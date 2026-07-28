@@ -78,27 +78,82 @@ PLAN §5.3 的第 3 档（块级编译）可以从"P0 不达标就上"降级为
 **缓存驱逐后反而更快**（p95 46µs vs 552µs）：`comemo::evict(0)` 之后
 重建的是精简缓存。说明长时间编辑不会因缓存膨胀而劣化。
 
-## #3a IME 事件通路 — ⏳ 待人工验证
+## #3a IME 事件通路 — ✅ 通过（人工验证）
 
 **问题**：中文输入法的预编辑串能不能拿到？候选框能不能定位？
 **标准**：能收到 `Preedit` 和 `Commit`，`set_ime_cursor_area` 能固定候选框位置。
-**不通过的退路**：重新考虑 Qt 6。
 
-已完成：
+Wayland + fcitx5 + rime，实测一轮 44 次 `Preedit` / 2 次 `Commit`：
 
-- winit 0.30 窗口在 Wayland + fcitx5 下正常创建，无崩溃。
-- `set_ime_allowed(true)` 与 `set_ime_cursor_area()` 调用通过。
-- 事件处理与统计代码就绪，涵盖 `Enabled` / `Preedit` / `Commit` / `Disabled`，
-  并单独统计 `Preedit` 是否带 cursor 范围（决定能否画下划线分段）。
+| 项 | 结果 |
+|---|---|
+| `Ime::Enabled` | ✅ 窗口获得焦点后 12ms 到达 |
+| `Ime::Preedit` | ✅ 拼音串增量到达，如 `"w"` → `"wo"` → `"wo f"` → `"wo fu le"` |
+| `Ime::Commit` | ✅ 选字后提交 `"我服了"` |
+| 候选框位置 | ✅ 跟随 `set_ime_cursor_area`，贴着窗口内的模拟光标 |
+| cursor 范围 | ✅ 40 次非空 `Preedit` **全部**带 `Some((0, N))` |
 
-**未完成**：需要人在键盘前切到中文输入法敲拼音，确认：
+**结论：winit 路线在 Linux 上成立，不需要退回 Qt 6。**
 
-1. 收到 `Ime::Enabled`
-2. 敲拼音时收到 `Ime::Preedit`，内容为拼音串
-3. 候选框出现在窗口内 (120, 200) 附近，而非屏幕角落
-4. 选字后收到 `Ime::Commit`
+Windows / macOS 尚未验证，排到 P1 的三平台 CI 里做。
 
-这是 P0 唯一还能推翻 winit 框架选择的项。
+### 两个坑，都是调用时序问题
+
+**坑 1：Wayland 下不提交缓冲区，窗口根本不显示。**
+
+最初的 spike 只创建窗口不绘制，结果窗口完全不出现，`Ime::Enabled` 也永远收不到
+（拿不到焦点）。X11 下空窗口会显示，Wayland 不会——合成器没有内容可合成。
+
+加 softbuffer 画一块底色后窗口立刻可见，`Ime::Enabled` 12ms 就到。
+
+**这个坑的危险在于它伪装成"winit 的 IME 坏了"。** 如果当时据此判 3a 失败去换 Qt 6，
+就是被一个渲染时序问题误导着推翻了框架选择。
+
+**坑 2：`set_ime_cursor_area` 必须在 `Ime::Enabled` 之后调用。**
+
+在 `resumed()` 里调用无效，候选框落到窗口左下角（fcitx5 默认位置）。
+
+原因在 winit 源码 `platform_impl/linux/wayland/window/state.rs:1044`：
+
+```rust
+for text_input in self.text_inputs.iter() {
+    text_input.set_cursor_rectangle(x, y, width, height);
+    text_input.commit();
+}
+```
+
+`text_inputs` 在窗口拿到焦点前是空集合，循环体一次都不执行——**调用静默变成空操作，
+没有任何错误返回**。上一层 `window/mod.rs:604` 还有个 `if window_state.ime_allowed()`
+的早退，也是静默的。
+
+正确做法：在 `Ime::Enabled` 之后调，且每次光标移动都重推。后者不只是为了绕开这个坑，
+真实编辑器里光标随输入移动，本来就必须每帧重推。
+
+### `Preedit` 的 cursor 字段语义
+
+`Ime::Preedit(text, cursor)` 的 `cursor: Option<(usize, usize)>` 是**指向 `text` 内部的
+两个字节偏移**，不是文档光标。它告诉你输入法希望预编辑串的哪一段被高亮、插入点画在哪。
+
+fcitx5 + rime 给的一律是 `Some((0, N))`，`N` == 字节长度，即"整串一段，插入点在末尾"。
+
+这个字段存在是因为某些输入法会给**子段**——日文输入法在转换阶段会把预编辑串切成
+"已确定 / 正在转换 / 未转换"几段，每段下划线样式不同。中文输入法一般不用这个粒度。
+
+对实现的要求：`(0, N)` 是常态，按"整串一段 + 末尾插入点"绘制即可，
+但数据结构上不要把它硬编码成整串，保留分段能力。
+
+### 空串 Preedit 是清除信号
+
+`Preedit("")` 且 `cursor=None`，在 `Commit` 前后各出现一次。这是正常的状态转移，
+不是异常：
+
+```
+Preedit("wo fu le")  → Preedit("") + cursor=None  → Commit("我服了") → Preedit("")
+```
+
+实现时按状态机处理。**空串 + `cursor=None` 不能当作"输入法没给光标范围"的缺陷**——
+spike 最初的判据就犯了这个错，把 4 次空串算成需要兜底，报了误警。
+判据应该是"非空 `Preedit` 是否缺 cursor"。
 
 ## #3b vello 渲染 Typst Frame — 未开始
 

@@ -47,9 +47,12 @@ struct Stats {
     preedit_events: usize,
     commit_events: usize,
     disabled: usize,
-    /// preedit 是否带过光标范围——决定能否画下划线的分段
+    /// 非空 preedit 带光标范围——决定能否画下划线分段
     preedit_with_cursor: usize,
-    preedit_without_cursor: usize,
+    /// 非空 preedit 却不带光标范围——这才是真需要兜底的情况
+    nonempty_without_cursor: usize,
+    /// 空 preedit，即"清除预编辑"信号。不带 cursor 是正常的，不算缺陷。
+    empty_preedit: usize,
 }
 
 impl ApplicationHandler for App {
@@ -71,15 +74,9 @@ impl ApplicationHandler for App {
         // 关键：必须显式开启，否则收不到任何 Ime 事件
         window.set_ime_allowed(true);
 
-        // 关键：不设这个，候选框会飘到屏幕角落而不是跟着光标
-        window.set_ime_cursor_area(
-            PhysicalPosition::new(CARET_X, CARET_Y),
-            PhysicalSize::new(1, CARET_H),
-        );
-
         println!("窗口已创建。");
         println!("  set_ime_allowed(true) 已调用");
-        println!("  set_ime_cursor_area 设到 ({CARET_X}, {CARET_Y})，高 {CARET_H}px");
+        println!("  set_ime_cursor_area 延后到 Ime::Enabled 之后调用（见下）");
         println!();
         println!("请切到中文输入法，敲拼音。观察：");
         println!("  1. 是否收到 Ime::Enabled");
@@ -121,14 +118,20 @@ impl ApplicationHandler for App {
                 Ime::Enabled => {
                     self.stats.enabled += 1;
                     println!("[{t:>6}ms] Ime::Enabled");
+                    // 必须在这里（而非 resumed）调：Wayland 下 winit 的
+                    // text_inputs 集合在窗口拿到焦点前是空的，
+                    // set_ime_cursor_area 会静默变成空操作。
+                    self.push_cursor_area();
                 }
 
                 Ime::Preedit(text, cursor) => {
                     self.stats.preedit_events += 1;
-                    if cursor.is_some() {
-                        self.stats.preedit_with_cursor += 1;
-                    } else {
-                        self.stats.preedit_without_cursor += 1;
+                    // 空串是清除信号，没有光标范围是正常的。
+                    // 只有非空却缺 cursor 才需要兜底。
+                    match (text.is_empty(), cursor.is_some()) {
+                        (true, _) => self.stats.empty_preedit += 1,
+                        (false, true) => self.stats.preedit_with_cursor += 1,
+                        (false, false) => self.stats.nonempty_without_cursor += 1,
                     }
                     println!(
                         "[{t:>6}ms] Ime::Preedit  {text:?}  cursor={cursor:?}  \
@@ -137,6 +140,9 @@ impl ApplicationHandler for App {
                         text.chars().count()
                     );
                     self.preedit = text;
+                    // 真实编辑器里光标会随输入移动，每次都要重推。
+                    // 这里位置固定，重推是为了验证 Enabled 之后调用确实生效。
+                    self.push_cursor_area();
                     if let Some(w) = &self.window {
                         w.request_redraw();
                     }
@@ -183,6 +189,19 @@ impl ApplicationHandler for App {
 }
 
 impl App {
+    /// 把候选框位置推给输入法。
+    ///
+    /// 必须在 `Ime::Enabled` 之后调用。winit 的 Wayland 后端里
+    /// `set_ime_cursor_area` 遍历 `text_inputs` 集合，而该集合在窗口
+    /// 拿到焦点前是空的——早调用会静默失败，候选框落到窗口左下角。
+    fn push_cursor_area(&self) {
+        let Some(w) = &self.window else { return };
+        w.set_ime_cursor_area(
+            PhysicalPosition::new(CARET_X, CARET_Y),
+            PhysicalSize::new(1, CARET_H),
+        );
+    }
+
     /// 画一屏内容。
     ///
     /// 不做文字渲染——那是 #3b 的事。这里只画色块标出模拟光标的位置，
@@ -243,26 +262,31 @@ impl App {
         println!("═══ 统计 ═══");
         println!("Ime::Enabled       {}", self.stats.enabled);
         println!("Ime::Preedit       {}", self.stats.preedit_events);
-        println!("  带 cursor 范围   {}", self.stats.preedit_with_cursor);
-        println!("  不带 cursor      {}", self.stats.preedit_without_cursor);
+        println!("  非空带 cursor    {}", self.stats.preedit_with_cursor);
+        println!("  非空缺 cursor    {}", self.stats.nonempty_without_cursor);
+        println!("  空串（清除信号） {}", self.stats.empty_preedit);
         println!("Ime::Commit        {}", self.stats.commit_events);
         println!("Ime::Disabled      {}", self.stats.disabled);
         println!("最终文本           {:?}", self.committed);
         println!();
 
-        let pass = self.stats.preedit_events > 0 && self.stats.commit_events > 0;
-        if pass {
-            println!("✅ 事件通路可用：Preedit 和 Commit 都收到了");
-            if self.stats.preedit_without_cursor > 0 {
-                println!("⚠️  部分 Preedit 不带 cursor 范围，画下划线分段时需兜底");
-            }
-        } else if self.stats.enabled == 0 {
+        if self.stats.enabled == 0 {
             println!("❌ 连 Ime::Enabled 都没收到 —— IME 未接通");
-        } else {
+        } else if self.stats.preedit_events == 0 || self.stats.commit_events == 0 {
             println!("❌ 缺 Preedit 或 Commit —— 通路不完整");
+        } else {
+            println!("✅ 事件通路可用：Preedit 和 Commit 都收到了");
+            if self.stats.nonempty_without_cursor > 0 {
+                println!(
+                    "⚠️  {} 次非空 Preedit 缺 cursor 范围，下划线分段需兜底",
+                    self.stats.nonempty_without_cursor
+                );
+            } else {
+                println!("✅ 所有非空 Preedit 都带 cursor 范围，下划线分段可直接实现");
+            }
         }
         println!();
-        println!("候选框位置是否跟随 ({CARET_X}, {CARET_Y})，需人工确认。");
+        println!("候选框是否贴着窗口内 ({CARET_X}, {CARET_Y}) 的红竖条，需人工确认。");
     }
 }
 

@@ -186,10 +186,20 @@ winit 给 `WindowEvent::Ime { Preedit(String, Option<(usize, usize)>) | Commit(S
 
 - preedit 串作为**临时覆盖节点**插入 AST，不进 undo 栈。
 - 重新 layout + 绘制，带下划线。
-- `Window::set_ime_cursor_area()` 定位候选框，否则候选窗飘到屏幕角落。
+- `Window::set_ime_cursor_area()` 定位候选框，否则候选窗飘到窗口角落。
 - `Commit` 时替换为正式节点，进 undo 栈。
 
-三平台行为不一致，Linux 还要区分 fcitx5 / ibus。预算 1-2 周，P0 必须验证。
+P0 实测已通过（Wayland + fcitx5 + rime），细节见 `P0_RESULTS.md`。三条必须遵守的约束：
+
+1. **`set_ime_cursor_area` 只能在 `Ime::Enabled` 之后调用**，且每次光标移动都要重推。
+   早调用会静默失败（winit 的 `text_inputs` 集合此时为空），无错误返回。
+2. **Wayland 下必须先提交渲染缓冲区窗口才可见**，否则拿不到焦点、收不到任何 IME 事件。
+3. **空串 `Preedit` + `cursor=None` 是清除信号，不是缺陷**，按状态机处理。
+
+`Preedit` 的 `cursor` 是指向预编辑串内部的字节偏移（不是文档光标），
+fcitx5 给 `(0, N)` 即整串一段。数据结构要保留分段能力（日文输入法会给子段）。
+
+三平台行为不一致，Windows / macOS 排到 P1 的 CI 验证。预算 1-2 周。
 
 ## 6. AI 接入（接口先行，实现后置）
 
@@ -308,11 +318,11 @@ pub struct AgentCapabilities {
 |---|---|---|---|
 | 1 | 遍历 Frame，打印每个字形的坐标 / span / range | span 粒度到单个数学原子 | ✅ 32 字形全有 span，零 detached |
 | 2 | 各规模文档单字符编辑后重编译，测延迟 | <16ms，可接受 <50ms | ✅ 27 页 p95 = 5.81ms |
-| 3a | winit + 中文输入法，取 preedit、定位候选框 | 收到 Preedit/Commit，候选框跟随 | ⏳ 待人工输入验证 |
+| 3a | winit + 中文输入法，取 preedit、定位候选框 | 收到 Preedit/Commit，候选框跟随 | ✅ Wayland+fcitx5 全通过 |
 | 3b | Typst Frame 的字形喂给 vello 绘制 | 能画出正确位置的字形 | 接口已查证可对接，代码未写 |
 
-3a 失败则框架选择需重新讨论（退路是 Qt 6，IME 成熟度是它最强项）——
-这也是把它放在写任何产品代码之前的原因。
+**winit 路线在 Linux 上已确认成立，不需要退回 Qt 6。**
+Windows / macOS 的 IME 排到 P1 的三平台 CI 里验证。
 
 ### P1 — 骨架（3-4 周）
 
@@ -393,7 +403,8 @@ AI provider 实装 + 建议态 UI、结构化搜索替换、LaTeX/Markdown/`.tm`
 
 | 风险 | 概率 | 影响 | 处理 |
 |---|---|---|---|
-| IME 在某平台不可用 | 中 | 高 | **未排除**，待 3a 人工验证；失败则换 Qt 6 |
+| ~~IME 在 Linux 不可用~~ | — | — | **已排除**：Wayland+fcitx5 实测全通过 |
+| IME 在 Windows/macOS 不可用 | 中 | 中 | P1 三平台 CI 验证；单平台失败可局部换实现，不必换框架 |
 | ~~全量编译延迟超标~~ | — | — | **已排除**：27 页 p95 = 5.81ms |
 | ~~span 粒度不足~~ | — | — | **已排除**：实测逐原子可区分，零 detached |
 | typst 0.16 breaking change | 高 | 中 | 锁次版本号；`scholium-layout` 是唯一接触点 |
