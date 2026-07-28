@@ -11,6 +11,8 @@
 //!
 //! 需要人工操作：运行后切到中文输入法，敲拼音，观察输出。
 
+use std::num::NonZeroU32;
+use std::rc::Rc;
 use std::time::Instant;
 use winit::application::ApplicationHandler;
 use winit::dpi::{PhysicalPosition, PhysicalSize};
@@ -27,7 +29,10 @@ const CARET_H: i32 = 24;
 
 #[derive(Default)]
 struct App {
-    window: Option<Window>,
+    /// `Rc` 是 softbuffer 的要求：surface 要持有 window
+    window: Option<Rc<Window>>,
+    surface: Option<softbuffer::Surface<Rc<Window>, Rc<Window>>>,
+    size: PhysicalSize<u32>,
     /// 已提交的文本，模拟文档内容
     committed: String,
     /// 当前预编辑串，模拟临时覆盖节点（PLAN §5.4）
@@ -53,7 +58,15 @@ impl ApplicationHandler for App {
             .with_title("Scholium P0 — IME 验证")
             .with_inner_size(PhysicalSize::new(720, 400));
 
-        let window = el.create_window(attrs).expect("创建窗口失败");
+        let window = Rc::new(el.create_window(attrs).expect("创建窗口失败"));
+
+        // Wayland 下窗口在附加第一个缓冲区之前不会被合成器显示。
+        // 所以必须真的画东西，光创建窗口是看不见的（X11 下会显示空窗口）。
+        let context = softbuffer::Context::new(window.clone()).expect("创建 softbuffer 上下文失败");
+        let surface =
+            softbuffer::Surface::new(&context, window.clone()).expect("创建 softbuffer surface 失败");
+
+        self.size = window.inner_size();
 
         // 关键：必须显式开启，否则收不到任何 Ime 事件
         window.set_ime_allowed(true);
@@ -77,7 +90,9 @@ impl ApplicationHandler for App {
         println!("按 Esc 退出并打印统计。");
         println!("────────────────────────────────────────");
 
+        window.request_redraw();
         self.window = Some(window);
+        self.surface = Some(surface);
         self.started = Some(Instant::now());
     }
 
@@ -92,6 +107,15 @@ impl ApplicationHandler for App {
                 self.report();
                 el.exit();
             }
+
+            WindowEvent::Resized(size) => {
+                self.size = size;
+                if let Some(w) = &self.window {
+                    w.request_redraw();
+                }
+            }
+
+            WindowEvent::RedrawRequested => self.redraw(),
 
             WindowEvent::Ime(ime) => match ime {
                 Ime::Enabled => {
@@ -113,6 +137,9 @@ impl ApplicationHandler for App {
                         text.chars().count()
                     );
                     self.preedit = text;
+                    if let Some(w) = &self.window {
+                        w.request_redraw();
+                    }
                 }
 
                 Ime::Commit(text) => {
@@ -121,6 +148,9 @@ impl ApplicationHandler for App {
                     self.committed.push_str(&text);
                     self.preedit.clear();
                     println!("           已提交文本: {:?}", self.committed);
+                    if let Some(w) = &self.window {
+                        w.request_redraw();
+                    }
                 }
 
                 Ime::Disabled => {
@@ -153,6 +183,61 @@ impl ApplicationHandler for App {
 }
 
 impl App {
+    /// 画一屏内容。
+    ///
+    /// 不做文字渲染——那是 #3b 的事。这里只画色块标出模拟光标的位置，
+    /// 让候选框有没有跟上肉眼可判。
+    fn redraw(&mut self) {
+        let Some(surface) = &mut self.surface else {
+            return;
+        };
+        let (Some(w), Some(h)) = (
+            NonZeroU32::new(self.size.width),
+            NonZeroU32::new(self.size.height),
+        ) else {
+            return; // 最小化时尺寸为 0
+        };
+
+        if surface.resize(w, h).is_err() {
+            return;
+        }
+        let Ok(mut buf) = surface.buffer_mut() else {
+            return;
+        };
+
+        let (width, height) = (w.get() as i32, h.get() as i32);
+
+        // 底色：浅灰，能看出窗口确实出现了
+        buf.fill(0x00f2_f2f0);
+
+        // 模拟光标：红色竖条。候选框应该贴着它出现。
+        fill_rect(&mut buf, width, height, CARET_X, CARET_Y, 2, CARET_H, 0x00d0_2020);
+
+        // 预编辑串的占位条：有 preedit 时在光标右侧画蓝条，
+        // 长度随字符数变化，用来确认 Preedit 事件确实在实时到达。
+        let n = self.preedit.chars().count() as i32;
+        if n > 0 {
+            fill_rect(
+                &mut buf,
+                width,
+                height,
+                CARET_X + 4,
+                CARET_Y + CARET_H - 3,
+                n * 14,
+                2,
+                0x0020_60d0,
+            );
+        }
+
+        // 已提交文本的占位条：绿条，长度随已提交字符数增长
+        let m = self.committed.chars().count() as i32;
+        if m > 0 {
+            fill_rect(&mut buf, width, height, 40, 60, (m * 14).min(width - 80), 6, 0x0020_9040);
+        }
+
+        let _ = buf.present();
+    }
+
     fn report(&self) {
         println!("────────────────────────────────────────");
         println!("═══ 统计 ═══");
@@ -178,6 +263,30 @@ impl App {
         }
         println!();
         println!("候选框位置是否跟随 ({CARET_X}, {CARET_Y})，需人工确认。");
+    }
+}
+
+/// 往 softbuffer 里填一个矩形。裁剪到缓冲区边界内。
+fn fill_rect(
+    buf: &mut [u32],
+    width: i32,
+    height: i32,
+    x: i32,
+    y: i32,
+    w: i32,
+    h: i32,
+    color: u32,
+) {
+    let x0 = x.max(0);
+    let y0 = y.max(0);
+    let x1 = (x + w).min(width);
+    let y1 = (y + h).min(height);
+
+    for row in y0..y1 {
+        let base = (row * width) as usize;
+        for col in x0..x1 {
+            buf[base + col as usize] = color;
+        }
     }
 }
 

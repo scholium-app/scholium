@@ -13,6 +13,7 @@ typst-assets = { version = "0.15", features = ["fonts"] }
 comemo = "0.4"
 winit = "0.30"
 vello = "0.9.0"
+softbuffer = "0.4.8"
 
 [[bin]]
 name = "span"
