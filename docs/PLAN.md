@@ -2,8 +2,7 @@
 
 科学写作桌面应用。原生 UI，Typst 排版内核，结构化数学编辑。
 
-取代 `../../plans/RIIR.md`（Typst 源码编辑路线）和 `../../plans/STRUCTURED_MATH_TYPST.md`
-（Tiptap + 双渲染器路线）。旧的 `mogan-rs` 与 `mogan` 均不复用任何代码。
+不复用任何既有代码。前两轮尝试的失败原因见 `BACKGROUND.md`。
 
 **名称**：scholium 是古典手稿页边的注疏。欧几里得《几何原本》的 scholia
 是希腊数学史最重要的传世材料之一。中文名「注疏」。
@@ -13,29 +12,19 @@ GitHub 同名个人空号存在，org 需用变体。**商标未检索，正式�
 
 ## 1. 为什么重做
 
-旧方案把 Typst 当**导出器**：
+前两轮方案都把 Typst 当**导出器**：
 
 ```
 AST → Typst 源码 → SVG → 塞进 iframe/图片控件
 ```
 
-屏幕上的字形和 AST 节点之间没有对应关系，于是点击无法定位、光标无法进入分母、
-矩阵单元格无法高亮。`STRUCTURED_MATH_TYPST.md` 因此被迫引入 KaTeX 做编辑态渲染，
+这条路径上屏幕字形和 AST 节点之间没有对应关系，于是点击无法定位、光标无法进入分母、
+矩阵单元格无法高亮。方案因此被迫引入第二个渲染器（KaTeX）做编辑态显示，
 结果是两套排版引擎、两种排版结果，所见永远非所得。
 
 而全部辨识度就在结构化数学编辑手感上。管线隔断了这个能力，产品就没有存在理由。
 
-实际完成度也印证了问题所在——排版闭环一行未通，而 `mogan-ai` 已经建好了目录：
-
-| 模块 | 计划状态 | 实际 |
-|---|---|---|
-| `mogan-typst::Compiler` | 阶段 1 核心 | 全是 `Ok(())` 空壳，`typst` crate 未被调用 |
-| `mogan-typst::MoganWorld` | impl `World` | 空 struct，无 impl |
-| `mogan-core::DocumentTree` | 结构化 schema | `{ root: String }` |
-| `mogan-convert` | 1500+ 映射规则 | 返回空串 |
-| `mogan-ai` / `mogan-bib` | 阶段 4/6 | 空 struct |
-| `Preview.svelte` | Typst SVG 预览 | 写死的假页面 |
-| 前端数学原型 | 阶段 2-4 | 唯一真有内容，~3.7k 行 |
+完整的失败复盘、两轮方案的技术栈与实际完成度见 `BACKGROUND.md`。
 
 ## 2. 新方案：Typst 当排版库，不当导出器
 
