@@ -1,0 +1,22 @@
+/target
+**/*.rs.bk
+*.pdb
+
+# 本地环境
+.env
+.env.*
+!.env.example
+
+# 编辑器
+.idea/
+.vscode/
+*.swp
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# P0 spike 产物
+/spike/**/target
+/spike/**/*.pdf
+/spike/**/*.svg
