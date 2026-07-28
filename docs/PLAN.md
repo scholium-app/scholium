@@ -319,7 +319,16 @@ pub struct AgentCapabilities {
 | 1 | 遍历 Frame，打印每个字形的坐标 / span / range | span 粒度到单个数学原子 | ✅ 32 字形全有 span，零 detached |
 | 2 | 各规模文档单字符编辑后重编译，测延迟 | <16ms，可接受 <50ms | ✅ 27 页 p95 = 5.81ms |
 | 3a | winit + 中文输入法，取 preedit、定位候选框 | 收到 Preedit/Commit，候选框跟随 | ✅ Wayland+fcitx5 全通过 |
-| 3b | Typst Frame 的字形喂给 vello 绘制 | 能画出正确位置的字形 | 接口已查证可对接，代码未写 |
+| 3b | Typst Frame 的字形喂给 vello 绘制 | 能画出正确位置的字形 | ✅ 92 字形 / 5 shape 绘制正确 |
+
+**四项全部通过，PLAN §2 的管线闭环已实测验证。**
+
+两条追加约束（详见 `P0_RESULTS.md`）：
+
+- **必须自带 CJK 字体。** `typst-assets` 一个 CJK 字体都没有，缺字体时 Typst
+  不报错、只返回 `.notdef` 字形。`scholium-layout` 要在启动时探关键码位。
+- **坐标系有三处必须处理**：Typst 的 y 是 Y-up 而 vello 是 Y-down；字形绝对位置
+  要沿 x 自己累加；`Group` 变换要逐层叠加。错了不报错，只是位置不对。
 
 **winit 路线在 Linux 上已确认成立，不需要退回 Qt 6。**
 Windows / macOS 的 IME 排到 P1 的三平台 CI 里验证。
@@ -410,6 +419,7 @@ AI provider 实装 + 建议态 UI、结构化搜索替换、LaTeX/Markdown/`.tm`
 | typst 0.16 breaking change | 高 | 中 | 锁次版本号；`scholium-layout` 是唯一接触点 |
 | AI 层被提前拉进 MVP | 中 | 中 | §6.5 硬性边界；P1 只有 trait |
 | 无障碍工作量被低估 | 中 | 低 | accesskit 排 P6，不阻塞 MVP |
+| 静默失败类问题 | 高 | 中 | P0 已踩三个（见 `P0_RESULTS.md`）。凡"配置/资源/时序不对但不报错"的路径都主动加断言 |
 | 又一次范围失控 | **高** | **高** | 硬性规定：P3 结束前不碰转换/文献/AI 实现 |
 | 商标冲突 | 未知 | 高 | 发布前必须查 USPTO + CNIPA（quire 就是在这翻的车） |
 

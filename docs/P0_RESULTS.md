@@ -155,21 +155,96 @@ Preedit("wo fu le")  → Preedit("") + cursor=None  → Commit("我服了") → 
 spike 最初的判据就犯了这个错，把 4 次空串算成需要兜底，报了误警。
 判据应该是"非空 `Preedit` 是否缺 cursor"。
 
-## #3b vello 渲染 Typst Frame — 未开始
+## #3b vello 渲染 Typst Frame — ✅ 通过
 
-接口层面已查证可对接，无缺口：
+**问题**：Typst 排版产出的字形能不能直接用 vello 画出来？
+**标准**：字形位置正确，数学结构（分数线、根号、矩阵）形状正确。
+
+这验证的是 PLAN §2 管线的最后一段（Frame → vello scene → 屏幕）。
+配合 #1 验证的 Frame → NodeId 反查，整条管线闭环。
+
+实测一页含分数、根号、矩阵、求和的文档：
+**92 字形 / 5 shape / 68 text run / 7 group / 嵌套最深 2 层**，全部走完绘制路径。
+公式渲染人工确认正确。
+
+### 接口映射
 
 | vello 需要 | Typst 提供 | 转换 |
 |---|---|---|
-| `FontData::new(Blob<u8>, u32)` | `Font::data()` / `Font::index()` | `Blob::new` 包一层 |
+| `FontData::new(Blob<u8>, u32)` | `Font::data()` / `Font::index()` | `Blob::new(Arc::new(data.to_vec()))` |
 | `Glyph { id: u32, x: f32, y: f32 }` | `Glyph.id: u16` + offset/advance | `u32::from`，坐标乘字号 |
 | `.font_size(f32)` | `TextItem.size: Abs` | `.to_pt()` |
+| `BezPath` | `Geometry::{Line,Rect,Curve}` | `CurveItem` 与 kurbo 路径模型一一对应 |
 
 `vello::Glyph` 实际定义在 `vello_encoding`，由 vello 顶层重导出。
+
+### 三个必须处理的坐标问题
+
+1. **Y 轴方向相反。** Typst 的 `y_offset` / `y_advance` 是 **Y-up**，vello 是 **Y-down**，
+   要取反。
+2. **字形绝对位置要自己累加。** Typst 只给每字形的 `x_offset` + `x_advance`，
+   沿 x 累加才得到绝对位置。
+3. **`Group` 的变换要逐层叠加**（`transform * translate`），否则嵌套结构（矩阵、分式）错位。
+
+这三处任一处错了，表现都是"能画出来但位置不对"，不会报错。
+
+## 字体：`typst-assets` 没有 CJK 字体
+
+`typst_assets::fonts()` 只捆了 New Computer Modern / Libertinus / DejaVu Mono，
+**一个 CJK 字体都没有**。中文优先的产品必须自带字体，PLAN §3 的资产清单
+（New Computer Modern + Noto Serif CJK，均 OFL）不是可选项。
+
+### 这是一次静默降级
+
+缺字体时 Typst **不报任何错**：编译成功、span 正确、延迟正常，
+只是返回 `id=0` 的 `.notdef` 字形。只有画到屏幕上才看得出问题。
+
+#1 的输出里其实已经有证据——每个汉字的字形 `id` 都是 `0`，
+而同一份输出里数学字形是 3548、6600 这些真实索引。当时没警觉，
+因为验的是 span 映射，那部分确实通过了。
+
+加载系统 `NotoSerifCJK-Regular.ttc`（含 5 个 face）后：
+
+| | 加载前 | 加载后 |
+|---|---|---|
+| 字体数 | 17 | 22 |
+| 「标」的字形 id | 0（`.notdef`） | 21038 |
+| 「题」的字形 id | 0 | 44083 |
+| span 统计 | 32 字形 / 零 detached | **完全一致** |
+| 27 页编辑 p95 | 5.81ms | 6.34ms（+9%） |
+| 27 页冷启动 | 22.4ms | 31.0ms |
+
+span 统计一字不差，印证了缺字体不影响反向映射，#1 的结论仍然成立。
+延迟代价约 9%，在预算内。
+
+### 对 P1 的要求：启动时主动自检
+
+已在 spike 的 `SpikeWorld::assert_coverage` 里实现——加载完字体后探关键码位
+（一个常用汉字 + 一个数学符号），用 `FontInfo.coverage.contains()` 查。
+
+`scholium-layout` 要保留这个自检。**把静默降级变成启动时的显式警告**，
+否则这类问题只能靠肉眼在渲染结果里发现。
+
+## 三个同类模式：静默失败
+
+P0 至今踩到三个，全都不报错、不 panic，只能靠肉眼或额外断言发现：
+
+| 现象 | 真因 | 防御 |
+|---|---|---|
+| 窗口完全不出现，收不到 IME 事件 | Wayland 下不提交渲染缓冲区窗口不显示 | 起步就画底色 |
+| 候选框飘到窗口左下角 | `set_ime_cursor_area` 在焦点前调用，`text_inputs` 为空集合，循环体不执行 | 只在 `Ime::Enabled` 之后调 |
+| 汉字渲染成方块/空白 | 缺 CJK 字体，返回 `.notdef` | 启动时探关键码位 |
+
+第一个最危险——它伪装成"winit 的 IME 坏了"。如果当时据此判 3a 失败去换 Qt 6，
+就是被一个渲染时序问题误导着推翻了框架选择。
+
+**P1 的启示：凡是"配置/资源/时序不对但不报错"的路径，都要主动加断言。**
 
 ## API 陷阱记录
 
 typst 0.15.1 的实际 API 与 docs.rs 展示的**不一致**，以下均为实测修正：
+
+### typst 0.15.1
 
 | docs.rs 显示 | 实际 |
 |---|---|
@@ -182,7 +257,24 @@ typst 0.15.1 的实际 API 与 docs.rs 展示的**不一致**，以下均为实�
 | `Source::range(span)` | `Source::range(SpanNumber, Option<SubRange>)`；更好用的是 `typst::WorldExt::range(span)` |
 | `VirtualPath::as_rootless_path()` | 已弃用，改 `get_without_slash()` |
 
-**教训：查 `~/.cargo/registry/src/*/typst-*-0.15.1/src/` 里的源码比查 docs.rs 可靠。**
+### vello 0.9 / wgpu 29
+
+| 以为 | 实际 |
+|---|---|
+| `wgpu` 要单独加依赖 | vello 重导出了，`use vello::wgpu` |
+| `Line`/`Rect` 有 `into_path` | 需 `use vello::kurbo::Shape as _` 让 trait 在作用域 |
+| `get_current_texture() -> Result` | **wgpu 29 改成枚举** `CurrentSurfaceTexture`，有 `Timeout`/`Occluded`/`Outdated` 变体，该跳帧而非 panic |
+| `Color::to_rgb().to_vec4()` | `to_vec4` 挂在 `Color` 上 |
+| `AlphaColor::new` 能推类型 | 推不出色彩空间，要写 `AlphaColor::<Srgb>::new` |
+| `Font::ttf()` 可用 | 在 `typst::text::Font` 上取不到（`ttf_parser` 未作为直接依赖）；用 `FontInfo.coverage.contains()` 代替 |
+
+累计 14 处签名与文档/直觉不符。
+
+**教训：查 `~/.cargo/registry/src/` 里的源码比查 docs.rs 可靠。**
+
+对 P1 的实际含义：`scholium-layout` 是 PLAN §4 里特意隔离出来的、唯一接触 typst 的 crate，
+这个隔离设计现在验证是对的——所有签名变动都被挡在一个 crate 内。
+但工期上要给"查真实签名"预留比照文档写代码更多的时间。
 
 ## spike 自身的两个 bug（值得记）
 
