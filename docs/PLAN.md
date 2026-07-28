@@ -75,7 +75,12 @@ pub span: (Span, u16),      // 源码位置 + 偏移
 **每个字形都带 span**，粒度足够，无需往生成的源码里插标记节点。
 `Span → 源码字节范围` 用 `typst_syntax::Source::range(span)`。
 
-未确认：`span` 元组第二个 `u16` 的语义（文档未说明，推测是 ligature 内偏移），P0 实测。
+`span` 元组第二个 `u16` 已由 P0 实测确认：**是 span 内的字节偏移**，
+精确位置 = `range.start + offset`。文本节点的 span 覆盖整段、靠 offset 细化到单字；
+数学原子的 span 本身精确、offset 恒为 0。详见 `P0_RESULTS.md`。
+
+注意实际 API 与 docs.rs 不一致（`FileId::new`、`VirtualPath::new`、`today` 等 8 处），
+`P0_RESULTS.md` 有对照表。查 cargo registry 里的源码比查 docs.rs 可靠。
 
 ## 3. 技术栈
 
@@ -163,9 +168,14 @@ pub struct Cursor {
 
 1. **乐观绘制**：按键立刻应用到 AST，用上一帧 layout 近似定位，先出画面。
 2. **debounce 编译**：停顿 ~8-16ms 触发 Typst 编译，拿到真 layout 后校正。
-3. **块级编译**（仅当 P0 实测全量不达标）：只编译当前 block，全量放到 idle。
+3. **块级编译**：只编译当前 block，全量放到 idle。
 
-Typst 内部 hash-based memoization，未改动内容命中缓存。实际延迟见 P0。
+P0 实测（`P0_RESULTS.md`）：27 页文档单字符编辑 p95 = 5.81ms，约三分之一帧预算；
+到 ~71 页才升到 16.54ms。**第 3 档从"不达标就上"降级为"超大文档的已知手段"，
+MVP 不实现。** 前两档足够。
+
+Typst 内部 hash-based memoization，未改动内容命中缓存。
+缓存驱逐后反而更快（46µs vs 552µs），长时间编辑不会因缓存膨胀劣化。
 
 ### 5.4 IME
 
@@ -292,13 +302,17 @@ pub struct AgentCapabilities {
 
 不搭架子，只回答三个能否定整个方案的问题。
 
-| # | 验证内容 | 通过标准 | 不通过的退路 |
-|---|---|---|---|
-| 1 | 硬编码含数学的 Typst，编译，遍历 Frame，打印每个字形的坐标 / span / range | span 粒度到单个数学原子（分子、分母、上标各自可区分） | 序列化时插标记节点提高分辨率 |
-| 2 | 1 / 10 / 30 页文档，单字符编辑后重编译，测延迟 | 目标 <16ms，可接受 <50ms | 降级块级编译 |
-| 3 | winit 空窗口 + 中文输入法，取 preedit、绘制、定位候选框 | Linux + Windows 可用 | **重新考虑 Qt 6**（IME 成熟度是 Qt 最强项） |
+结果见 `P0_RESULTS.md`，代码在 `spike/`。
 
-第 3 项失败则框架选择需重新讨论——这也是把它放在写任何产品代码之前的原因。
+| # | 验证内容 | 通过标准 | 状态 |
+|---|---|---|---|
+| 1 | 遍历 Frame，打印每个字形的坐标 / span / range | span 粒度到单个数学原子 | ✅ 32 字形全有 span，零 detached |
+| 2 | 各规模文档单字符编辑后重编译，测延迟 | <16ms，可接受 <50ms | ✅ 27 页 p95 = 5.81ms |
+| 3a | winit + 中文输入法，取 preedit、定位候选框 | 收到 Preedit/Commit，候选框跟随 | ⏳ 待人工输入验证 |
+| 3b | Typst Frame 的字形喂给 vello 绘制 | 能画出正确位置的字形 | 接口已查证可对接，代码未写 |
+
+3a 失败则框架选择需重新讨论（退路是 Qt 6，IME 成熟度是它最强项）——
+这也是把它放在写任何产品代码之前的原因。
 
 ### P1 — 骨架（3-4 周）
 
@@ -379,9 +393,9 @@ AI provider 实装 + 建议态 UI、结构化搜索替换、LaTeX/Markdown/`.tm`
 
 | 风险 | 概率 | 影响 | 处理 |
 |---|---|---|---|
-| IME 在某平台不可用 | 中 | 高 | P0 验证；失败则换 Qt 6 |
-| 全量编译延迟超标 | 中 | 中 | P0 实测；降级块级编译 |
-| span 粒度不足 | 低 | 高 | 已查文档确认逐字形带 span；不足则插标记节点 |
+| IME 在某平台不可用 | 中 | 高 | **未排除**，待 3a 人工验证；失败则换 Qt 6 |
+| ~~全量编译延迟超标~~ | — | — | **已排除**：27 页 p95 = 5.81ms |
+| ~~span 粒度不足~~ | — | — | **已排除**：实测逐原子可区分，零 detached |
 | typst 0.16 breaking change | 高 | 中 | 锁次版本号；`scholium-layout` 是唯一接触点 |
 | AI 层被提前拉进 MVP | 中 | 中 | §6.5 硬性边界；P1 只有 trait |
 | 无障碍工作量被低估 | 中 | 低 | accesskit 排 P6，不阻塞 MVP |

@@ -1,0 +1,31 @@
+[package]
+name = "spike"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# P0 技术验证，代码可弃。不属于正式 workspace。
+
+[dependencies]
+typst = "0.15"
+typst-layout = "0.15"
+typst-assets = { version = "0.15", features = ["fonts"] }
+comemo = "0.4"
+winit = "0.30"
+vello = "0.9.0"
+
+[[bin]]
+name = "span"
+path = "src/span.rs"
+
+[[bin]]
+name = "latency"
+path = "src/latency.rs"
+
+# 验证 #3a：IME 事件通路。只记录事件，不渲染——渲染栈是独立风险。
+[[bin]]
+name = "ime"
+path = "src/ime.rs"
+
+[profile.release]
+debug = true
