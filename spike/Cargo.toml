@@ -14,6 +14,7 @@ comemo = "0.4"
 winit = "0.30"
 vello = "0.9.0"
 softbuffer = "0.4.8"
+pollster = "1.0.1"
 
 [[bin]]
 name = "span"
@@ -27,6 +28,11 @@ path = "src/latency.rs"
 [[bin]]
 name = "ime"
 path = "src/ime.rs"
+
+# 验证 #3b：Typst Frame 的字形喂给 vello 绘制。
+[[bin]]
+name = "render"
+path = "src/render.rs"
 
 [profile.release]
 debug = true
