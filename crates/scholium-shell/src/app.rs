@@ -7,7 +7,7 @@ use vello::peniko::color::{AlphaColor, Srgb};
 use vello::util::{RenderContext, RenderSurface};
 use vello::wgpu;
 use winit::application::ApplicationHandler;
-use winit::dpi::PhysicalSize;
+use winit::dpi::{PhysicalPosition, PhysicalSize};
 use winit::event::{ElementState, Ime, Modifiers, WindowEvent};
 use winit::event_loop::ActiveEventLoop;
 use winit::keyboard::{Key, ModifiersState, NamedKey};
@@ -280,7 +280,7 @@ impl ApplicationHandler for App {
                         self.insert_text(" ");
                     }
                     Key::Named(NamedKey::Tab) => {}
-                    Key::Character(ch) if !ch.is_empty() && !self.ime_active => {
+                    Key::Character(ch) if !ch.is_empty() && self.pending_text.is_empty() => {
                         self.insert_text(ch);
                     }
                     _ => {}
@@ -334,6 +334,8 @@ impl App {
         };
 
         let (w, h) = (surface.config.width, surface.config.height);
+        let available_w = (w as f64) - 2.0 * MARGIN;
+        let available_h = (h as f64) - 2.0 * MARGIN;
 
         self.scene.reset();
         fill_background(
@@ -346,22 +348,39 @@ impl App {
         if let Some(ref output) = self.compile_output
             && let Some(page_frame) = output.doc.pages().first().map(|p| &p.frame)
         {
+            let pw = page_frame.width().to_pt().max(1.0);
+            let ph = page_frame.height().to_pt().max(1.0);
+            let scale = (available_w / pw).min(available_h / ph).min(1.0);
+            let ox = (w as f64 - pw * scale) / 2.0;
+            let oy = (h as f64 - ph * scale) / 2.0;
+
             frame_scene::add_page(
                 &mut self.scene,
                 page_frame,
                 &mut self.font_cache,
-                MARGIN,
-                MARGIN,
+                ox,
+                oy,
+                scale,
             );
-        }
 
-        if let Some(cursor_pos) = self.cursor_screen {
-            let pos = CursorScreenPos {
-                x: cursor_pos.x + MARGIN,
-                y: cursor_pos.y + MARGIN,
-                height: cursor_pos.height,
-            };
-            frame_scene::draw_cursor(&mut self.scene, pos);
+            if let Some(cursor_pos) = self.cursor_screen {
+                let sx = cursor_pos.x * scale + ox;
+                let sy = cursor_pos.y * scale + oy;
+                let sh = cursor_pos.height * scale;
+                let screen = CursorScreenPos {
+                    x: sx,
+                    y: sy,
+                    height: sh,
+                };
+                frame_scene::draw_cursor(&mut self.scene, screen);
+
+                if let Some(ref window) = self.window {
+                    window.set_ime_cursor_area(
+                        PhysicalPosition::new(sx as i32, (sy + sh) as i32),
+                        PhysicalSize::new(2, sh as u32),
+                    );
+                }
+            }
         }
 
         renderer.render(surface, &self.scene);

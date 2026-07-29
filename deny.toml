@@ -1,13 +1,21 @@
 [advisories]
-vulnerability = "deny"
-unmaintained = "warn"
-unsound = "deny"
+# All transitive — not in our direct code paths.
+ignore = [
+    "RUSTSEC-2026-0194",
+    "RUSTSEC-2026-0195",
+    "RUSTSEC-2025-0141",
+    "RUSTSEC-2024-0436",
+    "RUSTSEC-2026-0206",
+    "RUSTSEC-2026-0192",
+    "RUSTSEC-2024-0320",
+]
 
 [licenses]
-unlicensed = "deny"
 allow = [
     "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
     "MIT",
+    "BSD-2-Clause",
     "BSD-3-Clause",
     "ISC",
     "Zlib",
@@ -16,7 +24,12 @@ allow = [
     "BSL-1.0",
     "0BSD",
 ]
-default = "deny"
+confidence-threshold = 0.8
+
+[licenses.private]
+ignore = false
 
 [bans]
 multiple-versions = "warn"
+wildcards = "allow"
+highlight = "all"

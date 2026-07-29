@@ -46,14 +46,18 @@ pub struct CursorScreenPos {
 }
 
 /// Render a page frame onto the scene with a white background.
+///
+/// `offset_x`/`offset_y` position the page on screen (in scene coords).
+/// `scale` scales the page content (e.g. 1.0 for 1pt=1px).
 pub fn add_page(
     scene: &mut Scene,
     frame: &Frame,
     font_cache: &mut FontCache,
     offset_x: f64,
     offset_y: f64,
+    scale: f64,
 ) {
-    let page_transform = Affine::translate((offset_x, offset_y));
+    let page_transform = Affine::translate((offset_x, offset_y)) * Affine::scale(scale);
     let w = frame.width().to_pt();
     let h = frame.height().to_pt();
     let page_rect = Rect::new(0.0, 0.0, w, h);

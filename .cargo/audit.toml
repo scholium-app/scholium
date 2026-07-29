@@ -1,0 +1,4 @@
+[advisories]
+# quick-xml 0.38.4 — transitive via citationberg→hayagriva→typst.
+# Not in our direct code path (bibliography is unused in P1).
+ignore = ["RUSTSEC-2026-0194", "RUSTSEC-2026-0195"]
