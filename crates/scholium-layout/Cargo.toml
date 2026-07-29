@@ -1,0 +1,15 @@
+[package]
+name = "scholium-layout"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+scholium-doc = { path = "../scholium-doc" }
+scholium-serialize = { path = "../scholium-serialize" }
+typst = "0.15"
+typst-layout = "0.15"
+typst-assets = { version = "0.15", features = ["fonts"] }
