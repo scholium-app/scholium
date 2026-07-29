@@ -1,4 +1,4 @@
-use scholium_doc::{Cursor, Document, EditOp, Origin, Selection, Transaction};
+use scholium_doc::{Cursor, Document, EditOp, History, Origin, Selection, Transaction};
 use scholium_layout::{FontConfig, ScholiumWorld, compile};
 use scholium_render::frame_scene::{self, CursorScreenPos, FontCache};
 use scholium_render::{ScholiumRenderer, fill_background};
@@ -8,9 +8,9 @@ use vello::util::{RenderContext, RenderSurface};
 use vello::wgpu;
 use winit::application::ApplicationHandler;
 use winit::dpi::PhysicalSize;
-use winit::event::{ElementState, Ime, WindowEvent};
+use winit::event::{ElementState, Ime, Modifiers, WindowEvent};
 use winit::event_loop::ActiveEventLoop;
-use winit::keyboard::{Key, NamedKey};
+use winit::keyboard::{Key, ModifiersState, NamedKey};
 use winit::window::{Window, WindowId};
 
 const MARGIN: f64 = 48.0;
@@ -29,6 +29,8 @@ pub struct App {
     cursor_screen: Option<CursorScreenPos>,
     font_cache: FontCache,
 
+    history: History,
+    cached_mods: Modifiers,
     ime_active: bool,
     pending_text: String,
 }
@@ -50,6 +52,8 @@ impl App {
             cursor: Cursor::start(),
             cursor_screen: None,
             font_cache: FontCache::new(),
+            history: History::new(),
+            cached_mods: Modifiers::from(ModifiersState::empty()),
             ime_active: false,
             pending_text: String::new(),
         }
@@ -66,6 +70,7 @@ impl App {
 
         match compile(&mut self.world, &self.doc) {
             Ok(output) => {
+                self.history.commit(before);
                 self.compile_output = Some(output);
                 self.update_cursor_screen();
             }
@@ -128,6 +133,44 @@ impl App {
             );
             let tx = Transaction::new(vec![EditOp::DeleteRange { range }], Origin::User);
             self.edit_and_recompile(tx);
+        }
+    }
+
+    /// Undo the last transaction.
+    fn undo(&mut self) {
+        if !self.history.can_undo() {
+            return;
+        }
+        if let Some(prev) = self.history.undo(self.doc.clone()) {
+            self.doc = prev;
+            self.cursor = Cursor::start();
+            self.recompile();
+        }
+    }
+
+    /// Redo the last undone transaction.
+    fn redo(&mut self) {
+        if !self.history.can_redo() {
+            return;
+        }
+        if let Some(next) = self.history.redo(self.doc.clone()) {
+            self.doc = next;
+            self.cursor = Cursor::start();
+            self.recompile();
+        }
+    }
+
+    /// Recompile and request a redraw.
+    fn recompile(&mut self) {
+        match compile(&mut self.world, &self.doc) {
+            Ok(output) => {
+                self.compile_output = Some(output);
+                self.update_cursor_screen();
+            }
+            Err(e) => eprintln!("recompile failed: {e:?}"),
+        }
+        if let Some(ref w) = self.window {
+            w.request_redraw();
         }
     }
 
@@ -206,7 +249,26 @@ impl ApplicationHandler for App {
             {
                 el.exit();
             }
+            WindowEvent::ModifiersChanged(mods) => {
+                self.cached_mods = mods;
+            }
             WindowEvent::KeyboardInput { event, .. } if event.state == ElementState::Pressed => {
+                if self.cached_mods.state().control_key() || self.cached_mods.state().super_key() {
+                    match &event.logical_key {
+                        Key::Character(ch) if ch == "z" || ch == "Z" => {
+                            if self.cached_mods.state().shift_key() {
+                                self.redo();
+                            } else {
+                                self.undo();
+                            }
+                        }
+                        Key::Character(ch) if ch == "y" || ch == "Y" => {
+                            self.redo();
+                        }
+                        _ => {}
+                    }
+                    return;
+                }
                 match &event.logical_key {
                     Key::Named(NamedKey::Backspace) | Key::Named(NamedKey::Delete) => {
                         self.delete_backward();
