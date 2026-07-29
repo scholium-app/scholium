@@ -10,4 +10,4 @@
 
 mod world;
 
-pub use world::{FontConfig, ScholiumWorld, compile};
+pub use world::{CompileOutput, FontConfig, ScholiumWorld, compile};

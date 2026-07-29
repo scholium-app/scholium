@@ -114,3 +114,6 @@ pub fn fill_background(scene: &mut Scene, color: AlphaColor<Srgb>, width: f64, h
         &Rect::new(0.0, 0.0, width, height).into_path(0.0),
     );
 }
+
+/// Frame → vello Scene conversion.
+pub mod frame_scene;

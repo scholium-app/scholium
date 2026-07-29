@@ -2803,6 +2803,8 @@ name = "scholium-render"
 version = "0.1.0"
 dependencies = [
  "pollster",
+ "scholium-doc",
+ "typst",
  "vello",
 ]
 
@@ -2818,6 +2820,8 @@ name = "scholium-shell"
 version = "0.1.0"
 dependencies = [
  "pollster",
+ "scholium-doc",
+ "scholium-layout",
  "scholium-render",
  "vello",
  "winit",
