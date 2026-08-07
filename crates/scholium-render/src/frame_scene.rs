@@ -157,6 +157,22 @@ pub fn draw_cursor(scene: &mut Scene, pos: CursorScreenPos) {
     );
 }
 
+/// Draw the underline used by an IME preedit string.
+pub fn draw_preedit_underline(scene: &mut Scene, start: CursorScreenPos, end: CursorScreenPos) {
+    let left = start.x.min(end.x);
+    let right = start.x.max(end.x).max(left + CURSOR_LINE_WIDTH);
+    let y = (start.y + start.height * 1.02).min(end.y + end.height * 1.02);
+    let rect = Rect::new(left, y, right, y + CURSOR_LINE_WIDTH);
+    let color = AlphaColor::<Srgb>::new([0.1, 0.3, 0.8, 1.0]);
+    scene.fill(
+        vello::peniko::Fill::NonZero,
+        Affine::IDENTITY,
+        color,
+        None,
+        &rect.into_path(0.0),
+    );
+}
+
 /// Walk the frame tree and return the end-of-line position for a cursor.
 pub fn find_last_glyph_position(frame: &Frame) -> Option<CursorScreenPos> {
     walk_for_last_glyph(frame, Affine::IDENTITY)

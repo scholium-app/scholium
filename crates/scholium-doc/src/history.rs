@@ -12,6 +12,9 @@ pub struct History {
 }
 
 impl History {
+    /// Default number of undo snapshots retained.
+    pub const DEFAULT_LIMIT: usize = 100;
+
     /// Create an empty history tracker.
     ///
     /// The initial document snapshot must be committed via `commit()` before
@@ -20,7 +23,7 @@ impl History {
         Self {
             past: Vec::new(),
             future: Vec::new(),
-            max_past: 100,
+            max_past: Self::DEFAULT_LIMIT,
         }
     }
 

@@ -51,6 +51,8 @@ pub struct Node {
     pub text: Option<String>,
     /// Heading level (1–6); `Some(lvl)` only for `Heading` nodes.
     pub heading_level: Option<u8>,
+    /// Extensible attributes changed through `EditOp::SetAttr`.
+    pub attrs: std::collections::HashMap<AttrKey, AttrValue>,
 }
 
 /// Key for structured node attributes.

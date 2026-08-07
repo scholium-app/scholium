@@ -23,8 +23,8 @@ fn test_capabilities_all() {
     assert!(caps.cite_suggest);
 }
 
-#[test]
-fn test_mock_agent_returns_configured_proposal() {
+#[tokio::test]
+async fn test_mock_agent_returns_configured_proposal() {
     let tx = Transaction::new(
         vec![EditOp::InsertText {
             at: Cursor::start(),
@@ -44,20 +44,20 @@ fn test_mock_agent_returns_configured_proposal() {
         prompt: "Say hello".to_string(),
         context: Vec::new(),
     };
-    let result = agent.propose(req).unwrap();
+    let result = agent.propose(req).await.unwrap();
     assert_eq!(result.transaction, tx);
     assert_eq!(result.rationale, "Add greeting");
     assert_eq!(result.confidence, Some(0.95));
 }
 
-#[test]
-fn test_mock_agent_returns_error() {
+#[tokio::test]
+async fn test_mock_agent_returns_error() {
     let agent = MockAgent::new().with_error(AgentError::UnsupportedOperation);
     let req = AgentRequest {
         prompt: "Do something impossible".to_string(),
         context: Vec::new(),
     };
-    let result = agent.propose(req);
+    let result = agent.propose(req).await;
     assert!(matches!(result, Err(AgentError::UnsupportedOperation)));
 }
 
@@ -67,14 +67,14 @@ fn test_mock_agent_capabilities() {
     assert_eq!(agent.capabilities(), AgentCapabilities::all());
 }
 
-#[test]
-fn test_mock_agent_default_returns_empty_proposal() {
-    let agent = MockAgent::new();
+#[tokio::test]
+async fn test_mock_agent_default_returns_empty_proposal() {
+    let agent: Box<dyn Agent> = Box::new(MockAgent::new());
     let req = AgentRequest {
         prompt: "anything".to_string(),
         context: Vec::new(),
     };
-    let result = agent.propose(req).unwrap();
+    let result = agent.propose(req).await.unwrap();
     assert!(result.transaction.ops.is_empty());
 }
 
@@ -101,6 +101,18 @@ fn test_document_view_node_text() {
     let view = MockDocumentView::from_doc(&doc);
     assert_eq!(view.node_text(t).as_deref(), Some("content"));
     assert_eq!(view.node_text(NodeId::from_raw(999)), None);
+}
+
+#[test]
+fn test_document_view_keeps_full_unicode_text() {
+    let mut doc = Document::new();
+    let content = "中".repeat(100);
+    let text = doc.append_child(doc.root(), NodeKind::Text, Some(content.clone()));
+
+    let view = MockDocumentView::from_doc(&doc);
+
+    assert_eq!(view.node_text(text), Some(content));
+    assert_eq!(view.outline()[1].2.chars().count(), 81);
 }
 
 #[test]

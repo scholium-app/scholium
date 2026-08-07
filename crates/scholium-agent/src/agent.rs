@@ -1,6 +1,8 @@
 use crate::capabilities::AgentCapabilities;
 use crate::types::{AgentError, AgentRequest, Proposal};
 use scholium_doc::Transaction;
+use std::future::Future;
+use std::pin::Pin;
 
 /// An AI agent that can propose edits to a document.
 ///
@@ -9,7 +11,7 @@ use scholium_doc::Transaction;
 /// The agent only returns `Proposal`s. It never receives mutable access to
 /// the document. This boundary is enforced at the trait level:
 /// `propose` takes a read-only request, returns a proposal.
-pub trait Agent {
+pub trait Agent: Send + Sync {
     /// Query the agent's supported capabilities.
     fn capabilities(&self) -> AgentCapabilities;
 
@@ -21,7 +23,10 @@ pub trait Agent {
     /// # Errors
     /// Returns `UnsupportedOperation` if the agent cannot handle the request,
     /// `InvalidRequest` if the request is malformed, or `Internal` for other failures.
-    fn propose(&self, req: AgentRequest) -> Result<Proposal, AgentError>;
+    fn propose(
+        &self,
+        req: AgentRequest,
+    ) -> Pin<Box<dyn Future<Output = Result<Proposal, AgentError>> + Send + '_>>;
 }
 
 /// A mock agent for testing the full proposal → application → undo chain.
@@ -84,23 +89,27 @@ impl Agent for MockAgent {
         self.capabilities.clone()
     }
 
-    fn propose(&self, _req: AgentRequest) -> Result<Proposal, AgentError> {
-        if let Some(ref err) = self.fixed_error {
-            return Err(err.clone());
-        }
-        if let Some(ref prop) = self.fixed_proposal {
-            return Ok(prop.clone());
-        }
-        Ok(Proposal {
-            transaction: Transaction::new(
-                Vec::new(),
-                scholium_doc::Origin::Agent {
-                    session: scholium_doc::AgentSessionId(0),
-                },
-            ),
-            rationale: "MockAgent: no fixed proposal configured".to_string(),
-            confidence: None,
-        })
+    fn propose(
+        &self,
+        _req: AgentRequest,
+    ) -> Pin<Box<dyn Future<Output = Result<Proposal, AgentError>> + Send + '_>> {
+        let response = if let Some(ref err) = self.fixed_error {
+            Err(err.clone())
+        } else if let Some(ref prop) = self.fixed_proposal {
+            Ok(prop.clone())
+        } else {
+            Ok(Proposal {
+                transaction: Transaction::new(
+                    Vec::new(),
+                    scholium_doc::Origin::Agent {
+                        session: scholium_doc::AgentSessionId(0),
+                    },
+                ),
+                rationale: "MockAgent: no fixed proposal configured".to_string(),
+                confidence: None,
+            })
+        };
+        Box::pin(async move { response })
     }
 }
 

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use scholium_doc::{NodeId, NodeKind, Selection};
 
 /// Read-only projection of the document for LLM consumption.
@@ -35,6 +37,7 @@ pub trait DocumentView {
 #[derive(Debug, Clone)]
 pub struct MockDocumentView {
     outline: Vec<(NodeId, NodeKind, String)>,
+    texts: HashMap<NodeId, String>,
     selection: Option<Selection>,
 }
 
@@ -51,18 +54,24 @@ impl MockDocumentView {
                     .text
                     .as_deref()
                     .map(|t| {
-                        if t.len() > 80 {
-                            format!("{}…", &t[..80])
+                        let summary: String = t.chars().take(80).collect();
+                        if t.chars().count() > 80 {
+                            format!("{summary}…")
                         } else {
-                            t.to_string()
+                            summary
                         }
                     })
                     .unwrap_or_default();
                 (n.id, n.kind, summary)
             })
             .collect();
+        let texts = doc
+            .iter()
+            .filter_map(|node| node.text.clone().map(|text| (node.id, text)))
+            .collect();
         Self {
             outline,
+            texts,
             selection: None,
         }
     }
@@ -80,11 +89,7 @@ impl DocumentView for MockDocumentView {
     }
 
     fn node_text(&self, id: NodeId) -> Option<String> {
-        self.outline
-            .iter()
-            .find(|(nid, _, _)| *nid == id)
-            .map(|(_, _, summary)| summary.clone())
-            .filter(|s| !s.is_empty())
+        self.texts.get(&id).cloned()
     }
 
     fn selection(&self) -> Option<Selection> {

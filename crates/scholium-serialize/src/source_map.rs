@@ -10,6 +10,15 @@ use scholium_doc::NodeId;
 #[derive(Debug, Clone)]
 pub struct SourceMap {
     entries: Vec<(Range<usize>, NodeId)>,
+    text_entries: Vec<TextMapEntry>,
+}
+
+/// Mapping between an escaped Typst source fragment and its original text.
+#[derive(Debug, Clone)]
+struct TextMapEntry {
+    source: Range<usize>,
+    node: NodeId,
+    text: Range<usize>,
 }
 
 impl SourceMap {
@@ -17,6 +26,7 @@ impl SourceMap {
     pub fn new() -> Self {
         Self {
             entries: Vec::new(),
+            text_entries: Vec::new(),
         }
     }
 
@@ -31,10 +41,58 @@ impl SourceMap {
         self.entries.push((range, id));
     }
 
+    /// Record how an escaped source fragment maps to bytes in a text node.
+    pub(crate) fn push_text(&mut self, source: Range<usize>, node: NodeId, text: Range<usize>) {
+        self.text_entries.push(TextMapEntry { source, node, text });
+    }
+
     /// Sort entries by start position. Required before `innermost` queries;
     /// called automatically by the serializer after all entries are pushed.
     pub fn sort(&mut self) {
         self.entries.sort_by_key(|e| e.0.start);
+        self.text_entries.sort_by_key(|e| e.source.start);
+    }
+
+    /// Map a source byte position back to a text node and its UTF-8 byte range.
+    ///
+    /// This remains correct when serializer escaping makes source offsets differ
+    /// from document-text offsets.
+    pub fn text_position(&self, source_offset: usize) -> Option<(NodeId, Range<usize>)> {
+        let idx = self
+            .text_entries
+            .partition_point(|entry| entry.source.start <= source_offset);
+        let entry = self.text_entries[..idx]
+            .iter()
+            .rev()
+            .find(|entry| source_offset < entry.source.end)?;
+        Some((entry.node, entry.text.clone()))
+    }
+
+    /// Map a shaped glyph cluster back to its original text byte range.
+    ///
+    /// `text_len` comes from Typst's glyph range and can cover multiple
+    /// characters when a font shapes a ligature.
+    pub fn text_range(
+        &self,
+        source_offset: usize,
+        text_len: usize,
+    ) -> Option<(NodeId, Range<usize>)> {
+        let idx = self
+            .text_entries
+            .partition_point(|entry| entry.source.start <= source_offset);
+        let start_idx = self.text_entries[..idx]
+            .iter()
+            .rposition(|entry| source_offset < entry.source.end)?;
+        let first = &self.text_entries[start_idx];
+        let desired_end = first.text.start + text_len.max(first.text.len());
+        let mut end = first.text.end;
+        for entry in &self.text_entries[start_idx + 1..] {
+            if entry.node != first.node || entry.text.start != end || end >= desired_end {
+                break;
+            }
+            end = entry.text.end;
+        }
+        Some((first.node, first.text.start..end))
     }
 
     /// Find the innermost node whose source range contains `query`.
@@ -81,6 +139,9 @@ impl Default for SourceMap {
 impl From<Vec<(Range<usize>, NodeId)>> for SourceMap {
     fn from(mut entries: Vec<(Range<usize>, NodeId)>) -> Self {
         entries.sort_by_key(|e| e.0.start);
-        Self { entries }
+        Self {
+            entries,
+            text_entries: Vec::new(),
+        }
     }
 }

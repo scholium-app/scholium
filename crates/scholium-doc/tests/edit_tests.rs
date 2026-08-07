@@ -116,6 +116,7 @@ fn test_replace_node() {
         children: Vec::new(),
         text: Some("new".to_string()),
         heading_level: None,
+        attrs: std::collections::HashMap::new(),
     };
     doc.apply_op(&EditOp::ReplaceNode {
         id: t,
@@ -138,6 +139,7 @@ fn test_replace_nonexistent_node() {
             children: Vec::new(),
             text: Some("x".to_string()),
             heading_level: None,
+            attrs: std::collections::HashMap::new(),
         },
     });
     assert!(matches!(result, Err(DocError::NodeNotFound(_))));
@@ -155,6 +157,7 @@ fn test_insert_node() {
         children: Vec::new(),
         text: Some("first".to_string()),
         heading_level: None,
+        attrs: std::collections::HashMap::new(),
     };
     doc.apply_op(&EditOp::InsertNode {
         at: Cursor::new(vec![0], 0),
@@ -192,4 +195,31 @@ fn test_wrap_root_rejected() {
         wrapper: NodeKind::Paragraph,
     });
     assert!(matches!(result, Err(DocError::InvalidOp(_))));
+}
+
+#[test]
+fn test_set_attr_persists_value() {
+    let mut doc = Document::new();
+    let text = doc.append_child(doc.root(), NodeKind::Text, Some("content".to_string()));
+    let key = AttrKey("language".to_string());
+    let value = AttrValue::String("zh-CN".to_string());
+
+    doc.apply_op(&EditOp::SetAttr {
+        id: text,
+        key: key.clone(),
+        value: value.clone(),
+    })
+    .unwrap();
+
+    assert_eq!(doc.node(text).attrs.get(&key), Some(&value));
+}
+
+#[test]
+fn test_wrap_missing_node_returns_error() {
+    let mut doc = Document::new();
+    let result = doc.apply_op(&EditOp::WrapNode {
+        id: NodeId::from_raw(999),
+        wrapper: NodeKind::Paragraph,
+    });
+    assert!(matches!(result, Err(DocError::NodeNotFound(_))));
 }

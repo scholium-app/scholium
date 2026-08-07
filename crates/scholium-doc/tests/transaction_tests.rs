@@ -26,6 +26,29 @@ fn test_apply_transaction() {
 }
 
 #[test]
+fn failed_transaction_is_atomic() {
+    let mut doc = Document::new();
+    let root = doc.root();
+    let text = doc.append_child(root, NodeKind::Text, Some("before".to_string()));
+    let tx = Transaction::new(
+        vec![
+            EditOp::InsertText {
+                at: Cursor::new(vec![0], 6),
+                text: " changed".to_string(),
+            },
+            EditOp::ReplaceNode {
+                id: NodeId::from_raw(999),
+                with: doc.node(text).clone(),
+            },
+        ],
+        Origin::User,
+    );
+
+    assert!(doc.apply_transaction(&tx).is_err());
+    assert_eq!(doc.node(text).text.as_deref(), Some("before"));
+}
+
+#[test]
 fn test_transaction_with_agent_origin() {
     let tx = Transaction::new(
         vec![EditOp::InsertText {

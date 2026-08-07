@@ -8,6 +8,8 @@
 //! Dependency direction: `scholium-doc ← scholium-serialize ← scholium-layout`.
 //! This is the only crate that directly depends on `typst`.
 
+mod interaction;
 mod world;
 
+pub use interaction::{CaretGeometry, InteractionMap};
 pub use world::{CompileOutput, FontConfig, ScholiumWorld, compile};

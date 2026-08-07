@@ -8,6 +8,8 @@ use typst::utils::LazyHash;
 use typst::{Library, LibraryExt};
 use typst_layout::PagedDocument;
 
+use crate::InteractionMap;
+
 /// Output of a successful compilation.
 #[derive(Debug, Clone)]
 pub struct CompileOutput {
@@ -17,6 +19,8 @@ pub struct CompileOutput {
     pub source_map: SourceMap,
     /// Compilation warnings (if any).
     pub warnings: Vec<SourceDiagnostic>,
+    /// Glyph geometry used for hit testing and caret placement.
+    pub interaction: InteractionMap,
 }
 
 impl CompileOutput {
@@ -48,6 +52,10 @@ impl FontConfig {
                 "/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc".into(),
                 "/usr/share/fonts/opentype/noto/NotoSerifCJK-Regular.ttc".into(),
                 "/usr/share/fonts/noto/NotoSerifCJK-Regular.ttc".into(),
+                "/System/Library/Fonts/PingFang.ttc".into(),
+                "/System/Library/Fonts/STHeiti Medium.ttc".into(),
+                r"C:\Windows\Fonts\msyh.ttc".into(),
+                r"C:\Windows\Fonts\simsun.ttc".into(),
             ],
         }
     }
@@ -86,8 +94,7 @@ impl ScholiumWorld {
     /// is found.
     ///
     /// # Panics
-    /// Panics if no GPU-compatible rendering backend is available (unlikely on
-    /// regular desktop/server environments).
+    /// Panics only if the built-in literal source path is invalid.
     pub fn new(config: &FontConfig) -> Self {
         let mut fonts: Vec<Font> = typst_assets::fonts()
             .flat_map(|bytes| {
@@ -193,11 +200,15 @@ pub fn compile(
     let result = typst::compile::<PagedDocument>(world);
 
     match result.output {
-        Ok(doc) => Ok(CompileOutput {
-            doc,
-            source_map,
-            warnings: result.warnings.to_vec(),
-        }),
+        Ok(doc) => {
+            let interaction = InteractionMap::build(world, &doc, &source_map);
+            Ok(CompileOutput {
+                doc,
+                source_map,
+                warnings: result.warnings.to_vec(),
+                interaction,
+            })
+        }
         Err(errors) => Err(errors.to_vec()),
     }
 }

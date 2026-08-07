@@ -65,7 +65,7 @@ impl<'a> Serializer<'a> {
 
             NodeKind::Text => {
                 if let Some(ref text) = node.text {
-                    self.output.push_str(text);
+                    self.serialize_text(node_id, text);
                 }
             }
         }
@@ -75,6 +75,27 @@ impl<'a> Serializer<'a> {
             self.source_map.push(start..end, node_id);
         }
     }
+
+    fn serialize_text(&mut self, node_id: scholium_doc::NodeId, text: &str) {
+        for (text_start, ch) in text.char_indices() {
+            let source_start = self.output.len();
+            if is_typst_markup(ch) {
+                self.output.push('\\');
+            }
+            self.output.push(ch);
+            let source_end = self.output.len();
+            let text_end = text_start + ch.len_utf8();
+            self.source_map
+                .push_text(source_start..source_end, node_id, text_start..text_end);
+        }
+    }
+}
+
+fn is_typst_markup(ch: char) -> bool {
+    matches!(
+        ch,
+        '\\' | '#' | '$' | '*' | '_' | '@' | '<' | '>' | '[' | ']'
+    )
 }
 
 #[cfg(test)]
@@ -177,5 +198,19 @@ mod tests {
         doc.append_child(h, NodeKind::Text, Some("Default level".to_string()));
         let (src, _sm) = serialize(&doc);
         assert!(src.starts_with("= Default level"));
+    }
+
+    #[test]
+    fn escapes_typst_markup_and_preserves_text_offsets() {
+        let mut doc = Document::new();
+        let root = doc.root();
+        let text = doc.append_child(root, NodeKind::Text, Some("a#中*".to_string()));
+
+        let (src, map) = serialize(&doc);
+
+        assert_eq!(src, "a\\#中\\*");
+        assert_eq!(map.text_position(2), Some((text, 1..2)));
+        assert_eq!(map.text_position(3), Some((text, 2..5)));
+        assert_eq!(map.text_range(0, 2), Some((text, 0..2)));
     }
 }

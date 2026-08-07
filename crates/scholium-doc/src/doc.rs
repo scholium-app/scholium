@@ -31,6 +31,7 @@ impl Document {
                 children: Vec::new(),
                 text: None,
                 heading_level: None,
+                attrs: HashMap::new(),
             },
         );
         Self {
@@ -81,6 +82,21 @@ impl Document {
         Some(current)
     }
 
+    /// Return the child-index path from the root to `id`.
+    pub fn path_to(&self, id: NodeId) -> Option<Vec<usize>> {
+        let mut current = id;
+        let mut path = Vec::new();
+        while current != self.root {
+            let node = self.nodes.get(&current)?;
+            let parent_id = node.parent?;
+            let parent = self.nodes.get(&parent_id)?;
+            path.push(parent.children.iter().position(|child| *child == current)?);
+            current = parent_id;
+        }
+        path.reverse();
+        Some(path)
+    }
+
     /// Append a new child node to `parent`.
     ///
     /// Returns the new node's id. This is a low-level construction helper;
@@ -94,6 +110,7 @@ impl Document {
             children: Vec::new(),
             text,
             heading_level: None,
+            attrs: HashMap::new(),
         };
         self.nodes.insert(id, node);
         self.node_mut(parent).children.push(id);
@@ -116,6 +133,7 @@ impl Document {
             children: Vec::new(),
             text,
             heading_level: None,
+            attrs: HashMap::new(),
         };
         self.nodes.insert(id, node);
         let p = self.node_mut(parent);
@@ -169,9 +187,11 @@ impl Document {
     /// # Errors
     /// Returns `DocError` if any operation in the transaction fails.
     pub fn apply_transaction(&mut self, tx: &Transaction) -> Result<(), DocError> {
+        let mut staged = self.clone();
         for op in &tx.ops {
-            self.apply_op(op)?;
+            staged.apply_op(op)?;
         }
+        *self = staged;
         Ok(())
     }
 
@@ -188,6 +208,11 @@ impl Document {
             let text_len = stored.text.as_ref().map_or(0, |s| s.len());
             let offset = at.offset.min(text_len);
             if let Some(ref mut content) = stored.text {
+                if !content.is_char_boundary(offset) {
+                    return Err(DocError::InvalidOp(
+                        "text insertion offset is not a UTF-8 boundary".to_string(),
+                    ));
+                }
                 content.insert_str(offset, text);
             }
         } else {
@@ -216,6 +241,11 @@ impl Document {
             if let Some(ref mut content) = stored.text {
                 let byte_start = start.min(content.len());
                 let byte_end = end.min(content.len());
+                if !content.is_char_boundary(byte_start) || !content.is_char_boundary(byte_end) {
+                    return Err(DocError::InvalidOp(
+                        "deletion range is not on UTF-8 boundaries".to_string(),
+                    ));
+                }
                 content.drain(byte_start..byte_end);
             }
         } else {
@@ -255,7 +285,9 @@ impl Document {
 
     fn op_wrap_node(&mut self, id: NodeId, wrapper: NodeKind) -> Result<(), DocError> {
         let parent_id = self
-            .node(id)
+            .nodes
+            .get(&id)
+            .ok_or(DocError::NodeNotFound(id))?
             .parent
             .ok_or(DocError::InvalidOp("cannot wrap root node".to_string()))?;
         let wrapper_id = self.alloc_id();
@@ -266,6 +298,7 @@ impl Document {
             children: vec![id],
             text: None,
             heading_level: None,
+            attrs: HashMap::new(),
         };
         let parent = self.node_mut(parent_id);
         if let Some(pos) = parent.children.iter().position(|c| *c == id) {
@@ -279,12 +312,14 @@ impl Document {
     fn op_set_attr(
         &mut self,
         id: NodeId,
-        _key: &AttrKey,
-        _value: &AttrValue,
+        key: &AttrKey,
+        value: &AttrValue,
     ) -> Result<(), DocError> {
-        if !self.nodes.contains_key(&id) {
-            return Err(DocError::NodeNotFound(id));
-        }
+        self.nodes
+            .get_mut(&id)
+            .ok_or(DocError::NodeNotFound(id))?
+            .attrs
+            .insert(key.clone(), value.clone());
         Ok(())
     }
 
