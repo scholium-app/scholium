@@ -234,7 +234,7 @@ fn assert_coverage(book: &FontBook, fonts: &[Font]) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use scholium_doc::{Document, NodeKind};
+    use scholium_doc::{Document, EditOp, NodeKind};
 
     #[test]
     fn compiles_empty_document() {
@@ -308,5 +308,81 @@ mod tests {
         doc.node_mut(t).text = Some("Second".to_string());
         let result = compile(&mut world, &doc);
         assert!(result.is_ok());
+    }
+
+    #[test]
+    fn compiles_every_math_structure() {
+        // serialization syntax (`lr()`, `root()`, limit scripts, quoting)
+        // is only proven by the real compiler — P0 lesson: docs.rs lies
+        let config = FontConfig::none();
+        let mut world = ScholiumWorld::new(&config);
+
+        let mut doc = Document::new();
+        let p = doc.append_child(doc.root(), NodeKind::Paragraph, None);
+
+        // $frac(x, 2)$
+        let m = doc.append_math(p, false);
+        let row = doc.node(m).children[0];
+        let x = doc.append_math_symbol(row, "x");
+        doc.apply_op(&EditOp::WrapNode {
+            id: x,
+            wrapper: NodeKind::MathFrac,
+        })
+        .expect("wrap frac");
+        let frac = doc.node(row).children[0];
+        doc.append_math_symbol(doc.node(frac).children[1], "2");
+
+        // $sum_(i = 1)^n$
+        let m2 = doc.append_math(p, false);
+        let row2 = doc.node(m2).children[0];
+        let sum = doc.append_math_symbol(row2, "sum");
+        doc.apply_op(&EditOp::WrapNode {
+            id: sum,
+            wrapper: NodeKind::MathBigOp,
+        })
+        .expect("wrap bigop");
+        let big = doc.node(row2).children[0];
+        let lower = doc.node(big).children[1];
+        for name in ["i", "=", "1"] {
+            doc.append_math_symbol(lower, name);
+        }
+        doc.append_math_symbol(doc.node(big).children[2], "n");
+
+        // $lr(x, left: "(", right: ")")$
+        let m3 = doc.append_math(p, false);
+        let row3 = doc.node(m3).children[0];
+        let y = doc.append_math_symbol(row3, "x");
+        doc.apply_op(&EditOp::WrapNode {
+            id: y,
+            wrapper: NodeKind::MathDelimited,
+        })
+        .expect("wrap delimited");
+
+        // $root(3, x)$
+        let m4 = doc.append_math(p, false);
+        let row4 = doc.node(m4).children[0];
+        let z = doc.append_math_symbol(row4, "x");
+        doc.apply_op(&EditOp::WrapNode {
+            id: z,
+            wrapper: NodeKind::MathRoot,
+        })
+        .expect("wrap root");
+        let root_node = doc.node(row4).children[0];
+        let deg = doc.append_math_row(root_node);
+        doc.append_math_symbol(deg, "3");
+
+        // display env: $ x + 1 $
+        let m5 = doc.append_math(p, true);
+        let row5 = doc.node(m5).children[0];
+        for name in ["x", "+", "1"] {
+            doc.append_math_symbol(row5, name);
+        }
+
+        let result = compile(&mut world, &doc);
+        assert!(
+            result.is_ok(),
+            "math document should compile: {:?}",
+            result.err()
+        );
     }
 }

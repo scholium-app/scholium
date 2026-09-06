@@ -1,4 +1,5 @@
-use scholium_doc::{Document, NodeKind};
+use scholium_doc::math::{self, slot};
+use scholium_doc::{Document, NodeId, NodeKind};
 
 use crate::SourceMap;
 
@@ -68,6 +69,73 @@ impl<'a> Serializer<'a> {
                     self.serialize_text(node_id, text);
                 }
             }
+
+            // `$x$` inline; `$ x $` display — in Typst the inner whitespace
+            // is what selects display (block) mode
+            NodeKind::Math => {
+                let display = math::is_display(node);
+                self.output.push('$');
+                if display {
+                    self.output.push(' ');
+                }
+                for child in &node.children {
+                    self.serialize_node(*child);
+                }
+                if display {
+                    self.output.push(' ');
+                }
+                self.output.push('$');
+            }
+
+            // space-separated juxtaposition: `a b + c`
+            NodeKind::MathRow => {
+                self.serialize_joined(&node.children, " ");
+            }
+
+            NodeKind::MathSymbol => {
+                if let Some(ref text) = node.text {
+                    self.serialize_math_symbol(node_id, text);
+                }
+            }
+
+            NodeKind::MathFrac => {
+                self.output.push_str("frac(");
+                self.serialize_joined(&node.children, ", ");
+                self.output.push(')');
+            }
+
+            // base first, then only the non-empty limit slots — an empty
+            // slot *is* the "absent" script by AST convention
+            NodeKind::MathScript | NodeKind::MathBigOp => {
+                if let Some(&base) = node.children.first() {
+                    self.serialize_node(base);
+                }
+                self.serialize_limits(&node.children);
+            }
+
+            NodeKind::MathRoot => {
+                self.serialize_root(&node.children);
+            }
+
+            // typst 0.15's lr() has no left/right params: the delimiters are
+            // part of the body content — verified against the registry source
+            NodeKind::MathDelimited => {
+                let (left, right) = math::delimiters(node);
+                self.output.push_str("lr(");
+                self.output.push_str(delim_to_source(&left));
+                self.output.push(' ');
+                self.serialize_joined(&node.children, " ");
+                self.output.push(' ');
+                self.output.push_str(delim_to_source(&right));
+                self.output.push(')');
+            }
+
+            NodeKind::MathAccent => {
+                self.output.push_str(&math::accent(node));
+                self.output.push('(');
+                self.serialize_joined(&node.children, ", ");
+                self.output.push(')');
+            }
         }
 
         let end = self.output.len();
@@ -76,7 +144,7 @@ impl<'a> Serializer<'a> {
         }
     }
 
-    fn serialize_text(&mut self, node_id: scholium_doc::NodeId, text: &str) {
+    fn serialize_text(&mut self, node_id: NodeId, text: &str) {
         for (text_start, ch) in text.char_indices() {
             let source_start = self.output.len();
             if is_typst_markup(ch) {
@@ -88,6 +156,109 @@ impl<'a> Serializer<'a> {
             self.source_map
                 .push_text(source_start..source_end, node_id, text_start..text_end);
         }
+    }
+
+    fn serialize_joined(&mut self, children: &[NodeId], sep: &str) {
+        for (i, child) in children.iter().enumerate() {
+            if i > 0 {
+                self.output.push_str(sep);
+            }
+            self.serialize_node(*child);
+        }
+    }
+
+    /// Sub/superscript slots of a script or big-op node, skipping absent ones.
+    fn serialize_limits(&mut self, children: &[NodeId]) {
+        for (slot_idx, marker) in [(slot::SUB, '_'), (slot::SUP, '^')] {
+            if let Some(&slot_id) = children.get(slot_idx)
+                && !self.doc.is_empty_slot(slot_id)
+            {
+                self.output.push(marker);
+                self.output.push('(');
+                self.serialize_node(slot_id);
+                self.output.push(')');
+            }
+        }
+    }
+
+    /// Square root `[radicand]`, or *n*-th root `[radicand, degree]` —
+    /// Typst's `root()` takes the degree first, our slots store it second.
+    fn serialize_root(&mut self, children: &[NodeId]) {
+        if children.len() >= 2 {
+            self.output.push_str("root(");
+            self.serialize_node(children[1]);
+            self.output.push_str(", ");
+            self.serialize_node(children[0]);
+            self.output.push(')');
+        } else {
+            self.output.push_str("sqrt(");
+            self.serialize_joined(children, ", ");
+            self.output.push(')');
+        }
+    }
+
+    /// Emit a symbol, quoted or bare depending on [`is_bare_math_symbol`].
+    ///
+    /// Bare output needs no escaping by construction (the safe set excludes
+    /// every math-mode structural); quoted output escapes string
+    /// metacharacters. Either way every glyph keeps its per-character
+    /// text-offset mapping for reverse lookup.
+    fn serialize_math_symbol(&mut self, node_id: NodeId, text: &str) {
+        if is_bare_math_symbol(text) {
+            for (text_start, ch) in text.char_indices() {
+                let source_start = self.output.len();
+                self.output.push(ch);
+                let source_end = self.output.len();
+                let text_end = text_start + ch.len_utf8();
+                self.source_map
+                    .push_text(source_start..source_end, node_id, text_start..text_end);
+            }
+        } else {
+            self.output.push('"');
+            for (text_start, ch) in text.char_indices() {
+                let source_start = self.output.len();
+                if matches!(ch, '"' | '\\') {
+                    self.output.push('\\');
+                }
+                self.output.push(ch);
+                let source_end = self.output.len();
+                let text_end = text_start + ch.len_utf8();
+                self.source_map
+                    .push_text(source_start..source_end, node_id, text_start..text_end);
+            }
+            self.output.push('"');
+        }
+    }
+}
+
+/// Map a delimiter attribute to Typst math source.
+///
+/// `{` and `}` cannot appear literally in math mode (they group content),
+/// so they map to their scalable symbol names. Everything else is emitted
+/// as-is; an empty string means "no delimiter on this side".
+fn delim_to_source(delim: &str) -> &str {
+    match delim {
+        "{" => "brace.l",
+        "}" => "brace.r",
+        _ => delim,
+    }
+}
+
+/// Whether a symbol name can be emitted bare in Typst math mode.
+///
+/// Two cases are safe: a single graphic ASCII character that is not a
+/// math-mode structural (`$ # \\ % _ ^ " '`), and an ASCII identifier —
+/// Typst resolves identifiers as symbol names (`alpha`, `sum`).
+/// Everything else (CJK, spaces, punctuation runs) goes through a quoted
+/// string, which Typst renders as upright text.
+fn is_bare_math_symbol(s: &str) -> bool {
+    let mut chars = s.chars();
+    if let (Some(c), None) = (chars.next(), chars.next()) {
+        c.is_ascii_graphic() && !matches!(c, '$' | '#' | '\\' | '%' | '_' | '^' | '"' | '\'')
+    } else {
+        !s.is_empty()
+            && s.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
+            && s.chars().all(|c| c.is_ascii_alphanumeric())
     }
 }
 

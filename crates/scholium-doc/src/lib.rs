@@ -20,6 +20,8 @@ pub mod edit_op;
 pub mod error;
 /// Snapshot-based undo/redo history.
 pub mod history;
+/// Math AST semantics: arity contracts, slot layout, math-aware editing.
+pub mod math;
 /// Core node types: NodeId, NodeKind, Node, attributes.
 pub mod node;
 
@@ -28,4 +30,5 @@ pub use doc::{Document, NodeIter};
 pub use edit_op::{AgentSessionId, EditOp, Origin, Transaction};
 pub use error::DocError;
 pub use history::History;
+pub use math::{Arity, arity, is_math_kind};
 pub use node::{AttrKey, AttrValue, Node, NodeId, NodeKind};
