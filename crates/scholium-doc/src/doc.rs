@@ -203,22 +203,36 @@ impl Document {
             .ok_or(DocError::InvalidCursorPath)?;
         let node = self.node(node_id);
 
-        if node.kind == NodeKind::Text {
-            let stored = self.node_mut(node_id);
-            let text_len = stored.text.as_ref().map_or(0, |s| s.len());
-            let offset = at.offset.min(text_len);
-            if let Some(ref mut content) = stored.text {
-                if !content.is_char_boundary(offset) {
-                    return Err(DocError::InvalidOp(
-                        "text insertion offset is not a UTF-8 boundary".to_string(),
-                    ));
+        match node.kind {
+            // text-bearing leaves: splice into `text` at the byte offset
+            NodeKind::Text | NodeKind::MathSymbol => {
+                let stored = self.node_mut(node_id);
+                let text_len = stored.text.as_ref().map_or(0, |s| s.len());
+                let offset = at.offset.min(text_len);
+                if let Some(ref mut content) = stored.text {
+                    if !content.is_char_boundary(offset) {
+                        return Err(DocError::InvalidOp(
+                            "text insertion offset is not a UTF-8 boundary".to_string(),
+                        ));
+                    }
+                    content.insert_str(offset, text);
                 }
-                content.insert_str(offset, text);
             }
-        } else {
-            let text_len = node.children.len();
-            let offset = at.offset.min(text_len);
-            self.insert_child_at(node_id, offset, NodeKind::Text, Some(text.to_string()));
+            // a row takes new text as symbol children; offset is a child slot
+            NodeKind::MathRow => {
+                let offset = at.offset.min(node.children.len());
+                self.insert_child_at(
+                    node_id,
+                    offset,
+                    NodeKind::MathSymbol,
+                    Some(text.to_string()),
+                );
+            }
+            _ => {
+                let text_len = node.children.len();
+                let offset = at.offset.min(text_len);
+                self.insert_child_at(node_id, offset, NodeKind::Text, Some(text.to_string()));
+            }
         }
         Ok(())
     }
@@ -284,6 +298,11 @@ impl Document {
     }
 
     fn op_wrap_node(&mut self, id: NodeId, wrapper: NodeKind) -> Result<(), DocError> {
+        // math wrappers build fixed slot layouts; the prose path below only
+        // knows how to re-parent a single child
+        if crate::math::is_math_kind(wrapper) {
+            return self.wrap_math(id, wrapper);
+        }
         let parent_id = self
             .nodes
             .get(&id)
