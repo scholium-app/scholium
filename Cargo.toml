@@ -1,0 +1,20 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+
+[workspace.lints.clippy]
+too_many_lines = "warn"
+cognitive_complexity = "warn"
+too_many_arguments = "warn"
+unwrap_used = "warn"
+missing_panics_doc = "warn"
+missing_errors_doc = "warn"
+undocumented_unsafe_blocks = "deny"
+
+[workspace.lints.rust]
+missing_docs = "warn"

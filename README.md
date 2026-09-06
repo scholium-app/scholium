@@ -7,9 +7,25 @@
 
 ## 状态
 
-规划阶段。尚无可运行代码。
+P1 骨架已进入可运行验收阶段。当前桌面程序支持 Typst 原生排版、点击定位光标、
+键盘与中文 IME 输入、撤销/重做；底层 `EditOp`、SourceMap 和 MockAgent 链路已有测试。
 
 实施方案见 [docs/PLAN.md](docs/PLAN.md)。
+P1 逐项执行情况见 [docs/P1_STATUS.md](docs/P1_STATUS.md)。
+
+## 运行
+
+需要 Rust nightly 和 Vulkan/Metal/DX12 图形驱动：
+
+```bash
+cargo run -p scholium-shell
+```
+
+Linux 优先查找 Noto CJK，macOS/Windows 会使用系统 CJK 字体。缺少可用中文字体时
+启动日志会明确警告，而不是静默显示 `.notdef` 方框。
+
+当前编辑快捷键：方向键/Home/End 移动，Backspace/Delete 删除，
+`Ctrl/Cmd+Z` 撤销，`Ctrl/Cmd+Y` 或 `Ctrl/Cmd+Shift+Z` 重做。
 
 ## 设计要点
 

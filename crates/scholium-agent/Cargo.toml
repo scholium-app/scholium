@@ -1,0 +1,13 @@
+[package]
+name = "scholium-agent"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+scholium-doc = { path = "../scholium-doc" }
+thiserror = "2"
+tokio = { version = "1", default-features = false, features = ["rt", "macros"] }

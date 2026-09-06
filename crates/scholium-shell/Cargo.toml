@@ -1,0 +1,16 @@
+[package]
+name = "scholium-shell"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+scholium-doc = { path = "../scholium-doc" }
+scholium-layout = { path = "../scholium-layout" }
+scholium-render = { path = "../scholium-render" }
+vello = "0.9.0"
+winit = "0.30"
+pollster = "1.0.1"
