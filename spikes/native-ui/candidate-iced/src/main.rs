@@ -6,25 +6,27 @@
 //! - 输入法预编辑只存在于 UI 状态，**不进历史**；`Commit` 才产生一个核心动作。
 //! - 源码面板在非活动语言下不可写：控件的编辑会被权威缓冲回滚，而不是留在前端。
 
+mod fixture;
+mod ime_host;
+
 use iced::advanced::input_method;
 use iced::keyboard::key::Named;
 use iced::keyboard::{self, Key};
-use iced::widget::{button, column, container, row, scrollable, text, text_editor};
-use iced::{Element, Font, Length, Subscription, Task};
+use iced::widget::{button, column, container, mouse_area, row, scrollable, text, text_editor};
+use iced::{Element, Font, Length, Point, Rectangle, Size, Subscription, Task};
 
+use ime_host::ImeHost;
 use scholium_spike_core::cursor::move_cursor;
 use scholium_spike_core::{
-    ActorId, Cursor, Dialect, Direction, Editor, Intent, NodeId, NodeKind, RemoteEdit,
-    SemanticEdit, SourcePane,
+    ActorId, Cursor, Dialect, Direction, Editor, Intent, NodeId, NodeKind, SemanticEdit, SourcePane,
 };
 
 /// 本机 CJK 字体。缺失时应用仍启动，但界面会报告字体缺口。
 const CJK_FONT_PATH: &str = "/usr/share/fonts/adobe-source-han-serif/SourceHanSerifCN-Regular.otf";
 const CJK_FAMILY: &str = "Source Han Serif CN";
 
-/// 本地写入者。夹具用另一个 actor 注入，避免污染本地 undo scope。
+/// 本地写入者。夹具由 `fixture` 模块用另一个 actor 注入，避免污染本地 undo scope。
 const LOCAL: ActorId = ActorId(1);
-const FIXTURE: ActorId = ActorId(99);
 
 const SOURCE_INITIAL: &str =
     "\\documentclass{article}\n\\begin{document}\n正文与 $a/b$ 公式\n\\end{document}\n";
@@ -48,10 +50,24 @@ pub fn main() -> iced::Result {
     application.run()
 }
 
+/// 当前持有键盘与输入法的区域。
+///
+/// 输入法事件是**窗口级**的，不带目标控件信息。应用必须自己记住输入焦点在哪个区域，
+/// 否则会把源码面板的输入法提交错误地写进正文。
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum InputArea {
+    /// 正文结构编辑区。自绘，因此必须自己请求输入法。
+    Visual,
+    /// 源码面板。只有可写时才是真正的编辑控件。
+    Source,
+}
+
 /// 应用状态。
 struct App {
     core: Editor,
     focus: Cursor,
+    /// 输入焦点所在区域。
+    input_area: InputArea,
     /// 输入法预编辑串。只属于 UI，不进 core。
     preedit: String,
     source: SourcePane,
@@ -87,6 +103,8 @@ enum Message {
     Undo,
     /// 切换源码面板可写性（团队活动语言授权）。
     ToggleSourceWritable,
+    /// 点击正文区，取得输入焦点。
+    FocusVisual,
     /// 源码控件动作。
     SourceEdit(text_editor::Action),
 }
@@ -104,7 +122,7 @@ impl App {
                 .copied()
                 .expect("文档至少有一个段落")
         };
-        build_fixture(&mut core, paragraph);
+        fixture::build(&mut core, paragraph);
 
         let source = SourcePane::new(Dialect::Latex, SOURCE_INITIAL);
         let source_content = text_editor::Content::with_text(source.text());
@@ -117,6 +135,7 @@ impl App {
         Self {
             core,
             focus,
+            input_area: InputArea::Visual,
             preedit: String::new(),
             source,
             source_content,
@@ -147,8 +166,23 @@ impl App {
     fn update(&mut self, message: Message) -> Task<Message> {
         self.events += 1;
         match message {
-            Message::Preedit(text) => self.on_preedit(text),
-            Message::Commit(text) => self.on_commit(text),
+            Message::FocusVisual => {
+                self.input_area = InputArea::Visual;
+                self.push_log("输入焦点 → 正文");
+            }
+            Message::Preedit(text) => {
+                // 输入法事件是窗口级的：只有正文区持有输入焦点时才归属它。
+                if self.input_area == InputArea::Visual {
+                    self.on_preedit(text);
+                }
+            }
+            Message::Commit(text) => {
+                if self.input_area == InputArea::Visual {
+                    self.on_commit(text);
+                } else {
+                    self.push_log("忽略输入法提交：当前输入焦点不在正文区");
+                }
+            }
             Message::Key(key, modifiers) => self.on_key(key, modifiers),
             Message::InsertSample => self.insert_text("示例文本", Intent::Typing),
             Message::Wrap(kind) => self.wrap_focus(kind),
@@ -357,6 +391,7 @@ impl App {
     }
 
     fn on_source_edit(&mut self, _action: text_editor::Action) {
+        self.input_area = InputArea::Source;
         if !self.source.is_writable() {
             // 只读：把控件内容回滚到权威缓冲，证明 UI 不是第二权威副本。
             self.restore_source_from_authority();
@@ -385,7 +420,10 @@ impl App {
     }
 
     fn push_log(&mut self, line: impl Into<String>) {
-        self.log.push(line.into());
+        let line = line.into();
+        // 同时写 stdout，便于脚本与日志对事件时间线取证。
+        println!("{line}");
+        self.log.push(line);
         if self.log.len() > 200 {
             self.log.remove(0);
         }
@@ -421,6 +459,19 @@ impl App {
         } else {
             "只读"
         };
+        // 只读面板不应该是可编辑控件：既是 UX 正确，也避免它抢走输入法焦点。
+        // （实测：把它渲染成 text_editor 时，输入法提交会落到源码控件而不是正文。）
+        let source_body: Element<'_, Message> = if self.source.is_writable() {
+            text_editor(&self.source_content)
+                .on_action(Message::SourceEdit)
+                .height(Length::Fill)
+                .into()
+        } else {
+            scrollable(container(text(self.source.text().to_string()).size(14)).padding(8))
+                .height(Length::Fill)
+                .into()
+        };
+
         let source_pane = column![
             text(format!("源码 Source Studio [{source_state}]")).size(18),
             text(format!(
@@ -430,9 +481,7 @@ impl App {
                 self.source.len_bytes()
             ))
             .size(13),
-            text_editor(&self.source_content)
-                .on_action(Message::SourceEdit)
-                .height(Length::Fill),
+            source_body,
         ]
         .spacing(6);
 
@@ -476,8 +525,15 @@ impl App {
             .map(|line| text(line.clone()).size(12).into())
             .collect();
 
+        // 正文区是自绘的，必须自己请求输入法；点击它取得输入焦点。
+        let visual_host = ImeHost::new(
+            mouse_area(container(visual_pane)).on_press(Message::FocusVisual),
+            self.input_area == InputArea::Visual,
+            Rectangle::new(Point::new(24.0, 96.0), Size::new(2.0, 20.0)),
+        );
+
         let panes = row![
-            container(visual_pane)
+            container(visual_host)
                 .width(Length::FillPortion(1))
                 .height(Length::Fill),
             container(source_pane)
@@ -502,74 +558,3 @@ impl App {
     }
 }
 
-/// 用远端 actor 注入夹具，保证本地 undo scope 从空开始。
-fn build_fixture(core: &mut Editor, paragraph: NodeId) {
-    let math = fixture_create(core, paragraph, 0, 1, NodeKind::Math);
-    let fraction = fixture_create(core, math, 0, 0, NodeKind::Fraction);
-    let script = fixture_create(core, math, 0, 1, NodeKind::Script);
-    let matrix = fixture_create(core, math, 0, 2, NodeKind::Matrix);
-
-    let num = slot0(core, fraction);
-    let den = slot1(core, fraction);
-    let base = slot0(core, script);
-    let sub = slot1(core, script);
-    let sup = slot2(core, script);
-    let cell = slot0(core, matrix);
-
-    fixture_type(core, num, "a");
-    fixture_type(core, den, "b");
-    fixture_type(core, base, "x");
-    fixture_type(core, sub, "1");
-    fixture_type(core, sup, "2");
-    fixture_type(core, cell, "1");
-}
-
-fn fixture_create(
-    core: &mut Editor,
-    parent: NodeId,
-    slot: usize,
-    index: usize,
-    kind: NodeKind,
-) -> NodeId {
-    let edit = SemanticEdit::InsertNode {
-        parent,
-        slot,
-        index,
-        kind,
-    };
-    core.apply_remote(RemoteEdit { actor: FIXTURE, edit })
-        .expect("夹具插入结构")
-        .created
-        .expect("结构插入应返回新节点")
-}
-
-fn fixture_type(core: &mut Editor, node: NodeId, text: &str) {
-    let edit = SemanticEdit::InsertText {
-        node,
-        at: 0,
-        text: text.to_string(),
-    };
-    core.apply_remote(RemoteEdit { actor: FIXTURE, edit })
-        .expect("夹具插入文本");
-}
-
-fn slot0(core: &Editor, node: NodeId) -> NodeId {
-    child(core, node, 0, 0)
-}
-
-fn slot1(core: &Editor, node: NodeId) -> NodeId {
-    child(core, node, 1, 0)
-}
-
-fn slot2(core: &Editor, node: NodeId) -> NodeId {
-    child(core, node, 2, 0)
-}
-
-fn child(core: &Editor, node: NodeId, slot: usize, index: usize) -> NodeId {
-    *core
-        .document()
-        .slot(node, slot)
-        .expect("槽位存在")
-        .get(index)
-        .expect("子节点存在")
-}

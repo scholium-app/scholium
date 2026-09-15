@@ -1,13 +1,14 @@
 # Spike 0001：原生 UI 候选 — Iced
 
-- 结论：**Blocked**（真实输入法与可访问性验收未完成；其余判据见结果表）
+- 结论：**Blocked**（可访问性与预览定位未验收；其余判据见结果表）
 - 对应验证项：[路线图阶段 0 第 1 项](../ROADMAP.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
 - 关联 ADR：[0002 原生技术栈与 UI 验证顺序](../adr/0002-native-ui-validation-order.md)；最终选型 ADR 待完成
 
-> **状态：中间报告。** 共用核心与 Iced 适配层已实现并跑通冒烟，但真实输入法、可访问性和预览定位三项
-> 仍需人工验收。在这三项完成前，不得据此宣称 Iced 已通过原生 UI 验收。
+> **状态：中间报告。** 共用核心与 Iced 适配层已实现，冒烟、渲染后端与真实输入法（经 fcitx5 注入）
+> 均已有可复现证据；可访问性与预览点击定位仍需人工验收。在这两项完成前，不得据此宣称
+> Iced 已通过原生 UI 验收。
 
 ## 问题与判据
 
@@ -22,7 +23,7 @@
 | 平台 | Linux，Wayland（`wayland-1`），`XDG_SESSION_TYPE=wayland`，合成器 niri |
 | GPU | Intel Raptor Lake-S UHD + NVIDIA RTX 4060 Laptop（驱动 615.71.09）；`/dev/dri` 有 card0/card1/renderD128/renderD129 |
 | CJK 字体 | 163 项；候选显式加载 `SourceHanSerifCN-Regular.otf` 并设为默认字体 |
-| 输入法 | `XMODIFIERS=@im=fcitx`；**真实输入法未测**，见剩余工作 |
+| 输入法 | fcitx5 运行中（`fcitx5 -r`）；输入注入用 `ydotool`（`extra/ydotool`，走 `/dev/uinput`，会经过输入法） |
 
 几个必须先记录的环境约束，它们直接影响候选的可复现性：
 
@@ -86,6 +87,37 @@ wgpu 编译期启用的后端: Backends(VULKAN | GL)
   "远端动作不进本地历史"。
 - 冒烟脚本：`spikes/native-ui/candidate-iced/scripts/smoke.sh`（启动 → 合成器确认窗口 → 按窗口 ID 截图 →
   干净退出；只截取本应用窗口，不采集屏幕其他内容）。
+- 输入注入脚本：`scripts/input-test.sh`。用 `ydotool` 经 `/dev/uinput` 注入按键，因此**会经过输入法**；
+  每次注入前都复核焦点在本应用窗口，焦点不符立即中止，避免敲进其他窗口。
+
+### 输入法：一次实测发现的误路由与修复
+
+第一次注入拼音时暴露了一个真实缺陷，值得完整记录：
+
+- **现象**：`preedit="a b ni hao"` 与 `错误：源码面板为只读：拒绝非活动语言的写入，控件内容已回滚`
+  交替出现；提交后的中文落在**正文**里，同时源码控件也被拒绝并回滚。
+- **原因**：输入法事件是**窗口级**的，不带目标控件信息。当时源码面板即使只读也用 `text_editor` 渲染，
+  它持有键盘焦点并代表窗口请求了输入法；而应用的订阅把窗口级 `Preedit`/`Commit` 一律当成正文区输入。
+- **修复**：① 只读面板改用文本视图——只读面板本来就不该是可编辑控件；
+  ② 应用显式跟踪输入焦点所在区域（正文 / 源码），只把属于正文区的事件交给核心；
+  ③ 正文区通过自定义控件 `ime_host::ImeHost` **自己请求输入法**。
+
+第 ③ 点是框架层面的关键结论：**iced 只在控件显式调用 `Shell::request_input_method` 时才开启输入法**
+（`iced_winit` 中 `set_ime_allowed(true/false)`）。自绘的结构编辑器必须自己请求，否则窗口收不到
+`Preedit`/`Commit`。好消息是 iced 支持 on-the-spot 预编辑
+（`InputMethod::Enabled { cursor, purpose, preedit }`），代价是实现者要自己维护光标几何。
+
+修复后实测：
+
+```text
+preedit="ni hao"（未进历史）
+preedit=""（未进历史）
+core: ImeCommit "打我" → action ActionId(11) revision 12
+```
+
+界面计数 `预编辑事件 30 / IME 提交 1 / 核心动作 11 / 错误 无`：30 次预编辑产生 **0** 个核心动作，
+提交恰好产生 **1** 个动作，正文收到文本，源码面板保持原样。
+证据截图：[artifacts/iced-ime-test.png](../../spikes/native-ui/candidate-iced/artifacts/iced-ime-test.png)。
 
 ## 结果
 
@@ -98,7 +130,7 @@ wgpu 编译期启用的后端: Backends(VULKAN | GL)
 
 | 验收项（计划第 4 节） | 结果 | 证据 / 缺口 |
 |---|---|---|
-| 中文与 Unicode | **部分 Pass** | 界面中文、标签与日志全部正确渲染，无 `.notdef` 方块（截图）；模型层验证预编辑不入历史、整串提交只产生一个动作、ZWJ emoji 与组合字符不被拆坏。**缺口：真实输入法的预编辑与候选窗未测**（截图时计数为"预编辑事件 0 / IME 提交 0"）。 |
+| 中文与 Unicode | **Pass（真实输入法）** | 经 fcitx5 注入拼音：30 次预编辑产生 0 个核心动作，提交"打我"恰好产生 1 个动作（ActionId(11) / revision 12），正文收到文本、源码面板不变（截图 `artifacts/iced-ime-test.png`）。界面中文与标签无 `.notdef` 方块。模型层另有 ZWJ emoji、组合字符不被按字节拆坏的测试。缺口：删除/光标在长组合串下的行为仅在模型层验证。 |
 | 数学结构 | **部分 Pass** | 模型层验证分子/分母与上下标纵向导航、矩阵单元格、wrap/unwrap 保留内容、变体循环、多槽结构拒绝无策略展开。UI 已接按钮与方向键，但未做人工交互验收。 |
 | 源码视图 | **部分 Pass** | 面板显示 `[只读]`，非活动语言写入被拒绝并把控件回滚到权威缓冲（截图 + 代码路径）。缺口：语法高亮、10 万行滚动与真实编辑手感未测。 |
 | 团队规则 | **部分 Pass** | 远端 actor 注入的夹具留在历史但**不进本地 undo scope**：界面显示"动作 10 / 本地历史为空"；模型层另有"远端插入不被本地撤销删除"测试。缺口：真实多端同步与语言切换属阶段 0 第 6 项。 |
@@ -114,9 +146,9 @@ wgpu 编译期启用的后端: Backends(VULKAN | GL)
 
 ## 失败与不确定性
 
-- **真实输入法、可访问性、预览定位未验收**，这是本报告判 Blocked 的原因。fcitx5 已在运行
-  （`fcitx5 -r`），但本机没有可用的输入注入工具（`wtype` / `ydotool` / `dotool` / `wlrctl` 均未安装），
-  无法脚本化验证预编辑与提交的区分。
+- **可访问性与预览定位未验收**，这是本报告判 Blocked 的原因。
+- 输入注入依赖 `ydotool` 与可用的 `/dev/uinput`，并且需要能稳定取得窗口焦点；
+  桌面会话里有其他窗口抢焦点时脚本会中止（这是有意的安全行为）。
 - 本报告的 GUI 测量都在 agent 沙箱内完成，沙箱对 `/dev` 的可见性会直接改变渲染后端结论（见上节）。
   在普通会话复现时以 `gpu_probe` 输出为准。
 - 模型层的撤销用字符身份近似 CRDT 相对位置，`TextDeleted` 的恢复锚点只记录右邻单一身份；
@@ -134,13 +166,12 @@ wgpu 编译期启用的后端: Backends(VULKAN | GL)
 
 ## 剩余工作
 
-1. **真实输入法**：运行冒烟脚本后手动用 fcitx5 输入中文，观察界面计数——预编辑期间"核心动作"不得增加，
-   提交后只增加一次。
-2. **可访问性**：用真实窗口与系统辅助功能检查角色/名称/选区暴露。
-3. **框架快捷键绕过**：确认 Ctrl+Z 不会被 Iced 默认绑定截走而不经过 `Editor::undo`。
-4. **性能**：在两种后端下分别测量真实输入延迟与 20 页预览延迟。本次只测了冷启动与静态窗口 CPU，
+1. **可访问性**：用真实窗口与系统辅助功能检查角色/名称/选区暴露。
+2. **框架快捷键绕过**：确认 Ctrl+Z 不会被 Iced 默认绑定截走而不经过 `Editor::undo`。
+3. **性能**：在两种后端下分别测量真实输入延迟与 20 页预览延迟。本次只测了冷启动与静态窗口 CPU，
    不足以判定任何预算。
-5. **固定窗口几何**重做布局与滚动验收。
+4. **固定窗口几何**重做布局与滚动验收。
+5. **输入法光标几何**：当前 `ImeHost` 传的是近似矩形，真实编辑器需按 caret 位置计算候选窗避让区域。
 
 ## 复现步骤
 
@@ -160,4 +191,8 @@ cargo build  --manifest-path spikes/native-ui/candidate-iced/Cargo.toml
 cargo run --manifest-path spikes/native-ui/candidate-iced/Cargo.toml --bin gpu_probe
 bash spikes/native-ui/candidate-iced/scripts/smoke.sh default
 bash spikes/native-ui/candidate-iced/scripts/compare-backends.sh 3
+
+# 4. 输入法验证（需要 ydotool 与正在运行的 ydotoold）
+sudo pacman -S --needed ydotool && systemctl --user start ydotool
+bash spikes/native-ui/candidate-iced/scripts/input-test.sh
 ```

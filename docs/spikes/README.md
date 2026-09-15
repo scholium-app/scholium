@@ -24,7 +24,7 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 
 | 验证项 | 报告 | 结论 |
 |---|---|---|
-| 第 1 项 原生 UI | [0001-native-ui-iced.md](0001-native-ui-iced.md) | 中间报告：共用核心 20/20 通过，Iced 候选已实现并跑通窗口冒烟；真实输入法、可访问性与预览定位待人工验收（Blocked） |
+| 第 1 项 原生 UI | [0001-native-ui-iced.md](0001-native-ui-iced.md) | 中间报告：核心 20/20 通过；Iced 候选已实现，渲染后端（Vulkan 与软件）与真实输入法均有可复现证据；可访问性与预览定位待验收（Blocked） |
 | 第 2–7 项 | 尚无 | 待执行 |
 
 阶段 0 七项清单与出口条件见 [路线图](../ROADMAP.md)。
