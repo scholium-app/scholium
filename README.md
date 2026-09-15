@@ -1,43 +1,48 @@
 # Scholium /「注疏」
 
-科学写作桌面应用。原生 UI，Typst 排版内核，结构化数学编辑。
+本地优先、可协作、同时支持即时结构编辑与源码编辑的科学写作工作区。
 
 > scholium：古典手稿页边的注疏。欧几里得《几何原本》的 scholia
 > 是希腊数学史最重要的传世材料之一。
 
 ## 状态
 
-P1 骨架已进入可运行验收阶段。当前桌面程序支持 Typst 原生排版、点击定位光标、
-键盘与中文 IME 输入、撤销/重做；底层 `EditOp`、SourceMap 和 MockAgent 链路已有测试。
+项目已完成重新立项，废弃实现已经删除，当前仓库只保留设计文档和空白 workspace。
+旧实验结果仍可在归档文档和 Git 历史中查阅。
 
-实施方案见 [docs/PLAN.md](docs/PLAN.md)。
-P1 逐项执行情况见 [docs/P1_STATUS.md](docs/P1_STATUS.md)。
+新方案聚焦 Liii STEM 式结构编辑体验、LaTeX/Typst 源码模式、双后端预览、非线性历史、
+local-first 多人协作和可解释格式转换。从 [设计文档索引](docs/README.md) 开始阅读。
 
-## 运行
+## 原生技术栈
 
-需要 Rust nightly 和 Vulkan/Metal/DX12 图形驱动：
+应用 UI、核心与服务端优先 Rust，必要时混用 C/C++/Zig；构建以 Cargo 为主，原生依赖可使用 CMake 等工具。
+UI 验证顺序为 **Iced → GPUI → C++ EUI-NEO → Slint 或 egui**，最终选型待验证；不采用 npm/JavaScript/WebView 编辑器。
+具体验收与 FFI 边界见 [原生 UI 验证计划](docs/NATIVE_UI_VALIDATION.md)。
 
-```bash
-cargo run -p scholium-shell
-```
+## 设计目标
 
-Linux 优先查找 Noto CJK，macOS/Windows 会使用系统 CJK 字体。缺少可用中文字体时
-启动日志会明确警告，而不是静默显示 `.notdef` 方框。
+- **双工作形态。** 原生项目以语义图为真，外部 LaTeX/Typst/Markdown 项目以源码为真。
+- **视觉与源码都是一等入口。** 默认即时结构编辑，Source Studio 可直接编辑 LaTeX 或 Typst。
+- **双后端。** Typst 提供快速预览，LaTeX 提供兼容性验证和最终构建。
+- **历史不是一条栈。** 撤销产生新的补偿变更，并支持 checkpoint、分支、合并、
+  revert 和 cherry-pick。
+- **本地优先协作。** 离线可编辑、保存和导出；联网后通过 CRDT 增量收敛。
+- **转换必须可解释。** 保存原生格式无损；跨格式导出若有降级，必须提供报告。
 
-当前编辑快捷键：方向键/Home/End 移动，Backspace/Delete 删除，
-`Ctrl/Cmd+Z` 撤销，`Ctrl/Cmd+Y` 或 `Ctrl/Cmd+Shift+Z` 重做。
+## 已确认的兼容行为
 
-## 设计要点
+- 同一共享项目分支在团队范围内只允许一种源码语言正在被编辑，同语言支持多人协作；两种编译器可并行。
+- LaTeX/Typst 混用目标覆盖正文、公式、图表、宏、模板和跨片段引用；两种格式可打开保存、另存为与输出。
+- 混合项目保留两种原文，标准目标包与双工具链重建包分别说明依赖和可编辑性。
+- 共享分支的离线源码修改进入本地草稿/fork，重连后按团队活动语言显式合入。
 
-- **Typst 作为排版库，不是导出器。** 直接消费 `typst::compile` 产出的 `Frame`，
-  靠每个 `Glyph` 携带的 span 反查到文档 AST 节点，用 vello 自绘。
-  单引擎，编辑态即最终排版。
-- **原生 UI。** winit + wgpu + vello + parley，无 Web 运行时。
-- **结构化数学编辑。** 光标住在 AST 里，支持进入分母、矩阵单元格导航、
-  Tab 变体循环等 Mogan 风格输入手感。
-- **AI 接口先行。** 所有编辑经由统一的 `EditOp` 通道，AI 只能提交 `Proposal`，
-  由宿主决定是否应用。接口在 P1 定型，provider 实现放到 1.0 之后。
+具体规则及待验证边界见 [混合源码与团队编辑](docs/MIXED_SOURCE_EDITING.md)。
 
 ## 许可证
 
-未定。参见 PLAN.md §9——不移植任何 TeXmacs/Mogan 代码以保留选择权。
+当前 workspace 声明为 Apache-2.0。正式实现不移植 TeXmacs/Mogan 或废弃原型实现，
+新增依赖必须通过许可证检查。
+
+## 全栈与 WASM
+
+[全栈候选](docs/TECH_STACK.md)记录编辑核心、解析/编译、渲染、协作、存储及服务端的验证方向；[WASM 计划](docs/WASM.md)优先保证 Rust 核心可移植。[Mogan LaTeX 调研](docs/research/MOGAN_LATEX.md)记录源码依据与可借鉴边界。当前均为设计与待验证项。

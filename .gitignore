@@ -15,9 +15,3 @@
 # 系统
 .DS_Store
 Thumbs.db
-
-# P0 spike 产物
-/spike/target
-/spike/Cargo.lock
-/spike/**/*.pdf
-/spike/**/*.svg
