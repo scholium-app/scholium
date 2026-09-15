@@ -22,7 +22,8 @@
 ### 出口条件
 
 - 中文 IME、嵌套数学光标、结构选区和源码工作台在原生候选中通过共同验收；记录锁定版本及真实平台。
-- 构建与运行不依赖 npm/Node.js/WebView；C/C++/Zig 依赖有明确 ABI、生命周期、构建和许可证记录。
+- 构建与运行不依赖 npm/Node.js/WebView；C/C++/Zig 依赖有明确 ABI、生命周期和构建记录，且许可证落入
+  `AGENT.md` 许可证政策的允许清单，`cargo deny` 通过。
 - Typst 快速预览单字符路径 p95 不阻塞 16ms 帧，旧 revision 不闪回。
 - 受支持 LaTeX/Typst source edit 可 round-trip，Raw 不丢失。
 - 两端收敛且本地撤销保留远端输入。

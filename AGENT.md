@@ -16,8 +16,9 @@
 5. **跨格式转换不可静默丢失。** unsupported 结构必须带源位置进入导出报告。
 6. **快速预览不能冒充最终排版。** LaTeX 发布目标可用 Typst 交互预览，但最终结果与兼容性以
    LaTeX 验证构建为准，UI 必须始终显示当前后端和 revision。
-7. **阶段出口优先。** 阶段 0 的结构编辑、源码 reconcile、CRDT、恢复和安全构建验证通过前，不搭生产脚手架，
-   不做 AI、CAS、绘图、幻灯片或插件市场。
+7. **阶段出口优先。** 阶段 0 的七项否决性验证——原生结构/源码编辑、Typst 映射、源码 reconcile、CRDT 赛马、
+   构建与恢复、团队语言协调、混合构建——全部通过前，不搭生产脚手架，不做 AI、CAS、绘图、幻灯片或插件市场。
+   清单、出口条件和证据要求见 `docs/ROADMAP.md` 与 `docs/spikes/README.md`。
 
 8. **团队只能同时编辑一种源码语言。** 同一共享项目分支的 LaTeX/Typst 写入受活动语言与 epoch 门禁约束；同语言可多人编辑，编译可并行，不能仅在本机 UI 实现。
 9. **混用是完整产品要求。** 正文、公式、图表、宏、模板、跨片段引用都要有验证路径。Raw 保留不等于支持执行；正式输出不得包含 unresolved 占位。见 `docs/MIXED_SOURCE_EDITING.md`。
@@ -27,17 +28,56 @@
 
 ## 设计文档纪律
 
-- `docs/PLAN.md` 只是总览；产品、体验、架构、数据模型、排版转换、协议、历史、格式、安全、测试和路线图各自维护。
+- `docs/PLAN.md` 只是总览；产品、体验、架构、数据模型、排版转换、混合源码与团队编辑、协议、历史、格式、
+  安全、测试、原生 UI 验证、全栈候选、WASM 和路线图各自维护。
 - 修改模块前阅读 `docs/modules/<module>.md`；公共接口、不变量或职责发生变化时，同一提交更新文档。
 - 第三方核心选型、长期存储格式、协议破坏性变化和跨模块边界调整必须新增 ADR。
 - `docs/archive/` 只用于查证废弃原型，不得作为实现规范引用；确需沿用的实验结论应重新验证。
-- 设计中的“待验证”必须通过 spike 关闭。不能通过先写生产脚手架、以后再验证来关闭风险。
+- 设计中的“待验证”必须通过 spike 关闭，报告落在 `docs/spikes/` 并回链到阶段 0 对应条目；
+  测试代码放 `spikes/<name>/`。不能通过先写生产脚手架、以后再验证来关闭风险。
 
 ## 分支与提交
 
 格式：`username/<type>/<description>`，type 取 `feat` / `fix` / `chore` / `refactor` / `docs`。
 
 提交信息：`<type>: <简述>`。一个 PR 聚焦一个主题。推送直接用 `git push`，不用 `gh`。
+
+所有提交必须带签署行（`git commit -s`）：
+
+```text
+Signed-off-by: 姓名 <邮箱>
+```
+
+这是 [DCO 1.1](DCO) 的要求，确认贡献者有权按本项目许可提交该内容。没有签署行的提交不接受。
+采用 DCO 而非 CLA，是为了让贡献者保留版权、同时保证许可仍可在需要时整体调整。
+
+## 许可证政策
+
+本项目以 **MIT OR Apache-2.0** 双许可发布（见 [LICENSE-MIT](LICENSE-MIT)、[LICENSE-APACHE](LICENSE-APACHE)），
+决策依据见 [ADR 0004](docs/adr/0004-project-license.md)。新增依赖必须落在下列允许类别内，由 `cargo deny` 强制。
+
+允许，无需额外审批：
+
+- MIT、Apache-2.0、BSD-2-Clause、BSD-3-Clause、ISC、Zlib、0BSD、Unicode-DFS、CC0-1.0、Unlicense。
+- MPL-2.0：仅作为文件级 copyleft 依赖；修改其文件时按 MPL 公开该文件。
+- 以**独立子进程**调用的外部工具链（例如 TeX Live 的 GPL 系组件）不构成链接，不改变本项目许可；
+  但若在安装包中分发其二进制，必须单独履行对应 GPL 义务并登记。
+- LGPL：仅限动态链接且用户可替换该库；静态链接按禁止处理。
+
+需 ADR 批准，默认禁止：
+
+- GPL-2.0、GPL-3.0、AGPL-3.0、SSPL、BUSL，以及任何"非商业""仅限评估""禁止竞品"条款。
+- 源码可见但受限的自定义许可，例如 **Slint**（GPLv3、商业许可或 Slint Royalty-free 许可，均非宽松）。
+  在项目保持双许可的前提下不得链接 Slint；选择它必须先把项目改为对应 copyleft 或取得商业许可。
+- 许可未明确的依赖或代码。**EUI-NEO 的许可证尚未核实**，也未确认上游仓库是否已从
+  `sudoevolve/EUI-NEO` 迁移；在许可证落入允许类别前不得作为候选进入阶段 0 验收。
+
+其他规则：
+
+- 内容类资产单独登记：CSL 样式文件为 CC-BY-SA，打包时保留署名并说明同类共享要求；字体、图标和
+  夹具样本各自声明许可证。
+- `deny.toml` 随首个 crate 提交，按上表配置 `licenses.allow`；CI 的 `cargo deny` 失败即阻断。
+- 引入新许可类别、需要例外，或调整本政策，都走新 ADR。
 
 ## Rust 规范
 
@@ -180,5 +220,8 @@ undocumented_unsafe_blocks = "deny"
 [workspace.lints.rust]
 missing_docs = "warn"
 ```
+
+`rustfmt.toml`、`deny.toml`、`rust-toolchain.toml`（固定 MSRV）和 600 行文件规模脚本随首个 crate 一并提交；
+当前 workspace 还没有成员，CI 平台与这些配置文件的位置在阶段 0 建立最小核心时确定并更新本节。
 
 有了这些门禁，评审时就能只谈设计和正确性，不用再纠缠风格。

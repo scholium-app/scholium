@@ -6,7 +6,7 @@
 
 | 层 | 首选验证方向与替代 | 关键验收 |
 |---|---|---|
-| GUI | **Iced → GPUI → C++ EUI-NEO → Slint 或 egui** | 遵守[原生 UI 验证计划](NATIVE_UI_VALIDATION.md)，中文 IME、数学结构、无障碍；另记浏览器可行性 |
+| GUI | **Iced → GPUI → C++ EUI-NEO → Slint 或 egui** | 遵守[原生 UI 验证计划](NATIVE_UI_VALIDATION.md)，中文 IME、数学结构、无障碍；另记浏览器可行性。Slint 为 GPLv3/商业/royalty-free 许可，非宽松，须先解决许可证问题（同计划第 3.1 节）；EUI-NEO 许可证待核实 |
 | 权威文档与编辑动作 | 自研 Rust 语义图、数学树、Action、源码投影 | 独立于 GUI/CRDT/IO；两种权威模式不能形成双写副本 |
 | 源码文本容器 | [Ropey](https://github.com/cessen/ropey) 候选 | 大文本、UTF-8/UTF-16 转换；协作模式中只能是可重建视图缓存，不能成为第二权威 |
 | 文本 shaping/layout | 先复用 GUI 文本能力，缺口再比较 [cosmic-text](https://github.com/pop-os/cosmic-text) / [Parley](https://github.com/linebender/parley) | CJK、组合字符、双向文本、字体 fallback、光标命中；文本排版库不等于数学编辑器 |

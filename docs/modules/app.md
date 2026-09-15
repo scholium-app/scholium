@@ -9,7 +9,7 @@
 
 不直接写项目文件，不实现 CRDT/解析/历史算法，不拼接构建命令，不在前端保存永久 token。
 
-## 运行结构
+## 内部结构
 
 ```text
 app-shell
@@ -51,6 +51,15 @@ revision 交付。
 - Timeline：Action、checkpoint、branch、diff、revert/cherry-pick。
 - Merge/Recovery：三方内容、语义诊断、逐冲突决议、恢复报告。
 
+## 公共接口
+
+- `ProjectSession::open(root, policy)` / `close()`；一个项目一个串行 actor，写命令只能经 session 提交。
+- 命令注册表 `register(CommandSpec)`，`CommandSpec { id, title, keybinding, required_capability, writes, intent, params_schema }`；
+  菜单、命令面板和快捷键调用同一 `CommandSpec`。
+- UI ↔ core 只使用 [协议设计](../PROTOCOLS.md) 定义的命令/事件 DTO，不导入 core 内部类型。
+- 平台端口 trait（window、clipboard、file dialog、credential store、updater）由 app 实现，core 只依赖端口声明。
+- 交付物是可执行程序 `scholium-app`，不承诺稳定库 API。
+
 ## 不变量
 
 - UI 不持久化正文的第二份权威副本。
@@ -58,6 +67,15 @@ revision 交付。
 - 过期事件可识别并丢弃；不能用到达顺序推断新旧。
 - viewer 在前端只读，同时 core 也拒绝写命令。
 - 关闭窗口前确认 WAL durable；无需等待慢构建。
+
+## 失败处理
+
+- core 返回 `Rebased`/`Rejected` 时，UI 必须应用 authoritative range/snapshot，不能清空全部 pending 或自行猜测补丁。
+- `PlanStale` 或 precondition 失败时重新规划；冲突进入冲突预览，不静默选一侧。
+- 许可失效、离线或无写权限的源码输入转本地草稿/fork，并明确提示未上传的数据量。
+- 构建或导出失败保留原项目与上次成功产物；编辑不被阻塞，失败原因可定位。
+- 会话崩溃或强杀后走 storage 的恢复计划，不自动"修复"正文。
+- 前端不得重试写命令绕过 session；viewer 的写命令在 UI 与 core 两侧都被拒绝。
 
 ## 测试门禁
 

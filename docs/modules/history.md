@@ -46,6 +46,15 @@ recipe 使用 RelativeAnchor 和上下文 hash，不保存可执行闭包或第�
 - checkpoint 内容由 parent、资源 heads 和 metadata hash 决定。
 - merge checkpoint 至少两个不同父节点；fast-forward 不伪造 merge。
 
+## 失败处理
+
+- 无法生成可靠 inverse 的动作标记为 `non_revertible` 并说明原因，不伪装成功。
+- 上下文指纹或 precondition 失败时展示三方预览；用户确认后仍以新 Action 提交。
+- branch ref CAS 失败返回冲突，由客户端重新获取 head，不静默覆盖。
+- merge 出现语义冲突时建立临时 merge session；只有无冲突才创建双父 checkpoint。
+- 中部日志损坏时停止自动恢复并生成恢复报告，保留损坏副本；只允许截断尾部半写记录。
+- 重复 revert 与重复 update 幂等；涉及源码的历史操作无当前许可时拒绝或转为可恢复步骤。
+
 ## 测试门禁
 
 DAG 属性、无环、共同祖先、多分支 ref CAS、远端穿插 undo、删除后重定位、不可撤动作、重复 revert、

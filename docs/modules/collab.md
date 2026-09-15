@@ -51,6 +51,14 @@ StructuredAuthority 使用共享节点 map、children sequence 和文本 leaves�
 按 Loro → Yrs → Automerge 的顺序验证，候选必须比较 Unicode 位置、批量编辑、origin undo、快照大小、10 万次 update、线程模型、
 原生 Rust 线程/消息集成、可选 FFI 和长期维护；不以 JS/WASM 桥接作为桌面必要依赖。选择写 ADR；engine adapter 保留替换可能。
 
+## 失败处理
+
+- update decoder 遇到超限、递归过深或畸形输入时拒绝本次更新，且不改变当前文档。
+- 重复 update 返回 `AlreadyKnown`；乱序、分片和重放按幂等应用。
+- anchor 无法重定位时返回 `Detached`，由调用方决定提示、近似定位或取消。
+- 未取得当前语言许可的 `apply_text` 或含源码写集的 `apply_semantic` 在进入共享 CRDT 前被拒绝。
+- 远端未经协调者接受的更新不应用；engine 类型不得越过 crate 边界。
+
 ## 测试门禁
 
 双端/三端随机收敛、乱序/重复/分片 update、删除区 anchor、emoji/组合字符、快照往返、恶意 decoder、

@@ -39,6 +39,14 @@ src/
 TreeCursor；geometry 只是当前 revision 派生物。derived 内容如自动编号可以选择其拥有者节点，但不可进入
 不存在的文本槽。
 
+## 公共接口
+
+- `schedule(sdg_revision, profile) -> PreviewRequest`，负责 debounce、取消和 revision 淘汰。
+- `preview_state() -> PreviewState`（FastCurrent / FastStale / FinalBuilding / FinalCurrent / FinalStale / Failed）。
+- `hit_test(page, point) -> Option<PreviewTarget>`；`bounds(TreeAnchor) -> Option<Geometry>`。
+- `overlay() -> OverlayInputs`，只输出 caret、selection、presence 的绘制输入，不写回 graph。
+- `compare(fast, final) -> Vec<BackendDifference>`，只报告结构、引用和编号级差异。
+
 ## 不变量
 
 - 过期预览不替换 current，也不提供当前点击定位。
@@ -46,6 +54,14 @@ TreeCursor；geometry 只是当前 revision 派生物。derived 内容如自动�
 - overlay 不写回 graph；所有输入转为 SemanticEdit。
 - 双后端比较只报告结构/引用/编号等可验证差异，不声称像素一致。
 - 页面虚拟化不改变 NodeId 映射。
+
+## 失败处理
+
+- Typst 编译失败时进入 `Failed` 并展示诊断，保留上一次 current，不隐藏后端标签。
+- 旧 revision 结果直接丢弃，既不替换 current 也不提供点击定位。
+- source span 找不到 NodeId 时标记 derived，不猜测最近节点。
+- 缺少可靠 geometry 的混合组件禁用精确光标操作并给出解释。
+- 占位或过期预览不能进入正式输出；快速与最终后端差异必须可定位。
 
 ## 测试门禁
 

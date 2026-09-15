@@ -44,6 +44,15 @@ profile 不接受任意 shell 字符串。高级用户命令属于明确的高�
 key 包含入口内容、依赖内容 hash、profile、工具链版本和安全策略。失败结果只短期缓存；用户取消不缓存。
 缓存是可删除派生物，不能放未物化源文件。
 
+## 公共接口
+
+- `plan(profile, input_snapshot) -> BuildPlan`；`start(plan) -> BuildHandle`；`cancel(build_id)`。
+- `BuildProfile { entry, toolchain_id, target, allowed_inputs, env_allowlist, network, timeout, memory, output_limit, diagnostic_parser }`，
+  不接受任意 shell 字符串。
+- `artifact(build_id) -> Option<ArtifactRef>`，与输入 revision 绑定并放入内容寻址缓存。
+- `observe() -> BuildChanged`；`map_diagnostics(tool_output) -> Vec<Diagnostic>`，经 SourceMap 映射回节点或组件源位置。
+- 后台构建只消费不可变快照，不持有可变文档句柄。
+
 ## 不变量
 
 - 不经 shell 解释 argv。
@@ -51,6 +60,15 @@ key 包含入口内容、依赖内容 hash、profile、工具链版本和安全�
 - 旧 revision 构建不能替换当前预览；Typst 快速和 LaTeX 最终 artifact 状态分开。
 - 日志截断必须显式标识，不能悄悄丢尾部。
 - artifact 展示前验证 MIME/魔数并隔离 active content。
+
+## 失败处理
+
+- 工具链缺失、版本不符或平台不支持时返回能力诊断，不伪造产物。
+- 超时、内存或输出超限与用户取消都终止完整进程树；取消结果不进入缓存。
+- 未授权根外路径、网络访问或 shell escape 请求直接拒绝构建，并给出安全诊断。
+- 输入 revision 已过期时结果标记 stale，不替换当前预览。
+- 日志被截断必须显式标识；日志行无法映射时保留原位置。
+- 缺组件、模板冲突或引用不收敛阻止正式输出，并保留上次成功产物。
 
 ## 测试门禁
 

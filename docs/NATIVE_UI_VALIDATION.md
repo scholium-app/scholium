@@ -33,11 +33,25 @@
 | Iced | [官方仓库](https://github.com/iced-rs/iced)、[输入法说明](https://book.iced.rs/faq.html) | 自定义数学结构、中文输入边界、可访问性、源码编辑状态适配 |
 | GPUI | [官方 README](https://github.com/zed-industries/zed/blob/main/crates/gpui/README.md) | 版本变动成本、自定义布局、原生平台差异、输入法和无障碍 |
 | EUI-NEO | [官方仓库](https://github.com/sudoevolve/EUI-NEO) | C++ UI/Rust FFI、文本塑形、IME 预编辑、数学控件、可访问树与平台覆盖 |
-| Slint / egui | [Slint](https://slint.dev/)、[egui](https://github.com/emilk/egui) | 针对前三候选留下的缺口验证；不以普通 TextInput 替代完整编辑器 |
+| Slint / egui | [Slint](https://slint.dev/)、[egui](https://github.com/emilk/egui) | 针对前三候选留下的缺口验证；不以普通 TextInput 替代完整编辑器；Slint 的许可证须先解决，见第 3.1 节 |
 
-EUI-NEO 指 `sudoevolve/EUI-NEO`，上游声明 C++17、GLFW/SDL2 和 OpenGL/Vulkan。这些是上游能力描述，
-不是 Scholium 实测结论。验证时固定具体 commit、窗口/渲染后端，检查其第三方字体和依赖许可证。
+EUI-NEO 通常指 `sudoevolve/EUI-NEO`，上游声明 C++17、GLFW/SDL2 和 OpenGL/Vulkan；检索也会指向
+`GTC2080/EUI-NEO`，仓库可能已迁移，验证前必须先确认当前上游。这些是上游能力描述，不是 Scholium 实测结论。
+验证时固定具体 commit、窗口/渲染后端，检查其第三方字体和依赖许可证。
 Iced/GPUI 等框架的文本输入和渲染基础不等于已具备科学文档结构编辑，不能沿用“成熟 Web 编辑器现成可用”的假设。
+
+### 3.1 许可证前置
+
+项目许可是 `MIT OR Apache-2.0` 双许可（[ADR 0004](adr/0004-project-license.md)），候选的许可证直接决定它能否被采用：
+
+- **Slint 不是宽松许可。** 上游提供 GPLv3、商业许可或 Slint Royalty-free 许可，三者都不是 MIT/Apache。
+  在项目保持双许可的前提下链接 Slint，会把应用整体推向 GPLv3，或引入 royalty-free 许可的附加条款。
+  因此 Slint 只能在其余候选全部失败、且用户明确选择改用相应 copyleft 或购买商业许可之后再验证；
+  不能因为"它排最后"就默认可用。
+- **EUI-NEO 许可证未核实。** 需先确认上游仓库、固定 commit 与许可证类别；未落入
+  [AGENT.md](../AGENT.md) 允许清单前不得进入验收。
+- 每个候选的报告必须列出该框架及其必需传递依赖的许可证，以及它们对项目许可的影响；
+  只写"依赖许可证可追溯"不算结论。
 
 ## 4. 每个候选使用同一最小工程
 

@@ -51,6 +51,14 @@ src/
 数据库迁移向前兼容并可滚动部署。update payload 不写应用日志。指标包含连接、ACK 延迟、更新字节、
 拒绝原因、快照命中和 presence 丢弃，不含正文。备份与删除恢复期限形成公开策略。
 
+## 公共接口
+
+- 版本化 HTTP/WebSocket 信封与消息集合见 [协议设计](../PROTOCOLS.md) 第 6 节；本模块不新增未记录消息。
+- 服务端能力：鉴权与成员/邀请管理、project/branch CAS refs、update 校验与幂等持久化、快照上传与选择、
+  blob 上传下载、配额、审计、源码语言控制与结构级写集校验。
+- 对外承诺：ACK 表示已持久化；重复包返回原回执；viewer 永远不能写；presence 可丢弃。
+- 运维接口：数据库迁移、公开的保留期与备份策略、脱敏指标。
+
 ## 不变量
 
 - ACK 只在 update 事务持久化后发送。
@@ -58,6 +66,15 @@ src/
 - viewer 永远不能上传 update、移动 refs 或上传 blob。
 - 服务器不能把 presence 当可靠消息。
 - 未实现 E2EE 前不声称 payload 对服务器不可见。
+
+## 失败处理
+
+- 鉴权、成员或权限 epoch 校验失败返回 `PermissionDenied`，错误与日志不含正文、token 或绝对路径。
+- 重复包返回原回执；序号空洞请求补包；序号回退且 hash 不同判为身份冲突。
+- 旧 epoch 的源码包返回 `SourceEpochStale` 或 `SourcePermitRequired`，写集不符返回 `SourceWriteSetMismatch`，客户端保留草稿。
+- 事务未提交成功不得发送 ACK；重启从持久化控制记录恢复，不能因 presence 清空重新开放两种语言。
+- 快照 hash/大小校验失败时拒绝并保留已有快照；配额与限流超限返回 retry 标志正确的结构化错误。
+- 慢消费者先丢 presence，超限后断开内容通道并要求按 state vector 重连。
 
 ## 测试门禁
 

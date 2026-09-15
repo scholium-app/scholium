@@ -10,19 +10,14 @@ UI 按 [原生 UI 验证计划](NATIVE_UI_VALIDATION.md) 验证 Iced → GPUI �
 框架状态只保存视图投影，原生编辑控件不能成为第二份权威文档。
 
 ```text
-┌────────────────── Desktop UI ──────────────────┐
-│ visual editor · source studio · timeline       │
-│ focus toolbar · preview · citations · resources│
-└────────────── command/event protocol ──────┘
-                       │
-┌────────────────── Core process ────────────────┐
-│ session │ document │ history │ collab │ format │
-│ source  │ render   │ build   │ storage         │
-└───────────────┬───────────────────┬────────┘
-                │                   │
-        local filesystem      sync protocol
-                                    │
-                              relay service
+Desktop UI      visual editor · source studio · timeline · preview · citations
+     │
+     │  command/event protocol（带版本信封，见第 6 节）
+     ▼
+Core process    session · document · history · collab · format · source · render · build · storage
+     │
+     ├── local filesystem
+     └── sync protocol ── relay service
 ```
 
 不让前端直接写文件，也不让同步服务参与格式解析。核心进程是单机状态协调者；共享分支的源码语言门禁

@@ -50,6 +50,16 @@ lexer 不展开 catcode；首发假定常见 LaTeX catcode 语义。遇到可能
 识别 input/include、bibliography/addbibresource、常见图片命令和 documentclass/usepackage。解析路径时保留原
 字符串与解析结果。循环边形成诊断但不递归。动态拼接路径标记 unresolved，不能假装缺失或存在。
 
+## 公共接口
+
+- `parse(resource, revision, text) -> LatexCst`；`reparse(previous, edits) -> LatexCst`。
+- `symbols(cst) -> SymbolIndex`；`dependencies(cst) -> Vec<ResourceDependency>`（input/include、bibliography、
+  图片、documentclass/usepackage）。
+- `project(cst, selection) -> Projection { ir, coverage, diagnostics }`。
+- `generate(ir, profile) -> GeneratedArtifact + PackageRequirements`。
+- `lower_edit(cst, SemanticEdit) -> PatchResult`；每个 patch 携带 precondition hash。
+- `reconcile(generation, edited_source) -> ReconcilePlan`；`parse_log(text) -> Vec<Diagnostic>`。
+
 ## 不变量
 
 - parse 后所有 token 拼接等于输入字节。
@@ -57,6 +67,15 @@ lexer 不展开 catcode；首发假定常见 LaTeX catcode 语义。遇到可能
 - error/unknown/uncertain 区域不能执行破坏性语义重构。
 - 日志映射失败时保留原日志位置，不猜测到错误文件。
 - 构建能力和解析能力分离：能构建不代表能理解。
+
+## 失败处理
+
+- catcode 可能改变词法时标记 `lexically_uncertain`，并拒绝该区域的破坏性语义重构。
+- 未知命令保留命令 token 与词法可辨认参数，不推测可选参数数量。
+- include 循环、缺失资源、根外路径和动态拼接路径产生诊断；动态路径标记 unresolved，不假装存在或不存在。
+- CST 过期或 precondition hash 不匹配时拒绝 patch，重算或进入冲突预览。
+- 日志位置无法映射时保留原日志位置，不猜测到其他文件。
+- fuzz 输入不得 panic，且 token 拼接仍等于输入字节。
 
 ## 测试门禁
 

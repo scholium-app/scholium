@@ -40,8 +40,11 @@ UI 验证顺序为 **Iced → GPUI → C++ EUI-NEO → Slint 或 egui**，最终
 
 ## 许可证
 
-当前 workspace 声明为 Apache-2.0。正式实现不移植 TeXmacs/Mogan 或废弃原型实现，
-新增依赖必须通过许可证检查。
+本项目以 **MIT OR Apache-2.0** 双许可发布，使用者可任选其一：[LICENSE-MIT](LICENSE-MIT) 或
+[LICENSE-APACHE](LICENSE-APACHE)。决策依据见 [ADR 0004](docs/adr/0004-project-license.md)。
+
+正式实现不移植 TeXmacs/Mogan 或废弃原型实现；新增依赖必须通过 `cargo deny` 许可证检查，
+允许与禁止的许可类别见 [AGENT.md](AGENT.md) 的许可证政策一节。
 
 ## 全栈与 WASM
 

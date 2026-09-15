@@ -53,6 +53,15 @@ sequence slot，禁止调用方按裸 child index 猜语义。
 - StructuredAuthority 的 dirty source 未 reconcile 前不改变 graph。
 - unwrap 必须定义内容保留策略；无安全策略的节点不提供该命令。
 
+## 失败处理
+
+- 前置条件、槽位或 capability 校验失败时返回结构化错误，不部分应用编辑。
+- 没有内容保留策略的 unwrap 不提供命令；调用方请求时明确拒绝。
+- `dirty` 生成源码未 reconcile 前不改变 graph；冲突进入预览而非静默取舍。
+- SourceAuthority 投影中无可逆 capability 的区域拒绝写操作。
+- invariant 校验出现 fatal violation 时阻止发布构建，并指出违规节点。
+- tombstone 仍被保留 checkpoint 或活跃设备引用时不得压缩。
+
 ## 测试门禁
 
 每种节点 schema、结构导航、空槽、嵌套选区、焦点能力、wrap/unwrap、variant cycle、矩阵行列、Raw 边界、

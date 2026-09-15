@@ -14,7 +14,21 @@
 - `CheckpointId`：命名版本节点。
 - `RevisionId`：资源当前状态的短生命周期版本，用于拒绝过期派生结果。
 
-路径不是身份，显示名不是身份，墙上时间不参与因果排序。
+协作、许可、构建与导出任务同样使用类型包装标识符，不用裸字符串或自增整数：
+
+- `BranchId`：命名分支引用；共享编辑范围 = `ProjectId + BranchId`。
+- `UserId` / `DeviceId`：账号身份与设备身份；`ActorId` 绑定设备身份，不跨设备克隆。
+- `DraftId`：未提交源码草稿。
+- `PermitId`：源码写许可，绑定 scope、actor、dialect、epoch 与有效期。
+- `SwitchId`：一次团队语言切换流程。
+- `GenerationId`：一次生成源码基线；reconcile 只在同一 generation 内有效。
+- `ComponentId` / `ScopeId`：ForeignSource 组件及其模板/宏作用域。
+- `PlanId`：plan/confirm 两阶段命令的计划标识，confirm 必须回带。
+- `ConflictId`：冲突预览与合并决议。
+- `BuildId` / `ExportId`：一次构建或导出任务。
+
+路径不是身份，显示名不是身份，墙上时间不参与因果排序。协议 DTO 与领域合约中出现的标识字段一律使用
+上述类型包装，不使用裸字符串或整数。
 
 ## 2. 项目与资源
 

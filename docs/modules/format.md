@@ -49,6 +49,15 @@ src/
 - Dropped 默认使导出失败；只有用户 policy 可降级为警告。
 - Copy As 无副作用，临时资源在返回前清理或交由生命周期对象持有。
 
+## 失败处理
+
+- adapter panic 被隔离为内部错误，不终止 project session。
+- 未投影节点、依赖或 Raw 未进入报告时视为门禁失败，不允许导出继续。
+- 出现 `Dropped` 且用户 policy 未降级时导出失败；`Unresolved` 组件阻止正式输出。
+- 资源访问超出 `ParseInput` 声明、registry 冲突或 revision 过期时拒绝并返回诊断。
+- Copy As 的临时资源必须在返回前清理或由生命周期对象持有。
+- 跨格式另存为失败时保留原项目与上次成功产物，不产生半成品目标项目。
+
 ## 测试门禁
 
 fake adapters 验证取消、过期结果、registry 冲突、依赖失效、report 完整性、多 MIME 一致性。具体格式

@@ -39,6 +39,16 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 只接受同 generator schema 的 base。比较新旧 CST，将受支持属性/结构变化转为 SemanticEdit；新增未知合法
 语法可包装 RawTypst；删除生成边界、破坏 helper 契约或跨多个节点的动态代码进入冲突预览。
 
+## 公共接口
+
+- `parse(resource, revision, text) -> TypstCst`；`reparse(previous, edits) -> TypstCst`。
+- `project(cst, selection) -> Projection { ir, coverage, diagnostics }`。
+- `generate(sdg, profile) -> GeneratedArtifact + SourceMap`，generation metadata 记录 generator schema 版本。
+- `reconcile(generation, edited_source) -> ReconcilePlan`，只接受同 generator schema 的 base。
+- `compile(revision, inputs) -> CompileResult`，由 `scholium-build` 的沙箱 worker 调用，core 不得绕过取消、
+  内存与网络策略。
+- `locate(span) -> Option<NodeId | Derived>`；`diagnostics() -> Vec<Diagnostic>`。
+
 ## 不变量
 
 - 生成相同 SDG 和 profile 得到相同源码。
@@ -46,6 +56,15 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 - RawTypst 不在其他方言生成时静默丢失。
 - source span 找不到 NodeId 时标记 derived，不猜测最近节点。
 - package/network 访问遵守 build/security policy。
+
+## 失败处理
+
+- 任意 code、循环、状态与未知函数进入 RawTypst；可编译不等于可 reconcile，不反推语义。
+- 只接受同 generator schema 的 base；schema 不匹配拒绝 reconcile 并进入冲突预览。
+- 删除生成边界、破坏 helper 契约或改动跨多个节点的动态代码进入冲突预览，不静默重写。
+- package/network 访问被 build/security policy 拒绝时返回诊断，不绕过策略。
+- 编译结果 revision 过期时丢弃，不发布；source span 找不到 NodeId 时标记 derived，不猜最近节点。
+- 锁定 Typst 版本的 golden 差异显式失败，不自动更新基线。
 
 ## 测试门禁
 
