@@ -20,7 +20,7 @@
 |---|---|
 | rustc / cargo | 1.98.0-nightly（bd08c9e71 / a595d0da6），edition 2024 |
 | 平台 | Linux，Wayland（`wayland-1`），`XDG_SESSION_TYPE=wayland`，合成器 niri |
-| GPU | Intel Raptor Lake-S UHD + NVIDIA AD107M（RTX 4060 Max-Q），Vulkan ICD 齐全 |
+| GPU | Intel Raptor Lake-S UHD + NVIDIA RTX 4060 Laptop（驱动 615.71.09）；`/dev/dri` 有 card0/card1/renderD128/renderD129 |
 | CJK 字体 | 163 项；候选显式加载 `SourceHanSerifCN-Regular.otf` 并设为默认字体 |
 | 输入法 | `XMODIFIERS=@im=fcitx`；**真实输入法未测**，见剩余工作 |
 
@@ -34,16 +34,45 @@
 4. 首次 `cargo fetch` 下载 623 MB 后因 rsproxy.cn 传输超时中断；**重试成功**（`.cargo-home` 共 685 MB）。
    最终报告必须记录实际镜像与下载完整性，否则"某个候选装不上"会被误判成框架问题。
 
-### 渲染后端
+### 渲染后端，与一次已更正的错误结论
 
-| 后端 | 结果 | stderr |
-|---|---|---|
-| `ICED_BACKEND=wgpu`（默认） | 窗口可创建 | `MESA: error: ZINK: vkEnumeratePhysicalDevices failed (VK_ERROR_INITIALIZATION_FAILED)`、`egl: failed to create dri2 screen` |
-| `ICED_BACKEND=tiny-skia`（软件） | 窗口可创建 | **0 条 error** |
+先记录一次错误结论及其根因。本报告初稿曾判定"本机 wgpu 路径初始化失败，必须回退软件后端"。
+该结论**是错的**，原因是当时 agent 沙箱用 tmpfs 覆盖了 `/dev`，其中没有任何 GPU 设备节点：
 
-本机混合显卡 + Wayland 下 wgpu 的 Vulkan/ZINK 路径初始化失败，**必须显式回退软件后端**。
-这同时是一条负面性能证据：软件渲染不是硬件路径，16 ms 输入预算与 20 页预览延迟必须在两种后端下分别测量，
-不能把软件后端的可用性当成 GPU 路径通过。
+```text
+/dev 挂载栈（错误结论成立时的状态）
+  ... /dev ro,nosuid,nodev - devtmpfs devtmpfs
+  ... /dev rw,nosuid,nodev - tmpfs tmpfs          <- 这一层盖住了真实设备节点
+```
+
+缺少 `/dev/dri` 与 `/dev/nvidia*` 时，Mesa 只能尝试 zink/dri2 并失败，stderr 因此出现
+`ZINK: vkEnumeratePhysicalDevices failed` 与 `egl: failed to create dri2 screen`；候选随后回退软件后端并正常渲染。
+**那些报错是环境造成的，既不是驱动问题，也不是 wgpu 或候选的缺陷。**
+
+设备节点可见后用 `cargo run --bin gpu_probe` 实测：
+
+```text
+wgpu 编译期启用的后端: Backends(VULKAN | GL)
+枚举到 3 个适配器
+[0] backend=Vulkan type=IntegratedGpu  Intel(R) Graphics (RPL-S)          Mesa 26.2.2   request_device: OK
+[1] backend=Vulkan type=DiscreteGpu    NVIDIA RTX 4060 Laptop GPU        615.71.09     request_device: OK
+[2] backend=Gl     type=Other          NVIDIA RTX 4060 Laptop GPU        (3.3.0)       request_device: FAIL (Parent device is lost)
+```
+
+结论：**Vulkan 路径可用**。GL 适配器那一条以 `Parent device is lost` 失败，它是 MESA 噪声的唯一来源，
+不影响 Vulkan 选择，也不需要任何显式后端覆盖。
+
+`scripts/compare-backends.sh` 的冷启动与稳态开销（各 2 次）：
+
+| 后端 | 首窗口 | 稳态 CPU（约 3 s） | 常驻内存 | stderr error |
+|---|---|---|---|---|
+| 默认（wgpu → Vulkan） | 855 / 954 ms | 0.84 / 1.00 s | 295 / 347 MB | 0 |
+| `ICED_BACKEND=wgpu` | 722 / 843 ms | 0.79 / 1.15 s | 294 MB | 0 |
+| `ICED_BACKEND=tiny-skia` | 482 / 490 ms | 0.55 s | 103 MB | 0 |
+
+软件后端在**静态窗口**下反而更快、更省内存，这符合预期（省掉了 GPU 初始化与显存占用）。
+但静态窗口不代表编辑负载：真实输入延迟与 20 页预览延迟必须在两种后端下分别测量，
+既不能把软件后端的可用性当作 GPU 路径通过，也不能用本次数字宣称任一后端达标。
 
 ## 方法与夹具
 
@@ -62,8 +91,10 @@
 
 模型层：`cargo test --offline` **20 passed / 0 failed**。
 候选冒烟：**窗口创建成功、合成器已列出、0 条 error、SIGTERM 干净退出**。
-证据截图：[artifacts/iced-window.png](../../spikes/native-ui/candidate-iced/artifacts/iced-window.png)
-（只含本应用窗口）。
+证据截图：[artifacts/iced-window-default.png](../../spikes/native-ui/candidate-iced/artifacts/iced-window-default.png)
+（默认后端，wgpu → Vulkan）与
+[artifacts/iced-window-tiny-skia.png](../../spikes/native-ui/candidate-iced/artifacts/iced-window-tiny-skia.png)
+（软件后端），两者都只含本应用窗口。
 
 | 验收项（计划第 4 节） | 结果 | 证据 / 缺口 |
 |---|---|---|
@@ -76,15 +107,18 @@
 | 大源码 | **部分 Pass（模型层）** | 10 万行 / 4.99 MB：构建 **23 ms**，单次局部插入 **180 µs**（debug 构建）。缺口：UI 滚动与软件后端的重排延迟未测。 |
 | 可访问性 | **Blocked** | 未做系统辅助功能检查，逻辑测试不能替代。 |
 | 文件恢复 | **Blocked** | 核心不含持久化与 IO；属阶段 0 第 5 项。 |
-| 构建与依赖 | **Pass** | `iced 0.14.0` 全树编译通过；构建与运行只需 cargo，无 Node/npm/WebView。直接依赖许可证：`thiserror`、`unicode-segmentation`、`proc-macro2`、`quote`、`syn` 为 `MIT OR Apache-2.0`，`unicode-ident` 为 `(MIT OR Apache-2.0) AND Unicode-3.0`。 |
+| 构建与依赖 | **Pass** | `iced 0.14.0` 全树编译通过；构建与运行只需 cargo，无 Node/npm/WebView。默认（Vulkan）与 `tiny-skia` 两种后端都渲染正确（截图 `artifacts/iced-window-default.png`、`iced-window-tiny-skia.png`）。直接依赖许可证：`thiserror`、`unicode-segmentation`、`proc-macro2`、`quote`、`syn` 为 `MIT OR Apache-2.0`，`unicode-ident` 为 `(MIT OR Apache-2.0) AND Unicode-3.0`。 |
 
 许可证检查的一个实际产出：`unicode-ident` 使用 SPDX `Unicode-3.0`，而 `AGENT.md` 的允许清单原先只列了旧的
 `Unicode-DFS`，已补上 `Unicode-3.0`。
 
 ## 失败与不确定性
 
-- **真实输入法、可访问性、预览定位未验收**，这是本报告判 Blocked 的原因。
-- wgpu 路径在本机初始化失败（见上），当前结论只在软件后端下成立。
+- **真实输入法、可访问性、预览定位未验收**，这是本报告判 Blocked 的原因。fcitx5 已在运行
+  （`fcitx5 -r`），但本机没有可用的输入注入工具（`wtype` / `ydotool` / `dotool` / `wlrctl` 均未安装），
+  无法脚本化验证预编辑与提交的区分。
+- 本报告的 GUI 测量都在 agent 沙箱内完成，沙箱对 `/dev` 的可见性会直接改变渲染后端结论（见上节）。
+  在普通会话复现时以 `gpu_probe` 输出为准。
 - 模型层的撤销用字符身份近似 CRDT 相对位置，`TextDeleted` 的恢复锚点只记录右邻单一身份；
   这在验收场景下正确，但**不是** CRDT 收敛证据（属第 4 项）。
 - 结构编辑的反向配方标记为不可逆，补偿历史的完整语义属阶段 4。
@@ -104,7 +138,8 @@
    提交后只增加一次。
 2. **可访问性**：用真实窗口与系统辅助功能检查角色/名称/选区暴露。
 3. **框架快捷键绕过**：确认 Ctrl+Z 不会被 Iced 默认绑定截走而不经过 `Editor::undo`。
-4. **性能**：在 `tiny-skia` 与 `wgpu`（若修复驱动）两种后端下分别测量输入延迟与 20 页预览延迟。
+4. **性能**：在两种后端下分别测量真实输入延迟与 20 页预览延迟。本次只测了冷启动与静态窗口 CPU，
+   不足以判定任何预算。
 5. **固定窗口几何**重做布局与滚动验收。
 
 ## 复现步骤
@@ -121,6 +156,8 @@ export CARGO_HOME="$PWD/spikes/native-ui/.cargo-home"
 cargo fetch  --manifest-path spikes/native-ui/candidate-iced/Cargo.toml
 cargo build  --manifest-path spikes/native-ui/candidate-iced/Cargo.toml
 
-# 3. 冒烟 + 窗口截图（只截本应用窗口）
-bash spikes/native-ui/candidate-iced/scripts/smoke.sh tiny-skia
+# 3. 先确认 GPU 对该进程可见，再跑冒烟与截图（只截本应用窗口）
+cargo run --manifest-path spikes/native-ui/candidate-iced/Cargo.toml --bin gpu_probe
+bash spikes/native-ui/candidate-iced/scripts/smoke.sh default
+bash spikes/native-ui/candidate-iced/scripts/compare-backends.sh 3
 ```

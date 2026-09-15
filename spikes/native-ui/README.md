@@ -26,3 +26,11 @@ feature 合并，也不会有 UI 状态或类型泄漏进核心，符合"候选�
 
 核心不实现 CRDT 收敛、真实 reconcile、持久化或语言切换协议——它们分别是阶段 0 第 3、4、5、6 项。
 每个候选必须用同一组验收脚本跑核心，见各候选目录与 `docs/spikes/` 的报告。
+
+## 诊断脚本
+
+- `candidate-iced/scripts/smoke.sh [default|wgpu|tiny-skia]`：启动 → 合成器确认窗口 → 按窗口 ID 截图 → 干净退出。
+- `candidate-iced/scripts/compare-backends.sh [次数]`：对比各后端的首窗口时间、稳态 CPU、内存与 stderr 噪声。
+- `candidate-iced/src/bin/gpu_probe.rs`：枚举 wgpu 适配器并尝试创建设备。渲染异常时**先跑它**，
+  以区分"后端选择问题"和"GPU 设备节点对该进程不可见"——后者会让 Mesa 打印 zink/dri2 报错，
+  看起来像驱动坏了，实际只是没有 `/dev/dri`。

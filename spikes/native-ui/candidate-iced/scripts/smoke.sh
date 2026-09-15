@@ -21,7 +21,12 @@ fi
 
 mkdir -p "$SHOT_DIR"
 
-ICED_BACKEND="$BACKEND" "$BIN" >"$LOG" 2>&1 &
+# "default" 表示不设置 ICED_BACKEND，观察候选的默认后端选择。
+if [ "$BACKEND" = "default" ]; then
+    "$BIN" >"$LOG" 2>&1 &
+else
+    ICED_BACKEND="$BACKEND" "$BIN" >"$LOG" 2>&1 &
+fi
 PID=$!
 sleep 7
 
@@ -56,8 +61,8 @@ if command -v niri >/dev/null 2>&1; then
     NEWEST="$(find "$HOME/Pictures/Screenshots" -name '*.png' -newermt '-2 minutes' \
         -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-)"
     if [ -n "$NEWEST" ]; then
-        cp "$NEWEST" "$SHOT_DIR/iced-window.png"
-        echo "PASS: 已保存窗口截图 $SHOT_DIR/iced-window.png"
+        cp "$NEWEST" "$SHOT_DIR/iced-window-${BACKEND}.png"
+        echo "PASS: 已保存窗口截图 $SHOT_DIR/iced-window-${BACKEND}.png"
     else
         echo "WARN: 未取得截图（检查 niri 的 screenshot-path 配置）"
     fi
