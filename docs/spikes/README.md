@@ -22,4 +22,9 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 
 ## 当前状态
 
-尚无已完成报告。阶段 0 的七项验证全部待执行，清单见 [路线图](../ROADMAP.md)。
+| 验证项 | 报告 | 结论 |
+|---|---|---|
+| 第 1 项 原生 UI | [0001-native-ui-iced.md](0001-native-ui-iced.md) | 中间报告：核心已通过模型层验收，Iced 适配层待实现（Blocked） |
+| 第 2–7 项 | 尚无 | 待执行 |
+
+阶段 0 七项清单与出口条件见 [路线图](../ROADMAP.md)。

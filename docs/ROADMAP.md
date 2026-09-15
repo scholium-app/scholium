@@ -10,7 +10,8 @@
 
 1. 原生结构/源码编辑 spike：严格按 Iced → GPUI → C++ EUI-NEO → Slint 或 egui 依次验证；
    每个候选运行同一组嵌套文本、数学结构、TreeSelection、中文 IME、源码编辑和无障碍脚本。
-   具体任务、进入下一候选的条件与报告见 [原生 UI 验证计划](NATIVE_UI_VALIDATION.md)。
+   具体任务、进入下一候选的条件与报告见 [原生 UI 验证计划](NATIVE_UI_VALIDATION.md)；
+   进度见[报告 0001](spikes/0001-native-ui-iced.md)（进行中）。
 2. Typst 映射 spike：20 页 SDG 生成 Typst、增量编译、NodeId ↔ glyph/preview 双向定位。
 3. 源码 reconcile spike：同一小文档生成 LaTeX/Typst，手改受支持结构后可靠映射回 SDG；未知语法变 Raw。
 4. CRDT 赛马：共享树和共享文本的两人离线编辑、本地 undo、快照与 10 万次动作。

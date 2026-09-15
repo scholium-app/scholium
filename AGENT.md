@@ -58,7 +58,7 @@ Signed-off-by: 姓名 <邮箱>
 
 允许，无需额外审批：
 
-- MIT、Apache-2.0、BSD-2-Clause、BSD-3-Clause、ISC、Zlib、0BSD、Unicode-DFS、CC0-1.0、Unlicense。
+- MIT、Apache-2.0、BSD-2-Clause、BSD-3-Clause、ISC、Zlib、0BSD、Unicode-DFS、Unicode-3.0、CC0-1.0、Unlicense。
 - MPL-2.0：仅作为文件级 copyleft 依赖；修改其文件时按 MPL 公开该文件。
 - 以**独立子进程**调用的外部工具链（例如 TeX Live 的 GPL 系组件）不构成链接，不改变本项目许可；
   但若在安装包中分发其二进制，必须单独履行对应 GPL 义务并登记。
