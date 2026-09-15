@@ -84,6 +84,18 @@ impl SourcePane {
         &self.buffer
     }
 
+    /// 用权威缓冲覆盖面板内容。只读时拒绝——UI 不得据此形成第二份权威副本。
+    pub fn set_text(&mut self, text: &str) -> Result<(), EditError> {
+        if !self.writable {
+            return Err(EditError::SourceReadOnly {
+                dialect: self.dialect,
+            });
+        }
+        self.buffer.clear();
+        self.buffer.push_str(text);
+        Ok(())
+    }
+
     /// 字节长度。
     pub fn len_bytes(&self) -> usize {
         self.buffer.len()

@@ -290,7 +290,8 @@ impl Editor {
     }
 
     /// 应用远端编辑。记录动作元数据但不加入本地 undo scope。
-    pub fn apply_remote(&mut self, remote: RemoteEdit) -> Result<(), EditError> {        edit::apply(&mut self.doc, &remote.edit)?;
+    pub fn apply_remote(&mut self, remote: RemoteEdit) -> Result<EditOutcome, EditError> {
+        let outcome = edit::apply(&mut self.doc, &remote.edit)?;
         self.history.push(
             remote.actor,
             Intent::External,
@@ -299,7 +300,7 @@ impl Editor {
                 description: "远端动作，不参与本地 undo",
             },
         );
-        Ok(())
+        Ok(outcome)
     }
 
     /// 结束当前输入组：空闲窗口到期、选区变化或 intent 变化时调用。
