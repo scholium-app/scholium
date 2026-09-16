@@ -70,9 +70,25 @@
 ## 失败与不确定性
 
 - **LaTeX 侧出口条件未满足。** 仅靠 TeX 配置无法满足，必须把编译进程放进 OS 级沙箱。
-- **本 spike 的 bwrap 配方还不完整**：恶意文档被成功阻断，但**良性文档在沙箱里编译失败**
-  （`xdvipdfmx` 驱动返回 256；尝试过挂 `/var/lib/texmf`、把 `TEXMFVAR`/`HOME` 指向可写 tmpfs、挂 fontconfig 缓存）。
-  也就是说"沙箱能阻断"已验证，"沙箱能正常干活"**尚未验证**——这是本项最大的缺口。
+- **本 spike 的 bwrap 配方还不完整**：恶意文档被成功阻断，但**良性文档在沙箱里编译失败**。
+  已把真实错误定位到（探针现在会打印它）：
+
+  ```text
+  xdvipdfmx:fatal: Unrecognized paper format: a4
+  ```
+
+  排查记录（供阶段 1 接手，省掉重复试错）：
+
+  | 观察到的事实 | 说明 |
+  |---|---|
+  | 沙箱外同一份 `benign.tex` 编译成功（2099 字节 PDF） | 不是文档问题，是沙箱环境差异 |
+  | 沙箱内 `kpsewhich texmf.cnf` 能找到（`/usr/share/texmf-dist/web2c/texmf.cnf`） | kpathsea 基本可用 |
+  | 沙箱内 `kpsewhich dvipdfmx.cfg` **返回空**，而该文件在 `/etc/texmf/dvipdfmx/dvipdfmx.cfg` 且**沙箱内可正常读取**（`cat` 有内容） | 配置文件在，但 kpathsea 的搜索没找到它——纸张定义因此缺失 |
+  | `~/.texlive/texmf-var` 在沙箱内只读 | 尝试把 `TEXMFVAR`/`TEXMFCACHE` 指向可写目录后**仍然失败** |
+  | 挂载方式也试过：整根只读 + 空 `/etc` 再挂回必要子路径、`HOME` 指向 tmpfs | 都能阻断读取，但编译仍失败 |
+
+  结论：**"沙箱能阻断"已验证，"沙箱能正常干活"尚未验证**——这是本项最大的缺口，
+  也是阶段 1 的第一件事。注意 bwrap 的挂载顺序限制（只读根上无法新建挂载点，工作目录必须用已存在的路径）。
 - **未验证**：以其它用户身份运行、Landlock/seccomp、容器方案；TeX 的写路径限制
   （`openout_any`）；`\input` 与 `\openin` 在 kpathsea 层的差异（本次 `\input` 绝对路径测试未读到文件，
   但没有查明原因，因此没有据此下结论）；Typst 的 `sys.inputs`、包下载等其它入口。

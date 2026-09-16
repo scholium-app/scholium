@@ -235,15 +235,32 @@ fn check_os_sandbox() {
     );
 
     // 沙箱内良性文档能否正常产出：如实记录，不当作通过。
-    let ok = Command::new("bwrap")
+    let benign = Command::new("bwrap")
         .args(sandbox_args(&dir))
         .args(["/usr/bin/xelatex", "-interaction=nonstopmode", "benign.tex"])
-        .output()
+        .output();
+    let ok = benign
+        .as_ref()
         .map(|output| output.status.success())
         .unwrap_or(false);
+    // 失败时把真实错误打出来：报告里记录的是 xdvipdfmx 读不到纸张定义，
+    // 而不是"沙箱挂了"这种没有信息量的结论。
+    let driver_error = String::from_utf8_lossy(
+        &benign.map(|output| output.stderr).unwrap_or_default(),
+    )
+    .lines()
+    .find(|line| line.contains("xdvipdfmx") || line.contains("Error"))
+    .unwrap_or("")
+    .trim()
+    .to_string();
     println!(
-        "  [记录] 沙箱内良性文档编译：{}（本 spike 的挂载配方尚未让它产出 PDF，见报告）",
-        if ok { "成功" } else { "失败" }
+        "  [记录] 沙箱内良性文档编译：{}；驱动错误：{}",
+        if ok { "成功" } else { "失败" },
+        if driver_error.is_empty() {
+            "无".to_string()
+        } else {
+            driver_error
+        }
     );
 }
 
