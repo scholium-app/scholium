@@ -332,3 +332,65 @@ fn caret_inside_fraction_lands_inside_that_fraction() {
         denominator_caret.baseline
     );
 }
+
+#[test]
+fn hit_test_maps_point_to_node_and_byte_offset() {
+    let mut editor = build_editor();
+    let text = {
+        let doc = editor.document();
+        doc.first_text_descendant(doc.root()).expect("文本叶子")
+    };
+    type_text(&mut editor, text, "ab");
+
+    let layout = layout_document(editor.document());
+    let caret_end = layout.caret(text, 2).expect("末尾光标");
+    let top = Item::top_of(caret_end.baseline, caret_end.size);
+
+    // 最左端 → 偏移 0；越过最后一个字符中点 → 偏移 2。
+    assert_eq!(layout.hit_test(-100.0, top + 2.0), Some((text, 0)));
+    assert_eq!(
+        layout.hit_test(caret_end.x + 100.0, top + 2.0),
+        Some((text, 2))
+    );
+}
+
+#[test]
+fn hit_test_inside_fraction_selects_that_slot() {
+    let mut editor = build_editor();
+    let doc = editor.document();
+    let paragraph = doc.slot(doc.root(), 0).expect("根槽位")[0];
+    let math = doc.slot(paragraph, 0).expect("段落槽位")[1];
+    let fraction = create(&mut editor, math, 0, 0, NodeKind::Fraction);
+    let numerator = slot_child(&editor, fraction, 0, 0);
+    let denominator = slot_child(&editor, fraction, 1, 0);
+    type_text(&mut editor, numerator, "1");
+    type_text(&mut editor, denominator, "2");
+
+    let layout = layout_document(editor.document());
+    let numerator_caret = layout.caret(numerator, 1).expect("分子光标");
+    let denominator_caret = layout.caret(denominator, 1).expect("分母光标");
+
+    let numerator_top = Item::top_of(numerator_caret.baseline, numerator_caret.size);
+    let denominator_top = Item::top_of(denominator_caret.baseline, denominator_caret.size);
+
+    assert_eq!(
+        layout.hit_test(numerator_caret.x - 100.0, numerator_top + 2.0),
+        Some((numerator, 0))
+    );
+    assert_eq!(
+        layout.hit_test(denominator_caret.x - 100.0, denominator_top + 2.0),
+        Some((denominator, 0))
+    );
+}
+
+#[test]
+fn hit_test_outside_any_text_is_none() {
+    let mut editor = build_editor();
+    let text = {
+        let doc = editor.document();
+        doc.first_text_descendant(doc.root()).expect("文本叶子")
+    };
+    type_text(&mut editor, text, "a");
+    let layout = layout_document(editor.document());
+    assert!(layout.hit_test(0.0, -500.0).is_none(), "远离文本不应命中");
+}

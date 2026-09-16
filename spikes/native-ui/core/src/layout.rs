@@ -173,6 +173,48 @@ impl Layout {
         }
         None
     }
+
+    /// 命中测试：把布局坐标映射回 `(节点, 字节偏移)`，用于"点哪定位哪"。
+    ///
+    /// 竖直方向按行判定，水平方向取最近的字符边界（插入点在字符之间）。
+    /// 只会命中带来源信息的图元；合成文本（括号、根号）不参与。
+    pub fn hit_test(&self, x: f32, y: f32) -> Option<(NodeId, usize)> {
+        let mut best: Option<(f32, NodeId, usize)> = None;
+        for item in &self.items {
+            let Item::Text {
+                x: item_x,
+                baseline,
+                size,
+                content,
+                source: Some(span),
+            } = item
+            else {
+                continue;
+            };
+            let top = Item::top_of(*baseline, *size);
+            if y < top || y > top + size * 1.2 {
+                continue;
+            }
+
+            // 找到第一个"中点已在 x 右侧"的字符，插入点就在它前面。
+            let mut cumulative = 0.0_f32;
+            let mut offset = content.len();
+            for (index, ch) in content.char_indices() {
+                let width = text_width(&ch.to_string(), *size);
+                if x < item_x + cumulative + width / 2.0 {
+                    offset = index;
+                    break;
+                }
+                cumulative += width;
+            }
+
+            let distance = (x - (item_x + cumulative)).abs();
+            if best.is_none_or(|(best_distance, _, _)| distance < best_distance) {
+                best = Some((distance, span.node, span.start_byte + offset));
+            }
+        }
+        best.map(|(_, node, offset)| (node, offset))
+    }
 }
 
 /// 布局整个文档。

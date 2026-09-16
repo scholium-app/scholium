@@ -119,6 +119,46 @@ application name='scholium-spike-egui'
 `TextEdit` 内部的做法可作参照（`egui-0.36.2/src/widgets/text_edit/builder.rs:952`；
 `Memory::owns_ime_events` 即"是否持有焦点"，`memory/mod.rs:1042`）。
 
+### 确定性测试：无窗口驱动（不再依赖注入）
+
+**为什么加这个**：`ydotool` 注入依赖窗口焦点，在共享桌面会话里会被抢焦点——我已经被它误导过两次。
+egui 提供 `Context::run_ui(RawInput, impl FnMut(&mut Ui))`，可以在**没有窗口、没有焦点、没有输入法进程**
+的条件下，用合成事件驱动**同一段输入处理代码**。应用逻辑因此从 eframe 里拆出来成为库
+（`src/lib.rs`），`src/main.rs` 只留入口。
+
+`tests/input.rs` 的 8 个测试（全部通过）：
+
+| 测试 | 断言的核心契约 |
+|---|---|
+| `startup_focuses_the_document_area` | 启动后正文区持有输入焦点 |
+| `preedit_does_not_touch_history_and_commit_adds_exactly_one_action` | 3 次预编辑产生 **0** 个核心动作；一次提交恰好 **1** 个 |
+| `typing_inserts_text_and_advances_the_caret` | 输入进入正文且插入点前进 |
+| `backspace_deletes_one_grapheme` | 退格只删一个字素 |
+| `typing_zwj_emoji_then_backspace_does_not_split_grapheme` | 退格不拆开 ZWJ 序列 |
+| `arrow_keys_do_not_corrupt_the_document` | 纯导航不改内容 |
+| `undo_reverts_the_local_typing` | Ctrl+Z 撤销本地输入，且历史只追加（产生补偿动作） |
+| `clicking_in_the_document_moves_the_caret` | 点击把插入点移到命中位置 |
+
+**点击定位**依赖共享核心新增的命中测试：`Layout::hit_test(x, y) -> Option<(NodeId, usize)>`
+（`core/src/layout.rs`），把布局坐标映射回节点与字节偏移；核心另有 3 个测试覆盖边界、
+分数槽位内部与"远离文本不命中"。
+
+两个测试写法上的坑，记下来免得再踩：① 无窗口运行时 `FullOutput.textures_delta` 必须显式 `clear()`，
+否则 epaint 会在 drop 时断言；② egui 0.36 的 `Modifiers::CTRL` 里 `command` 为 `false`
+（真机由 egui-winit 同时置位），且 `InputState.modifiers` 只由 `ModifiersChanged` 事件更新。
+
+### 无障碍开关：两个都要开
+
+复测发现**只开 `IsEnabled` 不够**，`ScreenReaderEnabled` 也必须为真，AccessKit 才会注册：
+
+```text
+只开 IsEnabled：桌面 13 个应用，无 scholium-spike-egui
+两个都开：    桌面 14 个应用，含 scholium-spike-egui
+```
+
+`a11y-probe.py` 已按此更新提示。自绘结构通过 `Response::widget_info` 补的可访问描述也出现在树中
+（与预览面板的文本同形，未能单独区分）。
+
 ## 与其它候选的对比
 
 | 维度 | Iced 0.14 | GPUI 0.2.2 | EUI-NEO（仅预筛） | **egui 0.36** |

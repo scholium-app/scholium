@@ -200,13 +200,15 @@ def main():
     print(
         "会话无障碍开关：IsEnabled={} ScreenReaderEnabled={}".format(enabled, screen_reader)
     )
-    if enabled is False:
+    if enabled is not True or screen_reader is not True:
         print()
-        print("警告：会话无障碍处于关闭状态。AccessKit 类框架此时不会向 AT-SPI 注册，")
-        print("      测到的'没有对象'是假阴性。先启用再测：")
+        print("警告：会话无障碍开关未全部打开。AccessKit 类框架此时不会向 AT-SPI 注册，")
+        print("      测到的'没有对象'是假阴性。**两个开关都要置位**再测：")
         print(
-            "      gdbus call --session --dest org.a11y.Bus --object-path /org/a11y/bus \\\n"
-            "        --method org.freedesktop.DBus.Properties.Set org.a11y.Status IsEnabled '<true>'"
+            "      for k in IsEnabled ScreenReaderEnabled; do\n"
+            "        gdbus call --session --dest org.a11y.Bus --object-path /org/a11y/bus \\\n"
+            "          --method org.freedesktop.DBus.Properties.Set org.a11y.Status \"$k\" '<true>'\n"
+            "      done"
         )
 
     matches = find_matching(desktop, keyword)
