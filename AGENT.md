@@ -70,8 +70,9 @@ Signed-off-by: 姓名 <邮箱>
 - GPL-2.0、GPL-3.0、AGPL-3.0、SSPL、BUSL，以及任何"非商业""仅限评估""禁止竞品"条款。
 - 源码可见但受限的自定义许可，例如 **Slint**（GPLv3、商业许可或 Slint Royalty-free 许可，均非宽松）。
   在项目保持双许可的前提下不得链接 Slint；选择它必须先把项目改为对应 copyleft 或取得商业许可。
-- 许可未明确的依赖或代码。**EUI-NEO 的许可证尚未核实**，也未确认上游仓库是否已从
-  `sudoevolve/EUI-NEO` 迁移；在许可证落入允许类别前不得作为候选进入阶段 0 验收。
+- 许可未明确的依赖或代码。
+- EUI-NEO：许可证已核实为 **Apache-2.0**（见[报告 0003](docs/spikes/0003-native-ui-prescreen.md)），
+  但**无任何无障碍支持**，加上 C++/CMake + FFI 的成本，预筛即不投入（[ADR 0006](docs/adr/0006-native-ui-framework.md)）。
 
 其他规则：
 
