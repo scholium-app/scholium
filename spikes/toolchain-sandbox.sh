@@ -23,6 +23,7 @@ exec /usr/bin/timeout --kill-after=2s "${seconds}s" \
   --clearenv --setenv PATH /usr/bin --setenv HOME /tmp \
   --setenv LANG C.UTF-8 --setenv TEXMFVAR /tmp/texmf-var \
   --setenv TEXMFCONFIG /tmp/texmf-config --setenv TEXMFHOME /tmp/texmf-home \
+  --setenv TEXINPUTS /project: --setenv TEXPICTS /project: \
   "${mounts[@]}" --proc /proc --dev /dev --tmpfs /tmp \
   --ro-bind "$input" /project --bind "$output" /work --chdir /work \
   /usr/bin/prlimit --as=4294967296 --fsize=67108864 --cpu=30 --nofile=128 -- "$@"

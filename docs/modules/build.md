@@ -89,3 +89,9 @@ key 包含入口内容、依赖内容 hash、profile、工具链版本和安全�
 ## 工具链候选与宿主
 
 LaTeX 按 TeX Live 所需引擎（pdfLaTeX/XeLaTeX/LuaLaTeX）→ Tectonic 验证，实际兼容矩阵决定后端，不能假定 Tectonic 完全替换全部引擎。参考[Mogan 工具探测](../research/MOGAN_LATEX.md)报告路径、版本及能力。原生流程使用受控进程；浏览器不能调用本机进程，Typst Worker 与本地 LaTeX WASM 分别验证。远程构建需用户显式选择，缺少后端返回能力诊断而非伪造最终产物。见[WASM](../WASM.md)。
+
+## 阶段 0 实验进展
+
+[报告 0017](../spikes/0017-mixed-build-isolation.md) 验证普通混合构建与包重建的 LaTeX 共用沙箱入口，
+输入只读、输出分离，失败不保留当前入口旧 PDF。它是独立 spike，不是本模块的生产实现；
+可信运行时最小白名单、完整资源树、进程内 Typst 和产物探针隔离仍待实现。

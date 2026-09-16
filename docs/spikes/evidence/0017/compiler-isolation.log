@@ -1,0 +1,11 @@
+   Compiling scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build)
+    Finished `release` profile [optimized] target(s) in 1.68s
+     Running unittests src/main.rs (spikes/mixed-build/target/release/deps/scholium_spike_mixed_build-045a9ff5eabf80e8)
+
+running 3 tests
+test latex::tests::symlink_input_is_rejected_before_compilation ... ok
+test latex::tests::failed_compile_cannot_leave_a_previous_pdf_as_current_output ... ok
+test latex::tests::compiler_preserves_project_inputs_but_cannot_read_private_files ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 1.61s
+

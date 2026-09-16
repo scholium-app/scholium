@@ -23,7 +23,7 @@ ForeignSource 的 LaTeX/Typst 宏、模板、构建桥接和预生成资源都�
   在默认配置下，不可信 LaTeX 用 `\openin` + `\read` **真的读到了项目外文件**（`/etc/hostname`）；
   并且 TeX 自身的限制项**无效**：`-cnf-line=openin_any=p` 时 `kpsewhich` 显示取值已变，
   运行中的引擎仍然读到了文件（环境变量方式与 `pdflatex` 同样无效）。
-  因此 **LaTeX 等外部引擎必须运行在 OS 级沙箱内**（只读挂载运行时与工具资源、项目目录单独可写、
+  因此 **LaTeX 等外部引擎必须运行在 OS 级沙箱内**（只读挂载运行时与工具资源、项目输入只读、输出目录单独可写、
   无网络、独立 PID/挂载命名空间、以非特权用户运行），不能依赖 TeX 配置。
 - **Typst 侧按构造安全，但依赖一个不变量**：`World::file()` 除主文件与显式纳入的资源外一律返回
   `NotFound`，且**绝不访问磁盘**。实测 `#read("/etc/hostname")` 与 `#plugin("/bin/sh")` 均被拒绝。
@@ -35,6 +35,11 @@ ForeignSource 的 LaTeX/Typst 宏、模板、构建桥接和预生成资源都�
 
 需要高权限构建的项目使用单独 profile，并在每次首次启用时展示具体能力，不能只给“信任项目”
 一个无限授权开关。
+
+当前验证：Linux 配方的良性编译与隔离见[报告 0016](spikes/0016-working-tree-status.md)，
+普通混合构建 LaTeX 入口的接入与覆盖矩阵见[报告 0017](spikes/0017-mixed-build-isolation.md)。
+只读系统运行时是显式例外；目前 `/usr` 等挂载仍较宽，不能宣称项目根外所有文件不可读。
+进程内 Typst、宿主侧产物探针与旧恢复实验的边界尚未全部统一。
 
 ## 4. 同步与身份
 

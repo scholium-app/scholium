@@ -5,6 +5,10 @@
 use std::collections::BTreeMap;
 use std::path::Path;
 use std::process::Command;
+mod sandbox;
+
+#[cfg(test)]
+mod tests;
 
 /// 单次 LaTeX 调用的墙钟上限（秒）。
 pub(crate) const TIMEOUT_SECONDS: u64 = 45;
@@ -31,19 +35,7 @@ pub(crate) struct LatexRun {
 /// 在 `dir` 里编译 `main.tex`。
 pub(crate) fn compile(dir: &Path, main: &str) -> LatexRun {
     let mut run = LatexRun::default();
-    // 用 `timeout` 兜住病态输入（例如递归宏）：不能让它挂住整个构建。
-    let output = Command::new("timeout")
-        .args([
-            &format!("{TIMEOUT_SECONDS}s"),
-            "xelatex",
-            "-no-shell-escape",
-            "-interaction=nonstopmode",
-            "-halt-on-error",
-            "-file-line-error",
-            &format!("{main}.tex"),
-        ])
-        .current_dir(dir)
-        .output();
+    let output = sandbox::compile(dir, main);
     let output = match output {
         Ok(output) => output,
         Err(error) => {

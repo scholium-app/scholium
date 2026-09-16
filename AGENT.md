@@ -25,7 +25,7 @@
 
 10. **原生技术栈。** 应用 UI、核心与服务端优先 Rust；必要时引入 C/C++/Zig。禁止 npm/Node.js、JavaScript/TypeScript 编辑器、WebView/Electron/Tauri 作为应用 UI 或验证依赖。HTML 导出是文件能力，不是 UI 实现。可选浏览器 WASM 允许必要的工具生成加载/绑定胶水，不允许 JS/TS 业务编辑器或 npm/Node.js；见 `docs/WASM.md`。
     C/C++/Zig 依赖（含经由构建脚本编译本地代码的 crate）必须登记在 [docs/NATIVE_DEPENDENCIES.md](docs/NATIVE_DEPENDENCIES.md)，显式声明 ABI、内存所有权、线程约束与销毁顺序。
-11. **UI 验证顺序固定。** 按 Iced → GPUI → C++ EUI-NEO → Slint 或 egui 的顺序，用 `docs/NATIVE_UI_VALIDATION.md` 的同一验收集验证，不以演示能运行替代编辑器可行性。**阶段 0 已完成并选定 egui**（[ADR 0006](docs/adr/0006-native-ui-framework.md)、报告 0001–0004）；更换框架必须新立 ADR 并重跑同一验收集。
+11. **UI 验证顺序固定。** 按 Iced → GPUI → C++ EUI-NEO → Slint 或 egui 的顺序，用 `docs/NATIVE_UI_VALIDATION.md` 的同一验收集验证，不以演示能运行替代编辑器可行性。**阶段 0 的 UI 候选比较已完成并选定 egui，阶段 0 整体尚未关闭**（[ADR 0006](docs/adr/0006-native-ui-framework.md)、报告 0001–0004）；更换框架必须新立 ADR 并重跑同一验收集。
 
 ## 设计文档纪律
 

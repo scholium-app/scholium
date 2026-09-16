@@ -11,7 +11,9 @@ fn unknown_fixture_is_an_error() {
 }
 
 #[test]
-fn missing_compiler_fails_success_fixture() {
+fn missing_host_tools_fail_success_fixture() {
+    // The compiler now uses a fixed trusted path inside the sandbox. Empty PATH
+    // removes host-side PDF probes; failed evidence must still reach the caller.
     let output = Command::new(env!("CARGO_BIN_EXE_scholium-spike-mixed-build"))
         .arg("E1-equation")
         .env("PATH", "")
