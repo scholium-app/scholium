@@ -153,6 +153,27 @@ core: ImeCommit "打我" → action ActionId(11) revision 12
 提交恰好产生 **1** 个动作，正文收到文本，源码面板保持原样。
 证据截图：[artifacts/iced-ime-test.png](../../spikes/native-ui/candidate-iced/artifacts/iced-ime-test.png)。
 
+### 确定性输入契约测试（8 个，全部通过）
+
+与 egui 候选覆盖**同一组契约**，便于横向对比：应用逻辑拆到 `src/lib.rs`，测试直接调用
+`App::update` 驱动同一段消息处理代码，不依赖窗口、焦点或输入法进程。
+
+`tests/input.rs`：
+
+| 测试 | 断言 |
+|---|---|
+| `preedit_does_not_touch_history_and_commit_adds_exactly_one_action` | 3 次预编辑产生 0 个核心动作；一次提交恰好 1 个 |
+| `ime_commit_is_ignored_after_focus_moves_to_source_pane` | 输入焦点在源码面板时，窗口级输入法提交不得写进正文 |
+| `typing_inserts_text_and_advances_the_caret` | 输入进入正文且插入点前进 |
+| `backspace_deletes_one_grapheme` | 退格只删一个字素 |
+| `typing_zwj_emoji_then_backspace_does_not_split_grapheme` | 退格不拆开 ZWJ 序列 |
+| `arrow_keys_do_not_corrupt_the_document` | 纯导航不改内容 |
+| `undo_reverts_the_local_typing` | 撤销移除本地输入，且历史只追加（产生补偿动作） |
+| `source_edit_action_moves_input_focus_and_read_only_write_is_rejected` | 源码控件动作切换输入区域；只读写入被拒绝并报错 |
+
+**缺口**：本候选**没有接入点击定位**——共享核心已有 `Layout::hit_test`，但 iced 侧未接鼠标坐标，
+因此"点哪定位哪"在 iced 上未实现；egui 候选已接并有测试覆盖。
+
 ### 可访问性：实测不通过（框架级缺口）
 
 判据原文是"键盘遍历、焦点通知、角色/名称/文本与选区暴露 → 真实系统辅助功能检查，有缺口就记录失败"。
