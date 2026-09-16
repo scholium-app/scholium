@@ -14,14 +14,21 @@ scholium-spike-core = { path = "../native-ui/core" }
 thiserror = "=2.0.20"
 # WAL 每条记录带 CRC-32 校验和；crc32fast 是 Apache-2.0/MIT 双许可，纯 Rust。
 crc32fast = "=1.5.2"
+# 崩溃夹具要向自己发 SIGKILL；libc 是 MIT/Apache-2.0。
+libc = "=0.2.189"
+# 外部修改冲突用 SHA-256 内容哈希。放在 dependencies 而不是 dev-dependencies：
+# 冲突检测是判据本身的实现，不是测试脚手架。
+sha2 = "=0.10.9"
+# Typst 引擎，锁定与阶段 0 第 2 项相同的版本。
+typst = "=0.15.1"
+# PagedDocument 在 typst-layout 里，需要直接依赖。
+typst-layout = "=0.15.1"
+# 字体来源（内置 + 系统扫描）。
+typst-kit = { version = "=0.15.1", features = ["embedded-fonts", "scan-fonts"] }
 
 [dev-dependencies]
 # 随机截断用固定种子；rand 0.9 的 SmallRng 可用 32 字节种子复现。
 rand = "=0.9.5"
-# 外部修改冲突用 SHA-256 内容哈希；只出现在验证代码里。
-sha2 = "=0.10.9"
-# SIGKILL 子进程需要 raise()；libc 是 MIT/Apache-2.0。
-libc = "=0.2.189"
 
 [lints.clippy]
 too_many_lines = "warn"

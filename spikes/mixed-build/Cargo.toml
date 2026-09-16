@@ -1,0 +1,31 @@
+[package]
+name = "scholium-spike-mixed-build"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "MIT OR Apache-2.0"
+
+# 独立 workspace，不进入正式 workspace 依赖图。
+[workspace]
+
+[dependencies]
+# 锁定候选版本；编译后端版本必须随报告记录。
+typst = "=0.15.1"
+# PagedDocument / Page 等产物类型在 typst-layout 里，需要直接依赖。
+typst-layout = "=0.15.1"
+# 系统字体加载等辅助能力（正式实现需要自行控制字体来源与许可证）。
+typst-kit = { version = "=0.15.1", features = ["embedded-fonts", "scan-fonts"] }
+# 把外语组件导出为矢量 SVG（LaTeX 宿主的嵌入载体）。
+typst-svg = "=0.15.1"
+
+[lints.clippy]
+too_many_lines = "warn"
+cognitive_complexity = "warn"
+too_many_arguments = "warn"
+unwrap_used = "warn"
+missing_panics_doc = "warn"
+missing_errors_doc = "warn"
+undocumented_unsafe_blocks = "deny"
+
+[lints.rust]
+missing_docs = "warn"

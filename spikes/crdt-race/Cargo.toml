@@ -1,0 +1,25 @@
+[package]
+name = "scholium-spike-crdt-race"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "MIT OR Apache-2.0"
+
+# 独立 workspace：阶段 0 验证代码不进正式 workspace 的依赖图，也不与其它 spike 共享 feature 解析。
+[workspace]
+
+[dependencies]
+# 精确锁定：本机 cargo registry 为只读挂载，只有这些版本已缓存，离线构建依赖它们。
+thiserror = "=2.0.20"
+
+[lints.clippy]
+too_many_lines = "warn"
+cognitive_complexity = "warn"
+too_many_arguments = "warn"
+unwrap_used = "warn"
+missing_panics_doc = "warn"
+missing_errors_doc = "warn"
+undocumented_unsafe_blocks = "deny"
+
+[lints.rust]
+missing_docs = "warn"

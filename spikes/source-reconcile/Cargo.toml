@@ -1,0 +1,23 @@
+[package]
+name = "scholium-spike-reconcile"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "MIT OR Apache-2.0"
+
+# 独立 workspace，不进入正式 workspace 依赖图。
+[workspace]
+
+[dependencies]
+scholium-spike-core = { path = "../native-ui/core" }
+
+[lints.clippy]
+too_many_lines = "warn"
+cognitive_complexity = "warn"
+too_many_arguments = "warn"
+unwrap_used = "warn"
+missing_panics_doc = "warn"
+missing_errors_doc = "warn"
+
+[lints.rust]
+missing_docs = "warn"
