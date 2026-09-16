@@ -68,7 +68,7 @@ fi
 # ---------- 第 4–7 项：各 spike ----------
 if want items; then
   section "第 4–7 项"
-  for s in crdt-race recovery language-coordination mixed-build; do
+  for s in crdt-race crdt-engines recovery language-coordination mixed-build; do
     run "$s" cargo run --release --offline --manifest-path "spikes/$s/Cargo.toml"
   done
 fi
@@ -83,7 +83,7 @@ fi
 if want license; then
   section "出口条件 许可门禁（cargo deny）"
   for d in spikes/native-ui/core spikes/typst-mapping spikes/source-reconcile spikes/untrusted-input \
-           spikes/crdt-race spikes/recovery spikes/language-coordination spikes/mixed-build; do
+           spikes/crdt-race spikes/crdt-engines spikes/recovery spikes/language-coordination spikes/mixed-build; do
     [ -f "$d/Cargo.lock" ] || continue
     ( cd "$d" && cargo deny --offline check licenses >/tmp/verify-stage0.log 2>&1 )
     record "deny $(basename "$d")" $?

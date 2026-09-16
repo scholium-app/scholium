@@ -1,0 +1,17 @@
+[package]
+name = "scholium-spike-crdt-engines"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "MIT OR Apache-2.0"
+
+# 独立 workspace，不进入正式 workspace 依赖图。
+[workspace]
+
+[dependencies]
+loro = { version = "=1.16.0", default-features = false }
+yrs = { version = "=0.27.4", default-features = false }
+automerge = { version = "=0.11.0", default-features = false }
+
+[lints.rust]
+missing_docs = "warn"

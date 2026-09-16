@@ -20,7 +20,7 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 | [0006：原生桌面框架选型 —— egui](0006-native-ui-framework.md) | Accepted | 采用 egui/eframe 0.36.2；Iced 缺可访问性、GPUI 缺文本输入控件、EUI-NEO 不投入、Slint 被许可证阻断 |
 | [0007：Typst 生成、编译集成与位置映射](0007-typst-integration.md) | Accepted | 锚点 + `Introspector::position` 双向定位；持久 World；异步编译 + 结果门；锁定 typst 0.15.1 |
 | [0008：源码 reconcile 策略与构建工具链隔离](0008-reconcile-and-toolchain-isolation.md) | Accepted | 行+范围归因、不确定即冲突、Raw 逐字保留；LaTeX 必须跑在 OS 级沙箱内 |
-| [0009：CRDT 引擎选型](0009-crdt-engine.md) | Proposed | Loro / Yrs / Automerge 三者许可与依赖均合规（预筛见报告 0013）；引擎对比夹具待跑 |
+| [0009：CRDT 引擎选型](0009-crdt-engine.md) | **Accepted** | **选定 Loro 1.16.0**：只有它同时具备可移动树与能过滤远端输入的内置 undo，且都端到端跑通（报告 0014）；性能对比留待阶段 1 首个迭代 |
 
 ## 待补（阶段出口依赖）
 
@@ -30,7 +30,7 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 | 主题 | 关闭阶段 | 依赖验证项 | 状态 |
 |---|---|---|---|
 | LaTeX/Typst parser 的正式实现（本阶段只用行+范围归因） | 0 | 阶段 0 第 3、7 项 | 部分关闭：策略已定（ADR 0008），解析器待实现 |
-| CRDT engine（Loro → Yrs → Automerge） | 0 | 阶段 0 第 4 项 | **部分关闭**：ADR 0009 已建（Proposed），预筛通过；夹具对比待跑 |
+| CRDT engine（Loro → Yrs → Automerge） | 0 | 阶段 0 第 4 项 | **已关闭**：ADR 0009 Accepted，选定 Loro 1.16.0（报告 0014） |
 | WAL、快照与内容寻址格式 | 0 | 阶段 0 第 5 项 | 缺文件 |
 | 原生语义文档持久化 schema | 0 | 阶段 0 第 5 项 | 缺文件 |
 | Markdown 方言基线 | 3 | 阶段 3 | 缺文件 |
