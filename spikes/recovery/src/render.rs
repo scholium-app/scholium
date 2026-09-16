@@ -53,11 +53,11 @@ fn emit_latex_block(document: &Document, node: NodeId, out: &mut String) {
     match current.kind {
         NodeKind::Heading => {
             out.push_str("\\section*{");
-            emit_latex_inline(document, node, out, false);
+            emit_latex_inline(document, node, out);
             out.push_str("}\n");
         }
         _ => {
-            emit_latex_inline(document, node, out, false);
+            emit_latex_inline(document, node, out);
             out.push_str("\n\n");
         }
     }
@@ -70,17 +70,22 @@ fn emit_typst_block(document: &Document, node: NodeId, out: &mut String) {
     match current.kind {
         NodeKind::Heading => {
             out.push_str("= ");
-            emit_typst_inline(document, node, out, false);
+            emit_typst_inline(document, node, out);
             out.push('\n');
         }
         _ => {
-            emit_typst_inline(document, node, out, false);
+            emit_typst_inline(document, node, out);
             out.push_str("\n\n");
         }
     }
 }
 
-fn emit_latex_inline(document: &Document, node: NodeId, out: &mut String, in_math: bool) {
+/// 生成 LaTeX 行内内容。
+///
+/// 刻意**不区分**标记模式与数学模式，也刻意不做"文本模式 vs 数学模式"的转义分派：
+/// 目前所有叶子都是 ASCII 标识符与汉字，`\textbackslash{}` / `\_` / `\%` 这些
+/// 文本模式转义在 `$…$` 内同样合法。正式实现必须按模式分别转义（见报告"失败与不确定性"）。
+fn emit_latex_inline(document: &Document, node: NodeId, out: &mut String) {
     let Ok(current) = document.node(node) else {
         return;
     };
@@ -88,44 +93,47 @@ fn emit_latex_inline(document: &Document, node: NodeId, out: &mut String, in_mat
         NodeKind::Text | NodeKind::Raw => out.push_str(&escape_latex(&document.text_of(node).unwrap_or_default())),
         NodeKind::Document | NodeKind::Paragraph | NodeKind::Heading => {
             for child in document.slot(node, 0).unwrap_or(&[]) {
-                emit_latex_inline(document, *child, out, in_math);
+                emit_latex_inline(document, *child, out);
             }
         }
         NodeKind::Math => {
-            out.push_str("$");
+            out.push('$');
             for child in document.slot(node, 0).unwrap_or(&[]) {
-                emit_latex_inline(document, *child, out, true);
+                emit_latex_inline(document, *child, out);
             }
-            out.push_str("$");
+            out.push('$');
         }
         NodeKind::Fraction => {
             out.push_str("\\frac{");
-            emit_latex_slot(document, node, 0, out, true);
+            emit_latex_slot(document, node, 0, out);
             out.push_str("}{");
-            emit_latex_slot(document, node, 1, out, true);
+            emit_latex_slot(document, node, 1, out);
             out.push('}');
         }
         NodeKind::Sqrt => {
             out.push_str("\\sqrt{");
-            emit_latex_slot(document, node, 0, out, true);
+            emit_latex_slot(document, node, 0, out);
             out.push('}');
         }
         NodeKind::Script => {
-            emit_latex_slot(document, node, 0, out, true);
+            emit_latex_slot(document, node, 0, out);
             let mut superscript = String::new();
-            emit_latex_slot(document, node, 2, &mut superscript, true);
+            emit_latex_slot(document, node, 2, &mut superscript);
             if !superscript.is_empty() {
                 out.push_str(&format!("^{{{superscript}}}"));
             }
             let mut subscript = String::new();
-            emit_latex_slot(document, node, 1, &mut subscript, true);
+            emit_latex_slot(document, node, 1, &mut subscript);
             if !subscript.is_empty() {
                 out.push_str(&format!("_{{{subscript}}}"));
             }
         }
         NodeKind::Delimited => {
+            // 不用 `push('(')`：那会丢掉 `\left`，定界符大小不再随内容变化，
+            // 是语义变化而不是风格问题；clippy 的 single_char_push_str 建议在这里不适用。
+            #[allow(clippy::single_char_add_str)]
             out.push_str("\\left(");
-            emit_latex_slot(document, node, 0, out, true);
+            emit_latex_slot(document, node, 0, out);
             out.push_str("\\right)");
         }
         NodeKind::Matrix => {
@@ -135,14 +143,17 @@ fn emit_latex_inline(document: &Document, node: NodeId, out: &mut String, in_mat
                 if index > 0 {
                     out.push_str(if index % 2 == 0 { " \\\\ " } else { " & " });
                 }
-                emit_latex_inline(document, *cell, out, true);
+                emit_latex_inline(document, *cell, out);
             }
             out.push_str("\\end{pmatrix}");
         }
     }
 }
 
-fn emit_typst_inline(document: &Document, node: NodeId, out: &mut String, in_math: bool) {
+/// 生成 Typst 行内内容。
+///
+/// 与 LaTeX 侧同理：不区分标记模式与数学模式，转义集合是两边的并集而非各自最小集。
+fn emit_typst_inline(document: &Document, node: NodeId, out: &mut String) {
     let Ok(current) = document.node(node) else {
         return;
     };
@@ -150,44 +161,45 @@ fn emit_typst_inline(document: &Document, node: NodeId, out: &mut String, in_mat
         NodeKind::Text | NodeKind::Raw => out.push_str(&escape_typst(&document.text_of(node).unwrap_or_default())),
         NodeKind::Document | NodeKind::Paragraph | NodeKind::Heading => {
             for child in document.slot(node, 0).unwrap_or(&[]) {
-                emit_typst_inline(document, *child, out, in_math);
+                emit_typst_inline(document, *child, out);
             }
         }
         NodeKind::Math => {
             out.push_str("$ ");
             for child in document.slot(node, 0).unwrap_or(&[]) {
-                emit_typst_inline(document, *child, out, true);
+                emit_typst_inline(document, *child, out);
             }
+            // 前导/尾随空格是 Typst 数学模式的分隔要求，所以这一侧只能 push_str。
             out.push_str(" $");
         }
         NodeKind::Fraction => {
             out.push_str("frac(");
-            emit_typst_slot(document, node, 0, out, true);
+            emit_typst_slot(document, node, 0, out);
             out.push_str(", ");
-            emit_typst_slot(document, node, 1, out, true);
+            emit_typst_slot(document, node, 1, out);
             out.push(')');
         }
         NodeKind::Sqrt => {
             out.push_str("sqrt(");
-            emit_typst_slot(document, node, 0, out, true);
+            emit_typst_slot(document, node, 0, out);
             out.push(')');
         }
         NodeKind::Script => {
-            emit_typst_slot(document, node, 0, out, true);
+            emit_typst_slot(document, node, 0, out);
             let mut superscript = String::new();
-            emit_typst_slot(document, node, 2, &mut superscript, true);
+            emit_typst_slot(document, node, 2, &mut superscript);
             if !superscript.is_empty() {
                 out.push_str(&format!("^({superscript})"));
             }
             let mut subscript = String::new();
-            emit_typst_slot(document, node, 1, &mut subscript, true);
+            emit_typst_slot(document, node, 1, &mut subscript);
             if !subscript.is_empty() {
                 out.push_str(&format!("_({subscript})"));
             }
         }
         NodeKind::Delimited => {
             out.push_str("lr((");
-            emit_typst_slot(document, node, 0, out, true);
+            emit_typst_slot(document, node, 0, out);
             out.push_str("))");
         }
         NodeKind::Matrix => {
@@ -197,22 +209,22 @@ fn emit_typst_inline(document: &Document, node: NodeId, out: &mut String, in_mat
                 if index > 0 {
                     out.push_str(if index % 2 == 0 { "; " } else { ", " });
                 }
-                emit_typst_inline(document, *cell, out, true);
+                emit_typst_inline(document, *cell, out);
             }
             out.push(')');
         }
     }
 }
 
-fn emit_latex_slot(document: &Document, node: NodeId, slot: usize, out: &mut String, in_math: bool) {
+fn emit_latex_slot(document: &Document, node: NodeId, slot: usize, out: &mut String) {
     if let Some(child) = document.slot(node, slot).unwrap_or(&[]).first() {
-        emit_latex_inline(document, *child, out, in_math);
+        emit_latex_inline(document, *child, out);
     }
 }
 
-fn emit_typst_slot(document: &Document, node: NodeId, slot: usize, out: &mut String, in_math: bool) {
+fn emit_typst_slot(document: &Document, node: NodeId, slot: usize, out: &mut String) {
     if let Some(child) = document.slot(node, slot).unwrap_or(&[]).first() {
-        emit_typst_inline(document, *child, out, in_math);
+        emit_typst_inline(document, *child, out);
     }
 }
 

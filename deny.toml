@@ -17,6 +17,8 @@ allow = [
     "Apache-2.0 WITH LLVM-exception",
     "BSD-2-Clause",
     "BSD-3-Clause",
+    # Boost Software License：宽松许可，与 MIT 同类；依据见 ADR 0010。
+    "BSL-1.0",
     "ISC",
     "Zlib",
     "0BSD",

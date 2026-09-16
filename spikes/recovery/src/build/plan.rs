@@ -11,7 +11,7 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::error::{Result, io_context};
+use crate::error::Result;
 use crate::fsutil;
 
 /// 一条已加载并进入编辑的源码。
@@ -23,8 +23,6 @@ pub struct TrackedSource {
     pub text: String,
     /// 加载时的 SHA-256。
     pub loaded_hash: String,
-    /// 加载时的字节数。
-    pub loaded_bytes: usize,
 }
 
 /// 为什么拒绝保存。
@@ -87,7 +85,6 @@ impl TrackedSource {
             path: path.to_path_buf(),
             text: String::from_utf8_lossy(&bytes).to_string(),
             loaded_hash: fsutil::sha256_hex(&bytes),
-            loaded_bytes: bytes.len(),
         })
     }
 
@@ -157,8 +154,6 @@ pub struct ConflictReport {
     pub path: PathBuf,
     /// 拒写判定。
     pub rejection: Rejection,
-    /// 当前磁盘内容（读不到时为空）。
-    pub current_text: String,
     /// 差异行（1-based 行号）。
     pub diff_lines: Vec<DiffLine>,
 }
@@ -190,7 +185,6 @@ impl ConflictReport {
         Ok(Self {
             path: source.path.clone(),
             rejection,
-            current_text,
             diff_lines,
         })
     }
@@ -264,18 +258,4 @@ pub fn first_difference(left: &str, right: &str) -> Option<usize> {
                 Some(left.chars().count().min(right.chars().count()))
             }
         })
-}
-
-/// 在 `dir` 下建立一对源码路径，名字里带引擎名。
-pub fn source_path(dir: &Path, job_name: &str, ext: &str) -> PathBuf {
-    dir.join(format!("{job_name}.{ext}"))
-}
-
-/// 确保目录存在。
-///
-/// # Errors
-///
-/// 目录创建失败。
-pub fn ensure_dir(dir: &Path) -> Result<()> {
-    std::fs::create_dir_all(dir).map_err(io_context(dir))
 }

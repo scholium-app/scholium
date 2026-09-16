@@ -63,11 +63,18 @@ pub fn compile(request: &BuildRequest) -> Result<CompiledProduct> {
         product_path,
         pages: Some(pages),
         engine_note: format!(
-            "typst crate 进程内编译；warnings={}；page-hash={page_hash}",
+            "{TYPST_VERSION_NOTE} 进程内编译；warnings={}；page-hash={page_hash}",
             warnings.len()
         ),
     })
 }
+
+/// 写进产物与证据行的 Typst 版本。
+///
+/// 硬编码在这里**只用于人读的证据行**，不是锁定机制；锁定机制是 `Cargo.toml` 的
+/// `=0.15.1` 与 `Cargo.lock` 的实际解析结果（报告里抄录 lock 文件）。Typst 是库依赖，
+/// 没有 `typst --version` 可问；运行时的库哈希则用来证明"编译进来的确实是这一份"。
+const TYPST_VERSION_NOTE: &str = "typst 0.15.1";
 
 /// 页内容的确定性哈希：`PagedDocument` 自己实现了 `Hash`（页与文档信息都参与，
 /// introspector 由页派生因此不重复计入）。

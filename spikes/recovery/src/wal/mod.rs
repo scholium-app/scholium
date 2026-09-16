@@ -34,6 +34,12 @@ pub const MAGIC: [u8; 4] = *b"SWAL";
 /// 固定头长度。
 pub const HEADER_LEN: usize = 32;
 
+/// 头部中参与 CRC 的部分：`[MAGIC_LEN, HEADER_LEN - CRC_LEN)`，即长度/序号/纪元/负载长度。
+///
+/// 单独具名是因为这里踩过一次：`encode` 里先写 28 字节头字段再算 CRC，
+/// 若把范围写成 `..HEADER_LEN` 就会越界 panic。CRC 位置在头的最后 4 字节。
+pub const CRC_INPUT: std::ops::Range<usize> = 4..28;
+
 /// 负载长度上限：1 MiB。超过说明头已损坏，而不是真有这么大的记录。
 pub const MAX_PAYLOAD: usize = 1024 * 1024;
 
@@ -74,7 +80,7 @@ impl Record {
         out.extend_from_slice(&self.seq.to_le_bytes());
         out.extend_from_slice(&self.epoch.to_le_bytes());
         out.extend_from_slice(&payload_len.to_le_bytes());
-        let crc = checksum(&out[4..HEADER_LEN], &self.payload);
+        let crc = record_crc(&out[CRC_INPUT], &self.payload);
         out.extend_from_slice(&crc.to_le_bytes());
         out.extend_from_slice(&self.payload);
         out
@@ -82,7 +88,10 @@ impl Record {
 }
 
 /// 计算一条记录的 CRC-32：头字段（除魔数）加负载。
-pub fn checksum(header_tail: &[u8], payload: &[u8]) -> u32 {
+///
+/// 名字带 `record_` 前缀是为了和 [`Record::checksum`] 区分：两者都在本模块可见，
+/// 同名会让 `crate::wal::checksum(header, payload)` 解析到方法调用上并 panic。
+pub fn record_crc(header_tail: &[u8], payload: &[u8]) -> u32 {
     let mut hasher = Hasher::new();
     hasher.update(header_tail);
     hasher.update(payload);
@@ -107,11 +116,6 @@ pub fn append(path: &Path, record: &Record) -> Result<u64> {
     let bytes = record.encode();
     crate::fsutil::append_synced(&mut file, &bytes)?;
     Ok(offset)
-}
-
-/// 日志文件里已存在的记录条数（只数完整记录）。
-pub fn count_complete(path: &Path) -> Result<usize> {
-    Ok(recovery::recover(path)?.records.len())
 }
 
 /// 负载与序号一致性的守卫：拒绝非连续序号，避免夹具自己写错日志还判"通过"。

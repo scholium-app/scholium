@@ -23,8 +23,3 @@ pub fn subcommand(args: &[String]) -> Option<String> {
         .contains(&candidate.as_str())
         .then(|| candidate.clone())
 }
-
-/// 是否带开关参数。
-pub fn has_flag(args: &[String], key: &str) -> bool {
-    args.iter().any(|arg| arg == key)
-}

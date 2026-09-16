@@ -25,9 +25,9 @@ typst = "=0.15.1"
 typst-layout = "=0.15.1"
 # 字体来源（内置 + 系统扫描）。
 typst-kit = { version = "=0.15.1", features = ["embedded-fonts", "scan-fonts"] }
-
-[dev-dependencies]
-# 随机截断用固定种子；rand 0.9 的 SmallRng 可用 32 字节种子复现。
+# 随机截断用固定种子。注意：这些是**可执行判据的实现依赖**，必须放在
+# [dependencies] 而不是 [dev-dependencies] —— 二进制目标看不到 dev-dependencies，
+# 放错位置会在 cargo build 阶段直接编译失败。
 rand = "=0.9.5"
 
 [lints.clippy]

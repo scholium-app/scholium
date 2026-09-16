@@ -19,27 +19,18 @@ pub fn compile(request: &BuildRequest) -> Result<CompiledProduct> {
     let staged = crate::build::sandbox::stage_source(request)?;
     let args = latexmk_args(request, &staged);
 
-    let output = process::run_checked("latexmk", &args, &request.out_dir).map_err(|error| {
-        // latexmk 的失败信息在 stdout 的日志里，错误消息必须带上最后几行，
-        // 否则报告里只剩一个退出码，无法判断是隔离失败还是文档本身编译不过。
-        SpikeError::Core(match error {
-            SpikeError::CommandFailed {
-                program,
-                code,
-                stderr,
-            } => format!("{program} 退出 {code:?}: {stderr}"),
-            other => format!("{other}"),
-        })
-    })?;
+    // latexmk 失败时保持 `CommandFailed` 而不是包成 `Core`：错误分类是判据的一部分，
+    // 调用方要能区分"引擎跑了但文档编译不过"和"隔离/锁/路径出错"。
+    process::run_checked("latexmk", &args, &request.out_dir)?;
 
     let product_path = request
         .out_dir
         .join(format!("{}.pdf", request.job_name));
     if !product_path.exists() {
         return Err(SpikeError::Core(format!(
-            "latexmk 成功但产物缺失: {}；stdout 尾部: {}",
+            "latexmk 成功但产物缺失: {}（沙箱文件: {:?}）",
             product_path.display(),
-            output.summary(6)
+            crate::fsutil::list_names(&request.out_dir).unwrap_or_default()
         )));
     }
 
@@ -47,7 +38,11 @@ pub fn compile(request: &BuildRequest) -> Result<CompiledProduct> {
     Ok(CompiledProduct {
         product_path,
         pages,
-        engine_note: format!("latexmk + xelatex；{}", first_line(&output.stdout)),
+        engine_note: format!(
+            "{}；{}",
+            process::version_line("latexmk", &["-v"]),
+            process::version_line("xelatex", &["--version"])
+        ),
     })
 }
 
@@ -74,14 +69,6 @@ fn pdf_pages(path: &Path) -> Result<Option<usize>> {
         Err(_) => return Ok(None),
     };
     Ok(process::parse_pdf_pages(&output.stdout))
-}
-
-fn first_line(text: &str) -> String {
-    text.lines()
-        .find(|line| !line.trim().is_empty())
-        .unwrap_or("无输出版本行")
-        .trim()
-        .to_string()
 }
 
 /// 沙箱里应出现的 LaTeX 中间文件扩展名（证据用，不参与判定逻辑）。

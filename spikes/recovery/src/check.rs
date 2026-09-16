@@ -126,4 +126,19 @@ impl Checks {
     pub fn case_count(&self) -> usize {
         self.cases.len()
     }
+
+    /// 逐用例汇总的纯文本形式，用于跨轮次对比。
+    pub fn summary_text(&self) -> String {
+        let mut out = String::new();
+        for case in &self.cases {
+            let verdict = if case.is_pass() { "PASS" } else { "FAIL" };
+            out.push_str(&format!(
+                "{verdict} {:<34} {}/{}\n",
+                case.id,
+                case.passed,
+                case.total()
+            ));
+        }
+        out
+    }
 }

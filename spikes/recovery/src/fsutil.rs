@@ -65,16 +65,6 @@ pub fn list_names(dir: &Path) -> Result<Vec<String>> {
     Ok(names)
 }
 
-/// 按扩展名过滤目录下的文件名，返回 `文件名` 列表，按名称排序。
-pub fn names_with_suffix(dir: &Path, suffix: &str) -> Result<Vec<String>> {
-    let mut names: Vec<String> = list_names(dir)?
-        .into_iter()
-        .filter(|name| name.ends_with(suffix))
-        .collect();
-    names.sort();
-    Ok(names)
-}
-
 /// 抢救目录：为一次运行创建的临时根目录。
 ///
 /// `SCHOLIUM_SPIKE_KEEP=1` 时保留现场并打印路径，否则在 `Drop` 时递归删除。

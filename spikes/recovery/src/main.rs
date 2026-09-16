@@ -42,16 +42,50 @@ fn main() -> Result<()> {
 }
 
 /// 跑完全部判据，返回是否存在失败。
+///
+/// `SCHOLIUM_SPIKE_REPEAT=2` 让整轮判据再跑一遍：第二轮用**全新的目录与全新的进程**，
+/// 用它的逐用例汇总行与第一轮逐行对比，证明结果不是靠残留状态或运气得到的。
 fn run_all() -> Result<bool> {
-    let workspace = PathBuf::from(
-        std::env::var("SCHOLIUM_SPIKE_WORKSPACE")
-            .unwrap_or_else(|_| "/tmp/scholium-recovery-workspace".to_string()),
-    );
+    let repeat: usize = std::env::var("SCHOLIUM_SPIKE_REPEAT")
+        .ok()
+        .and_then(|value| value.parse().ok())
+        .unwrap_or(1)
+        .max(1);
+
+    let mut rounds = Vec::new();
+    let mut all_pass = true;
+    for round in 0..repeat {
+        let (passed, summary) = run_round(round)?;
+        all_pass &= passed;
+        rounds.push(summary);
+    }
+
+    if rounds.len() > 1 {
+        println!("\n== 两轮一致性 ==");
+        let identical = rounds[0] == rounds[1];
+        println!(
+            "  [{}] 第 1 轮与第 2 轮逐用例汇总完全一致",
+            if identical { "PASS" } else { "FAIL" }
+        );
+        if !identical {
+            all_pass = false;
+            println!("  第一轮:\n{}", rounds[0]);
+            println!("  第二轮:\n{}", rounds[1]);
+        }
+    }
+    Ok(!all_pass)
+}
+
+/// 跑一轮判据，返回是否全过与逐用例汇总文本。
+fn run_round(round: usize) -> Result<(bool, String)> {
+    let base = std::env::var("SCHOLIUM_SPIKE_WORKSPACE")
+        .unwrap_or_else(|_| "/tmp/scholium-recovery-workspace".to_string());
+    let workspace = PathBuf::from(format!("{base}-r{round}"));
     let _ = std::fs::remove_dir_all(&workspace);
     fsutil::write_file(&workspace.join(".keep"), b"workspace root\n")?;
 
     let mut checks = Checks::new();
-    println!("Scholium 阶段 0 第 5 项 spike：构建/恢复");
+    println!("Scholium 阶段 0 第 5 项 spike：构建/恢复（第 {} 轮）", round + 1);
     println!("工作目录: {}\n", workspace.display());
 
     criteria::build_isolation::run(&mut checks, &workspace)?;
@@ -59,11 +93,11 @@ fn run_all() -> Result<bool> {
     criteria::source_conflict::run(&mut checks, &workspace)?;
     criteria::random_truncate::run(&mut checks, &workspace)?;
 
-    let all_pass = checks.finish();
+    let passed = checks.finish();
     println!(
-        "\n总结论: {}（用例 {} 个独立判定）",
-        if all_pass { "PASS" } else { "FAIL" },
+        "\n本轮总结论: {}（用例 {} 个独立判定）",
+        if passed { "PASS" } else { "FAIL" },
         checks.case_count()
     );
-    Ok(!all_pass)
+    Ok((passed, checks.summary_text()))
 }

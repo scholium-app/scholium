@@ -11,8 +11,6 @@ use crate::error::{Result, SpikeError};
 /// 捕获到的子进程结果。
 #[derive(Debug, Clone)]
 pub struct ProcessOutput {
-    /// 程序名（用于错误消息）。
-    pub program: String,
     /// 退出码；被信号杀死时为 `None`。
     pub code: Option<i32>,
     /// 终止信号；正常退出时为 `None`。
@@ -73,7 +71,6 @@ pub fn run(program: &str, args: &[String], cwd: &Path) -> Result<ProcessOutput> 
     let (code, signal) = (output.status.code(), None);
 
     Ok(ProcessOutput {
-        program: program.to_string(),
         code,
         signal,
         stdout: String::from_utf8_lossy(&output.stdout).to_string(),
@@ -131,12 +128,33 @@ pub fn spawn_inherit(program: &str, args: &[String], cwd: &Path) -> Result<Proce
     let (code, signal) = (status.code(), None);
 
     Ok(ProcessOutput {
-        program: program.to_string(),
         code,
         signal,
         stdout: String::new(),
         stderr: String::new(),
     })
+}
+
+/// 取程序版本行的可读形式：优先第一行，没有则取 stderr 第一行，都没有则 `"未知"`。
+///
+/// 版本要进报告，所以必须是**程序自己报的版本**，不能由我们拼一个看起来像版本的字符串。
+pub fn version_line(program: &str, args: &[&str]) -> String {
+    let owned: Vec<String> = args.iter().map(|arg| arg.to_string()).collect();
+    let output = match run(program, &owned, Path::new(".")) {
+        Ok(output) => output,
+        Err(error) => return format!("{program} 不可用 ({error})"),
+    };
+    let source = if output.stdout.trim().is_empty() {
+        &output.stderr
+    } else {
+        &output.stdout
+    };
+    source
+        .lines()
+        .map(str::trim)
+        .find(|line| !line.is_empty())
+        .unwrap_or("未知")
+        .to_string()
 }
 
 /// 从 `pdfinfo` 输出里解析页数。

@@ -17,30 +17,27 @@ use crate::cli::arg_value;
 use crate::error::{Result, SpikeError, io_context};
 use crate::wal::Record;
 
-/// 子进程模式。
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum WriterMode {
-    /// 正常写完 `count` 条记录后正常退出（进程退出码 0）。
-    Normal {
-        /// 记录条数。
-        count: u64,
-    },
-    /// 写完 `crash_at - 1` 条完整记录，然后分块写第 `crash_at` 条并在
-    /// 第 `chunk` 块之后 `SIGKILL` 自己。
-    Crash {
-        /// 目标崩溃记录序号（从 1 开始）。
-        crash_at: u64,
-        /// 分块大小。
-        chunk: usize,
-    },
-    /// 写完 `count` 条完整记录后，翻转尾部记录里的一个字节再自杀。
-    ///
-    /// 这一分支**不是**真实崩溃能产生的（真实撕裂不会产生自洽的头加坏负载的后来记录），
-    /// 它对应的是磁盘位翻转或外部改写，用来验证 CRC 确实拦得住。
-    CorruptTail {
-        /// 完整记录条数。
-        count: u64,
-    },
+/// 子进程模式。由 `--mode` 解析而来；未知取值在解析处直接报错。
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Mode {
+    /// 正常写完 `count` 条记录后正常退出（退出码 0）。
+    Normal,
+    /// 写完 `crash_at - 1` 条完整记录，再分块写第 `crash_at` 条并中途 SIGKILL。
+    Crash,
+    /// 写完完整记录后翻转尾部一个字节，再 SIGKILL。
+    CorruptTail,
+}
+
+impl Mode {
+    /// 解析 `--mode` 取值。
+    fn parse(raw: &str) -> Result<Self> {
+        match raw {
+            "normal" => Ok(Self::Normal),
+            "crash" => Ok(Self::Crash),
+            "corrupt-tail" => Ok(Self::CorruptTail),
+            other => Err(SpikeError::Core(format!("未知 writer 模式: {other}"))),
+        }
+    }
 }
 
 /// 子进程入口：解析参数、执行模式。
@@ -50,29 +47,35 @@ pub enum WriterMode {
 /// 参数缺失/非法，或写入失败。
 pub fn run(args: &[String]) -> Result<()> {
     let path = PathBuf::from(require(args, "--wal")?);
-    match arg_value(args, "--mode").unwrap_or_else(|| "normal".to_string()).as_str() {
-        "normal" => {
+    let mode = Mode::parse(&arg_value(args, "--mode").unwrap_or_else(|| "normal".to_string()))?;
+    match mode {
+        Mode::Normal => {
             let count = parse_u64(args, "--count")?;
             write_normal(&path, count)
         }
-        "crash" => {
+        Mode::Crash => {
             let crash_at = parse_u64(args, "--crash-at")?;
             let chunk = parse_usize(args, "--chunk")?;
-            if crash_at < 2 || crash_at > 64 {
+            let kill_after = parse_usize(args, "--kill-after-chunks")?;
+            if !(2..=64).contains(&crash_at) {
                 return Err(SpikeError::Core(format!(
                     "crash-at 必须落在 [2, 64]，收到 {crash_at}"
                 )));
             }
-            if chunk == 0 || chunk > 4096 {
+            if !(1..=4096).contains(&chunk) {
                 return Err(SpikeError::Core(format!("chunk 必须落在 [1, 4096]，收到 {chunk}")));
             }
-            crash_mid_record(&path, crash_at, chunk)
+            if kill_after == 0 || kill_after > 64 {
+                return Err(SpikeError::Core(format!(
+                    "kill-after-chunks 必须落在 [1, 64]，收到 {kill_after}"
+                )));
+            }
+            crash_mid_record(&path, crash_at, chunk, kill_after)
         }
-        "corrupt-tail" => {
+        Mode::CorruptTail => {
             let count = parse_u64(args, "--count")?;
             corrupt_tail(&path, count)
         }
-        other => Err(SpikeError::Core(format!("未知 writer 模式: {other}"))),
     }
 }
 
@@ -88,30 +91,45 @@ pub fn write_normal(path: &Path, count: u64) -> Result<()> {
     Ok(())
 }
 
-/// 分块写一条记录，并在第 `kill_after_chunks` 块之后自杀。
+/// 分块写一条记录，并在写完 `kill_after_chunks` 块之后自杀。
+///
+/// 为什么必须显式给"杀在第几块"而不是"写完循环就杀"：`bytes.chunks(chunk)` 只要
+/// `chunk` 不整除记录长度，循环就会把整条记录写完，于是这个"崩溃夹具"会悄悄退化成
+/// **正常关闭**，把撕裂用例测成空。`kill_after_chunks` 让"停在记录中间"成为
+/// 夹具的前置条件，并在这里直接断言。
 ///
 /// # Errors
 ///
-/// 写入失败。函数正常情况下不返回：进程会先被 `SIGKILL` 终止。
-pub fn crash_mid_record(path: &Path, seq: u64, chunk: usize) -> Result<()> {
+/// 写入失败，或参数根本制造不出残缺（此时明确报错，不返回 Ok）。
+pub fn crash_mid_record(path: &Path, seq: u64, chunk: usize, kill_after_chunks: usize) -> Result<()> {
     write_normal(path, seq - 1)?;
 
+    // 只用 `.append(true)`（它已隐含可写；clippy 的
+    // `suspicious_open_options` 会指出多写的 `.write(true)` 是冗余的）。
+    // 这里曾经漏掉可写性判断、写死 `.append(true)` 却以为不可写，于是改用
+    // 「写完循环再自杀」的写法，结果分块整除时记录被完整写下，
+    // "尾部撕裂"用例静默退化成"正常关闭"。
     let mut file = OpenOptions::new()
         .create(true)
         .append(true)
         .open(path)
         .map_err(io_context(path))?;
     let bytes = fixture_record(seq).encode();
-    for piece in bytes.chunks(chunk) {
+    let chunks: Vec<&[u8]> = bytes.chunks(chunk).collect();
+    if kill_after_chunks >= chunks.len() {
+        return Err(SpikeError::Core(format!(
+            "kill-after-chunks={kill_after_chunks} 覆盖整条记录（{} B / {chunk} B 分块 = {} 块），\
+             制造不出残缺尾部",
+            bytes.len(),
+            chunks.len()
+        )));
+    }
+
+    for piece in chunks.iter().take(kill_after_chunks) {
         file.write_all(piece).map_err(io_context(path))?;
         file.sync_all().map_err(io_context(path))?;
     }
-    // 写完却到达这里说明 chunk 整除记录长度，没有制造出尾部残缺；
-    // 夹具必须明确失败，而不是悄悄变成"正常关闭"用例。
-    Err(SpikeError::Core(format!(
-        "分块 {chunk} 未能在第 {seq} 条记录中间截断（记录 {} B）",
-        bytes.len()
-    )))
+    kill_self()
 }
 
 /// 写完完整记录后破坏尾部记录的一个负载字节，再自杀。
@@ -135,10 +153,11 @@ pub fn corrupt_tail(path: &Path, count: u64) -> Result<()> {
 ///
 /// # Errors
 ///
-/// 理论上不会失败；失败时返回 IO 错误而不是假装成功。
+/// 实际上不会走到错误返回：`SIGKILL` 不能被捕获或阻塞，进程在 `raise` 内即终止。
+/// 两个 `Err` 分支是为了让类型是 `Result`，并保证"没死成"不会被当成成功。
 pub fn kill_self() -> Result<()> {
-    // SAFETY: raise(SIGKILL) 只接受一个有效信号号，没有指针参数，
-    // 不会与 Rust 的内存模型交互；此调用之后进程立即终止，不会返回。
+    // SAFETY: `raise` 的参数是一个信号号常量，没有指针、没有缓冲区、没有别名问题，
+    // 也不与 Rust 的内存模型交互；`SIGKILL` 在该调用内终止进程，函数不会正常返回。
     let rc = unsafe { libc::raise(libc::SIGKILL) };
     if rc != 0 {
         return Err(SpikeError::Core(format!("raise(SIGKILL) 返回 {rc}")));

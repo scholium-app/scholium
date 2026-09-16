@@ -15,14 +15,19 @@ use crate::error::{Result, SpikeError};
 use crate::fsutil::Scratch;
 use crate::process::{self, ProcessOutput};
 use crate::wal::recovery::{self, TailDefect};
-use crate::wal::{self, Record};
+use crate::wal::{self, HEADER_LEN, Record};
 
 /// 夹具记录条数。
 const RECORDS: u64 = 8;
-/// 分块大小：设计成**不能整除**探针记录长度，构造出真的尾部残缺。
-/// 探针记录长度见用例内断言，不靠注释声称。
-const CHUNK: usize = 64;
-/// 刻意选一条负载长度**不是** `CHUNK` 整数倍的记录作为崩溃点。
+/// 负载撕裂用例的分块大小。崩溃点是第 5 条记录（76 B）。
+/// 第一块 40 B 写完后立即自杀：头（32 B）完整、负载只写下前 8 B。
+const CHUNK: usize = 40;
+/// 头撕裂用例的分块大小：20 B < 头长 32 B，所以第一块只覆盖魔数与部分长度字段。
+const HEADER_CHUNK: usize = 20;
+/// 写完第几块之后自杀。固定为 1：夹具必须停在记录中间，
+/// 写满整条记录再杀就等于把撕裂用例测成了正常关闭。
+const KILL_AFTER_CHUNKS: usize = 1;
+/// 崩溃点记录。取 5 使前面有完整的 4 条记录可以对照。
 const CRASH_SEQ: u64 = 5;
 
 /// 崩溃子进程的启动结果。
@@ -52,6 +57,76 @@ pub fn run(checks: &mut Checks, workspace: &Path) -> Result<()> {
     case_normal_close(checks, scratch.root())?;
     case_tail_truncated(checks, scratch.root())?;
     case_tail_corrupted(checks, scratch.root())?;
+    case_synthetic_rewrite(checks, scratch.root())?;
+    Ok(())
+}
+
+/// 用例 4（负向能力边界）：**协同改写长度字段与 CRC 不会被拦住**。
+///
+/// 这一用例期望的结果是"改写成功"，因此它同时是：
+/// - 对 [`crate::wal::recovery::TailDefect`] 校验强度的能力上界声明；
+/// - 对"CRC 防的是随机损坏/撕裂，不防蓄意改写"这一设计取舍的**可复现证据**。
+///
+/// 如果哪天实现加上了独立校验（例如对整个前缀做哈希链），这个用例会失败——
+/// 那时应当是**改断言**并在报告里更新结论，而不是删掉它。
+fn case_synthetic_rewrite(checks: &mut Checks, root: &Path) -> Result<()> {
+    checks.case("wal.synthetic-rewrite-boundary");
+    let dir = root.join("synthetic");
+    std::fs::create_dir_all(&dir).map_err(crate::error::io_context(&dir))?;
+    let log = dir.join("draft.wal");
+    let baseline = write_baseline(&log, 4)?;
+
+    let mut bytes = crate::fsutil::read_file(&log)?;
+    // 第 2 条记录的起点与长度（用同一套编码算出来，不靠猜偏移）。
+    let start: usize = baseline[..1].iter().map(Record::encoded_len).sum();
+    let record = &baseline[1];
+    let payload_start = start + wal::HEADER_LEN;
+    let payload_len = record.payload.len();
+
+    // 把负载整体改成同长度的另一个值，然后**把 CRC 一起改对**。
+    let replacement = vec![b'Z'; payload_len];
+    bytes[payload_start..payload_start + payload_len].copy_from_slice(&replacement);
+    let header_crc_range = (start + wal::CRC_INPUT.start)..(start + wal::CRC_INPUT.end);
+    let new_crc = wal::record_crc(
+        &bytes[header_crc_range],
+        &bytes[payload_start..payload_start + payload_len],
+    );
+    let crc_offset = start + 28;
+    bytes[crc_offset..crc_offset + 4].copy_from_slice(&new_crc.to_le_bytes());
+    crate::fsutil::write_file(&log, &bytes)?;
+
+    let recovered = crate::wal::recovery::recover(&log)?;
+    checks.note(
+        "协同改写",
+        &format!(
+            "第 2 条负载改为 {} 字节的 'Z' 并同步重算 CRC — 恢复 {} 条，defect={:?}",
+            payload_len,
+            recovered.records.len(),
+            recovered.defect
+        ),
+    );
+    checks.expect(
+        recovered.records.len() == 4 && recovered.defect.is_none(),
+        "协同改写（含 CRC）确实不会被结构性校验拦住 —— 这是已知能力上界",
+        &format!(
+            "恢复 {} 条，defect={:?}",
+            recovered.records.len(),
+            recovered.defect
+        ),
+    );
+    checks.expect(
+        recovered.records[1].payload == replacement,
+        "恢复出的负载是改写后的内容（数据确实被替换，而不是被丢弃）",
+        &format!("前 8 字节={:?}", &recovered.records[1].payload[..8.min(payload_len)]),
+    );
+    checks.expect(
+        recovered.records[0] == baseline[0] && recovered.records[2] == baseline[2],
+        "同一条记录前后的记录不受影响",
+        &format!(
+            "第 1 条 seq={} 第 3 条 seq={}",
+            recovered.records[0].seq, recovered.records[2].seq
+        ),
+    );
     Ok(())
 }
 
@@ -87,20 +162,24 @@ fn check_encoding(checks: &mut Checks) -> Result<()> {
         &format!("defect={:?}", scan.defect),
     );
 
-    // 探针记录长度必须不是分块大小整数倍，否则崩溃用例会退化成"完整记录"。
+    // 崩溃点记录长度必须比一个分块长，且不是分块大小的整数倍，
+    // 否则分块写会在记录边界上停下，"尾部撕裂"用例会退化成"正常关闭"。
     let probe = crash::fixture_record(CRASH_SEQ);
     checks.expect(
-        probe.encoded_len() % CHUNK != 0,
-        "崩溃探针记录长度不是分块整数倍",
-        &format!("记录 {} B，分块 {CHUNK} B", probe.encoded_len()),
+        probe.encoded_len() > CHUNK * KILL_AFTER_CHUNKS,
+        "崩溃探针比写完的分块长（否则夹具会变成正常关闭）",
+        &format!(
+            "记录 {} B，写完 {CHUNK}×{KILL_AFTER_CHUNKS} B，残缺 {} B",
+            probe.encoded_len(),
+            probe.encoded_len() - CHUNK * KILL_AFTER_CHUNKS
+        ),
     );
     checks.expect(
-        probe.encoded_len() < CHUNK * 2,
-        "崩溃探针在第二块内就结束（只会留下一个分块）",
+        probe.encoded_len() > HEADER_CHUNK * KILL_AFTER_CHUNKS,
+        "头撕裂探针在头部中间就停下",
         &format!(
-            "记录 {} B，第一块 {CHUNK} B，剩余 {} B",
-            probe.encoded_len(),
-            probe.encoded_len() - CHUNK
+            "头 {HEADER_LEN} B，写完 {HEADER_CHUNK}×{KILL_AFTER_CHUNKS} B 后残缺 {} B",
+            probe.encoded_len() - HEADER_CHUNK * KILL_AFTER_CHUNKS
         ),
     );
     Ok(())
@@ -140,7 +219,11 @@ fn case_normal_close(checks: &mut Checks, root: &Path) -> Result<()> {
     checks.expect(
         recovered.records == expected,
         "逐条字节与写入内容一致",
-        &format!("首条 seq={} 末条 seq={}", recovered.records[0].seq, recovered.records[RECORDS as usize - 1].seq),
+        &format!(
+            "首条 seq={:?} 末条 seq={:?}",
+            recovered.records.first().map(|record| record.seq),
+            recovered.records.last().map(|record| record.seq)
+        ),
     );
     checks.expect(
         recovered.defect.is_none(),
@@ -161,10 +244,20 @@ fn case_normal_close(checks: &mut Checks, root: &Path) -> Result<()> {
 }
 
 /// 用例 2：尾部截断——写到一半被 SIGKILL，只恢复到最后一个完整记录。
+///
+/// 拆成两个子用例（负载撕裂 / 头撕裂），因为两者的缺陷分类与后续处理不同，
+/// 合成一个函数会同时越过项目的"单函数 60 行"上限与 clippy 的 `too_many_lines`。
 fn case_tail_truncated(checks: &mut Checks, root: &Path) -> Result<()> {
     checks.case("wal.tail-truncated");
+    let complete = payload_tear_case(checks, root)?;
+    header_tear_case(checks, root, complete)?;
+    Ok(())
+}
 
-    // 2a：撕裂落在负载中间，而且第一块写在头上、第二块写不完。
+/// 2a：撕裂落在负载中间（头完整、负载缺一截）。
+///
+/// 返回"崩溃前应完整落盘"的字节数，供 2b 复用。
+fn payload_tear_case(checks: &mut Checks, root: &Path) -> Result<usize> {
     let spawned = spawn_writer(
         root,
         "truncated-payload",
@@ -175,6 +268,8 @@ fn case_tail_truncated(checks: &mut Checks, root: &Path) -> Result<()> {
             &CRASH_SEQ.to_string(),
             "--chunk",
             &CHUNK.to_string(),
+            "--kill-after-chunks",
+            &KILL_AFTER_CHUNKS.to_string(),
         ],
     )?;
     checks.expect(
@@ -183,9 +278,11 @@ fn case_tail_truncated(checks: &mut Checks, root: &Path) -> Result<()> {
         &format!("code={:?} signal={:?}", spawned.output.code, spawned.output.signal),
     );
     let raw = crate::fsutil::read_file(&spawned.log)?;
-    let complete: usize = (1..CRASH_SEQ)
+    // 崩溃前应完整落盘的字节数 = 前 CRASH_SEQ-1 条记录的长度之和。
+    let expected_good: usize = (1..CRASH_SEQ)
         .map(|seq| crash::fixture_record(seq).encoded_len())
         .sum();
+    let complete = expected_good;
     checks.note(
         "崩溃现场",
         &format!(
@@ -248,8 +345,11 @@ fn case_tail_truncated(checks: &mut Checks, root: &Path) -> Result<()> {
         "修复后文件长度等于完整部分",
         &format!("{} / {complete}", after.file_bytes),
     );
+    Ok(complete)
+}
 
-    // 2b：撕裂落在头中间，缺陷必须是"头不完整"而不是被误判成损坏。
+/// 2b：撕裂落在头中间，缺陷必须是"头不完整"而不是被误判成损坏。
+fn header_tear_case(checks: &mut Checks, root: &Path, complete: usize) -> Result<()> {
     let header_case = spawn_writer(
         root,
         "truncated-header",
@@ -259,7 +359,9 @@ fn case_tail_truncated(checks: &mut Checks, root: &Path) -> Result<()> {
             "--crash-at",
             &CRASH_SEQ.to_string(),
             "--chunk",
-            "512",
+            &HEADER_CHUNK.to_string(),
+            "--kill-after-chunks",
+            &KILL_AFTER_CHUNKS.to_string(),
         ],
     )?;
     let header_recovered = recovery::recover(&header_case.log)?;

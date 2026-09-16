@@ -12,7 +12,7 @@ use std::io::{Seek, SeekFrom, Write};
 use std::path::Path;
 
 use crate::error::{Result, io_context};
-use crate::wal::{HEADER_LEN, MAGIC, MAX_PAYLOAD, Record};
+use crate::wal::{CRC_INPUT, HEADER_LEN, MAGIC, MAX_PAYLOAD, Record};
 
 /// 恢复停止的原因。`None` 表示整个文件都是完整记录。
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -170,7 +170,7 @@ pub fn scan(bytes: &[u8]) -> Recovery {
         };
 
         let payload = &record_bytes[HEADER_LEN..];
-        let actual_crc = crate::wal::checksum(&record_bytes[4..HEADER_LEN], payload);
+        let actual_crc = crate::wal::record_crc(&record_bytes[CRC_INPUT], payload);
         if actual_crc != expected_crc {
             return finish(
                 records,

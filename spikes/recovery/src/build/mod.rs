@@ -56,11 +56,6 @@ impl Engine {
             Self::Typst => "typ",
         }
     }
-
-    /// 是否为子进程构建。Typst 是进程内的，恢复语义不同，报告里要写清。
-    pub fn is_subprocess(self) -> bool {
-        matches!(self, Self::Latex)
-    }
 }
 
 /// 一次构建请求。
@@ -68,8 +63,6 @@ impl Engine {
 pub struct BuildRequest {
     /// 引擎。
     pub engine: Engine,
-    /// 沙箱根目录（每条引擎一个，互不复用）。
-    pub sandbox: PathBuf,
     /// 引擎独有的输出目录（沙箱内的子目录）。
     pub out_dir: PathBuf,
     /// `-jobname`，让不同引擎的中间文件名本身也不同名。
@@ -85,12 +78,13 @@ pub struct BuildRequest {
 /// 构建结果。
 #[derive(Debug, Clone)]
 pub struct BuildOutcome {
-    /// 引擎。
-    pub engine: Engine,
     /// 源码内容哈希（输入侧）。
     pub source_hash: String,
-    /// 产物内容哈希（输出侧）。
+    /// 产物文件哈希（输出侧，逐字节）。注意：xelatex 会写入时间戳与随机 PDF ID，
+    /// **跨运行不稳定**，因此判据用 [`BuildOutcome::product_signature`] 而不是它。
     pub product_hash: String,
+    /// 产物内容签名（跨运行稳定）；`None` 表示缺少提取工具，报告里要算缺口。
+    pub product_signature: Option<String>,
     /// 产物路径。
     pub product_path: PathBuf,
     /// 产物字节数。
@@ -141,13 +135,15 @@ pub fn build(request: &BuildRequest) -> Result<BuildOutcome> {
 
     let product_bytes = fsutil::read_file(&product.product_path)?;
     let product_hash = fsutil::sha256_hex(&product_bytes);
+    let product_signature =
+        product_signature(request.engine, &product.product_path, product.pages)?;
     let sandbox_files = fsutil::list_names(&request.out_dir)?;
     let output_digest = digest_dir(&request.out_dir)?;
 
     Ok(BuildOutcome {
-        engine: request.engine,
         source_hash: request.source_hash.clone(),
         product_hash,
+        product_signature,
         product_path: product.product_path,
         product_bytes: product_bytes.len() as u64,
         pages: product.pages,
@@ -156,6 +152,45 @@ pub fn build(request: &BuildRequest) -> Result<BuildOutcome> {
         engine_note: product.engine_note,
         elapsed_ms,
     })
+}
+
+/// 产物内容签名：**跨运行稳定**的那部分内容哈希。
+///
+/// 为什么不能直接用产物文件的 SHA-256：xelatex 会把运行时间与一个随机 PDF ID 写进
+/// PDF，同一份源码两次编译的字节不同，用它当"隔离证据"会逼出两种坏断言——
+/// 要么永远失败，要么退化成"两次都成功"这种空证据。签名只取内容：
+///
+/// - PDF：`pdftotext` 抽出的文本 + 页数；
+/// - 其它（Typst 的文本产物）：文件字节本身（它已经是确定性的）。
+///
+/// `pdftotext` 缺失时返回 `None`：调用方必须把"没有签名"当成缺口，而不是当成通过。
+///
+/// # Errors
+///
+/// 产物不可读。
+pub fn product_signature(
+    engine: Engine,
+    path: &Path,
+    pages: Option<usize>,
+) -> Result<Option<String>> {
+    match engine {
+        Engine::Latex => {
+            let output = match crate::process::run(
+                "pdftotext",
+                &["-q".to_string(), path.display().to_string(), "-".to_string()],
+                Path::new("."),
+            ) {
+                Ok(output) if output.succeeded() => output,
+                _ => return Ok(None),
+            };
+            let material = format!("pages={pages:?}\n{}", output.stdout);
+            Ok(Some(fsutil::sha256_hex(material.as_bytes())))
+        }
+        Engine::Typst => {
+            let bytes = fsutil::read_file(path)?;
+            Ok(Some(fsutil::sha256_hex(&bytes)))
+        }
+    }
 }
 
 /// 目录内容摘要：文件名到内容哈希。空目录返回空表。
