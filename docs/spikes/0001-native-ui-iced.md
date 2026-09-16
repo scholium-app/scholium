@@ -1,14 +1,15 @@
 # Spike 0001：原生 UI 候选 — Iced
 
-- 结论：**Blocked**（可访问性与预览定位未验收；其余判据见结果表）
+- 结论：**Fail**（可访问性项不通过，且是框架级缺口；其余判据多为 Pass，预览项未测）
 - 对应验证项：[路线图阶段 0 第 1 项](../ROADMAP.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
 - 关联 ADR：[0002 原生技术栈与 UI 验证顺序](../adr/0002-native-ui-validation-order.md)；最终选型 ADR 待完成
 
-> **状态：中间报告。** 共用核心与 Iced 适配层已实现，冒烟、渲染后端与真实输入法（经 fcitx5 注入）
-> 均已有可复现证据；可访问性与预览点击定位仍需人工验收。在这两项完成前，不得据此宣称
-> Iced 已通过原生 UI 验收。
+> **状态：候选结论 Fail。** 共用核心与 Iced 适配层已实现，冒烟、渲染后端与真实输入法（经 fcitx5 注入）
+> 都有可复现证据；**可访问性项实测不通过**，原因是 Iced 当前不发布任何可访问对象树。
+> 按 [原生 UI 验证计划](../NATIVE_UI_VALIDATION.md) 第 1 节，候选产出结论后才进入下一候选，
+> 因此可以推进 GPUI 比较；这不等于最终选型。
 
 ## 问题与判据
 
@@ -119,6 +120,50 @@ core: ImeCommit "打我" → action ActionId(11) revision 12
 提交恰好产生 **1** 个动作，正文收到文本，源码面板保持原样。
 证据截图：[artifacts/iced-ime-test.png](../../spikes/native-ui/candidate-iced/artifacts/iced-ime-test.png)。
 
+### 可访问性：实测不通过（框架级缺口）
+
+判据原文是"键盘遍历、焦点通知、角色/名称/文本与选区暴露 → 真实系统辅助功能检查，有缺口就记录失败"。
+本机 AT-SPI 基础设施在运行（`org.a11y.Bus`、`at-spi2-registryd`，niri 提供
+`org.freedesktop.a11y.Manager`），因此可以做真实检查。
+
+**方法**：`scripts/a11y-test.sh` + `scripts/a11y-probe.py`（`python-atspi`）。先由合成器确认候选窗口
+确实存在（列出 `Scholium spike — Iced candidate`），再遍历 AT-SPI 桌面对象树。
+
+**结果**：AT-SPI 桌面只列出 5 个应用——`xdg-desktop-portal-gtk`、`com.follow.clash`、`qs`、
+`Avalonia Application`、`Unnamed`；**候选完全不在其中**。为排除"探针本身失效"的误判，
+对同一时刻的其他应用做了对照转储：
+
+```text
+APP 'Avalonia Application' childCount=1
+    WIN role=frame  name='G-Helper - ASUS TUF Gaming F16 FX607JV_FX607JV'  childCount=2
+        - role=panel name='WindowChrome'
+        - role=panel name='Panel'
+APP 'Unnamed' childCount=1
+    WIN role=frame  name='dsh web'  childCount=1
+        - role=panel name=''
+```
+
+其他工具包（Avalonia、Web/Electron）都能正常发布 frame/panel 及名称，说明探针有效；
+候选是**完全没有对象**，不是命名或匹配问题。
+
+**静态证据**（本地已下载源码，可复核）：
+
+- `iced 0.14.0`、`iced_core`、`iced_widget`、`iced_winit` 中 `accesskit` 出现 **0 次**，
+  也没有 `a11y` / `accessibility` feature。
+- 其依赖的 `winit 0.30.13` 源码中同样 **0 次** 提及 `accesskit`，feature 列表里也没有对应项。
+  也就是说，即使想在候选侧自行接入，窗口层也没有现成钩子。
+
+**后果**：屏幕阅读器读不到候选窗口的角色、名称、文本与选区——不是"标签不全"，而是整棵树不存在。
+要达标本项目要求，需要 iced/winit 上游提供 AccessKit 集成，或自行实现 AT-SPI 桥，
+属于上游工程量级，不是候选层打补丁能解决的。
+
+外部参考（**未在本机验证**，仅作背景）：iced 上游有开放的
+[accessibility 支持 issue #552](https://github.com/iced-rs/iced/issues/552) 与
+[accessibility RFC 草案](https://raw.githubusercontent.com/iced-rs/rfcs/d25c20f726db173c6b6d36e458199ef03d1a7e7f/text/0000-accessibility.md)；
+下一个候选 GPUI 有基于 AccessKit 的可访问性实现（上游存在
+[a11y 示例](https://github.com/zed-industries/zed/blob/20a3f770/crates/gpui/examples/a11y.rs)）。
+**可访问性因此成为区分候选的关键判据**，建议比较 GPUI 时把它作为必测项而不是可选项。
+
 ## 结果
 
 模型层：`cargo test --offline` **20 passed / 0 failed**。
@@ -137,7 +182,7 @@ core: ImeCommit "打我" → action ActionId(11) revision 12
 | 核心集成 | **Pass（本轮范围）** | 焦点直接显示核心 `Cursor`，revision 与动作数来自 core；每次编辑产生 Action 并推进 revision；过期 base revision 返回 `StaleRevision`。缺口：框架快捷键绕过项目历史的验证见剩余工作。 |
 | 预览 | **Blocked** | 仅投影占位，界面明确标注"占位，不冒充最终排版"。真实 Typst 编译与点击定位属阶段 0 第 2 项。 |
 | 大源码 | **部分 Pass（模型层）** | 10 万行 / 4.99 MB：构建 **23 ms**，单次局部插入 **180 µs**（debug 构建）。缺口：UI 滚动与软件后端的重排延迟未测。 |
-| 可访问性 | **Blocked** | 未做系统辅助功能检查，逻辑测试不能替代。 |
+| 可访问性 | **Fail** | 候选**不在 AT-SPI 桌面对象树中**，屏幕阅读器读不到任何角色、名称、文本与选区。同期其他应用（Avalonia、Electron）可正常发布 frame/panel；iced/iced_core/iced_widget/iced_winit 与 winit 0.30.13 源码中 `accesskit` 出现 0 次，也无 a11y feature。属框架级缺口，非候选层可补。 |
 | 文件恢复 | **Blocked** | 核心不含持久化与 IO；属阶段 0 第 5 项。 |
 | 构建与依赖 | **Pass** | `iced 0.14.0` 全树编译通过；构建与运行只需 cargo，无 Node/npm/WebView。默认（Vulkan）与 `tiny-skia` 两种后端都渲染正确（截图 `artifacts/iced-window-default.png`、`iced-window-tiny-skia.png`）。直接依赖许可证：`thiserror`、`unicode-segmentation`、`proc-macro2`、`quote`、`syn` 为 `MIT OR Apache-2.0`，`unicode-ident` 为 `(MIT OR Apache-2.0) AND Unicode-3.0`。 |
 
@@ -146,7 +191,8 @@ core: ImeCommit "打我" → action ActionId(11) revision 12
 
 ## 失败与不确定性
 
-- **可访问性与预览定位未验收**，这是本报告判 Blocked 的原因。
+- **可访问性不通过**，这是本报告判 Fail 的原因，且属框架级缺口（见上节）。
+- 预览点击定位未测：需要真实 Typst 布局，属阶段 0 第 2 项。
 - 输入注入依赖 `ydotool` 与可用的 `/dev/uinput`，并且需要能稳定取得窗口焦点；
   桌面会话里有其他窗口抢焦点时脚本会中止（这是有意的安全行为）。
 - 本报告的 GUI 测量都在 agent 沙箱内完成，沙箱对 `/dev` 的可见性会直接改变渲染后端结论（见上节）。
@@ -166,12 +212,16 @@ core: ImeCommit "打我" → action ActionId(11) revision 12
 
 ## 剩余工作
 
-1. **可访问性**：用真实窗口与系统辅助功能检查角色/名称/选区暴露。
-2. **框架快捷键绕过**：确认 Ctrl+Z 不会被 Iced 默认绑定截走而不经过 `Editor::undo`。
-3. **性能**：在两种后端下分别测量真实输入延迟与 20 页预览延迟。本次只测了冷启动与静态窗口 CPU，
+若后续仍考虑 Iced，需要先解决 Fail 项：
+
+1. **可访问性**：等待或推动上游 AccessKit 集成；在窗口层没有钩子的情况下自行实现 AT-SPI 桥。
+   这是 Fail 项，不是待测项。
+2. **预览点击定位**：需要真实 Typst 布局，属阶段 0 第 2 项。
+3. **框架快捷键绕过**：确认 Ctrl+Z 不会被 Iced 默认绑定截走而不经过 `Editor::undo`。
+4. **性能**：在两种后端下分别测量真实输入延迟与 20 页预览延迟。本次只测了冷启动与静态窗口 CPU，
    不足以判定任何预算。
-4. **固定窗口几何**重做布局与滚动验收。
-5. **输入法光标几何**：当前 `ImeHost` 传的是近似矩形，真实编辑器需按 caret 位置计算候选窗避让区域。
+5. **固定窗口几何**重做布局与滚动验收。
+6. **输入法光标几何**：当前 `ImeHost` 传的是近似矩形，真实编辑器需按 caret 位置计算候选窗避让区域。
 
 ## 复现步骤
 
@@ -195,4 +245,8 @@ bash spikes/native-ui/candidate-iced/scripts/compare-backends.sh 3
 # 4. 输入法验证（需要 ydotool 与正在运行的 ydotoold）
 sudo pacman -S --needed ydotool && systemctl --user start ydotool
 bash spikes/native-ui/candidate-iced/scripts/input-test.sh
+
+# 5. 可访问性检查（需要 python-atspi 与运行中的 AT-SPI 总线）
+sudo pacman -S --needed python-atspi
+bash spikes/native-ui/candidate-iced/scripts/a11y-test.sh
 ```
