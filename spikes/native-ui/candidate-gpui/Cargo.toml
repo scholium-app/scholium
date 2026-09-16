@@ -8,5 +8,18 @@ license = "MIT OR Apache-2.0"
 [workspace]
 
 [dependencies]
-gpui = "0.2.2"
 scholium-spike-core = { path = "../core" }
+# 锁定候选版本；GPUI 上游是 Zed，版本与 feature 由验证报告记录。
+gpui = "=0.2.2"
+
+[lints.clippy]
+too_many_lines = "warn"
+cognitive_complexity = "warn"
+too_many_arguments = "warn"
+unwrap_used = "warn"
+missing_panics_doc = "warn"
+missing_errors_doc = "warn"
+undocumented_unsafe_blocks = "deny"
+
+[lints.rust]
+missing_docs = "warn"
