@@ -38,6 +38,7 @@ impl<Message> canvas::Program<Message> for StructureView<'_> {
                     baseline,
                     size,
                     content,
+                    ..
                 } => {
                     frame.fill_text(canvas::Text {
                         content: content.clone(),

@@ -51,6 +51,7 @@ fn dump(layout: &scholium_spike_core::Layout) {
                 baseline,
                 size,
                 content,
+                ..
             } => println!(
                 "  Text  x={:<7} baseline={:<7} size={:<4} top={:<7} {:?}",
                 round(*x),

@@ -29,6 +29,26 @@ const SUPERSCRIPT_SHIFT: f32 = -0.42;
 /// 下标基线相对底基线的偏移（em）。
 const SUBSCRIPT_SHIFT: f32 = 0.20;
 
+/// 文本图元对应的源位置，用于把光标与点击映射回语义图。
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct SourceSpan {
+    /// 文本叶子节点。
+    pub node: NodeId,
+    /// 该图元内容在叶子里的起始字节偏移（UTF-8）。
+    pub start_byte: usize,
+}
+
+/// 文本光标的几何位置，相对所属布局的原点。
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Caret {
+    /// 光标左边界。
+    pub x: f32,
+    /// 光标所在行的基线。
+    pub baseline: f32,
+    /// 该处文本的字号，光标高度由它推出。
+    pub size: f32,
+}
+
 /// 一个可绘制图元。坐标相对所属布局的原点，单位是逻辑像素。
 #[derive(Clone, Debug, PartialEq)]
 pub enum Item {
@@ -42,6 +62,8 @@ pub enum Item {
         size: f32,
         /// 内容。
         content: String,
+        /// 源位置。合成文本（括号、根号等）为 `None`。
+        source: Option<SourceSpan>,
     },
     /// 一条实心线，用于分数线与根号上横线。
     Rule {
@@ -120,6 +142,39 @@ pub struct Layout {
     pub baseline: f32,
 }
 
+impl Layout {
+    /// 在布局里定位文本光标。
+    ///
+    /// 返回相对**本布局**原点的几何；调用方负责再加上布局在页面上的原点。
+    /// 找不到对应节点时返回 `None`（例如光标停在结构槽位上）。
+    pub fn caret(&self, node: NodeId, byte_offset: usize) -> Option<Caret> {
+        for item in &self.items {
+            let Item::Text {
+                x,
+                baseline,
+                size,
+                content,
+                source: Some(span),
+            } = item
+            else {
+                continue;
+            };
+            if span.node != node {
+                continue;
+            }
+            let local = byte_offset.saturating_sub(span.start_byte);
+            // 字节偏移可能落在字素中间：取不到就退回到整段宽度，绝不按字节切字符串。
+            let prefix = content.get(..local).unwrap_or(content.as_str());
+            return Some(Caret {
+                x: x + text_width(prefix, *size),
+                baseline: *baseline,
+                size: *size,
+            });
+        }
+        None
+    }
+}
+
 /// 布局整个文档。
 pub fn layout_document(doc: &Document) -> Layout {
     layout_node(doc, doc.root(), Metrics::default())
@@ -133,7 +188,15 @@ pub fn layout_node(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
 
     match current.kind {
         NodeKind::Text | NodeKind::Raw => {
-            text_layout(&doc.text_of(node).unwrap_or_default(), metrics)
+            let content = doc.text_of(node).unwrap_or_default();
+            text_layout_at(
+                &content,
+                metrics,
+                Some(SourceSpan {
+                    node,
+                    start_byte: 0,
+                }),
+            )
         }
         NodeKind::Document => block(slot_layouts(doc, node, 0, metrics), metrics.block_gap),
         NodeKind::Paragraph => inline(slot_layouts(doc, node, 0, metrics), 0.0),
@@ -164,8 +227,13 @@ fn text_width(content: &str, size: f32) -> f32 {
         .sum()
 }
 
-/// 单段文本：基线在 `ASCENT_RATIO * size` 处。
+/// 单段文本：基线在 `ASCENT_RATIO * size` 处。用于合成文本（括号、根号等）。
 fn text_layout(content: &str, metrics: Metrics) -> Layout {
+    text_layout_at(content, metrics, None)
+}
+
+/// 单段文本，并记录它来自哪个节点的哪个字节区间。
+fn text_layout_at(content: &str, metrics: Metrics, source: Option<SourceSpan>) -> Layout {
     let size = metrics.font_size;
     if content.is_empty() {
         return Layout::default();
@@ -177,6 +245,7 @@ fn text_layout(content: &str, metrics: Metrics) -> Layout {
             baseline,
             size,
             content: content.to_string(),
+            source,
         }],
         width: text_width(content, size),
         height: size * 1.2,

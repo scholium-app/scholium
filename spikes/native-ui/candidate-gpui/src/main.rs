@@ -64,6 +64,7 @@ impl SpikeView {
                     baseline,
                     size,
                     content,
+                    ..
                 } => container.child(
                     div()
                         .absolute()

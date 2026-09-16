@@ -68,6 +68,7 @@ fn texts(layout: &scholium_spike_core::Layout) -> Vec<(f32, f32, f32, String)> {
                 baseline,
                 size,
                 content,
+                ..
             } => Some((*x, *baseline, *size, content.clone())),
             Item::Rule { .. } => None,
         })
@@ -273,5 +274,61 @@ fn undo_after_typing_keeps_layout_consistent() {
         "撤销后布局宽度应变小：{} → {}",
         before.width,
         after.width
+    );
+}
+
+#[test]
+fn caret_maps_byte_offset_to_layout_position() {
+    let mut editor = build_editor();
+    let text = {
+        let doc = editor.document();
+        doc.first_text_descendant(doc.root()).expect("文本叶子")
+    };
+    type_text(&mut editor, text, "ab");
+
+    let layout = layout_document(editor.document());
+    let start = layout.caret(text, 0).expect("文本开头有光标");
+    let end = layout.caret(text, 2).expect("文本末尾有光标");
+
+    assert!(start.x.abs() < 0.01, "开头光标应在最左：{}", start.x);
+    assert!(end.x > start.x, "末尾光标应在右侧：{} vs {}", end.x, start.x);
+    assert!(
+        (start.baseline - end.baseline).abs() < 0.01,
+        "同一行光标基线应一致"
+    );
+    assert!((end.x - 24.0).abs() < 0.01, "两个 ASCII 字符宽 1.2em：{}", end.x);
+}
+
+#[test]
+fn caret_is_none_for_non_text_node() {
+    let editor = build_editor();
+    let layout = layout_document(editor.document());
+    let root = editor.document().root();
+    assert!(
+        layout.caret(root, 0).is_none(),
+        "非文本节点不应产出光标"
+    );
+}
+
+#[test]
+fn caret_inside_fraction_lands_inside_that_fraction() {
+    let mut editor = build_editor();
+    let doc = editor.document();
+    let paragraph = doc.slot(doc.root(), 0).expect("根槽位")[0];
+    let math = doc.slot(paragraph, 0).expect("段落槽位")[1];
+    let fraction = create(&mut editor, math, 0, 0, NodeKind::Fraction);
+    let numerator = slot_child(&editor, fraction, 0, 0);
+    let denominator = slot_child(&editor, fraction, 1, 0);
+    type_text(&mut editor, numerator, "12");
+    type_text(&mut editor, denominator, "3");
+
+    let layout = layout_document(editor.document());
+    let numerator_caret = layout.caret(numerator, 1).expect("分子光标");
+    let denominator_caret = layout.caret(denominator, 0).expect("分母光标");
+    assert!(
+        numerator_caret.baseline < denominator_caret.baseline,
+        "分子光标基线应高于分母：{} vs {}",
+        numerator_caret.baseline,
+        denominator_caret.baseline
     );
 }

@@ -33,6 +33,17 @@ struct SpikeApp {
     preedit_events: usize,
     commits: usize,
     font_loaded: bool,
+    /// 正文自绘区是否持有输入焦点。输入法事件是全局的，必须自己记住归属。
+    structure_focused: bool,
+    /// 是否已经做过启动时的默认聚焦。
+    initial_focus_done: bool,
+    /// 上一次打印到 stdout 的事件，用于让测试日志能取证。
+    printed: String,
+    /// 是否已经打印过"向平台请求输入法"，用于诊断。
+    ime_requested: bool,
+    /// 诊断用：把输入焦点交给源码面板的 `TextEdit`，用于分辨"自绘区请求方式不全"与
+    /// "eframe 这一层根本没接输入法"。由环境变量 `SCHOLIUM_FOCUS_SOURCE=1` 打开。
+    focus_source: bool,
 }
 
 impl SpikeApp {
@@ -47,7 +58,12 @@ impl SpikeApp {
         let mut core = Editor::new();
         fixture::build_standard(&mut core);
         let layout = layout_document(core.document());
-        let source = SourcePane::new(Dialect::Latex, SOURCE_INITIAL);
+        let focus_source = std::env::var("SCHOLIUM_FOCUS_SOURCE").is_ok();
+        let mut source = SourcePane::new(Dialect::Latex, SOURCE_INITIAL);
+        if focus_source {
+            // 诊断路径需要源码面板可编辑，才会渲染出 TextEdit。
+            source.set_writable(true);
+        }
         let focus = {
             let document = core.document();
             document
@@ -67,6 +83,11 @@ impl SpikeApp {
             preedit_events: 0,
             commits: 0,
             font_loaded,
+            structure_focused: false,
+            initial_focus_done: false,
+            printed: String::new(),
+            ime_requested: false,
+            focus_source,
         }
     }
 
@@ -123,6 +144,11 @@ impl SpikeApp {
     ///
     /// 输入法事件是全局的，因此这里统一按"当前焦点在正文区"处理；源码面板只读时不参与。
     fn handle_input(&mut self, ctx: &egui::Context) {
+        // 输入焦点不在正文区时，输入法与按键都不属于它；否则会与源码编辑器抢输入
+        // （这正是 Iced 候选当初踩过的坑）。
+        if !self.structure_focused {
+            return;
+        }
         let events = ctx.input(|input| input.events.clone());
         for event in events {
             match event {
@@ -228,6 +254,7 @@ impl SpikeApp {
                     baseline,
                     size,
                     content,
+                    ..
                 } => {
                     painter.text(
                         // 布局给的是基线，绘制需要上沿；换算走 core 的统一约定。
@@ -264,6 +291,19 @@ impl eframe::App for SpikeApp {
         self.handle_input(&ctx);
         self.layout = layout_document(self.core.document());
 
+        // 事件时间线打到 stdout，便于脚本取证而不必读截图。
+        if self.last_event != self.printed {
+            println!(
+                "[event] {} | revision {} | 核心动作 {} | 预编辑事件 {} | IME 提交 {}",
+                self.last_event,
+                self.core.revision(),
+                self.core.history().len(),
+                self.preedit_events,
+                self.commits
+            );
+            self.printed = self.last_event.clone();
+        }
+
         ui.vertical(|ui| {
             let panes = ui.available_width() / 3.0;
             ui.horizontal_top(|ui| {
@@ -273,14 +313,84 @@ impl eframe::App for SpikeApp {
                         ui.heading("正文（结构编辑 · 结构渲染）");
                         ui.label(format!("焦点 {:?}", self.focus));
                         let size = ui.available_size();
-                        let (rect, _) = ui.allocate_exact_size(size, egui::Sense::hover());
+                        let (rect, response) =
+                            ui.allocate_exact_size(size, egui::Sense::click());
+                        // 启动后默认聚焦正文区：编辑器打开就该能直接打字，
+                        // 而不是要求用户先点一下（也让键盘注入的自动测试有意义）。
+                        if response.clicked() || (!self.initial_focus_done && !self.focus_source) {
+                            response.request_focus();
+                            self.initial_focus_done = true;
+                        }
+                        let focused = response.has_focus();
+                        self.structure_focused = focused;
+
                         let painter = ui.painter_at(rect);
+                        let origin = rect.min + egui::vec2(8.0, 8.0);
                         SpikeApp::paint_structure(
                             &painter,
-                            rect.min + egui::vec2(8.0, 8.0),
+                            origin,
                             &self.layout,
                             egui::Color32::from_rgb(230, 230, 233),
                         );
+
+                        // 光标几何由共享布局按焦点算出：既是可见光标，也是输入法候选窗的锚点。
+                        let caret = match self.focus {
+                            Cursor::Text { node, byte } => self.layout.caret(node, byte),
+                            Cursor::Slot { .. } => None,
+                        };
+                        let caret_rect = caret.map(|caret| {
+                            let top = Item::top_of(caret.baseline, caret.size);
+                            egui::Rect::from_min_size(
+                                origin + egui::vec2(caret.x, top),
+                                egui::vec2(1.5, caret.size * 1.2),
+                            )
+                        });
+                        if focused
+                            && let Some(rect) = caret_rect
+                        {
+                            painter.rect_filled(
+                                rect,
+                                0.0,
+                                egui::Color32::from_rgb(120, 190, 255),
+                            );
+                        }
+
+                        if focused {
+                            // 自绘区必须自己声明输入法归属，并把**真实光标矩形**交给它；
+                            // 早期版本传的是硬编码假矩形，等于没接线。
+                            let cursor_rect = caret_rect.unwrap_or_else(|| {
+                                egui::Rect::from_min_size(origin, egui::vec2(1.5, 20.0))
+                            });
+                            ui.output_mut(|output| {
+                                output.ime = Some(egui::output::IMEOutput {
+                                    purpose: egui::IMEPurpose::Normal,
+                                    rect,
+                                    cursor_rect,
+                                    should_interrupt_composition: false,
+                                });
+                            });
+                            if !self.ime_requested {
+                                self.ime_requested = true;
+                                println!(
+                                    "[ime] 已向平台声明输入法归属：cursor_rect=({:.0},{:.0},{:.0},{:.0})",
+                                    cursor_rect.min.x,
+                                    cursor_rect.min.y,
+                                    cursor_rect.width(),
+                                    cursor_rect.height()
+                                );
+                            }
+
+                            // 自绘内容不会自动进对象树，必须显式补一条可访问描述。
+                            // `widget_info` 接收的是可多次调用的闭包，因此这里 clone。
+                            let description = self.core.document().to_plain_text();
+                            response.widget_info(|| {
+                                egui::WidgetInfo::labeled(
+                                    egui::WidgetType::Label,
+                                    true,
+                                    description.clone(),
+                                )
+                            });
+                        }
                     });
                 });
 
@@ -301,13 +411,27 @@ impl eframe::App for SpikeApp {
                             self.source.line_count()
                         ));
                         if self.source.is_writable() {
-                            let response =
-                                ui.add(egui::TextEdit::multiline(&mut self.source_buffer));
-                            if response.changed()
-                                && let Err(error) = self.source.set_text(&self.source_buffer)
-                            {
-                                self.last_event = format!("源码写入被拒：{error}");
-                                self.source_buffer = self.source.text().to_string();
+                            let response = ui.add(
+                                egui::TextEdit::multiline(&mut self.source_buffer)
+                                    .id(egui::Id::new("source_editor")),
+                            );
+                            if response.changed() {
+                                match self.source.set_text(&self.source_buffer) {
+                                    Ok(()) => {
+                                        self.last_event =
+                                            format!("源码内容：{:?}", self.source_buffer);
+                                    }
+                                    Err(error) => {
+                                        self.last_event = format!("源码写入被拒：{error}");
+                                        self.source_buffer = self.source.text().to_string();
+                                    }
+                                }
+                            }
+                            // 诊断路径：让自带控件先拿焦点，看它能不能收到输入法。
+                            if self.focus_source {
+                                ui.memory_mut(|memory| {
+                                    memory.request_focus(egui::Id::new("source_editor"));
+                                });
                             }
                         } else {
                             ui.label(self.source.text());

@@ -88,25 +88,37 @@ application name='scholium-spike-egui'
 | 团队规则 / 预览 / 大源码 / 文件恢复 | **Blocked** | 与其它候选同一原因（分别属本项未接、或阶段 0 第 2/5 项）。 |
 | 构建与依赖 | **Pass** | 编译通过，无 Node/npm/WebView；`eframe`/`egui` 为 MIT OR Apache-2.0；依赖树 accesskit 含 `accesskit_unix`（Linux AT-SPI 适配器）。 |
 
-### 输入法：框架路径存在，候选未接线
+### 输入法：候选侧已按 API 接好，但本栈下仍收不到合成（实测）
 
-注入 "nihao" 后，文本以**普通 ASCII** 落进正文，预编辑与提交计数都是 0 —— 说明
-**输入法根本没有开启**，按键走的是 `Event::Text`。原因与 Iced 候选当初的问题同源：
-egui 只在**有控件请求时**才启用输入法。`TextEdit` 在获得焦点后这样请求：
+**第一轮（候选没有编辑位置）**：注入 "nihao" 后文本以普通 ASCII 落进正文，预编辑与提交计数都是 0。
+当时的候选连光标都没有，交给输入法的 `cursor_rect` 是硬编码假矩形——那等于没接线。
 
-```rust
-// egui-0.36.2/src/widgets/text_edit/builder.rs:952
-if ui.memory(|mem| mem.owns_ime_events(id)) {
-    ui.output_mut(|o| o.ime = Some(crate::output::IMEOutput {
-        purpose: IMEPurpose::Normal,
-        rect: /* 编辑区 */, cursor_rect: /* 光标 */, should_interrupt_composition: false,
-    }));
-}
+**已修的部分**：`core::layout` 现在为每个文本图元记录来源（`SourceSpan { node, start_byte }`），
+并可按 `(NodeId, byte_offset)` 算出光标几何（`Layout::caret`）。候选据此绘制可见光标，
+并把**真实光标矩形**交给输入法。实测日志可证：
+
+```text
+[ime] 已向平台声明输入法归属：cursor_rect=(8,75,2,24)   ← 由布局算出，非硬编码
 ```
 
-`Memory::owns_ime_events(Id)` 决定哪些事件归属该 id（`egui-0.36.2/src/memory/mod.rs:1042`）。
-**自绘结构编辑器必须自己申请 IME 归属并设置 `o.ime`**，否则收不到 `Event::Ime(ImeEvent::Preedit/Commit)`。
-这是一段有界工作，尚未实施。
+**但仍收不到合成**。此时按键仍以 `Event::Text` 逐个进来，`预编辑事件 0 / IME 提交 0`。
+
+**决定性对照实验**：把焦点交给 egui **自带的 `TextEdit`**（它内部会自行设置 `o.ime`，
+`egui-0.36.2/src/widgets/text_edit/builder.rs:952`；`Memory::owns_ime_events` 即"是否持有焦点"，
+`memory/mod.rs:1042`），注入同样的拼音，结果它收到的也是纯 ASCII：
+
+```text
+源码内容："...\nnihao"     ← 没有中文、没有合成
+```
+
+因此**问题不在候选的自绘区**：连 egui 自带控件在本栈下也拿不到输入法合成。
+两条旁证：egui 与 iced 用的是**同一个 winit 0.30.13**（它有 Wayland text-input 实现），
+而 iced 候选的 IME 是实测可用的；egui-winit 里的启用逻辑（`set_ime_allowed` 与
+`set_ime_cursor_area`，`egui-winit-0.36.2/src/lib.rs:1153`、`1177`）看起来是完整的。
+
+结论：断点在 **egui-winit → eframe → winit** 这条链上，定位它超出本项 spike 的范围。
+候选侧已经按 API 接好，一旦断点找到，改动很小。诊断脚本保留：
+`SCHOLIUM_FOCUS_SOURCE=1` 可把焦点交给自带 `TextEdit` 复现该对照。
 
 ## 与其它候选的对比
 
@@ -114,10 +126,14 @@ if ui.memory(|mem| mem.owns_ime_events(id)) {
 |---|---|---|---|---|
 | 许可证 | MIT OR Apache | Apache-2.0 | Apache-2.0 | MIT OR Apache |
 | 文本输入控件 | 有 | **无** | 有 | 有（`TextEdit`） |
-| 输入法 | 需自绘区自行请求 | 需自行实现 `InputHandler` | 有合成文本 | 需自绘区自行请求（路径已知） |
-| 可访问性 | **无 accesskit** | **无 accesskit** | **无** | **默认开启，含 `accesskit_unix`** |
+| 输入法（实测） | **可用**（ydotool 注入：预编辑 30 事件、提交 1 动作） | 需自行实现 `InputHandler`，未实现 | 有合成文本，未实测 | **本栈下不可用**（自带 `TextEdit` 也收不到合成，见上节） |
+| 可访问性（实测） | **无对象树** | **无对象树** | 未实测（源码无 accesskit） | **发布对象树**（frame + label） |
+| 光标/编辑位置 | 有（自绘区） | 无 | 有 | 有（`Layout::caret` + 可见光标） |
 | 结构自绘 | canvas | canvas / 绝对定位 | 原生绘制 | `Painter` |
-| 结论 | Fail | Fail | 未投入（预筛） | **Blocked（首个无硬性 Fail）** |
+| 结论 | Fail（无无障碍） | Fail（无输入控件、无无障碍） | 未投入（预筛） | **Blocked（无硬性 Fail，但输入法待解决）** |
+
+**直接结论：目前没有任何一个候选同时具备"输入法与文本编辑"和"可访问性"。**
+iced 有前者没后者，egui 有后者没前者（本栈下）。这是第 1 项到目前为止最重要的事实。
 
 ## 失败与不确定性
 

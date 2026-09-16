@@ -29,6 +29,6 @@ pub use cursor::{Cursor, Direction};
 pub use doc::{Document, Node, NodeKind};
 pub use edit::{EditError, SemanticEdit};
 pub use ids::{CharId, NodeId};
-pub use layout::{Item, Layout, Metrics, layout_document, layout_node};
+pub use layout::{Caret, Item, Layout, Metrics, SourceSpan, layout_document, layout_node};
 pub use source::{Dialect, SourcePane};
 pub use text::{Char, TextLeaf};
