@@ -15,6 +15,7 @@ mod generate_typst;
 mod host;
 mod ir;
 mod latex;
+mod pdf_evidence;
 mod plan;
 mod typst_host;
 mod verify;
@@ -25,7 +26,7 @@ use std::path::PathBuf;
 use diag::Evidence;
 use ir::Dialect;
 
-fn main() {
+fn main() -> std::process::ExitCode {
     let filter = std::env::args().nth(1);
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let out = root.join("out");
@@ -68,9 +69,14 @@ fn main() {
     }
     if ran == 0 {
         println!("没有匹配的夹具：{filter:?}");
-        return;
+        return std::process::ExitCode::FAILURE;
     }
     print_summary(&evidence);
+    if evidence.iter().all(Evidence::passed) {
+        std::process::ExitCode::SUCCESS
+    } else {
+        std::process::ExitCode::FAILURE
+    }
 }
 
 /// 打印单个夹具的全部断言。

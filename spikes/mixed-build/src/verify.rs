@@ -14,11 +14,14 @@ use crate::diag::{Evidence, Expect, Outcome};
 use crate::fixtures::Fixture;
 use crate::generate::marker_for;
 use crate::ir::Dialect;
+use crate::pdf_evidence::raster_images;
 use crate::plan;
 
 /// 去掉全部空白，便于跨换行匹配中文与数字。
 fn compact(text: &str) -> String {
-    text.chars().filter(|character| !character.is_whitespace()).collect()
+    text.chars()
+        .filter(|character| !character.is_whitespace())
+        .collect()
 }
 
 /// 某段文本出现在第几页（1 基）。
@@ -31,7 +34,10 @@ fn page_of(pages: &[String], needle: &str) -> Option<usize> {
 
 /// 某段文本在整篇里出现多少次。
 fn count_in(pages: &[String], needle: &str) -> usize {
-    pages.iter().map(|page| compact(page).matches(needle).count()).sum()
+    pages
+        .iter()
+        .map(|page| compact(page).matches(needle).count())
+        .sum()
 }
 
 /// 运行并核验一个夹具。
@@ -50,11 +56,7 @@ pub(crate) fn run(fixture: &Fixture, host: Dialect, dir: &Path) -> Evidence {
         Ok(plan) => plan,
         Err(problems) => {
             evidence.outcome = Outcome::PlanRejected;
-            evidence.check(
-                "计划阶段拒绝",
-                true,
-                format!("{} 条诊断", problems.len()),
-            );
+            evidence.check("计划阶段拒绝", true, format!("{} 条诊断", problems.len()));
             evidence.check(
                 "诊断可读",
                 problems.iter().all(|problem| !problem.message.is_empty()),
@@ -80,26 +82,10 @@ pub(crate) fn run(fixture: &Fixture, host: Dialect, dir: &Path) -> Evidence {
             return evidence;
         }
     };
-    evidence.check(
-        "计划接受",
-        true,
-        plan.steps.join(" ｜ "),
-    );
+    evidence.check("计划接受", true, plan.steps.join(" ｜ "));
 
     let outcome = build::build(&project, &plan, dir, build::MAX_ROUNDS);
     evidence.outcome = outcome.outcome.clone();
-    if !outcome.diagnostics.is_empty() {
-        evidence.check(
-            "构建诊断",
-            outcome.outcome != Outcome::Success,
-            outcome
-                .diagnostics
-                .iter()
-                .map(|problem| problem.render())
-                .collect::<Vec<_>>()
-                .join(" | "),
-        );
-    }
     if !outcome.diagnostics.is_empty() {
         evidence.check(
             "构建诊断",
@@ -144,7 +130,10 @@ pub(crate) fn run(fixture: &Fixture, host: Dialect, dir: &Path) -> Evidence {
             .collect();
         evidence.check(
             "诊断可读",
-            outcome.diagnostics.iter().all(|problem| !problem.message.is_empty()),
+            outcome
+                .diagnostics
+                .iter()
+                .all(|problem| !problem.message.is_empty()),
             outcome
                 .diagnostics
                 .iter()
@@ -181,7 +170,9 @@ pub(crate) fn run(fixture: &Fixture, host: Dialect, dir: &Path) -> Evidence {
                 .unwrap_or(false),
         format!(
             "{} 字节 {}",
-            std::fs::metadata(&final_pdf).map(|meta| meta.len()).unwrap_or(0),
+            std::fs::metadata(&final_pdf)
+                .map(|meta| meta.len())
+                .unwrap_or(0),
             final_pdf.display()
         ),
     );
@@ -250,11 +241,7 @@ fn check_longtable(evidence: &mut Evidence, observation: &crate::build::Observat
         .get("tab:long")
         .cloned()
         .unwrap_or_default();
-    evidence.check(
-        "表格编号读回",
-        number == "1",
-        format!("编号 {number:?}"),
-    );
+    evidence.check("表格编号读回", number == "1", format!("编号 {number:?}"));
     let text = compact(&pages.join(""));
     evidence.check(
         "正文引用出现在产物中",
@@ -351,8 +338,11 @@ fn check_plot(
     let raster = raster_images(&dir.join("final.pdf"));
     evidence.check(
         format!("{label} 最终件为矢量（无栅格图像）"),
-        raster == 0,
-        format!("pdfimages 列出 {raster} 个栅格图像（宿主 {}）", host.name()),
+        matches!(raster, Ok(0)),
+        format!(
+            "pdfimages 列出 {raster:?} 个栅格图像（宿主 {}）",
+            host.name()
+        ),
     );
 }
 
@@ -381,14 +371,14 @@ fn check_foreign_vector(evidence: &mut Evidence, outcome: &BuildOutput, dir: &Pa
     } else {
         evidence.check(
             "LaTeX 组件产物为矢量（无 SVG 中间件，直接 PDF）",
-            raster_images(path) == 0,
+            matches!(raster_images(path), Ok(0)),
             "由 xelatex 直接产出矢量 PDF",
         );
     }
     evidence.check(
         "组件独立编译产物是矢量",
-        raster_images(path) == 0,
-        format!("pdfimages 列出 {} 个栅格图像", raster_images(path)),
+        matches!(raster_images(path), Ok(0)),
+        format!("pdfimages 结果 {:?}", raster_images(path)),
     );
 }
 
@@ -500,7 +490,8 @@ fn check_refs(
     evidence.check(
         "跨引擎符号编号：宿主引用值 = 组件自身引擎分配的编号",
         !component_number.is_empty()
-            && compact(&pages.join("")).contains(&format!("外语组件中的公式编号{component_number}")),
+            && compact(&pages.join(""))
+                .contains(&format!("外语组件中的公式编号{component_number}")),
         format!(
             "组件自身编号 ({}), 宿主引用文本查找 `外语组件中的公式编号{}`",
             component_number, component_number
@@ -530,10 +521,7 @@ fn check_refs(
         target.is_some() && links.iter().any(|(_, page)| *page == target),
         format!("目标页 {target:?}，链接 {links:?}"),
     );
-    let bad = links
-        .iter()
-        .filter(|(_, page)| page.is_none())
-        .count();
+    let bad = links.iter().filter(|(_, page)| page.is_none()).count();
     evidence.check(
         "链接目标均可解析到交付件内的页",
         bad == 0,
@@ -575,20 +563,4 @@ fn parenthesized_number(text: &str) -> Option<String> {
         }
     }
     None
-}
-
-/// 用 `pdfimages -list` 数栅格图像。
-fn raster_images(pdf: &Path) -> usize {
-    let output = std::process::Command::new("pdfimages")
-        .arg("-list")
-        .arg(pdf)
-        .output();
-    let Ok(output) = output else { return 0 };
-    let text = String::from_utf8_lossy(&output.stdout);
-    text.lines()
-        .filter(|line| {
-            let trimmed = line.trim_start();
-            trimmed.starts_with(|character: char| character.is_ascii_digit())
-        })
-        .count()
 }

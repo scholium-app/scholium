@@ -22,7 +22,10 @@ bash spikes/verify-stage0.sh          # 跑全部（七项 + 出口条件）
 bash spikes/verify-stage0.sh core     # 分段：core / ui / typst / reconcile / items / security / license / web
 ```
 
-脚本逐项打印 `PASS`/`FAIL` 并在结尾汇总，失败即非零退出。两点注意：
+脚本逐项打印 `PASS`/`FAIL` 并在结尾汇总，非零退出码或日志中显式的 `FAIL` 均判失败；
+未知分段名也会报错。每次运行的完整日志保存在脚本打印的独立临时目录中。
+这只是自动检查结果，不能代替阶段出口判定；门禁复核见 [报告 0015](0015-verification-review.md)。
+回归测试：`bash spikes/tests/verify-stage0.sh`，以及 mixed-build 的 `cargo test --release --offline`。两点注意：
 
 - `cargo deny` 只能在**每个 crate** 运行（仓库根 workspace 没有成员），且 `advisories`
   需要联网获取 RustSec 数据库——离线环境跑不了，脚本会明确提示而不是假装通过。

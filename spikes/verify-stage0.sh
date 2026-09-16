@@ -10,6 +10,12 @@ cd "$(dirname "$0")/.." || exit 1
 export CARGO_HOME="$PWD/spikes/native-ui/.cargo-home"
 
 ONLY="${1:-all}"
+case "$ONLY" in
+  all|core|ui|typst|reconcile|items|security|license|web) ;;
+  *) printf '未知验证分段：%s\n' "$ONLY" >&2; exit 2 ;;
+esac
+LOG_DIR="$(mktemp -d "${TMPDIR:-/tmp}/scholium-stage0.XXXXXX")" || exit 1
+printf '本次日志：%s\n' "$LOG_DIR"
 pass=0
 fail=0
 declare -a FAILED
@@ -23,9 +29,19 @@ record() { # name exit_code
 
 run() { # name command...
   local name="$1"; shift
-  "$@" >/tmp/verify-stage0.log 2>&1
-  record "$name" $?
-  if [ $? -ne 0 ]; then tail -5 /tmp/verify-stage0.log | sed 's/^/        /'; fi
+  local log="$LOG_DIR/$((pass+fail+1)).log"
+  local status=0
+  "$@" >"$log" 2>&1 || status=$?
+  # Some exploratory binaries print assertions without propagating an exit code.
+  # Treat explicit failed evidence as failure until every runner has a typed result.
+  if [ "$status" -eq 0 ] && grep -Eq '(^|[^[:alnum:]_])FAIL([^[:alnum:]_]|$)' "$log"; then
+    status=1
+  fi
+  record "$name" "$status"
+  if [ "$status" -ne 0 ]; then
+    tail -10 "$log" | sed 's/^/        /'
+    printf '        完整日志：%s\n' "$log"
+  fi
 }
 
 want() { [ "$ONLY" = "all" ] || [ "$ONLY" = "$1" ]; }
@@ -33,20 +49,16 @@ want() { [ "$ONLY" = "all" ] || [ "$ONLY" = "$1" ]; }
 # ---------- 共享核心测试 ----------
 if want core; then
   section "共享核心（语义图 / 光标 / 语义编辑 / 布局）"
-  ( cd spikes/native-ui/core && cargo test --offline >/tmp/verify-stage0.log 2>&1 )
-  record "核心测试（32 个）" $?
+  run "核心测试" cargo test --offline --manifest-path spikes/native-ui/core/Cargo.toml
 fi
 
 # ---------- 第 1 项：原生 UI ----------
 if want ui; then
   section "第 1 项 原生 UI（egui 选定；iced 对照）"
-  ( cd spikes/native-ui/candidate-egui && cargo test --offline >/tmp/verify-stage0.log 2>&1 )
-  record "egui 输入契约与性能测试（9 个）" $?
-  ( cd spikes/native-ui/candidate-iced && cargo test --offline >/tmp/verify-stage0.log 2>&1 )
-  record "iced 输入契约测试（8 个）" $?
+  run "egui 输入契约与性能测试" cargo test --offline --manifest-path spikes/native-ui/candidate-egui/Cargo.toml
+  run "iced 输入契约测试" cargo test --offline --manifest-path spikes/native-ui/candidate-iced/Cargo.toml
   for c in iced gpui egui; do
-    ( cd "spikes/native-ui/candidate-$c" && cargo build --offline >/tmp/verify-stage0.log 2>&1 )
-    record "候选 $c 构建" $?
+    run "候选 $c 构建" cargo build --offline --manifest-path "spikes/native-ui/candidate-$c/Cargo.toml"
   done
 fi
 
@@ -90,10 +102,10 @@ if want license; then
     [ -f "$d/Cargo.lock" ] || continue
     ok=0
     for check in licenses bans sources; do
-      ( cd "$d" && cargo deny --offline check "$check" >/tmp/verify-stage0.log 2>&1 ) || {
+      ( cd "$d" && cargo deny --offline check "$check" >"$LOG_DIR/deny-$(basename "$d")-$check.log" 2>&1 ) || {
         ok=1
         printf '        %s / %s 失败：\n' "$(basename "$d")" "$check"
-        tail -3 /tmp/verify-stage0.log | sed 's/^/          /'
+        tail -3 "$LOG_DIR/deny-$(basename "$d")-$check.log" | sed 's/^/          /'
       }
     done
     record "deny $(basename "$d")" $ok
@@ -119,4 +131,4 @@ if [ "$fail" -gt 0 ]; then
   for name in "${FAILED[@]}"; do printf '    - %s\n' "$name"; done
   exit 1
 fi
-printf '  全部通过。\n'
+printf '  本次所选检查通过；阶段出口仍以报告中的未完成项为准。\n'

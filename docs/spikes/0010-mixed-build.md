@@ -332,3 +332,9 @@ pdftotext -f 1 -l 1 spikes/mixed-build/out/T1-longtable-latex/final.pdf -
 
 代码清单（供复核）：`spikes/mixed-build/src/{ir,plan,generate,generate_typst,world,typst_host,latex,build,host,verify,diag,main}.rs`
 与 `spikes/mixed-build/src/fixtures/{mod,content,macros_scope,refs}.rs`，单文件均 < 600 行。
+
+## 验证门禁复核（2026-09-16）
+
+见[报告 0015](0015-verification-review.md)：已修复失败断言仍返回退出码 0、未知夹具空跑通过、
+`pdfimages` 执行失败被算作零栅格图像的问题，并删除重复的“构建诊断”断言。
+上文历史断言数量包含重复项；当前版本以实际输出为准。这不扩大本报告的支持范围。
