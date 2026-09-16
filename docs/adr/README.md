@@ -13,7 +13,7 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 | ADR | 状态 | 当前结论 |
 |---|---|---|
 | [0001：团队单一源码语言与混合项目](0001-mixed-source-team-editing.md) | Proposed | 用户要求已确认；协调协议、桥接与存储实现待阶段 0 验证 |
-| [0002：原生技术栈与 UI 验证顺序](0002-native-ui-validation-order.md) | Accepted | 语言约束与验证顺序已确认，具体框架未选定 |
+| [0002：原生技术栈与 UI 验证顺序](0002-native-ui-validation-order.md) | Accepted | 语言约束与验证顺序已确认；框架选定见 [ADR 0006](0006-native-ui-framework.md)（egui） |
 | [0003：全栈验证范围与 WASM 优先兼容](0003-wasm-and-stack-validation.md) | Accepted | 目标与验证方向已确认，具体库与浏览器发行未选定 |
 | [0004：项目许可证](0004-project-license.md) | Accepted | 采用 MIT OR Apache-2.0 双许可，依赖许可政策由 `cargo deny` 强制 |
 | [0005：允许 Apache-2.0 WITH LLVM-exception](0005-llvm-exception-license.md) | Accepted | 该例外权限严格宽于 Apache-2.0，加入允许清单；`deny.toml` 已建 |

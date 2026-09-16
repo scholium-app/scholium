@@ -35,7 +35,7 @@
 - 原生结构项目以语义文档图为真；外部源码项目以 lossless CST/source 为真。
 - Typst 提供快速交互预览，LaTeX 可作为最终发布与验证后端。
 - 桌面 UI、核心与服务端优先 Rust，必要时使用 C/C++/Zig；采用原生窗口/文本/绘制，不采用 npm 或 WebView。
-- UI 按 [原生 UI 验证计划](NATIVE_UI_VALIDATION.md) 顺序验证 Iced、GPUI、C++ EUI-NEO，最后 Slint 或 egui；尚未选定框架。
+- UI 按 [原生 UI 验证计划](NATIVE_UI_VALIDATION.md) 的顺序验证后**已选定 egui / eframe 0.36.2**（[ADR 0006](adr/0006-native-ui-framework.md)）：Iced 缺可访问性、GPUI 缺文本输入控件、EUI-NEO 无无障碍不投入、Slint 被许可证政策阻断。
 - 标准源文件可脱离 Scholium 使用；协作历史是增强层，不是文件可读性的前提。
 
 - 同一共享项目分支在团队范围内只允许一种 LaTeX/Typst 源码语言写入，编译器不受此限制。
