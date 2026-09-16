@@ -21,6 +21,7 @@
    **第 1 项判定：egui 通过共同验收的可验证部分**（唯一同时具备中文输入法与可访问性的候选），
    锁定 eframe/egui 0.36.2 + winit 0.30.13 + accesskit 0.24.1，平台 Arch Linux / niri 26.04 / fcitx5 5.1.22；
    已补：共享核心的选区模型（拖拽、Shift 扩展、同叶删除，含 headless 测试）；
+   以及候选的结构编辑命令（包裹/解除/循环变体 + 界面按钮，含 headless 测试）；
    未承诺：**跨节点选区的删除**、复制/剪切、完整结构编辑界面、正式渲染质量、增量布局。
 2. Typst 映射 spike：20 页 SDG 生成 Typst、增量编译、NodeId ↔ glyph/preview 双向定位。
    进度见[报告 0005](spikes/0005-typst-mapping.md)：**结论 Pass（机制，含行内结构坐标）**——20 页编译约 220 ms，

@@ -10,6 +10,7 @@ use std::sync::Arc;
 
 use eframe::egui;
 use scholium_spike_core::{
+    NodeKind,
     Selection,
     ActorId, Cursor, Dialect, Direction, Editor, Intent, Item, Layout, NodeId, SemanticEdit,
     SourcePane, cursor::move_cursor, fixture, layout_document,
@@ -115,6 +116,54 @@ impl SpikeApp {
                     .first_text_descendant(*child)
                     .map(|text_node| (text_node, 0))
             }
+        }
+    }
+
+    /// 把焦点节点包进一个结构。
+    ///
+    /// 与 Iced 候选的同名能力对齐：结构编辑是验收项之一，候选必须能真的执行，
+    /// 而不只是核心里有这两个 API。
+    pub fn wrap(&mut self, kind: NodeKind) {
+        let node = self.focus.focus();
+        let edit = SemanticEdit::Wrap { node, kind };
+        match self.core.apply(LOCAL, Intent::Structural, edit) {
+            Ok(Some(_)) => {
+                // 焦点跟随新结构：包裹后用户接下来的操作（解除、循环变体）显然应作用于它。
+                // Wrap 把新结构放在被包裹节点的原位置，所以从被包裹节点的父节点就能取到。
+                if let Some((wrapper, _, _)) = self.core.document().locate_in_parent(node) {
+                    self.focus = Cursor::Slot {
+                        node: wrapper,
+                        slot: 0,
+                        index: 0,
+                    };
+                    self.selection = Selection::collapsed(self.focus);
+                }
+                self.last_event = format!("core：包裹为 {kind:?}");
+            }
+            Ok(None) => self.last_event = "包裹：无变化".to_string(),
+            Err(error) => self.last_event = format!("包裹被拒：{error}"),
+        }
+    }
+
+    /// 解除最内层结构，保留内容。
+    pub fn unwrap(&mut self) {
+        let node = self.focus.focus();
+        let edit = SemanticEdit::Unwrap { node };
+        match self.core.apply(LOCAL, Intent::Structural, edit) {
+            Ok(Some(_)) => self.last_event = "core：解除结构".to_string(),
+            Ok(None) => self.last_event = "解除：无变化".to_string(),
+            Err(error) => self.last_event = format!("解除被拒：{error}"),
+        }
+    }
+
+    /// 循环结构变体（例如分数 ↔ 根式）。
+    pub fn cycle_variant(&mut self) {
+        let node = self.focus.focus();
+        let edit = SemanticEdit::CycleVariant { node };
+        match self.core.apply(LOCAL, Intent::Structural, edit) {
+            Ok(Some(_)) => self.last_event = "core：循环结构变体".to_string(),
+            Ok(None) => self.last_event = "循环变体：无变化".to_string(),
+            Err(error) => self.last_event = format!("循环变体被拒：{error}"),
         }
     }
 
@@ -361,6 +410,20 @@ impl SpikeApp {
                 ui.allocate_ui(egui::vec2(panes, ui.available_height()), |ui| {
                     ui.vertical(|ui| {
                         ui.heading("正文（结构编辑 · 结构渲染）");
+                        ui.horizontal(|ui| {
+                            if ui.button("包裹为分数").clicked() {
+                                self.wrap(NodeKind::Fraction);
+                            }
+                            if ui.button("包裹为根式").clicked() {
+                                self.wrap(NodeKind::Sqrt);
+                            }
+                            if ui.button("解除结构").clicked() {
+                                self.unwrap();
+                            }
+                            if ui.button("循环变体").clicked() {
+                                self.cycle_variant();
+                            }
+                        });
                         ui.label(format!("焦点 {:?}", self.focus));
                         let size = ui.available_size();
                         let (rect, response) =

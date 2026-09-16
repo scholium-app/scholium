@@ -359,3 +359,85 @@ fn backspace_deletes_exactly_the_selected_range() {
         "删除后选区应折叠到起点"
     );
 }
+
+/// 把文档结构打印成紧凑摘要，便于断言。
+fn summary(document: &scholium_spike_core::Document) -> String {
+    fn walk(document: &scholium_spike_core::Document, node: scholium_spike_core::NodeId, out: &mut String) {
+        let Ok(current) = document.node(node) else {
+            return;
+        };
+        use scholium_spike_core::NodeKind;
+        match current.kind {
+            NodeKind::Text | NodeKind::Raw => out.push_str(&format!(
+                "{:?}({:?})",
+                current.kind,
+                document.text_of(node).unwrap_or_default()
+            )),
+            _ => {
+                out.push_str(&format!("{:?}(", current.kind));
+                for slot in 0..current.kind.slot_count() {
+                    if let Ok(children) = document.slot(node, slot) {
+                        for child in children {
+                            walk(document, *child, out);
+                        }
+                    }
+                }
+                out.push(')');
+            }
+        }
+    }
+    let mut out = String::new();
+    walk(document, document.root(), &mut out);
+    out
+}
+
+#[test]
+fn wrapping_the_focused_node_creates_a_structure() {
+    use scholium_spike_core::NodeKind;
+
+    let ctx = Context::default();
+    let mut app = new_app(&ctx);
+    settle(&mut app, &ctx);
+
+    // 夹具里已经有 Fraction / Script / Matrix / Sqrt，所以用夹具中不存在的
+    // Delimited 来断言，并统计出现次数而不是"包含与否"。
+    let before = summary(app.core().document());
+    assert!(!before.contains("Delimited("), "夹具不应含定界符：{before}");
+
+    app.wrap(NodeKind::Delimited);
+
+    let after = summary(app.core().document());
+    assert!(after.contains("Delimited("), "包裹后应出现定界符：{after}");
+    assert!(
+        after.contains("结构渲染夹具："),
+        "包裹不应丢失原文：{after}"
+    );
+    assert_eq!(
+        after.matches("Delimited(").count(),
+        1,
+        "只应新增一个定界符：{after}"
+    );
+}
+
+#[test]
+fn unwrapping_removes_the_structure_and_keeps_content() {
+    use scholium_spike_core::NodeKind;
+
+    let ctx = Context::default();
+    let mut app = new_app(&ctx);
+    settle(&mut app, &ctx);
+
+    app.wrap(NodeKind::Delimited);
+    assert!(summary(app.core().document()).contains("Delimited("));
+
+    app.unwrap();
+    let after = summary(app.core().document());
+    assert!(
+        !after.contains("Delimited("),
+        "解除后不应还有定界符：{after}"
+    );
+    assert!(
+        after.contains("结构渲染夹具："),
+        "解除后必须保留内容：{after}"
+    );
+}
