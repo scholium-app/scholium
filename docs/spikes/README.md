@@ -14,6 +14,21 @@
 - 原生 UI 各候选的报告还必须满足 [原生 UI 验证计划](../NATIVE_UI_VALIDATION.md) 第 5 节的字段要求。
 - 可执行验证代码放在仓库根 `spikes/<name>/`，使用 Rust 或必要原生代码构建。
 
+## 一键复现
+
+```bash
+cd <repo>
+bash spikes/verify-stage0.sh          # 跑全部（七项 + 出口条件）
+bash spikes/verify-stage0.sh core     # 分段：core / ui / typst / reconcile / items / security / license / web
+```
+
+脚本逐项打印 `PASS`/`FAIL` 并在结尾汇总，失败即非零退出。两点注意：
+
+- `cargo deny` 只能在**每个 crate** 运行（仓库根 workspace 没有成员），且 `advisories`
+  需要联网获取 RustSec 数据库——离线环境跑不了，脚本会明确提示而不是假装通过。
+- 无障碍测试需要会话开关 `IsEnabled` 与 `ScreenReaderEnabled` **都开**，否则 AccessKit 不注册、
+  结果是假阴性；输入法的自动注入在共享桌面会话里不稳定，**不能**据一次运行否定框架。
+
 ## 语言与工具约束
 
 验证代码遵守 `AGENT.md` 的硬性约束：不使用 npm/Node.js、JavaScript/TypeScript 编辑器或
