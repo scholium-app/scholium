@@ -189,10 +189,14 @@ iced 与 winit 源码中都不存在 accesskit 集成，任何候选实现都无
 
 外部参考（**未在本机验证**，仅作背景）：iced 上游有开放的
 [accessibility 支持 issue #552](https://github.com/iced-rs/iced/issues/552) 与
-[accessibility RFC 草案](https://raw.githubusercontent.com/iced-rs/rfcs/d25c20f726db173c6b6d36e458199ef03d1a7e7f/text/0000-accessibility.md)；
-下一个候选 GPUI 有基于 AccessKit 的可访问性实现（上游存在
-[a11y 示例](https://github.com/zed-industries/zed/blob/20a3f770/crates/gpui/examples/a11y.rs)）。
-**可访问性因此成为区分候选的关键判据**，建议比较 GPUI 时把它作为必测项而不是可选项。
+[accessibility RFC 草案](https://raw.githubusercontent.com/iced-rs/rfcs/d25c20f726db173c6b6d36e458199ef03d1a7e7f/text/0000-accessibility.md)。
+
+**已更正**：本节初稿曾写"下一个候选 GPUI 有基于 AccessKit 的可访问性实现"，并据此推断
+"可访问性成为区分候选的关键判据"。核实已发布的 `gpui 0.2.2` 后该推断**作废**——发布版 `gpui`
+同样没有 accesskit（`Cargo.toml`、feature、源码、整棵依赖树计数均为 0），AT-SPI 实测也读不到
+GPUI 候选窗口。Zed 仓库里有 a11y 示例，但没有进入发布 crate。
+
+结论：**可访问性不能区分这两个候选，两者都是 Fail**，详见[报告 0002](0002-native-ui-gpui.md)。
 
 ## 结果
 

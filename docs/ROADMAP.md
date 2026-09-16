@@ -11,8 +11,9 @@
 1. 原生结构/源码编辑 spike：严格按 Iced → GPUI → C++ EUI-NEO → Slint 或 egui 依次验证；
    每个候选运行同一组嵌套文本、数学结构、TreeSelection、中文 IME、源码编辑和无障碍脚本。
    具体任务、进入下一候选的条件与报告见 [原生 UI 验证计划](NATIVE_UI_VALIDATION.md)；
-   进度见[报告 0001](spikes/0001-native-ui-iced.md)：**Iced 结论 Fail**（可访问性——候选不发布
-   可访问对象树，属框架级缺口），按计划进入 GPUI 比较。
+   进度见[报告 0001](spikes/0001-native-ui-iced.md)：**Iced 结论 Fail**（可访问性——不发布可访问对象树）；
+   见[报告 0002](spikes/0002-native-ui-gpui.md)：**GPUI 结论 Fail**（同样无无障碍，且核心没有文本输入控件）。
+   两个候选的失败原因不同，可访问性无法区分它们；下一个候选前应先查证文本输入控件与无障碍两项。
 2. Typst 映射 spike：20 页 SDG 生成 Typst、增量编译、NodeId ↔ glyph/preview 双向定位。
 3. 源码 reconcile spike：同一小文档生成 LaTeX/Typst，手改受支持结构后可靠映射回 SDG；未知语法变 Raw。
 4. CRDT 赛马：共享树和共享文本的两人离线编辑、本地 undo、快照与 10 万次动作。

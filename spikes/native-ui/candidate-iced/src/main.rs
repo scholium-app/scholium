@@ -6,7 +6,6 @@
 //! - 输入法预编辑只存在于 UI 状态，**不进历史**；`Commit` 才产生一个核心动作。
 //! - 源码面板在非活动语言下不可写：控件的编辑会被权威缓冲回滚，而不是留在前端。
 
-mod fixture;
 mod ime_host;
 mod structure_view;
 
@@ -22,7 +21,7 @@ use ime_host::ImeHost;
 use scholium_spike_core::cursor::move_cursor;
 use scholium_spike_core::{
     ActorId, Cursor, Dialect, Direction, Editor, Intent, Layout, NodeId, NodeKind, SemanticEdit,
-    SourcePane, layout_document,
+    SourcePane, fixture, layout_document,
 };
 use structure_view::StructureView;
 
@@ -131,7 +130,7 @@ impl App {
                 .copied()
                 .expect("文档至少有一个段落")
         };
-        fixture::build(&mut core, paragraph);
+        fixture::build_standard(&mut core);
 
         let source = SourcePane::new(Dialect::Latex, SOURCE_INITIAL);
         let source_content = text_editor::Content::with_text(source.text());

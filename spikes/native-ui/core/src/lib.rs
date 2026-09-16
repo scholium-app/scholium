@@ -16,6 +16,7 @@ pub mod cursor;
 pub mod doc;
 pub mod edit;
 pub mod error;
+pub mod fixture;
 pub mod ids;
 pub mod layout;
 pub mod source;
