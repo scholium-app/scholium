@@ -32,6 +32,7 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 | 第 3 项 源码 reconcile | [0006-source-reconcile.md](0006-source-reconcile.md) | **结论 Pass（限定范围）**：受支持结构的受支持编辑在 LaTeX/Typst 两种方言下 8/8 用例通过，未知语法落成 Raw 且原文逐字保留、往返一致；结构级重构与增删行一律报冲突。 |
 | 出口条件 安全 | [0011-untrusted-input.md](0011-untrusted-input.md) | **部分 Pass**：shell escape 默认关闭且有效；Typst 侧按构造安全（读文件/加载插件均被拒）；但 **LaTeX 能读项目外文件，`openin_any=p` 挡不住**，必须用 OS 级沙箱（bwrap 实测可阻断，但沙箱内良性编译尚未跑通）。 |
 | 第 6 项 团队语言协调 | [0009-team-language.md](0009-team-language.md) | **结论 Pass（内存模型 + 确定性时序）**：60 用例 60/60，含切换屏障扫描（重叠 0）、epoch 隔离不自动回灌、重启恢复字段级一致、分区/旧包/19 类恶意写集逐条拒绝。真实网络、多进程、磁盘与解析器未验证。 |
+| CRDT 引擎预筛 | [0013-crdt-prescreen.md](0013-crdt-prescreen.md) | Loro 1.16 / Yrs 0.27 / Automerge 0.11 **均为 MIT 且无 C 依赖**；能力差异集中在"树可移动性"与"内置 undo"，需夹具对比后定选（ADR 0009 Proposed）。 |
 | 第 4、5、7 项 | 进行中 | 见下方各报告 |
 
 **测试前提**：无障碍测试必须在会话 `org.a11y.Status IsEnabled = true` 下进行。
