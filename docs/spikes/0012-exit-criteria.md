@@ -156,3 +156,19 @@ SIGKILL 不等于断电，真实掉电语义未测。
 与 ADR 0008 提到的 `SplitText`/`ReplaceRangeWithRaw`）；② 出口条件 3 与 6 的**表述修订**
 （并补齐 bwrap 配方——「能阻断」已验证，「能正常干活」未通过）；③ 报告 0010 的第 8、9 条；
 ④ Loro 的性能对比（ADR 0009 已选定引擎但未测吞吐/体积/内存，属阶段 1 首个迭代）。
+
+## 复现步骤
+
+本页是逐条判定，证据在上表链接的各报告里。一键复现全部判定：
+
+```bash
+cd /home/ation_ciger/Projects/Mogan/scholium
+bash spikes/verify-stage0.sh            # 全部
+bash spikes/verify-stage0.sh license    # 只跑许可门禁（逐 workspace 的 licenses/bans/sources）
+bash spikes/verify-stage0.sh security   # 只跑不受信源码隔离
+```
+
+两点环境限制（脚本会提示，不假装通过）：
+
+- `cargo deny check advisories` 需要联网获取 RustSec 数据库，离线环境跑不了，**CI 必须跑**；
+- 无障碍测试要求会话 `IsEnabled` 与 `ScreenReaderEnabled` **都开**，否则 AccessKit 不注册、结果是假阴性。
