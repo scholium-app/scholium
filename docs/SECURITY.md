@@ -38,8 +38,9 @@ ForeignSource 的 LaTeX/Typst 宏、模板、构建桥接和预生成资源都�
 
 当前验证：Linux 配方的良性编译与隔离见[报告 0016](spikes/0016-working-tree-status.md)，
 普通混合构建 LaTeX 入口的接入与覆盖矩阵见[报告 0017](spikes/0017-mixed-build-isolation.md)。
-只读系统运行时是显式例外；目前 `/usr` 等挂载仍较宽，不能宣称项目根外所有文件不可读。
-进程内 Typst、宿主侧产物探针与旧恢复实验的边界尚未全部统一。
+[报告 0018](spikes/0018-typst-worker-isolation.md) 将普通混合构建 Typst 编译/导出也移入沙箱 worker，
+并用工具文件和运行时资源目录白名单替代整个 `/usr`。可信资源仍是项目根外只读例外；
+宿主侧产物探针、旧恢复实验及总资源配额尚未全部统一。
 
 ## 4. 同步与身份
 

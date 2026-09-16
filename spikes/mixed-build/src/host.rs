@@ -93,8 +93,8 @@ pub(crate) fn observe_typst(
     next: &mut RefTable,
 ) -> Result<Observation, Diagnostic> {
     let pdf_path = dir.join("main.pdf");
-    if let Some(document) = run.document.as_ref() {
-        typst_host::export_pdf(document, &pdf_path).map_err(|error| {
+    if run.ok {
+        typst_host::export_pdf(run, &pdf_path).map_err(|error| {
             Diagnostic::new("host-pdf-export", format!("宿主 Typst 导出 PDF 失败：{error}"))
         })?;
     }
@@ -173,23 +173,23 @@ pub(crate) fn export_component(
     component: &crate::ir::Component,
     run: &TypstRun,
 ) -> Result<String, Diagnostic> {
-    let Some(document) = run.document.as_ref() else {
+    if !run.ok {
         return Err(Diagnostic::new(
             "component-artifact",
             format!("组件 `{}` 没有可导出的文档", component.id),
         ));
-    };
-    if document.pages().len() > 1 {
+    }
+    if run.text_pages.len() > 1 {
         return Err(Diagnostic::new(
             "component-multipage-unsupported",
             format!(
                 "组件 `{}` 编译出 {} 页；当前受支持载体只有单页矢量嵌入",
                 component.id,
-                document.pages().len()
+                run.text_pages.len()
             ),
         ));
     }
-    let Some(svg) = typst_host::page_svg(document, 1) else {
+    let Some(svg) = run.svg.as_ref() else {
         return Err(Diagnostic::new(
             "component-artifact",
             format!("组件 `{}` 无法导出 SVG", component.id),
@@ -197,14 +197,14 @@ pub(crate) fn export_component(
     };
     let svg_path = dir.join(format!("{}.svg", component.id));
     let pdf_path = dir.join(format!("{}.pdf", component.id));
-    let _ = std::fs::write(&svg_path, &svg);
+    let _ = std::fs::write(&svg_path, svg);
     if !svg.contains("<path") {
         return Err(Diagnostic::new(
             "component-artifact",
             format!("组件 `{}` 的 SVG 不含路径数据，可能是位图载体", component.id),
         ));
     }
-    let bytes = typst_host::export_pdf(document, &pdf_path).map_err(|error| {
+    let bytes = typst_host::export_pdf(run, &pdf_path).map_err(|error| {
         Diagnostic::new(
             "component-artifact",
             format!("组件 `{}` 导出 PDF 失败：{error}", component.id),

@@ -1,0 +1,11 @@
+   Compiling scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build)
+    Finished `release` profile [optimized] target(s) in 0.55s
+     Running tests/typst_isolation.rs (spikes/mixed-build/target/release/deps/typst_isolation-9af11e27edb30e64)
+
+running 3 tests
+test undeclared_resources_do_not_become_available_inside_worker ... ok
+test ordinary_typst_rebuild_still_publishes_a_pdf ... ok
+test expensive_typst_is_stopped_by_worker_budget_without_publishing ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.32s
+

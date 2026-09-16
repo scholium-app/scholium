@@ -20,6 +20,7 @@ use typst::utils::LazyHash;
 use typst_kit::fonts::FontStore;
 
 /// 虚拟文件系统里的一项。
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub(crate) enum Entry {
     /// 文本源码（`.typ`）。
     Text(String),

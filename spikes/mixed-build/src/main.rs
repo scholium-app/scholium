@@ -28,6 +28,9 @@ use diag::Evidence;
 use ir::Dialect;
 
 fn main() -> std::process::ExitCode {
+    if let Some(result) = typst_host::worker::dispatch() {
+        return result;
+    }
     if let Some(result) = packages::dispatch() {
         return result;
     }

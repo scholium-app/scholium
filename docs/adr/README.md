@@ -24,6 +24,8 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 | [0011：允许字体资产许可（OFL-1.1 / Ubuntu-font-1.0）](0011-font-asset-licenses.md) | Accepted | 仅限未修改字体；须登记来源与许可；同时修正 bans 对路径依赖的误伤 |
 | [0009：CRDT 引擎选型](0009-crdt-engine.md) | **Accepted** | **选定 Loro 1.16.0**：只有它同时具备可移动树与能过滤远端输入的内置 undo，且都端到端跑通（报告 0014）；性能对比留待阶段 1 首个迭代 |
 
+| [0012：Typst worker 与运行时挂载](0012-typst-worker-isolation.md) | Accepted | 混合构建 Typst 编译/内省/导出进入受控子进程；固定工具及资源白名单（执行者 Codex） |
+
 ## 待补（阶段出口依赖）
 
 下表是必须补齐的 ADR。"缺文件"表示尚未建立；关闭阶段是该 ADR 必须完成的最晚阶段，对应验证项见

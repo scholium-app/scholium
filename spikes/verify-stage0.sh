@@ -100,6 +100,8 @@ if want security; then
   section "出口条件 安全（不受信源码隔离）"
   run "untrusted-input" cargo run --release --offline --manifest-path spikes/untrusted-input/Cargo.toml
   run "mixed-build compiler isolation" cargo test --release --offline --manifest-path spikes/mixed-build/Cargo.toml --bin scholium-spike-mixed-build latex::tests
+  run "Typst worker isolation" cargo test --release --offline --manifest-path spikes/mixed-build/Cargo.toml --test typst_isolation
+  run "runtime mount allowlist" bash spikes/tests/runtime-mounts.sh
 fi
 
 # ---------- 出口条件：许可与来源 ----------

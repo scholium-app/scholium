@@ -14,8 +14,13 @@ use typst_layout::{Page, PagedDocument};
 use typst_svg::SvgOptions;
 
 use crate::world::{Entry, World};
+use serde::{Deserialize, Serialize};
+mod observe;
+pub(crate) mod worker;
+use observe::*;
 
 /// 一条链接记录。
+#[derive(Serialize, Deserialize)]
 pub(crate) struct LinkRecord {
     /// 所在页。
     pub(crate) page: u64,
@@ -26,10 +31,12 @@ pub(crate) struct LinkRecord {
 }
 
 /// 一次 Typst 编译的观测结果。
-#[derive(Default)]
+#[derive(Default, Serialize, Deserialize)]
 pub(crate) struct TypstRun {
     /// 编译产物。
-    pub(crate) document: Option<PagedDocument>,
+    pub(crate) pdf: Vec<u8>,
+    /// First-page SVG evidence, exported in the worker.
+    pub(crate) svg: Option<String>,
     /// 是否编译成功。
     pub(crate) ok: bool,
     /// 错误信息。
@@ -62,6 +69,11 @@ impl TypstRun {
 
 /// 用给定虚拟文件编译主文件；`probes` 是要读回编号的符号 id。
 pub(crate) fn compile(main: &str, files: &[(String, Entry)], probes: &[String]) -> TypstRun {
+    worker::compile(main, files, probes)
+}
+
+/// Worker-only compilation; never invoked by the parent build path.
+fn compile_local(main: &str, files: &[(String, Entry)], probes: &[String]) -> TypstRun {
     let mut run = TypstRun::default();
     let world = World::new(main.to_string());
     for (path, entry) in files {
@@ -76,11 +88,8 @@ pub(crate) fn compile(main: &str, files: &[(String, Entry)], probes: &[String]) 
         .iter()
         .map(|warning| warning.message.to_string())
         .collect();
-    match warned.output {
-        Ok(document) => {
-            run.ok = true;
-            run.document = Some(document);
-        }
+    let document = match warned.output {
+        Ok(document) => document,
         Err(errors) => {
             run.errors = errors
                 .iter()
@@ -88,18 +97,12 @@ pub(crate) fn compile(main: &str, files: &[(String, Entry)], probes: &[String]) 
                 .collect();
             return run;
         }
-    }
-    let Some(document) = run.document.as_ref() else {
-        return run;
     };
+    run.ok = true;
+    let document = &document;
     for (index, page) in document.pages().iter().enumerate() {
         run.text_pages.push(page_text(page));
-        collect_links(
-            &page.frame,
-            (index + 1) as u64,
-            document,
-            &mut run.links,
-        );
+        collect_links(&page.frame, (index + 1) as u64, document, &mut run.links);
     }
     let introspector = document.introspector();
     for probe in probes {
@@ -112,82 +115,19 @@ pub(crate) fn compile(main: &str, files: &[(String, Entry)], probes: &[String]) 
             run.numbers.insert(probe.clone(), number);
         }
     }
+    match pdf_bytes(document) {
+        Ok(bytes) => run.pdf = bytes,
+        Err(error) => {
+            run.ok = false;
+            run.errors.push(error);
+        }
+    }
+    run.svg = page_svg(document, 1);
     run
 }
 
-/// 某标签所在的物理页码。
-pub(crate) fn label_position(
-    introspector: &typst_layout::PagedIntrospector,
-    name: &str,
-) -> Option<u64> {
-    let label = Label::new(PicoStr::intern(name))?;
-    introspector
-        .query_label(label)
-        .ok()?
-        .location()
-        .and_then(|location| introspector.position(location))
-        .map(|position| position.page.get() as u64)
-}
-
-/// 从编号探针元数据里读回编号。
-pub(crate) fn label_value(
-    introspector: &typst_layout::PagedIntrospector,
-    name: &str,
-) -> Option<String> {
-    let label = Label::new(PicoStr::intern(name))?;
-    let content = introspector.query_label(label).ok()?;
-    match content.get_by_name("value").ok()? {
-        Value::Str(text) => Some(text.to_string()),
-        other => Some(format!("{other:?}")),
-    }
-}
-
-/// 递归抽取一页的文本，链接以 `⟦LINK⟧` 标记。
-pub(crate) fn page_text(page: &Page) -> String {
-    let mut out = String::new();
-    collect_text(&page.frame, &mut out);
-    out
-}
-
-fn collect_text(frame: &Frame, out: &mut String) {
-    for (_, item) in frame.items() {
-        match item {
-            FrameItem::Group(group) => collect_text(&group.frame, out),
-            FrameItem::Text(text) => out.push_str(&text.text),
-            _ => {}
-        }
-    }
-}
-
-fn collect_links(frame: &Frame, page: u64, document: &PagedDocument, out: &mut Vec<LinkRecord>) {
-    for (_, item) in frame.items() {
-        match item {
-            FrameItem::Group(group) => collect_links(&group.frame, page, document, out),
-            FrameItem::Link(destination, _) => {
-                let introspector = document.introspector();
-                let (target_page, url) = match destination {
-                    Destination::Url(url) => (None, Some(url.as_str().to_string())),
-                    Destination::Position(position) => (Some(position.page.get() as u64), None),
-                    Destination::Location(location) => (
-                        introspector
-                            .position(*location)
-                            .map(|position| position.page.get() as u64),
-                        None,
-                    ),
-                };
-                out.push(LinkRecord {
-                    page,
-                    target_page,
-                    url,
-                });
-            }
-            _ => {}
-        }
-    }
-}
-
 /// 把某页导出为 SVG（矢量载体）。
-pub(crate) fn page_svg(document: &PagedDocument, page: usize) -> Option<String> {
+fn page_svg(document: &PagedDocument, page: usize) -> Option<String> {
     let page = document.pages().get(page.saturating_sub(1))?;
     Some(typst_svg::svg(
         page,
@@ -199,21 +139,26 @@ pub(crate) fn page_svg(document: &PagedDocument, page: usize) -> Option<String> 
 }
 
 /// 把文档导出为真实 PDF。
-pub(crate) fn export_pdf(document: &PagedDocument, path: &std::path::Path) -> Result<usize, String> {
+fn pdf_bytes(document: &PagedDocument) -> Result<Vec<u8>, String> {
     let options = typst_pdf::PdfOptions {
         ident: typst::foundations::Smart::Auto,
         ..Default::default()
     };
     match typst_pdf::pdf(document, &options) {
-        Ok(bytes) => {
-            let length = bytes.len();
-            std::fs::write(path, bytes).map_err(|error| error.to_string())?;
-            Ok(length)
-        }
+        Ok(bytes) => Ok(bytes),
         Err(errors) => Err(errors
             .iter()
             .map(|error| error.message.to_string())
             .collect::<Vec<_>>()
             .join("；")),
     }
+}
+
+/// Save only the PDF already exported by the isolated worker.
+pub(crate) fn export_pdf(run: &TypstRun, path: &std::path::Path) -> Result<usize, String> {
+    if !run.ok || !run.pdf.starts_with(b"%PDF-") {
+        return Err("missing worker PDF".into());
+    }
+    std::fs::write(path, &run.pdf).map_err(|error| error.to_string())?;
+    Ok(run.pdf.len())
 }

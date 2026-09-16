@@ -83,3 +83,7 @@ worker 调用，不能在 core 中绕过取消、内存和网络策略。新增�
 ## WASM 验证边界
 
 官方 Rust syntax 与编译引擎作为候选；纯语法和投影优先移植。浏览器编译另测 Worker、版本 features、字体、包资源、缓存、内存与取消；World 通过宿主注入声明资源，不能直接依赖本机文件系统，也不能因为引擎使用 Rust 就宣称 WASM 已可用。见[全栈候选](../TECH_STACK.md)及[WASM](../WASM.md)。
+
+当前 mixed-build spike 的 Typst 编译、内省和 PDF/SVG 导出已进入独立沙箱 worker，
+见[报告 0018](../spikes/0018-typst-worker-isolation.md)与[ADR 0012](../adr/0012-typst-worker-isolation.md)。
+每次新进程不保留增量缓存；临时 JSON 不是正式存储或网络协议。

@@ -1,0 +1,1 @@
+PASS: runtime allowlist exposes tools/resources but omits unrelated host trees
