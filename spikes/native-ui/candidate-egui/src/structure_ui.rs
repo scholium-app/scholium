@@ -5,7 +5,7 @@ impl SpikeApp {
     pub(super) fn draw_structure(&mut self, ui: &mut egui::Ui) {
         ui.vertical(|ui| {
             ui.heading("正文（结构编辑 · 结构渲染）");
-            ui.horizontal(|ui| {
+            ui.horizontal_wrapped(|ui| {
                 if ui.button("包裹为分数").clicked() {
                     self.wrap(NodeKind::Fraction);
                 }
@@ -38,8 +38,17 @@ impl SpikeApp {
                 &self.layout,
                 egui::Color32::from_rgb(230, 230, 233),
             );
+            // Keep the document exposed when focus moves to source or preview.
+            // This remains a label, not a complete editable math accessibility tree.
+            response.widget_info(|| {
+                egui::WidgetInfo::labeled(
+                    egui::WidgetType::Label,
+                    true,
+                    self.core.document().to_plain_text(),
+                )
+            });
             if self.structure_focused {
-                self.caret_and_ime(ui, &response, &painter, origin);
+                self.caret_and_ime(ui, &painter, origin);
             }
         });
     }
@@ -65,13 +74,7 @@ impl SpikeApp {
         }
     }
 
-    fn caret_and_ime(
-        &mut self,
-        ui: &mut egui::Ui,
-        response: &egui::Response,
-        painter: &egui::Painter,
-        origin: egui::Pos2,
-    ) {
+    fn caret_and_ime(&mut self, ui: &mut egui::Ui, painter: &egui::Painter, origin: egui::Pos2) {
         let caret = match self.focus {
             Cursor::Text { node, byte } => self.layout.caret(node, byte),
             Cursor::Slot { .. } => None,
@@ -100,9 +103,5 @@ impl SpikeApp {
             self.ime_requested = true;
             println!("[ime] 输入法锚点 {anchor:?}");
         }
-        let description = self.core.document().to_plain_text();
-        response.widget_info(|| {
-            egui::WidgetInfo::labeled(egui::WidgetType::Label, true, description.clone())
-        });
     }
 }

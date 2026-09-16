@@ -19,7 +19,7 @@ app-shell
 └── platform/       window、clipboard、file dialog、keychain、updates
 ```
 
-桌面框架严格按 Iced → GPUI → C++ EUI-NEO → Slint 或 egui 依次验证，选型尚未确定。
+桌面框架严格按 Iced → GPUI → C++ EUI-NEO → Slint 或 egui 依次验证，已选定 egui / eframe 0.36.2（ADR 0006）。
 窗口、输入法、文本塑形、布局、GPU/软件绘制与可访问树均采用原生接口；不使用浏览器编辑器或 WebView。
 Rust 负责权威文档和业务；EUI-NEO 候选由 C++ 实现原生 UI，通过受控 ABI 连接 Rust。必要 C/C++/Zig 依赖单独审查。
 原生框架提供基础控件不代表现成支持数学结构编辑。结构视图与源码视图分别验证编辑适配、IME、选区、撤销、
@@ -91,3 +91,9 @@ RequestSourceDialectSwitch 展示待冲刷成员、超时隔离和草稿处置�
 新增三人同语言/视觉协作、切换期间 IME、模板冲突、异语言只读与双目标输出端到端测试。
 
 共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+
+## 阶段 0 窗口证据
+
+[报告 0019](../spikes/0019-native-window-review.md) 记录真实源码/剪贴板/预览闭环，
+并修复候选窄窗口面板溢出和正文失焦后从无障碍树消失。正文仍缺 Text/Selection 接口，
+长结构缺视口滚动；候选并未通过完整编辑器无障碍验收。

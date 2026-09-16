@@ -1,5 +1,6 @@
 # 实施路线图
 
+> 真实窗口复核见[报告 0019](spikes/0019-native-window-review.md)：源码/剪贴板/预览闭环通过；正文无障碍接口、结构视口和实际帧性能仍未闭合。
 > Typst 进程隔离和运行时白名单的后续进展见[报告 0018](spikes/0018-typst-worker-isolation.md)，条件 6 仍部分满足。
 > 后续入口隔离进展见[报告 0017](spikes/0017-mixed-build-isolation.md)：普通混合构建 LaTeX 已接入统一沙箱，条件 6 仍部分满足。
 路线按产品风险推进。首先验证结构编辑、源码 reconcile、团队单一源码语言和全范围混合构建，随后尽早完成

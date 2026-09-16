@@ -173,17 +173,10 @@ impl SpikeApp {
         }
 
         ui.vertical(|ui| {
-            let panes = ui.available_width() / 3.0;
-            ui.horizontal_top(|ui| {
-                ui.allocate_ui(egui::vec2(panes, ui.available_height()), |ui| {
-                    self.draw_structure(ui)
-                });
-                ui.allocate_ui(egui::vec2(panes, ui.available_height()), |ui| {
-                    self.draw_source(ui)
-                });
-                ui.allocate_ui(egui::vec2(panes, ui.available_height()), |ui| {
-                    self.preview.draw(ui, &self.core);
-                });
+            ui.columns(3, |columns| {
+                self.draw_structure(&mut columns[0]);
+                self.draw_source(&mut columns[1]);
+                self.preview.draw(&mut columns[2], &self.core);
             });
 
             ui.separator();
