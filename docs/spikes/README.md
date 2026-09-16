@@ -27,7 +27,7 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 | 第 1 项 原生 UI（候选 1） | [0001-native-ui-iced.md](0001-native-ui-iced.md) | **Iced 结论 Fail**：核心 26 个测试全过、渲染后端与真实输入法均有可复现证据；可访问性不通过（框架无 accesskit）。 |
 | 第 1 项 原生 UI（候选 2） | [0002-native-ui-gpui.md](0002-native-ui-gpui.md) | **GPUI 结论 Fail**：结构渲染可行且与 Iced 可比，但核心**没有文本输入控件**，且同样无 accesskit。 |
 | 第 1 项 原生 UI（候选预筛） | [0003-native-ui-prescreen.md](0003-native-ui-prescreen.md) | EUI-NEO 许可证 Apache-2.0 但无无障碍（不投入）；Slint 有无障碍但许可证被政策阻断；**egui 三项全过，进入实现**。 |
-| 第 1 项 原生 UI（候选 3） | [0004-native-ui-egui.md](0004-native-ui-egui.md) | **egui 结论 Blocked（首个无硬性 Fail）**：可访问性通过（发布对象树），结构渲染通过；输入法接线与自绘结构的可访问描述待完成。 |
+| 第 1 项 原生 UI（候选 3） | [0004-native-ui-egui.md](0004-native-ui-egui.md) | **egui 结论 Blocked（首个无硬性 Fail）**：可访问性通过（发布对象树）、输入法可用（用户实机确认）、结构渲染通过；结构编辑交互、性能与预览定位未验收。**目前唯一同时具备输入法与可访问性的候选。** |
 | 第 2–7 项 | 尚无 | 待执行 |
 
 **测试前提**：无障碍测试必须在会话 `org.a11y.Status IsEnabled = true` 下进行。

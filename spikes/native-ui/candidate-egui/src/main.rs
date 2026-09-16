@@ -356,27 +356,31 @@ impl eframe::App for SpikeApp {
                         }
 
                         if focused {
-                            // 自绘区必须自己声明输入法归属，并把**真实光标矩形**交给它；
-                            // 早期版本传的是硬编码假矩形，等于没接线。
-                            let cursor_rect = caret_rect.unwrap_or_else(|| {
+                            // 自绘区必须自己声明输入法归属，并把光标位置交给它。
+                            //
+                            // 注意：egui-winit 在 Wayland 下用 `IMEOutput.rect` 调用
+                            // `set_ime_cursor_area`（不是 `cursor_rect`，见 egui-winit 的
+                            // handle_platform_output_inner）。所以这里必须传**光标处的
+                            // 小矩形**；传整块面板会把候选窗锚在面板左上角。
+                            let anchor = caret_rect.unwrap_or_else(|| {
                                 egui::Rect::from_min_size(origin, egui::vec2(1.5, 20.0))
                             });
                             ui.output_mut(|output| {
                                 output.ime = Some(egui::output::IMEOutput {
                                     purpose: egui::IMEPurpose::Normal,
-                                    rect,
-                                    cursor_rect,
+                                    rect: anchor,
+                                    cursor_rect: anchor,
                                     should_interrupt_composition: false,
                                 });
                             });
                             if !self.ime_requested {
                                 self.ime_requested = true;
                                 println!(
-                                    "[ime] 已向平台声明输入法归属：cursor_rect=({:.0},{:.0},{:.0},{:.0})",
-                                    cursor_rect.min.x,
-                                    cursor_rect.min.y,
-                                    cursor_rect.width(),
-                                    cursor_rect.height()
+                                    "[ime] 已向平台声明输入法归属：anchor=({:.0},{:.0},{:.0},{:.0})",
+                                    anchor.min.x,
+                                    anchor.min.y,
+                                    anchor.width(),
+                                    anchor.height()
                                 );
                             }
 
