@@ -4,7 +4,6 @@
 //!
 //! Typst 的 `<label>` 只在标记模式生效；写进数学模式会被解析成比较运算，
 //! 改用 `#label("…")` 又只是**孤儿标签**（没有附着元素，查询不到位置）。
-//!
 //! 实测可行的写法是在**任何模式**下插入一个带标签的元数据元素：
 //!
 //! ```text
@@ -13,7 +12,10 @@
 //!
 //! `here()` 在布局期求值，给出该处的页码与坐标；元数据零宽，不改变排版。
 //! 于是每个节点在内容**前后各插一个锚点**，就得到它在预览里的区间——
-//! 既支持"节点 → 位置"，也支持"点中位置 → 节点"（行内结构也能命中，不只是块级）。
+//! 既支持"节点 → 位置"，也支持"点中位置 → 节点"（行内结构也能命中）。
+//!
+//! 文本叶子还可以按字符切块（[`Options::text_chunk_chars`]），每个块自带区间，
+//! 从而支持"点击位置 → 字符偏移"的字符级映射。
 //!
 //! # 简化（刻意为之，见验证报告）
 //!
@@ -32,6 +34,29 @@ pub enum Side {
     End,
 }
 
+/// 生成选项。
+#[derive(Clone, Copy, Debug, Default)]
+pub struct Options {
+    /// 文本叶子的分块字符数。`Some(n)` 时每 n 个字符左右各加一个锚点，
+    /// 从而支持"点击位置 → 字符偏移"的字符级映射。
+    pub text_chunk_chars: Option<usize>,
+}
+
+/// 一个文本分块。它的起止锚点给出该块在预览里的横向区间。
+#[derive(Clone, Debug)]
+pub struct TextChunk {
+    /// 所属文本叶子。
+    pub node: NodeId,
+    /// 起始字节偏移（含）。
+    pub start_byte: usize,
+    /// 结束字节偏移（不含）。
+    pub end_byte: usize,
+    /// 起点锚点名。
+    pub begin_anchor: String,
+    /// 终点锚点名。
+    pub end_anchor: String,
+}
+
 /// 生成结果。
 #[derive(Debug, Default)]
 pub struct Generation {
@@ -41,6 +66,8 @@ pub struct Generation {
     pub spans: BTreeMap<NodeId, (usize, usize)>,
     /// 锚点名 → (节点, 侧)，编译后据此取页码与坐标。
     pub anchors: BTreeMap<String, (NodeId, Side)>,
+    /// 文本分块（仅当启用了 `text_chunk_chars` 时非空）。
+    pub text_chunks: Vec<TextChunk>,
 }
 
 impl Generation {
@@ -65,11 +92,16 @@ fn anchor_name(node: NodeId, side: Side) -> String {
     format!("nd-{}-{suffix}", node.index())
 }
 
-/// 生成 Typst 源码。
+/// 生成 Typst 源码（默认选项：不加文本分块锚点）。
 pub fn generate(document: &Document) -> Generation {
+    generate_with(document, Options::default())
+}
+
+/// 按给定选项生成 Typst 源码。
+pub fn generate_with(document: &Document, options: Options) -> Generation {
     let mut generation = Generation::default();
     let mut sink = String::new();
-    emit_block(document, document.root(), &mut generation, &mut sink);
+    emit_block(document, document.root(), &mut generation, &mut sink, options);
     generation
 }
 
@@ -105,14 +137,20 @@ fn is_inline_structure(kind: NodeKind) -> bool {
 }
 
 /// 块级节点：段落、标题、独立公式。
-fn emit_block(document: &Document, node: NodeId, generation: &mut Generation, sink: &mut String) {
+fn emit_block(
+    document: &Document,
+    node: NodeId,
+    generation: &mut Generation,
+    sink: &mut String,
+    options: Options,
+) {
     let Ok(current) = document.node(node) else {
         return;
     };
     match current.kind {
         NodeKind::Document => {
             for child in document.slot(node, 0).unwrap_or(&[]) {
-                emit_block(document, *child, generation, sink);
+                emit_block(document, *child, generation, sink, options);
             }
         }
         NodeKind::Paragraph | NodeKind::Heading => {
@@ -122,7 +160,7 @@ fn emit_block(document: &Document, node: NodeId, generation: &mut Generation, si
             }
             let mut inline = String::new();
             emit_anchor(generation, node, Side::Begin, &mut inline);
-            emit_inline(document, node, generation, &mut inline, false);
+            emit_inline(document, node, generation, &mut inline, false, options);
             emit_anchor(generation, node, Side::End, &mut inline);
 
             generation.source.push_str(&inline);
@@ -135,7 +173,7 @@ fn emit_block(document: &Document, node: NodeId, generation: &mut Generation, si
             let start_byte = generation.source.len();
             let mut inline = String::new();
             emit_anchor(generation, node, Side::Begin, &mut inline);
-            emit_inline(document, node, generation, &mut inline, false);
+            emit_inline(document, node, generation, &mut inline, false, options);
             emit_anchor(generation, node, Side::End, &mut inline);
             generation.source.push_str(&inline);
             generation.source.push_str("\n\n");
@@ -153,6 +191,7 @@ fn emit_inline(
     generation: &mut Generation,
     out: &mut String,
     in_math: bool,
+    options: Options,
 ) {
     let Ok(current) = document.node(node) else {
         return;
@@ -165,50 +204,50 @@ fn emit_inline(
     }
 
     match kind {
-        NodeKind::Text => out.push_str(&escape(&document.text_of(node).unwrap_or_default())),
+        NodeKind::Text => emit_text(document, node, generation, out, options),
         NodeKind::Raw => out.push_str(&document.text_of(node).unwrap_or_default()),
         NodeKind::Document | NodeKind::Paragraph | NodeKind::Heading => {
             for child in document.slot(node, 0).unwrap_or(&[]) {
-                emit_inline(document, *child, generation, out, in_math);
+                emit_inline(document, *child, generation, out, in_math, options);
             }
         }
         NodeKind::Math => {
             out.push_str("$ ");
             for child in document.slot(node, 0).unwrap_or(&[]) {
-                emit_inline(document, *child, generation, out, true);
+                emit_inline(document, *child, generation, out, true, options);
             }
             out.push_str(" $");
         }
         NodeKind::Fraction => {
             out.push_str("frac(");
-            emit_slot(document, node, 0, generation, out, in_math);
+            emit_slot(document, node, 0, generation, out, in_math, options);
             out.push_str(", ");
-            emit_slot(document, node, 1, generation, out, in_math);
+            emit_slot(document, node, 1, generation, out, in_math, options);
             out.push(')');
         }
         NodeKind::Sqrt => {
             out.push_str("sqrt(");
-            emit_slot(document, node, 0, generation, out, in_math);
+            emit_slot(document, node, 0, generation, out, in_math, options);
             out.push(')');
         }
         NodeKind::Script => {
             let mut base = String::new();
-            emit_slot(document, node, 0, generation, &mut base, in_math);
+            emit_slot(document, node, 0, generation, &mut base, in_math, options);
             out.push_str(&base);
             let mut superscript = String::new();
-            emit_slot(document, node, 2, generation, &mut superscript, in_math);
+            emit_slot(document, node, 2, generation, &mut superscript, in_math, options);
             if !superscript.is_empty() {
                 out.push_str(&format!("^({superscript})"));
             }
             let mut subscript = String::new();
-            emit_slot(document, node, 1, generation, &mut subscript, in_math);
+            emit_slot(document, node, 1, generation, &mut subscript, in_math, options);
             if !subscript.is_empty() {
                 out.push_str(&format!("_({subscript})"));
             }
         }
         NodeKind::Delimited => {
             out.push_str("lr((");
-            emit_slot(document, node, 0, generation, out, in_math);
+            emit_slot(document, node, 0, generation, out, in_math, options);
             out.push_str("))");
         }
         NodeKind::Matrix => {
@@ -219,7 +258,7 @@ fn emit_inline(
                     // 简化：固定 2 列，用分号换行。
                     out.push_str(if index % 2 == 0 { "; " } else { ", " });
                 }
-                emit_inline(document, *cell, generation, out, in_math);
+                emit_inline(document, *cell, generation, out, in_math, options);
             }
             out.push(')');
         }
@@ -227,6 +266,56 @@ fn emit_inline(
 
     if anchored {
         emit_anchor(generation, node, Side::End, out);
+    }
+}
+
+/// 发出一个文本叶子。启用分块时，每 `size` 个字符左右各加一个锚点。
+fn emit_text(
+    document: &Document,
+    node: NodeId,
+    generation: &mut Generation,
+    out: &mut String,
+    options: Options,
+) {
+    let text = document.text_of(node).unwrap_or_default();
+    let Some(size) = options.text_chunk_chars.filter(|size| *size > 0) else {
+        out.push_str(&escape(&text));
+        return;
+    };
+    if text.is_empty() {
+        return;
+    }
+
+    // 字符边界表：按字符数切块，绝不按字节切，以免切开 UTF-8。
+    let boundaries: Vec<usize> = text
+        .char_indices()
+        .map(|(byte, _)| byte)
+        .chain(std::iter::once(text.len()))
+        .collect();
+
+    let mut index = 0usize;
+    while index < boundaries.len() - 1 {
+        let end = (index + size).min(boundaries.len() - 1);
+        let (start_byte, end_byte) = (boundaries[index], boundaries[end]);
+        let begin_anchor = format!("nd-{}-t{index}-b", node.index());
+        let end_anchor = format!("nd-{}-t{index}-e", node.index());
+        generation
+            .anchors
+            .insert(begin_anchor.clone(), (node, Side::Begin));
+        generation
+            .anchors
+            .insert(end_anchor.clone(), (node, Side::End));
+        generation.text_chunks.push(TextChunk {
+            node,
+            start_byte,
+            end_byte,
+            begin_anchor: begin_anchor.clone(),
+            end_anchor: end_anchor.clone(),
+        });
+        out.push_str(&format!("#context [#metadata(here()) <{begin_anchor}>]"));
+        out.push_str(&escape(&text[start_byte..end_byte]));
+        out.push_str(&format!("#context [#metadata(here()) <{end_anchor}>]"));
+        index = end;
     }
 }
 
@@ -238,8 +327,9 @@ fn emit_slot(
     generation: &mut Generation,
     out: &mut String,
     in_math: bool,
+    options: Options,
 ) {
     if let Some(child) = document.slot(node, slot).unwrap_or(&[]).first() {
-        emit_inline(document, *child, generation, out, in_math);
+        emit_inline(document, *child, generation, out, in_math, options);
     }
 }

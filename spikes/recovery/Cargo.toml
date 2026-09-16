@@ -1,0 +1,36 @@
+[package]
+name = "scholium-spike-recovery"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "MIT OR Apache-2.0"
+
+# 独立 workspace：验证代码不进正式 workspace 的依赖图。
+[workspace]
+
+[dependencies]
+# 文档模型复用阶段 0 第 1 项的共享核心（只读，不作为持久化格式）。
+scholium-spike-core = { path = "../native-ui/core" }
+thiserror = "=2.0.20"
+# WAL 每条记录带 CRC-32 校验和；crc32fast 是 Apache-2.0/MIT 双许可，纯 Rust。
+crc32fast = "=1.5.2"
+
+[dev-dependencies]
+# 随机截断用固定种子；rand 0.9 的 SmallRng 可用 32 字节种子复现。
+rand = "=0.9.5"
+# 外部修改冲突用 SHA-256 内容哈希；只出现在验证代码里。
+sha2 = "=0.10.9"
+# SIGKILL 子进程需要 raise()；libc 是 MIT/Apache-2.0。
+libc = "=0.2.189"
+
+[lints.clippy]
+too_many_lines = "warn"
+cognitive_complexity = "warn"
+too_many_arguments = "warn"
+unwrap_used = "warn"
+missing_panics_doc = "warn"
+missing_errors_doc = "warn"
+undocumented_unsafe_blocks = "deny"
+
+[lints.rust]
+missing_docs = "warn"

@@ -135,3 +135,14 @@ pub fn build_large(core: &mut Editor, paragraphs: usize) -> NodeId {
     }
     last
 }
+
+/// 把首段文本设为给定内容，返回该段落的文本叶子。
+///
+/// 用于需要精确控制文本内容的验证（例如字符级位置映射）。
+pub fn build_text(core: &mut Editor, text: &str) -> NodeId {
+    let root = core.document().root();
+    let paragraph = child(core, root, 0, 0);
+    let text_node = child(core, paragraph, 0, 0);
+    type_text(core, text_node, text);
+    text_node
+}
