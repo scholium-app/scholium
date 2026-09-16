@@ -40,9 +40,21 @@
 - C/C++/Zig 依赖：**唯一**需要编译本地代码的路径是 `typst-eval → stacker → psm → cc`；
   `psm` 产出一个小型汇编 shim（见其构建产物 `...x86_64.o`），用途是深递归时的栈切换，
   ABI 局限在该 crate 内；`psm`/`cc` 均为 MIT OR Apache-2.0。除此之外无自研 C/C++/Zig 源码。
-- 许可门禁：新增 `deny.toml`（按 `AGENT.md` 政策配置），**8 个 workspace 全部通过**
-  `cargo deny check licenses`。门禁期间真实拦下 `Apache-2.0 WITH LLVM-exception`
-  （`ar_archive_writer`/`rustix`/`linux-raw-sys`），按政策走 [ADR 0005](../adr/0005-llvm-exception-license.md) 后加入允许清单。
+- 许可门禁：新增 `deny.toml`（按 `AGENT.md` 政策配置），**12 个 workspace 全部通过**
+  `cargo deny --offline check licenses / bans / sources`（一键脚本 `license` 段可复现）。
+  门禁期间真实拦下三类问题，都按政策处理并留下 ADR：
+
+  | 被拦下的 | 处理 |
+  |---|---|
+  | `Apache-2.0 WITH LLVM-exception`（`ar_archive_writer`/`rustix`/`linux-raw-sys`） | [ADR 0005](../adr/0005-llvm-exception-license.md)：权限严格宽于 Apache-2.0，加入允许清单 |
+  | `BSL-1.0`（`xxhash-rust`，Loro/Yrs 依赖） | [ADR 0010](../adr/0010-bsl-license.md)：OSI 宽松许可，加入允许清单 |
+  | `OFL-1.1` + `Ubuntu-font-1.0`（`epaint_default_fonts`，egui 内置字体） | [ADR 0011](../adr/0011-font-asset-licenses.md)：**字体资产**单独一类，仅限未修改字体并要求登记 |
+
+  另外修正了两处**我自己的验证缺陷**：① 先前的门禁检查只覆盖部分 workspace，
+  漏掉了三个 UI 候选（正是 egui 的字体许可就在那里被发现）；② `bans.wildcards = "deny"`
+  误伤了路径依赖（`{ path = "../.." }` 本就没有版本号），已改为 `allow-wildcard-paths = true`。
+- **未运行**：`cargo deny check advisories` 需要联网获取 RustSec 数据库，本环境无法运行——
+  明确记为未验证，CI 必须跑（脚本会在输出里提示，不假装通过）。
 
 注意：`cargo deny` 目前**无法在仓库根运行**（根 workspace `members = []`），必须逐 crate 跑；
 CI 接入时按 workspace 列表执行。

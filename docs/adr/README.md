@@ -21,6 +21,7 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 | [0007：Typst 生成、编译集成与位置映射](0007-typst-integration.md) | Accepted | 锚点 + `Introspector::position` 双向定位；持久 World；异步编译 + 结果门；锁定 typst 0.15.1 |
 | [0008：源码 reconcile 策略与构建工具链隔离](0008-reconcile-and-toolchain-isolation.md) | Accepted | 行+范围归因、不确定即冲突、Raw 逐字保留；LaTeX 必须跑在 OS 级沙箱内 |
 | [0010：允许 BSL-1.0 依赖](0010-bsl-license.md) | Accepted | Boost Software License 是宽松许可（与 MIT 同类），加入允许清单 |
+| [0011：允许字体资产许可（OFL-1.1 / Ubuntu-font-1.0）](0011-font-asset-licenses.md) | Accepted | 仅限未修改字体；须登记来源与许可；同时修正 bans 对路径依赖的误伤 |
 | [0009：CRDT 引擎选型](0009-crdt-engine.md) | **Accepted** | **选定 Loro 1.16.0**：只有它同时具备可移动树与能过滤远端输入的内置 undo，且都端到端跑通（报告 0014）；性能对比留待阶段 1 首个迭代 |
 
 ## 待补（阶段出口依赖）

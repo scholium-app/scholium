@@ -81,13 +81,24 @@ fi
 
 # ---------- 出口条件：许可与来源 ----------
 if want license; then
-  section "出口条件 许可门禁（cargo deny）"
-  for d in spikes/native-ui/core spikes/typst-mapping spikes/source-reconcile spikes/untrusted-input \
+  section "出口条件 许可与来源（cargo deny：licenses / bans / sources）"
+  # 注意：advisories 需要联网获取 RustSec 数据库，离线环境下无法运行——这里明确跳过而不是假装通过。
+  for d in spikes/native-ui/core \
+           spikes/native-ui/candidate-iced spikes/native-ui/candidate-gpui spikes/native-ui/candidate-egui \
+           spikes/typst-mapping spikes/source-reconcile spikes/untrusted-input \
            spikes/crdt-race spikes/crdt-engines spikes/recovery spikes/language-coordination spikes/mixed-build; do
     [ -f "$d/Cargo.lock" ] || continue
-    ( cd "$d" && cargo deny --offline check licenses >/tmp/verify-stage0.log 2>&1 )
-    record "deny $(basename "$d")" $?
+    ok=0
+    for check in licenses bans sources; do
+      ( cd "$d" && cargo deny --offline check "$check" >/tmp/verify-stage0.log 2>&1 ) || {
+        ok=1
+        printf '        %s / %s 失败：\n' "$(basename "$d")" "$check"
+        tail -3 /tmp/verify-stage0.log | sed 's/^/          /'
+      }
+    done
+    record "deny $(basename "$d")" $ok
   done
+  printf '  提示：advisories 需要联网，本脚本在离线环境跳过该项（CI 必须跑）。\n'
 fi
 
 # ---------- 出口条件：无 npm/Node/WebView ----------

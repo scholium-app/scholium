@@ -28,12 +28,17 @@ allow = [
     "Unlicense",
     # MPL-2.0：仅作文件级 copyleft 依赖；修改其文件时按 MPL 公开该文件。
     "MPL-2.0",
+    # 字体资产许可（仅限未修改的字体）：依据见 ADR 0011。
+    "OFL-1.1",
+    "Ubuntu-font-1.0",
 ]
 confidence-threshold = 0.9
 
 [bans]
 multiple-versions = "allow"
 wildcards = "deny"
+# 路径依赖没有版本号，wildcards="deny" 会误伤它们；仍然禁止 registry 依赖用通配版本。
+allow-wildcard-paths = true
 deny = [
     # 明确禁止：受限许可或与"不得引入 WebView"冲突的实现。
     { name = "slint" },
