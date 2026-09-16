@@ -15,7 +15,14 @@ use crate::model::{
 
 /// 用于"声明语言 vs 实际内容"抽检的 Typst 结构标记。不是解析器。
 const TYPST_MARKERS: &[&str] = &[
-    "#let ", "#set ", "#show ", "#import ", "#include ", "#context ", "#for ", "#if ",
+    "#let ",
+    "#set ",
+    "#show ",
+    "#import ",
+    "#include ",
+    "#context ",
+    "#for ",
+    "#if ",
 ];
 
 /// 用于"声明语言 vs 实际内容"抽检的 LaTeX 结构标记。不是解析器。
@@ -63,11 +70,7 @@ fn validate_shape(pkt: &WritePacket) -> Result<(), RejectReason> {
             max: MAX_OPS,
         });
     }
-    let payload: usize = pkt
-        .ops
-        .iter()
-        .map(|op| op.path.len() + op.text.len())
-        .sum();
+    let payload: usize = pkt.ops.iter().map(|op| op.path.len() + op.text.len()).sum();
     if payload > MAX_PAYLOAD_BYTES {
         return Err(RejectReason::PayloadTooLarge {
             got: payload,
@@ -109,7 +112,8 @@ fn validate_path(path: &str, dialect: Dialect) -> Result<(), RejectReason> {
         });
     }
     for component in path.split('/') {
-        if component.is_empty() || component == "." || component == ".." || component.contains(':') {
+        if component.is_empty() || component == "." || component == ".." || component.contains(':')
+        {
             return Err(RejectReason::PathOutOfScope {
                 path: path.to_owned(),
             });

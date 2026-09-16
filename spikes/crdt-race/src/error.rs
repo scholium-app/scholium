@@ -2,7 +2,7 @@
 //!
 //! 按 `AGENT.md` 规范用 `thiserror`，不用裸 `String` 作为错误类型。
 
-use crate::ids::{Id, NodeId};
+use crate::ids::NodeId;
 
 /// CRDT 与编解码错误。
 #[derive(Debug, thiserror::Error)]
@@ -24,9 +24,18 @@ pub(crate) enum CrdtError {
     /// 引用了未知节点。
     #[error("unknown node {0:?}")]
     UnknownNode(NodeId),
-    /// 引用了未知字符。
-    #[error("unknown char {0:?}")]
-    UnknownChar(Id),
+    /// 节点已被删除，不能作为结构操作的起点。
+    #[error("node {0:?} is not alive")]
+    NodeNotAlive(NodeId),
+    /// 目标节点不是文本叶子，不能接受文本编辑。
+    #[error("node {0:?} is not a text leaf")]
+    NotTextLeaf(NodeId),
+    /// 快照魔数不匹配。
+    #[error("snapshot magic mismatch")]
+    SnapshotMagic,
+    /// 快照读完后仍有剩余字节。
+    #[error("{0} trailing bytes after snapshot")]
+    TrailingBytes(usize),
     /// 反序列化时输入提前结束。
     #[error("unexpected end of snapshot input")]
     UnexpectedEof,

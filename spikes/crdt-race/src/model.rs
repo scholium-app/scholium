@@ -62,17 +62,4 @@ impl NodeKind {
             Self::Document | Self::Text => None,
         }
     }
-
-    /// 人类可读名称，用于证据输出。
-    pub(crate) fn name(self) -> &'static str {
-        match self {
-            Self::Document => "document",
-            Self::Paragraph => "paragraph",
-            Self::Heading => "heading",
-            Self::Strong => "strong",
-            Self::Emphasis => "emphasis",
-            Self::Math => "math",
-            Self::Text => "text",
-        }
-    }
 }

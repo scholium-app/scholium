@@ -47,11 +47,6 @@ impl Id {
             seq: 0,
         }
     }
-
-    /// 是否为保留的根节点标识。
-    pub(crate) fn is_root(self) -> bool {
-        self.actor.0 == 0
-    }
 }
 
 /// 文本字符标识。

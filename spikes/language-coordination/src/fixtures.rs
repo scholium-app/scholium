@@ -3,8 +3,8 @@
 use crate::coordinator::{Coordinator, SwitchOutcome};
 use crate::error::RejectReason;
 use crate::model::{
-    ActorId, Decision, Dialect, Permit, PermitId, ScopeId, WriteOp, WritePacket,
-    PERMIT_TTL_TICKS, PROTOCOL_VERSION,
+    ActorId, Decision, Dialect, PERMIT_TTL_TICKS, PROTOCOL_VERSION, Permit, PermitId, ScopeId,
+    WriteOp, WritePacket,
 };
 
 /// 模拟客户端：持有许可、序号与本地草稿队列。
@@ -65,11 +65,6 @@ impl Client {
         (decision, text)
     }
 
-    /// 本地草稿队列。
-    pub(crate) fn take_drafts(&mut self) -> Vec<WritePacket> {
-        std::mem::take(&mut self.drafts)
-    }
-
     /// 重新领取当前语言许可（例如重连后经显式授权）。
     pub(crate) fn refresh_permit(&mut self, coord: &mut Coordinator) -> bool {
         match coord.grant_permit(&self.actor, PERMIT_TTL_TICKS) {
@@ -113,12 +108,6 @@ impl PacketBuilder {
     /// 设置协议版本。
     pub(crate) fn protocol(mut self, protocol: u16) -> Self {
         self.protocol = protocol;
-        self
-    }
-
-    /// 设置范围。
-    pub(crate) fn scope(mut self, scope: &ScopeId) -> Self {
-        self.scope = scope.clone();
         self
     }
 

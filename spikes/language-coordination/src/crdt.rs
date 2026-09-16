@@ -79,9 +79,4 @@ impl Replica {
     pub(crate) fn len(&self) -> usize {
         self.ops.len()
     }
-
-    /// 是否为空。
-    pub(crate) fn is_empty(&self) -> bool {
-        self.ops.is_empty()
-    }
 }

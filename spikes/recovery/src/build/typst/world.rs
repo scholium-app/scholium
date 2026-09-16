@@ -7,6 +7,7 @@
 use std::sync::Mutex;
 
 use typst::Library;
+use typst::LibraryExt;
 use typst::diag::{FileError, FileResult};
 use typst::foundations::{Bytes, Datetime, Duration};
 use typst::syntax::{FileId, RootedPath, Source, VirtualPath, VirtualRoot};

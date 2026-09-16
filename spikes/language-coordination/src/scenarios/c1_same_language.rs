@@ -14,12 +14,25 @@ pub(crate) fn run(h: &mut Harness) {
     let mut alice = Client::join(&mut coord, "alice");
     let mut bob = Client::join(&mut coord, "bob");
     let mut carol = Client::join(&mut coord, "carol");
+    let doc = success_case(h, &mut coord, &mut alice, &mut bob, &mut carol);
+    control_case(h, &coord);
+    failure_permit_expired(h, &mut coord, &doc);
+    failure_unknown_permit(h, &mut coord);
+}
 
+/// 成功夹具：三人交错写入并收敛；返回渲染后的正文。
+fn success_case(
+    h: &mut Harness,
+    coord: &mut Coordinator,
+    alice: &mut Client,
+    bob: &mut Client,
+    carol: &mut Client,
+) -> String {
     let mut accepted = 0usize;
     let mut markers = Vec::new();
     for _ in 0..3 {
-        for client in [&mut alice, &mut bob, &mut carol] {
-            let (decision, text) = client.submit(&mut coord, "main.tex");
+        for client in [&mut *alice, &mut *bob, &mut *carol] {
+            let (decision, text) = client.submit(coord, "main.tex");
             if decision.is_accepted() {
                 accepted += 1;
             }
@@ -36,20 +49,30 @@ pub(crate) fn run(h: &mut Harness) {
     let doc_forward = forward.render(Dialect::Latex);
     let doc_backward = backward.render(Dialect::Latex);
     let present = markers.iter().filter(|m| doc_forward.contains(*m)).count();
+    let timeline_count = coord.timeline().accepted_count(Dialect::Latex);
     h.case(
         "C1",
         CaseKind::Success,
         "c1.success.three_writers_converge",
-        "9/9 接受；两种投递顺序渲染一致；9/9 标记都在",
-        &format!(
-            "accepted={accepted}/9 identical={} markers={present}/9",
-            doc_forward == doc_backward
+        (
+            "9/9 接受；两种投递顺序渲染一致；9/9 标记都在",
+            &format!(
+                "accepted={accepted}/9 timeline={timeline_count} identical={} markers={present}/9",
+                doc_forward == doc_backward
+            ),
         ),
-        accepted == 9 && forward.len() == 9 && doc_forward == doc_backward && present == 9,
+        accepted == 9
+            && forward.len() == 9
+            && timeline_count == 9
+            && doc_forward == doc_backward
+            && present == 9,
         &format!("文档 {} 字节；三个 LaTeX 客户端交错提交", doc_forward.len()),
     );
+    doc_forward
+}
 
-    // 对照：去掉确定性排序（按到达顺序拼接）后，两种投递顺序不再一致。
+/// 对照：去掉确定性排序后，两种投递顺序不再一致。
+fn control_case(h: &mut Harness, coord: &Coordinator) {
     let mut arrival = Replica::new();
     for op in coord.applied_ops() {
         arrival.apply(op.clone());
@@ -62,38 +85,44 @@ pub(crate) fn run(h: &mut Harness) {
         "C1",
         CaseKind::Control,
         "c1.control.arrival_order_diverges",
-        "按到达顺序拼接会因投递顺序不同而不同（证明收敛断言有齿）",
-        &format!(
-            "identical={}",
-            arrival.render_arrival(Dialect::Latex) == arrival_rev.render_arrival(Dialect::Latex)
+        (
+            "按到达顺序拼接会因投递顺序不同而不同（证明收敛断言有齿）",
+            &format!(
+                "identical={}",
+                arrival.render_arrival(Dialect::Latex)
+                    == arrival_rev.render_arrival(Dialect::Latex)
+            ),
         ),
         arrival.render_arrival(Dialect::Latex) != arrival_rev.render_arrival(Dialect::Latex),
         "对照组故意不作确定性排序",
     );
+}
 
-    // 失败夹具：许可过期后写入必须被拒，且不影响已接受内容的收敛。
+/// 失败夹具：许可过期后写入必须被拒，且不影响已接受内容。
+fn failure_permit_expired(h: &mut Harness, coord: &mut Coordinator, doc: &str) {
     let mut dave = Client::new("dave");
     coord.add_member(&dave.actor);
     if let Ok(permit) = coord.grant_permit(&dave.actor, 1) {
         dave.permit = Some(permit);
     }
     coord.advance_ticks(5);
-    let (expired, expired_text) = dave.submit(&mut coord, "main.tex");
-    let expired_ok = matches!(
-        expired.rejection(),
-        Some(RejectReason::PermitExpired { .. })
-    );
+    let (expired, expired_text) = dave.submit(coord, "main.tex");
     h.case(
         "C1",
         CaseKind::Failure,
         "c1.failure.expired_permit_rejected",
-        "PermitExpired 且该写入不进入共享内容",
-        &expired.label(),
-        expired_ok && !doc_forward.contains(&expired_text) && coord.applied_len() == 9,
+        ("PermitExpired 且该写入不进入共享内容", &expired.label()),
+        matches!(
+            expired.rejection(),
+            Some(RejectReason::PermitExpired { .. })
+        ) && !doc.contains(&expired_text)
+            && coord.applied_len() == 9,
         "许可 TTL=1 tick，推进 5 tick 后提交",
     );
+}
 
-    // 失败夹具：非成员携带未知许可写入。
+/// 失败夹具：非成员携带未知许可写入。
+fn failure_unknown_permit(h: &mut Harness, coord: &mut Coordinator) {
     let mallory = Client::new("mallory");
     let scoped = coord.scope().clone();
     let forged = PacketBuilder::new(&scoped, &mallory.actor, 4242)
@@ -107,8 +136,7 @@ pub(crate) fn run(h: &mut Harness) {
         "C1",
         CaseKind::Failure,
         "c1.failure.unknown_permit_rejected",
-        "PermitUnknown 且写集为空",
-        &unknown.label(),
+        ("PermitUnknown 且写集为空", &unknown.label()),
         matches!(
             unknown.rejection(),
             Some(RejectReason::PermitUnknown { id: 4242 })

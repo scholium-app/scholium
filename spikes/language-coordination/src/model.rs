@@ -106,16 +106,6 @@ pub(crate) enum Phase {
     },
 }
 
-impl Phase {
-    /// 当前允许接收写入的语言：`Draining` 下仍是旧语言（仅限在途冲刷）。
-    pub(crate) const fn writable_dialect(self) -> Dialect {
-        match self {
-            Self::Active { dialect } => dialect,
-            Self::Draining { from, .. } => from,
-        }
-    }
-}
-
 /// 源码写许可：包含 scope、actor、dialect、epoch、许可 ID 和有效期。
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct Permit {

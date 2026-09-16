@@ -71,10 +71,15 @@ impl TailDefect {
     }
 }
 
+impl std::fmt::Display for TailDefect {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter.write_str(&self.describe())
+    }
+}
+
 /// 恢复结果。
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Recovery {
-    /// 从文件头开始连续完整的记录。
+pub struct Recovery {    /// 从文件头开始连续完整的记录。
     pub records: Vec<Record>,
     /// 最后一条完整记录的结束偏移；文件应当被截断到这里。
     pub good_bytes: usize,
@@ -125,12 +130,12 @@ pub fn scan(bytes: &[u8]) -> Recovery {
         let header_end = offset.saturating_add(HEADER_LEN);
         let Some(header) = bytes.get(offset..header_end) else {
             let remaining = bytes.len() - offset;
-            return finish(records, offset, bytes.len(), TailDefect::TruncatedHeader { remaining });
+            return finish(records, offset, bytes.len(), Some(TailDefect::TruncatedHeader { remaining }));
         };
 
         let magic: [u8; 4] = header[0..4].try_into().unwrap_or(MAGIC);
         if magic != MAGIC {
-            return finish(records, offset, bytes.len(), TailDefect::CorruptMagic { found: magic });
+            return finish(records, offset, bytes.len(), Some(TailDefect::CorruptMagic { found: magic }));
         }
 
         let total_len = u32::from_le_bytes(header[4..8].try_into().unwrap_or([0; 4]));
@@ -146,7 +151,7 @@ pub fn scan(bytes: &[u8]) -> Recovery {
                 records,
                 offset,
                 bytes.len(),
-                TailDefect::CorruptLength { total_len },
+                Some(TailDefect::CorruptLength { total_len }),
             );
         }
 
@@ -157,10 +162,10 @@ pub fn scan(bytes: &[u8]) -> Recovery {
                 records,
                 offset,
                 bytes.len(),
-                TailDefect::TruncatedPayload {
+                Some(TailDefect::TruncatedPayload {
                     declared: total_len as usize,
                     remaining,
-                },
+                }),
             );
         };
 
@@ -171,10 +176,10 @@ pub fn scan(bytes: &[u8]) -> Recovery {
                 records,
                 offset,
                 bytes.len(),
-                TailDefect::ChecksumMismatch {
+                Some(TailDefect::ChecksumMismatch {
                     expected: expected_crc,
                     actual: actual_crc,
-                },
+                }),
             );
         }
 

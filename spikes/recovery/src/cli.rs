@@ -9,11 +9,19 @@ pub fn arg_value(args: &[String], key: &str) -> Option<String> {
     args.get(position + 1).cloned()
 }
 
-/// 取第一个不以 `--` 开头的参数作为子命令。
+/// 已知子命令。只有 `writer` 一个：它是崩溃夹具子进程的入口。
+pub const SUBCOMMANDS: &[&str] = &["writer"];
+
+/// 取第一个参数作为子命令，且必须落在 [`SUBCOMMANDS`] 里。
+///
+/// 不把任意首个非 `--` 参数当子命令：`cargo run` 会把二进制路径放在 `argv[0]`，
+/// 若只判断"非 `--` 开头"，`cargo run --release` 会被误判成子命令
+/// `target/release/scholium-spike-recovery`。
 pub fn subcommand(args: &[String]) -> Option<String> {
-    args.iter()
-        .find(|arg| !arg.starts_with("--") && arg.as_str() != "run")
-        .cloned()
+    let candidate = args.get(1)?;
+    SUBCOMMANDS
+        .contains(&candidate.as_str())
+        .then(|| candidate.clone())
 }
 
 /// 是否带开关参数。

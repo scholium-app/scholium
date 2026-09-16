@@ -212,13 +212,20 @@ impl ChunkedSeq {
     }
 
     fn locate(&self, index: usize) -> Option<(usize, usize)> {
+        // 空序列没有可定位的条目；`insert_at` 会先建立第一个块再定位。
         if self.chunks.is_empty() {
-            return if index == 0 { Some((0, 0)) } else { None };
+            return None;
+        }
+        let total = self.len();
+        if index == total {
+            // `index == len` 是合法的追加位置：落在最后一个块的末尾。
+            let last = self.chunks.len() - 1;
+            return Some((last, self.chunks[last].entries.len()));
         }
         let mut base = 0usize;
         for (ci, chunk) in self.chunks.iter().enumerate() {
             let end = base + chunk.entries.len();
-            if index <= end {
+            if index < end {
                 return Some((ci, index - base));
             }
             base = end;
@@ -279,8 +286,10 @@ mod tests {
             entry(1, 3, 'c', true),
             entry(2, 5, 'e', true),
         ]);
-        assert_eq!(seq.lower_bound(&[0], Id::new(ActorId(9), 0)), 0);
-        assert_eq!(seq.lower_bound(&[3], Id::new(ActorId(9), 0)), 1);
-        assert_eq!(seq.lower_bound(&[6], Id::new(ActorId(9), 0)), 3);
+        // 键是 (位置标识, 字符标识) 全序：用比现有字符都小的标识才能表达 "只看位置"。
+        let smallest = Id::new(ActorId(0), 0);
+        assert_eq!(seq.lower_bound(&[0], smallest), 0);
+        assert_eq!(seq.lower_bound(&[3], smallest), 1);
+        assert_eq!(seq.lower_bound(&[6], smallest), 3);
     }
 }

@@ -66,16 +66,18 @@ impl Harness {
     }
 
     /// 登记并打印一个用例。
+    ///
+    /// `comparison` 是 `(期望, 实际)`；两者合成一个参数以遵守项目的参数个数上限。
     pub(crate) fn case(
         &mut self,
         criterion: &'static str,
         kind: CaseKind,
         name: &str,
-        expected: &str,
-        actual: &str,
+        comparison: (&str, &str),
         ok: bool,
         detail: &str,
     ) {
+        let (expected, actual) = comparison;
         let result = if ok { "PASS" } else { "FAIL" };
         println!("[{criterion} {}] {name} -> {result}", kind.label());
         println!("    期望: {expected}");
@@ -94,19 +96,6 @@ impl Harness {
         });
     }
 
-    /// 打印一条补充说明。
-    pub(crate) fn note(&mut self, criterion: &'static str, text: &str) {
-        println!("[{criterion} NOTE] {text}");
-    }
-
-    /// 某判据是否全通过。
-    pub(crate) fn criterion_pass(&self, criterion: &str) -> bool {
-        self.cases
-            .iter()
-            .filter(|case| case.criterion == criterion)
-            .all(|case| case.ok)
-    }
-
     /// 打印汇总并返回总体是否通过。
     pub(crate) fn finish(&self) -> bool {
         println!("\n=== 判据汇总（逐用例） ===");
@@ -123,12 +112,28 @@ impl Harness {
             if failed > 0 {
                 all_ok = false;
             }
+            let successes = cases
+                .iter()
+                .filter(|case| case.kind == CaseKind::Success)
+                .count();
+            let failures = cases
+                .iter()
+                .filter(|case| case.kind == CaseKind::Failure)
+                .count();
+            let controls = cases
+                .iter()
+                .filter(|case| case.kind == CaseKind::Control)
+                .count();
             println!(
-                "{criterion} {title}: cases={} pass={passed} fail={failed} -> {result}",
+                "{criterion} {title}: cases={} pass={passed} fail={failed} \
+                 [成功夹具={successes} 失败夹具={failures} 对照={controls}] -> {result}",
                 cases.len()
             );
             for case in cases.iter().filter(|case| !case.ok) {
-                println!("    FAILED: {} 期望={} 实际={}", case.name, case.expected, case.actual);
+                println!(
+                    "    FAILED: {} 期望={} 实际={} 说明={}",
+                    case.name, case.expected, case.actual, case.detail
+                );
             }
         }
         let total_failed = self.cases.iter().filter(|case| !case.ok).count();

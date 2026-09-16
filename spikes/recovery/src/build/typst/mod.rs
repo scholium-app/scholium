@@ -14,7 +14,7 @@ pub mod world;
 
 use std::hash::{Hash, Hasher};
 
-use typst::LibraryExt;
+use typst::World as _;
 use typst::diag::Warned;
 use typst_layout::PagedDocument;
 
@@ -40,12 +40,16 @@ pub fn compile(request: &BuildRequest) -> Result<CompiledProduct> {
         SpikeError::Core(format!("Typst 编译失败: {}", detail.join(" | ")))
     })?;
 
-    let pages = document.pages.len();
+    let pages = document.pages().len();
     let page_hash = page_content_hash(&document);
 
     // 库哈希把 Typst 版本/标准库内容钉进产物：换 typst 版本时产物必然变化，
     // 不会出现"A 仍然产出同样的字节"这种假隔离通过。
-    let library_hash = LibraryExt::library(&typst::Library::default()).hash();
+    let library_hash = {
+        let mut hasher = std::collections::hash_map::DefaultHasher::new();
+        world.library().hash(&mut hasher);
+        hasher.finish()
+    };
 
     let product_path = request
         .out_dir
@@ -65,12 +69,10 @@ pub fn compile(request: &BuildRequest) -> Result<CompiledProduct> {
     })
 }
 
-/// 页内容的确定性哈希：逐页哈希 `Page`（typst-layout 为它实现了 `Hash`）。
+/// 页内容的确定性哈希：`PagedDocument` 自己实现了 `Hash`（页与文档信息都参与，
+/// introspector 由页派生因此不重复计入）。
 fn page_content_hash(document: &PagedDocument) -> String {
     let mut hasher = std::collections::hash_map::DefaultHasher::new();
-    document.pages.len().hash(&mut hasher);
-    for page in &document.pages {
-        page.hash(&mut hasher);
-    }
+    document.hash(&mut hasher);
     fsutil::sha256_hex(format!("typst-paged:{:016x}", hasher.finish()).as_bytes())[..16].to_string()
 }

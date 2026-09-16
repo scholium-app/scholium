@@ -8,7 +8,10 @@ use crate::model::{Decision, Dialect};
 
 /// 执行判据 3 的全部夹具。
 pub(crate) fn run(h: &mut Harness) {
-    h.section("C3", "epoch 隔离：切换递增 epoch，旧 epoch 拒绝且不自动回灌");
+    h.section(
+        "C3",
+        "epoch 隔离：切换递增 epoch，旧 epoch 拒绝且不自动回灌",
+    );
     strict(h);
     control(h);
 }
@@ -55,8 +58,10 @@ fn strict(h: &mut Harness) {
         "C3",
         CaseKind::Success,
         "c3.success.epoch_monotonic",
-        "接受/切换 epoch 依次为 1,2,2,3，最终 3",
-        &format!("{epochs:?}"),
+        (
+            "接受/切换 epoch 依次为 1,2,2,3，最终 3",
+            &format!("{epochs:?}"),
+        ),
         epochs == (Some(1), Some(2), Some(2), Some(3), 3, Some(3), Some(2))
             && coord.active() == Dialect::Latex,
         "LaTeX(1) → Typst(2) → LaTeX(3)，epoch 不复用",
@@ -66,8 +71,7 @@ fn strict(h: &mut Harness) {
         "C3",
         CaseKind::Failure,
         "c3.failure.old_epoch_rejected",
-        "SourceEpochStale(got=1, current=3)",
-        &stale.label(),
+        ("SourceEpochStale(got=1, current=3)", &stale.label()),
         matches!(
             stale.rejection(),
             Some(RejectReason::SourceEpochStale { got: 1, current: 3 })
@@ -76,8 +80,8 @@ fn strict(h: &mut Harness) {
     );
 
     let replica = coord.replica();
-    let backfilled =
-        replica.contains(Dialect::Latex, stale_text) || replica.contains(Dialect::Typst, stale_text);
+    let backfilled = replica.contains(Dialect::Latex, stale_text)
+        || replica.contains(Dialect::Typst, stale_text);
     let drafted = coord.drafts().iter().any(|draft| {
         draft
             .ops
@@ -88,8 +92,10 @@ fn strict(h: &mut Harness) {
         "C3",
         CaseKind::Failure,
         "c3.failure.no_auto_backfill",
-        "被拒文本两种语言的正文都不存在，且保留为本地草稿",
-        &format!("backfilled={backfilled} drafted={drafted}"),
+        (
+            "被拒文本两种语言的正文都不存在，且保留为本地草稿",
+            &format!("backfilled={backfilled} drafted={drafted}"),
+        ),
         !backfilled && drafted,
         "拒绝不等于删除输入；也不能悄悄转换成新语言的写入",
     );
@@ -104,10 +110,12 @@ fn strict(h: &mut Harness) {
         "C3",
         CaseKind::Success,
         "c3.success.control_record_survives_replay",
-        "回放 3 个 epoch 的历史后控制记录仍是 epoch=3 / latex",
-        &format!(
-            "recovered_epoch={:?}",
-            recovered.as_ref().map(|r| r.coord.epoch())
+        (
+            "回放 3 个 epoch 的历史后控制记录仍是 epoch=3 / latex",
+            &format!(
+                "recovered_epoch={:?}",
+                recovered.as_ref().map(|r| r.coord.epoch())
+            ),
         ),
         recovery_ok,
         "语言控制记录不随历史回放倒退（HISTORY_COLLABORATION 第 11 节）",
@@ -143,11 +151,13 @@ fn control(h: &mut Harness) {
         "C3",
         CaseKind::Control,
         "c3.control.trust_token_accepts_stale_epoch",
-        "对照实现接受 epoch=1 的写入并登记到 epoch=2",
-        &format!(
-            "switch_epoch={:?} decision={} accepted_epoch={accepted_epoch:?}",
-            switched.as_ref().ok().map(|s| s.epoch),
-            decision.label()
+        (
+            "对照实现接受 epoch=1 的写入并登记到 epoch=2",
+            &format!(
+                "switch_epoch={:?} decision={} accepted_epoch={accepted_epoch:?}",
+                switched.as_ref().ok().map(|s| s.epoch),
+                decision.label()
+            ),
         ),
         decision.is_accepted() && accepted_epoch == Some(2),
         "证明 epoch 检查确实是隔离的来源，而不是恒真",

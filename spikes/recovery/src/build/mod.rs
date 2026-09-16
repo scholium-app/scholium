@@ -39,8 +39,14 @@ impl Engine {
     }
 
     /// 产物扩展名。
+    ///
+    /// Typst 路径不产 PDF（依赖里没有 `typst-pdf`），因此扩展名是 `.out` 而不是 `.pdf`：
+    /// 名字必须反映内容，否则报告里出现 `typst.pdf` 而实际是文本摘要，就是误导。
     pub fn product_ext(self) -> &'static str {
-        "pdf"
+        match self {
+            Self::Latex => "pdf",
+            Self::Typst => "out",
+        }
     }
 
     /// 源码扩展名：分发进沙箱时用，也决定引擎怎么解释这份源码。
@@ -119,6 +125,10 @@ pub struct CompiledProduct {
 /// 沙箱创建失败、源码写不进去、引擎可执行文件缺失或编译失败、
 /// 输出目录已被另一个写者占用。
 pub fn build(request: &BuildRequest) -> Result<BuildOutcome> {
+    // 先建目录再拿锁：DirLock 是 `create_new` 一个文件，目录不存在时错误会是
+    // "No such file or directory"，与"锁被占用"混在一起，不利于诊断。
+    std::fs::create_dir_all(&request.out_dir)
+        .map_err(crate::error::io_context(&request.out_dir))?;
     let _lock = fsutil::DirLock::acquire(&request.out_dir, "LOCK")?;
     fsutil::write_file(&request.source_path, request.source_text.as_bytes())?;
 

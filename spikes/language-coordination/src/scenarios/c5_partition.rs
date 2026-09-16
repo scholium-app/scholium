@@ -31,6 +31,12 @@ fn strict(h: &mut Harness) {
     let committed = coord.complete_switch(false);
     let _ = alice.refresh_permit(&mut coord);
     let (a2, _) = alice.submit(&mut coord, "main.typ");
+    // 重放之前先记录隔离写入是否曾经被接受。
+    let leaked_before_reconnect = coord
+        .timeline()
+        .accepted
+        .iter()
+        .any(|write| write.marker == isolated_text);
     // 恢复网络：bob 先提交旧草稿，再经显式重新授权重放。
     coord.clear_partition();
     let scoped = coord.scope().clone();
@@ -44,8 +50,15 @@ fn strict(h: &mut Harness) {
         "C5",
         CaseKind::Success,
         "C5.success.connected_side_writes",
-        "连接侧 LaTeX 写入与切换后 Typst 写入均被接受",
-        &format!("a1={} switch={started:?} commit={:?} a2={}", a1.label(), committed.as_ref().map(|o| (o.epoch, o.to)), a2.label()),
+        (
+            "连接侧 LaTeX 写入与切换后 Typst 写入均被接受",
+            &format!(
+                "a1={} switch={started:?} commit={:?} a2={}",
+                a1.label(),
+                committed.as_ref().map(|o| (o.epoch, o.to)),
+                a2.label()
+            ),
+        ),
         a1.is_accepted() && started == Ok(2) && committed.is_ok() && a2.is_accepted(),
         "分区期间只有连接侧能写入",
     );
@@ -53,24 +66,24 @@ fn strict(h: &mut Harness) {
         "C5",
         CaseKind::Failure,
         "c5.partition.isolated_write_not_accepted",
-        "NetworkUnreachable 且没有任何接受记录包含该标记",
-        &isolated.label(),
+        (
+            "NetworkUnreachable 且重放前没有任何接受记录包含该标记",
+            &isolated.label(),
+        ),
         matches!(
             isolated.rejection(),
             Some(crate::error::RejectReason::NetworkUnreachable { .. })
-        ) && coord
-            .timeline()
-            .accepted
-            .iter()
-            .all(|write| write.marker != isolated_text),
+        ) && !leaked_before_reconnect,
         &format!("bob_seq={bob_seq} 写入留在本地草稿"),
     );
     h.case(
         "C5",
         CaseKind::Failure,
         "c5.reconnect.stale_draft_rejected",
-        "SourceEpochStale(got=1, current=2) 且没有回执",
-        &reconnect.label(),
+        (
+            "SourceEpochStale(got=1, current=2) 且没有回执",
+            &reconnect.label(),
+        ),
         matches!(
             reconnect.rejection(),
             Some(crate::error::RejectReason::SourceEpochStale { got: 1, current: 2 })
@@ -81,8 +94,10 @@ fn strict(h: &mut Harness) {
         "C5",
         CaseKind::Success,
         "c5.reconnect.authorized_replay_accepted",
-        "重新授权后 Typst 重放被接受一次",
-        &format!("refreshed={bob_refreshed} replay={}", replayed.label()),
+        (
+            "重新授权后 Typst 重放被接受一次",
+            &format!("refreshed={bob_refreshed} replay={}", replayed.label()),
+        ),
         bob_refreshed && replayed.is_accepted(),
         &format!("epoch={} active={}", coord.epoch(), coord.active()),
     );
@@ -94,8 +109,10 @@ fn strict(h: &mut Harness) {
         "C5",
         CaseKind::Success,
         "c5.success.no_double_write",
-        "重连后标记恰好出现 1 次，只有重放序号有回执",
-        &format!("occurrences={count} receipts_ok={receipt_ok}"),
+        (
+            "重连后标记恰好出现 1 次，只有重放序号有回执",
+            &format!("occurrences={count} receipts_ok={receipt_ok}"),
+        ),
         count == 1 && receipt_ok && coord.last_seq(&bob.actor) == Some(bob_seq + 1),
         "旧草稿被拒 + 新 epoch 重放一次 = 恰好一次",
     );
@@ -145,7 +162,7 @@ fn submit_replay(
 /// 对照：只信任 token 的实现会静默接受隔离期间的旧草稿。
 fn control(h: &mut Harness) {
     let mut coord = Coordinator::new(scope(), Dialect::Latex, GatePolicy::TrustPermitToken);
-    let mut alice = Client::join(&mut coord, "alice");
+    let alice = Client::join(&mut coord, "alice");
     let mut bob = Client::join(&mut coord, "bob");
     let _ = bob.submit(&mut coord, "main.tex");
     let bob_old = bob.permit.clone();
@@ -160,11 +177,13 @@ fn control(h: &mut Harness) {
         "C5",
         CaseKind::Control,
         "c5.control.trust_token_accepts_isolated_draft",
-        "对照实现静默接受隔离期间的旧草稿",
-        &format!(
-            "switch={:?} decision={} occurrences={occurrences}",
-            switched.as_ref().ok().map(|o| (o.epoch, o.to)),
-            decision.label()
+        (
+            "对照实现静默接受隔离期间的旧草稿",
+            &format!(
+                "switch={:?} decision={} occurrences={occurrences}",
+                switched.as_ref().ok().map(|o| (o.epoch, o.to)),
+                decision.label()
+            ),
         ),
         decision.is_accepted() && occurrences == 1,
         "证明 epoch / 撤销检查是分区隔离的来源",

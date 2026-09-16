@@ -37,11 +37,6 @@ pub(crate) struct TextCrdt {
 }
 
 impl TextCrdt {
-    /// 空文本。
-    pub(crate) fn new() -> Self {
-        Self::default()
-    }
-
     /// 可见字符数。
     pub(crate) fn visible_len(&self) -> usize {
         self.seq.visible_len()
@@ -171,7 +166,9 @@ impl TextCrdt {
         if ts <= register.ts {
             return false;
         }
+        // 必须写回时间戳：否则后续写入永远"更新"，乱序到达的旧操作会把新状态覆盖掉。
         register.alive = alive;
+        register.ts = ts;
         if let Some(pos) = self.positions.get(&id)
             && let Some(index) = self.seq.index_of(pos, id)
         {

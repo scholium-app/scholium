@@ -13,7 +13,14 @@ pub(crate) fn run(h: &mut Harness) {
     let mut alice = Client::join(&mut coord, "alice");
     let scoped = coord.scope().clone();
     let Some(permit1) = alice.permit.clone() else {
-        h.case("C6", CaseKind::Failure, "c6.setup", "alice 持有许可", "无许可", false, "");
+        h.case(
+            "C6",
+            CaseKind::Failure,
+            "c6.setup",
+            ("alice 持有许可", "无许可"),
+            false,
+            "",
+        );
         return;
     };
 
@@ -35,8 +42,14 @@ pub(crate) fn run(h: &mut Harness) {
         "C6",
         CaseKind::Success,
         "c6.success.confirmed_duplicate_returns_receipt",
-        "重复包返回原回执，已应用操作数不增加",
-        &format!("first={} duplicate={} receipt={receipt_first:?}/{receipt_dup:?}", first.label(), duplicate.label()),
+        (
+            "重复包返回原回执，已应用操作数不增加",
+            &format!(
+                "first={} duplicate={} receipt={receipt_first:?}/{receipt_dup:?}",
+                first.label(),
+                duplicate.label()
+            ),
+        ),
         duplicate.is_accepted()
             && receipt_first == receipt_dup
             && receipt_first.is_some()
@@ -47,14 +60,25 @@ pub(crate) fn run(h: &mut Harness) {
 
     let mut rejected = Vec::new();
     rejected.push(stale_epoch(&mut coord, &alice, &scoped, permit1.id));
-    rejected.push(protocol_unsupported(&mut coord, &alice, &scoped, permit1.id));
+    rejected.push(protocol_unsupported(
+        &mut coord, &alice, &scoped, permit1.id,
+    ));
     let _ = alice.refresh_permit(&mut coord);
     let Some(permit2) = alice.permit.clone() else {
-        h.case("C6", CaseKind::Failure, "c6.setup2", "alice 取得 typst 许可", "无许可", false, "");
+        h.case(
+            "C6",
+            CaseKind::Failure,
+            "c6.setup2",
+            ("alice 取得 typst 许可", "无许可"),
+            false,
+            "",
+        );
         return;
     };
     rejected.push(sequence_rollback(&mut coord, &alice, &scoped, permit2.id));
-    rejected.push(duplicate_seq_conflict(&mut coord, &alice, &scoped, permit2.id));
+    rejected.push(duplicate_seq_conflict(
+        &mut coord, &alice, &scoped, permit2.id,
+    ));
 
     for (name, expected, decision) in rejected {
         let ok = decision.rejection() == Some(&expected);
@@ -62,8 +86,7 @@ pub(crate) fn run(h: &mut Harness) {
             "C6",
             CaseKind::Failure,
             name,
-            &expected.to_string(),
-            &decision.label(),
+            (&expected.to_string(), &decision.label()),
             ok,
             "旧包必须给出明确原因且不进入共享内容",
         );
@@ -72,12 +95,14 @@ pub(crate) fn run(h: &mut Harness) {
         "C6",
         CaseKind::Success,
         "c6.success.no_old_packet_leaked_into_content",
-        "被拒旧包未进入正文；正文只保留 p1 与 p5",
-        &format!(
-            "applied={} p1={} p5={}",
-            coord.applied_len(),
-            coord.replica().count(Dialect::Latex, "[p1]"),
-            coord.replica().count(Dialect::Typst, "[p5]")
+        (
+            "被拒旧包未进入正文；正文只保留 p1 与 p5",
+            &format!(
+                "applied={} p1={} p5={}",
+                coord.applied_len(),
+                coord.replica().count(Dialect::Latex, "[p1]"),
+                coord.replica().count(Dialect::Typst, "[p5]")
+            ),
         ),
         coord.applied_len() == applied_after_first + 1
             && coord.replica().count(Dialect::Latex, "[p1]") == 1

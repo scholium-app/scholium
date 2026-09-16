@@ -98,6 +98,47 @@ pub fn run_checked(program: &str, args: &[String], cwd: &Path) -> Result<Process
     Ok(output)
 }
 
+/// 启动子进程并等待其结束，`stdout`/`stderr` 直接继承父进程。
+///
+/// 与 [`run`] 的区别：这里不捕获输出。崩溃夹具会打印少量证据然后 `SIGKILL` 自己，
+/// 捕获输出反而会丢掉"进程被信号杀死"的现场顺序；让它直接写到同一个终端更可信。
+///
+/// 返回 [`ProcessOutput`]，其中 `stdout`/`stderr` 为空，只有退出状态有意义。
+///
+/// # Errors
+///
+/// 程序无法启动，或等待失败。
+pub fn spawn_inherit(program: &str, args: &[String], cwd: &Path) -> Result<ProcessOutput> {
+    let mut child = Command::new(program)
+        .args(args)
+        .current_dir(cwd)
+        .spawn()
+        .map_err(|source| SpikeError::Spawn {
+            program: program.to_string(),
+            source,
+        })?;
+    let status = child.wait().map_err(|source| SpikeError::Spawn {
+        program: program.to_string(),
+        source,
+    })?;
+
+    #[cfg(unix)]
+    let (code, signal) = {
+        use std::os::unix::process::ExitStatusExt;
+        (status.code(), status.signal())
+    };
+    #[cfg(not(unix))]
+    let (code, signal) = (status.code(), None);
+
+    Ok(ProcessOutput {
+        program: program.to_string(),
+        code,
+        signal,
+        stdout: String::new(),
+        stderr: String::new(),
+    })
+}
+
 /// 从 `pdfinfo` 输出里解析页数。
 pub fn parse_pdf_pages(text: &str) -> Option<usize> {
     for line in text.lines() {

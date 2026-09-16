@@ -232,6 +232,14 @@ fn frame_at(bytes: &[u8], pos: usize) -> Option<Frame<'_>> {
 /// 字节编码。
 fn encode(record: &LogRecord) -> Vec<u8> {
     let mut out = Vec::new();
+    if !encode_control(&mut out, record) {
+        encode_stream(&mut out, record);
+    }
+    out
+}
+
+/// 编码控制面记录（bootstrap / 成员 / 许可）；返回是否已处理。
+fn encode_control(out: &mut Vec<u8>, record: &LogRecord) -> bool {
     match record {
         LogRecord::Bootstrap {
             scope,
@@ -240,14 +248,16 @@ fn encode(record: &LogRecord) -> Vec<u8> {
             tick,
         } => {
             out.push(1);
-            put_str(&mut out, scope);
+            put_str(out, scope);
             out.push(dialect_byte(*dialect));
-            put_u64(&mut out, *epoch);
-            put_u64(&mut out, *tick);
+            put_u64(out, *epoch);
+            put_u64(out, *tick);
+            true
         }
         LogRecord::MemberAdded { actor } => {
             out.push(2);
-            put_str(&mut out, actor);
+            put_str(out, actor);
+            true
         }
         LogRecord::PermitGranted {
             id,
@@ -258,18 +268,27 @@ fn encode(record: &LogRecord) -> Vec<u8> {
             expires_at,
         } => {
             out.push(3);
-            put_u64(&mut out, *id);
-            put_str(&mut out, actor);
+            put_u64(out, *id);
+            put_str(out, actor);
             out.push(dialect_byte(*dialect));
-            put_u64(&mut out, *epoch);
-            put_u64(&mut out, *tick);
-            put_u64(&mut out, *expires_at);
+            put_u64(out, *epoch);
+            put_u64(out, *tick);
+            put_u64(out, *expires_at);
+            true
         }
         LogRecord::PermitRevoked { id, tick } => {
             out.push(4);
-            put_u64(&mut out, *id);
-            put_u64(&mut out, *tick);
+            put_u64(out, *id);
+            put_u64(out, *tick);
+            true
         }
+        _ => false,
+    }
+}
+
+/// 编码屏障与写入流记录。
+fn encode_stream(out: &mut Vec<u8>, record: &LogRecord) {
+    match record {
         LogRecord::SwitchStarted {
             from,
             to,
@@ -280,14 +299,14 @@ fn encode(record: &LogRecord) -> Vec<u8> {
             out.push(5);
             out.push(dialect_byte(*from));
             out.push(dialect_byte(*to));
-            put_u64(&mut out, *target_epoch);
-            put_u64(&mut out, *tick);
-            put_str_vec(&mut out, expected);
+            put_u64(out, *target_epoch);
+            put_u64(out, *tick);
+            put_str_vec(out, expected);
         }
         LogRecord::Quarantined { actor, tick } => {
             out.push(6);
-            put_str(&mut out, actor);
-            put_u64(&mut out, *tick);
+            put_str(out, actor);
+            put_u64(out, *tick);
         }
         LogRecord::DrainQueued {
             actor,
@@ -298,16 +317,16 @@ fn encode(record: &LogRecord) -> Vec<u8> {
             ops,
         } => {
             out.push(7);
-            put_str(&mut out, actor);
-            put_u64(&mut out, *seq);
+            put_str(out, actor);
+            put_u64(out, *seq);
             out.push(dialect_byte(*dialect));
-            put_u64(&mut out, *epoch);
-            put_u64(&mut out, *tick);
-            put_ops(&mut out, ops);
+            put_u64(out, *epoch);
+            put_u64(out, *tick);
+            put_ops(out, ops);
         }
         LogRecord::DrainFlushed { tick } => {
             out.push(8);
-            put_u64(&mut out, *tick);
+            put_u64(out, *tick);
         }
         LogRecord::SwitchCommitted {
             from,
@@ -318,8 +337,8 @@ fn encode(record: &LogRecord) -> Vec<u8> {
             out.push(9);
             out.push(dialect_byte(*from));
             out.push(dialect_byte(*to));
-            put_u64(&mut out, *epoch);
-            put_u64(&mut out, *tick);
+            put_u64(out, *epoch);
+            put_u64(out, *tick);
         }
         LogRecord::WriteAccepted {
             actor,
@@ -330,15 +349,15 @@ fn encode(record: &LogRecord) -> Vec<u8> {
             ops,
         } => {
             out.push(10);
-            put_str(&mut out, actor);
-            put_u64(&mut out, *seq);
+            put_str(out, actor);
+            put_u64(out, *seq);
             out.push(dialect_byte(*dialect));
-            put_u64(&mut out, *epoch);
-            put_u64(&mut out, *tick);
-            put_ops(&mut out, ops);
+            put_u64(out, *epoch);
+            put_u64(out, *tick);
+            put_ops(out, ops);
         }
+        _ => {}
     }
-    out
 }
 
 /// 字节解码。

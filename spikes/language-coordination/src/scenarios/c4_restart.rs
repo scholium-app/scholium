@@ -26,14 +26,16 @@ pub(crate) fn run(h: &mut Harness) {
         "C4",
         CaseKind::Success,
         "c4.success.preconditions",
-        "两次写入已接受、屏障已开始、队列入队 1 条",
-        &format!(
-            "started={started:?} writes={}/{} queued={}/{} before={}",
-            write1.label(),
-            write2.label(),
-            queued.label(),
-            queued_text,
-            before.summary()
+        (
+            "两次写入已接受、屏障已开始、队列入队 1 条",
+            &format!(
+                "started={started:?} writes={}/{} queued={}/{} before={}",
+                write1.label(),
+                write2.label(),
+                queued.label(),
+                queued_text,
+                before.summary()
+            ),
         ),
         write1.is_accepted()
             && write2.is_accepted()
@@ -47,17 +49,19 @@ pub(crate) fn run(h: &mut Harness) {
         "C4",
         CaseKind::Success,
         "c4.success.state_restored_exactly",
-        "恢复后 active/epoch/phase/队列/许可/成员/已应用全部一致",
-        &format!(
-            "before={} after={:?}",
-            before.summary(),
-            after.as_ref().map(Snapshot::summary)
+        (
+            "恢复后 active/epoch/phase/队列/许可/成员/已应用全部一致",
+            &format!(
+                "before={} after={:?}",
+                before.summary(),
+                after.as_ref().map(Snapshot::summary)
+            ),
         ),
         after.as_ref() == Some(&before),
         &format!(
             "records={:?} truncated_tail={:?}",
             recovered.as_ref().map(|r| r.record_count),
-            recovered.as_ref().and_then(|r| r.truncated_tail)
+            recovered.as_ref().ok().and_then(|r| r.truncated_tail)
         ),
     );
 
@@ -69,8 +73,7 @@ pub(crate) fn run(h: &mut Harness) {
                 "C4",
                 CaseKind::Failure,
                 "c4.setup.recovery_failed",
-                "恢复成功",
-                &format!("{error}"),
+                ("恢复成功", &format!("{error}")),
                 false,
                 "后续用例无法继续",
             );
@@ -85,19 +88,11 @@ pub(crate) fn run(h: &mut Harness) {
         .coord
         .replica()
         .contains(Dialect::Latex, &queued_text);
-    h.case(
-        "C4",
-        CaseKind::Success,
-        "c4.success.pending_queue_flushed_after_restart",
-        "重启后完成切换：epoch=2 / typst，队列写入仍在旧语言正文中",
-        &format!(
+    h.case("C4", CaseKind::Success, "c4.success.pending_queue_flushed_after_restart", ("重启后完成切换：epoch=2 / typst，队列写入仍在旧语言正文中", &format!(
             "completed={:?} queued_present={flushed_present}",
             completed.as_ref().map(|o| (o.epoch, o.to, o.flushed_ops))
-        ),
-        matches!(&completed, Ok(outcome) if outcome.epoch == 2 && outcome.to == Dialect::Typst && outcome.flushed_ops == 1)
-            && flushed_present,
-        "待提交队列未丢失",
-    );
+        )), matches!(&completed, Ok(outcome) if outcome.epoch == 2 && outcome.to == Dialect::Typst && outcome.flushed_ops == 1)
+            && flushed_present, "待提交队列未丢失");
 
     torn_tail(h, &recorded);
     mid_log_corruption(h, &recorded);
@@ -110,16 +105,15 @@ fn torn_tail(h: &mut Harness, recorded: &[u8]) {
     torn.truncate(recorded.len().saturating_sub(5));
     let recovered = Coordinator::recover(&scope(), GatePolicy::Strict, &torn);
     let truncated = recovered.as_ref().ok().and_then(|r| r.truncated_tail);
-    let drain_after = recovered
-        .as_ref()
-        .ok()
-        .map(|r| r.coord.drain_queue_len());
+    let drain_after = recovered.as_ref().ok().map(|r| r.coord.drain_queue_len());
     h.case(
         "C4",
         CaseKind::Failure,
         "c4.failure.torn_tail_truncated",
-        "截断最后 5 字节：报告 truncated_tail 且队列退回 0 条",
-        &format!("truncated_tail={truncated:?} drain_queue={drain_after:?}"),
+        (
+            "截断最后 5 字节：报告 truncated_tail 且队列退回 0 条",
+            &format!("truncated_tail={truncated:?} drain_queue={drain_after:?}"),
+        ),
         truncated.is_some() && drain_after == Some(0),
         "尾部半写的 DrainQueued 记录要么全在、要么全不在",
     );
@@ -127,7 +121,8 @@ fn torn_tail(h: &mut Harness, recorded: &[u8]) {
 
 /// 失败夹具：中部损坏必须拒绝自动恢复，而不是回退到默认可写状态。
 fn mid_log_corruption(h: &mut Harness, recorded: &[u8]) {
-    let first_len = u32::from_le_bytes([recorded[0], recorded[1], recorded[2], recorded[3]]) as usize;
+    let first_len =
+        u32::from_le_bytes([recorded[0], recorded[1], recorded[2], recorded[3]]) as usize;
     let second_start = 4 + first_len + 8;
     let mut corrupt = recorded.to_vec();
     corrupt[second_start + 5] ^= 0xff;
@@ -136,9 +131,14 @@ fn mid_log_corruption(h: &mut Harness, recorded: &[u8]) {
         "C4",
         CaseKind::Failure,
         "c4.failure.mid_log_corruption_refuses_autostart",
-        "MidLogCorruption(offset=第二条记录起点)",
-        &format!("{recovered:?}"),
-        matches!(recovered, Err(crate::error::RecoveryError::MidLogCorruption { .. })),
+        (
+            "MidLogCorruption(offset=第二条记录起点)",
+            &format!("{recovered:?}"),
+        ),
+        matches!(
+            recovered,
+            Err(crate::error::RecoveryError::MidLogCorruption { .. })
+        ),
         "不允许用默认 LaTeX epoch=1 顶替损坏的控制记录",
     );
 }
@@ -150,8 +150,7 @@ fn empty_log(h: &mut Harness) {
         "C4",
         CaseKind::Failure,
         "c4.failure.empty_log_refuses_autostart",
-        "NoControlRecord",
-        &format!("{recovered:?}"),
+        ("NoControlRecord", &format!("{recovered:?}")),
         matches!(recovered, Err(crate::error::RecoveryError::NoControlRecord)),
         "不能因 presence 清空就重新开放语言写入",
     );

@@ -83,7 +83,14 @@ pub(crate) struct Timeline {
 
 impl Timeline {
     /// 记录许可发放。
-    pub(crate) fn grant(&mut self, permit: u64, actor: ActorId, dialect: Dialect, epoch: u64, tick: u64) {
+    pub(crate) fn grant(
+        &mut self,
+        permit: u64,
+        actor: ActorId,
+        dialect: Dialect,
+        epoch: u64,
+        tick: u64,
+    ) {
         self.permits.push(PermitWindow {
             permit,
             actor,
