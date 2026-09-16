@@ -6,6 +6,7 @@
 //!
 //! 与其它候选相同的约束：正文权威在 core，UI 只保存投影；结构绘制的是**同一份** `core::layout`。
 
+mod accessibility;
 mod input;
 mod preview;
 mod source_ui;

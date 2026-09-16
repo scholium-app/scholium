@@ -40,7 +40,9 @@ fn measure(paragraphs: usize, frames: usize) -> (f64, f64) {
     let mut samples = Vec::with_capacity(frames);
     for index in 0..frames {
         // 每个事件都可能触发一次"核心更新 + 重新布局"，正是要测的路径。
-        let events = vec![Event::Text(if index % 2 == 0 { "a" } else { "b" }.to_string())];
+        let events = vec![Event::Text(
+            if index % 2 == 0 { "a" } else { "b" }.to_string(),
+        )];
         samples.push(frame_with(&mut app, &ctx, events));
     }
     samples.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));

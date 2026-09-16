@@ -1,0 +1,5 @@
+[event] 启动完成 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[ime] 输入法锚点 [[8.0 122.1] - [9.5 146.1]]
+[event] 源码已应用到正文 | revision 19 | 核心动作 18 | 预编辑事件 0 | IME 提交 0
+[event] 已删除选区 | revision 21 | 核心动作 19 | 预编辑事件 0 | IME 提交 0
+[event] core：撤销 ActionId(19)，删除 0 字符 | revision 22 | 核心动作 20 | 预编辑事件 0 | IME 提交 0

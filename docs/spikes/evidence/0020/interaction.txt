@@ -1,0 +1,23 @@
+source input received via native keyboard; apply and preview actions invoked
+正文（结构编辑 · 结构渲染）
+包裹为分数
+包裹为根式
+解除结构
+循环变体
+焦点 Text { node: NodeId(2), byte: 0 }
+正文结构编辑器
+
+源码 Source Studio
+LaTeX
+Typst
+Latex · 基于 revision 22
+
+应用源码
+丢弃草稿并从正文生成
+当前仅支持单处可归因编辑；冲突时不修改正文。
+Typst 快速预览
+启用后台预览
+预览 revision Some(22) / 正文 22
+首页预览 · 编译及栅格化 1117 ms
+
+revision 22 / 核心动作 20 / 预编辑事件 0 / IME 提交 0 / CJK 字体 已加载 / 最近：core：撤销 ActionId(19)，删除 0 字符

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Native keyboard/AT-SPI acceptance; temporarily enables a11y and ydotool, then restores them."""
-import subprocess,time,json,os,signal
+import subprocess,time,json,os,signal,re
 from pathlib import Path
 import pyatspi
 import sys
@@ -32,24 +32,43 @@ try:
  def focused():
   w=next(w for w in json.loads(call('niri','msg','--json','windows')) if w.get('is_focused'))
   assert w['pid']==process.pid, 'focus lost; no injection'
- entry=next(n for n in children() if n.getRoleName()=='entry')
+ def wait_preview():
+  deadline=time.monotonic()+20
+  while time.monotonic()<deadline:
+   if any(re.search(r'预览 revision Some\((\d+)\) / 正文 \1$', n.name or '') for n in children()): break
+   time.sleep(0.5)
+  else: raise AssertionError('preview did not catch up with body revision')
+ entry=next(n for n in children() if n.getRoleName()=='entry' and n.name!='正文结构编辑器')
  entry.queryComponent().grabFocus();time.sleep(0.6);focused()
  call('ydotool','key','29:1','102:1','102:0','29:0');time.sleep(0.3);focused()
  call('ydotool','type','CHECK');time.sleep(1)
- after=next(n for n in children() if n.getRoleName()=='entry').queryText().getText(0,-1)
+ after=next(n for n in children() if n.getRoleName()=='entry' and n.name!='正文结构编辑器').queryText().getText(0,-1)
  (out/'source-after.txt').write_text(after)
  assert 'CHECK' in after, 'source did not receive keyboard text'
  focused();call('ydotool','key','42:1','105:1','105:0','105:1','105:0','42:0');time.sleep(0.4)
  focused();call('ydotool','key','29:1','46:1','46:0','29:0');time.sleep(0.3)
  focused();call('ydotool','key','106:1','106:0','29:1','47:1','47:0','29:0');time.sleep(0.7)
- copied=next(n for n in children() if n.getRoleName()=='entry').queryText().getText(0,-1)
+ copied=next(n for n in children() if n.getRoleName()=='entry' and n.name!='正文结构编辑器').queryText().getText(0,-1)
  assert copied.startswith('CHECKCK'), copied
  (out/'clipboard.txt').write_text(copied)
  action(named('应用源码'))
  action(named('启用后台预览'))
- time.sleep(5)
- assert any('预览 revision Some(19) / 正文 19' in (n.name or '') for n in children())
- assert any('CHECKCK' in (n.name or '') for n in children()), 'body disappears from accessibility tree'
+ wait_preview()
+ body=named('正文结构编辑器').queryText()
+ original=body.getText(0,-1)
+ assert 'CHECKCK' in original, 'body text unavailable while source focused'
+ assert body.setSelection(0,0,original.index('a')+1), 'AT-SPI cross-node selection request failed'
+ time.sleep(0.8)
+ selection=body.getSelection(0)
+ assert tuple(selection)==(0,original.index('a')+1), selection
+ focused();call('ydotool','key','29:1','45:1','45:0','29:0');time.sleep(0.8)
+ cut=body.getText(0,-1)
+ assert cut!=original, 'body cut had no effect'
+ focused();call('ydotool','key','29:1','44:1','44:0','29:0');time.sleep(0.8)
+ restored=body.getText(0,-1)
+ assert restored==original, 'body undo failed'
+ (out/'body-selection.json').write_text(json.dumps({'before':original,'selection':list(selection),'after_cut':cut,'after_undo':restored},ensure_ascii=False,indent=2))
+ wait_preview()
  (out/'interaction.txt').write_text('source input received via native keyboard; apply and preview actions invoked\n'+'\n'.join(n.name or '' for n in children()))
  nodes=[]
  def walk(node,depth=0):

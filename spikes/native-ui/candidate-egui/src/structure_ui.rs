@@ -20,36 +20,38 @@ impl SpikeApp {
                 }
             });
             ui.label(format!("焦点 {:?}", self.focus));
-            let (rect, response) =
-                ui.allocate_exact_size(ui.available_size(), egui::Sense::click_and_drag());
-            if response.clicked() || (!self.initial_focus_done && !self.focus_source) {
-                response.request_focus();
-                self.initial_focus_done = true;
-            }
-            self.structure_focused = response.has_focus();
-            let painter = ui.painter_at(rect);
-            let origin = rect.min + egui::vec2(8.0, 8.0);
-            self.structure_origin = origin;
-            self.pointer_selection(&response, origin);
-            self.paint_selection(&painter, origin);
-            Self::paint_structure(
-                &painter,
-                origin,
-                &self.layout,
-                egui::Color32::from_rgb(230, 230, 233),
-            );
-            // Keep the document exposed when focus moves to source or preview.
-            // This remains a label, not a complete editable math accessibility tree.
-            response.widget_info(|| {
-                egui::WidgetInfo::labeled(
-                    egui::WidgetType::Label,
-                    true,
-                    self.core.document().to_plain_text(),
-                )
-            });
-            if self.structure_focused {
-                self.caret_and_ime(ui, &painter, origin);
-            }
+            egui::ScrollArea::both()
+                .id_salt("structure_viewport")
+                .auto_shrink([false, false])
+                .show(ui, |ui| {
+                    let (rect, response) = ui.allocate_exact_size(
+                        egui::vec2(
+                            ui.available_width().max(self.layout.width + 16.0),
+                            ui.available_height().max(self.layout.height + 16.0),
+                        ),
+                        egui::Sense::click_and_drag(),
+                    );
+                    if response.clicked() || (!self.initial_focus_done && !self.focus_source) {
+                        response.request_focus();
+                        self.initial_focus_done = true;
+                    }
+                    self.structure_focused = response.has_focus();
+                    let painter = ui.painter_at(rect);
+                    let origin = rect.min + egui::vec2(8.0, 8.0);
+                    self.structure_origin = origin;
+                    self.pointer_selection(&response, origin);
+                    self.paint_selection(&painter, origin);
+                    Self::paint_structure(
+                        &painter,
+                        origin,
+                        &self.layout,
+                        egui::Color32::from_rgb(230, 230, 233),
+                    );
+                    self.accessible_structure(ui, &response, origin);
+                    if self.structure_focused {
+                        self.caret_and_ime(ui, &painter, origin);
+                    }
+                });
         });
     }
 

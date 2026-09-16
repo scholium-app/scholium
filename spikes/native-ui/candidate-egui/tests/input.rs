@@ -123,7 +123,11 @@ fn backspace_deletes_one_grapheme() {
     frame(&mut app, &ctx, vec![text_event("ab")]);
     assert!(app.plain_text().contains("ab"));
 
-    frame(&mut app, &ctx, vec![key_event(Key::Backspace, Modifiers::NONE)]);
+    frame(
+        &mut app,
+        &ctx,
+        vec![key_event(Key::Backspace, Modifiers::NONE)],
+    );
 
     let text = app.plain_text();
     assert!(text.contains('a'), "退格只应删除一个字素");
@@ -138,7 +142,11 @@ fn typing_zwj_emoji_then_backspace_does_not_split_grapheme() {
 
     let family = "👨‍👩‍👧";
     frame(&mut app, &ctx, vec![text_event(&format!("a{family}b"))]);
-    frame(&mut app, &ctx, vec![key_event(Key::Backspace, Modifiers::NONE)]);
+    frame(
+        &mut app,
+        &ctx,
+        vec![key_event(Key::Backspace, Modifiers::NONE)],
+    );
 
     let text = app.plain_text();
     assert!(
@@ -154,14 +162,15 @@ fn arrow_keys_do_not_corrupt_the_document() {
     settle(&mut app, &ctx);
 
     let before = app.plain_text();
-    for key in [Key::ArrowDown, Key::ArrowUp, Key::ArrowLeft, Key::ArrowRight] {
+    for key in [
+        Key::ArrowDown,
+        Key::ArrowUp,
+        Key::ArrowLeft,
+        Key::ArrowRight,
+    ] {
         frame(&mut app, &ctx, vec![key_event(key, Modifiers::NONE)]);
     }
-    assert_eq!(
-        app.plain_text(),
-        before,
-        "纯导航不应改变文档内容"
-    );
+    assert_eq!(app.plain_text(), before, "纯导航不应改变文档内容");
 }
 
 #[test]
@@ -186,10 +195,7 @@ fn undo_reverts_the_local_typing() {
     frame(
         &mut app,
         &ctx,
-        vec![
-            Event::ModifiersChanged(ctrl),
-            key_event(Key::Z, ctrl),
-        ],
+        vec![Event::ModifiersChanged(ctrl), key_event(Key::Z, ctrl)],
     );
 
     assert!(
@@ -343,7 +349,11 @@ fn backspace_deletes_exactly_the_selected_range() {
         .to_string();
     assert!(!selected.is_empty(), "选区不应为空");
 
-    frame(&mut app, &ctx, vec![key_event(Key::Backspace, Modifiers::NONE)]);
+    frame(
+        &mut app,
+        &ctx,
+        vec![key_event(Key::Backspace, Modifiers::NONE)],
+    );
 
     let after = app.plain_text();
     assert!(
@@ -354,15 +364,16 @@ fn backspace_deletes_exactly_the_selected_range() {
         !after.contains(&selected),
         "被选中的内容应已删除：选区={selected:?}，结果={after:?}"
     );
-    assert!(
-        app.selection().is_collapsed(),
-        "删除后选区应折叠到起点"
-    );
+    assert!(app.selection().is_collapsed(), "删除后选区应折叠到起点");
 }
 
 /// 把文档结构打印成紧凑摘要，便于断言。
 fn summary(document: &scholium_spike_core::Document) -> String {
-    fn walk(document: &scholium_spike_core::Document, node: scholium_spike_core::NodeId, out: &mut String) {
+    fn walk(
+        document: &scholium_spike_core::Document,
+        node: scholium_spike_core::NodeId,
+        out: &mut String,
+    ) {
         let Ok(current) = document.node(node) else {
             return;
         };
