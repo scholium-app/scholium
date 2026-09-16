@@ -27,7 +27,7 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 | 第 1 项 原生 UI（候选 1） | [0001-native-ui-iced.md](0001-native-ui-iced.md) | **Iced 结论 Fail**：核心 26 个测试全过、渲染后端与真实输入法均有可复现证据；可访问性不通过（框架无 accesskit）。 |
 | 第 1 项 原生 UI（候选 2） | [0002-native-ui-gpui.md](0002-native-ui-gpui.md) | **GPUI 结论 Fail**：结构渲染可行且与 Iced 可比，但核心**没有文本输入控件**，且同样无 accesskit。 |
 | 第 1 项 原生 UI（候选预筛） | [0003-native-ui-prescreen.md](0003-native-ui-prescreen.md) | EUI-NEO 许可证 Apache-2.0 但无无障碍（不投入）；Slint 有无障碍但许可证被政策阻断；**egui 三项全过，进入实现**。 |
-| 第 1 项 原生 UI（候选 3） | [0004-native-ui-egui.md](0004-native-ui-egui.md) | **egui 结论 Blocked（首个无硬性 Fail）**：可访问性通过（发布对象树）、输入法可用（用户实机确认）、结构渲染通过；结构编辑交互、性能与预览定位未验收。**目前唯一同时具备输入法与可访问性的候选。** |
+| 第 1 项 原生 UI（候选 3，**选定**） | [0004-native-ui-egui.md](0004-native-ui-egui.md) | **egui 结论通过共同验收的可验证部分**：可访问性通过（发布对象树）、输入法可用（用户实机确认）、结构渲染通过；结构编辑交互、性能与预览定位未验收。**目前唯一同时具备输入法与可访问性的候选。** |
 | 第 2 项 Typst 映射 | [0005-typst-mapping.md](0005-typst-mapping.md) | **结论 Pass（机制，含行内结构坐标）**：20 页 668 ms 编译；2050/2050 锚点解析；分数与上下标各有区间且反查 40/40 命中；增量编译 200 ms（冷的 30%）。已渲染首页叠加锚点核对；多页覆盖与文本字符级映射（误差 0.24 pt）已验证。附带结论：预览必须异步去抖，不能按帧预算设计。 |
 | 第 3 项 源码 reconcile | [0006-source-reconcile.md](0006-source-reconcile.md) | **结论 Pass（限定范围）**：受支持结构的受支持编辑在 LaTeX/Typst 两种方言下 8/8 用例通过，未知语法落成 Raw 且原文逐字保留、往返一致；结构级重构与增删行一律报冲突。 |
 | 出口条件 安全 | [0011-untrusted-input.md](0011-untrusted-input.md) | **部分 Pass**：shell escape 默认关闭且有效；Typst 侧按构造安全（读文件/加载插件均被拒）；但 **LaTeX 能读项目外文件，`openin_any=p` 挡不住**，必须用 OS 级沙箱（bwrap 实测可阻断，但沙箱内良性编译尚未跑通）。 |

@@ -62,6 +62,7 @@ impl Replica {
             log: Vec::new(),
             seen: HashSet::new(),
             undo: Vec::new(),
+            position_fallbacks: 0,
         }
     }
 
@@ -79,7 +80,18 @@ impl Replica {
             log: self.log.clone(),
             seen: self.seen.clone(),
             undo: Vec::new(),
+            position_fallbacks: 0,
         }
+    }
+
+    /// 文本叶子的撤销栈深度，供随机工作负载决定是否生成 undo 动作。
+    pub(crate) fn undo_depth(&self) -> usize {
+        self.undo.len()
+    }
+
+    /// 结构性位置生成退化为"复用相邻位置"的次数。
+    pub(crate) fn position_fallbacks(&self) -> usize {
+        self.position_fallbacks
     }
 
     /// 文档状态。
@@ -284,7 +296,7 @@ impl Replica {
             pos: old_pos.clone(),
             ts: wrapper_ts,
         });
-        let child_pos = between(None, None, &mut self.rng)?;
+        let child_pos = self.position_between(None, None)?;
         let target_ts = self.tick();
         let op = self.alloc_op();
         self.receive(Op::NodePlace {
@@ -327,7 +339,7 @@ impl Replica {
                 .doc
                 .node(child)
                 .map_or_else(|| vec![1], |record| record.pos.clone());
-            let new_pos = between(Some(&last), upper.as_deref(), &mut self.rng)?;
+            let new_pos = self.position_between(Some(&last), upper.as_deref())?;
             last = new_pos.clone();
             plans.push((child, old_pos, new_pos));
         }
@@ -516,7 +528,27 @@ impl Replica {
             log,
             seen,
             undo,
+            position_fallbacks: 0,
         })
+    }
+
+    /// 结构性位置生成：上下界相同时退化为复用该位置。
+    ///
+    /// 并发包裹可能让两个兄弟拿到相同的位置标识，"下一个兄弟的位置"因此可能等于下界。
+    /// 此时不能报错——位置标识相同仍由节点标识决定组内顺序，收敛不受影响。
+    fn position_between(
+        &mut self,
+        a: Option<&[u32]>,
+        b: Option<&[u32]>,
+    ) -> Result<Position, CrdtError> {
+        match between(a, b, &mut self.rng) {
+            Ok(pos) => Ok(pos),
+            Err(CrdtError::UnorderedBounds) => {
+                self.position_fallbacks += 1;
+                Ok(a.or(b).map(<[u32]>::to_vec).unwrap_or_else(|| vec![1]))
+            }
+            Err(other) => Err(other),
+        }
     }
 
     fn alloc_op(&mut self) -> Id {
@@ -562,7 +594,7 @@ impl Replica {
             .last()
             .and_then(|id| self.doc.node(*id))
             .map(|record| record.pos.clone());
-        between(last.as_deref(), None, &mut self.rng)
+        self.position_between(last.as_deref(), None)
     }
 
     fn undo_insert_text(&mut self, node: NodeId, chars: &[Id]) -> usize {
