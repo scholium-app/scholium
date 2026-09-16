@@ -227,13 +227,14 @@ core       通过 1   失败 0
 ui         通过 5   失败 0
 typst      通过 4   失败 0
 reconcile  通过 1   失败 0
+items      通过 5   失败 0    ← crdt-race / crdt-engines / recovery / language-coordination / mixed-build
 security   通过 1   失败 0
 license    通过 12  失败 0
 web        通过 1   失败 0
-合计：通过 25 项，失败 0 项
+合计：通过 30 项，失败 0 项
 ```
 
-第 7 项完成后需再跑一次 `bash spikes/verify-stage0.sh items` 补上。
+第 7 项完成后 `items` 段已补齐，**全部 30 项通过**。
 
 ## 复现步骤
 
