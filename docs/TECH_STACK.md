@@ -2,6 +2,20 @@
 
 日期：2026-09-16。用户已确认语言约束、候选验证方向以及优先兼容 WASM 的目标；下表不是已安装依赖或已通过验证的结论。最终版本、feature、许可证与性能结果随 spike 记录，并通过独立选型 ADR 固定。
 
+## 阶段 0 已固定的选型
+
+阶段 0 的七项否决性验证关闭了一部分候选。**已固定的部分以下列 ADR 为准**，本页候选清单只保留仍未定的层：
+
+| 层 | 结论 | ADR |
+|---|---|---|
+| 桌面外壳 / UI 框架 | **egui / eframe 0.36.2**（唯一同时具备中文输入法与可访问性的候选；Iced 缺可访问性、GPUI 缺文本输入控件、EUI-NEO 不投入、Slint 被许可证阻断） | [ADR 0006](adr/0006-native-ui-framework.md) |
+| Typst 生成与预览集成 | 由 SDG 生成 Typst；锚点 + `Introspector::position` 双向定位；持久 World；异步编译 + 结果门；锁定 `typst 0.15.1` | [ADR 0007](adr/0007-typst-integration.md) |
+| 源码 reconcile 与构建隔离 | 行+范围归因（不确定即冲突）、`Raw` 逐字保留；**LaTeX 编译必须跑在 OS 级沙箱内** | [ADR 0008](adr/0008-reconcile-and-toolchain-isolation.md) |
+| CRDT 引擎 | **未定**（Proposed）：Loro / Yrs / Automerge 预筛均为 MIT 且无 C 依赖，对比夹具待跑 | [ADR 0009](adr/0009-crdt-engine.md) |
+| 依赖许可门禁 | `deny.toml` 已建并逐 workspace 通过；新增 `Apache-2.0 WITH LLVM-exception` | [ADR 0005](adr/0005-llvm-exception-license.md) |
+
+一键复现全部验证：`bash spikes/verify-stage0.sh`。
+
 ## 候选清单
 
 | 层 | 首选验证方向与替代 | 关键验收 |
