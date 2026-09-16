@@ -8,18 +8,23 @@
 
 mod fixture;
 mod ime_host;
+mod structure_view;
 
 use iced::advanced::input_method;
 use iced::keyboard::key::Named;
 use iced::keyboard::{self, Key};
-use iced::widget::{button, column, container, mouse_area, row, scrollable, text, text_editor};
-use iced::{Element, Font, Length, Point, Rectangle, Size, Subscription, Task};
+use iced::widget::{
+    button, canvas, column, container, mouse_area, row, scrollable, text, text_editor,
+};
+use iced::{Color, Element, Font, Length, Point, Rectangle, Size, Subscription, Task};
 
 use ime_host::ImeHost;
 use scholium_spike_core::cursor::move_cursor;
 use scholium_spike_core::{
-    ActorId, Cursor, Dialect, Direction, Editor, Intent, NodeId, NodeKind, SemanticEdit, SourcePane,
+    ActorId, Cursor, Dialect, Direction, Editor, Intent, Layout, NodeId, NodeKind, SemanticEdit,
+    SourcePane, layout_document,
 };
+use structure_view::StructureView;
 
 /// 本机 CJK 字体。缺失时应用仍启动，但界面会报告字体缺口。
 const CJK_FONT_PATH: &str = "/usr/share/fonts/adobe-source-han-serif/SourceHanSerifCN-Regular.otf";
@@ -68,6 +73,10 @@ struct App {
     focus: Cursor,
     /// 输入焦点所在区域。
     input_area: InputArea,
+    /// 当前布局。每次编辑后由共享核心重算，正文区据此绘制结构。
+    layout: Layout,
+    /// 正文绘制使用的字体。
+    view_font: Font,
     /// 输入法预编辑串。只属于 UI，不进 core。
     preedit: String,
     source: SourcePane,
@@ -133,6 +142,12 @@ impl App {
             .expect("段落有文本叶子");
 
         Self {
+            layout: layout_document(core.document()),
+            view_font: if cjk_font {
+                Font::with_name(CJK_FAMILY)
+            } else {
+                Font::default()
+            },
             core,
             focus,
             input_area: InputArea::Visual,
@@ -193,6 +208,8 @@ impl App {
             Message::ToggleSourceWritable => self.toggle_source_writable(),
             Message::SourceEdit(action) => self.on_source_edit(action),
         }
+        // 任何消息之后都重算布局：正文区绘制的是共享核心的真实布局，不是纯文本投影。
+        self.layout = layout_document(self.core.document());
         Task::none()
     }
 
@@ -432,7 +449,6 @@ impl App {
     // ------------------------------------------------------------ 视图
 
     fn view(&self) -> Element<'_, Message> {
-        let visual_body = self.core.document().to_plain_text();
         let preview_body = self.core.document().to_plain_text();
         let focus_line = format!(
             "焦点 {:?} / revision {} / 动作 {}",
@@ -447,10 +463,16 @@ impl App {
         };
 
         let visual_pane = column![
-            text("正文（结构编辑）").size(18),
+            text("正文（结构编辑 · 结构渲染）").size(18),
             text(focus_line).size(13),
             text(preedit_line).size(13),
-            scrollable(container(text(visual_body).size(18)).padding(8)).height(Length::Fill),
+            canvas(StructureView {
+                layout: &self.layout,
+                font: self.view_font,
+                color: Color::from_rgb(0.90, 0.90, 0.93),
+            })
+            .width(Length::Fill)
+            .height(Length::Fill),
         ]
         .spacing(6);
 

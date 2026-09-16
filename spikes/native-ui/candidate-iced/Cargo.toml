@@ -11,8 +11,9 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 scholium-spike-core = { path = "../core" }
 # 锁定候选版本；具体版本与 feature 由验证报告记录。
-# `advanced` 用于取得 input_method 事件类型（输入法预编辑与提交）。
-iced = { version = "=0.14.0", features = ["advanced"] }
+# `advanced` 用于取得 input_method 事件类型（输入法预编辑与提交）；
+# `canvas` 用于自绘结构（分数线、上下标位置、矩阵网格），两者都非默认 feature。
+iced = { version = "=0.14.0", features = ["advanced", "canvas"] }
 
 [lints.clippy]
 too_many_lines = "warn"

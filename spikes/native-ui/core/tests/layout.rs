@@ -1,0 +1,258 @@
+//! 结构渲染验收测试。
+//!
+//! 这些测试针对一个此前被漏掉的问题：正文只投影成纯文本时，"数学结构"这一项验收
+//! 退化成模型层测试，候选之间也无法比较。这里断言**布局真的画出了结构**。
+
+use scholium_spike_core::layout::{Item, Metrics, layout_document, layout_node};
+use scholium_spike_core::{
+    ActorId, Editor, Intent, NodeId, NodeKind, RemoteEdit, SemanticEdit,
+};
+
+const FIXTURE: ActorId = ActorId(99);
+
+fn build_editor() -> Editor {
+    let mut editor = Editor::new();
+    let paragraph = {
+        let doc = editor.document();
+        doc.slot(doc.root(), 0)
+            .expect("根槽位")
+            .first()
+            .copied()
+            .expect("段落")
+    };
+    let math = create(&mut editor, paragraph, 0, 1, NodeKind::Math);
+    let _ = math;
+    editor
+}
+
+fn create(editor: &mut Editor, parent: NodeId, slot: usize, index: usize, kind: NodeKind) -> NodeId {
+    editor
+        .apply_remote(RemoteEdit {
+            actor: FIXTURE,
+            edit: SemanticEdit::InsertNode {
+                parent,
+                slot,
+                index,
+                kind,
+            },
+        })
+        .expect("插入结构")
+        .created
+        .expect("新节点")
+}
+
+fn type_text(editor: &mut Editor, node: NodeId, text: &str) {
+    editor
+        .apply_remote(RemoteEdit {
+            actor: FIXTURE,
+            edit: SemanticEdit::InsertText {
+                node,
+                at: 0,
+                text: text.to_string(),
+            },
+        })
+        .expect("插入文本");
+}
+
+fn slot_child(editor: &Editor, node: NodeId, slot: usize, index: usize) -> NodeId {
+    editor.document().slot(node, slot).expect("槽位")[index]
+}
+
+fn texts(layout: &scholium_spike_core::Layout) -> Vec<(f32, f32, f32, String)> {
+    layout
+        .items
+        .iter()
+        .filter_map(|item| match item {
+            Item::Text {
+                x,
+                y,
+                size,
+                content,
+            } => Some((*x, *y, *size, content.clone())),
+            Item::Rule { .. } => None,
+        })
+        .collect()
+}
+
+fn rules(layout: &scholium_spike_core::Layout) -> Vec<(f32, f32, f32)> {
+    layout
+        .items
+        .iter()
+        .filter_map(|item| match item {
+            Item::Rule { y, width, height, .. } => Some((*y, *width, *height)),
+            Item::Text { .. } => None,
+        })
+        .collect()
+}
+
+#[test]
+fn fraction_draws_a_bar_between_numerator_and_denominator() {
+    let mut editor = build_editor();
+    let doc = editor.document();
+    let paragraph = doc.slot(doc.root(), 0).expect("根槽位")[0];
+    let math = doc.slot(paragraph, 0).expect("段落槽位")[1];
+    let fraction = create(&mut editor, math, 0, 0, NodeKind::Fraction);
+    let numerator = slot_child(&editor, fraction, 0, 0);
+    let denominator = slot_child(&editor, fraction, 1, 0);
+    type_text(&mut editor, numerator, "a");
+    type_text(&mut editor, denominator, "b");
+
+    let layout = layout_node(editor.document(), fraction, Metrics::default());
+    let bars = rules(&layout);
+    assert_eq!(bars.len(), 1, "分数必须画出恰好一条分数线");
+
+    let numerator_item = texts(&layout)
+        .into_iter()
+        .find(|(_, _, _, content)| content == "a")
+        .expect("分子文本");
+    let denominator_item = texts(&layout)
+        .into_iter()
+        .find(|(_, _, _, content)| content == "b")
+        .expect("分母文本");
+
+    let (bar_y, bar_width, _) = bars[0];
+    assert!(
+        numerator_item.1 + numerator_item.2 <= bar_y,
+        "分子必须在分数线之上：分子底 {} 线 {}",
+        numerator_item.1 + numerator_item.2,
+        bar_y
+    );
+    assert!(
+        denominator_item.1 >= bar_y,
+        "分母必须在分数线之下：分母顶 {} 线 {}",
+        denominator_item.1,
+        bar_y
+    );
+    assert!(bar_width > 0.0, "分数线必须有宽度");
+}
+
+#[test]
+fn script_raises_superscript_and_lowers_subscript() {
+    let mut editor = build_editor();
+    let doc = editor.document();
+    let paragraph = doc.slot(doc.root(), 0).expect("根槽位")[0];
+    let math = doc.slot(paragraph, 0).expect("段落槽位")[1];
+    let script = create(&mut editor, math, 0, 0, NodeKind::Script);
+    let base = slot_child(&editor, script, 0, 0);
+    let sub = slot_child(&editor, script, 1, 0);
+    let sup = slot_child(&editor, script, 2, 0);
+    type_text(&mut editor, base, "x");
+    type_text(&mut editor, sub, "1");
+    type_text(&mut editor, sup, "2");
+
+    let layout = layout_node(editor.document(), script, Metrics::default());
+    let items = texts(&layout);
+    let find = |content: &str| {
+        items
+            .iter()
+            .find(|(_, _, _, text)| text == content)
+            .cloned()
+            .unwrap_or_else(|| panic!("缺少文本 {content}"))
+    };
+    let (_, base_y, base_size, _) = find("x");
+    let (_, sub_y, sub_size, _) = find("1");
+    let (_, sup_y, sup_size, _) = find("2");
+
+    assert!(sup_y < base_y, "上标必须高于底：上标 {sup_y} 底 {base_y}");
+    assert!(sub_y > base_y, "下标必须低于底：下标 {sub_y} 底 {base_y}");
+    assert!(
+        sub_size < base_size && sup_size < base_size,
+        "上下标字号必须小于底：{sub_size} / {sup_size} vs {base_size}"
+    );
+}
+
+#[test]
+fn matrix_places_cells_on_a_grid() {
+    let mut editor = build_editor();
+    let doc = editor.document();
+    let paragraph = doc.slot(doc.root(), 0).expect("根槽位")[0];
+    let math = doc.slot(paragraph, 0).expect("段落槽位")[1];
+    let matrix = create(&mut editor, math, 0, 0, NodeKind::Matrix);
+    let first = slot_child(&editor, matrix, 0, 0);
+    type_text(&mut editor, first, "1");
+    let second = create(&mut editor, matrix, 0, 1, NodeKind::Text);
+    type_text(&mut editor, second, "2");
+    let third = create(&mut editor, matrix, 0, 2, NodeKind::Text);
+    type_text(&mut editor, third, "3");
+
+    let layout = layout_node(editor.document(), matrix, Metrics::default());
+    let items = texts(&layout);
+    assert_eq!(items.len(), 3, "三个单元格都应参与布局");
+
+    let position = |content: &str| {
+        items
+            .iter()
+            .find(|(_, _, _, text)| text == content)
+            .map(|(x, y, _, _)| (*x, *y))
+            .unwrap_or_else(|| panic!("缺少文本 {content}"))
+    };
+    let (x1, y1) = position("1");
+    let (x2, y2) = position("2");
+    let (_, y3) = position("3");
+
+    assert!(x2 > x1 && (y2 - y1).abs() < 0.5, "第 2 格应在同一行右侧");
+    assert!(y3 > y1, "第 3 格应在下一行（2 列网格）");
+}
+
+#[test]
+fn sqrt_draws_radical_and_overline() {
+    let mut editor = build_editor();
+    let doc = editor.document();
+    let paragraph = doc.slot(doc.root(), 0).expect("根槽位")[0];
+    let math = doc.slot(paragraph, 0).expect("段落槽位")[1];
+    let sqrt = create(&mut editor, math, 0, 0, NodeKind::Sqrt);
+    let radicand = slot_child(&editor, sqrt, 0, 0);
+    type_text(&mut editor, radicand, "y");
+
+    let layout = layout_node(editor.document(), sqrt, Metrics::default());
+    assert_eq!(rules(&layout).len(), 1, "根式必须有上横线");
+    assert!(
+        texts(&layout).iter().any(|(_, _, _, text)| text == "\u{221A}"),
+        "根式必须有根号符号"
+    );
+}
+
+#[test]
+fn document_layout_covers_whole_graph() {
+    let mut editor = build_editor();
+    let text = {
+        let doc = editor.document();
+        doc.first_text_descendant(doc.root()).expect("文本叶子")
+    };
+    type_text(&mut editor, text, "示例");
+    let layout = layout_document(editor.document());
+    assert!(
+        layout.width > 0.0 && layout.height > 0.0,
+        "文档布局不能是空尺寸"
+    );
+    assert!(!layout.items.is_empty(), "文档布局必须产生图元");
+}
+
+#[test]
+fn undo_after_typing_keeps_layout_consistent() {
+    let mut editor = build_editor();
+    let text = {
+        let doc = editor.document();
+        doc.first_text_descendant(doc.root()).expect("文本叶子")
+    };
+    editor
+        .apply(
+            ActorId(1),
+            Intent::Typing,
+            SemanticEdit::InsertText {
+                node: text,
+                at: 0,
+                text: "abc".to_string(),
+            },
+        )
+        .expect("输入");
+    let before = layout_document(editor.document());
+    editor.undo(ActorId(1)).expect("撤销");
+    let after = layout_document(editor.document());
+    assert!(
+        after.width < before.width,
+        "撤销后布局宽度应变小：{} → {}",
+        before.width,
+        after.width
+    );
+}

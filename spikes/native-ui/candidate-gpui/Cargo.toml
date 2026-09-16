@@ -1,0 +1,12 @@
+[package]
+name = "scholium-spike-gpui"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "MIT OR Apache-2.0"
+
+[workspace]
+
+[dependencies]
+gpui = "0.2.2"
+scholium-spike-core = { path = "../core" }
