@@ -20,3 +20,5 @@ Thumbs.db
 # Cargo.lock 必须入库，候选需要锁定版本。
 /spikes/**/target/
 /spikes/**/.cargo-home/
+# 候选预筛用的上游源码克隆与临时工程，不入库（结论写进 docs/spikes/）。
+/spikes/**/.vendor/

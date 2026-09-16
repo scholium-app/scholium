@@ -1,0 +1,28 @@
+[package]
+name = "scholium-spike-egui"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "MIT OR Apache-2.0"
+
+# 独立 workspace：候选不共享 workspace，避免 feature 合并与锁定版本互相影响。
+[workspace]
+
+[dependencies]
+scholium-spike-core = { path = "../core" }
+# 锁定候选版本。默认 feature 已包含 `accesskit`（Linux 走 accesskit_unix → AT-SPI），
+# 这是前三个候选都不具备的能力。
+eframe = "=0.36.2"
+egui = "=0.36.2"
+
+[lints.clippy]
+too_many_lines = "warn"
+cognitive_complexity = "warn"
+too_many_arguments = "warn"
+unwrap_used = "warn"
+missing_panics_doc = "warn"
+missing_errors_doc = "warn"
+undocumented_unsafe_blocks = "deny"
+
+[lints.rust]
+missing_docs = "warn"

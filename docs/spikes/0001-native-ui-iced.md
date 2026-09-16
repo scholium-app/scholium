@@ -187,6 +187,15 @@ APP 'Unnamed' childCount=1
 可访问性缺口"不能由此推断，那需要候选本身足够完整。框架层面的结论不受影响：
 iced 与 winit 源码中都不存在 accesskit 集成，任何候选实现都无从发布可访问树。
 
+**测试前提更正（2026-09-16 补充）**：上面的实测是在**会话无障碍处于关闭状态**下做的
+（`org.a11y.Status IsEnabled = false`）。AccessKit 类框架此时不会向 AT-SPI 注册，因此
+"看不到对象"在那种条件下是必然的——对 iced 而言结论不变（它本就没有 accesskit），
+但**当时的测试前提记录有误**，不能作为"框架不支持无障碍"的独立证据。
+
+在**启用无障碍**后重测，iced 仍不出现在 AT-SPI 应用列表中，静态证据与实测因此一致。
+后续所有无障碍测试都必须在 `IsEnabled = true` 下进行；`a11y-probe.py` 已改为先打印该开关并在
+关闭时明确提示"这是假阴性"。详见[报告 0004](0004-native-ui-egui.md) 的"测试方法错误"一节。
+
 外部参考（**未在本机验证**，仅作背景）：iced 上游有开放的
 [accessibility 支持 issue #552](https://github.com/iced-rs/iced/issues/552) 与
 [accessibility RFC 草案](https://raw.githubusercontent.com/iced-rs/rfcs/d25c20f726db173c6b6d36e458199ef03d1a7e7f/text/0000-accessibility.md)。

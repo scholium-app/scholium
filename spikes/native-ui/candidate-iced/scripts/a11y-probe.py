@@ -114,9 +114,40 @@ def text_interfaces(node):
     return found
 
 
+def a11y_status():
+    """读取会话无障碍开关。
+
+    AccessKit 只在 IsEnabled 为真时才向 AT-SPI 注册，因此这个开关是测试前提：
+    关着的时候，即使框架支持无障碍，也测不到任何对象——会造成假阴性。
+    """
+    import subprocess
+
+    def query(prop):
+        try:
+            out = subprocess.run(
+                [
+                    "gdbus", "call", "--session", "--dest", "org.a11y.Bus",
+                    "--object-path", "/org/a11y/bus",
+                    "--method", "org.freedesktop.DBus.Properties.Get",
+                    "org.a11y.Status", prop,
+                ],
+                capture_output=True, text=True, timeout=5,
+            ).stdout
+            return "true" in out.lower()
+        except Exception:
+            return None
+
+    return query("IsEnabled"), query("ScreenReaderEnabled")
+
+
 def find_matching(desktop, keyword):
-    """找到标题匹配关键字的窗口，并返回 (应用名, 窗口节点)。"""
+    """找到匹配关键字的对象，返回 (应用名, 节点)。
+
+    先按**应用名**匹配（AccessKit 应用常以 crate 名注册，窗口名为空），
+    再退回按窗口标题匹配。这一步曾经写错：只按标题匹配时，egui 明明注册了却被判为"没有对象"。
+    """
     matches = []
+    lowered = keyword.lower()
     for app_index in range(desktop.childCount):
         try:
             app = desktop.getChildAtIndex(app_index)
@@ -125,9 +156,12 @@ def find_matching(desktop, keyword):
         if app is None:
             continue
         try:
-            app_name = app.name
+            app_name = app.name or ""
         except Exception:
-            app_name = "?"
+            app_name = ""
+        if lowered in app_name.lower():
+            matches.append((app_name, app))
+            continue
         for window_index in range(app.childCount):
             try:
                 window = app.getChildAtIndex(window_index)
@@ -139,7 +173,7 @@ def find_matching(desktop, keyword):
                 window_name = window.name or ""
             except Exception:
                 window_name = ""
-            if keyword.lower() in window_name.lower():
+            if lowered in window_name.lower():
                 matches.append((app_name, window))
     return matches
 
@@ -162,21 +196,41 @@ def main():
                 applications.append("?")
     print("桌面上的应用（{} 个）：{}".format(len(applications), ", ".join(applications)))
 
+    enabled, screen_reader = a11y_status()
+    print(
+        "会话无障碍开关：IsEnabled={} ScreenReaderEnabled={}".format(enabled, screen_reader)
+    )
+    if enabled is False:
+        print()
+        print("警告：会话无障碍处于关闭状态。AccessKit 类框架此时不会向 AT-SPI 注册，")
+        print("      测到的'没有对象'是假阴性。先启用再测：")
+        print(
+            "      gdbus call --session --dest org.a11y.Bus --object-path /org/a11y/bus \\\n"
+            "        --method org.freedesktop.DBus.Properties.Set org.a11y.Status IsEnabled '<true>'"
+        )
+
     matches = find_matching(desktop, keyword)
     if not matches:
         print()
-        print("结果：未找到标题含 {!r} 的可访问窗口。".format(keyword))
-        print("含义：该候选没有向辅助技术发布任何对象树——屏幕阅读器看不到它的内容。")
+        print("结果：未找到匹配 {!r} 的可访问对象（已按应用名与窗口标题匹配）。".format(keyword))
+        if enabled is False:
+            print("含义：**在无障碍关闭的前提下**，该候选没有发布对象树；此结论不充分。")
+        else:
+            print("含义：该候选没有向辅助技术发布任何对象树——屏幕阅读器看不到它的内容。")
         return
 
-    for app_name, window in matches:
+    for app_name, node in matches:
+        try:
+            node_name = node.name
+        except Exception:
+            node_name = "?"
         print()
-        print("找到匹配窗口：应用={!r} 标题={!r}".format(app_name, window.name))
+        print("找到匹配对象：应用={!r} 名称={!r}".format(app_name, node_name))
         out = []
-        walk(window, 0, limit, out)
+        walk(node, 0, limit, out)
         print("可访问对象树（深度 {}，共 {} 行）：".format(limit, len(out)))
         print("\n".join(out))
-        print("窗口自身暴露的接口：{}".format(text_interfaces(window) or "无"))
+        print("该对象暴露的接口：{}".format(text_interfaces(node) or "无"))
 
 
 if __name__ == "__main__":
