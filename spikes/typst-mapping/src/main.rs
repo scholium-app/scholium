@@ -7,6 +7,7 @@
 
 mod checks;
 mod generator;
+mod latency;
 mod world;
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -35,6 +36,13 @@ struct Spot {
 fn main() {
     if std::env::args().nth(1).as_deref() == Some("probe") {
         checks::probe();
+        return;
+    }
+    if std::env::args().nth(1).as_deref() == Some("latency") {
+        latency::latency();
+        println!();
+        println!("=== 旧 revision 不闪回 ===");
+        latency::revision_gate();
         return;
     }
     if std::env::args().nth(1).as_deref() == Some("charmap") {

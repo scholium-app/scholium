@@ -204,7 +204,7 @@ fn emit_inline(
     }
 
     match kind {
-        NodeKind::Text => emit_text(document, node, generation, out, options),
+        NodeKind::Text => emit_text(document, node, generation, out, options, in_math),
         NodeKind::Raw => out.push_str(&document.text_of(node).unwrap_or_default()),
         NodeKind::Document | NodeKind::Paragraph | NodeKind::Heading => {
             for child in document.slot(node, 0).unwrap_or(&[]) {
@@ -276,10 +276,11 @@ fn emit_text(
     generation: &mut Generation,
     out: &mut String,
     options: Options,
+    in_math: bool,
 ) {
     let text = document.text_of(node).unwrap_or_default();
     let Some(size) = options.text_chunk_chars.filter(|size| *size > 0) else {
-        out.push_str(&escape(&text));
+        push_text(out, &text, in_math);
         return;
     };
     if text.is_empty() {
@@ -313,9 +314,27 @@ fn emit_text(
             end_anchor: end_anchor.clone(),
         });
         out.push_str(&format!("#context [#metadata(here()) <{begin_anchor}>]"));
-        out.push_str(&escape(&text[start_byte..end_byte]));
+        push_text(out, &text[start_byte..end_byte], in_math);
         out.push_str(&format!("#context [#metadata(here()) <{end_anchor}>]"));
         index = end;
+    }
+}
+
+/// 发出文本。
+///
+/// **数学模式下的转义规则与标记模式不同**：`$ ax $` 会把 `ax` 当成变量名而报
+/// `unknown variable`。所以数学模式里凡不是单个 ASCII 字母/数字的内容都加引号，
+/// 让它按文字渲染。这是实测发现的缺陷（延迟测试里插入两个字母即触发）。
+fn push_text(out: &mut String, text: &str, in_math: bool) {
+    let needs_quotes = in_math
+        && !(text.chars().count() == 1
+            && text.chars().next().is_some_and(|ch| ch.is_ascii_alphanumeric()));
+    if needs_quotes {
+        out.push('"');
+        out.push_str(&text.replace('"', "\\\""));
+        out.push('"');
+    } else {
+        out.push_str(&escape(text));
     }
 }
 
