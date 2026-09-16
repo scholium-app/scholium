@@ -6,6 +6,9 @@ use std::collections::BTreeMap;
 use std::path::Path;
 use std::process::Command;
 
+/// 单次 LaTeX 调用的墙钟上限（秒）。
+pub(crate) const TIMEOUT_SECONDS: u64 = 45;
+
 /// 一次 LaTeX 编译的观测结果。
 #[derive(Default)]
 pub(crate) struct LatexRun {
@@ -21,15 +24,18 @@ pub(crate) struct LatexRun {
     pub(crate) pages: usize,
     /// 逐页文本（`pdftotext -f i -l i`）。
     pub(crate) text_pages: Vec<String>,
-    /// 链接目标的 `#锚`（`pdftohtml -xml`）。
-    pub(crate) link_targets: Vec<String>,
+    /// 链接：(所在页, 目标锚)（`pdftohtml -xml`）。
+    pub(crate) link_targets: Vec<(u64, String)>,
 }
 
 /// 在 `dir` 里编译 `main.tex`。
 pub(crate) fn compile(dir: &Path, main: &str) -> LatexRun {
     let mut run = LatexRun::default();
-    let output = Command::new("xelatex")
+    // 用 `timeout` 兜住病态输入（例如递归宏）：不能让它挂住整个构建。
+    let output = Command::new("timeout")
         .args([
+            &format!("{TIMEOUT_SECONDS}s"),
+            "xelatex",
             "-interaction=nonstopmode",
             "-halt-on-error",
             "-file-line-error",
@@ -50,13 +56,17 @@ pub(crate) fn compile(dir: &Path, main: &str) -> LatexRun {
     for line in stdout.lines().chain(stderr.lines()) {
         if let Some(rest) = line.strip_prefix("! ") {
             run.diagnostics.push(rest.to_string());
-        } else if line.starts_with("./") && line.contains(".tex:") && run.ok {
-            // file:line:error 形式
+        } else if !run.ok && line.starts_with("./") && line.contains(".tex:") {
+            // `-file-line-error` 形式：./main.tex:12: 错误信息
             run.diagnostics.push(line.to_string());
         }
     }
     if !run.ok && run.diagnostics.is_empty() {
-        run.diagnostics.push("xelatex 非零退出".to_string());
+        run.diagnostics.push(match output.status.code() {
+            Some(124) => format!("xelatex 超过 {TIMEOUT_SECONDS}s 上限被终止"),
+            Some(code) => format!("xelatex 非零退出（{code}）"),
+            None => "xelatex 被信号终止".to_string(),
+        });
     }
     run.log_tail = stdout
         .lines()
@@ -135,8 +145,8 @@ pub(crate) fn pdf_page_text(pdf: &Path, page: usize) -> String {
     }
 }
 
-/// 链接目标列表（`pdftohtml -xml` 的 `<a href="...#锚">`）。
-pub(crate) fn pdf_links(pdf: &Path) -> Vec<String> {
+/// 链接列表（`pdftohtml -xml` 的 `<a href="...#锚">`），带所在页。
+pub(crate) fn pdf_links(pdf: &Path) -> Vec<(u64, String)> {
     let output = Command::new("pdftohtml")
         .args(["-xml", "-stdout", "-i", "-q"])
         .arg(pdf)
@@ -144,15 +154,28 @@ pub(crate) fn pdf_links(pdf: &Path) -> Vec<String> {
     let Ok(output) = output else {
         return Vec::new();
     };
-    let text = String::from_utf8_lossy(&output.stdout);
-    let mut targets = Vec::new();
-    let mut rest = text.as_ref();
-    while let Some(start) = rest.find("<a href=\"") {
-        rest = &rest[start + 9..];
-        if let Some(end) = rest.find('"') {
-            targets.push(rest[..end].to_string());
-            rest = &rest[end..];
+    let text = String::from_utf8_lossy(&output.stdout).to_string();
+    let mut links = Vec::new();
+    let mut page = 1u64;
+    let mut rest = text.as_str();
+    while !rest.is_empty() {
+        let next_page = rest.find("<page number=\"");
+        let next_link = rest.find("<a href=\"");
+        match (next_page, next_link) {
+            (Some(page_at), Some(link_at)) if page_at < link_at => {
+                let after = &rest[page_at + 14..];
+                let end = after.find('"').unwrap_or(0);
+                page = after[..end].parse::<u64>().unwrap_or(page);
+                rest = &after[end..];
+            }
+            (_, Some(link_at)) => {
+                let after = &rest[link_at + 9..];
+                let end = after.find('"').unwrap_or(0);
+                links.push((page, after[..end].to_string()));
+                rest = &after[end..];
+            }
+            _ => break,
         }
     }
-    targets
+    links
 }

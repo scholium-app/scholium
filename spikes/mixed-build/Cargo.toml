@@ -17,6 +17,8 @@ typst-layout = "=0.15.1"
 typst-kit = { version = "=0.15.1", features = ["embedded-fonts", "scan-fonts"] }
 # 把外语组件导出为矢量 SVG（LaTeX 宿主的嵌入载体）。
 typst-svg = "=0.15.1"
+# Typst 宿主导出真实 PDF：既做矢量嵌入载体，也让最终件能独立核验。
+typst-pdf = "=0.15.1"
 
 [lints.clippy]
 too_many_lines = "warn"

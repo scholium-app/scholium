@@ -268,7 +268,7 @@ pub(crate) enum Block {
         component: String,
     },
     /// 以真实源码方式纳入同方言组件（作用域隔离）。
-    IncludeBlock {
+    IncludeSection {
         /// 组件 id。
         component: String,
     },
@@ -468,10 +468,5 @@ impl Project {
     /// 组件查找。
     pub(crate) fn component(&self, id: &str) -> Option<&Component> {
         self.components.iter().find(|component| component.id == id)
-    }
-
-    /// 宏查找。
-    pub(crate) fn macro_decl(&self, name: &str) -> Option<&MacroDecl> {
-        self.macros.iter().find(|decl| decl.name == name)
     }
 }

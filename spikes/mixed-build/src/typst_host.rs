@@ -7,7 +7,8 @@ use std::collections::BTreeMap;
 
 use typst::foundations::{Label, Value};
 use typst::introspection::Introspector;
-use typst::layout::{Destination, Frame, FrameItem};
+use typst::layout::{Frame, FrameItem};
+use typst::model::Destination;
 use typst::utils::PicoStr;
 use typst_layout::{Page, PagedDocument};
 use typst_svg::SvgOptions;
@@ -51,14 +52,6 @@ impl TypstRun {
         self.warnings
             .iter()
             .any(|warning| warning.contains("did not converge"))
-    }
-
-    /// 取第 `page`（1 基）页文本。
-    pub(crate) fn page_text(&self, page: usize) -> &str {
-        self.text_pages
-            .get(page.saturating_sub(1))
-            .map(String::as_str)
-            .unwrap_or("")
     }
 
     /// 整篇文本。
@@ -110,11 +103,11 @@ pub(crate) fn compile(main: &str, files: &[(String, Entry)], probes: &[String]) 
     }
     let introspector = document.introspector();
     for probe in probes {
-        let page = label_position(&introspector, probe);
+        let page = label_position(introspector, probe);
         if let Some(page) = page {
             run.label_pages.insert(probe.clone(), page);
         }
-        let number = label_value(&introspector, &format!("num:{probe}"));
+        let number = label_value(introspector, &format!("num:{probe}"));
         if let Some(number) = number {
             run.numbers.insert(probe.clone(), number);
         }
@@ -124,24 +117,24 @@ pub(crate) fn compile(main: &str, files: &[(String, Entry)], probes: &[String]) 
 
 /// 某标签所在的物理页码。
 pub(crate) fn label_position(
-    introspector: &typst::introspection::PagedIntrospector,
+    introspector: &typst_layout::PagedIntrospector,
     name: &str,
 ) -> Option<u64> {
-    let label = Label::new(PicoStr::intern(name)).ok()?;
+    let label = Label::new(PicoStr::intern(name))?;
     introspector
         .query_label(label)
         .ok()?
         .location()
         .and_then(|location| introspector.position(location))
-        .map(|position| position.page.get())
+        .map(|position| position.page.get() as u64)
 }
 
 /// 从编号探针元数据里读回编号。
 pub(crate) fn label_value(
-    introspector: &typst::introspection::PagedIntrospector,
+    introspector: &typst_layout::PagedIntrospector,
     name: &str,
 ) -> Option<String> {
-    let label = Label::new(PicoStr::intern(name)).ok()?;
+    let label = Label::new(PicoStr::intern(name))?;
     let content = introspector.query_label(label).ok()?;
     match content.get_by_name("value").ok()? {
         Value::Str(text) => Some(text.to_string()),
@@ -161,7 +154,6 @@ fn collect_text(frame: &Frame, out: &mut String) {
         match item {
             FrameItem::Group(group) => collect_text(&group.frame, out),
             FrameItem::Text(text) => out.push_str(&text.text),
-            FrameItem::Link(_, _) => out.push_str("⟦LINK⟧"),
             _ => {}
         }
     }
@@ -175,11 +167,11 @@ fn collect_links(frame: &Frame, page: u64, document: &PagedDocument, out: &mut V
                 let introspector = document.introspector();
                 let (target_page, url) = match destination {
                     Destination::Url(url) => (None, Some(url.as_str().to_string())),
-                    Destination::Position(position) => (Some(position.page.get()), None),
+                    Destination::Position(position) => (Some(position.page.get() as u64), None),
                     Destination::Location(location) => (
                         introspector
                             .position(*location)
-                            .map(|position| position.page.get()),
+                            .map(|position| position.page.get() as u64),
                         None,
                     ),
                 };
@@ -206,18 +198,22 @@ pub(crate) fn page_svg(document: &PagedDocument, page: usize) -> Option<String> 
     ))
 }
 
-/// 把整篇导出为合并 SVG。
-pub(crate) fn document_svg(document: &PagedDocument) -> String {
-    let options = SvgOptions {
-        render_bleed: false,
-        pretty: true,
+/// 把文档导出为真实 PDF。
+pub(crate) fn export_pdf(document: &PagedDocument, path: &std::path::Path) -> Result<usize, String> {
+    let options = typst_pdf::PdfOptions {
+        ident: typst::foundations::Smart::Auto,
+        ..Default::default()
     };
-    let mut merged = String::new();
-    for index in 1..=document.pages().len() {
-        if let Some(svg) = page_svg(document, index) {
-            merged.push_str(&svg);
+    match typst_pdf::pdf(document, &options) {
+        Ok(bytes) => {
+            let length = bytes.len();
+            std::fs::write(path, bytes).map_err(|error| error.to_string())?;
+            Ok(length)
         }
+        Err(errors) => Err(errors
+            .iter()
+            .map(|error| error.message.to_string())
+            .collect::<Vec<_>>()
+            .join("；")),
     }
-    let _ = options;
-    merged
 }

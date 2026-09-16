@@ -7,7 +7,7 @@ use std::collections::BTreeMap;
 use std::fmt::Write as _;
 
 use crate::diag::Diagnostic;
-use crate::ir::{Block, Bridge, Component, Dialect, MacroKind, PlotSpec, Project, TableSpec};
+use crate::ir::{Block, Component, Dialect, MacroKind, PlotSpec, Project, TableSpec};
 use crate::plan::Plan;
 
 /// 一个符号的已解析值。
@@ -36,15 +36,13 @@ pub(crate) struct Ctx<'a> {
     pub(crate) dialect: Dialect,
     /// 当前文件归属（`"host"` 或组件 id）。
     pub(crate) owner: &'a str,
-    /// 当前作用域。
-    pub(crate) scope: &'a str,
     /// 是否禁用作用域隔离（对照实现）。
     pub(crate) unscoped: bool,
 }
 
 impl Ctx<'_> {
     /// 某个符号的引用写法：同归属用原生引用，跨归属用上一轮解析值。
-    fn reference(&self, target: &str, page: bool) -> String {
+    pub(crate) fn reference(&self, target: &str, page: bool) -> String {
         let resolved = self.table.get(target);
         let native = self
             .plan
@@ -63,7 +61,7 @@ impl Ctx<'_> {
                 }
                 Dialect::Typst => {
                     if page {
-                        format!("#ref(<{target}>, form: \"page\", supplement: [页])")
+                        format!("#ref(<{target}>, form: \"page\", supplement: none)")
                     } else {
                         format!("@{target}")
                     }
@@ -92,7 +90,7 @@ impl Ctx<'_> {
     }
 
     /// 反馈高度：由探测符号上一轮解析页码决定。
-    fn feedback_height(&self, probe: &str, base: f64, slope: f64) -> f64 {
+    pub(crate) fn feedback_height(&self, probe: &str, base: f64, slope: f64) -> f64 {
         let page = self
             .table
             .get(probe)
@@ -100,6 +98,30 @@ impl Ctx<'_> {
             .unwrap_or(1) as f64;
         (base - slope * page).max(1.0)
     }
+}
+
+/// 页内标记串：把符号 id 变成只含字母数字的标记，作为"该元素真实所在页"的独立证据。
+///
+/// 标记被放进被标记元素自身（表题/图题/公式），因此它出现的物理页就是该元素的物理页；
+/// 核验时用逐页文本抽取找标记，与 `.aux`/内省读回的页码交叉验证。
+pub(crate) fn marker_for(label: &str) -> String {
+    let mut marker = String::from("MK");
+    for character in label.chars() {
+        if character.is_ascii_alphanumeric() {
+            marker.push(character);
+        }
+    }
+    marker
+}
+
+/// 表头第一格附上标记串：表头在首屏出现，因此标记页就是表格起始页（续页也会重复出现）。
+pub(crate) fn marked_header(header: &[String], label: &str) -> Vec<String> {
+    let mut cells = header.to_vec();
+    if let Some(first) = cells.first_mut() {
+        first.push(' ');
+        first.push_str(&marker_for(label));
+    }
+    cells
 }
 
 /// 生成 LaTeX 宿主文档。
@@ -110,8 +132,22 @@ pub(crate) fn host_source(ctx: &Ctx<'_>) -> Result<String, Diagnostic> {
     for block in &ctx.project.body {
         latex_block(block, ctx, &mut out)?;
     }
-    out.push_str("\\end{document}\n");
-    Ok(out)
+    // 宿主侧宏定义：宿主自有宏 + 有桥接合约的跨语言宏（在宿主侧重实现）。
+    // 放在正文之后定义会失效，所以这里先收集、再在导言区插入。
+    let mut defs = String::new();
+    for decl in ctx
+        .plan
+        .macros
+        .values()
+        .flatten()
+        .filter(|decl| decl.owner == "host" || decl.contract.is_some())
+    {
+        latex_macro(&mut defs, decl);
+    }
+    let mut document = String::new();
+    document.push_str(&out);
+    document.push_str("\\end{document}\n");
+    Ok(document.replace("\\begin{document}\n", &format!("\\begin{{document}}\n{defs}")))
 }
 
 /// 生成同方言组件的片段（被宿主 `\input`）。
@@ -121,10 +157,14 @@ pub(crate) fn include_fragment(
 ) -> Result<String, Diagnostic> {
     let mut out = String::new();
     let mut defs = String::new();
-    for decl in ctx.plan.macros.values() {
-        if decl.owner == component.id && decl.scope == component.scope {
-            latex_macro(&mut defs, decl);
-        }
+    for decl in ctx
+        .plan
+        .macros
+        .values()
+        .flatten()
+        .filter(|decl| decl.owner == component.id && decl.scope == component.scope)
+    {
+        latex_macro(&mut defs, decl);
     }
     out.push_str(&defs);
     for block in &component.body {
@@ -142,10 +182,14 @@ pub(crate) fn standalone_source(
     out.push_str(&preamble(ctx.project, component.dialect));
     out.push_str("\\begin{document}\n");
     let mut defs = String::new();
-    for decl in ctx.plan.macros.values() {
-        if decl.owner == component.id {
-            latex_macro(&mut defs, decl);
-        }
+    for decl in ctx
+        .plan
+        .macros
+        .values()
+        .flatten()
+        .filter(|decl| decl.owner == component.id)
+    {
+        latex_macro(&mut defs, decl);
     }
     out.push_str(&defs);
     for block in &component.body {
@@ -161,6 +205,10 @@ pub(crate) fn preamble(project: &Project, _dialect: Dialect) -> String {
     format!(
         "\\documentclass[11pt]{{article}}\n\
          \\usepackage[paperwidth={width}pt,paperheight={height}pt,margin=48pt]{{geometry}}\n\
+         \\usepackage{{fontspec}}\n\
+         \\usepackage{{xeCJK}}\n\
+         \\setmainfont{{Noto Serif}}\n\
+         \\setCJKmainfont{{Noto Sans CJK SC}}\n\
          \\usepackage{{longtable}}\n\
          \\usepackage{{booktabs}}\n\
          \\usepackage{{pgfplots}}\n\
@@ -179,19 +227,20 @@ fn latex_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
             let _ = writeln!(out, "\\{command}{{{}}}", escape_latex(text));
         }
         Block::Para(text) => {
-            let _ = writeln!(out, "{}\n", escape_latex(text));
+            let _ = writeln!(out, "{}", escape_latex(text));
         }
         Block::PageBreak => out.push_str("\\newpage\n"),
         Block::Table(spec) => latex_longtable(spec, out),
         Block::Equation { label, math, display } => {
             let body = math.to_latex()?;
             if *display {
+                let marker = marker_for(label);
                 let _ = write!(
                     out,
-                    "\\begin{{equation}}\n{body}\\label{{{label}}}\n\\end{{equation}}\n"
+                    "\\begin{{equation}}\n{body}\\;\\mathrm{{{marker}}}\\label{{{label}}}\n\\end{{equation}}\n"
                 );
             } else {
-                let _ = write!(out, "${body}$\n");
+                let _ = writeln!(out, "${body}$");
             }
         }
         Block::Figure { label, caption, plot } => latex_plot(label, caption, plot, out),
@@ -206,18 +255,19 @@ fn latex_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
                 "\\begin{{figure}}[htbp]\n\\centering\n\
                  \\phantomsection\\label{{comp:{component}}}%\n\
                  \\includegraphics[width={width}\\linewidth]{{{component}.pdf}}\n\
-                 \\caption{{{}}}\n\\label{{{label}}}\n\\end{{figure}}\n",
-                escape_latex(caption)
+                 \\caption{{{} {}}}\n\\label{{{label}}}\n\\end{{figure}}\n",
+                escape_latex(caption),
+                marker_for(label)
             );
         }
-        Block::IncludeBlock { component } => {
+        Block::IncludeSection { component } => {
             let Some(found) = ctx.project.component(component) else {
                 return Ok(());
             };
             if ctx.unscoped {
-                let _ = write!(out, "\\input{{{}}}\n", found.id);
+                let _ = writeln!(out, "\\input{{{}}}", found.id);
             } else {
-                let _ = write!(out, "\\begingroup\n\\input{{{}}}\n\\endgroup\n", found.id);
+                let _ = writeln!(out, "\\begingroup\n\\input{{{}}}\n\\endgroup", found.id);
             }
         }
         Block::MacroUse { name, args } => {
@@ -226,17 +276,17 @@ fn latex_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
                 .map(|arg| escape_latex(arg))
                 .collect::<Vec<_>>()
                 .join("}{");
-            let _ = write!(out, "\\{name}{{{rendered}}}\n");
+            let _ = writeln!(out, "\\{name}{{{rendered}}}");
         }
         Block::Ref { target, page } => {
-            let _ = write!(out, "{}\n", ctx.reference(target, *page));
+            let _ = writeln!(out, "{}", ctx.reference(target, *page));
         }
         Block::Raw { text, .. } => {
             let _ = writeln!(out, "{text}");
         }
         Block::FeedbackSpace { probe, base, slope } => {
             let height = ctx.feedback_height(probe, *base, *slope);
-            let _ = write!(out, "\\vspace*{{{height:.2}pt}}\n");
+            let _ = writeln!(out, "\\vspace*{{{height:.2}pt}}");
         }
     }
     Ok(())
@@ -245,8 +295,7 @@ fn latex_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
 /// 跨页表格。
 fn latex_longtable(spec: &TableSpec, out: &mut String) {
     let columns = "l".repeat(spec.columns.max(1));
-    let header = spec
-        .header
+    let header = marked_header(&spec.header, &spec.label)
         .iter()
         .map(|cell| escape_latex(cell))
         .collect::<Vec<_>>()
@@ -269,14 +318,14 @@ fn latex_longtable(spec: &TableSpec, out: &mut String) {
             .map(|cell| escape_latex(cell))
             .collect::<Vec<_>>()
             .join(" & ");
-        let _ = write!(out, "{cells} \\\\\n");
+        let _ = writeln!(out, "{cells} \\\\");
     }
     for index in 0..spec.filler {
         let cells = (0..spec.columns.max(1))
             .map(|column| format!("填充 {}·{}", index + 1, column + 1))
             .collect::<Vec<_>>()
             .join(" & ");
-        let _ = write!(out, "{cells} \\\\\n");
+        let _ = writeln!(out, "{cells} \\\\");
     }
     out.push_str("\\end{longtable}\n");
 }
@@ -295,28 +344,26 @@ fn latex_plot(label: &str, caption: &str, plot: &PlotSpec, out: &mut String) {
          \\begin{{axis}}[width=7cm,height=4.2cm,xlabel={{x}},ylabel={{y}},grid=major]\n\
          \\addplot[mark=*,thick,blue] coordinates {{{coordinates}}};\n\
          \\end{{axis}}\n\\end{{tikzpicture}}\n\
-         \\caption{{{}}}\n\\label{{{label}}}\n\\end{{figure}}\n",
-        escape_latex(caption)
+         \\caption{{{} {}}}\n\\label{{{label}}}\n\\end{{figure}}\n",
+        escape_latex(caption),
+        marker_for(label)
     );
 }
 
 /// 宏定义：语言无关的宏体在宿主侧的具体形态。
+///
+/// 用 `\def` 而不是 `\newcommand`：`\def` 允许静默重定义，正好用来暴露"作用域没隔离"的真实后果。
 fn latex_macro(out: &mut String, decl: &crate::ir::MacroDecl) {
     match &decl.kind {
         MacroKind::Multiply { factor } => {
-            let _ = write!(
+            let _ = writeln!(
                 out,
-                "\\newcommand{{\\{}}}[1]{{\\the\\numexpr#1*{factor}\\relax}}\n",
+                "\\def\\{}#1{{\\the\\numexpr#1*{factor}\\relax}}",
                 decl.name
             );
         }
         MacroKind::Constant { value } => {
-            let _ = write!(
-                out,
-                "\\newcommand{{\\{}}}[0]{{{}}}\n",
-                decl.name,
-                escape_latex(value)
-            );
+            let _ = writeln!(out, "\\def\\{}{{{}}}", decl.name, escape_latex(value));
         }
     }
 }
@@ -337,9 +384,4 @@ pub(crate) fn escape_latex(text: &str) -> String {
         }
     }
     out
-}
-
-/// 组件是否有可被宿主 `\input` 的权威源文件。
-pub(crate) fn is_include(component: &Component) -> bool {
-    matches!(component.bridge, Bridge::Include)
 }

@@ -14,8 +14,8 @@ pub(crate) struct Plan {
     pub(crate) host: Dialect,
     /// 符号表（引用目标 → 归属）。
     pub(crate) symbols: BTreeMap<String, SymbolInfo>,
-    /// 宏表。
-    pub(crate) macros: BTreeMap<String, MacroDecl>,
+    /// 宏表：宏名 → 各作用域下的声明（同名宏可以在不同作用域各自存在）。
+    pub(crate) macros: BTreeMap<String, Vec<MacroDecl>>,
     /// 人类可读的构建步骤，作为证据打印。
     pub(crate) steps: Vec<String>,
 }
@@ -24,10 +24,11 @@ pub(crate) struct Plan {
 pub(crate) const HOST_SCOPE: &str = "host";
 
 /// 校验项目并产出计划；有任何不支持的组合就返回全部诊断。
+#[allow(clippy::too_many_lines)] // 校验规则清单，拆开反而难与文档逐条对照
 pub(crate) fn plan(project: &Project) -> Result<Plan, Vec<Diagnostic>> {
     let mut problems = Vec::new();
     let mut symbols: BTreeMap<String, SymbolInfo> = BTreeMap::new();
-    let mut macros: BTreeMap<String, MacroDecl> = BTreeMap::new();
+    let mut macros: BTreeMap<String, Vec<MacroDecl>> = BTreeMap::new();
 
     // ---- 作用域与组件结构 ----
     let mut scopes: BTreeMap<String, &str> = BTreeMap::new();
@@ -120,12 +121,13 @@ pub(crate) fn plan(project: &Project) -> Result<Plan, Vec<Diagnostic>> {
         }
     }
 
-    // ---- 宏表 ----
+    // ---- 宏表：按 (名字, 作用域) 唯一 ----
     for decl in &project.macros {
-        let key = (decl.name.clone(), decl.scope.clone());
-        if let Some(previous) = macros.values().find(|existing| {
-            (existing.name.clone(), existing.scope.clone()) == key
-        }) {
+        let bucket = macros.entry(decl.name.clone()).or_default();
+        if let Some(previous) = bucket
+            .iter()
+            .find(|existing| existing.scope == decl.scope)
+        {
             problems.push(Diagnostic::new(
                 "scope-conflict",
                 format!(
@@ -134,7 +136,7 @@ pub(crate) fn plan(project: &Project) -> Result<Plan, Vec<Diagnostic>> {
                 ),
             ));
         } else {
-            macros.insert(decl.name.clone(), decl.clone());
+            bucket.push(decl.clone());
         }
     }
 
@@ -170,18 +172,28 @@ pub(crate) fn plan(project: &Project) -> Result<Plan, Vec<Diagnostic>> {
 
     let mut steps = vec![format!("宿主 = {}（{}）", project.host.name(), project.name)];
     for component in &project.components {
+        let bridge = match &component.bridge {
+            Bridge::Macro { contract } => format!("macro（合约 {contract}）"),
+            other => other.name().to_string(),
+        };
         steps.push(format!(
             "组件 {} = {} 源码 / {} 桥接 / 作用域 {}",
             component.id,
             component.dialect.name(),
-            component.bridge.name(),
+            bridge,
             component.scope
         ));
     }
+    let symbol_list = symbols
+        .values()
+        .map(|symbol| format!("{}:{}@{}/{}", symbol.id, symbol.kind.name(), symbol.owner, symbol.scope))
+        .collect::<Vec<_>>()
+        .join(", ");
+    steps.push(format!("符号表 {symbol_list}"));
     steps.push(format!(
         "符号 {} 个，宏 {} 个，引用轮数上限由构建循环控制",
         symbols.len(),
-        macros.len()
+        macros.values().map(Vec::len).sum::<usize>()
     ));
     Ok(Plan {
         host: project.host,
@@ -193,10 +205,11 @@ pub(crate) fn plan(project: &Project) -> Result<Plan, Vec<Diagnostic>> {
 
 /// 对全部块做逐条校验。
 #[allow(clippy::too_many_arguments)]
+#[allow(clippy::too_many_lines)] // 逐类内容校验清单，保持一处可读
 fn check_blocks(
     project: &Project,
     symbols: &BTreeMap<String, SymbolInfo>,
-    macros: &BTreeMap<String, MacroDecl>,
+    macros: &BTreeMap<String, Vec<MacroDecl>>,
     owner: &str,
     scope: &str,
     dialect: Dialect,
@@ -258,7 +271,7 @@ fn check_blocks(
                     }
                 }
             },
-            Block::MacroUse { name, args } => match macros.get(name) {
+            Block::MacroUse { name, args } => match resolve_macro(macros, name, scope) {
                 None => problems.push(
                     Diagnostic::new(
                         "macro-undeclared",
@@ -289,7 +302,11 @@ fn check_blocks(
                             )
                             .hint("跨引擎调用必须有声明的适配合约，宏不会自动互换"),
                         );
-                    } else if !is_host && decl.scope != scope && decl.contract.is_none() {
+                    } else if !is_host
+                        && decl.scope != scope
+                        && decl.contract.is_none()
+                        && !project.unscoped_control
+                    {
                         problems.push(
                             Diagnostic::new(
                                 "scope-leak",
@@ -300,20 +317,18 @@ fn check_blocks(
                             )
                             .hint("要么把宏移入本作用域，要么声明跨语言/跨作用域桥接合约"),
                         );
-                    } else if is_host {
-                        if let Some(component) = project.component(&decl.owner) {
-                            if matches!(component.bridge, Bridge::Vector)
-                                && decl.contract.is_none()
-                            {
-                                problems.push(Diagnostic::new(
-                                    "macro-vector-boundary",
-                                    format!(
-                                        "宿主使用了组件 `{}` 的宏 `{name}`，但该组件是矢量嵌入，宏边界不可穿越",
-                                        component.id
-                                    ),
-                                ));
-                            }
-                        }
+                    } else if is_host
+                        && let Some(component) = project.component(&decl.owner)
+                        && matches!(component.bridge, Bridge::Vector)
+                        && decl.contract.is_none()
+                    {
+                        problems.push(Diagnostic::new(
+                            "macro-vector-boundary",
+                            format!(
+                                "宿主使用了组件 `{}` 的宏 `{name}`，但该组件是矢量嵌入，宏边界不可穿越",
+                                component.id
+                            ),
+                        ));
                     }
                 }
             },
@@ -357,9 +372,26 @@ fn check_blocks(
                     ));
                 }
             }
+            Block::Figure { .. } | Block::IncludeSection { .. } => {}
             Block::Heading { .. } | Block::Para(_) | Block::PageBreak => {}
         }
     }
+}
+
+/// 解析宏调用：同作用域优先，其次带桥接合约的定义。
+pub(crate) fn resolve_macro<'a>(
+    macros: &'a BTreeMap<String, Vec<MacroDecl>>,
+    name: &str,
+    scope: &str,
+) -> Option<&'a MacroDecl> {
+    let candidates = macros.get(name)?;
+    if let Some(found) = candidates.iter().find(|decl| decl.scope == scope) {
+        return Some(found);
+    }
+    if let Some(found) = candidates.iter().find(|decl| decl.contract.is_some()) {
+        return Some(found);
+    }
+    candidates.first()
 }
 
 /// 依赖图环路检测。

@@ -1,129 +1,152 @@
-//! 临时探针 2：验证生成器要用的 Typst 写法。
+//! 阶段 0 第 7 项验证：混合构建 spike。
+//!
+//! `cargo run --release` 会依次运行全部夹具（两种宿主），逐夹具打印断言与真实运行证据，
+//! 最后打印按夹具汇总的通过/失败表。产物（`.tex` / `.typ` / `.svg` / `.pdf`）写在 `out/`。
+//!
+//! 命令：
+//! - `cargo run --release`            全部夹具
+//! - `cargo run --release -- <id>`    只跑某个夹具（id 见夹具列表）
 
+mod build;
+mod diag;
+mod fixtures;
+mod generate;
+mod generate_typst;
+mod host;
+mod ir;
+mod latex;
+mod plan;
+mod typst_host;
+mod verify;
 mod world;
 
-use typst::foundations::{Label, Value};
-use typst::introspection::Introspector;
-use typst::utils::PicoStr;
-use typst_layout::PagedDocument;
-use world::World;
+use std::path::PathBuf;
+
+use diag::Evidence;
+use ir::Dialect;
 
 fn main() {
-    let source = r#"#set page(width: 320pt, height: 240pt, margin: 24pt, numbering: "1")
-#set math.equation(numbering: "(1)")
-#set heading(numbering: "1.")
-#set figure(numbering: "1")
+    let filter = std::env::args().nth(1);
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let out = root.join("out");
 
-= 第一节
+    println!("=== 混合构建 spike（阶段 0 第 7 项）===");
+    println!(
+        "仓库：{}\n产物目录：{}\n宿主：xelatex（TeX Live 2026）+ typst crate 0.15.1\n",
+        root.display(),
+        out.display()
+    );
 
-行内 $ E = m c^2 $ 与独立公式：
-$ integral_0^1 x^2 dif x = frac(1, 3) $ <eq:int>
-#context [#metadata(str(counter(math.equation).get().first())) <num:eq:int>]
-
-#figure(
-  table(
-    columns: 2,
-    table.header([甲], [乙]),
-    [1], [2],
-    [3], [4],
-  ),
-  kind: table,
-  caption: [跨页表示例],
-) <tab:demo>
-#context [#metadata(str(counter(figure.where(kind: table)).get().first())) <num:tab:demo>]
-
-#figure(
-  box(width: 120pt, height: 60pt, stroke: 0.3pt)[
-    #place(top + left, curve(
-      curve.move((6pt, 54pt)),
-      curve.line((6pt, 4pt)),
-      curve.line((114pt, 4pt)),
-      stroke: 0.6pt,
-    ))
-    #place(top + left, curve(
-      curve.move((10pt, 50pt)),
-      curve.line((40pt, 30pt)),
-      curve.line((80pt, 12pt)),
-      stroke: 1pt + blue,
-    ))
-  ],
-  kind: "figure",
-  supplement: [图],
-  caption: [原生绘图],
-) <fig:demo>
-#context [#metadata(str(counter(figure.where(kind: "figure")).get().first())) <num:fig:demo>]
-
-#metadata(none) <comp:foreign>
-
-引用：@eq:int，图 @fig:demo，表 @tab:demo，页 #ref(<tab:demo>, form: "page")，
-链接 #link(<comp:foreign>)[跳到外语组件]。
-"#;
-    let world = World::new(source.to_string());
-    let warned = typst::compile::<PagedDocument>(&world);
-    println!("warnings = {}", warned.warnings.len());
-    for w in &warned.warnings {
-        println!("  WARN: {}", w.message);
+    let all = fixtures::all();
+    let mut evidence: Vec<Evidence> = Vec::new();
+    let mut ran = 0usize;
+    for fixture in &all {
+        if let Some(filter) = &filter
+            && fixture.id != *filter
+        {
+            continue;
+        }
+        for host in fixture.hosts {
+            let dir = out.join(format!("{}-{}", fixture.id, host.name()));
+            let _ = std::fs::remove_dir_all(&dir);
+            println!(
+                "---- 夹具 {} [{}] / 宿主 {} / 期望 {} ----",
+                fixture.id,
+                fixture.category,
+                host.name(),
+                match fixture.expect {
+                    diag::Expect::Success => "成功",
+                    diag::Expect::Rejected => "被拒绝",
+                }
+            );
+            println!("  意图：{}", fixture.note);
+            let result = verify::run(fixture, *host, &dir);
+            print_evidence(&result);
+            evidence.push(result);
+            ran += 1;
+        }
     }
-    let doc = match warned.output {
-        Ok(doc) => doc,
-        Err(errors) => {
-            for error in &errors {
-                println!("ERROR: {}", error.message);
+    if ran == 0 {
+        println!("没有匹配的夹具：{filter:?}");
+        return;
+    }
+    print_summary(&evidence);
+}
+
+/// 打印单个夹具的全部断言。
+fn print_evidence(evidence: &Evidence) {
+    println!("  产物目录：{}", evidence.dir);
+    println!(
+        "  结果：{}（期望 {}）",
+        evidence.outcome.name(),
+        match evidence.expect {
+            diag::Expect::Success => "成功",
+            diag::Expect::Rejected => "被拒绝",
+        }
+    );
+    for check in &evidence.checks {
+        println!(
+            "    [{}] {}：{}",
+            if check.ok { "PASS" } else { "FAIL" },
+            check.name,
+            check.detail
+        );
+    }
+    println!(
+        "  → 夹具判定：{}\n",
+        if evidence.passed() { "Pass" } else { "Fail" }
+    );
+}
+
+/// 打印逐夹具汇总表。
+fn print_summary(evidence: &[Evidence]) {
+    println!("=== 逐夹具汇总（每个夹具单独判定，不看总数）===");
+    let mut passed = 0usize;
+    let mut failed = Vec::new();
+    for item in evidence {
+        let ok = item.passed();
+        if ok {
+            passed += 1;
+        } else {
+            failed.push(format!(
+                "{}-{}（{}）",
+                item.fixture,
+                item.host,
+                item.outcome.name()
+            ));
+        }
+        let failed_checks: Vec<String> = item
+            .checks
+            .iter()
+            .filter(|check| !check.ok)
+            .map(|check| check.name.clone())
+            .collect();
+        println!(
+            "  {:<20} {:<6} {:<14} {:>3} 条断言  {}",
+            item.fixture,
+            item.host,
+            item.outcome.name(),
+            item.checks.len(),
+            if ok {
+                "Pass".to_string()
+            } else {
+                format!("Fail：{}", failed_checks.join("，"))
             }
-            return;
-        }
-    };
-    println!("pages = {}", doc.pages().len());
-    for (i, page) in doc.pages().iter().enumerate() {
-        println!("--- page {} ---", i + 1);
-        println!("{}", dump_text(page));
+        );
     }
-    let intro = doc.introspector();
-    for name in ["num:eq:int", "num:tab:demo", "num:fig:demo"] {
-        let label = Label::new(PicoStr::intern(name)).expect("非空");
-        let value = intro
-            .query_label(label)
-            .ok()
-            .and_then(|content| content.get_by_name("value").ok());
-        println!("probe {name} -> {:?}", value.and_then(value_str));
+    println!("\n汇总：{} / {} 个夹具运行通过", passed, evidence.len());
+    if failed.is_empty() {
+        println!("全部夹具通过。");
+    } else {
+        println!("失败：{}", failed.join("；"));
     }
-    let mut links = 0;
-    for page in doc.pages() {
-        count_links(&page.frame, &mut links);
-    }
-    println!("links = {links}");
-}
-
-fn value_str(value: Value) -> Option<String> {
-    match value {
-        Value::Str(s) => Some(s.to_string()),
-        other => Some(format!("{other:?}")),
-    }
-}
-
-fn dump_text(page: &typst_layout::Page) -> String {
-    let mut out = String::new();
-    collect(&page.frame, &mut out);
-    out
-}
-
-fn collect(frame: &typst::layout::Frame, out: &mut String) {
-    for (_, item) in frame.items() {
-        match item {
-            typst::layout::FrameItem::Group(group) => collect(&group.frame, out),
-            typst::layout::FrameItem::Text(text) => out.push_str(&text.text),
-            typst::layout::FrameItem::Link(_, _) => out.push_str("[LINK]"),
-            _ => {}
-        }
-    }
-}
-
-fn count_links(frame: &typst::layout::Frame, count: &mut usize) {
-    for (_, item) in frame.items() {
-        match item {
-            typst::layout::FrameItem::Group(group) => count_links(&group.frame, count),
-            typst::layout::FrameItem::Link(_, _) => *count += 1,
-            _ => {}
-        }
-    }
+    let latex_count = evidence
+        .iter()
+        .filter(|item| item.host == Dialect::Latex.name())
+        .count();
+    println!(
+        "覆盖：LaTeX 宿主 {} 次、Typst 宿主 {} 次",
+        latex_count,
+        evidence.len() - latex_count
+    );
 }

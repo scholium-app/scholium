@@ -6,7 +6,7 @@
 use std::fmt::Write as _;
 
 use crate::diag::Diagnostic;
-use crate::gen::Ctx;
+use crate::generate::Ctx;
 use crate::ir::{Block, Component, MacroKind, PlotSpec, Project, TableSpec};
 
 /// 独立组件的页面尺寸（pt）。
@@ -15,6 +15,16 @@ pub(crate) const COMPONENT_PAGE: (f64, f64) = (320.0, 200.0);
 /// 生成 Typst 宿主文档。
 pub(crate) fn host_source(ctx: &Ctx<'_>) -> Result<String, Diagnostic> {
     let mut out = preamble(ctx.project, true);
+    // 宿主侧宏定义：宿主自有宏 + 有桥接合约的跨语言宏（在宿主侧重实现）。
+    for decl in ctx
+        .plan
+        .macros
+        .values()
+        .flatten()
+        .filter(|decl| decl.owner == "host" || decl.contract.is_some())
+    {
+        typst_macro(&mut out, decl);
+    }
     for block in &ctx.project.body {
         typst_block(block, ctx, &mut out)?;
     }
@@ -27,10 +37,14 @@ pub(crate) fn include_fragment(
     component: &Component,
 ) -> Result<String, Diagnostic> {
     let mut out = String::new();
-    for decl in ctx.plan.macros.values() {
-        if decl.owner == component.id && decl.scope == component.scope {
-            typst_macro(&mut out, decl);
-        }
+    for decl in ctx
+        .plan
+        .macros
+        .values()
+        .flatten()
+        .filter(|decl| decl.owner == component.id && decl.scope == component.scope)
+    {
+        typst_macro(&mut out, decl);
     }
     for block in &component.body {
         typst_block(block, ctx, &mut out)?;
@@ -44,10 +58,14 @@ pub(crate) fn standalone_source(
     component: &Component,
 ) -> Result<String, Diagnostic> {
     let mut out = preamble(ctx.project, false);
-    for decl in ctx.plan.macros.values() {
-        if decl.owner == component.id {
-            typst_macro(&mut out, decl);
-        }
+    for decl in ctx
+        .plan
+        .macros
+        .values()
+        .flatten()
+        .filter(|decl| decl.owner == component.id)
+    {
+        typst_macro(&mut out, decl);
     }
     for block in &component.body {
         typst_block(block, ctx, &mut out)?;
@@ -68,7 +86,10 @@ pub(crate) fn preamble(project: &Project, host: bool) -> String {
         "#set page(width: {width}pt, height: {height}pt, margin: {}pt, numbering: \"1\")\n\
          #set heading(numbering: \"1.\")\n\
          #set math.equation(numbering: \"(1)\")\n\
+         #show math.equation.where(block: false): set math.equation(numbering: none)\n\
          #set figure(numbering: \"1\")\n\
+         #set text(lang: \"zh\")\n\
+         #show figure: set block(breakable: true)\n\
          #set par(justify: false)\n",
         if host { 48 } else { 8 }
     );
@@ -80,19 +101,19 @@ fn typst_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
     match block {
         Block::Heading { level, text } => {
             let marker = if *level <= 1 { "=" } else { "==" };
-            let _ = writeln!(out, "{marker} {}\n", escape_typst(text));
+            let _ = writeln!(out, "{marker} {}", escape_typst(text));
         }
         Block::Para(text) => {
-            let _ = writeln!(out, "{}\n", escape_typst(text));
+            let _ = writeln!(out, "{}", escape_typst(text));
         }
         Block::PageBreak => out.push_str("#pagebreak()\n"),
         Block::Table(spec) => {
             let _ = write!(
                 out,
-                "#figure(\n  table(\n    columns: {},\n    table.header({}),\n{},\n  ),\n  \
+                "#figure(\n  table(\n    columns: {},\n    table.header({}),\n{}\n  ),\n  \
                  kind: table,\n  caption: [{}],\n) <{}>\n{}\n",
                 spec.columns.max(1),
-                spec.header
+                crate::generate::marked_header(&spec.header, &spec.label)
                     .iter()
                     .map(|cell| format!("[{}]", escape_typst(cell)))
                     .collect::<Vec<_>>()
@@ -100,7 +121,7 @@ fn typst_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
                 table_rows(spec),
                 escape_typst(&spec.caption),
                 spec.label,
-                number_probe("table", &spec.label)
+                number_probe("figure.where(kind: table)", &spec.label)
             );
         }
         Block::Equation { label, math, display } => {
@@ -108,21 +129,24 @@ fn typst_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
             if *display {
                 let _ = write!(
                     out,
-                    "$ {body} $ <{label}>\n{}\n",
+                    "$ {body} \"{}\" $ <{label}>\n{}\n",
+                    crate::generate::marker_for(label),
                     number_probe("math.equation", label)
                 );
             } else {
-                let _ = write!(out, "$ {body} $\n");
+                // 注意：Typst 里 `$ x $`（带空格）是**块级**公式；行内必须 `$x$`。
+                let _ = writeln!(out, "${body}$");
             }
         }
         Block::Figure { label, caption, plot } => {
             let _ = write!(
                 out,
-                "#figure(\n{},\n  kind: \"figure\",\n  supplement: [图],\n  caption: [{}],\n) <{}>\n{}\n",
+                "#figure(\n{},\n  kind: \"figure\",\n  supplement: [图],\n  caption: [{} {}],\n) <{}>\n{}\n",
                 plot_box(plot),
                 escape_typst(caption),
+                crate::generate::marker_for(label),
                 label,
-                number_probe("figure", label)
+                number_probe("figure.where(kind: \"figure\")", label)
             );
         }
         Block::ForeignFigure {
@@ -134,37 +158,47 @@ fn typst_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
                 out,
                 "#metadata(none) <comp:{component}>\n\
                  #figure(\n  image(\"{component}.pdf\", width: 55%),\n  \
-                 kind: \"figure\",\n  supplement: [图],\n  caption: [{}],\n) <{}>\n{}\n",
+                 kind: \"figure\",\n  supplement: [图],\n  caption: [{} {}],\n) <{}>\n{}\n",
                 escape_typst(caption),
+                crate::generate::marker_for(label),
                 label,
-                number_probe("figure", label)
+                number_probe("figure.where(kind: \"figure\")", label)
             );
         }
-        Block::IncludeBlock { component } => {
+        Block::IncludeSection { component } => {
             if ctx.unscoped {
-                let _ = write!(out, "#include \"{component}.typ\"\n");
+                // 对照实现：`#include` 在 Typst 里**不会**把定义泄漏进包含者作用域，
+                // 所以这里改成把组件源码原样内联，模拟"直接拼接源码"的天真实现。
+                if let Some(found) = ctx.project.component(component) {
+                    let fragment = include_fragment(ctx, found)?;
+                    let _ = write!(out, "{fragment}");
+                }
             } else {
                 // 代码块形成作用域：组件里的定义不会泄漏到宿主。
-                let _ = write!(out, "#{{\n  include \"{component}.typ\"\n}}\n");
+                let _ = writeln!(out, "#{{\n  include \"{component}.typ\"\n}}");
             }
         }
         Block::MacroUse { name, args } => {
+            // 数值实参按数值传：`v * 3` 才是乘法，字符串会变成重复。
             let rendered = args
                 .iter()
-                .map(|arg| format!("\"{}\"", arg.replace('"', "\\\"")))
+                .map(|arg| match arg.parse::<i64>() {
+                    Ok(number) => number.to_string(),
+                    Err(_) => format!("\"{}\"", arg.replace('"', "\\\"")),
+                })
                 .collect::<Vec<_>>()
                 .join(", ");
-            let _ = write!(out, "#{name}({rendered})\n");
+            let _ = writeln!(out, "#{name}({rendered})");
         }
         Block::Ref { target, page } => {
-            let _ = write!(out, "{}\n", ctx.reference(target, *page));
+            let _ = writeln!(out, "{}", ctx.reference(target, *page));
         }
         Block::Raw { text, .. } => {
             let _ = writeln!(out, "{text}");
         }
         Block::FeedbackSpace { probe, base, slope } => {
             let height = ctx.feedback_height(probe, *base, *slope);
-            let _ = write!(out, "#block(height: {height:.2}pt)\n");
+            let _ = writeln!(out, "#block(height: {height:.2}pt)");
         }
     }
     Ok(())
@@ -228,7 +262,7 @@ fn plot_box(plot: &PlotSpec) -> String {
     for (index, (x, y)) in plot.points.iter().enumerate() {
         let (px, py) = map(*x, *y);
         let call = if index == 0 { "curve.move" } else { "curve.line" };
-        let _ = write!(curve, "      {call}(({px:.1}pt, {py:.1}pt)),\n");
+        let _ = writeln!(curve, "      {call}(({px:.1}pt, {py:.1}pt)),");
     }
     curve.push_str("      stroke: 1pt + blue,\n    ))");
     format!(
