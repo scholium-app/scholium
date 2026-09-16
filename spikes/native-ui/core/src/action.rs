@@ -9,6 +9,7 @@ use crate::edit::{self, EditOutcome, SemanticEdit};
 use crate::error::EditError;
 use crate::ids::{CharId, NodeId};
 use crate::text::Char;
+mod batch;
 
 /// 写入者身份。验证核心不建模设备身份，只区分 actor。
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -44,6 +45,27 @@ pub enum Intent {
 /// 反向配方。只保存身份与上下文，不保存可执行闭包。
 #[derive(Clone, Debug)]
 pub enum InverseRecipe {
+    /// 按逆序执行多个局部补偿，不保存整文档快照。
+    Batch {
+        /// 按正向编辑顺序记录的逆配方。
+        recipes: Vec<InverseRecipe>,
+    },
+    /// 把脱离的子树挂回原槽位。
+    Reattach {
+        /// 子树身份。
+        node: NodeId,
+        /// 原父节点。
+        parent: NodeId,
+        /// 原槽位。
+        slot: usize,
+        /// 原右邻节点，优先按身份恢复。
+        before: Option<NodeId>,
+    },
+    /// 撤销一次重新挂接。
+    Detach {
+        /// 子树身份。
+        node: NodeId,
+    },
     /// 本次插入的字符身份。撤销即按身份删除，不受期间远端插入影响。
     TextInserted {
         /// 目标文本叶子。
@@ -85,7 +107,7 @@ pub struct Action {
 }
 
 /// 动作历史：追加日志 + actor 作用域 undo。
-#[derive(Debug, Default)]
+#[derive(Clone, Debug, Default)]
 pub struct History {
     actions: Vec<Action>,
     next_id: u64,
@@ -169,7 +191,7 @@ pub struct UndoOutcome {
 }
 
 /// 编辑器：文档 + 动作历史 + 待提交的输入法预编辑。
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Editor {
     doc: Document,
     history: History,
@@ -318,32 +340,9 @@ impl Editor {
         let Some(action) = self.history.action(index).cloned() else {
             return Ok(None);
         };
-        let mut removed_chars = 0usize;
-        let compensation_recipe = match action.recipe.clone() {
-            InverseRecipe::TextInserted { node, ids } => {
-                let (removed, after) = remove_ids(&mut self.doc, node, &ids)?;
-                removed_chars = removed.len();
-                InverseRecipe::TextDeleted {
-                    node,
-                    chars: removed,
-                    after,
-                }
-            }
-            InverseRecipe::TextDeleted { node, chars, after } => {
-                insert_chars_back(&mut self.doc, node, &chars, after)?;
-                InverseRecipe::TextInserted {
-                    node,
-                    ids: chars.iter().map(|c| c.id).collect(),
-                }
-            }
-            InverseRecipe::StructuralIrreversible { description } => {
-                return Err(EditError::Unsupported {
-                    node: self.doc.root(),
-                    kind: NodeKind::Document,
-                    operation: description,
-                });
-            }
-        };
+        let mut candidate = self.doc.clone();
+        let (compensation_recipe, removed_chars) = batch::invert(&mut candidate, &action.recipe)?;
+        self.doc = candidate;
         self.doc.bump_revision();
         self.history.mark_undone(index);
         let compensation = self.history.push(
@@ -414,7 +413,10 @@ fn remove_ids(
     ids: &[CharId],
 ) -> Result<(Vec<Char>, Option<CharId>), EditError> {
     let n = doc.node(node)?;
-    let first = ids.iter().filter_map(|id| n.text.index_of_char_id(*id)).min();
+    let first = ids
+        .iter()
+        .filter_map(|id| n.text.index_of_char_id(*id))
+        .min();
     let after = first.and_then(|index| n.text.chars().get(index + ids.len()).map(|c| c.id));
     let removed = doc.node_mut(node)?.text.remove_by_id(ids);
     Ok((removed, after))

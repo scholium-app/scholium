@@ -36,6 +36,7 @@ pub(crate) fn compile(dir: &Path, main: &str) -> LatexRun {
         .args([
             &format!("{TIMEOUT_SECONDS}s"),
             "xelatex",
+            "-no-shell-escape",
             "-interaction=nonstopmode",
             "-halt-on-error",
             "-file-line-error",

@@ -20,6 +20,7 @@ pub mod fixture;
 pub mod ids;
 pub mod layout;
 pub mod selection;
+pub mod selection_edit;
 pub mod source;
 pub mod text;
 

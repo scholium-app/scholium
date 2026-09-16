@@ -8,8 +8,8 @@
 spikes/native-ui/
 ├── core/            独立 Rust 文档核心（无 UI、无 IO）+ 共用布局器，所有候选共用
 ├── candidate-iced/  第一个候选：Iced，自带 Cargo.lock
-├── candidate-gpui/  第二个候选：GPUI（骨架，依赖已锁定）
-└── candidate-<next>/ 后续候选，互不共享 UI 代码与锁定版本
+├── candidate-gpui/  第二个候选：GPUI，已验证后淘汰，保留作对照
+└── candidate-egui/  选定候选；结构编辑、源码草稿应用与后台 Typst 预览
 ```
 
 每个候选目录都是独立 workspace，通过 path 依赖引用 `core/`。这样候选之间不会发生 cargo
@@ -35,6 +35,8 @@ feature 合并，也不会有 UI 状态或类型泄漏进核心，符合"候选�
 分层确定后重做，不要照此扩展，也不要把它当成约定。
 
 核心不实现 CRDT 收敛、真实 reconcile、持久化或语言切换协议——它们分别是阶段 0 第 3、4、5、6 项。
+egui 候选已通过 path 依赖接入 `source-reconcile` 的事务会话；后台预览调用沙箱内的 Typst CLI。
+当前新增能力与测试边界见[报告 0016](../../docs/spikes/0016-working-tree-status.md)。
 每个候选必须用同一组验收脚本跑核心，见各候选目录与 `docs/spikes/` 的报告。
 
 ## 诊断脚本

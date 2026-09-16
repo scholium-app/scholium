@@ -50,4 +50,5 @@
 - [全栈候选与验证顺序](TECH_STACK.md)：库候选、替代方案和验收，不限于 GUI。
 - [WASM 兼容计划](WASM.md)：共享核心、浏览器宿主与桌面能力边界。
 - [阶段 0 验证报告](spikes/README.md)：报告规则、模板与当前状态。
+  [最新工作区复核](spikes/0016-working-tree-status.md)：新增实现、复现命令与未关闭的出口条件。
 - [Mogan LaTeX 实现参考](research/MOGAN_LATEX.md)：固定提交源码依据与独立 Rust 实现方向。

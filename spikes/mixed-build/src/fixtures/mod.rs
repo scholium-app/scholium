@@ -109,7 +109,7 @@ fn sqrt(a: Math) -> Math {
 }
 
 fn sym(name: &'static str) -> Math {
-    Math::Sym(name)
+    Math::Sym(name.to_owned())
 }
 
 fn ident(name: &str) -> Math {

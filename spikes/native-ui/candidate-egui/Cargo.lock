@@ -2641,7 +2641,17 @@ version = "0.0.0"
 dependencies = [
  "eframe",
  "egui",
+ "image",
  "scholium-spike-core",
+ "scholium-spike-reconcile",
+]
+
+[[package]]
+name = "scholium-spike-reconcile"
+version = "0.0.0"
+dependencies = [
+ "scholium-spike-core",
+ "thiserror 2.0.20",
 ]
 
 [[package]]

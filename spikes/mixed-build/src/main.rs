@@ -16,6 +16,7 @@ mod host;
 mod ir;
 mod latex;
 mod pdf_evidence;
+mod packages;
 mod plan;
 mod typst_host;
 mod verify;
@@ -27,6 +28,9 @@ use diag::Evidence;
 use ir::Dialect;
 
 fn main() -> std::process::ExitCode {
+    if let Some(result) = packages::dispatch() {
+        return result;
+    }
     let filter = std::env::args().nth(1);
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let out = root.join("out");

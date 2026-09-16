@@ -4,9 +4,10 @@
 //! 只有无法原生表达的内容才落到组件桥接（矢量嵌入）。
 
 use crate::diag::Diagnostic;
+use serde::{Deserialize, Serialize};
 
 /// 源码方言（同时也是排版宿主/工具链）。
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]
 pub(crate) enum Dialect {
     /// LaTeX（XeTeX 工具链）。
     Latex,
@@ -25,10 +26,10 @@ impl Dialect {
 }
 
 /// 语言无关的数学树。支持子集之外的命令必须显式失败，不得静默丢弃。
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub(crate) enum Math {
     /// 命名字符（希腊字母、运算符），由内置表映射到双端写法。
-    Sym(&'static str),
+    Sym(String),
     /// 整数常量。
     Num(u32),
     /// 普通标识符（变量名）。
@@ -208,7 +209,7 @@ impl Math {
 }
 
 /// 表格规格。
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub(crate) struct TableSpec {
     /// 标签（同时是符号 id）。
     pub(crate) label: String,
@@ -225,14 +226,14 @@ pub(crate) struct TableSpec {
 }
 
 /// 可复现绘图规格（折线）。
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub(crate) struct PlotSpec {
     /// 数据点。
     pub(crate) points: Vec<(f64, f64)>,
 }
 
 /// 块级内容。
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub(crate) enum Block {
     /// 标题。
     Heading { level: u8, text: String },
@@ -320,7 +321,7 @@ impl Block {
 }
 
 /// 符号种类。
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]
 pub(crate) enum SymbolKind {
     /// 表格。
     Table,
@@ -345,7 +346,7 @@ impl SymbolKind {
 }
 
 /// 宏体：语言无关，双端各自生成，因此可以断言"语义一致"而不只是文本抄写。
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub(crate) enum MacroKind {
     /// `name(v) = v * factor`。
     Multiply { factor: i64 },
@@ -354,7 +355,7 @@ pub(crate) enum MacroKind {
 }
 
 /// 宏声明。
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub(crate) struct MacroDecl {
     /// 宏名（双端同名，便于按名查找宿主侧定义）。
     pub(crate) name: String,
@@ -373,7 +374,7 @@ pub(crate) struct MacroDecl {
 }
 
 /// 组件桥接方式。
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub(crate) enum Bridge {
     /// 同方言：作为真实源码 `\input` / `#include`，语义完整。
     Include,
@@ -395,7 +396,7 @@ impl Bridge {
 }
 
 /// 组件放置位置。
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]
 pub(crate) enum Placement {
     /// 块级。
     Block,
@@ -404,7 +405,7 @@ pub(crate) enum Placement {
 }
 
 /// 一个混用组件：有独立权威源文件，由自己的工具链编译。
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub(crate) struct Component {
     /// 组件 id。
     pub(crate) id: String,
@@ -423,7 +424,7 @@ pub(crate) struct Component {
 }
 
 /// 一个混合项目：一个宿主 + 若干组件。
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub(crate) struct Project {
     /// 项目名。
     pub(crate) name: String,
@@ -442,7 +443,7 @@ pub(crate) struct Project {
 }
 
 /// 符号的解析归属。
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub(crate) struct SymbolInfo {
     /// 符号 id。
     pub(crate) id: String,

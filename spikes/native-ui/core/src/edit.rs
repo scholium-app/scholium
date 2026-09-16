@@ -11,6 +11,11 @@ use crate::text::Char;
 /// 一次语义编辑请求。
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum SemanticEdit {
+    /// 从父槽位移除节点，保留 arena 身份供补偿恢复。
+    DetachNode {
+        /// 被删除的子树根。
+        node: NodeId,
+    },
     /// 在文本叶子插入字符串。
     InsertText {
         /// 目标文本叶子。
@@ -87,6 +92,18 @@ pub struct EditOutcome {
 /// 应用编辑。校验失败时不产生任何修改。
 pub fn apply(doc: &mut Document, edit: &SemanticEdit) -> Result<EditOutcome, EditError> {
     match edit {
+        SemanticEdit::DetachNode { node } => {
+            let (parent, slot, index) =
+                doc.locate_in_parent(*node).ok_or(EditError::Unsupported {
+                    node: *node,
+                    kind: doc.node(*node)?.kind,
+                    operation: "detach root or detached node",
+                })?;
+            doc.node_mut(parent)?.slots[slot].remove(index);
+            doc.node_mut(*node)?.parent = None;
+            doc.bump_revision();
+            Ok(EditOutcome::default())
+        }
         SemanticEdit::InsertText { node, at, text } => insert_text(doc, *node, *at, text),
         SemanticEdit::DeleteBackward { node, at } => delete_backward(doc, *node, *at),
         SemanticEdit::DeleteForward { node, at } => delete_forward(doc, *node, *at),
@@ -113,10 +130,7 @@ pub fn apply(doc: &mut Document, edit: &SemanticEdit) -> Result<EditOutcome, Edi
 fn check_text_offset(doc: &Document, node: NodeId, at: usize) -> Result<(), EditError> {
     let n = doc.node(node)?;
     if !n.kind.is_text() {
-        return Err(EditError::NotText {
-            node,
-            kind: n.kind,
-        });
+        return Err(EditError::NotText { node, kind: n.kind });
     }
     let len = n.text.len_bytes();
     if at > len {
@@ -142,7 +156,9 @@ fn insert_text(
     if text.is_empty() {
         return Ok(EditOutcome::default());
     }
-    let ids: Vec<CharId> = (0..text.chars().count()).map(|_| doc.next_char_id()).collect();
+    let ids: Vec<CharId> = (0..text.chars().count())
+        .map(|_| doc.next_char_id())
+        .collect();
     let n = doc.node_mut(node)?;
     let index = n.text.char_index_at_byte(at);
     let chars: Vec<Char> = text

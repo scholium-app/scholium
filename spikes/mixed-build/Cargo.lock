@@ -1797,6 +1797,8 @@ dependencies = [
 name = "scholium-spike-mixed-build"
 version = "0.0.0"
 dependencies = [
+ "serde",
+ "serde_json",
  "typst",
  "typst-kit",
  "typst-layout",

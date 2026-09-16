@@ -171,9 +171,9 @@ Native/ForeignRendered/Bridged/Unresolved；编辑性 NativeEditable/SourceEdita
 | 上面的条目 | 阶段 0 验证 | 结论与边界 |
 |---|---|---|
 | 1、2、3（同语言编辑、切换屏障、epoch / 离线 / 恶意写集） | [报告 0009](spikes/0009-team-language.md) | **Pass（内存模型 + 确定性时序）**：60 用例 60/60，屏障扫描出跨方言许可窗口重叠 0、无屏障语言变化 0；旧 epoch 包被拒且不自动回灌。**真实网络、多进程、磁盘 fsync 与解析器未验证**；写集校验是字符串抽检，**不足以宣称能阻止恶意客户端**。 |
-| 4、5、6、7（混合正文/跨页表格/宏/模板/双向引用、干净环境与失败夹具） | [报告 0010](spikes/0010-mixed-build.md) | 见该报告结论（本项报告完成时回填）。**明确不在范围**：复杂浮动体、超长文档、增量构建、目录/文献/脚注的跨引擎装配。 |
+| 4、5、6、7（混合正文/跨页表格/宏/模板/双向引用、干净环境与失败夹具） | [报告 0010](spikes/0010-mixed-build.md) | 36/36 宿主运行通过，含六类内容的成功/失败夹具；包重建的后续验证见[报告 0016](spikes/0016-working-tree-status.md)。**明确不在范围**：复杂浮动体、超长文档、增量构建、目录/文献/脚注的跨引擎装配。 |
 
 **仍未实现的部分**（与验证结论无关，属阶段 1 工作）：协调协议与桥接的正式实现
 （[ADR 0001](adr/0001-mixed-source-team-editing.md) 仍为 Proposed）；LaTeX/Typst 解析器与
 reconcile 的正式实现（[ADR 0008](adr/0008-reconcile-and-toolchain-isolation.md)）；
-TeX 编译的 OS 级沙箱配方（[报告 0011](spikes/0011-untrusted-input.md)：能阻断但沙箱内良性编译未跑通）。
+TeX 编译沙箱的产品集成与跨平台策略（Linux spike 已补良性编译及隔离验证，见[报告 0016](spikes/0016-working-tree-status.md)；仍有只读运行时白名单等边界）。

@@ -33,6 +33,7 @@ name = "scholium-spike-reconcile"
 version = "0.0.0"
 dependencies = [
  "scholium-spike-core",
+ "thiserror",
 ]
 
 [[package]]

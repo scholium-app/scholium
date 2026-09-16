@@ -11,7 +11,7 @@ export CARGO_HOME="$PWD/spikes/native-ui/.cargo-home"
 
 ONLY="${1:-all}"
 case "$ONLY" in
-  all|core|ui|typst|reconcile|items|security|license|web) ;;
+  all|core|ui|typst|reconcile|items|security|license|web|packages|preview) ;;
   *) printf '未知验证分段：%s\n' "$ONLY" >&2; exit 2 ;;
 esac
 LOG_DIR="$(mktemp -d "${TMPDIR:-/tmp}/scholium-stage0.XXXXXX")" || exit 1
@@ -83,6 +83,16 @@ if want items; then
   for s in crdt-race crdt-engines recovery language-coordination mixed-build; do
     run "$s" cargo run --release --offline --manifest-path "spikes/$s/Cargo.toml"
   done
+fi
+
+# ---------- 可交付包与真实后台预览 ----------
+if want packages; then
+  section "标准包与混合包的干净环境重建（需要 Typst CLI 0.15.1）"
+  run "export packages" cargo run --release --offline --manifest-path spikes/mixed-build/Cargo.toml -- --packages
+fi
+if want preview; then
+  section "真实后台编译期间的原生 UI 帧验证（需要 Typst CLI 0.15.1）"
+  run "async preview" cargo test --offline --manifest-path spikes/native-ui/candidate-egui/Cargo.toml --lib -- --ignored --nocapture
 fi
 
 # ---------- 出口条件：安全 ----------

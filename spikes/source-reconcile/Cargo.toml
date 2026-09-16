@@ -9,6 +9,7 @@ license = "MIT OR Apache-2.0"
 [workspace]
 
 [dependencies]
+thiserror = "2"
 scholium-spike-core = { path = "../native-ui/core" }
 
 [lints.clippy]
