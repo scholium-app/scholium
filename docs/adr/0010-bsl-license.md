@@ -4,7 +4,7 @@
 - 日期：2026-09-16
 - 决策者：ation_ciger
 - 影响模块：依赖许可门禁（`deny.toml`）、CRDT 与工具链依赖
-- 关联：[ADR 0004 项目许可证](0004-project-license.md)、[ADR 0005 Apache-2.0 WITH LLVM-exception](0005-llvm-exception-license.md)、[ADR 0009 CRDT 引擎选型](0009-crdt-engine.md)
+- 关联：[ADR 0004 项目许可证](0004-project-license.md)、[ADR 0005 Apache-2.0 WITH LLVM-exception](0005-llvm-exception-license.md)、[ADR 0009 CRDT 引擎选型](0009-crdt-engine.md)、报告 [0014](../spikes/0014-crdt-engines.md)（本项由该 spike 的许可门禁发现）
 
 ## 背景
 
