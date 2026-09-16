@@ -15,6 +15,7 @@ pub(crate) fn run(ev: &mut Evidence) {
     check_result(ev, "J2.2", remote_insert_survives_local_delete_undo());
     check_result(ev, "J2.3", undo_is_lifo_per_action());
     check_result(ev, "J2.4", compensation_is_a_shared_append_only_op());
+    check_result(ev, "J2.5", local_undo_skips_remotely_deleted_chars());
 }
 
 /// A 插入 `x`、B 并发插入 `y`，A 合并后撤销自己的插入：`x` 消失、`y` 留下。
@@ -54,7 +55,8 @@ fn remote_insert_survives_local_delete_undo() -> Result<(bool, String), CrdtErro
         && restored.contains('e')
         && restored.chars().count() == 12
         && restored.matches('l').count() == 3;
-    let passed = deleted == "y world" && outcome.skipped == 0 && restored.contains('y') && restored_span;
+    let passed =
+        deleted == "y world" && outcome.skipped == 0 && restored.contains('y') && restored_span;
     let detail = format!(
         "A 收到远端 {applied} 个操作后文本={deleted:?}（\"hello\" 已被 A 删除、B 的 y 仍在）；\
          undo(skipped={}) 后文本={restored:?}（恢复 5 个字符且 y 未被动过）",
@@ -99,10 +101,8 @@ fn compensation_is_a_shared_append_only_op() -> Result<(bool, String), CrdtError
     let bytes_a = a.canonical();
     let bytes_b = b.canonical();
     let text_b = b.doc().render_text_node(fx.body);
-    let passed = bytes_a == bytes_b
-        && text_b.contains('y')
-        && text_b.contains('p')
-        && !text_b.contains('q');
+    let passed =
+        bytes_a == bytes_b && text_b.contains('y') && text_b.contains('p') && !text_b.contains('q');
     let detail = format!(
         "undo 后 A 操作总数={ops_after_undo}；B 合并到补偿操作 {b_applied} 个后文本={text_b:?}；\
          字节 {} == {}：{}；hash {:#018x} / {:#018x}",
@@ -111,6 +111,37 @@ fn compensation_is_a_shared_append_only_op() -> Result<(bool, String), CrdtError
         bytes_a == bytes_b,
         fnv1a(&bytes_a),
         fnv1a(&bytes_b)
+    );
+    Ok((passed, detail))
+}
+
+/// 撤销与远端删除冲突时必须跳过，不能把远端删掉的字符复活。
+///
+/// A 删除整个 `"hello"`，B 并发删除其中的 `"ll"`；A 撤销自己的删除时，`l`、`l` 的存活寄存器
+/// 已经被 B 的删除覆盖，指纹不再匹配，因此跳过；`h`、`e`、`o` 恢复。这是
+/// `docs/HISTORY_COLLABORATION.md` §3 第 3 步 "验证上下文指纹" 的正面用例。
+fn local_undo_skips_remotely_deleted_chars() -> Result<(bool, String), CrdtError> {
+    let (mut a, mut b, fx) = pair(0xB5)?;
+    a.delete_text(fx.body, 0, 5)?;
+    b.delete_text(fx.body, 2, 4)?;
+    let applied = a.merge_from(&b);
+    let merged = a.doc().render_text_node(fx.body);
+    let outcome = a.undo()?;
+    let after_undo = a.doc().render_text_node(fx.body);
+    b.merge_from(&a);
+    let bytes_a = a.canonical();
+    let bytes_b = b.canonical();
+    let passed = merged == " world"
+        && outcome.skipped == 2
+        && after_undo == "heo world"
+        && bytes_a == bytes_b;
+    let detail = format!(
+        "A 收到远端删除 {applied} 个操作后文本={merged:?}；undo(skipped={}) 后 A 文本={after_undo:?}\
+         （h/e/o 恢复、被 B 删掉的 l/l 跳过）；B 合并补偿后两端字节 {} == {}：{}",
+        outcome.skipped,
+        bytes_a.len(),
+        bytes_b.len(),
+        bytes_a == bytes_b
     );
     Ok((passed, detail))
 }

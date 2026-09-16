@@ -10,6 +10,7 @@ use std::sync::Arc;
 
 use eframe::egui;
 use scholium_spike_core::{
+    Selection,
     ActorId, Cursor, Dialect, Direction, Editor, Intent, Item, Layout, NodeId, SemanticEdit,
     SourcePane, cursor::move_cursor, fixture, layout_document,
 };
@@ -44,6 +45,10 @@ pub struct SpikeApp {
     ime_requested: bool,
     /// 正文布局在屏幕上的原点。绘制时记录，供命中测试（点击定位）与测试使用。
     structure_origin: egui::Pos2,
+    /// 结构选区。折叠时等价于单个光标。
+    selection: Selection,
+    /// 指针按下时的锚点。自己跟踪而不依赖框架的拖拽判定，行为更可预期。
+    press_anchor: Option<Cursor>,
     /// 诊断用：把输入焦点交给源码面板的 `TextEdit`，用于分辨"自绘区请求方式不全"与
     /// "eframe 这一层根本没接输入法"。由环境变量 `SCHOLIUM_FOCUS_SOURCE=1` 打开。
     focus_source: bool,
@@ -92,6 +97,8 @@ impl SpikeApp {
             printed: String::new(),
             ime_requested: false,
             structure_origin: egui::Pos2::ZERO,
+            selection: Selection::collapsed(focus),
+            press_anchor: None,
             focus_source,
         }
     }
@@ -181,7 +188,7 @@ impl SpikeApp {
             }
         }
 
-        let (down, up, left, right, backspace, undo) = ctx.input(|input| {
+        let (down, up, left, right, backspace, undo, extend) = ctx.input(|input| {
             (
                 input.key_pressed(egui::Key::ArrowDown),
                 input.key_pressed(egui::Key::ArrowUp),
@@ -189,20 +196,29 @@ impl SpikeApp {
                 input.key_pressed(egui::Key::ArrowRight),
                 input.key_pressed(egui::Key::Backspace),
                 input.modifiers.command && input.key_pressed(egui::Key::Z),
+                input.modifiers.shift,
             )
         });
 
+        let mut moved = false;
         if down {
             self.navigate(Direction::Down);
+            moved = true;
         }
         if up {
             self.navigate(Direction::Up);
+            moved = true;
         }
         if left {
             self.navigate(Direction::Parent);
+            moved = true;
         }
         if right {
             self.navigate(Direction::FirstChild);
+            moved = true;
+        }
+        if moved {
+            self.sync_selection(extend);
         }
         if backspace {
             self.delete_backward();
@@ -212,7 +228,35 @@ impl SpikeApp {
         }
     }
 
+    /// 光标移动后同步选区：按住 Shift 时保留锚点（扩展），否则折叠到光标处。
+    fn sync_selection(&mut self, extend: bool) {
+        if extend {
+            self.selection.focus = self.focus;
+        } else {
+            self.selection = Selection::collapsed(self.focus);
+        }
+    }
+
     fn delete_backward(&mut self) {
+        // 有非折叠选区时先删选区。只有"同一文本叶子内"的选区能直接删；
+        // 跨节点的选区需要结构级编辑，当前明确拒绝而不是猜（见 ADR 0006 的不承诺项）。
+        if !self.selection.is_collapsed() {
+            if let Some((node, start, end)) = self.selection.text_range(self.core.document()) {
+                let edit = SemanticEdit::DeleteRange { node, start, end };
+                match self.core.apply(LOCAL, Intent::Typing, edit) {
+                    Ok(Some(_)) => {
+                        self.focus = Cursor::Text { node, byte: start };
+                        self.selection = Selection::collapsed(self.focus);
+                        self.last_event = "core：删除选区".to_string();
+                    }
+                    Ok(None) => self.last_event = "删除选区：无变化".to_string(),
+                    Err(error) => self.last_event = format!("删除选区被拒：{error}"),
+                }
+            } else {
+                self.last_event = "跨节点选区暂不支持删除（需要结构级编辑）".to_string();
+            }
+            return;
+        }
         let Some((node, at)) = self.target() else {
             return;
         };
@@ -334,12 +378,62 @@ impl SpikeApp {
                         let origin = rect.min + egui::vec2(8.0, 8.0);
                         self.structure_origin = origin;
 
-                        // 点哪定位哪：把点击位置映射回 (节点, 字节偏移) 并移动插入点。
-                        if let Some(position) = response.interact_pointer_pos() {
-                            let local = position - origin;
-                            if let Some((node, byte)) = self.layout.hit_test(local.x, local.y) {
-                                self.focus = Cursor::Text { node, byte };
+                        // 选区高亮：先画，位于结构文字之下。
+                        if let Some((node, start, end)) = self.selection.text_range(self.core.document())
+                            && let (Some(from), Some(to)) = (
+                                self.layout.caret(node, start),
+                                self.layout.caret(node, end),
+                            )
+                            && (from.baseline - to.baseline).abs() <= 2.0
+                        {
+                            let top = Item::top_of(from.baseline, from.size);
+                            let left = from.x.min(to.x);
+                            let highlight = egui::Rect::from_min_size(
+                                origin + egui::vec2(left, top),
+                                egui::vec2((to.x - from.x).abs(), from.size * 1.2),
+                            );
+                            painter.rect_filled(
+                                highlight,
+                                0.0,
+                                egui::Color32::from_rgb(58, 86, 132),
+                            );
+                        }
+
+                        // 点哪定位哪：把指针位置映射回 (节点, 字节偏移)。
+                        //
+                        // 按下时记下锚点，按住期间移动就扩展选区。不依赖框架的拖拽判定
+                        // （`dragged()` 需要移动超过阈值，行为随平台/版本变化）。
+                        let down = response.is_pointer_button_down_on();
+                        if let Some(position) = response.interact_pointer_pos()
+                            && let Some((node, byte)) = self
+                                .layout
+                                .hit_test((position - origin).x, (position - origin).y)
+                        {
+                            let hit = Cursor::Text { node, byte };
+                            if down {
+                                match self.press_anchor {
+                                    None => {
+                                        self.press_anchor = Some(hit);
+                                        self.focus = hit;
+                                        self.selection = Selection::collapsed(hit);
+                                    }
+                                    Some(anchor) => {
+                                        self.focus = hit;
+                                        self.selection = Selection {
+                                            anchor,
+                                            focus: hit,
+                                        };
+                                    }
+                                }
+                            } else {
+                                self.focus = hit;
+                                if self.press_anchor.is_none() {
+                                    self.selection = Selection::collapsed(hit);
+                                }
                             }
+                        }
+                        if !down {
+                            self.press_anchor = None;
                         }
                         SpikeApp::paint_structure(
                             &painter,
@@ -544,6 +638,11 @@ impl SpikeApp {
     /// 正文布局在屏幕上的原点（绘制时记录）。
     pub fn structure_origin(&self) -> egui::Pos2 {
         self.structure_origin
+    }
+
+    /// 当前结构选区。
+    pub fn selection(&self) -> Selection {
+        self.selection
     }
 
     /// 测试与基准用：替换核心文档并立即重算布局。

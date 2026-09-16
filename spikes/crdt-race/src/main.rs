@@ -22,6 +22,8 @@ mod replica;
 mod report;
 mod rng;
 mod seq;
+mod snapshot;
+mod structure;
 mod text;
 mod tree;
 mod undo;

@@ -14,8 +14,10 @@
 
 use crate::codec::{Reader, Writer};
 use crate::error::CrdtError;
-use crate::ids::{CharId, Lamport, NodeId};
+use crate::ids::{CharId, Id, Lamport, NodeId};
+use crate::op::Op;
 use crate::position::Position;
+use crate::replica::Replica;
 
 /// 解除包裹动作里一个子节点的还原信息。
 #[derive(Clone, Debug)]
@@ -249,5 +251,228 @@ impl Action {
                 tag: other,
             }),
         }
+    }
+}
+
+/// 一次 undo 的结果。
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct UndoOutcome {
+    /// 是否真的执行了撤销（栈非空即视为执行，即使目标全部被跳过）。
+    pub(crate) acted: bool,
+    /// 因上下文指纹不匹配而跳过的目标数量。
+    pub(crate) skipped: usize,
+}
+
+impl Replica {
+    /// 撤销**本地**最近一个动作，生成新的补偿操作。
+    ///
+    /// 远端操作不在撤销栈里，因此不可能被撤销。目标若已被别人改动（上下文指纹不匹配），
+    /// 跳过并计入 `skipped`，不会伪装成功。
+    ///
+    /// # Errors
+    ///
+    /// 本地撤销栈为空时返回 [`CrdtError::NothingToUndo`]。
+    pub(crate) fn undo(&mut self) -> Result<UndoOutcome, CrdtError> {
+        let Some(action) = self.undo.pop() else {
+            return Err(CrdtError::NothingToUndo);
+        };
+        let skipped = match action {
+            Action::InsertText { node, chars } => self.undo_insert_text(node, &chars),
+            Action::DeleteText { node, chars, ts } => self.undo_delete_text(node, &chars, ts),
+            Action::SetAttr {
+                node,
+                key,
+                previous,
+                ts,
+            } => self.undo_set_attr(node, &key, previous, ts),
+            Action::CreateNode { node, ts } => self.undo_create_node(node, ts),
+            Action::Wrap {
+                wrapper,
+                target,
+                old_parent,
+                old_pos,
+                target_ts,
+                wrapper_ts,
+            } => self.undo_wrap(wrapper, target, old_parent, old_pos, target_ts, wrapper_ts),
+            Action::Unwrap {
+                wrapper,
+                children,
+                wrapper_ts,
+            } => self.undo_unwrap(wrapper, &children, wrapper_ts),
+        };
+        Ok(UndoOutcome {
+            acted: true,
+            skipped,
+        })
+    }
+
+    fn undo_insert_text(&mut self, node: NodeId, chars: &[Id]) -> usize {
+        let ts = self.tick();
+        let mut skipped = 0usize;
+        for ch in chars {
+            let alive = self.doc.text(node).is_some_and(|text| text.is_alive(*ch));
+            if !alive {
+                skipped += 1;
+                continue;
+            }
+            let op = self.alloc_op();
+            self.receive(Op::TextAlive {
+                op,
+                node,
+                char: *ch,
+                alive: false,
+                ts,
+            });
+        }
+        skipped
+    }
+
+    fn undo_delete_text(&mut self, node: NodeId, chars: &[Id], delete_ts: Lamport) -> usize {
+        let ts = self.tick();
+        let mut skipped = 0usize;
+        for ch in chars {
+            let current = self.doc.text(node).and_then(|text| text.liveness_ts(*ch));
+            if current != Some(delete_ts) {
+                skipped += 1;
+                continue;
+            }
+            let op = self.alloc_op();
+            self.receive(Op::TextAlive {
+                op,
+                node,
+                char: *ch,
+                alive: true,
+                ts,
+            });
+        }
+        skipped
+    }
+
+    fn undo_set_attr(
+        &mut self,
+        node: NodeId,
+        key: &str,
+        previous: Option<String>,
+        set_ts: Lamport,
+    ) -> usize {
+        let current = self
+            .doc
+            .node(node)
+            .and_then(|record| record.attrs.get(key))
+            .map(|reg| reg.ts);
+        if current != Some(set_ts) {
+            return 1;
+        }
+        let ts = self.tick();
+        let op = self.alloc_op();
+        self.receive(Op::NodeAttr {
+            op,
+            node,
+            key: key.to_owned(),
+            value: previous,
+            ts,
+        });
+        0
+    }
+
+    fn undo_create_node(&mut self, node: NodeId, create_ts: Lamport) -> usize {
+        let current = self.doc.node(node).map(|record| record.place_ts);
+        if current != Some(create_ts) {
+            return 1;
+        }
+        let ts = self.tick();
+        let op = self.alloc_op();
+        self.receive(Op::NodeAlive {
+            op,
+            node,
+            alive: false,
+            ts,
+        });
+        0
+    }
+
+    fn undo_wrap(
+        &mut self,
+        wrapper: NodeId,
+        target: NodeId,
+        old_parent: NodeId,
+        old_pos: Position,
+        target_ts: Lamport,
+        wrapper_ts: Lamport,
+    ) -> usize {
+        let mut skipped = 0usize;
+        let target_now = self.doc.node(target).map(|record| record.place_ts);
+        if target_now == Some(target_ts) {
+            let ts = self.tick();
+            let op = self.alloc_op();
+            self.receive(Op::NodePlace {
+                op,
+                node: target,
+                parent: old_parent,
+                pos: old_pos,
+                ts,
+            });
+        } else {
+            skipped += 1;
+        }
+        let wrapper_now = self
+            .doc
+            .node(wrapper)
+            .map(|record| (record.place_ts, record.alive));
+        if wrapper_now == Some((wrapper_ts, true)) {
+            let ts = self.tick();
+            let op = self.alloc_op();
+            self.receive(Op::NodeAlive {
+                op,
+                node: wrapper,
+                alive: false,
+                ts,
+            });
+        } else {
+            skipped += 1;
+        }
+        skipped
+    }
+
+    fn undo_unwrap(
+        &mut self,
+        wrapper: NodeId,
+        children: &[UnwrapChild],
+        wrapper_ts: Lamport,
+    ) -> usize {
+        let mut skipped = 0usize;
+        for child in children {
+            let now = self.doc.node(child.id).map(|record| record.place_ts);
+            if now != Some(child.place_ts) {
+                skipped += 1;
+                continue;
+            }
+            let ts = self.tick();
+            let op = self.alloc_op();
+            self.receive(Op::NodePlace {
+                op,
+                node: child.id,
+                parent: wrapper,
+                pos: child.old_pos.clone(),
+                ts,
+            });
+        }
+        let wrapper_now = self
+            .doc
+            .node(wrapper)
+            .map(|record| (record.alive, record.alive_ts));
+        if wrapper_now == Some((false, wrapper_ts)) {
+            let ts = self.tick();
+            let op = self.alloc_op();
+            self.receive(Op::NodeAlive {
+                op,
+                node: wrapper,
+                alive: true,
+                ts,
+            });
+        } else {
+            skipped += 1;
+        }
+        skipped
     }
 }

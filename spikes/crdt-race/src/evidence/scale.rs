@@ -100,22 +100,25 @@ fn scale_run() -> Result<ScaleReport, CrdtError> {
     let bytes_b = b.canonical();
     let converged = bytes_a == bytes_b;
     let (entries, visible, chunks) = a.doc().text_totals();
-    let (ins_a, del_a, attr_a, wrap_a, unwrap_a) = workload_a.counts();
-    let (ins_b, del_b, attr_b, wrap_b, unwrap_b) = workload_b.counts();
+    let max_position_len = a.doc().max_position_len();
+    let (ins_a, del_a, attr_a, wrap_a, unwrap_a, undo_a) = workload_a.counts();
+    let (ins_b, del_b, attr_b, wrap_b, unwrap_b, undo_b) = workload_b.counts();
     let total_ops = a.op_count();
     let nodes = a.doc().tree().node_count();
     let units = TOTAL_ACTIONS as u128;
     let ns_per_action = elapsed.as_nanos() / units;
     let summary = format!(
-        "用户动作 {TOTAL_ACTIONS}（A={side_a} / B={side_b}：插入 {} 删除 {} 属性 {} 包裹 {} 解除 {}）；\
-         操作总数 {total_ops}（夹具引导 {base_ops}）；节点 {nodes}；文本条目 {entries}（可见 {visible}、墓碑 {}），最大块 {chunks}；\
-         总耗时 {elapsed:?}（{ns_per_action} ns/动作）；两端收敛 {converged}（hash {:#018x}）",
+        "用户动作 {TOTAL_ACTIONS}（A={side_a} / B={side_b}：插入 {} 删除 {} 属性 {} 包裹 {} 解除 {} 撤销 {}）；\
+         操作总数 {total_ops}（夹具引导 {base_ops}）；节点 {nodes}；文本条目 {entries}（可见 {visible}、墓碑 {}），最大分块数 {chunks}；最长位置标识 {max_position_len} 位；\
+         位置复用回退 {} 次；总耗时 {elapsed:?}（{ns_per_action} ns/动作）；两端收敛 {converged}（hash {:#018x}）",
         ins_a + ins_b,
         del_a + del_b,
         attr_a + attr_b,
         wrap_a + wrap_b,
         unwrap_a + unwrap_b,
+        undo_a + undo_b,
         entries - visible,
+        a.position_fallbacks(),
         fnv1a(&bytes_a)
     );
     Ok(ScaleReport {

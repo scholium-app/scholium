@@ -247,3 +247,115 @@ fn clicking_in_the_document_moves_the_caret() {
         "点击后焦点应是文本插入点"
     );
 }
+
+#[test]
+fn dragging_in_the_document_selects_a_range() {
+    let ctx = Context::default();
+    let mut app = new_app(&ctx);
+    settle(&mut app, &ctx);
+    assert!(app.selection().is_collapsed(), "初始应是折叠选区");
+
+    let origin = app.structure_origin();
+    let from = egui::pos2(origin.x + 10.0, origin.y + 25.0);
+    let to = egui::pos2(origin.x + 60.0, origin.y + 25.0);
+
+    // 按下 → 拖到另一处 → 松开
+    frame(
+        &mut app,
+        &ctx,
+        vec![
+            Event::PointerMoved(from),
+            Event::PointerButton {
+                pos: from,
+                button: egui::PointerButton::Primary,
+                pressed: true,
+                modifiers: Modifiers::NONE,
+            },
+        ],
+    );
+    frame(&mut app, &ctx, vec![Event::PointerMoved(to)]);
+    frame(
+        &mut app,
+        &ctx,
+        vec![Event::PointerButton {
+            pos: to,
+            button: egui::PointerButton::Primary,
+            pressed: false,
+            modifiers: Modifiers::NONE,
+        }],
+    );
+
+    let selection = app.selection();
+    assert!(
+        !selection.is_collapsed(),
+        "拖拽应产生非折叠选区（焦点 {:?}，锚点 {:?}）",
+        selection.focus,
+        selection.anchor
+    );
+    let range = selection
+        .text_range(app.core().document())
+        .expect("拖拽产生的选区应落在同一文本叶子内");
+    assert!(range.1 < range.2, "选区应有正的字节区间：{range:?}");
+}
+
+#[test]
+fn backspace_deletes_exactly_the_selected_range() {
+    let ctx = Context::default();
+    let mut app = new_app(&ctx);
+    settle(&mut app, &ctx);
+
+    let origin = app.structure_origin();
+    let from = egui::pos2(origin.x + 10.0, origin.y + 25.0);
+    let to = egui::pos2(origin.x + 60.0, origin.y + 25.0);
+    frame(
+        &mut app,
+        &ctx,
+        vec![
+            Event::PointerMoved(from),
+            Event::PointerButton {
+                pos: from,
+                button: egui::PointerButton::Primary,
+                pressed: true,
+                modifiers: Modifiers::NONE,
+            },
+        ],
+    );
+    frame(&mut app, &ctx, vec![Event::PointerMoved(to)]);
+    frame(
+        &mut app,
+        &ctx,
+        vec![Event::PointerButton {
+            pos: to,
+            button: egui::PointerButton::Primary,
+            pressed: false,
+            modifiers: Modifiers::NONE,
+        }],
+    );
+
+    let before = app.plain_text();
+    let (_, start, end) = app
+        .selection()
+        .text_range(app.core().document())
+        .expect("应有同叶选区");
+    let selected: String = before
+        .get(start..end)
+        .expect("选区应落在文本内")
+        .to_string();
+    assert!(!selected.is_empty(), "选区不应为空");
+
+    frame(&mut app, &ctx, vec![key_event(Key::Backspace, Modifiers::NONE)]);
+
+    let after = app.plain_text();
+    assert!(
+        after.len() < before.len(),
+        "删除选区后文本应变短：{before:?} → {after:?}"
+    );
+    assert!(
+        !after.contains(&selected),
+        "被选中的内容应已删除：选区={selected:?}，结果={after:?}"
+    );
+    assert!(
+        app.selection().is_collapsed(),
+        "删除后选区应折叠到起点"
+    );
+}

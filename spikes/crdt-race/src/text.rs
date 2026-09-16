@@ -52,6 +52,11 @@ impl TextCrdt {
         self.seq.chunk_count()
     }
 
+    /// 遍历全部条目的位置标识（含墓碑），用于统计最长位置标识。
+    pub(crate) fn iter_positions(&self) -> impl Iterator<Item = &[u32]> {
+        self.seq.iter().map(|entry| entry.pos.as_slice())
+    }
+
     /// 渲染可见字符。
     pub(crate) fn render(&self) -> String {
         self.seq.iter().filter(|e| e.alive).map(|e| e.ch).collect()
@@ -220,12 +225,7 @@ impl TextCrdt {
             let pos = r.position()?;
             let ch = r.char()?;
             let alive = r.bool()?;
-            entries.push(Entry {
-                pos,
-                id,
-                ch,
-                alive,
-            });
+            entries.push(Entry { pos, id, ch, alive });
         }
         let registers = r.u32()? as usize;
         let mut liveness = HashMap::with_capacity(registers);

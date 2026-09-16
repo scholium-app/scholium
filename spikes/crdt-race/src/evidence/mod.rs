@@ -47,11 +47,7 @@ pub(crate) fn exchange(a: &mut Replica, b: &mut Replica, a_first: bool) -> (usiz
 }
 
 /// 执行一个返回判据结论的闭包，把错误也记成失败用例。
-pub(crate) fn check_result(
-    ev: &mut Evidence,
-    id: &str,
-    result: Result<(bool, String), CrdtError>,
-) {
+pub(crate) fn check_result(ev: &mut Evidence, id: &str, result: Result<(bool, String), CrdtError>) {
     match result {
         Ok((passed, detail)) => ev.check(id, passed, detail),
         Err(error) => ev.check(id, false, format!("运行失败：{error}")),

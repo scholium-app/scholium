@@ -19,6 +19,7 @@ pub mod error;
 pub mod fixture;
 pub mod ids;
 pub mod layout;
+pub mod selection;
 pub mod source;
 pub mod text;
 
@@ -30,5 +31,6 @@ pub use doc::{Document, Node, NodeKind};
 pub use edit::{EditError, SemanticEdit};
 pub use ids::{CharId, NodeId};
 pub use layout::{Caret, Item, Layout, Metrics, SourceSpan, layout_document, layout_node};
+pub use selection::Selection;
 pub use source::{Dialect, SourcePane};
 pub use text::{Char, TextLeaf};

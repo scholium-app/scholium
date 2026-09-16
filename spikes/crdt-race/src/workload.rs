@@ -14,15 +14,19 @@ use crate::replica::Replica;
 use crate::rng::Rng;
 
 /// 文本插入动作在总动作中的百分比。
-const INSERT_PERCENT: u64 = 55;
+const INSERT_PERCENT: u64 = 60;
 /// 文本删除动作在总动作中的百分比。
-const DELETE_PERCENT: u64 = 15;
+const DELETE_PERCENT: u64 = 10;
 /// 属性变更动作在总动作中的百分比。
 const ATTR_PERCENT: u64 = 8;
 /// 本地撤销动作在总动作中的百分比（其余为包裹 / 解除包裹）。
 const UNDO_PERCENT: u64 = 5;
 /// 单次删除的最大字符数。
 const MAX_DELETE_LEN: usize = 8;
+/// 文本短于该长度时不删除（退化为插入），避免删除把文档长期压在空文本附近。
+const MIN_DELETE_LEN: usize = 64;
+/// 单次删除不超过当前长度的该比例。
+const DELETE_SHARE: usize = 8;
 /// 包裹相对解除包裹的偏好百分比。
 const WRAP_PERCENT: u64 = 55;
 /// 属性值的循环集合（含移除）。
@@ -102,7 +106,11 @@ impl Workload {
         }
     }
 
-    fn insert(&mut self, replica: &mut Replica, fixture: &Fixture) -> Result<&'static str, CrdtError> {
+    fn insert(
+        &mut self,
+        replica: &mut Replica,
+        fixture: &Fixture,
+    ) -> Result<&'static str, CrdtError> {
         let len = replica
             .doc()
             .text(fixture.body)
@@ -114,18 +122,24 @@ impl Workload {
         Ok("insert")
     }
 
-    fn delete(&mut self, replica: &mut Replica, fixture: &Fixture) -> Result<&'static str, CrdtError> {
+    fn delete(
+        &mut self,
+        replica: &mut Replica,
+        fixture: &Fixture,
+    ) -> Result<&'static str, CrdtError> {
         let len = replica
             .doc()
             .text(fixture.body)
             .map_or(0, |text| text.visible_len());
-        if len == 0 {
-            // 没有可删内容时退化为插入，保持动作总数与判据一致。
+        if len <= MIN_DELETE_LEN {
+            // 文本太短时不删除：否则 10 万次动作会把文档长期压在空文本附近，
+            // 规模数字就测不到大序列的插入与定位成本。
             return self.insert(replica, fixture);
         }
         let start = self.rng.below(len as u64) as usize;
         let span = len - start;
-        let take = (self.rng.below(MAX_DELETE_LEN as u64) as usize + 1).min(span);
+        let cap = (len / DELETE_SHARE).clamp(1, MAX_DELETE_LEN);
+        let take = (self.rng.below(cap as u64) as usize + 1).min(span);
         replica.delete_text(fixture.body, start, start + take)?;
         self.deletions += 1;
         Ok("delete")

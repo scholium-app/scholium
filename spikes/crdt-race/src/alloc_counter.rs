@@ -41,6 +41,7 @@ fn shrink(size: usize) {
 // 在分配失败时也返回空指针，因此满足 `GlobalAlloc` 的安全契约。
 unsafe impl GlobalAlloc for CountingAllocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+        // SAFETY: 直接转发给 `System`；`layout` 由调用方按 `GlobalAlloc` 契约提供。
         let ptr = unsafe { System.alloc(layout) };
         if !ptr.is_null() {
             grow(layout.size());
@@ -49,6 +50,7 @@ unsafe impl GlobalAlloc for CountingAllocator {
     }
 
     unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
+        // SAFETY: 直接转发给 `System`；`layout` 由调用方按 `GlobalAlloc` 契约提供。
         let ptr = unsafe { System.alloc_zeroed(layout) };
         if !ptr.is_null() {
             grow(layout.size());
@@ -58,10 +60,12 @@ unsafe impl GlobalAlloc for CountingAllocator {
 
     unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
         shrink(layout.size());
+        // SAFETY: `ptr` 与 `layout` 来自本分配器的 `alloc`/`realloc`，仍然有效。
         unsafe { System.dealloc(ptr, layout) };
     }
 
     unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, new_size: usize) -> *mut u8 {
+        // SAFETY: `ptr` 与 `layout` 来自本分配器的分配调用；`new_size` 是新布局大小。
         let new_ptr = unsafe { System.realloc(ptr, layout, new_size) };
         if !new_ptr.is_null() {
             if new_size >= layout.size() {

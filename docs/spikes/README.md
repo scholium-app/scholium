@@ -33,7 +33,7 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 | 出口条件 安全 | [0011-untrusted-input.md](0011-untrusted-input.md) | **部分 Pass**：shell escape 默认关闭且有效；Typst 侧按构造安全（读文件/加载插件均被拒）；但 **LaTeX 能读项目外文件，`openin_any=p` 挡不住**，必须用 OS 级沙箱（bwrap 实测可阻断，但沙箱内良性编译尚未跑通）。 |
 | 第 6 项 团队语言协调 | [0009-team-language.md](0009-team-language.md) | **结论 Pass（内存模型 + 确定性时序）**：60 用例 60/60，含切换屏障扫描（重叠 0）、epoch 隔离不自动回灌、重启恢复字段级一致、分区/旧包/19 类恶意写集逐条拒绝。真实网络、多进程、磁盘与解析器未验证。 |
 | CRDT 引擎预筛 | [0013-crdt-prescreen.md](0013-crdt-prescreen.md) | Loro 1.16 / Yrs 0.27 / Automerge 0.11 **均为 MIT 且无 C 依赖**；能力差异集中在"树可移动性"与"内置 undo"，需夹具对比后定选（ADR 0009 Proposed）。 |
-| 第 4 项 CRDT 赛马 | [0007-crdt-race.md](0007-crdt-race.md) | **结论 Pass（自研最小实现）**：136 用例逐条通过——收敛 14/14、本地 undo 不回滚远端 5/5、快照 5/5、10 万动作 2.94 s（堆增量 87.5 MiB）、110 轮随机化全部收敛。未覆盖第三方引擎选型与树语义的边界情形。 |
+| 第 4 项 CRDT 赛马 | [0007-crdt-race.md](0007-crdt-race.md) | **结论 Pass（自研最小实现）**：136 用例逐条通过——收敛 14/14、本地 undo 不回滚远端 5/5、快照 5/5、10 万动作 3.7 s（重复运行 2.8–6.0 s；堆增量 87.5 MiB）、110 轮随机化全部收敛。未覆盖第三方引擎选型与树语义的边界情形。 |
 | 第 5、7 项 | 进行中 | 见下方各报告 |
 
 **测试前提**：无障碍测试必须在会话 `org.a11y.Status IsEnabled = true` 下进行。

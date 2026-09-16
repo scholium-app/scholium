@@ -45,7 +45,8 @@ pub(crate) fn between(
         return Err(CrdtError::UnorderedBounds);
     }
 
-    let digit = |p: Option<&[u32]>, i: usize| -> u32 { p.and_then(|p| p.get(i).copied()).unwrap_or(0) };
+    let digit =
+        |p: Option<&[u32]>, i: usize| -> u32 { p.and_then(|p| p.get(i).copied()).unwrap_or(0) };
     let digit_upper = |p: Option<&[u32]>, i: usize| -> u32 {
         match p {
             None => BASE,
@@ -119,13 +120,23 @@ mod tests {
         ];
         for (a, b) in cases {
             for _ in 0..64 {
-                let mid = between(a.as_deref(), b.as_deref(), &mut rng).expect("bounds are ordered");
-                assert!(is_valid(&mid), "generated position must satisfy invariant: {mid:?}");
+                let mid =
+                    between(a.as_deref(), b.as_deref(), &mut rng).expect("bounds are ordered");
+                assert!(
+                    is_valid(&mid),
+                    "generated position must satisfy invariant: {mid:?}"
+                );
                 if let Some(a) = a.as_deref() {
-                    assert!(*a < mid[..], "mid must be greater than lower bound: {a:?} < {mid:?}");
+                    assert!(
+                        *a < mid[..],
+                        "mid must be greater than lower bound: {a:?} < {mid:?}"
+                    );
                 }
                 if let Some(b) = b.as_deref() {
-                    assert!(mid[..] < *b, "mid must be less than upper bound: {mid:?} < {b:?}");
+                    assert!(
+                        mid[..] < *b,
+                        "mid must be less than upper bound: {mid:?} < {b:?}"
+                    );
                 }
             }
         }

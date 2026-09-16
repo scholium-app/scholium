@@ -471,3 +471,69 @@ fn empty_document_always_has_reachable_text_leaf() {
     assert!(text.is_some(), "空文档也必须保留可编辑文本槽位");
     assert_eq!(doc.to_plain_text(), "\n");
 }
+
+#[test]
+fn selection_orders_endpoints_by_document_order() {
+    use scholium_spike_core::Selection;
+
+    let (mut editor, text) = editor_with_text();
+    type_text(&mut editor, text, 0, "abcdef");
+
+    let left = Cursor::Text { node: text, byte: 1 };
+    let right = Cursor::Text { node: text, byte: 4 };
+
+    // 无论拖拽方向如何，ordered 都返回文档顺序。
+    let forward = Selection {
+        anchor: left,
+        focus: right,
+    };
+    let backward = Selection {
+        anchor: right,
+        focus: left,
+    };
+    assert_eq!(
+        forward.ordered(editor.document()),
+        backward.ordered(editor.document()),
+        "拖拽方向不应影响语义"
+    );
+    assert_eq!(
+        forward.ordered(editor.document()),
+        Some((left, right)),
+        "ordered 必须按文档顺序"
+    );
+    assert!(!forward.is_collapsed());
+    assert!(Selection::collapsed(left).is_collapsed());
+}
+
+#[test]
+fn selection_text_range_only_within_one_leaf() {
+    use scholium_spike_core::Selection;
+
+    let (mut editor, text) = editor_with_text();
+    type_text(&mut editor, text, 0, "abcdef");
+
+    let selection = Selection {
+        anchor: Cursor::Text { node: text, byte: 1 },
+        focus: Cursor::Text { node: text, byte: 4 },
+    };
+    assert_eq!(
+        selection.text_range(editor.document()),
+        Some((text, 1, 4)),
+        "同一叶子内应给出字节区间"
+    );
+
+    // 跨节点的选区（槽位端点）没有可删除的字节区间。
+    let across = Selection {
+        anchor: Cursor::Text { node: text, byte: 1 },
+        focus: Cursor::Slot {
+            node: editor.document().root(),
+            slot: 0,
+            index: 0,
+        },
+    };
+    assert_eq!(
+        across.text_range(editor.document()),
+        None,
+        "跨节点选区没有可删除的字节区间"
+    );
+}

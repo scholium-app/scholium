@@ -154,7 +154,9 @@ impl TreeCrdt {
         let me = self.nodes.get(&id)?;
         self.nodes
             .iter()
-            .filter(|(other_id, other)| other.alive && other.parent == me.parent && **other_id != id)
+            .filter(|(other_id, other)| {
+                other.alive && other.parent == me.parent && **other_id != id
+            })
             .filter(|(other_id, other)| {
                 other.pos > me.pos || (other.pos == me.pos && **other_id > id)
             })

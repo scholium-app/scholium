@@ -37,14 +37,22 @@ pub(crate) fn run(ev: &mut Evidence) {
     ));
     for round in 0..TWO_REPLICA_ROUNDS {
         let seed = TWO_REPLICA_BASE_SEED + round as u64;
-        check_result(ev, &format!("J5.1-round{round:03}"), two_replica_round(seed));
+        check_result(
+            ev,
+            &format!("J5.1-round{round:03}"),
+            two_replica_round(seed),
+        );
     }
     ev.note(&format!(
         "J5.2 种子基准 {THREE_REPLICA_BASE_SEED:#x}：{THREE_REPLICA_ROUNDS} 轮 × 3 副本 × 每副本 {THREE_REPLICA_OPS} 个随机动作"
     ));
     for round in 0..THREE_REPLICA_ROUNDS {
         let seed = THREE_REPLICA_BASE_SEED + round as u64;
-        check_result(ev, &format!("J5.2-round{round:03}"), three_replica_round(seed));
+        check_result(
+            ev,
+            &format!("J5.2-round{round:03}"),
+            three_replica_round(seed),
+        );
     }
 }
 

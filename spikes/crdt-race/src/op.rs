@@ -166,7 +166,12 @@ impl Op {
                 w.position(pos);
                 w.lamport(*ts);
             }
-            Self::NodeAlive { op, node, alive, ts } => {
+            Self::NodeAlive {
+                op,
+                node,
+                alive,
+                ts,
+            } => {
                 w.u8(tag::NODE_ALIVE);
                 w.id(*op);
                 w.id(*node);

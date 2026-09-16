@@ -37,7 +37,9 @@ impl Doc {
                 parent,
                 pos,
                 ts,
-            } => self.tree.apply_create(*op, *kind, *parent, pos.clone(), *ts),
+            } => self
+                .tree
+                .apply_create(*op, *kind, *parent, pos.clone(), *ts),
             Op::NodePlace {
                 node,
                 parent,
@@ -45,7 +47,9 @@ impl Doc {
                 ts,
                 ..
             } => self.tree.apply_place(*node, *parent, pos.clone(), *ts),
-            Op::NodeAlive { node, alive, ts, .. } => {
+            Op::NodeAlive {
+                node, alive, ts, ..
+            } => {
                 self.tree.apply_alive(*node, *alive, *ts);
             }
             Op::NodeAttr {
@@ -148,7 +152,10 @@ impl Doc {
 
     /// 某个文本叶子的可见文本。
     pub(crate) fn render_text_node(&self, node: NodeId) -> String {
-        self.texts.get(&node).map(TextCrdt::render).unwrap_or_default()
+        self.texts
+            .get(&node)
+            .map(TextCrdt::render)
+            .unwrap_or_default()
     }
 
     /// 规范状态：结构树 + 每个文本叶子的条目，顺序完全确定。
@@ -186,6 +193,16 @@ impl Doc {
             texts.insert(node, text);
         }
         Ok(Self { tree, texts })
+    }
+
+    /// 全文档最长的位置标识位数。反复在同一间隙插入会让位置标识变长，是规模与存储成本的关键量。
+    pub(crate) fn max_position_len(&self) -> usize {
+        self.texts
+            .values()
+            .flat_map(|text| text.iter_positions())
+            .map(<[u32]>::len)
+            .max()
+            .unwrap_or(0)
     }
 
     /// 规模证据用的文本统计：`(条目数, 可见数, 最大块数)`。
