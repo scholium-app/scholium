@@ -62,7 +62,7 @@ ForeignSource 的 LaTeX/Typst 宏、模板、构建桥接和预生成资源都�
 - 外部贡献必须带 DCO 签署（`git commit -s`），保证来源与版权可追溯。
 - 外部工具链记录版本与 hash；自动下载必须校验签名或固定 hash。
 - 应用构建/运行不引入 npm、Node.js 或 JS UI 运行时；HTML 导出数据不作为应用代码执行。
-- C/C++/Zig 依赖显式声明 ABI、内存所有权、线程约束和销毁顺序；异常/panic 不得跨 FFI 边界。
+- C/C++/Zig 依赖显式声明 ABI、内存所有权、线程约束和销毁顺序；异常/panic 不得跨 FFI 边界。登记处：[原生依赖登记](NATIVE_DEPENDENCIES.md)；新增此类依赖必须补录，`cargo deny` 只覆盖许可证、不覆盖这四项。
 - 发布产物生成 SBOM，并进行平台签名和可复现性抽查。
 
 ## 7. 安全测试

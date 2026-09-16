@@ -20,6 +20,7 @@
 11. [路线图](ROADMAP.md)：阶段、交付物、出口条件和依赖关系。
 12. [模块索引](modules/README.md)：每个 crate、应用和服务的内部设计。
 13. [ADR 索引](adr/README.md)：经过验证的技术选择与替代方案。
+    [原生依赖登记](NATIVE_DEPENDENCIES.md)：C/C++/Zig 与需编译本地代码的依赖（ABI / 所有权 / 线程 / 销毁顺序）。
 14. [Liii STEM 体验调研](research/LIIISTEM_EXPERIENCE.md)：参考交互、取舍与映射。
 
 ## 文档状态

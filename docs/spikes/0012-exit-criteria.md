@@ -37,7 +37,8 @@
 
 - 无 npm/Node/WebView：仓库内无 `package.json`/`package-lock.json`/`yarn.lock`/`pnpm-lock.yaml`/`node_modules`；
   依赖树无 `wry`/`tauri`/`electron`/`webview2`（`deny.toml` 的 `bans.deny` 已把 `slint`/`wry`/`tauri` 列为禁止）。
-- C/C++/Zig 依赖：**唯一**需要编译本地代码的路径是 `typst-eval → stacker → psm → cc`；
+- C/C++/Zig 依赖：**唯一**需要编译本地代码的路径是 `typst-eval → stacker → psm → cc`；登记在
+  [原生依赖登记](../NATIVE_DEPENDENCIES.md)（ABI / 所有权 / 线程 / 销毁顺序 / 构建记录四项齐备）；
   `psm` 产出一个小型汇编 shim（见其构建产物 `...x86_64.o`），用途是深递归时的栈切换，
   ABI 局限在该 crate 内；`psm`/`cc` 均为 MIT OR Apache-2.0。除此之外无自研 C/C++/Zig 源码。
 - 许可门禁：新增 `deny.toml`（按 `AGENT.md` 政策配置），**12 个 workspace 全部通过**
