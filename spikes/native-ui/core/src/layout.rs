@@ -19,6 +19,7 @@
 
 use crate::doc::{Document, NodeKind};
 use crate::ids::NodeId;
+use unicode_segmentation::UnicodeSegmentation;
 
 /// 基线到绘制框上沿相对字号的比例（近似值，见模块说明）。
 pub const ASCENT_RATIO: f32 = 0.88;
@@ -196,11 +197,11 @@ impl Layout {
                 continue;
             }
 
-            // 找到第一个"中点已在 x 右侧"的字符，插入点就在它前面。
+            // 命中位置必须在字素边界，不能落入组合字符或 ZWJ 序列内部。
             let mut cumulative = 0.0_f32;
             let mut offset = content.len();
-            for (index, ch) in content.char_indices() {
-                let width = text_width(&ch.to_string(), *size);
+            for (index, grapheme) in content.grapheme_indices(true) {
+                let width = text_width(grapheme, *size);
                 if x < item_x + cumulative + width / 2.0 {
                     offset = index;
                     break;
@@ -316,9 +317,7 @@ fn drop_to_origin(layout: &mut Layout) {
         .items
         .iter()
         .map(|item| match item {
-            Item::Text {
-                baseline, size, ..
-            } => Item::top_of(*baseline, *size),
+            Item::Text { baseline, size, .. } => Item::top_of(*baseline, *size),
             Item::Rule { y, .. } => *y,
         })
         .fold(f32::MAX, f32::min);

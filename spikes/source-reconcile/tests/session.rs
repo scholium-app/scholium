@@ -3,6 +3,23 @@ use scholium_spike_core::{ActorId, Editor, Intent, SemanticEdit, fixture};
 use scholium_spike_reconcile::{Session, generate::Dialect};
 
 #[test]
+fn incomplete_markup_in_a_text_leaf_stays_an_uncommitted_draft() {
+    for (dialect, prefix) in [(Dialect::Latex, "\\sqrt{"), (Dialect::Typst, "$broken(")] {
+        let mut editor = Editor::new();
+        fixture::build_standard(&mut editor);
+        let mut session = Session::new(&editor, dialect);
+        let before = editor.document().to_plain_text();
+        let revision = editor.revision();
+        let actions = editor.history().len();
+        let draft = format!("{prefix}{}", session.generated.text);
+        assert!(session.commit(&mut editor, &draft).is_err());
+        assert_eq!(editor.document().to_plain_text(), before);
+        assert_eq!(editor.revision(), revision);
+        assert_eq!(editor.history().len(), actions);
+    }
+}
+
+#[test]
 fn source_change_updates_document_and_stale_draft_is_retained() {
     for dialect in [Dialect::Latex, Dialect::Typst] {
         let mut editor = Editor::new();

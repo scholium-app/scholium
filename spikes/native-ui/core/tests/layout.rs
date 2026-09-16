@@ -4,9 +4,7 @@
 //! 退化成模型层测试，候选之间也无法比较。这里断言**布局真的画出了结构**。
 
 use scholium_spike_core::layout::{Item, Metrics, layout_document, layout_node};
-use scholium_spike_core::{
-    ActorId, Editor, Intent, NodeId, NodeKind, RemoteEdit, SemanticEdit,
-};
+use scholium_spike_core::{ActorId, Editor, Intent, NodeId, NodeKind, RemoteEdit, SemanticEdit};
 
 const FIXTURE: ActorId = ActorId(99);
 
@@ -25,7 +23,13 @@ fn build_editor() -> Editor {
     editor
 }
 
-fn create(editor: &mut Editor, parent: NodeId, slot: usize, index: usize, kind: NodeKind) -> NodeId {
+fn create(
+    editor: &mut Editor,
+    parent: NodeId,
+    slot: usize,
+    index: usize,
+    kind: NodeKind,
+) -> NodeId {
     editor
         .apply_remote(RemoteEdit {
             actor: FIXTURE,
@@ -80,7 +84,9 @@ fn rules(layout: &scholium_spike_core::Layout) -> Vec<(f32, f32, f32)> {
         .items
         .iter()
         .filter_map(|item| match item {
-            Item::Rule { y, width, height, .. } => Some((*y, *width, *height)),
+            Item::Rule {
+                y, width, height, ..
+            } => Some((*y, *width, *height)),
             Item::Text { .. } => None,
         })
         .collect()
@@ -227,7 +233,9 @@ fn sqrt_draws_radical_and_overline() {
     let layout = layout_node(editor.document(), sqrt, Metrics::default());
     assert_eq!(rules(&layout).len(), 1, "根式必须有上横线");
     assert!(
-        texts(&layout).iter().any(|(_, _, _, text)| text == "\u{221A}"),
+        texts(&layout)
+            .iter()
+            .any(|(_, _, _, text)| text == "\u{221A}"),
         "根式必须有根号符号"
     );
 }
@@ -291,12 +299,21 @@ fn caret_maps_byte_offset_to_layout_position() {
     let end = layout.caret(text, 2).expect("文本末尾有光标");
 
     assert!(start.x.abs() < 0.01, "开头光标应在最左：{}", start.x);
-    assert!(end.x > start.x, "末尾光标应在右侧：{} vs {}", end.x, start.x);
+    assert!(
+        end.x > start.x,
+        "末尾光标应在右侧：{} vs {}",
+        end.x,
+        start.x
+    );
     assert!(
         (start.baseline - end.baseline).abs() < 0.01,
         "同一行光标基线应一致"
     );
-    assert!((end.x - 24.0).abs() < 0.01, "两个 ASCII 字符宽 1.2em：{}", end.x);
+    assert!(
+        (end.x - 24.0).abs() < 0.01,
+        "两个 ASCII 字符宽 1.2em：{}",
+        end.x
+    );
 }
 
 #[test]
@@ -304,10 +321,7 @@ fn caret_is_none_for_non_text_node() {
     let editor = build_editor();
     let layout = layout_document(editor.document());
     let root = editor.document().root();
-    assert!(
-        layout.caret(root, 0).is_none(),
-        "非文本节点不应产出光标"
-    );
+    assert!(layout.caret(root, 0).is_none(), "非文本节点不应产出光标");
 }
 
 #[test]
@@ -393,4 +407,29 @@ fn hit_test_outside_any_text_is_none() {
     type_text(&mut editor, text, "a");
     let layout = layout_document(editor.document());
     assert!(layout.hit_test(0.0, -500.0).is_none(), "远离文本不应命中");
+}
+
+#[test]
+fn pointer_hit_never_splits_combining_or_zwj_graphemes() {
+    let mut editor = build_editor();
+    let text = editor
+        .document()
+        .first_text_descendant(editor.document().root())
+        .expect("leaf");
+    type_text(&mut editor, text, "e\u{301}👩‍💻中");
+    let layout = layout_document(editor.document());
+    let caret = layout.caret(text, 0).expect("caret");
+    for x in 0..150 {
+        if let Some((node, byte)) = layout.hit_test(x as f32, caret.baseline) {
+            assert!(
+                editor
+                    .document()
+                    .node(node)
+                    .expect("node")
+                    .text
+                    .is_grapheme_boundary(byte),
+                "x={x}, byte={byte}"
+            );
+        }
+    }
 }

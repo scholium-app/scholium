@@ -1,0 +1,43 @@
+   Compiling scholium-spike-egui v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/native-ui/candidate-egui)
+    Finished `release` profile [optimized] target(s) in 1.58s
+     Running unittests src/lib.rs (spikes/native-ui/candidate-egui/target/release/deps/scholium_spike_egui-e0bbd7e4ec6a5de6)
+
+running 1 test
+[event] 启动完成 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[ime] 输入法锚点 [[8.0 87.1] - [9.5 111.1]]
+source_100k lines=100000 bytes=1800031 first_layout_ms=52.28 edit_frame_ms=56.35 subsequent_edit_p95_ms=32.25 samples=30
+VmHWM:	   44352 kB
+test native_edit_tests::source_100k_lines_records_layout_and_local_edit_cost ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 1.06s
+
+     Running unittests src/main.rs (spikes/native-ui/candidate-egui/target/release/deps/scholium_spike_egui-6cd64b4eb27ce5d6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/accessibility.rs (spikes/native-ui/candidate-egui/target/release/deps/accessibility-b3e24056539606da)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/input.rs (spikes/native-ui/candidate-egui/target/release/deps/input-991ef42ca3e8b3c8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/perf.rs (spikes/native-ui/candidate-egui/target/release/deps/perf-3468be5f6d61a59a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/window_layout.rs (spikes/native-ui/candidate-egui/target/release/deps/window_layout-2c4b89327912b5f9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+

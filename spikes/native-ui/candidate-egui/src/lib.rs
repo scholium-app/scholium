@@ -8,6 +8,9 @@
 
 mod accessibility;
 mod input;
+mod math_accessibility;
+#[cfg(test)]
+mod native_edit_tests;
 mod preview;
 mod source_ui;
 mod structure_ui;
@@ -34,12 +37,15 @@ pub struct SpikeApp {
     source_buffer: String,
     /// 输入法预编辑串。只属于 UI，**不进历史**。
     preedit: String,
+    interrupt_ime: bool,
     last_event: String,
     preedit_events: usize,
     commits: usize,
     font_loaded: bool,
     /// 正文自绘区是否持有输入焦点。输入法事件是全局的，必须自己记住归属。
     structure_focused: bool,
+    structure_id: Option<egui::Id>,
+    visible_focus: Option<Cursor>,
     /// 是否已经做过启动时的默认聚焦。
     initial_focus_done: bool,
     /// 上一次打印到 stdout 的事件，用于让测试日志能取证。
@@ -94,11 +100,14 @@ impl SpikeApp {
             preview: preview::Preview::default(),
             source,
             preedit: String::new(),
+            interrupt_ime: false,
             last_event: "启动完成".to_string(),
             preedit_events: 0,
             commits: 0,
             font_loaded,
             structure_focused: false,
+            structure_id: None,
+            visible_focus: None,
             initial_focus_done: false,
             printed: String::new(),
             ime_requested: false,
@@ -177,6 +186,10 @@ impl SpikeApp {
             ui.columns(3, |columns| {
                 self.draw_structure(&mut columns[0]);
                 self.draw_source(&mut columns[1]);
+                if !self.structure_focused && !self.preedit.is_empty() {
+                    self.interrupt_ime = true;
+                    self.preedit.clear();
+                }
                 self.preview.draw(&mut columns[2], &self.core);
             });
 
@@ -195,6 +208,14 @@ impl SpikeApp {
                 self.last_event
             ));
         });
+        if self.interrupt_ime {
+            ui.output_mut(|output| {
+                if let Some(ime) = &mut output.ime {
+                    ime.should_interrupt_composition = true;
+                }
+            });
+            self.interrupt_ime = false;
+        }
     }
 }
 

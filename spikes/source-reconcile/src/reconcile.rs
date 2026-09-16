@@ -81,7 +81,9 @@ fn inline_change(old: &str, new: &str) -> Option<Change> {
     let new_bytes = new.as_bytes();
 
     let mut prefix = 0usize;
-    while prefix < old_bytes.len() && prefix < new_bytes.len() && old_bytes[prefix] == new_bytes[prefix]
+    while prefix < old_bytes.len()
+        && prefix < new_bytes.len()
+        && old_bytes[prefix] == new_bytes[prefix]
     {
         prefix += 1;
     }
@@ -173,6 +175,13 @@ fn attribute(
     document: &Document,
 ) -> Reconciled {
     let replacement = &new_line[change.start..change.new_end];
+    // Round-trip preservation alone also accepts unfinished Raw syntax. The spike's
+    // existing delimiter gate must run before converting a text edit to Raw.
+    if looks_like_markup(dialect, replacement) && !balanced(replacement) {
+        return Reconciled::Conflict {
+            reason: "新片段的分隔符未闭合，草稿保留，不应用正文".into(),
+        };
+    }
 
     // 找到**完全包含**被替换区间的最内层节点。
     let mut candidates: Vec<_> = info
@@ -214,9 +223,7 @@ fn attribute(
     }
 
     // 结构包裹：替换内容是一个受支持结构，且覆盖了整个节点。
-    if covers_whole_node
-        && let Some((structure, _inner)) = parse_structure(dialect, replacement)
-    {
+    if covers_whole_node && let Some((structure, _inner)) = parse_structure(dialect, replacement) {
         return Reconciled::Wrap {
             node: innermost.node,
             structure: format!("{structure}|{}", _inner),

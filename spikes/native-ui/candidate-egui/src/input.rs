@@ -46,9 +46,16 @@ impl SpikeApp {
     /// 解除最内层结构，保留内容。
     pub fn unwrap(&mut self) {
         let node = self.focus.focus();
+        let target = self.target();
         let edit = SemanticEdit::Unwrap { node };
         match self.core.apply(LOCAL, Intent::Structural, edit) {
-            Ok(Some(_)) => self.last_event = "core：解除结构".to_string(),
+            Ok(Some(_)) => {
+                if let Some((node, byte)) = target {
+                    self.focus = Cursor::Text { node, byte };
+                    self.selection = Selection::collapsed(self.focus);
+                }
+                self.last_event = "core：解除结构".to_string();
+            }
             Ok(None) => self.last_event = "解除：无变化".to_string(),
             Err(error) => self.last_event = format!("解除被拒：{error}"),
         }
@@ -66,22 +73,31 @@ impl SpikeApp {
     }
 
     pub(super) fn insert_text(&mut self, text: &str, intent: Intent) {
-        if !self.selection.is_collapsed() {
-            self.delete_backward();
-            if !self.selection.is_collapsed() {
+        let (node, at, mut edits) = if self.selection.is_collapsed() {
+            let Some((node, at)) = self.target() else {
+                self.last_event = "没有可编辑的文本槽位".to_string();
                 return;
+            };
+            (node, at, Vec::new())
+        } else {
+            match scholium_spike_core::selection_edit::deletion(
+                self.core.document(),
+                self.selection,
+            ) {
+                Ok((Cursor::Text { node, byte }, edits)) => (node, byte, edits),
+                Ok(_) => return,
+                Err(error) => {
+                    self.last_event = error.to_string();
+                    return;
+                }
             }
-        }
-        let Some((node, at)) = self.target() else {
-            self.last_event = "没有可编辑的文本槽位".to_string();
-            return;
         };
-        let edit = SemanticEdit::InsertText {
+        edits.push(SemanticEdit::InsertText {
             node,
             at,
             text: text.to_string(),
-        };
-        match self.core.apply(LOCAL, intent, edit) {
+        });
+        match self.core.apply_batch(LOCAL, intent, &edits) {
             Ok(Some(_)) => {
                 self.focus = Cursor::Text {
                     node,
@@ -112,9 +128,24 @@ impl SpikeApp {
     pub(super) fn handle_input(&mut self, ctx: &egui::Context) {
         // 输入焦点不在正文区时，输入法与按键都不属于它；否则会与源码编辑器抢输入
         // （这正是 Iced 候选当初踩过的坑）。
-        if !self.structure_focused {
+        if !self.structure_focused
+            || !ctx.input(|input| input.focused)
+            || self
+                .structure_id
+                .is_some_and(|id| !ctx.memory(|memory| memory.has_focus(id)))
+        {
+            self.interrupt_ime |= !self.preedit.is_empty();
+            self.preedit.clear();
             return;
         }
+
+        self.text_events(ctx);
+        if self.preedit.is_empty() {
+            self.navigation_keys(ctx);
+        }
+    }
+
+    fn text_events(&mut self, ctx: &egui::Context) {
         let events = ctx.input(|input| input.events.clone());
         for event in events {
             match event {
@@ -156,7 +187,9 @@ impl SpikeApp {
                 _ => {}
             }
         }
+    }
 
+    fn navigation_keys(&mut self, ctx: &egui::Context) {
         let (down, up, left, right, backspace, undo, extend) = ctx.input(|input| {
             (
                 input.key_pressed(egui::Key::ArrowDown),
@@ -231,19 +264,20 @@ impl SpikeApp {
             return;
         };
         let edit = SemanticEdit::DeleteBackward { node, at };
+        let previous = self
+            .core
+            .document()
+            .node(node)
+            .ok()
+            .and_then(|n| n.text.prev_grapheme_boundary(at))
+            .unwrap_or(0);
         match self.core.apply(LOCAL, Intent::Typing, edit) {
             Ok(Some(_)) => {
-                let previous = self
-                    .core
-                    .document()
-                    .node(node)
-                    .ok()
-                    .and_then(|n| n.text.prev_grapheme_boundary(at))
-                    .unwrap_or(0);
                 self.focus = Cursor::Text {
                     node,
                     byte: previous,
                 };
+                self.selection = Selection::collapsed(self.focus);
                 self.last_event = "core：删除一个字素".to_string();
             }
             Ok(None) => self.last_event = "退格：已在开头".to_string(),
@@ -254,6 +288,7 @@ impl SpikeApp {
     pub(super) fn undo(&mut self) {
         match self.core.undo(LOCAL) {
             Ok(Some(outcome)) => {
+                self.repair_focus();
                 self.last_event = format!(
                     "core：撤销 {:?}，删除 {} 字符",
                     outcome.undone, outcome.removed_chars
@@ -261,6 +296,38 @@ impl SpikeApp {
             }
             Ok(None) => self.last_event = "撤销：本地没有可撤销动作".to_string(),
             Err(error) => self.last_event = format!("错误：{error}"),
+        }
+    }
+
+    fn repair_focus(&mut self) {
+        let doc = self.core.document();
+        let mut node = self.focus.focus();
+        let attached = node == doc.root() || {
+            let mut current = node;
+            while let Some((parent, _, _)) = doc.locate_in_parent(current) {
+                current = parent;
+            }
+            current == doc.root()
+        };
+        if !attached {
+            node = doc.root();
+        }
+        if let Some(leaf) = doc.first_text_descendant(node) {
+            let byte = if leaf == self.focus.focus() {
+                self.focus.byte().unwrap_or(0)
+            } else {
+                0
+            };
+            if let Ok(text) = doc.node(leaf) {
+                let byte = text
+                    .text
+                    .grapheme_boundaries()
+                    .into_iter()
+                    .rfind(|b| *b <= byte)
+                    .unwrap_or(0);
+                self.focus = Cursor::Text { node: leaf, byte };
+                self.selection = Selection::collapsed(self.focus);
+            }
         }
     }
 }

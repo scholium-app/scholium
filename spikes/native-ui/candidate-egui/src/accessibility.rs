@@ -8,6 +8,8 @@ struct TextRun {
     source: SourceSpan,
     text: String,
     rect: egui::Rect,
+    positions: Vec<f32>,
+    widths: Vec<f32>,
 }
 
 impl TextRun {
@@ -61,6 +63,8 @@ impl TextRun {
                     .collect::<Vec<_>>(),
             );
             node.set_value(self.text.clone());
+            node.set_character_positions(self.positions.clone());
+            node.set_character_widths(self.widths.clone());
             // Screen logical pixels, using the same approximate metrics as the spike canvas.
             node.set_bounds(accesskit::Rect {
                 x0: self.rect.min.x.into(),
@@ -92,10 +96,31 @@ impl SpikeApp {
                 let end = self
                     .layout
                     .caret(source.node, source.start_byte + content.len())?;
+                let local = Layout {
+                    items: vec![item.clone()],
+                    ..Default::default()
+                };
                 Some(TextRun {
                     id: parent.with(source.node.index()).with(source.start_byte),
                     source: *source,
                     text: content.clone(),
+                    positions: content
+                        .char_indices()
+                        .filter_map(|(byte, _)| {
+                            local
+                                .caret(source.node, source.start_byte + byte)
+                                .map(|caret| caret.x - x)
+                        })
+                        .collect(),
+                    widths: content
+                        .char_indices()
+                        .filter_map(|(byte, ch)| {
+                            let start = local.caret(source.node, source.start_byte + byte)?;
+                            let end = local
+                                .caret(source.node, source.start_byte + byte + ch.len_utf8())?;
+                            Some(end.x - start.x)
+                        })
+                        .collect(),
                     rect: egui::Rect::from_min_max(
                         origin + egui::vec2(*x, Item::top_of(*baseline, *size)),
                         origin + egui::vec2(end.x, baseline + size * 0.2),
@@ -103,6 +128,11 @@ impl SpikeApp {
                 })
             })
             .collect();
+        self.sort_runs(&mut runs);
+        runs
+    }
+
+    fn sort_runs(&self, runs: &mut [TextRun]) {
         // Paint order puts superscripts first; selection editing uses document preorder.
         let mut order = std::collections::HashMap::new();
         let mut stack = vec![self.core.document().root()];
@@ -113,7 +143,6 @@ impl SpikeApp {
             }
         }
         runs.sort_by_key(|run| (order.get(&run.source.node).copied(), run.source.start_byte));
-        runs
     }
 
     fn accessible_selection(&mut self, ui: &egui::Ui, response: &egui::Response, runs: &[TextRun]) {
@@ -156,6 +185,13 @@ impl SpikeApp {
         response: &egui::Response,
         origin: egui::Pos2,
     ) {
+        if ui
+            .ctx()
+            .accesskit_node_builder(response.id, |_| ())
+            .is_none()
+        {
+            return;
+        }
         let runs = self.accessible_runs(response.id, origin);
         self.accessible_selection(ui, response, &runs);
         response.widget_info(|| {
@@ -175,5 +211,6 @@ impl SpikeApp {
         for run in runs {
             run.publish(ui, response.id);
         }
+        self.accessible_math(ui, response.id);
     }
 }

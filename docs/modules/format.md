@@ -2,6 +2,9 @@
 
 ## 职责
 
+阶段 0 source-reconcile 在 Raw 转换前增加保守的片段分隔符检查；不完整片段保持草稿，
+正文和历史不变。真实 LaTeX/Typst UI 证据及完整语法解析的边界见[报告 0021](../spikes/0021-native-edit-acceptance.md)。
+
 定义 FormatAdapter、调度解析与增量重解析、统一符号/依赖/诊断、管理 CST/SDG 到转换 IR 的投影、
 目标生成、生成源码 reconcile、导出报告、Copy As 和 capability registry。
 
