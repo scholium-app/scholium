@@ -17,6 +17,9 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 | [0003：全栈验证范围与 WASM 优先兼容](0003-wasm-and-stack-validation.md) | Accepted | 目标与验证方向已确认，具体库与浏览器发行未选定 |
 | [0004：项目许可证](0004-project-license.md) | Accepted | 采用 MIT OR Apache-2.0 双许可，依赖许可政策由 `cargo deny` 强制 |
 | [0005：允许 Apache-2.0 WITH LLVM-exception](0005-llvm-exception-license.md) | Accepted | 该例外权限严格宽于 Apache-2.0，加入允许清单；`deny.toml` 已建 |
+| [0006：原生桌面框架选型 —— egui](0006-native-ui-framework.md) | Accepted | 采用 egui/eframe 0.36.2；Iced 缺可访问性、GPUI 缺文本输入控件、EUI-NEO 不投入、Slint 被许可证阻断 |
+| [0007：Typst 生成、编译集成与位置映射](0007-typst-integration.md) | Accepted | 锚点 + `Introspector::position` 双向定位；持久 World；异步编译 + 结果门；锁定 typst 0.15.1 |
+| [0008：源码 reconcile 策略与构建工具链隔离](0008-reconcile-and-toolchain-isolation.md) | Accepted | 行+范围归因、不确定即冲突、Raw 逐字保留；LaTeX 必须跑在 OS 级沙箱内 |
 
 ## 待补（阶段出口依赖）
 
@@ -25,9 +28,7 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 
 | 主题 | 关闭阶段 | 依赖验证项 | 状态 |
 |---|---|---|---|
-| 原生桌面框架、结构编辑与源码编辑内核最终选型 | 0 | 阶段 0 第 1 项 | 缺文件 |
-| Typst generator、编译集成与 SourceMap | 0 | 阶段 0 第 2 项 | 缺文件 |
-| LaTeX/Typst parser、reconcile 策略与构建工具链 | 0 | 阶段 0 第 3、7 项 | 缺文件 |
+| LaTeX/Typst parser 的正式实现（本阶段只用行+范围归因） | 0 | 阶段 0 第 3、7 项 | 部分关闭：策略已定（ADR 0008），解析器待实现 |
 | CRDT engine（Loro → Yrs → Automerge） | 0 | 阶段 0 第 4 项 | 缺文件 |
 | WAL、快照与内容寻址格式 | 0 | 阶段 0 第 5 项 | 缺文件 |
 | 原生语义文档持久化 schema | 0 | 阶段 0 第 5 项 | 缺文件 |
