@@ -95,8 +95,8 @@
   | **受限挂载集**：`/usr` `/lib` `/lib64` `/bin` `/etc/fonts` `/etc/texmf` `/var/lib/texmf` `/etc/ld.so.cache` `/etc/passwd` + 工作目录 | **失败** | 不可读（符合判据） |
 
   受限集失败时逐个补挂 `/etc`（完整）、`/var`、`/run`、`/sys`、`/usr/local`、整个 `$HOME`、
-  `~/.texlive`、`~/.cache/fontconfig`、`/etc/nsswitch.conf`、`/etc/localtime` **都不能让它编译成功**，
-  缺失依赖尚未定位。
+  `~/.texlive`、`~/.cache/fontconfig`、`/etc/nsswitch.conf`、`/etc/localtime` **都不能让它编译成功**；
+  也排除了"工作目录只读"这一嫌疑（改成可写绑定后仍然失败）。缺失依赖尚未定位。
 
   排查中还踩到一个**我自己的挂载顺序错误**，值得记下来：bwrap 在**进入命名空间后**解析挂载源路径，
   所以 `--tmpfs /tmp` 之后再用 `/tmp/...` 当源，源路径已被遮蔽、绑定静默失效。
