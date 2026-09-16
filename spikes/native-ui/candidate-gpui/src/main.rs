@@ -61,14 +61,15 @@ impl SpikeView {
             container = match item {
                 Item::Text {
                     x,
-                    y,
+                    baseline,
                     size,
                     content,
                 } => container.child(
                     div()
                         .absolute()
                         .left(px(*x))
-                        .top(px(*y))
+                        // 布局给的是基线，绘制需要上沿。
+                        .top(px(Item::top_of(*baseline, *size)))
                         .text_size(px(*size))
                         .font_family(CJK_FAMILY)
                         .child(SharedString::from(content.clone())),

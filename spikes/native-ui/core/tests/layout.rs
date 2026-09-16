@@ -65,10 +65,10 @@ fn texts(layout: &scholium_spike_core::Layout) -> Vec<(f32, f32, f32, String)> {
         .filter_map(|item| match item {
             Item::Text {
                 x,
-                y,
+                baseline,
                 size,
                 content,
-            } => Some((*x, *y, *size, content.clone())),
+            } => Some((*x, *baseline, *size, content.clone())),
             Item::Rule { .. } => None,
         })
         .collect()
@@ -112,14 +112,14 @@ fn fraction_draws_a_bar_between_numerator_and_denominator() {
 
     let (bar_y, bar_width, _) = bars[0];
     assert!(
-        numerator_item.1 + numerator_item.2 <= bar_y,
-        "分子必须在分数线之上：分子底 {} 线 {}",
-        numerator_item.1 + numerator_item.2,
+        numerator_item.1 < bar_y,
+        "分子基线必须在分数线之上：分子 {} 线 {}",
+        numerator_item.1,
         bar_y
     );
     assert!(
-        denominator_item.1 >= bar_y,
-        "分母必须在分数线之下：分母顶 {} 线 {}",
+        denominator_item.1 > bar_y,
+        "分母基线必须在分数线之下：分母 {} 线 {}",
         denominator_item.1,
         bar_y
     );
@@ -149,12 +149,31 @@ fn script_raises_superscript_and_lowers_subscript() {
             .cloned()
             .unwrap_or_else(|| panic!("缺少文本 {content}"))
     };
-    let (_, base_y, base_size, _) = find("x");
-    let (_, sub_y, sub_size, _) = find("1");
-    let (_, sup_y, sup_size, _) = find("2");
+    let (_, base_baseline, base_size, _) = find("x");
+    let (_, sub_baseline, sub_size, _) = find("1");
+    let (_, sup_baseline, sup_size, _) = find("2");
 
-    assert!(sup_y < base_y, "上标必须高于底：上标 {sup_y} 底 {base_y}");
-    assert!(sub_y > base_y, "下标必须低于底：下标 {sub_y} 底 {base_y}");
+    assert!(
+        sup_baseline < base_baseline,
+        "上标基线必须高于底：上标 {sup_baseline} 底 {base_baseline}"
+    );
+    assert!(
+        sub_baseline > base_baseline,
+        "下标基线必须低于底：下标 {sub_baseline} 底 {base_baseline}"
+    );
+    // 排版惯例：上标抬约 0.42em、下标降约 0.20em，不能偏离到一整行。
+    let sup_shift = base_baseline - sup_baseline;
+    let sub_shift = sub_baseline - base_baseline;
+    assert!(
+        (sup_shift - 0.42 * base_size).abs() < 0.5,
+        "上标抬高应为 0.42em（{}），实测 {sup_shift}",
+        0.42 * base_size
+    );
+    assert!(
+        (sub_shift - 0.20 * base_size).abs() < 0.5,
+        "下标降低应为 0.20em（{}），实测 {sub_shift}",
+        0.20 * base_size
+    );
     assert!(
         sub_size < base_size && sup_size < base_size,
         "上下标字号必须小于底：{sub_size} / {sup_size} vs {base_size}"

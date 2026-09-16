@@ -225,12 +225,13 @@ impl SpikeApp {
             match item {
                 Item::Text {
                     x,
-                    y,
+                    baseline,
                     size,
                     content,
                 } => {
                     painter.text(
-                        origin + egui::vec2(*x, *y),
+                        // 布局给的是基线，绘制需要上沿；换算走 core 的统一约定。
+                        origin + egui::vec2(*x, Item::top_of(*baseline, *size)),
                         egui::Align2::LEFT_TOP,
                         content,
                         egui::FontId::proportional(*size),

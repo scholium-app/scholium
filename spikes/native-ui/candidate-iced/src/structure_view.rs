@@ -35,13 +35,14 @@ impl<Message> canvas::Program<Message> for StructureView<'_> {
             match item {
                 Item::Text {
                     x,
-                    y,
+                    baseline,
                     size,
                     content,
                 } => {
                     frame.fill_text(canvas::Text {
                         content: content.clone(),
-                        position: Point::new(*x, *y),
+                        // 布局给的是基线，绘制需要上沿；换算必须走 core 的统一约定。
+                        position: Point::new(*x, Item::top_of(*baseline, *size)),
                         max_width: bounds.width,
                         color: self.color,
                         size: (*size).into(),
