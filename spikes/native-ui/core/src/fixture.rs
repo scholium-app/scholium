@@ -104,3 +104,34 @@ fn child(core: &Editor, node: NodeId, slot: usize, index: usize) -> NodeId {
         .get(index)
         .expect("子节点存在")
 }
+
+/// 注入一个较大的文档：`paragraphs` 个段落，每段一段文本加一个行内公式。
+///
+/// 用于测量布局与帧开销随文档规模的变化。返回最后一个段落。
+pub fn build_large(core: &mut Editor, paragraphs: usize) -> NodeId {
+    let root = core.document().root();
+    let mut last = child(core, root, 0, 0);
+    for index in 0..paragraphs {
+        let paragraph = create(core, root, 0, index + 1, NodeKind::Paragraph);
+        // 容器槽位不自动填充占位节点，这里显式建文本叶子。
+        let text_node = create(core, paragraph, 0, 0, NodeKind::Text);
+        type_text(
+            core,
+            text_node,
+            &format!("第 {index} 段：这是一段用于测量布局开销的正文，包含中英文与标点。"),
+        );
+        let math = create(core, paragraph, 0, 1, NodeKind::Math);
+        let fraction = create(core, math, 0, 0, NodeKind::Fraction);
+        let numerator = child(core, fraction, 0, 0);
+        let denominator = child(core, fraction, 1, 0);
+        type_text(core, numerator, "a");
+        type_text(core, denominator, "b");
+        let script = create(core, math, 0, 1, NodeKind::Script);
+        let base = child(core, script, 0, 0);
+        let superscript = child(core, script, 2, 0);
+        type_text(core, base, "x");
+        type_text(core, superscript, "2");
+        last = paragraph;
+    }
+    last
+}

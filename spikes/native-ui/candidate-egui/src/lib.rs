@@ -545,4 +545,10 @@ impl SpikeApp {
     pub fn structure_origin(&self) -> egui::Pos2 {
         self.structure_origin
     }
+
+    /// 测试与基准用：替换核心文档并立即重算布局。
+    pub fn replace_document_for_test(&mut self, core: Editor) {
+        self.core = core;
+        self.layout = layout_document(self.core.document());
+    }
 }
