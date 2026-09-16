@@ -35,7 +35,8 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 | CRDT 引擎预筛 | [0013-crdt-prescreen.md](0013-crdt-prescreen.md) | Loro 1.16 / Yrs 0.27 / Automerge 0.11 均为 MIT 且无 C 依赖。 |
 | CRDT 引擎对比 | [0014-crdt-engines.md](0014-crdt-engines.md) | **结论 Pass，选定 Loro 1.16.0**：只有它同时具备可移动树与能过滤远端输入的内置 undo，且都端到端跑通；三者收敛但并发插入次序不同。**性能未对比**，留待阶段 1 首个迭代。 |
 | 第 4 项 CRDT 赛马 | [0007-crdt-race.md](0007-crdt-race.md) | **结论 Pass（自研最小实现）**：136 用例逐条通过——收敛 14/14、本地 undo 不回滚远端 5/5、快照 5/5、10 万动作 3.7 s（重复运行 2.8–6.0 s；堆增量 87.5 MiB）、110 轮随机化全部收敛。未覆盖第三方引擎选型与树语义的边界情形。 |
-| 第 5、7 项 | 进行中 | 见下方各报告 |
+| 第 5 项 构建/恢复 | [0008-build-recovery.md](0008-build-recovery.md) | **结论 Pass（机制）**：15 个用例组全通过（隔离构建、WAL 正常/截断/损坏恢复、外部冲突拒写、169 条随机截断断言）；SIGKILL 撕裂恢复到记录边界。缺口：Typst 未产出 PDF、夹具仅 1 页、未覆盖产品真实写盘路径。 |
+| 第 7 项 | 进行中 | 见报告 0010 |
 
 **测试前提**：无障碍测试必须在会话 `org.a11y.Status IsEnabled = true` 下进行。
 关闭时 AccessKit 类框架不会注册，结果是**假阴性**——本目录早期记录曾因此出错，已在报告 0001/0002 更正。
