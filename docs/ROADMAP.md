@@ -14,9 +14,10 @@
    进度见[报告 0001](spikes/0001-native-ui-iced.md)：**Iced 结论 Fail**（无 accesskit）；
    [报告 0002](spikes/0002-native-ui-gpui.md)：**GPUI 结论 Fail**（同样无无障碍，且核心没有文本输入控件）；
    [报告 0003](spikes/0003-native-ui-prescreen.md)：EUI-NEO 无无障碍不投入、Slint 被许可证政策阻断；
-   [报告 0004](spikes/0004-native-ui-egui.md)：**egui 结论 Blocked（首个无硬性 Fail）**——可访问性通过，
-   输入法接线与自绘结构的可访问描述待完成。
-   无障碍测试必须先启用会话开关（`org.a11y.Status IsEnabled`），否则是假阴性。
+   [报告 0004](spikes/0004-native-ui-egui.md)：**egui 结论 Blocked（首个无硬性 Fail）**——可访问性与
+   输入法均实测可用，是目前唯一同时具备两者的候选；结构编辑交互、性能与预览定位未验收。
+   无障碍测试必须先启用会话开关（`org.a11y.Status IsEnabled`），否则是假阴性；
+   输入法的自动注入在共享会话里不稳定，只能作参考，不能据一次运行否定框架。
 2. Typst 映射 spike：20 页 SDG 生成 Typst、增量编译、NodeId ↔ glyph/preview 双向定位。
 3. 源码 reconcile spike：同一小文档生成 LaTeX/Typst，手改受支持结构后可靠映射回 SDG；未知语法变 Raw。
 4. CRDT 赛马：共享树和共享文本的两人离线编辑、本地 undo、快照与 10 万次动作。
