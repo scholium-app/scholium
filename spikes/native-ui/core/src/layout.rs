@@ -247,7 +247,7 @@ pub fn layout_node(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
             slot_layouts(doc, node, 0, metrics.scaled(1.3)),
             metrics.block_gap,
         ),
-        NodeKind::Math => inline(slot_layouts(doc, node, 0, metrics), 0.0),
+        NodeKind::Math => inline(slot_layouts(doc, node, 0, metrics), metrics.font_size * 0.2),
         NodeKind::Fraction => fraction(doc, node, metrics),
         NodeKind::Sqrt => sqrt(doc, node, metrics),
         NodeKind::Script => script(doc, node, metrics),
@@ -325,6 +325,7 @@ fn drop_to_origin(layout: &mut Layout) {
         let dy = -lowest;
         shift(&mut layout.items, 0.0, dy);
         layout.baseline += dy;
+        layout.height += dy;
     }
 }
 
@@ -384,23 +385,22 @@ fn slot_layouts(doc: &Document, node: NodeId, slot: usize, metrics: Metrics) -> 
         .collect()
 }
 
+fn slot_inline(doc: &Document, node: NodeId, slot: usize, metrics: Metrics) -> Layout {
+    inline(slot_layouts(doc, node, slot, metrics), 0.0)
+}
+
 /// 分数：分子在上、分数线居中、分母在下。
 ///
 /// 行内基线取**数学轴**（分数线中心）下移 0.25em 的位置，使分数与相邻文本对齐。
 fn fraction(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
-    let numerator = slot_layouts(doc, node, 0, metrics)
-        .into_iter()
-        .next()
-        .unwrap_or_default();
-    let denominator = slot_layouts(doc, node, 1, metrics)
-        .into_iter()
-        .next()
-        .unwrap_or_default();
+    let numerator = slot_inline(doc, node, 0, metrics);
+    let denominator = slot_inline(doc, node, 1, metrics);
 
     let width = numerator
         .width
         .max(denominator.width)
-        .max(metrics.font_size * 0.8);
+        .max(metrics.font_size * 0.8)
+        + metrics.line_gap;
     let bar_y = numerator.height + metrics.line_gap;
     let denominator_y = bar_y + metrics.rule_thickness + metrics.line_gap;
 
@@ -435,10 +435,7 @@ fn fraction(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
 
 /// 根式：上横线 + 根号 + 被开方数，三者基线一致。
 fn sqrt(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
-    let radicand = slot_layouts(doc, node, 0, metrics)
-        .into_iter()
-        .next()
-        .unwrap_or_default();
+    let radicand = slot_inline(doc, node, 0, metrics);
     let sign = text_layout("\u{221A}", metrics);
     let sign_width = sign.width;
     let overlay = metrics.rule_thickness + metrics.line_gap * 0.5;
@@ -449,7 +446,7 @@ fn sqrt(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
     let body_height = body.height + overlay;
 
     let mut sign_items = sign.items;
-    shift(&mut sign_items, 0.0, overlay);
+    shift(&mut sign_items, 0.0, body_baseline - sign.baseline);
 
     let mut items = vec![Item::Rule {
         x: sign_width,
@@ -473,19 +470,10 @@ fn sqrt(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
 /// 上标基线抬 `0.42em`、下标基线降 `0.20em`（相对底的字号），这是排版惯例值，
 /// 不再是"看起来差不多"的临时常数。
 fn script(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
-    let base = slot_layouts(doc, node, 0, metrics)
-        .into_iter()
-        .next()
-        .unwrap_or_default();
+    let base = slot_inline(doc, node, 0, metrics);
     let small = metrics.scaled(metrics.script_scale);
-    let subscript = slot_layouts(doc, node, 1, small)
-        .into_iter()
-        .next()
-        .unwrap_or_default();
-    let superscript = slot_layouts(doc, node, 2, small)
-        .into_iter()
-        .next()
-        .unwrap_or_default();
+    let subscript = slot_inline(doc, node, 1, small);
+    let superscript = slot_inline(doc, node, 2, small);
 
     let base_width = base.width;
     let base_height = base.height;
@@ -534,10 +522,7 @@ fn script(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
 /// 定界符：左右括号包裹内容。
 fn delimited(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
     let open = text_layout("(", metrics);
-    let body = slot_layouts(doc, node, 0, metrics)
-        .into_iter()
-        .next()
-        .unwrap_or_default();
+    let body = slot_inline(doc, node, 0, metrics);
     let close = text_layout(")", metrics);
     inline(vec![open, body, close], metrics.font_size * 0.15)
 }

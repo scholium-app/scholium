@@ -1,0 +1,10 @@
+[
+  {
+    "case": "multipage_preview",
+    "result": "Pass"
+  },
+  {
+    "case": "frame_cpu_budget",
+    "result": "Pass"
+  }
+]

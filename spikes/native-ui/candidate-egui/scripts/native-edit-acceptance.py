@@ -16,6 +16,8 @@ ROOT = Path(__file__).resolve().parents[4]
 os.chdir(ROOT)
 OUT = Path(sys.argv[1] if len(sys.argv) > 1 else '/tmp/scholium-native-edit').resolve()
 OUT.mkdir(parents=True, exist_ok=True)
+BINARY = Path(os.environ.get('SCHOLIUM_SPIKE_BINARY',
+              'spikes/native-ui/candidate-egui/target/debug/scholium-spike-egui')).resolve()
 
 
 def call(*args):
@@ -38,7 +40,7 @@ class Window:
         self.path = OUT / f'{name}.log'
         self.log = self.path.open('w')
         self.process = subprocess.Popen(
-            ['spikes/native-ui/candidate-egui/target/debug/scholium-spike-egui'],
+            [str(BINARY)],
             stdout=self.log, stderr=self.log)
         self.app = None
 
@@ -214,7 +216,8 @@ def slot_selection():
         assert w.body().getNSelections() == 1, 'slot selection missing from AT-SPI'
         start, end = w.body().getSelection(0)
         assert start == 0 and end > 0, (start, end)
-        actions = w.history()
+        call('niri', 'msg', 'action', 'screenshot-window', '--id', str(w.window['id']),
+             '--path', str(OUT / 'slot-selection-highlight.png'), '-p', 'false')
         w.type('REPLACED')
         assert w.text().startswith('REPLACED')
         w.key(29, 44)
@@ -265,6 +268,20 @@ def multipage_preview():
         for key, value in [('SCHOLIUM_SPIKE_PARAGRAPHS', saved_count), ('SCHOLIUM_SPIKE_FRAME_METRICS', saved_metrics)]:
             if value is None: os.environ.pop(key, None)
             else: os.environ[key] = value
+
+
+def frame_cpu_measurement():
+    records = re.findall(
+        r'\[frame-cpu\] samples=(\d+) p95_ms=([\d.]+) max_ms=([\d.]+) excludes_gpu_present=true',
+        (OUT / 'multipage-preview.log').read_text())
+    assert records, 'no real-window CPU frame samples recorded'
+    windows = [dict(samples=int(count), p95_ms=float(p95), max_ms=float(peak))
+               for count, p95, peak in records]
+    (OUT / 'frame-cpu.json').write_text(json.dumps({
+        'scope': '256 paragraphs; AT-SPI enabled; eframe CPU timing; excludes GPU presentation',
+        'binary': str(BINARY),
+        'result': 'Measured', 'windows': windows,
+    }, indent=2))
 
 
 def unicode_clipboard():
@@ -394,6 +411,15 @@ try:
             result = {'case': case.__name__, 'result': 'Fail', 'reason': f'{type(error).__name__}: {error}'}
         results.append(result)
         print(json.dumps(result, ensure_ascii=False), flush=True)
+        if case is multipage_preview and result['result'] == 'Pass':
+            try:
+                frame_cpu_measurement()
+                timing = {'case': 'frame_cpu_measurement', 'result': 'Pass'}
+            except Exception as error:
+                timing = {'case': 'frame_cpu_measurement', 'result': 'Fail',
+                          'reason': f'{type(error).__name__}: {error}'}
+            results.append(timing)
+            print(json.dumps(timing, ensure_ascii=False), flush=True)
 finally:
     call('fcitx5-remote', '-s', ime_name or 'keyboard-us')
     if ime_state in ['1', '2']:

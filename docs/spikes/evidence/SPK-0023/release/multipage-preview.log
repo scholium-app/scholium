@@ -1,0 +1,8 @@
+[event] 启动完成 | revision 2578 | 核心动作 2577 | 预编辑事件 0 | IME 提交 0
+[ime] 输入法锚点 [[8.0 122.1] - [9.5 146.1]]
+[frame-cpu] samples=120 p95_ms=9.148 max_ms=17.763 excludes_gpu_present=true
+[frame-cpu] samples=120 p95_ms=8.636 max_ms=9.833 excludes_gpu_present=true
+[event] 预览定位 → NodeId(150) | revision 2578 | 核心动作 2577 | 预编辑事件 0 | IME 提交 0
+[frame-cpu] samples=120 p95_ms=8.770 max_ms=11.716 excludes_gpu_present=true
+[frame-cpu] samples=120 p95_ms=8.970 max_ms=10.114 excludes_gpu_present=true
+[frame-cpu] samples=120 p95_ms=8.817 max_ms=9.304 excludes_gpu_present=true

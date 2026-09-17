@@ -155,12 +155,21 @@ impl SpikeApp {
                     {
                         continue;
                     }
-                    painter.text(
-                        // 布局给的是基线，绘制需要上沿；换算走 core 的统一约定。
-                        origin + egui::vec2(*x, Item::top_of(*baseline, *size)),
-                        egui::Align2::LEFT_TOP,
-                        content,
+                    let galley = painter.layout_no_wrap(
+                        content.clone(),
                         egui::FontId::proportional(*size),
+                        color,
+                    );
+                    // The selected font's baseline need not equal the layout's
+                    // approximate ascent, especially when CJK fallback is used.
+                    let font_baseline = galley
+                        .rows
+                        .first()
+                        .and_then(|row| row.glyphs.first().map(|glyph| row.pos.y + glyph.pos.y))
+                        .unwrap_or(0.0);
+                    painter.galley(
+                        origin + egui::vec2(*x, *baseline - font_baseline),
+                        galley,
                         color,
                     );
                 }

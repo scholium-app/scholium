@@ -1,0 +1,8 @@
+[event] 启动完成 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[ime] 输入法锚点 [[8.0 122.1] - [9.5 146.1]]
+[event] 焦点 → 7 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[event] 焦点 → 6 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[event] core：包裹为 Sqrt | revision 20 | 核心动作 18 | 预编辑事件 0 | IME 提交 0
+[event] core：解除结构 | revision 21 | 核心动作 19 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："Q" | revision 22 | 核心动作 20 | 预编辑事件 0 | IME 提交 0
+[event] core：撤销 ActionId(20)，删除 1 字符 | revision 23 | 核心动作 21 | 预编辑事件 0 | IME 提交 0

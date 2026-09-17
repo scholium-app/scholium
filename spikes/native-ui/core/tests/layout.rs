@@ -8,6 +8,59 @@ use scholium_spike_core::{ActorId, Editor, Intent, NodeId, NodeKind, RemoteEdit,
 
 const FIXTURE: ActorId = ActorId(99);
 
+#[test]
+fn math_slots_render_every_child() {
+    for kind in [
+        NodeKind::Fraction,
+        NodeKind::Sqrt,
+        NodeKind::Script,
+        NodeKind::Delimited,
+    ] {
+        let mut editor = build_editor();
+        let paragraph = slot_child(&editor, editor.document().root(), 0, 0);
+        let math = slot_child(&editor, paragraph, 0, 1);
+        let structure = create(&mut editor, math, 0, 0, kind);
+        let slots = editor.document().node(structure).expect("node").slots.len();
+        for slot in 0..slots {
+            let first = slot_child(&editor, structure, slot, 0);
+            type_text(&mut editor, first, "a");
+            let second = create(&mut editor, structure, slot, 1, NodeKind::Text);
+            type_text(&mut editor, second, "WIDE");
+        }
+        let layout = layout_node(editor.document(), structure, Metrics::default());
+        assert_eq!(
+            texts(&layout)
+                .iter()
+                .filter(|item| item.3 == "WIDE")
+                .count(),
+            slots
+        );
+    }
+}
+
+#[test]
+fn nested_sqrt_aligns_sign_with_fraction_baseline() {
+    let mut editor = build_editor();
+    let paragraph = slot_child(&editor, editor.document().root(), 0, 0);
+    let math = slot_child(&editor, paragraph, 0, 1);
+    let sqrt = create(&mut editor, math, 0, 0, NodeKind::Sqrt);
+    let fraction = create(&mut editor, sqrt, 0, 1, NodeKind::Fraction);
+    let numerator = slot_child(&editor, fraction, 0, 0);
+    let denominator = slot_child(&editor, fraction, 1, 0);
+    type_text(&mut editor, numerator, "a");
+    type_text(&mut editor, denominator, "b");
+    let layout = layout_node(editor.document(), sqrt, Metrics::default());
+    let sign = texts(&layout)
+        .into_iter()
+        .find(|item| item.3 == "\u{221a}")
+        .expect("radical");
+    assert!((sign.1 - layout.baseline).abs() < 0.01);
+    assert!(
+        layout.caret(denominator, 1).is_some(),
+        "second slot child must be visible"
+    );
+}
+
 fn build_editor() -> Editor {
     let mut editor = Editor::new();
     let paragraph = {

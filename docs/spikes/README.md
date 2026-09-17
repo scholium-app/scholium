@@ -91,3 +91,4 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 | 正文可访问文本与滚动视口 | [0020-body-accessibility-viewport.md](SPK-0020-body-accessibility-viewport.md) | Pass（本报告接口与视口范围）；Fail（完整编辑器共同验收）。 |
 | 原生编辑完整清单复核 | [0021-native-edit-acceptance.md](SPK-0021-native-edit-acceptance.md) | Fail（整体）；六组限定桌面流程通过，完整共同清单仍有缺口。 |
 | 槽位选区与整节点替换 | [0022-slot-selection.md](SPK-0022-slot-selection.md) | 核心与 headless 回归通过；新增真实窗口路径与完整反馈未验收。 |
+| 结构排版与多页桌面复测 | [0023-native-layout-preview.md](SPK-0023-native-layout-preview.md) | 槽位/多页交互通过；修正基线与槽位漏画，性能仅报告实测，完整排版与共同验收未关闭。 |
