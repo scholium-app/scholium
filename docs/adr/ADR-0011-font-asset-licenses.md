@@ -4,7 +4,7 @@
 - 日期：2026-09-16
 - 决策者：ation_ciger
 - 影响模块：依赖许可门禁、字体与内容资产登记、安装包体积
-- 关联：[ADR 0004 项目许可证](ADR-0004-project-license.md)、[ADR 0006 原生桌面框架](ADR-0006-native-ui-framework.md)、报告 [0012](../spikes/0012-exit-criteria.md)
+- 关联：[ADR 0004 项目许可证](ADR-0004-project-license.md)、[ADR 0006 原生桌面框架](ADR-0006-native-ui-framework.md)、报告 [0012](../spikes/SPK-0012-exit-criteria.md)
 
 ## 背景
 

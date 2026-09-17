@@ -1,6 +1,6 @@
 # Spike 0021：原生编辑完整清单复核
 
-> **有效性（2026-09-17 登记）**：原生编辑完整清单的时点复核（整体 Fail）。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：原生编辑完整清单的时点复核（整体 Fail）。阶段 0 当前判定见 [报告 0012](SPK-0012-exit-criteria.md)。
 
 - 日期：2026-09-17；基线 `c3552e6` 加本轮修复。
 - **整体结论：Fail。** 已实现的六组桌面流程通过，但共同验收清单仍有缺失能力，不能宣布原生编辑全部通过。
@@ -29,7 +29,7 @@
 
 ## 桌面执行证据
 
-[六组结果](evidence/0021/results.json) 对应脚本的**限定场景**，全部通过并不等于上表十项全过：
+[六组结果](evidence/SPK-0021/results.json) 对应脚本的**限定场景**，全部通过并不等于上表十项全过：
 
 1. `ime`：`nihao` 预编辑，正文和动作计数不变；Escape 取消；再次输入并空格选词得到“你好”，仅一个提交动作；`ni` 尚在组合时切源码，通知平台中断，源码不会收到旧候选。
 2. `source_dialects`：LaTeX 和 Typst 分别在开头输入 CHECK 并应用；插入 `$broken(` 后拒绝应用，草稿保留；尝试切 LaTeX 仍保持 Typst 草稿。
@@ -38,9 +38,9 @@
 5. `pointer_selection`：真实按下/移动/释放从正文开头选到分子 a，读回偏移 0–8；Ctrl+X/Ctrl+Z；长文本输入使光标自动进入视口，再通过水平滚轮改变屏幕字符坐标。
 6. `unicode_clipboard`：系统粘贴 `中👩‍💻é`，三次 Backspace 分别删组合字素、完整 ZWJ emoji、中文，最终恢复原正文；原文本剪贴板只在内存备份并恢复，不写入证据。
 
-对应 [IME 日志](evidence/0021/ime.log)、[IME 截图](evidence/0021/ime.png)、
-[数学对象树](evidence/0021/accessibility.json)、[鼠标日志](evidence/0021/pointer.log)、
-[滚动坐标](evidence/0021/scroll.json)、[禁用状态差异](evidence/0021/disabled-state.json)。
+对应 [IME 日志](evidence/SPK-0021/ime.log)、[IME 截图](evidence/SPK-0021/ime.png)、
+[数学对象树](evidence/SPK-0021/accessibility.json)、[鼠标日志](evidence/SPK-0021/pointer.log)、
+[滚动坐标](evidence/SPK-0021/scroll.json)、[禁用状态差异](evidence/SPK-0021/disabled-state.json)。
 脚本截图只截被测进程；临时启用无障碍/ydotool，退出恢复此前配置与输入法状态。
 绝对指针设备在用后销毁，不修改用户 niri 鼠标加速配置。
 
@@ -61,7 +61,7 @@
 10 万行夹具为 `source 0123456789\n` 重复 100000 次，约 1.8 MB；先布局，再输入 X，随后 30 次独立 y 编辑帧。
 release 首次布局 52.28 ms，首个编辑帧 56.35 ms，后续编辑帧 p95 32.25 ms，进程 VmHWM 44352 kB。
 这是当前机器的**无窗口逻辑帧**，不含 GPU、AT-SPI、磁盘打开或真实滚动，不拿它关闭呈现门禁。
-[完整基准日志](evidence/0021/source-100k-release.log)。
+[完整基准日志](evidence/SPK-0021/source-100k-release.log)。
 
 - egui 常规测试 **29 通过、2 ignored**；其中 10 万行 benchmark 已按上述方式单独运行，另一个为既有预览集成测试。
 - core **38/38**；source-reconcile 事务 **3/3**，两方言命令行夹具 **16/16**。

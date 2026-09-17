@@ -1,9 +1,9 @@
 # Spike 0004：原生 UI 候选 — egui
 
-> **有效性（2026-09-17 登记）**：选定候选的原始验收证据；选型由 [ADR 0006](../adr/ADR-0006-native-ui-framework.md) 固定，后续能力进展见 [报告 0016](0016-working-tree-status.md) 与 [报告 0021](0021-native-edit-acceptance.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：选定候选的原始验收证据；选型由 [ADR 0006](../adr/ADR-0006-native-ui-framework.md) 固定，后续能力进展见 [报告 0016](SPK-0016-working-tree-status.md) 与 [报告 0021](SPK-0021-native-edit-acceptance.md)。阶段 0 当前判定见 [报告 0012](SPK-0012-exit-criteria.md)。
 
 > 历史记录：以下保留该轮验证结果。2026-09-16 工作区后续实现与复测见
-> [报告 0016](0016-working-tree-status.md)，当前出口判定见[报告 0012](0012-exit-criteria.md)。
+> [报告 0016](SPK-0016-working-tree-status.md)，当前出口判定见[报告 0012](SPK-0012-exit-criteria.md)。
 
 - 结论：**通过共同验收的可验证部分**（可访问性与输入法均实测可用；选区与增量布局未做，见文末「第 1 项结论」）
 - 对应验证项：[路线图阶段 0 第 1 项](../plan/ROADMAP.md)
@@ -18,7 +18,7 @@
 
 按验证计划第 1 节，末组"根据前三者的缺口决定先验证哪个"。前三者（含预筛的 EUI-NEO）在
 **同一处**缺口上一致：都不具备可访问性。按计划自身的规则，末组优先验证具备该能力的 egui。
-预筛依据见 [报告 0003](0003-native-ui-prescreen.md)。
+预筛依据见 [报告 0003](SPK-0003-native-ui-prescreen.md)。
 
 ## 环境与方法
 

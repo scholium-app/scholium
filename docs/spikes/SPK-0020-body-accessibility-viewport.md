@@ -1,6 +1,6 @@
 # Spike 0020：正文可访问文本、选区与滚动视口
 
-> **有效性（2026-09-17 登记）**：候选实现的时点复核，结论限于本报告的接口与视口范围。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：候选实现的时点复核，结论限于本报告的接口与视口范围。阶段 0 当前判定见 [报告 0012](SPK-0012-exit-criteria.md)。
 
 - 日期：2026-09-16；基线 `56acce6` 加本轮修改。
 - 平台/版本：Arch Linux / niri Wayland，eframe/egui 0.36.2、AccessKit 0.24.1；未新增依赖。
@@ -29,9 +29,9 @@ AT-SPI 的 Text 接口可读取文本、光标、选区并请求 SetTextSelectio
 | 原生正文剪切/撤销 | Ctrl+X 后正文剩余后续叶子；Ctrl+Z 恢复全部可访问文本；核心历史追加动作 |
 | 后台预览 | 等待预览 revision 与正文一致，剪切/撤销后再等待追平，不硬编码初始 revision |
 
-[选区与前后文本](evidence/0020/body-selection.json)、[AT-SPI 接口](evidence/0020/a11y.json)、
-[事件日志](evidence/0020/app.log)、[最终窗口](evidence/0020/window.png)、
-[状态文本](evidence/0020/interaction.txt)。截图仅包含被测进程的窗口。
+[选区与前后文本](evidence/SPK-0020/body-selection.json)、[AT-SPI 接口](evidence/SPK-0020/a11y.json)、
+[事件日志](evidence/SPK-0020/app.log)、[最终窗口](evidence/SPK-0020/window.png)、
+[状态文本](evidence/SPK-0020/interaction.txt)。截图仅包含被测进程的窗口。
 
 ## 复现
 

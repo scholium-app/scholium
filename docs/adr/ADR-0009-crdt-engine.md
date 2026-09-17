@@ -4,7 +4,7 @@
 - 日期：2026-09-16
 - 决策者：ation_ciger
 - 影响模块：协同编辑、三层历史、持久化、同步协议
-- 关联：[ADR 0001 团队单一源码语言与混合项目](ADR-0001-mixed-source-team-editing.md)、报告 [0007](../spikes/0007-crdt-race.md)、[0013](../spikes/0013-crdt-prescreen.md)
+- 关联：[ADR 0001 团队单一源码语言与混合项目](ADR-0001-mixed-source-team-editing.md)、报告 [0007](../spikes/SPK-0007-crdt-race.md)、[0013](../spikes/SPK-0013-crdt-prescreen.md)
 
 ## 背景
 

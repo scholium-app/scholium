@@ -1,9 +1,9 @@
 # Spike 0010：阶段 0 第 7 项 — 混合构建
 
-> **有效性（2026-09-17 登记）**：阶段 0 第 7 项的原始证据，结论限于已测夹具与宿主范围；契约见 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)，后续隔离进展见 [报告 0017](0017-mixed-build-isolation.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：阶段 0 第 7 项的原始证据，结论限于已测夹具与宿主范围；契约见 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)，后续隔离进展见 [报告 0017](SPK-0017-mixed-build-isolation.md)。阶段 0 当前判定见 [报告 0012](SPK-0012-exit-criteria.md)。
 
 > 历史记录：以下保留该轮验证结果。2026-09-16 工作区后续实现与复测见
-> [报告 0016](0016-working-tree-status.md)，当前出口判定见[报告 0012](0012-exit-criteria.md)。
+> [报告 0016](SPK-0016-working-tree-status.md)，当前出口判定见[报告 0012](SPK-0012-exit-criteria.md)。
 
 - 结论：**部分 Pass**（六类混用的成功路径与失败阻断在两种宿主下全部实测通过；但嵌入语义、超长文档、
   增量构建等范围明确未做，见[失败与不确定性](#失败与不确定性)）
@@ -340,6 +340,6 @@ pdftotext -f 1 -l 1 spikes/mixed-build/out/T1-longtable-latex/final.pdf -
 
 ## 验证门禁复核（2026-09-16）
 
-见[报告 0015](0015-verification-review.md)：已修复失败断言仍返回退出码 0、未知夹具空跑通过、
+见[报告 0015](SPK-0015-verification-review.md)：已修复失败断言仍返回退出码 0、未知夹具空跑通过、
 `pdfimages` 执行失败被算作零栅格图像的问题，并删除重复的“构建诊断”断言。
 上文历史断言数量包含重复项；当前版本以实际输出为准。这不扩大本报告的支持范围。

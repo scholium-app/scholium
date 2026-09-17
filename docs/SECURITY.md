@@ -19,7 +19,7 @@ ForeignSource 的 LaTeX/Typst 宏、模板、构建桥接和预生成资源都�
 ## 3. 构建隔离
 
 - LaTeX 默认禁止 shell escape；Typst/转换器禁止任意进程调用；所有后端默认禁止网络和 post-build command。
-- **关掉 shell escape 只挡得住命令执行，挡不住读文件——这是实测结论**（[报告 0011](spikes/0011-untrusted-input.md)）。
+- **关掉 shell escape 只挡得住命令执行，挡不住读文件——这是实测结论**（[报告 0011](spikes/SPK-0011-untrusted-input.md)）。
   在默认配置下，不可信 LaTeX 用 `\openin` + `\read` **真的读到了项目外文件**（`/etc/hostname`）；
   并且 TeX 自身的限制项**无效**：`-cnf-line=openin_any=p` 时 `kpsewhich` 显示取值已变，
   运行中的引擎仍然读到了文件（环境变量方式与 `pdflatex` 同样无效）。
@@ -36,9 +36,9 @@ ForeignSource 的 LaTeX/Typst 宏、模板、构建桥接和预生成资源都�
 需要高权限构建的项目使用单独 profile，并在每次首次启用时展示具体能力，不能只给“信任项目”
 一个无限授权开关。
 
-当前验证：Linux 配方的良性编译与隔离见[报告 0016](spikes/0016-working-tree-status.md)，
-普通混合构建 LaTeX 入口的接入与覆盖矩阵见[报告 0017](spikes/0017-mixed-build-isolation.md)。
-[报告 0018](spikes/0018-typst-worker-isolation.md) 将普通混合构建 Typst 编译/导出也移入沙箱 worker，
+当前验证：Linux 配方的良性编译与隔离见[报告 0016](spikes/SPK-0016-working-tree-status.md)，
+普通混合构建 LaTeX 入口的接入与覆盖矩阵见[报告 0017](spikes/SPK-0017-mixed-build-isolation.md)。
+[报告 0018](spikes/SPK-0018-typst-worker-isolation.md) 将普通混合构建 Typst 编译/导出也移入沙箱 worker，
 并用工具文件和运行时资源目录白名单替代整个 `/usr`。可信资源仍是项目根外只读例外；
 宿主侧产物探针、旧恢复实验及总资源配额尚未全部统一。
 

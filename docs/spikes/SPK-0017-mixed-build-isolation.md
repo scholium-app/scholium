@@ -1,10 +1,10 @@
 # Spike 0017：混合构建的 LaTeX 入口隔离
 
-> **有效性（2026-09-17 登记）**：出口条件 6 的过程证据，只作追溯；后续 Typst 侧见 [报告 0018](0018-typst-worker-isolation.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：出口条件 6 的过程证据，只作追溯；后续 Typst 侧见 [报告 0018](SPK-0018-typst-worker-isolation.md)。阶段 0 当前判定见 [报告 0012](SPK-0012-exit-criteria.md)。
 
 - 结论：**Pass（LaTeX 共用入口与相关回归）；阶段 0 条件 6 仍部分满足。**
 - 日期：2026-09-16；基线 `ad38a0d` 加本轮修改。
-- 平台与工具链沿用[报告 0016](0016-working-tree-status.md)：Linux、bubblewrap 0.12.0、TeX Live 2026、Typst 0.15.1。
+- 平台与工具链沿用[报告 0016](SPK-0016-working-tree-status.md)：Linux、bubblewrap 0.12.0、TeX Live 2026、Typst 0.15.1。
 - 对应：路线图第 7 项及出口条件 6；遵循 [ADR 0008](../adr/ADR-0008-reconcile-and-toolchain-isolation.md)，不新增产品架构或正式文件格式。
 
 ## 复现问题与修复
@@ -39,7 +39,7 @@
 | `cargo clippy --release --offline --all-targets -- -D warnings` | 通过 |
 | shell 门禁四场景、shell 语法与改动文件 rustfmt | 通过 |
 
-关键原始日志：[入口回归](evidence/0017/compiler-isolation.log)、[包重建](evidence/0017/packages.log)。
+关键原始日志：[入口回归](evidence/SPK-0017/compiler-isolation.log)、[包重建](evidence/SPK-0017/packages.log)。
 本机其他日志：`/tmp/scholium-stage0.x6IBu6/`（items）、`/tmp/scholium-stage0.0g2ZoJ/`（security）。
 `packages` 在后续仅临时目录权限/函数拆分及符号链接测试调整前通过；核心编译流程一致。
 本轮按影响范围运行分段，没有声称重新获得全量 33/33；脚本因新增 security 检查，全部运行时现在有 33 个检查项。

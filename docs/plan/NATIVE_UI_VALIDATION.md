@@ -1,7 +1,7 @@
 # 原生 UI 验证计划
 
 > 本页是**验证方法与判据**（计划）；其中的状态叙述已移入 [log/stage0-progress.md](../log/stage0-progress.md)。
-> 阶段 0 的**当前逐条判定以[报告 0012](../spikes/0012-exit-criteria.md) 为准**。
+> 阶段 0 的**当前逐条判定以[报告 0012](../spikes/SPK-0012-exit-criteria.md) 为准**。
 
 ## 1. 固定顺序
 

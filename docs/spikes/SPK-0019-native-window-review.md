@@ -1,6 +1,6 @@
 # Spike 0019：真实原生窗口复核
 
-> **有效性（2026-09-17 登记）**：候选实现的时点复核，只作追溯。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：候选实现的时点复核，只作追溯。阶段 0 当前判定见 [报告 0012](SPK-0012-exit-criteria.md)。
 
 - 日期：2026-09-16；基线 `fff6078` 加本轮修复。
 - 结论：**Fail（完整共同验收）；已测源码与预览闭环通过。** 阶段 0 条件 1、3 不升级。
@@ -28,8 +28,8 @@
 
 ## 证据与复现
 
-[窗口截图](evidence/0019/window.png)、[AT-SPI 对象与接口](evidence/0019/a11y.json)、
-[交互后的状态](evidence/0019/interaction.txt)、[核心事件日志](evidence/0019/app.log)。
+[窗口截图](evidence/SPK-0019/window.png)、[AT-SPI 对象与接口](evidence/SPK-0019/a11y.json)、
+[交互后的状态](evidence/SPK-0019/interaction.txt)、[核心事件日志](evidence/SPK-0019/app.log)。
 键盘输入通过 ydotool，每次注入前核验焦点 PID；按钮通过当前测试应用的 AT-SPI Action 操作。
 
 ```bash

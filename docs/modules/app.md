@@ -94,14 +94,14 @@ RequestSourceDialectSwitch 展示待冲刷成员、超时隔离和草稿处置�
 
 ## 阶段 0 窗口证据
 
-[报告 0019](../spikes/0019-native-window-review.md) 记录真实源码/剪贴板/预览闭环，
+[报告 0019](../spikes/SPK-0019-native-window-review.md) 记录真实源码/剪贴板/预览闭环，
 并修复候选窄窗口面板溢出和正文失焦后从无障碍树消失。
-[报告 0020](../spikes/0020-body-accessibility-viewport.md) 补正文 Text/选区操作和双轴视口；
+[报告 0020](../spikes/SPK-0020-body-accessibility-viewport.md) 补正文 Text/选区操作和双轴视口；
 文本叶子按模型前序发布，系统字符偏移转 UTF-8 字节偏移，核心校验字素边界后接受选区。
 真实 AT-SPI 跨节点选区、原生剪切/撤销已通过；报告 0020 时尚无数学角色/槽位朗读、自动光标跟随，后续见下方 0021；完整屏幕阅读器验收仍缺。
 这些接口仅位于阶段 0 候选，不代表生产 app 合约已落地。
 
-[报告 0021](../spikes/0021-native-edit-acceptance.md) 补真实 Rime 合成/取消/编辑区焦点切换、
+[报告 0021](../spikes/SPK-0021-native-edit-acceptance.md) 补真实 Rime 合成/取消/编辑区焦点切换、
 双源码草稿、鼠标拖选/滚动、Unicode 剪贴板和数学描述取证。正文组合失焦请求平台中断，
 选区替换是单个核心动作，退格/撤销/解除结构后修复光标，拖选按实际 press origin 锚定。
 Math 角色以独立只读语义投影暴露，TextRun 保持可编辑文本位置；禁用状态与屏幕阅读器验收仍有缺口。

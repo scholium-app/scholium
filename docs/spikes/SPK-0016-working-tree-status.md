@@ -1,6 +1,6 @@
 # Spike 0016：当前工作区状态与补齐验证
 
-> **有效性（2026-09-17 登记）**：时点工作区状态记录，只作追溯。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：时点工作区状态记录，只作追溯。阶段 0 当前判定见 [报告 0012](SPK-0012-exit-criteria.md)。
 
 - 结论：**Pass（本轮自动检查）；阶段 0 尚未关闭。**
 - 日期：2026-09-16。
@@ -8,7 +8,7 @@
 - 范围：核对实现、运行全量脚本和新增事务/门禁回归、整理文档；本轮未修改实现代码。
 - 平台：Linux 7.2.4-arch1-2；Rust 1.98.0-nightly（bd08c9e71）；bubblewrap 0.12.0；
   TeX Live 2026；Typst CLI 0.15.1；Rust 依赖以各目录 Cargo.lock 为准。
-- 关联：[前轮复核](0015-verification-review.md)、[出口判定](0012-exit-criteria.md)、[路线图](../plan/ROADMAP.md)。
+- 关联：[前轮复核](SPK-0015-verification-review.md)、[出口判定](SPK-0012-exit-criteria.md)、[路线图](../plan/ROADMAP.md)。
 
 ## 本次自动验证
 
@@ -30,8 +30,8 @@
 mixed-build 的 4 个单元/集成测试通过。`all` 没有调用这两项独立 crate 的 `cargo test`，不能省略补测。
 
 原始全量日志：本机 `/tmp/scholium-stage0.FNz0cI/`。为避免临时目录清理丢失关键证据，保留
-[包重建日志](evidence/0016/packages.log)、[预览日志](evidence/0016/preview.log)、
-[安全日志](evidence/0016/security.log)。日志中的绝对路径只定位本次运行。
+[包重建日志](evidence/SPK-0016/packages.log)、[预览日志](evidence/SPK-0016/preview.log)、
+[安全日志](evidence/SPK-0016/security.log)。日志中的绝对路径只定位本次运行。
 
 ## 已补齐的实现与边界
 

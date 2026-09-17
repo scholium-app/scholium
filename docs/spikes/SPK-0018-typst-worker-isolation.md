@@ -1,12 +1,12 @@
 # Spike 0018：Typst worker 隔离与运行时白名单
 
-> **有效性（2026-09-17 登记）**：出口条件 6 的过程证据；隔离决策见 [ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：出口条件 6 的过程证据；隔离决策见 [ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。阶段 0 当前判定见 [报告 0012](SPK-0012-exit-criteria.md)。
 
 - 日期：2026-09-16；基线 `3be0b0a` 加本轮更改。
 - 结论：**Pass（本轮隔离与受影响回归）；阶段 0 条件 6 仍部分满足。**
 - 范围：混合构建 Typst 宿主/组件、共享 Linux 沙箱；不涉及生产 workspace。
 - 平台：沿用报告 0017 的 Arch Linux、TeX Live 2026、Typst 0.15.1、bubblewrap 0.12.0。
-- 决策：[ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)；前轮：[报告 0017](0017-mixed-build-isolation.md)。
+- 决策：[ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)；前轮：[报告 0017](SPK-0017-mixed-build-isolation.md)。
 
 ## 实现
 
@@ -47,8 +47,8 @@
 | Clippy（所有 targets，warnings 为错误） | 通过 |
 | 改动 Rust 文件格式、shell 语法、门禁脚本四场景 | 通过 |
 
-持久证据：[Typst worker](evidence/0018/typst-worker.log)、[挂载探针](evidence/0018/runtime-mounts.log)、
-[包重建](evidence/0018/packages.log)。本机完整分段日志：`/tmp/scholium-stage0.nczf4w/`（security）、
+持久证据：[Typst worker](evidence/SPK-0018/typst-worker.log)、[挂载探针](evidence/SPK-0018/runtime-mounts.log)、
+[包重建](evidence/SPK-0018/packages.log)。本机完整分段日志：`/tmp/scholium-stage0.nczf4w/`（security）、
 `/tmp/scholium-stage0.FZki72/`（items）、`/tmp/scholium-stage0.mTT5Xa/`（packages）、
 `/tmp/scholium-stage0.1Pwmlu/`（preview）。
 

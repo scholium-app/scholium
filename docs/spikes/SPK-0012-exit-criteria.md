@@ -2,18 +2,18 @@
 
 > **有效性（2026-09-17 登记）**：**本报告是阶段 0 出口条件判定的唯一来源**；其余报告与文档中的状态叙述一律从属于它，与之冲突时以本报告为准。
 
-> 最新原生编辑验收见[报告 0021](0021-native-edit-acceptance.md)：六组限定桌面流程通过，完整共同清单仍 Fail；条件 1 不升级。
-> Typst 进程隔离和运行时白名单的后续进展见[报告 0018](0018-typst-worker-isolation.md)，条件 6 仍部分满足。
-> 后续入口隔离进展见[报告 0017](0017-mixed-build-isolation.md)：普通混合构建 LaTeX 已接入统一沙箱，条件 6 仍部分满足。
+> 最新原生编辑验收见[报告 0021](SPK-0021-native-edit-acceptance.md)：六组限定桌面流程通过，完整共同清单仍 Fail；条件 1 不升级。
+> Typst 进程隔离和运行时白名单的后续进展见[报告 0018](SPK-0018-typst-worker-isolation.md)，条件 6 仍部分满足。
+> 后续入口隔离进展见[报告 0017](SPK-0017-mixed-build-isolation.md)：普通混合构建 LaTeX 已接入统一沙箱，条件 6 仍部分满足。
 - 当前结论：**6 条满足（均按已声明范围）、4 条部分满足；阶段 0 尚未关闭。**
-- 更新日期：2026-09-16；依据 `62d82ba` 加当前未提交工作区的复测，见[报告 0016](0016-working-tree-status.md)。
+- 更新日期：2026-09-16；依据 `62d82ba` 加当前未提交工作区的复测，见[报告 0016](SPK-0016-working-tree-status.md)。
 - 对应：[路线图的 10 条出口条件](../plan/ROADMAP.md#出口条件)。本次不放宽产品要求或修改已有 ADR。
 
 ## 当前判定
 
 | # | 出口条件 | 判定 | 证据与剩余边界 |
 |---|---|---|---|
-| 1 | 原生候选共同验收、锁定版本与平台 | **部分满足** | [0021](0021-native-edit-acceptance.md) 已复测真实 IME、数学编辑、双源码草稿、拖选/剪切/撤销、滚动和 AT-SPI；槽位端点仍拒绝，大源码、完整无障碍及团队/预览定位/文件恢复窗口集成未闭合 |
+| 1 | 原生候选共同验收、锁定版本与平台 | **部分满足** | [0021](SPK-0021-native-edit-acceptance.md) 已复测真实 IME、数学编辑、双源码草稿、拖选/剪切/撤销、滚动和 AT-SPI；槽位端点仍拒绝，大源码、完整无障碍及团队/预览定位/文件恢复窗口集成未闭合 |
 | 2 | 无 npm/Node/WebView、原生依赖登记、许可门禁 | **满足（既定范围）** | 12 个 workspace 的 licenses/bans/sources 全过；原生依赖登记保留。advisories 未跑，不能据此声称无漏洞 |
 | 3 | Typst 快速预览 p95 不阻塞 16 ms 帧、旧 revision 不闪回 | **部分满足** | 真实后台编译期间 headless UI 逻辑 p95 1.76 ms，过期结果拒绝；未测实际 GPU/呈现与大文档窗口帧 |
 | 4 | 受支持源码 round-trip、Raw 不丢失 | **满足（限定范围）** | 两方言原夹具通过；新增事务会话拒绝过期/多行不可归因修改，整份草稿往返校验；不支持任意结构重构 |
@@ -30,25 +30,25 @@
 
 ## 证据入口
 
-- 条件 1：[egui 原始验收](0004-native-ui-egui.md)、[ADR 0006](../adr/ADR-0006-native-ui-framework.md)、
-  [新增选区和源码路径](0016-working-tree-status.md#原生编辑与源码应用)。
+- 条件 1：[egui 原始验收](SPK-0004-native-ui-egui.md)、[ADR 0006](../adr/ADR-0006-native-ui-framework.md)、
+  [新增选区和源码路径](SPK-0016-working-tree-status.md#原生编辑与源码应用)。
   已锁定 egui/eframe 0.36.2、winit 0.30.13、accesskit 0.24.1；原桌面环境为 Arch Linux / niri 26.04 / fcitx5 5.1.22。
 - 条件 2：[原生依赖登记](../NATIVE_DEPENDENCIES.md)、`verify-stage0.sh license` / `web`；
   许可例外决策见 ADR 0005、0010、0011。根 workspace 无成员，门禁必须逐 spike 运行。
-- 条件 3：[Typst 映射与同步基准](0005-typst-mapping.md)、[真实后台预览](0016-working-tree-status.md#后台预览)。
+- 条件 3：[Typst 映射与同步基准](SPK-0005-typst-mapping.md)、[真实后台预览](SPK-0016-working-tree-status.md#后台预览)。
   本轮 20 页同步单字符路径 p95 20.9 ms、改首段最大 210.6 ms；
   小夹具后台编译/栅格化 580 ms，不与 headless 帧 p95 1.76 ms 混用。
-- 条件 4：[reconcile](0006-source-reconcile.md)、[新增事务验证](0016-working-tree-status.md#原生编辑与源码应用)。
+- 条件 4：[reconcile](SPK-0006-source-reconcile.md)、[新增事务验证](SPK-0016-working-tree-status.md#原生编辑与源码应用)。
   一次只支持单处可归因修改；多处编辑、增删行和结构重排仍拒绝。
-- 条件 5：[自研赛马](0007-crdt-race.md)、[引擎对比](0014-crdt-engines.md)、
+- 条件 5：[自研赛马](SPK-0007-crdt-race.md)、[引擎对比](SPK-0014-crdt-engines.md)、
   [ADR 0009（Accepted）](../adr/ADR-0009-crdt-engine.md)。Loro 性能对比留到阶段 1 首个迭代。
-- 条件 6：[原安全问题](0011-untrusted-input.md)、[当前沙箱复测与限制](0016-working-tree-status.md#工具链沙箱)。
+- 条件 6：[原安全问题](SPK-0011-untrusted-input.md)、[当前沙箱复测与限制](SPK-0016-working-tree-status.md#工具链沙箱)。
   不能只凭恶意输入编译失败判断安全；本轮先确认良性编译、再跑负对照。
-- 条件 7：[语言协调](0009-team-language.md)、[恢复](0008-build-recovery.md)。
+- 条件 7：[语言协调](SPK-0009-team-language.md)、[恢复](SPK-0008-build-recovery.md)。
   写集校验仍为字符串抽检，不足以抵御真实恶意客户端。
-- 条件 8、9：[混合构建](0010-mixed-build.md)。六类混用都有成功/失败夹具；
+- 条件 8、9：[混合构建](SPK-0010-mixed-build.md)。六类混用都有成功/失败夹具；
   36 是宿主运行数（LaTeX/Typst 各 18），不是 19 个夹具全部各跑两遍。
-- 条件 10：[实验包重建](0016-working-tree-status.md#标准包与混合快照包)。
+- 条件 10：[实验包重建](SPK-0016-working-tree-status.md#标准包与混合快照包)。
   页数、提取文本、链接目标和矢量性均有断言；不等于像素级保真或跨平台干净安装。
 
 ## 进入阶段 1 前剩余工作
@@ -66,8 +66,8 @@ Loro 吞吐/体积/内存对比等原有阶段 1 待办仍保留，不因本次�
 | 记录 | 结果 | 含义 |
 |---|---|---|
 | 旧脚本首轮 | 30/30 | 有假通过漏洞，不能作阶段通过证据 |
-| [报告 0015](0015-verification-review.md) | 29/30 | 修复门禁后暴露安全失败 |
-| [报告 0016](0016-working-tree-status.md) | 32/32 | 新增 packages/preview，安全转为通过；出口仍有 4 条部分满足 |
+| [报告 0015](SPK-0015-verification-review.md) | 29/30 | 修复门禁后暴露安全失败 |
+| [报告 0016](SPK-0016-working-tree-status.md) | 32/32 | 新增 packages/preview，安全转为通过；出口仍有 4 条部分满足 |
 
 ```bash
 bash spikes/verify-stage0.sh all

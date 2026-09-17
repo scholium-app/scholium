@@ -4,7 +4,7 @@
 - 日期：2026-09-16
 - 决策者：ation_ciger
 - 影响模块：源码工作台、reconcile、构建/导出、安全边界
-- 关联：[ADR 0001 团队单一源码语言与混合项目](ADR-0001-mixed-source-team-editing.md)、报告 [0006](../spikes/0006-source-reconcile.md)、[0011](../spikes/0011-untrusted-input.md)
+- 关联：[ADR 0001 团队单一源码语言与混合项目](ADR-0001-mixed-source-team-editing.md)、报告 [0006](../spikes/SPK-0006-source-reconcile.md)、[0011](../spikes/SPK-0011-untrusted-input.md)
 
 ## 背景
 
@@ -67,8 +67,8 @@
 
 - **出口条件需要改写**：当前表述"不可信 LaTeX/Typst 无法执行外部命令或读取项目根外文件"
   对 LaTeX 不成立（配置层面），必须写成"编译进程在 OS 级沙箱内运行"。
-- 初轮 bwrap 配方未跑通良性编译；[报告 0016](../spikes/0016-working-tree-status.md) 已补齐，
-  [报告 0017](../spikes/0017-mixed-build-isolation.md) 又将普通混合构建的 LaTeX 共用入口接入沙箱。
+- 初轮 bwrap 配方未跑通良性编译；[报告 0016](../spikes/SPK-0016-working-tree-status.md) 已补齐，
+  [报告 0017](../spikes/SPK-0017-mixed-build-isolation.md) 又将普通混合构建的 LaTeX 共用入口接入沙箱。
   运行时白名单、其他入口覆盖与资源边界仍待完成，不改变本 ADR 的隔离要求。
 - 归因依赖行结构不变，重排或格式化会让所有行错位 → 全部落成冲突（安全但保守）。
 

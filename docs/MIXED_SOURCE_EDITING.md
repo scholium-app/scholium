@@ -167,4 +167,4 @@ Native/ForeignRendered/Bridged/Unresolved；编辑性 NativeEditable/SourceEdita
 ## 10. 阶段 0 验证状态
 
 > 本节的时点版本已移入 [log/stage0-progress.md](log/stage0-progress.md)（开发日志，只作追溯）。
-> 阶段 0 的**当前逐条判定以[报告 0012](spikes/0012-exit-criteria.md) 为准**。
+> 阶段 0 的**当前逐条判定以[报告 0012](spikes/SPK-0012-exit-criteria.md) 为准**。

@@ -36,12 +36,12 @@
   | 本目录顶层、[`modules/`](modules/README.md) | 规范 | 现在时：系统应该怎样 | 能（`modules/` 缺其约定的七节时不能） |
   | [`plan/`](plan/PLAN.md) | 计划 | 将来时：要做什么、什么算通过 | 只定义判据，不能当现状 |
   | [`log/`](log/README.md) | 开发日志 | 过去时：做到哪了 | **不能**，只作追溯 |
-  | [`spikes/`](spikes/README.md) | 验证证据 | 过去时：可复现结论 | 只作追溯；当前判定见 [报告 0012](spikes/0012-exit-criteria.md) |
+  | [`spikes/`](spikes/README.md) | 验证证据 | 过去时：可复现结论 | 只作追溯；当前判定见 [报告 0012](spikes/SPK-0012-exit-criteria.md) |
   | [`adr/`](adr/README.md) | 裁决 | 已定 | 能 |
   | `research/` | 外部资料 | — | 只作参考 |
   | [`archive/`](archive/README.md) | 弃用原型 | 已弃 | **不能**，不得作为实现规范引用 |
 - **状态单一来源**：其他文件里出现的进度、结论与出口判定一律只是副本，不构成当前判定；
-  与[报告 0012](spikes/0012-exit-criteria.md) 冲突时以 0012 为准。
+  与[报告 0012](spikes/SPK-0012-exit-criteria.md) 冲突时以 0012 为准。
 
 ## 当前基本假设
 
@@ -59,10 +59,10 @@
 
 ## 技术验证入口
 
-- [阶段 0 出口条件逐条判定](spikes/0012-exit-criteria.md)：**当前阶段状态的权威页**；条件本身的定义见[路线图](plan/ROADMAP.md)。
+- [阶段 0 出口条件逐条判定](spikes/SPK-0012-exit-criteria.md)：**当前阶段状态的权威页**；条件本身的定义见[路线图](plan/ROADMAP.md)。
 - [原生 UI 验证计划](plan/NATIVE_UI_VALIDATION.md)：固定候选顺序、共同验收集与报告要求。
 - [全栈候选与验证顺序](plan/TECH_STACK.md)：库候选、替代方案和验收，不限于 GUI。
 - [WASM 兼容计划](plan/WASM.md)：共享核心、浏览器宿主与桌面能力边界。
 - [阶段 0 验证报告](spikes/README.md)：报告规则、模板与当前状态。
-  [最新工作区复核](spikes/0016-working-tree-status.md)：新增实现、复现命令与未关闭的出口条件。
+  [最新工作区复核](spikes/SPK-0016-working-tree-status.md)：新增实现、复现命令与未关闭的出口条件。
 - [Mogan LaTeX 实现参考](research/MOGAN_LATEX.md)：固定提交源码依据与独立 Rust 实现方向。

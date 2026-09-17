@@ -36,7 +36,7 @@ feature 合并，也不会有 UI 状态或类型泄漏进核心，符合"候选�
 
 核心不实现 CRDT 收敛、真实 reconcile、持久化或语言切换协议——它们分别是阶段 0 第 3、4、5、6 项。
 egui 候选已通过 path 依赖接入 `source-reconcile` 的事务会话；后台预览调用沙箱内的 Typst CLI。
-当前新增能力与测试边界见[报告 0016](../../docs/spikes/0016-working-tree-status.md)。
+当前新增能力与测试边界见[报告 0016](../../docs/spikes/SPK-0016-working-tree-status.md)。
 每个候选必须用同一组验收脚本跑核心，见各候选目录与 `docs/spikes/` 的报告。
 
 ## 诊断脚本

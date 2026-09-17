@@ -97,7 +97,7 @@ SourceMap 同时记录 generated range → NodeId 和 NodeId → ranges；生成
 
 ## 8. 预览调度
 
-- **预览时延按实测设定，不按帧预算设定。** 阶段 0 实测（[报告 0005](spikes/0005-typst-mapping.md)，
+- **预览时延按实测设定，不按帧预算设定。** 阶段 0 实测（[报告 0005](spikes/SPK-0005-typst-mapping.md)，
   20 页 / 257 段，release，复用同一个编译 World）：
   单字符编辑的"重新生成 + 重新编译"合计中位 **19.2 ms**、p95 **21.3 ms**；
   改动首段导致源码整体平移时 p95 达 **207.8 ms**。因此：

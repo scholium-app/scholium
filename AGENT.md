@@ -19,7 +19,7 @@
 7. **阶段出口优先。** 阶段 0 的七项否决性验证——原生结构/源码编辑、Typst 映射、源码 reconcile、CRDT 赛马、
    构建与恢复、团队语言协调、混合构建——全部通过前，不搭生产脚手架，不做 AI、CAS、绘图、幻灯片或插件市场。
    清单与出口条件见 `docs/plan/ROADMAP.md`，报告规则见 `docs/spikes/README.md`，
-   **当前逐条判定见 `docs/spikes/0012-exit-criteria.md`（阶段状态的唯一来源）**。
+   **当前逐条判定见 `docs/spikes/SPK-0012-exit-criteria.md`（阶段状态的唯一来源）**。
 
 8. **团队只能同时编辑一种源码语言。** 同一共享项目分支的 LaTeX/Typst 写入受活动语言与 epoch 门禁约束；同语言可多人编辑，编译可并行，不能仅在本机 UI 实现。
 9. **混用是完整产品要求。** 正文、公式、图表、宏、模板、跨片段引用都要有验证路径。Raw 保留不等于支持执行；正式输出不得包含 unresolved 占位。见 `docs/MIXED_SOURCE_EDITING.md`。
@@ -35,7 +35,7 @@
 - **文档按体裁分处不同目录，新增文档一律按体裁归位**：规范在 `docs/` 顶层与 `docs/modules/`，
   计划在 `docs/plan/`，开发日志在 `docs/log/`（只追加、只作追溯，**不得作为实现依据**），
   验证证据在 `docs/spikes/`，裁决在 `docs/adr/`。**不得把进度或状态写进规范与计划**；
-  阶段状态的当前判定只有一处来源：`docs/spikes/0012-exit-criteria.md`。
+  阶段状态的当前判定只有一处来源：`docs/spikes/SPK-0012-exit-criteria.md`。
 - 修改模块前阅读 `docs/modules/<module>.md`；公共接口、不变量或职责发生变化时，同一提交更新文档。
 - 第三方核心选型、长期存储格式、协议破坏性变化和跨模块边界调整必须新增 ADR。
 - `docs/archive/` 只用于查证废弃原型，不得作为实现规范引用；确需沿用的实验结论应重新验证。
@@ -78,7 +78,7 @@ Signed-off-by: 姓名 <邮箱>
 - 源码可见但受限的自定义许可，例如 **Slint**（GPLv3、商业许可或 Slint Royalty-free 许可，均非宽松）。
   在项目保持双许可的前提下不得链接 Slint；选择它必须先把项目改为对应 copyleft 或取得商业许可。
 - 许可未明确的依赖或代码。
-- EUI-NEO：许可证已核实为 **Apache-2.0**（见[报告 0003](docs/spikes/0003-native-ui-prescreen.md)），
+- EUI-NEO：许可证已核实为 **Apache-2.0**（见[报告 0003](docs/spikes/SPK-0003-native-ui-prescreen.md)），
   但**无任何无障碍支持**，加上 C++/CMake + FFI 的成本，预筛即不投入（[ADR 0006](docs/adr/ADR-0006-native-ui-framework.md)）。
 
 其他规则：

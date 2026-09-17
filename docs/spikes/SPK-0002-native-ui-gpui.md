@@ -1,6 +1,6 @@
 # Spike 0002：原生 UI 候选 — GPUI
 
-> **有效性（2026-09-17 登记）**：候选层结论，只记录 GPUI 的 Fail 与原因（无文本输入控件且无 accesskit）；框架选型已由 [ADR 0006](../adr/ADR-0006-native-ui-framework.md) 固定为 egui。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：候选层结论，只记录 GPUI 的 Fail 与原因（无文本输入控件且无 accesskit）；框架选型已由 [ADR 0006](../adr/ADR-0006-native-ui-framework.md) 固定为 egui。阶段 0 当前判定见 [报告 0012](SPK-0012-exit-criteria.md)。
 
 - 结论：**Fail**（可访问性不通过；且 GPUI 核心**没有文本输入控件**，源码视图与输入法验收无法在候选层完成）
 - 对应验证项：[路线图阶段 0 第 1 项](../plan/ROADMAP.md)
@@ -13,7 +13,7 @@
 
 ## 问题与判据
 
-与 [报告 0001](0001-native-ui-iced.md) 相同：判据是验证计划第 4 节的验收表，候选使用同一最小工程、
+与 [报告 0001](SPK-0001-native-ui-iced.md) 相同：判据是验证计划第 4 节的验收表，候选使用同一最小工程、
 **同一份夹具与同一份布局**（`scholium-spike-core`）。
 
 ## 环境
@@ -75,7 +75,7 @@ Zed 的文本输入控件在**另一个 `ui` crate**里，而它没有随 `gpui`
 `gpui 0.2.2`：`Cargo.toml` 中 `grep -i accesskit` 无结果，feature 列表无相关项，`src/` 中 0 处引用，
 `Cargo.lock` 全树 accesskit 计数为 0。AT-SPI 实测同样读不到候选窗口。
 
-**更正**：[报告 0001](0001-native-ui-iced.md) 曾把"GPUI 有基于 AccessKit 的可访问性实现"列为参考。
+**更正**：[报告 0001](SPK-0001-native-ui-iced.md) 曾把"GPUI 有基于 AccessKit 的可访问性实现"列为参考。
 那是 **Zed 仓库源码**的情况，**已发布的 `gpui` crate 里没有**。因此：
 
 - 可访问性**不能**用来区分 Iced 与 GPUI——两者都是 Fail；
@@ -85,7 +85,7 @@ Zed 的文本输入控件在**另一个 `ui` crate**里，而它没有随 `gpui`
 （`org.a11y.Status IsEnabled = false`）下做的。AccessKit 类框架此时不会注册，所以那种条件下的
 "读不到"不能独立证明框架不支持无障碍。在**启用无障碍**后重测，GPUI 仍不出现在 AT-SPI 应用列表中，
 与静态证据一致（`gpui` 全树无 accesskit，本就没有可注册的实现）。
-详见[报告 0004](0004-native-ui-egui.md) 的"测试方法错误"一节。
+详见[报告 0004](SPK-0004-native-ui-egui.md) 的"测试方法错误"一节。
 
 ### 3. 结构渲染可行且与 Iced 可比
 

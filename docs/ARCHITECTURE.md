@@ -141,7 +141,7 @@ Envelope { protocol_version, request_id, project_id, actor_id, payload }
 
 结构编辑器框架、源码编辑器、CRDT、Typst 集成、TeX 工具链和转换后端都必须先完成 spike 与 ADR。模块边界先稳定，
 具体第三方库允许替换；任何库类型泄漏到 `model` 或长期存储格式都视为门禁失败。
-阶段 0 已关闭的门禁：[原生框架](adr/ADR-0006-native-ui-framework.md)（egui）、[Typst 集成](adr/ADR-0007-typst-integration.md)、[reconcile 与工具链隔离](adr/ADR-0008-reconcile-and-toolchain-isolation.md)、[CRDT 引擎](adr/ADR-0009-crdt-engine.md)（Loro）；团队语言协调与全范围混合构建的验证见[报告 0009](spikes/0009-team-language.md) 与[报告 0010](spikes/0010-mixed-build.md)，**协调协议与桥接的正式实现仍待做**（见 [ADR 0001](adr/ADR-0001-mixed-source-team-editing.md)，仍为 Proposed）。
+阶段 0 已关闭的门禁：[原生框架](adr/ADR-0006-native-ui-framework.md)（egui）、[Typst 集成](adr/ADR-0007-typst-integration.md)、[reconcile 与工具链隔离](adr/ADR-0008-reconcile-and-toolchain-isolation.md)、[CRDT 引擎](adr/ADR-0009-crdt-engine.md)（Loro）；团队语言协调与全范围混合构建的验证见[报告 0009](spikes/SPK-0009-team-language.md) 与[报告 0010](spikes/SPK-0010-mixed-build.md)，**协调协议与桥接的正式实现仍待做**（见 [ADR 0001](adr/ADR-0001-mixed-source-team-editing.md)，仍为 Proposed）。
 
 ## 全栈选型与 WASM 宿主
 

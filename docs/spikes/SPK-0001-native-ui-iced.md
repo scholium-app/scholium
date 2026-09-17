@@ -1,6 +1,6 @@
 # Spike 0001：原生 UI 候选 — Iced
 
-> **有效性（2026-09-17 登记）**：候选层结论，只记录 Iced 在该验收集下的 Fail 与框架级原因；框架选型已由 [ADR 0006](../adr/ADR-0006-native-ui-framework.md) 固定为 egui。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：候选层结论，只记录 Iced 在该验收集下的 Fail 与框架级原因；框架选型已由 [ADR 0006](../adr/ADR-0006-native-ui-framework.md) 固定为 egui。阶段 0 当前判定见 [报告 0012](SPK-0012-exit-criteria.md)。
 
 - 结论：**Fail**（可访问性项不通过，且是框架级缺口；其余判据多为 Pass，预览项未测）
 - 对应验证项：[路线图阶段 0 第 1 项](../plan/ROADMAP.md)
@@ -225,7 +225,7 @@ iced 与 winit 源码中都不存在 accesskit 集成，任何候选实现都无
 
 在**启用无障碍**后重测，iced 仍不出现在 AT-SPI 应用列表中，静态证据与实测因此一致。
 后续所有无障碍测试都必须在 `IsEnabled = true` 下进行；`a11y-probe.py` 已改为先打印该开关并在
-关闭时明确提示"这是假阴性"。详见[报告 0004](0004-native-ui-egui.md) 的"测试方法错误"一节。
+关闭时明确提示"这是假阴性"。详见[报告 0004](SPK-0004-native-ui-egui.md) 的"测试方法错误"一节。
 
 外部参考（**未在本机验证**，仅作背景）：iced 上游有开放的
 [accessibility 支持 issue #552](https://github.com/iced-rs/iced/issues/552) 与
@@ -236,7 +236,7 @@ iced 与 winit 源码中都不存在 accesskit 集成，任何候选实现都无
 同样没有 accesskit（`Cargo.toml`、feature、源码、整棵依赖树计数均为 0），AT-SPI 实测也读不到
 GPUI 候选窗口。Zed 仓库里有 a11y 示例，但没有进入发布 crate。
 
-结论：**可访问性不能区分这两个候选，两者都是 Fail**，详见[报告 0002](0002-native-ui-gpui.md)。
+结论：**可访问性不能区分这两个候选，两者都是 Fail**，详见[报告 0002](SPK-0002-native-ui-gpui.md)。
 
 ## 结果
 

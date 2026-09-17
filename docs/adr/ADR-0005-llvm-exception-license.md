@@ -27,7 +27,7 @@ error[rejected]: failed to satisfy license requirements
 ## 验证方法
 
 - 对每个 spike workspace 运行 `cargo deny --offline check licenses`，记录被拒依赖与其许可。
-- 复现命令见本 ADR 末尾与 `docs/spikes/0011-exit-criteria.md`。
+- 复现命令见本 ADR 末尾与 `docs/spikes/SPK-0012-exit-criteria.md`。
 
 ## 候选方案
 

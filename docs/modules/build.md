@@ -92,10 +92,10 @@ LaTeX 按 TeX Live 所需引擎（pdfLaTeX/XeLaTeX/LuaLaTeX）→ Tectonic 验�
 
 ## 阶段 0 实验进展
 
-[报告 0017](../spikes/0017-mixed-build-isolation.md) 验证普通混合构建与包重建的 LaTeX 共用沙箱入口，
+[报告 0017](../spikes/SPK-0017-mixed-build-isolation.md) 验证普通混合构建与包重建的 LaTeX 共用沙箱入口，
 输入只读、输出分离，失败不保留当前入口旧 PDF。它是独立 spike，不是本模块的生产实现；
 该轮尚未覆盖的 Typst worker 与运行时挂载已由报告 0018 补充；完整资源树和产物探针隔离仍待实现。
 
 当前 mixed-build spike 的 Typst 编译、内省和 PDF/SVG 导出已进入独立沙箱 worker，
-见[报告 0018](../spikes/0018-typst-worker-isolation.md)与[ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。
+见[报告 0018](../spikes/SPK-0018-typst-worker-isolation.md)与[ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。
 每次新进程不保留增量缓存；临时 JSON 不是正式存储或网络协议。

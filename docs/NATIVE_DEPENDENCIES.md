@@ -41,7 +41,7 @@
 | TeX Live（`xelatex` / `pdflatex` / `latexmk`） | 2026（`texlive-bin 2026.0-2`、`texlive-core 2026.1-1`） | GPL-2.0-or-later / GPL（latexmk 亦为 GPL 系） | **独立子进程**，本阶段用于 LaTeX 构建与验证 | 若随安装包分发二进制，须单独履行 GPL 义务并在此登记；当前仅依赖用户系统安装 |
 | [bubblewrap](https://github.com/containers/bubblewrap)（`bwrap`） | 0.12.0-1 | LGPL-2.1-or-later | **独立子进程**，用于把不可信构建放进 OS 级沙箱 | 同上；动态链接由发行版提供 |
 
-**安全边界（阶段 0 实测，见[报告 0011](spikes/0011-untrusted-input.md)）**：
+**安全边界（阶段 0 实测，见[报告 0011](spikes/SPK-0011-untrusted-input.md)）**：
 TeX 自身的配置**挡不住**读取项目外文件（`\openin` 在默认配置下读到 `/etc/hostname`，
 `openin_any=p` 无效），因此**不得**把 TeX 直接跑在用户会话里；必须放进 OS 级沙箱。
 沙箱的可用配方尚未完成（完整只读根可编译但会暴露项目外文件；受限挂载集编译失败、缺失依赖未定位）。
@@ -49,7 +49,7 @@ TeX 自身的配置**挡不住**读取项目外文件（`\openin` 在默认配�
 ## 3. 当前不存在的类别
 
 - **自研 C/C++/Zig**：无。仓库内 `spikes/native-ui/.vendor/eui-neo` 曾有一份上游 C++ 克隆，
-  已删除（该候选在[报告 0003](spikes/0003-native-ui-prescreen.md) 中预筛不投入）。
+  已删除（该候选在[报告 0003](spikes/SPK-0003-native-ui-prescreen.md) 中预筛不投入）。
 - **静态链接的 GPL/LGPL**：无（Slint 已因许可证被排除，见 [ADR 0006](adr/ADR-0006-native-ui-framework.md)）。
 - **FFI 到项目自有类型**：无。
 

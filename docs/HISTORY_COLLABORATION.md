@@ -48,7 +48,7 @@ redo 是撤销最近 compensation Action。远端 Action 永不自动进入本�
 
 任意 revert 比普通 undo 风险更高，必须依赖存档的语义 patch，而不只依赖 CRDT 库 UndoManager。
 
-**引擎已选定（阶段 0）**：Loro 1.16.0（[ADR 0009](adr/ADR-0009-crdt-engine.md)、[报告 0014](spikes/0014-crdt-engines.md)）。依据是两个决定性能力只有它同时具备：**可移动树**（`LoroTree` 的 `mov`/`mov_to`/`mov_after`/`mov_before` 直接对应包裹/解除/重排）与**能过滤远端输入的内置 UndoManager**（实测撤销本地输入而保留远端输入）。Yrs 无 mov 类 API、Automerge 无 undo API。
+**引擎已选定（阶段 0）**：Loro 1.16.0（[ADR 0009](adr/ADR-0009-crdt-engine.md)、[报告 0014](spikes/SPK-0014-crdt-engines.md)）。依据是两个决定性能力只有它同时具备：**可移动树**（`LoroTree` 的 `mov`/`mov_to`/`mov_after`/`mov_before` 直接对应包裹/解除/重排）与**能过滤远端输入的内置 UndoManager**（实测撤销本地输入而保留远端输入）。Yrs 无 mov 类 API、Automerge 无 undo API。
 两条约束：① 接口仍按操作语义（操作集、因果序、undo 作用域）定义，不把引擎类型暴露到三层历史之外；② 本项**未做性能对比**，阶段 1 首个迭代必须补（10 万动作、编码体积、内存），若 Loro 明显劣于 Yrs 则转 Yrs 并自建移动语义。
 
 - 文本输入保存插入内容与边界 anchors。

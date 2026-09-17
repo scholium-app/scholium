@@ -1,9 +1,9 @@
 # Spike 0006：阶段 0 第 3 项 — 源码 reconcile
 
-> **有效性（2026-09-17 登记）**：阶段 0 第 3 项的原始证据，结论限于已支持结构与已支持编辑；策略与工具链隔离契约见 [ADR 0008](../adr/ADR-0008-reconcile-and-toolchain-isolation.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：阶段 0 第 3 项的原始证据，结论限于已支持结构与已支持编辑；策略与工具链隔离契约见 [ADR 0008](../adr/ADR-0008-reconcile-and-toolchain-isolation.md)。阶段 0 当前判定见 [报告 0012](SPK-0012-exit-criteria.md)。
 
 > 历史记录：以下保留该轮验证结果。2026-09-16 工作区后续实现与复测见
-> [报告 0016](0016-working-tree-status.md)，当前出口判定见[报告 0012](0012-exit-criteria.md)。
+> [报告 0016](SPK-0016-working-tree-status.md)，当前出口判定见[报告 0012](SPK-0012-exit-criteria.md)。
 
 - 结论：**Pass（限定范围）**——受支持结构的受支持编辑可可靠往返；不支持的一律报冲突
 - 对应验证项：[路线图阶段 0 第 3 项](../plan/ROADMAP.md)

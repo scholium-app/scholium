@@ -1,9 +1,9 @@
 # Spike 0011：不受信源码的隔离（出口条件）
 
-> **有效性（2026-09-17 登记）**：出口条件「不可信源码隔离」的原始证据；LaTeX 侧结论由 [ADR 0008](../adr/ADR-0008-reconcile-and-toolchain-isolation.md) 的 OS 级沙箱要求承接，后续实测见 [报告 0016](0016-working-tree-status.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：出口条件「不可信源码隔离」的原始证据；LaTeX 侧结论由 [ADR 0008](../adr/ADR-0008-reconcile-and-toolchain-isolation.md) 的 OS 级沙箱要求承接，后续实测见 [报告 0016](SPK-0016-working-tree-status.md)。阶段 0 当前判定见 [报告 0012](SPK-0012-exit-criteria.md)。
 
 > 历史记录：以下保留该轮验证结果。2026-09-16 工作区后续实现与复测见
-> [报告 0016](0016-working-tree-status.md)，当前出口判定见[报告 0012](0012-exit-criteria.md)。
+> [报告 0016](SPK-0016-working-tree-status.md)，当前出口判定见[报告 0012](SPK-0012-exit-criteria.md)。
 
 - 结论：**部分 Pass** —— Typst 侧满足；**LaTeX 侧不满足**，且常用配置手段无效，必须靠 OS 级沙箱
 - 对应验证项：阶段 0 出口条件「不可信 LaTeX/Typst 无法执行外部命令或读取项目根外文件」

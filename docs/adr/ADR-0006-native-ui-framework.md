@@ -4,7 +4,7 @@
 - 日期：2026-09-16
 - 决策者：ation_ciger
 - 影响模块：桌面应用外壳、结构编辑视图、可访问性、输入法集成、渲染集成
-- 关联：[ADR 0002 原生技术栈与 UI 验证顺序](ADR-0002-native-ui-validation-order.md)、报告 [0001](../spikes/0001-native-ui-iced.md)、[0002](../spikes/0002-native-ui-gpui.md)、[0003](../spikes/0003-native-ui-prescreen.md)、[0004](../spikes/0004-native-ui-egui.md)
+- 关联：[ADR 0002 原生技术栈与 UI 验证顺序](ADR-0002-native-ui-validation-order.md)、报告 [0001](../spikes/SPK-0001-native-ui-iced.md)、[0002](../spikes/SPK-0002-native-ui-gpui.md)、[0003](../spikes/SPK-0003-native-ui-prescreen.md)、[0004](../spikes/SPK-0004-native-ui-egui.md)
 
 ## 背景
 

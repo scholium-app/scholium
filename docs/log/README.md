@@ -1,7 +1,7 @@
 # 开发日志与过程记录
 
 > **时效语义：过去时。** 本目录只收「某个时刻做到哪一步」的记录，只追加、不删改既有段落，
-> **不得作为实现依据**。要当前结论去 `docs/spikes/0012-exit-criteria.md`；要要求去 `docs/` 与 `docs/plan/`。
+> **不得作为实现依据**。要当前结论去 `docs/spikes/SPK-0012-exit-criteria.md`；要要求去 `docs/` 与 `docs/plan/`。
 
 ## 边界
 
