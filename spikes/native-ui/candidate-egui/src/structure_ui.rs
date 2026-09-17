@@ -33,12 +33,7 @@ impl SpikeApp {
                     self.structure_origin = origin;
                     self.pointer_selection(&response, origin);
                     self.paint_selection(&painter, origin);
-                    Self::paint_structure(
-                        &painter,
-                        origin,
-                        &self.layout,
-                        egui::Color32::from_rgb(230, 230, 233),
-                    );
+                    self.paint_structure(&painter, origin, egui::Color32::from_rgb(230, 230, 233));
                     self.accessible_structure(ui, &response, origin);
                     if self.structure_focused {
                         self.caret_and_ime(ui, &painter, origin);
@@ -101,9 +96,7 @@ impl SpikeApp {
         if down
             && self.press_anchor.is_none()
             && let Some(position) = response.ctx.input(|input| input.pointer.press_origin())
-            && let Some((node, byte)) = self
-                .layout
-                .hit_test((position - origin).x, (position - origin).y)
+            && let Some((node, byte)) = self.text_hit(position - origin)
         {
             self.press_anchor = Some(Cursor::Text { node, byte });
             println!(
@@ -112,9 +105,7 @@ impl SpikeApp {
             );
         }
         if let Some(position) = response.interact_pointer_pos()
-            && let Some((node, byte)) = self
-                .layout
-                .hit_test((position - origin).x, (position - origin).y)
+            && let Some((node, byte)) = self.text_hit(position - origin)
         {
             let hit = Cursor::Text { node, byte };
             self.focus = hit;
@@ -132,13 +123,13 @@ impl SpikeApp {
 
     fn caret_and_ime(&mut self, ui: &mut egui::Ui, painter: &egui::Painter, origin: egui::Pos2) {
         let caret = match self.text_endpoint(self.focus) {
-            Some(Cursor::Text { node, byte }) => self.layout.caret(node, byte),
+            Some(Cursor::Text { node, byte }) => self.text_caret(node, byte),
             _ => None,
         };
         let rect = caret.map(|caret| {
             egui::Rect::from_min_size(
-                origin + egui::vec2(caret.x, Item::top_of(caret.baseline, caret.size)),
-                egui::vec2(1.5, caret.size * 1.2),
+                origin + caret.min.to_vec2(),
+                egui::vec2(1.5, caret.height()),
             )
         });
         if let Some(rect) = rect {

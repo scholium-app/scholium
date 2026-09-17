@@ -46,15 +46,13 @@ impl SpikeApp {
             };
             stack.extend(n.slots.iter().flatten().copied());
             let (Some(from), Some(to)) = (
-                self.layout.caret(node, 0),
-                self.layout.caret(node, n.text.len_bytes()),
+                self.text_caret(node, 0),
+                self.text_caret(node, n.text.len_bytes()),
             ) else {
                 continue;
             };
-            let rect = egui::Rect::from_min_max(
-                origin + egui::vec2(from.x, Item::top_of(from.baseline, from.size)),
-                origin + egui::vec2(to.x.max(from.x + 6.0), to.baseline + to.size * 0.2),
-            );
+            let mut rect = from.union(to).translate(origin.to_vec2());
+            rect.max.x = rect.max.x.max(rect.min.x + 6.0);
             bounds = Some(bounds.map_or(rect, |old| old.union(rect)));
         }
         if let Some(rect) = bounds {

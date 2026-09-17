@@ -1,0 +1,32 @@
+{
+  "scope": "256 paragraphs; AT-SPI enabled; eframe CPU timing; excludes GPU presentation",
+  "binary": "/home/ation_ciger/Projects/Mogan/scholium/spikes/native-ui/candidate-egui/target/release/scholium-spike-egui",
+  "result": "Measured",
+  "windows": [
+    {
+      "samples": 120,
+      "p95_ms": 7.546,
+      "max_ms": 13.536
+    },
+    {
+      "samples": 120,
+      "p95_ms": 7.686,
+      "max_ms": 8.853
+    },
+    {
+      "samples": 120,
+      "p95_ms": 7.652,
+      "max_ms": 8.714
+    },
+    {
+      "samples": 120,
+      "p95_ms": 8.051,
+      "max_ms": 8.815
+    },
+    {
+      "samples": 120,
+      "p95_ms": 8.523,
+      "max_ms": 19.893
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+[event] 启动完成 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[ime] 输入法锚点 [[8.0 117.0] - [9.5 145.7]]
+[event] core：包裹为 Sqrt | revision 20 | 核心动作 18 | 预编辑事件 0 | IME 提交 0
+[event] 已选择整节点（复制为纯文本） | revision 20 | 核心动作 18 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 24 | 核心动作 19 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："E" | revision 25 | 核心动作 20 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："P" | revision 26 | 核心动作 21 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 27 | 核心动作 22 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："A" | revision 28 | 核心动作 23 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 29 | 核心动作 24 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："E" | revision 30 | 核心动作 25 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："D" | revision 31 | 核心动作 26 | 预编辑事件 0 | IME 提交 0
+[event] core：撤销 ActionId(26)，删除 1 字符 | revision 32 | 核心动作 27 | 预编辑事件 0 | IME 提交 0
+[event] core：撤销 ActionId(25)，删除 1 字符 | revision 33 | 核心动作 28 | 预编辑事件 0 | IME 提交 0
+[event] core：撤销 ActionId(24)，删除 1 字符 | revision 34 | 核心动作 29 | 预编辑事件 0 | IME 提交 0
+[event] core：撤销 ActionId(23)，删除 1 字符 | revision 35 | 核心动作 30 | 预编辑事件 0 | IME 提交 0
+[event] core：撤销 ActionId(22)，删除 1 字符 | revision 36 | 核心动作 31 | 预编辑事件 0 | IME 提交 0
+[event] core：撤销 ActionId(21)，删除 1 字符 | revision 37 | 核心动作 32 | 预编辑事件 0 | IME 提交 0
+[event] core：撤销 ActionId(20)，删除 1 字符 | revision 38 | 核心动作 33 | 预编辑事件 0 | IME 提交 0
+[event] core：撤销 ActionId(19)，删除 1 字符 | revision 40 | 核心动作 34 | 预编辑事件 0 | IME 提交 0
+[event] 已选择整节点（复制为纯文本） | revision 40 | 核心动作 34 | 预编辑事件 0 | IME 提交 0
+[event] 已删除选区 | revision 41 | 核心动作 35 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："A" | revision 43 | 核心动作 36 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："F" | revision 44 | 核心动作 37 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："T" | revision 45 | 核心动作 38 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："E" | revision 46 | 核心动作 39 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 47 | 核心动作 40 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 48 | 核心动作 41 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："U" | revision 49 | 核心动作 42 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："T" | revision 50 | 核心动作 43 | 预编辑事件 0 | IME 提交 0

@@ -334,19 +334,15 @@ impl SpikeApp {
             let SemanticEdit::DeleteRange { node, start, end } = edit else {
                 continue;
             };
-            let (Some(from), Some(to)) =
-                (self.layout.caret(node, start), self.layout.caret(node, end))
+            let (Some(from), Some(to)) = (self.text_caret(node, start), self.text_caret(node, end))
             else {
                 continue;
             };
-            if (from.baseline - to.baseline).abs() > 2.0 {
+            if (from.top() - to.top()).abs() > 2.0 {
                 continue;
             }
             painter.rect_filled(
-                egui::Rect::from_min_size(
-                    origin + egui::vec2(from.x.min(to.x), Item::top_of(from.baseline, from.size)),
-                    egui::vec2((to.x - from.x).abs(), from.size * 1.2),
-                ),
+                from.union(to).translate(origin.to_vec2()),
                 0.0,
                 egui::Color32::from_rgb(58, 86, 132),
             );

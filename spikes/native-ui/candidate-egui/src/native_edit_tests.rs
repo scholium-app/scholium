@@ -25,6 +25,61 @@ fn setup() -> (SpikeApp, egui::Context) {
 }
 
 #[test]
+fn proportional_font_carets_and_hits_follow_painted_glyphs() {
+    let (mut app, ctx) = setup();
+    app.insert_text("Wiie\u{301}👩\u{200d}💻", Intent::Typing);
+    frame(&mut app, &ctx, vec![]);
+    let node = app.focus.focus();
+    let run = &app.text_geometry[app.text_geometry_index[&node]];
+    let glyphs = &run.galley.rows[0].glyphs;
+    assert!(glyphs[0].advance_width > glyphs[1].advance_width * 1.5);
+    for byte in [0, 1, 2, 3, 6] {
+        let caret = app.text_caret(node, byte).expect("measured caret");
+        let scalar = app.core.document().text_of(node).expect("text")[..byte]
+            .chars()
+            .count();
+        let expected_x = run.origin.x + run.galley.rows[0].pos.x + glyphs[scalar].pos.x;
+        assert!((caret.left() - expected_x).abs() < 0.01);
+        assert_eq!(app.text_hit(caret.center().to_vec2()), Some((node, byte)));
+    }
+    assert!(
+        app.text_caret(node, 5).is_none(),
+        "UTF-8 interior must be rejected"
+    );
+    let start = app.text_caret(node, 0).expect("start");
+    let end = app.text_caret(node, 17).expect("end of emoji");
+    for x in (start.left() as i32)..(end.left() as i32) {
+        if let Some((hit, byte)) = app.text_hit(egui::vec2(x as f32, start.center().y)) {
+            assert!(
+                app.core
+                    .document()
+                    .node(hit)
+                    .expect("node")
+                    .text
+                    .is_grapheme_boundary(byte)
+            );
+        }
+    }
+}
+
+#[test]
+fn geometry_cache_tracks_edit_undo_and_display_scale() {
+    let (mut app, ctx) = setup();
+    let original = app.text_geometry[0].galley.clone();
+    frame(&mut app, &ctx, vec![]);
+    assert!(Arc::ptr_eq(&original, &app.text_geometry[0].galley));
+    app.insert_text("WWW", Intent::Typing);
+    frame(&mut app, &ctx, vec![]);
+    assert_ne!(original.text(), app.text_geometry[0].galley.text());
+    app.undo();
+    frame(&mut app, &ctx, vec![]);
+    assert_eq!(original.text(), app.text_geometry[0].galley.text());
+    ctx.set_pixels_per_point(2.0);
+    frame(&mut app, &ctx, vec![]);
+    assert_eq!(app.text_geometry_key, Some((app.core.revision(), 2.0)));
+}
+
+#[test]
 fn consecutive_backspaces_keep_a_collapsed_valid_selection() {
     let (mut app, _) = setup();
     app.insert_text("中😀", Intent::Typing);

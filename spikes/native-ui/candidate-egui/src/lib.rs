@@ -16,6 +16,7 @@ mod preview;
 mod selection_ui;
 mod source_ui;
 mod structure_ui;
+mod text_geometry;
 
 use std::sync::Arc;
 
@@ -34,6 +35,9 @@ pub struct SpikeApp {
     core: Editor,
     layout: Layout,
     layout_revision: u64,
+    text_geometry: Vec<text_geometry::TextGeometry>,
+    text_geometry_index: std::collections::HashMap<NodeId, usize>,
+    text_geometry_key: Option<(u64, f32)>,
     accessible_cache: Option<accessibility::RunCache>,
     frame_metrics: frame_metrics::FrameMetrics,
     focus: Cursor,
@@ -108,6 +112,9 @@ impl SpikeApp {
         Self {
             layout_revision,
             accessible_cache: None,
+            text_geometry: Vec::new(),
+            text_geometry_index: std::collections::HashMap::new(),
+            text_geometry_key: None,
             frame_metrics: Default::default(),
             core,
             layout,
@@ -134,45 +141,18 @@ impl SpikeApp {
         }
     }
 
-    fn paint_structure(
-        painter: &egui::Painter,
-        origin: egui::Pos2,
-        layout: &Layout,
-        color: egui::Color32,
-    ) {
-        for item in &layout.items {
+    fn paint_structure(&self, painter: &egui::Painter, origin: egui::Pos2, color: egui::Color32) {
+        for run in &self.text_geometry {
+            if painter
+                .clip_rect()
+                .intersects(run.bounds().translate(origin.to_vec2()))
+            {
+                painter.galley(origin + run.origin.to_vec2(), run.galley.clone(), color);
+            }
+        }
+        for item in &self.layout.items {
             match item {
-                Item::Text {
-                    x,
-                    baseline,
-                    size,
-                    content,
-                    ..
-                } => {
-                    let top = origin.y + Item::top_of(*baseline, *size);
-                    if top > painter.clip_rect().max.y
-                        || top + size * 1.2 < painter.clip_rect().min.y
-                    {
-                        continue;
-                    }
-                    let galley = painter.layout_no_wrap(
-                        content.clone(),
-                        egui::FontId::proportional(*size),
-                        color,
-                    );
-                    // The selected font's baseline need not equal the layout's
-                    // approximate ascent, especially when CJK fallback is used.
-                    let font_baseline = galley
-                        .rows
-                        .first()
-                        .and_then(|row| row.glyphs.first().map(|glyph| row.pos.y + glyph.pos.y))
-                        .unwrap_or(0.0);
-                    painter.galley(
-                        origin + egui::vec2(*x, *baseline - font_baseline),
-                        galley,
-                        color,
-                    );
-                }
+                Item::Text { .. } => (),
                 Item::Rule {
                     x,
                     y,
@@ -202,6 +182,8 @@ impl SpikeApp {
             self.layout = layout_document(self.core.document());
             self.layout_revision = self.core.revision();
         }
+
+        self.refresh_text_geometry(ui);
 
         // 事件时间线打到 stdout，便于脚本取证而不必读截图。
         if self.last_event != self.printed {
@@ -338,9 +320,8 @@ impl SpikeApp {
     /// 测试与基准用：替换核心文档并立即重算布局。
     pub fn replace_document_for_test(&mut self, core: Editor) {
         self.core = core;
-        if self.layout_revision != self.core.revision() {
-            self.layout = layout_document(self.core.document());
-            self.layout_revision = self.core.revision();
-        }
+        self.text_geometry_key = None;
+        self.layout = layout_document(self.core.document());
+        self.layout_revision = self.core.revision();
     }
 }

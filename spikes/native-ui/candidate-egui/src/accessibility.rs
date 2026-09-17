@@ -102,17 +102,13 @@ impl SpikeApp {
                     source: Some(source),
                     content,
                     x,
-                    baseline,
-                    size,
+                    ..
                 } = item
                 else {
                     return None;
                 };
-                let local = Layout {
-                    items: vec![item.clone()],
-                    ..Default::default()
-                };
-                let end = local.caret(source.node, source.start_byte + content.len())?;
+                let start = self.text_caret(source.node, source.start_byte)?;
+                let end = self.text_caret(source.node, source.start_byte + content.len())?;
                 Some(TextRun {
                     id: parent.with(source.node.index()).with(source.start_byte),
                     source: *source,
@@ -120,24 +116,22 @@ impl SpikeApp {
                     positions: content
                         .char_indices()
                         .filter_map(|(byte, _)| {
-                            local
-                                .caret(source.node, source.start_byte + byte)
-                                .map(|caret| caret.x - x)
+                            self.text_caret(source.node, source.start_byte + byte)
+                                .map(|caret| caret.left() - x)
                         })
                         .collect(),
                     widths: content
                         .char_indices()
                         .filter_map(|(byte, ch)| {
-                            let start = local.caret(source.node, source.start_byte + byte)?;
-                            let end = local
-                                .caret(source.node, source.start_byte + byte + ch.len_utf8())?;
-                            Some(end.x - start.x)
+                            let start = self.text_caret(source.node, source.start_byte + byte)?;
+                            let end = self.text_caret(
+                                source.node,
+                                source.start_byte + byte + ch.len_utf8(),
+                            )?;
+                            Some(end.left() - start.left())
                         })
                         .collect(),
-                    rect: egui::Rect::from_min_max(
-                        origin + egui::vec2(*x, Item::top_of(*baseline, *size)),
-                        origin + egui::vec2(end.x, baseline + size * 0.2),
-                    ),
+                    rect: start.union(end).translate(origin.to_vec2()),
                 })
             })
             .collect();
