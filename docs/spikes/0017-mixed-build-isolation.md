@@ -1,5 +1,7 @@
 # Spike 0017：混合构建的 LaTeX 入口隔离
 
+> **有效性（2026-09-17 登记）**：出口条件 6 的过程证据，只作追溯；后续 Typst 侧见 [报告 0018](0018-typst-worker-isolation.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+
 - 结论：**Pass（LaTeX 共用入口与相关回归）；阶段 0 条件 6 仍部分满足。**
 - 日期：2026-09-16；基线 `ad38a0d` 加本轮修改。
 - 平台与工具链沿用[报告 0016](0016-working-tree-status.md)：Linux、bubblewrap 0.12.0、TeX Live 2026、Typst 0.15.1。

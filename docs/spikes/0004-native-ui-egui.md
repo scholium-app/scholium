@@ -1,5 +1,7 @@
 # Spike 0004：原生 UI 候选 — egui
 
+> **有效性（2026-09-17 登记）**：选定候选的原始验收证据；选型由 [ADR 0006](../adr/0006-native-ui-framework.md) 固定，后续能力进展见 [报告 0016](0016-working-tree-status.md) 与 [报告 0021](0021-native-edit-acceptance.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+
 > 历史记录：以下保留该轮验证结果。2026-09-16 工作区后续实现与复测见
 > [报告 0016](0016-working-tree-status.md)，当前出口判定见[报告 0012](0012-exit-criteria.md)。
 
