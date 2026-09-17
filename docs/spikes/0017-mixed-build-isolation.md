@@ -5,7 +5,7 @@
 - 结论：**Pass（LaTeX 共用入口与相关回归）；阶段 0 条件 6 仍部分满足。**
 - 日期：2026-09-16；基线 `ad38a0d` 加本轮修改。
 - 平台与工具链沿用[报告 0016](0016-working-tree-status.md)：Linux、bubblewrap 0.12.0、TeX Live 2026、Typst 0.15.1。
-- 对应：路线图第 7 项及出口条件 6；遵循 [ADR 0008](../adr/0008-reconcile-and-toolchain-isolation.md)，不新增产品架构或正式文件格式。
+- 对应：路线图第 7 项及出口条件 6；遵循 [ADR 0008](../adr/ADR-0008-reconcile-and-toolchain-isolation.md)，不新增产品架构或正式文件格式。
 
 ## 复现问题与修复
 

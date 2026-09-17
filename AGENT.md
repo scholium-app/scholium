@@ -26,7 +26,7 @@
 
 10. **原生技术栈。** 应用 UI、核心与服务端优先 Rust；必要时引入 C/C++/Zig。禁止 npm/Node.js、JavaScript/TypeScript 编辑器、WebView/Electron/Tauri 作为应用 UI 或验证依赖。HTML 导出是文件能力，不是 UI 实现。可选浏览器 WASM 允许必要的工具生成加载/绑定胶水，不允许 JS/TS 业务编辑器或 npm/Node.js；见 `docs/plan/WASM.md`。
     C/C++/Zig 依赖（含经由构建脚本编译本地代码的 crate）必须登记在 [docs/NATIVE_DEPENDENCIES.md](docs/NATIVE_DEPENDENCIES.md)，显式声明 ABI、内存所有权、线程约束与销毁顺序。
-11. **UI 验证顺序固定。** 按 Iced → GPUI → C++ EUI-NEO → Slint 或 egui 的顺序，用 `docs/plan/NATIVE_UI_VALIDATION.md` 的同一验收集验证，不以演示能运行替代编辑器可行性。**阶段 0 的 UI 候选比较已完成并选定 egui，阶段 0 整体尚未关闭**（[ADR 0006](docs/adr/0006-native-ui-framework.md)、报告 0001–0004）；更换框架必须新立 ADR 并重跑同一验收集。
+11. **UI 验证顺序固定。** 按 Iced → GPUI → C++ EUI-NEO → Slint 或 egui 的顺序，用 `docs/plan/NATIVE_UI_VALIDATION.md` 的同一验收集验证，不以演示能运行替代编辑器可行性。**阶段 0 的 UI 候选比较已完成并选定 egui，阶段 0 整体尚未关闭**（[ADR 0006](docs/adr/ADR-0006-native-ui-framework.md)、报告 0001–0004）；更换框架必须新立 ADR 并重跑同一验收集。
 
 ## 设计文档纪律
 
@@ -60,12 +60,12 @@ Signed-off-by: 姓名 <邮箱>
 ## 许可证政策
 
 本项目以 **MIT OR Apache-2.0** 双许可发布（见 [LICENSE-MIT](LICENSE-MIT)、[LICENSE-APACHE](LICENSE-APACHE)），
-决策依据见 [ADR 0004](docs/adr/0004-project-license.md)。新增依赖必须落在下列允许类别内，由 `cargo deny` 强制。
+决策依据见 [ADR 0004](docs/adr/ADR-0004-project-license.md)。新增依赖必须落在下列允许类别内，由 `cargo deny` 强制。
 
 允许，无需额外审批：
 
-- MIT、Apache-2.0、**Apache-2.0 WITH LLVM-exception**（依据 [ADR 0005](docs/adr/0005-llvm-exception-license.md)）、
-  **BSL-1.0**（Boost Software License，依据 [ADR 0010](docs/adr/0010-bsl-license.md)）、
+- MIT、Apache-2.0、**Apache-2.0 WITH LLVM-exception**（依据 [ADR 0005](docs/adr/ADR-0005-llvm-exception-license.md)）、
+  **BSL-1.0**（Boost Software License，依据 [ADR 0010](docs/adr/ADR-0010-bsl-license.md)）、
   BSD-2-Clause、BSD-3-Clause、ISC、Zlib、0BSD、Unicode-DFS、Unicode-3.0、CC0-1.0、Unlicense。
 - MPL-2.0：仅作为文件级 copyleft 依赖；修改其文件时按 MPL 公开该文件。
 - 以**独立子进程**调用的外部工具链（例如 TeX Live 的 GPL 系组件）不构成链接，不改变本项目许可；
@@ -79,14 +79,14 @@ Signed-off-by: 姓名 <邮箱>
   在项目保持双许可的前提下不得链接 Slint；选择它必须先把项目改为对应 copyleft 或取得商业许可。
 - 许可未明确的依赖或代码。
 - EUI-NEO：许可证已核实为 **Apache-2.0**（见[报告 0003](docs/spikes/0003-native-ui-prescreen.md)），
-  但**无任何无障碍支持**，加上 C++/CMake + FFI 的成本，预筛即不投入（[ADR 0006](docs/adr/0006-native-ui-framework.md)）。
+  但**无任何无障碍支持**，加上 C++/CMake + FFI 的成本，预筛即不投入（[ADR 0006](docs/adr/ADR-0006-native-ui-framework.md)）。
 
 其他规则：
 
 - 内容类资产单独登记：CSL 样式文件为 CC-BY-SA，打包时保留署名并说明同类共享要求；字体、图标和
   夹具样本各自声明许可证。**字体许可**另列一类：`OFL-1.1` 与 `Ubuntu-font-1.0` 允许用于
   **未修改**的字体资产（须登记来源、字体名与许可，并随分发保留许可文本），依据见
-  [ADR 0011](docs/adr/0011-font-asset-licenses.md)；其它字体许可仍需单独审批。
+  [ADR 0011](docs/adr/ADR-0011-font-asset-licenses.md)；其它字体许可仍需单独审批。
 - `deny.toml` 随首个 crate 提交，按上表配置 `licenses.allow`；CI 的 `cargo deny` 失败即阻断。
 - 引入新许可类别、需要例外，或调整本政策，都走新 ADR。
 

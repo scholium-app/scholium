@@ -9,6 +9,8 @@
 ## 规则
 
 - 报告按 `NNNN-short-title.md` 命名，模板见 [0000-template.md](0000-template.md)。
+- 报告编号与 `docs/adr/` 的 ADR 编号是**两个独立且重叠的编号空间**（各有自己的 0001 起）。跨引用一律
+  写「报告 NNNN」或「ADR NNNN」；ADR 文件名带 `ADR-` 前缀，本目录的裸编号只指报告。
 - 每份报告对应 [路线图](../plan/ROADMAP.md) 阶段 0 的一个验证项，必须在 `docs/plan/ROADMAP.md` 对应条目上链接。
 - 结论只能是 `Pass`、`Fail`、`Blocked`。缺系统环境、缺工具链或缺夹具记 `Blocked`，不能记 `Pass`。
 - 报告必须包含锁定版本、真实平台、可复现命令和证据位置；只给结论不给证据视为未完成。

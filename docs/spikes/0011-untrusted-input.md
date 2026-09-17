@@ -1,6 +1,6 @@
 # Spike 0011：不受信源码的隔离（出口条件）
 
-> **有效性（2026-09-17 登记）**：出口条件「不可信源码隔离」的原始证据；LaTeX 侧结论由 [ADR 0008](../adr/0008-reconcile-and-toolchain-isolation.md) 的 OS 级沙箱要求承接，后续实测见 [报告 0016](0016-working-tree-status.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：出口条件「不可信源码隔离」的原始证据；LaTeX 侧结论由 [ADR 0008](../adr/ADR-0008-reconcile-and-toolchain-isolation.md) 的 OS 级沙箱要求承接，后续实测见 [报告 0016](0016-working-tree-status.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
 
 > 历史记录：以下保留该轮验证结果。2026-09-16 工作区后续实现与复测见
 > [报告 0016](0016-working-tree-status.md)，当前出口判定见[报告 0012](0012-exit-criteria.md)。
@@ -10,7 +10,7 @@
 - 日期：2026-09-16
 - 执行者：ation_ciger
 - 代码：[`spikes/untrusted-input/`](../../spikes/untrusted-input)
-- 关联 ADR：[0008 源码 reconcile 策略与构建工具链隔离](../adr/0008-reconcile-and-toolchain-isolation.md)（『LaTeX 必须运行在 OS 级沙箱内』这条要求记录在那里）
+- 关联 ADR：[0008 源码 reconcile 策略与构建工具链隔离](../adr/ADR-0008-reconcile-and-toolchain-isolation.md)（『LaTeX 必须运行在 OS 级沙箱内』这条要求记录在那里）
 
 ## 问题与判据
 

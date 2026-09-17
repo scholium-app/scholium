@@ -1,6 +1,6 @@
 # Spike 0004：原生 UI 候选 — egui
 
-> **有效性（2026-09-17 登记）**：选定候选的原始验收证据；选型由 [ADR 0006](../adr/0006-native-ui-framework.md) 固定，后续能力进展见 [报告 0016](0016-working-tree-status.md) 与 [报告 0021](0021-native-edit-acceptance.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：选定候选的原始验收证据；选型由 [ADR 0006](../adr/ADR-0006-native-ui-framework.md) 固定，后续能力进展见 [报告 0016](0016-working-tree-status.md) 与 [报告 0021](0021-native-edit-acceptance.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
 
 > 历史记录：以下保留该轮验证结果。2026-09-16 工作区后续实现与复测见
 > [报告 0016](0016-working-tree-status.md)，当前出口判定见[报告 0012](0012-exit-criteria.md)。
@@ -9,7 +9,7 @@
 - 对应验证项：[路线图阶段 0 第 1 项](../plan/ROADMAP.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
-- 关联 ADR：[0002 原生技术栈与 UI 验证顺序](../adr/0002-native-ui-validation-order.md)
+- 关联 ADR：[0002 原生技术栈与 UI 验证顺序](../adr/ADR-0002-native-ui-validation-order.md)
 
 > **这是四个候选里第一个没有硬性 Fail 的。** Iced 与 GPUI 是因为**框架不具备**能力而 Fail；
 > egui 具备能力，只是候选实现尚未接完，因此记 Blocked。这个区分对选型很关键。

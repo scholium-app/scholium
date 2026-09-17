@@ -4,7 +4,7 @@
 - 日期：2026-09-16
 - 决策者：ation_ciger
 - 影响模块：源码工作台、reconcile、构建/导出、安全边界
-- 关联：[ADR 0001 团队单一源码语言与混合项目](0001-mixed-source-team-editing.md)、报告 [0006](../spikes/0006-source-reconcile.md)、[0011](../spikes/0011-untrusted-input.md)
+- 关联：[ADR 0001 团队单一源码语言与混合项目](ADR-0001-mixed-source-team-editing.md)、报告 [0006](../spikes/0006-source-reconcile.md)、[0011](../spikes/0011-untrusted-input.md)
 
 ## 背景
 

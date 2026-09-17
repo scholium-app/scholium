@@ -79,7 +79,7 @@ export 临时目录完整验证后发布；原项目和前次成功输出在失�
 共享分支外部文件变更先交 session 检查语言许可，非活动语言变更保留为草稿；不能静默覆盖磁盘或共享正文。
 单机语言控制与共享控制缓存分开，不能把离线缓存当有效共享写许可。新增混合包重开和草稿/发布失败注入测试。
 
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
 
 ## 后端候选与宿主边界
 

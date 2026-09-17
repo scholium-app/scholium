@@ -50,7 +50,7 @@ TeX 自身的配置**挡不住**读取项目外文件（`\openin` 在默认配�
 
 - **自研 C/C++/Zig**：无。仓库内 `spikes/native-ui/.vendor/eui-neo` 曾有一份上游 C++ 克隆，
   已删除（该候选在[报告 0003](spikes/0003-native-ui-prescreen.md) 中预筛不投入）。
-- **静态链接的 GPL/LGPL**：无（Slint 已因许可证被排除，见 [ADR 0006](adr/0006-native-ui-framework.md)）。
+- **静态链接的 GPL/LGPL**：无（Slint 已因许可证被排除，见 [ADR 0006](adr/ADR-0006-native-ui-framework.md)）。
 - **FFI 到项目自有类型**：无。
 
 ## 维护

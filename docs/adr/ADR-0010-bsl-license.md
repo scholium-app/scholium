@@ -4,14 +4,14 @@
 - 日期：2026-09-16
 - 决策者：ation_ciger
 - 影响模块：依赖许可门禁（`deny.toml`）、CRDT 与工具链依赖
-- 关联：[ADR 0004 项目许可证](0004-project-license.md)、[ADR 0005 Apache-2.0 WITH LLVM-exception](0005-llvm-exception-license.md)、[ADR 0009 CRDT 引擎选型](0009-crdt-engine.md)、报告 [0014](../spikes/0014-crdt-engines.md)（本项由该 spike 的许可门禁发现）
+- 关联：[ADR 0004 项目许可证](ADR-0004-project-license.md)、[ADR 0005 Apache-2.0 WITH LLVM-exception](ADR-0005-llvm-exception-license.md)、[ADR 0009 CRDT 引擎选型](ADR-0009-crdt-engine.md)、报告 [0014](../spikes/0014-crdt-engines.md)（本项由该 spike 的许可门禁发现）
 
 ## 背景
 
 按 `AGENT.md` 的许可证政策，新增依赖必须落在允许类别内，由 `cargo deny` 强制；
 **引入新许可类别必须走新 ADR**。
 
-[ADR 0009](0009-crdt-engine.md) 选定 Loro 作为 CRDT 引擎后，其依赖树引入了
+[ADR 0009](ADR-0009-crdt-engine.md) 选定 Loro 作为 CRDT 引擎后，其依赖树引入了
 **Boost Software License 1.0**（`xxhash-rust`，Loro 与 Yrs 都用它）。门禁按设计拦住了：
 
 ```text

@@ -1,6 +1,6 @@
 # Spike 0010：阶段 0 第 7 项 — 混合构建
 
-> **有效性（2026-09-17 登记）**：阶段 0 第 7 项的原始证据，结论限于已测夹具与宿主范围；契约见 [ADR 0001](../adr/0001-mixed-source-team-editing.md)，后续隔离进展见 [报告 0017](0017-mixed-build-isolation.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：阶段 0 第 7 项的原始证据，结论限于已测夹具与宿主范围；契约见 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)，后续隔离进展见 [报告 0017](0017-mixed-build-isolation.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
 
 > 历史记录：以下保留该轮验证结果。2026-09-16 工作区后续实现与复测见
 > [报告 0016](0016-working-tree-status.md)，当前出口判定见[报告 0012](0012-exit-criteria.md)。
@@ -10,7 +10,7 @@
 - 对应验证项：[路线图阶段 0 第 7 项](../plan/ROADMAP.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
-- 关联 ADR：[0001 团队单一源码语言与 LaTeX/Typst 混合项目](../adr/0001-mixed-source-team-editing.md)、[0002 原生技术栈与 UI 验证顺序](../adr/0002-native-ui-validation-order.md)
+- 关联 ADR：[0001 团队单一源码语言与 LaTeX/Typst 混合项目](../adr/ADR-0001-mixed-source-team-editing.md)、[0002 原生技术栈与 UI 验证顺序](../adr/ADR-0002-native-ui-validation-order.md)
   （本项大量结论指向"嵌入载体与语义保真"需要新 ADR，见[对设计的影响](#对设计的影响)）
 - 代码：[`spikes/mixed-build/`](../../spikes/mixed-build)
 - 依赖版本：`typst = 0.15.1`、`typst-layout = 0.15.1`、`typst-kit = 0.15.1`（`embedded-fonts` + `scan-fonts`）、

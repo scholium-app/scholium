@@ -13,7 +13,7 @@
 ## 2026-09-16：原生 UI 验证计划的状态段（自 `docs/NATIVE_UI_VALIDATION.md` 移入，现见 `docs/plan/NATIVE_UI_VALIDATION.md`）
 
 > **当前状态（2026-09-16，UI 框架已选定，阶段 0 未关闭）**：候选比较已完成，最终选定 **egui / eframe 0.36.2**，
-> 依据见 [ADR 0006](../adr/0006-native-ui-framework.md) 与报告 0001–0004；本页保留为验证方法与判据的记录。
+> 依据见 [ADR 0006](../adr/ADR-0006-native-ui-framework.md) 与报告 0001–0004；本页保留为验证方法与判据的记录。
 > 后续新增选区、源码应用和预览见[报告 0016](../spikes/0016-working-tree-status.md)；
 > 最新逐项桌面复核见[报告 0021](../spikes/0021-native-edit-acceptance.md)：六组限定桌面流程通过，完整共同清单仍 Fail；槽位选区、大源码、团队/恢复/完整预览集成和无障碍边界未闭合。
 > 本页是**验证方法与判据**，其中的状态叙述只是副本；阶段 0 的**当前逐条判定以[报告 0012](../spikes/0012-exit-criteria.md) 为准**。
@@ -33,7 +33,7 @@
 | 4、5、6、7（混合正文/跨页表格/宏/模板/双向引用、干净环境与失败夹具） | [报告 0010](../spikes/0010-mixed-build.md) | 36/36 宿主运行通过，含六类内容的成功/失败夹具；包重建的后续验证见[报告 0016](../spikes/0016-working-tree-status.md)。**明确不在范围**：复杂浮动体、超长文档、增量构建、目录/文献/脚注的跨引擎装配。 |
 
 **仍未实现的部分**（与验证结论无关，属阶段 1 工作）：协调协议与桥接的正式实现
-（[ADR 0001](../adr/0001-mixed-source-team-editing.md) 仍为 Proposed）；LaTeX/Typst 解析器与
-reconcile 的正式实现（[ADR 0008](../adr/0008-reconcile-and-toolchain-isolation.md)）；
+（[ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md) 仍为 Proposed）；LaTeX/Typst 解析器与
+reconcile 的正式实现（[ADR 0008](../adr/ADR-0008-reconcile-and-toolchain-isolation.md)）；
 TeX 编译沙箱的产品集成与跨平台策略（Linux spike 已补良性编译及隔离验证，见[报告 0016](../spikes/0016-working-tree-status.md)；仍有只读运行时白名单等边界）。
 

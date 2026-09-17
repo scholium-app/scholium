@@ -1,9 +1,9 @@
 # Spike 0014：CRDT 引擎对比夹具（关闭 ADR 0009）
 
-> **有效性（2026-09-17 登记）**：引擎选型的原始依据，结论由 [ADR 0009](../adr/0009-crdt-engine.md) 固定（选定 Loro 1.16.0）；性能对比未做。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：引擎选型的原始依据，结论由 [ADR 0009](../adr/ADR-0009-crdt-engine.md) 固定（选定 Loro 1.16.0）；性能对比未做。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
 
 - 结论：**Pass —— 选定 Loro 1.16.0**
-- 对应验证项：ADR 表「CRDT engine（Loro → Yrs → Automerge）」；[ADR 0009](../adr/0009-crdt-engine.md)
+- 对应验证项：ADR 表「CRDT engine（Loro → Yrs → Automerge）」；[ADR 0009](../adr/ADR-0009-crdt-engine.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
 - 关联：[报告 0007](0007-crdt-race.md)（自研最小实现，接口语义的参照）、[报告 0013](0013-crdt-prescreen.md)（预筛）
@@ -11,7 +11,7 @@
 
 ## 问题与判据
 
-[ADR 0009](../adr/0009-crdt-engine.md) 写定的关闭判据：三个候选在同一份语义上跑
+[ADR 0009](../adr/ADR-0009-crdt-engine.md) 写定的关闭判据：三个候选在同一份语义上跑
 ①两副本离线收敛 ②本地撤销保留远端输入 ③快照往返 ④可移动树；
 另需回答"树用引擎自带 movable tree 还是自建"。
 

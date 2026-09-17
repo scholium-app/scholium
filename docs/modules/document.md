@@ -74,4 +74,4 @@ plan_edit/plan_reconcile 返回实际源码写集；修改原文、宏、模板�
 共享生成草稿只有活动语言可写；私有草稿独立持久化并带原基线。切换后重建 generation，旧草稿不能覆盖新正文。
 新增组件 scope、交叉引用、语义命令绕过门禁、草稿重定位和模板冲突测试。
 
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。

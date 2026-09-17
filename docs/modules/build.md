@@ -84,7 +84,7 @@ key 包含入口内容、依赖内容 hash、profile、工具链版本和安全�
 输出标准目标工具链包或双工具链重建包，分别进行干净环境测试。外语原文保留不代替可构建/可编辑验证。
 新增混合全范围夹具、轮数/组件总预算、沙箱桥接、半成品发布失败和两后端并行测试。
 
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
 
 ## 工具链候选与宿主
 
@@ -97,5 +97,5 @@ LaTeX 按 TeX Live 所需引擎（pdfLaTeX/XeLaTeX/LuaLaTeX）→ Tectonic 验�
 该轮尚未覆盖的 Typst worker 与运行时挂载已由报告 0018 补充；完整资源树和产物探针隔离仍待实现。
 
 当前 mixed-build spike 的 Typst 编译、内省和 PDF/SVG 导出已进入独立沙箱 worker，
-见[报告 0018](../spikes/0018-typst-worker-isolation.md)与[ADR 0012](../adr/0012-typst-worker-isolation.md)。
+见[报告 0018](../spikes/0018-typst-worker-isolation.md)与[ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。
 每次新进程不保留增量缓存；临时 JSON 不是正式存储或网络协议。

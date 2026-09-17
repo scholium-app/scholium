@@ -1,16 +1,16 @@
 # Spike 0013：CRDT 引擎预筛（Loro / Yrs / Automerge）
 
-> **有效性（2026-09-17 登记）**：预筛结论（三者许可均合规），不含选型；选型由 [ADR 0009](../adr/0009-crdt-engine.md) 依 [报告 0014](0014-crdt-engines.md) 固定。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：预筛结论（三者许可均合规），不含选型；选型由 [ADR 0009](../adr/ADR-0009-crdt-engine.md) 依 [报告 0014](0014-crdt-engines.md) 固定。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
 
 - 结论：**预筛通过，三者许可均合规**；引擎选型仍需一次夹具对比（见文末），故不在此下定论
 - 对应验证项：ADR 表「CRDT engine（Loro → Yrs → Automerge）」
 - 日期：2026-09-16
 - 执行者：ation_ciger
-- 关联：[ADR 0001 团队单一源码语言与混合项目](../adr/0001-mixed-source-team-editing.md)、报告 [0007](0007-crdt-race.md)
+- 关联：[ADR 0001 团队单一源码语言与混合项目](../adr/ADR-0001-mixed-source-team-editing.md)、报告 [0007](0007-crdt-race.md)
 
 ## 问题与判据
 
-[ADR 0001](../adr/0001-mixed-source-team-editing.md) 要求"共享树 + 共享文本"两层协同编辑，
+[ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md) 要求"共享树 + 共享文本"两层协同编辑，
 并配本地撤销、快照与 10 万次动作的规模验证。报告 0007 用一个**自写的最小 CRDT** 验证了收敛与撤销语义，
 但它不是引擎选型。本预筛回答四件事：
 

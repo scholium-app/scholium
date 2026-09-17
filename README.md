@@ -17,7 +17,7 @@ local-first 多人协作和可解释格式转换。从 [设计文档索引](docs
 ## 原生技术栈
 
 应用 UI、核心与服务端优先 Rust，必要时混用 C/C++/Zig；构建以 Cargo 为主，原生依赖可使用 CMake 等工具。
-UI 验证顺序为 **Iced → GPUI → C++ EUI-NEO → Slint 或 egui**，已选定 egui / eframe 0.36.2（[ADR 0006](docs/adr/0006-native-ui-framework.md)）；不采用 npm/JavaScript/WebView 编辑器。
+UI 验证顺序为 **Iced → GPUI → C++ EUI-NEO → Slint 或 egui**，已选定 egui / eframe 0.36.2（[ADR 0006](docs/adr/ADR-0006-native-ui-framework.md)）；不采用 npm/JavaScript/WebView 编辑器。
 具体验收与 FFI 边界见 [原生 UI 验证计划](docs/plan/NATIVE_UI_VALIDATION.md)。
 
 ## 设计目标
@@ -42,7 +42,7 @@ UI 验证顺序为 **Iced → GPUI → C++ EUI-NEO → Slint 或 egui**，已选
 ## 许可证
 
 本项目以 **MIT OR Apache-2.0** 双许可发布，使用者可任选其一：[LICENSE-MIT](LICENSE-MIT) 或
-[LICENSE-APACHE](LICENSE-APACHE)。决策依据见 [ADR 0004](docs/adr/0004-project-license.md)。
+[LICENSE-APACHE](LICENSE-APACHE)。决策依据见 [ADR 0004](docs/adr/ADR-0004-project-license.md)。
 
 正式实现不移植 TeXmacs/Mogan 或废弃原型实现；新增依赖必须通过 `cargo deny` 许可证检查，
 允许与禁止的许可类别见 [AGENT.md](AGENT.md) 的许可证政策一节。

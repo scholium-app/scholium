@@ -1,7 +1,7 @@
 # 混合源码、团队编辑与文件操作
 
 状态：产品要求已确认；协调协议、混合构建和长期持久化细节待阶段 0 验证。
-本文定义跨模块合约；技术方案见 [ADR 0001](adr/0001-mixed-source-team-editing.md)。
+本文定义跨模块合约；技术方案见 [ADR 0001](adr/ADR-0001-mixed-source-team-editing.md)。
 
 ## 1. 已确认要求
 

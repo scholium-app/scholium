@@ -3,7 +3,9 @@
 ADR 记录会约束多个模块、难以逆转或影响数据兼容性的决定。主设计文档描述当前目标，ADR 解释为何
 选择某种实现以及如何替换。
 
-文件名格式：`NNNN-short-title.md`，模板见 [0000-template.md](0000-template.md)。状态使用
+文件名格式：`ADR-NNNN-short-title.md`，模板见 [ADR-0000-template.md](ADR-0000-template.md)。
+前缀 `ADR-` 不可省略：`docs/adr/` 与 `docs/spikes/` 的编号空间**各自独立且重叠**（都有 0001 起），
+裸编号无法唯一确定目标；跨引用一律写「ADR NNNN」或「报告 NNNN」。状态使用
 Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并相互链接，不改写历史结论。
 每个 ADR 必须包含背景、验证方法、候选方案、决策、后果和替换方案；决策要有实验证据，原始数据放
 `docs/spikes/`。
@@ -12,19 +14,19 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 
 | ADR | 状态 | 当前结论 |
 |---|---|---|
-| [0001：团队单一源码语言与混合项目](0001-mixed-source-team-editing.md) | Proposed | 用户要求已确认；协调协议、桥接与存储实现待阶段 0 验证 |
-| [0002：原生技术栈与 UI 验证顺序](0002-native-ui-validation-order.md) | Accepted | 语言约束与验证顺序已确认；框架选定见 [ADR 0006](0006-native-ui-framework.md)（egui） |
-| [0003：全栈验证范围与 WASM 优先兼容](0003-wasm-and-stack-validation.md) | Accepted | 目标与验证方向已确认，具体库与浏览器发行未选定 |
-| [0004：项目许可证](0004-project-license.md) | Accepted | 采用 MIT OR Apache-2.0 双许可，依赖许可政策由 `cargo deny` 强制 |
-| [0005：允许 Apache-2.0 WITH LLVM-exception](0005-llvm-exception-license.md) | Accepted | 该例外权限严格宽于 Apache-2.0，加入允许清单；`deny.toml` 已建 |
-| [0006：原生桌面框架选型 —— egui](0006-native-ui-framework.md) | Accepted | 采用 egui/eframe 0.36.2；Iced 缺可访问性、GPUI 缺文本输入控件、EUI-NEO 不投入、Slint 被许可证阻断 |
-| [0007：Typst 生成、编译集成与位置映射](0007-typst-integration.md) | Accepted | 锚点 + `Introspector::position` 双向定位；持久 World；异步编译 + 结果门；锁定 typst 0.15.1 |
-| [0008：源码 reconcile 策略与构建工具链隔离](0008-reconcile-and-toolchain-isolation.md) | Accepted | 行+范围归因、不确定即冲突、Raw 逐字保留；LaTeX 必须跑在 OS 级沙箱内 |
-| [0010：允许 BSL-1.0 依赖](0010-bsl-license.md) | Accepted | Boost Software License 是宽松许可（与 MIT 同类），加入允许清单 |
-| [0011：允许字体资产许可（OFL-1.1 / Ubuntu-font-1.0）](0011-font-asset-licenses.md) | Accepted | 仅限未修改字体；须登记来源与许可；同时修正 bans 对路径依赖的误伤 |
-| [0009：CRDT 引擎选型](0009-crdt-engine.md) | **Accepted** | **选定 Loro 1.16.0**：只有它同时具备可移动树与能过滤远端输入的内置 undo，且都端到端跑通（报告 0014）；性能对比留待阶段 1 首个迭代 |
+| [0001：团队单一源码语言与混合项目](ADR-0001-mixed-source-team-editing.md) | Proposed | 用户要求已确认；协调协议、桥接与存储实现待阶段 0 验证 |
+| [0002：原生技术栈与 UI 验证顺序](ADR-0002-native-ui-validation-order.md) | Accepted | 语言约束与验证顺序已确认；框架选定见 [ADR 0006](ADR-0006-native-ui-framework.md)（egui） |
+| [0003：全栈验证范围与 WASM 优先兼容](ADR-0003-wasm-and-stack-validation.md) | Accepted | 目标与验证方向已确认，具体库与浏览器发行未选定 |
+| [0004：项目许可证](ADR-0004-project-license.md) | Accepted | 采用 MIT OR Apache-2.0 双许可，依赖许可政策由 `cargo deny` 强制 |
+| [0005：允许 Apache-2.0 WITH LLVM-exception](ADR-0005-llvm-exception-license.md) | Accepted | 该例外权限严格宽于 Apache-2.0，加入允许清单；`deny.toml` 已建 |
+| [0006：原生桌面框架选型 —— egui](ADR-0006-native-ui-framework.md) | Accepted | 采用 egui/eframe 0.36.2；Iced 缺可访问性、GPUI 缺文本输入控件、EUI-NEO 不投入、Slint 被许可证阻断 |
+| [0007：Typst 生成、编译集成与位置映射](ADR-0007-typst-integration.md) | Accepted | 锚点 + `Introspector::position` 双向定位；持久 World；异步编译 + 结果门；锁定 typst 0.15.1 |
+| [0008：源码 reconcile 策略与构建工具链隔离](ADR-0008-reconcile-and-toolchain-isolation.md) | Accepted | 行+范围归因、不确定即冲突、Raw 逐字保留；LaTeX 必须跑在 OS 级沙箱内 |
+| [0010：允许 BSL-1.0 依赖](ADR-0010-bsl-license.md) | Accepted | Boost Software License 是宽松许可（与 MIT 同类），加入允许清单 |
+| [0011：允许字体资产许可（OFL-1.1 / Ubuntu-font-1.0）](ADR-0011-font-asset-licenses.md) | Accepted | 仅限未修改字体；须登记来源与许可；同时修正 bans 对路径依赖的误伤 |
+| [0009：CRDT 引擎选型](ADR-0009-crdt-engine.md) | **Accepted** | **选定 Loro 1.16.0**：只有它同时具备可移动树与能过滤远端输入的内置 undo，且都端到端跑通（报告 0014）；性能对比留待阶段 1 首个迭代 |
 
-| [0012：Typst worker 与运行时挂载](0012-typst-worker-isolation.md) | Accepted | 混合构建 Typst 编译/内省/导出进入受控子进程；固定工具及资源白名单（执行者 Codex） |
+| [0012：Typst worker 与运行时挂载](ADR-0012-typst-worker-isolation.md) | Accepted | 混合构建 Typst 编译/内省/导出进入受控子进程；固定工具及资源白名单（执行者 Codex） |
 
 ## 待补（阶段出口依赖）
 

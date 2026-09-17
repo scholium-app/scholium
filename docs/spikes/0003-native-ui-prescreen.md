@@ -1,6 +1,6 @@
 # Spike 0003：原生 UI 候选预筛（EUI-NEO、Slint、egui）
 
-> **有效性（2026-09-17 登记）**：预筛结论，不是候选验收结论；框架选型已由 [ADR 0006](../adr/0006-native-ui-framework.md) 固定为 egui。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：预筛结论，不是候选验收结论；框架选型已由 [ADR 0006](../adr/ADR-0006-native-ui-framework.md) 固定为 egui。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
 
 - 结论：**预筛结论**（不是候选验收结论）：EUI-NEO 不投入、Slint 被许可证政策阻断、
   **egui 通过预筛并进入实现验证**

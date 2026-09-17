@@ -1,12 +1,12 @@
 # Spike 0009：阶段 0 第 6 项 — 团队语言协调
 
-> **有效性（2026-09-17 登记）**：阶段 0 第 6 项的原始证据，真实网络／多进程／磁盘／解析器未验证；契约记在 [ADR 0001](../adr/0001-mixed-source-team-editing.md)（仍为 Proposed）。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：阶段 0 第 6 项的原始证据，真实网络／多进程／磁盘／解析器未验证；契约记在 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)（仍为 Proposed）。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
 
 - 结论：**Pass（内存模型 + 确定性时序；真实网络 / 多进程 / 磁盘 / 解析器均未验证）**
 - 对应验证项：[路线图阶段 0 第 6 项](../plan/ROADMAP.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
-- 关联 ADR：[ADR 0001 团队单一源码语言与 LaTeX/Typst 混合项目](../adr/0001-mixed-source-team-editing.md)
+- 关联 ADR：[ADR 0001 团队单一源码语言与 LaTeX/Typst 混合项目](../adr/ADR-0001-mixed-source-team-editing.md)
   （该 ADR 状态为 Proposed，尚未加入指回本报告的反向链接；反向链接应由整合者随提交补上）
 - 代码：[`spikes/language-coordination/`](../../spikes/language-coordination)
 

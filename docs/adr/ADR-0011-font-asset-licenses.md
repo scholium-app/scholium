@@ -4,14 +4,14 @@
 - 日期：2026-09-16
 - 决策者：ation_ciger
 - 影响模块：依赖许可门禁、字体与内容资产登记、安装包体积
-- 关联：[ADR 0004 项目许可证](0004-project-license.md)、[ADR 0006 原生桌面框架](0006-native-ui-framework.md)、报告 [0012](../spikes/0012-exit-criteria.md)
+- 关联：[ADR 0004 项目许可证](ADR-0004-project-license.md)、[ADR 0006 原生桌面框架](ADR-0006-native-ui-framework.md)、报告 [0012](../spikes/0012-exit-criteria.md)
 
 ## 背景
 
 `AGENT.md` 的许可证政策把**内容类资产**单列：『字体、图标和夹具样本各自声明许可证』。
 但允许清单（`licenses.allow`）只覆盖代码许可，没有覆盖字体许可。
 
-[ADR 0006](0006-native-ui-framework.md) 选定 egui 后，其默认字体包 `epaint_default_fonts 0.36.2`
+[ADR 0006](ADR-0006-native-ui-framework.md) 选定 egui 后，其默认字体包 `epaint_default_fonts 0.36.2`
 进入依赖树，声明为：
 
 ```text

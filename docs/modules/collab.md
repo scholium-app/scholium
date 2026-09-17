@@ -73,7 +73,7 @@ apply_text、包含源码写集的 apply_semantic 和共享生成草稿都先经
 该接口的最小可信实现须通过阶段 0 验证后才确定 CRDT 选型。离线无许可的源码变化停留草稿/fork。
 新增 drain 屏障、旧 epoch、同语言并发、恶意结构写集、重连和已确认重复包的模型测试。
 
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
 
 ## WASM 互通
 

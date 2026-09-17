@@ -76,4 +76,4 @@ LaTeX 构建慢于连续编辑和双后端差异诊断。
 支持正文分节/分页桥接的显示，不以整页图像冒充可重排正文；无可靠 geometry 时禁用精确光标操作并解释。
 新增混合映射、多引擎旧结果淘汰、最终页码/链接和只读交互测试。
 
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。

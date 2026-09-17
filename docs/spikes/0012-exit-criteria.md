@@ -30,7 +30,7 @@
 
 ## 证据入口
 
-- 条件 1：[egui 原始验收](0004-native-ui-egui.md)、[ADR 0006](../adr/0006-native-ui-framework.md)、
+- 条件 1：[egui 原始验收](0004-native-ui-egui.md)、[ADR 0006](../adr/ADR-0006-native-ui-framework.md)、
   [新增选区和源码路径](0016-working-tree-status.md#原生编辑与源码应用)。
   已锁定 egui/eframe 0.36.2、winit 0.30.13、accesskit 0.24.1；原桌面环境为 Arch Linux / niri 26.04 / fcitx5 5.1.22。
 - 条件 2：[原生依赖登记](../NATIVE_DEPENDENCIES.md)、`verify-stage0.sh license` / `web`；
@@ -41,7 +41,7 @@
 - 条件 4：[reconcile](0006-source-reconcile.md)、[新增事务验证](0016-working-tree-status.md#原生编辑与源码应用)。
   一次只支持单处可归因修改；多处编辑、增删行和结构重排仍拒绝。
 - 条件 5：[自研赛马](0007-crdt-race.md)、[引擎对比](0014-crdt-engines.md)、
-  [ADR 0009（Accepted）](../adr/0009-crdt-engine.md)。Loro 性能对比留到阶段 1 首个迭代。
+  [ADR 0009（Accepted）](../adr/ADR-0009-crdt-engine.md)。Loro 性能对比留到阶段 1 首个迭代。
 - 条件 6：[原安全问题](0011-untrusted-input.md)、[当前沙箱复测与限制](0016-working-tree-status.md#工具链沙箱)。
   不能只凭恶意输入编译失败判断安全；本轮先确认良性编译、再跑负对照。
 - 条件 7：[语言协调](0009-team-language.md)、[恢复](0008-build-recovery.md)。

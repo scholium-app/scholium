@@ -1,12 +1,12 @@
 # Spike 0002：原生 UI 候选 — GPUI
 
-> **有效性（2026-09-17 登记）**：候选层结论，只记录 GPUI 的 Fail 与原因（无文本输入控件且无 accesskit）；框架选型已由 [ADR 0006](../adr/0006-native-ui-framework.md) 固定为 egui。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：候选层结论，只记录 GPUI 的 Fail 与原因（无文本输入控件且无 accesskit）；框架选型已由 [ADR 0006](../adr/ADR-0006-native-ui-framework.md) 固定为 egui。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
 
 - 结论：**Fail**（可访问性不通过；且 GPUI 核心**没有文本输入控件**，源码视图与输入法验收无法在候选层完成）
 - 对应验证项：[路线图阶段 0 第 1 项](../plan/ROADMAP.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
-- 关联 ADR：[0002 原生技术栈与 UI 验证顺序](../adr/0002-native-ui-validation-order.md)；最终选型 ADR 待完成
+- 关联 ADR：[0002 原生技术栈与 UI 验证顺序](../adr/ADR-0002-native-ui-validation-order.md)；最终选型 ADR 待完成
 
 > 按 [原生 UI 验证计划](../plan/NATIVE_UI_VALIDATION.md) 第 1 节的顺序验证第二个候选。结论是 Fail，
 > 但**失败原因与 Iced 不同**：Iced 缺的是无障碍，GPUI 缺的是无障碍**加**文本编辑基础设施。

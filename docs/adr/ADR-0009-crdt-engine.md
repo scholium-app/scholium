@@ -4,11 +4,11 @@
 - 日期：2026-09-16
 - 决策者：ation_ciger
 - 影响模块：协同编辑、三层历史、持久化、同步协议
-- 关联：[ADR 0001 团队单一源码语言与混合项目](0001-mixed-source-team-editing.md)、报告 [0007](../spikes/0007-crdt-race.md)、[0013](../spikes/0013-crdt-prescreen.md)
+- 关联：[ADR 0001 团队单一源码语言与混合项目](ADR-0001-mixed-source-team-editing.md)、报告 [0007](../spikes/0007-crdt-race.md)、[0013](../spikes/0013-crdt-prescreen.md)
 
 ## 背景
 
-[ADR 0001](0001-mixed-source-team-editing.md) 定了三层历史（CRDT / action / checkpoint）与
+[ADR 0001](ADR-0001-mixed-source-team-editing.md) 定了三层历史（CRDT / action / checkpoint）与
 "共享树 + 共享文本"的协同编辑形态，并要求本地撤销保留远端输入。
 报告 0007 用一个自写的最小 CRDT 验证了**收敛与撤销语义可达成**，但没有回答"用哪个引擎"。
 

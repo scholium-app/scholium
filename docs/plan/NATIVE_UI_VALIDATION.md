@@ -43,7 +43,7 @@ Iced/GPUI 等框架的文本输入和渲染基础不等于已具备科学文档�
 
 ### 3.1 许可证前置
 
-项目许可是 `MIT OR Apache-2.0` 双许可（[ADR 0004](../adr/0004-project-license.md)），候选的许可证直接决定它能否被采用：
+项目许可是 `MIT OR Apache-2.0` 双许可（[ADR 0004](../adr/ADR-0004-project-license.md)），候选的许可证直接决定它能否被采用：
 
 - **Slint 不是宽松许可。** 上游提供 GPLv3、商业许可或 Slint Royalty-free 许可，三者都不是 MIT/Apache。
   在项目保持双许可的前提下链接 Slint，会把应用整体推向 GPLv3，或引入 royalty-free 许可的附加条款。

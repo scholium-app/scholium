@@ -67,4 +67,4 @@ undo/revert/cherry-pick/merge 若修改源码，按当前活动语言取得新�
 两语言组合计划经可恢复步骤和团队切换执行；独立分支可各用一种语言，合并不得覆盖目标分支控制状态。
 未合入草稿独立恢复，不冒充共享 Action。新增 epoch 不回退、双语言合并、源码 inverse 与混合引用冲突测试。
 
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。

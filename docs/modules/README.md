@@ -24,4 +24,4 @@
 或引入由上层 app 实现的端口，不能形成 crate 环。
 
 团队语言控制、ForeignSource、文件交付和构建桥接横跨上述模块，公共合约统一见
-[混合源码与团队编辑](../MIXED_SOURCE_EDITING.md)，技术选择见 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+[混合源码与团队编辑](../MIXED_SOURCE_EDITING.md)，技术选择见 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。

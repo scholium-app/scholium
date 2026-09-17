@@ -73,4 +73,4 @@ golden 由各 adapter crate 提供，format 负责跨格式组合测试。
 Raw 保留和 ForeignRendered 执行分开；另报目标编辑性、工具链依赖及 unresolved。普通保存不跨格式生成，
 跨格式另存为和导出调用 generate，但不改变团队活动语言。新增双目标混合包和丢失覆盖率测试。
 
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。

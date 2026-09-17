@@ -1,13 +1,13 @@
 # Spike 0007：阶段 0 第 4 项 — CRDT 赛马
 
-> **有效性（2026-09-17 登记）**：自研最小基线的原始证据，**不用于关闭引擎选型**（其关联 ADR 已如此声明）；引擎选型由 [ADR 0009](../adr/0009-crdt-engine.md) 依 [报告 0014](0014-crdt-engines.md) 固定。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
+> **有效性（2026-09-17 登记）**：自研最小基线的原始证据，**不用于关闭引擎选型**（其关联 ADR 已如此声明）；引擎选型由 [ADR 0009](../adr/ADR-0009-crdt-engine.md) 依 [报告 0014](0014-crdt-engines.md) 固定。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
 
 - 结论：**Pass（自研最小实现；判据 J1–J5 逐用例通过）**，缺口与能力范围外事项见"失败与不确定性"
 - 对应验证项：[路线图阶段 0 第 4 项](../plan/ROADMAP.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
-- 关联 ADR：[0001 三层历史模型](../adr/0001-mixed-source-team-editing.md)（CRDT / Action / checkpoint 三层与本地撤销语义）、
-  [0009 CRDT 引擎选型](../adr/0009-crdt-engine.md)（Proposed，双向链接）。
+- 关联 ADR：[0001 三层历史模型](../adr/ADR-0001-mixed-source-team-editing.md)（CRDT / Action / checkpoint 三层与本地撤销语义）、
+  [0009 CRDT 引擎选型](../adr/ADR-0009-crdt-engine.md)（Proposed，双向链接）。
   **本报告不能用于关闭 ADR 0009**：本 spike 不使用任何现成 CRDT 库，只提供一条自研基线、
   一套不依赖第三方语义的验收夹具（J1–J5 可直接移植），以及稳定节点标识模型的收敛性论证，
   见"对设计的影响"。
@@ -317,7 +317,7 @@ J2.2 首次运行时 `skipped=5`、被删文本没有恢复：`TextCrdt::apply_a
 
 1. **第三方 CRDT 引擎没有比较。** 本 spike 按要求自研实现，没有引入 Loro / Yrs / Automerge，
    也没有实测它们的收敛、撤销、快照、规模与 `wasm32` 行为。其版本、许可证与代码依赖已由
-   [报告 0013](0013-crdt-prescreen.md) 预筛，选型判据见 [ADR 0009](../adr/0009-crdt-engine.md)
+   [报告 0013](0013-crdt-prescreen.md) 预筛，选型判据见 [ADR 0009](../adr/ADR-0009-crdt-engine.md)
    （Proposed）；本报告提供可移植到三者的**验收夹具**（J1–J5 与 136 条逐用例断言）
    与"自研基线至少需要什么"的参照，不能替代选型比较。
 2. **结构树语义极简。** 只有"收敛"没有"语义正确"：并发地互相移动两个节点可能让父指针成环

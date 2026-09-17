@@ -4,11 +4,11 @@
 - 日期：2026-09-16
 - 决策者：ation_ciger
 - 影响模块：依赖许可门禁（`deny.toml`）、构建与工具链选型
-- 关联：[ADR 0004 项目许可证](0004-project-license.md)
+- 关联：[ADR 0004 项目许可证](ADR-0004-project-license.md)
 
 ## 背景
 
-[ADR 0004](0004-project-license.md) 与 `AGENT.md` 的许可证政策规定：新增依赖必须落在允许类别内，
+[ADR 0004](ADR-0004-project-license.md) 与 `AGENT.md` 的许可证政策规定：新增依赖必须落在允许类别内，
 由 `cargo deny` 强制；**引入新许可类别必须走新 ADR**。
 
 阶段 0 的 spike 首次实际拉取了完整依赖树（`typst` 298 包、`recovery` 307 包等）。

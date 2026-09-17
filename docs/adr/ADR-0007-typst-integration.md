@@ -4,7 +4,7 @@
 - 日期：2026-09-16
 - 决策者：ation_ciger
 - 影响模块：预览、渲染转换、源码映射、构建调度
-- 关联：[ADR 0001 团队单一源码语言与混合项目](0001-mixed-source-team-editing.md)、报告 [0005](../spikes/0005-typst-mapping.md)
+- 关联：[ADR 0001 团队单一源码语言与混合项目](ADR-0001-mixed-source-team-editing.md)、报告 [0005](../spikes/0005-typst-mapping.md)
 
 ## 背景
 

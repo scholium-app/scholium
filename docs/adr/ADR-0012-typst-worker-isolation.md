@@ -4,7 +4,7 @@
 - 日期：2026-09-16
 - 执行者：Codex（用户授权推进阶段 0）
 - 影响模块：build、typst；当前实现仅限独立 mixed-build spike
-- 关联：[ADR 0007](0007-typst-integration.md)、[ADR 0008](0008-reconcile-and-toolchain-isolation.md)、[报告 0018](../spikes/0018-typst-worker-isolation.md)
+- 关联：[ADR 0007](ADR-0007-typst-integration.md)、[ADR 0008](ADR-0008-reconcile-and-toolchain-isolation.md)、[报告 0018](../spikes/0018-typst-worker-isolation.md)
 
 ## 背景
 

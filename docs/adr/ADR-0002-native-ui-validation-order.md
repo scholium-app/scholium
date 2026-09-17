@@ -44,4 +44,4 @@ HTML/MathML 导入导出与 LaTeX/Typst 文档能力保留，它们不改变应�
 
 ## 后续补充
 
-[ADR 0003](0003-wasm-and-stack-validation.md)补充 WASM 核心与可选浏览器宿主，有限允许工具生成加载/绑定胶水；原生桌面路线与 GUI 验证顺序不变。
+[ADR 0003](ADR-0003-wasm-and-stack-validation.md)补充 WASM 核心与可选浏览器宿主，有限允许工具生成加载/绑定胶水；原生桌面路线与 GUI 验证顺序不变。
