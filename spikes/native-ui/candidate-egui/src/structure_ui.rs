@@ -54,6 +54,7 @@ impl SpikeApp {
                 let sqrt = ui.button("包裹为根式").clicked();
                 let unwrap = ui.button("解除结构").clicked();
                 let cycle = ui.button("循环变体").clicked();
+                let select = ui.button("选择整节点").clicked();
                 if fraction {
                     self.wrap(NodeKind::Fraction);
                 }
@@ -66,12 +67,33 @@ impl SpikeApp {
                 if cycle {
                     self.cycle_variant();
                 }
-                fraction || sqrt || unwrap || cycle
+                if select {
+                    self.select_node();
+                }
+                fraction || sqrt || unwrap || cycle || select
             })
             .inner;
         if clicked && let Some(id) = self.structure_id {
             ui.memory_mut(|memory| memory.request_focus(id));
         }
+    }
+
+    pub(super) fn select_node(&mut self) {
+        let Some((node, slot, index)) = self.core.document().locate_in_parent(self.focus.focus())
+        else {
+            self.last_event = "根节点没有外层选区".into();
+            return;
+        };
+        self.selection = Selection {
+            anchor: Cursor::Slot { node, slot, index },
+            focus: Cursor::Slot {
+                node,
+                slot,
+                index: index + 1,
+            },
+        };
+        self.focus = self.selection.focus;
+        self.last_event = "已选择整节点（复制为纯文本）".into();
     }
 
     fn pointer_selection(&mut self, response: &egui::Response, origin: egui::Pos2) {
@@ -109,9 +131,9 @@ impl SpikeApp {
     }
 
     fn caret_and_ime(&mut self, ui: &mut egui::Ui, painter: &egui::Painter, origin: egui::Pos2) {
-        let caret = match self.focus {
-            Cursor::Text { node, byte } => self.layout.caret(node, byte),
-            Cursor::Slot { .. } => None,
+        let caret = match self.text_endpoint(self.focus) {
+            Some(Cursor::Text { node, byte }) => self.layout.caret(node, byte),
+            _ => None,
         };
         let rect = caret.map(|caret| {
             egui::Rect::from_min_size(

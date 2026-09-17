@@ -127,7 +127,7 @@ pub fn apply(doc: &mut Document, edit: &SemanticEdit) -> Result<EditOutcome, Edi
 }
 
 /// 校验文本偏移：节点必须是文本叶子，偏移在界内且落在字素边界上。
-fn check_text_offset(doc: &Document, node: NodeId, at: usize) -> Result<(), EditError> {
+pub(crate) fn check_text_offset(doc: &Document, node: NodeId, at: usize) -> Result<(), EditError> {
     let n = doc.node(node)?;
     if !n.kind.is_text() {
         return Err(EditError::NotText { node, kind: n.kind });

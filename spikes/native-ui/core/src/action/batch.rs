@@ -47,6 +47,16 @@ fn apply_recorded(
     if is_noop(edit, &outcome) {
         return Ok(None);
     }
+    if matches!(
+        edit,
+        SemanticEdit::InsertNode {
+            kind: NodeKind::Text | NodeKind::Paragraph,
+            ..
+        }
+    ) && let Some(node) = outcome.created
+    {
+        return Ok(Some(InverseRecipe::RemoveEmptyNode { node }));
+    }
     Ok(Some(
         recipe.unwrap_or_else(|| recipe_for(edit, &outcome, anchor)),
     ))
@@ -124,6 +134,7 @@ pub(super) fn invert(
             doc.node_mut(*node)?.parent = Some(*parent);
             Ok((InverseRecipe::Detach { node: *node }, 0))
         }
+        InverseRecipe::RemoveEmptyNode { node } => remove_empty_node(doc, *node),
         InverseRecipe::Detach { node } => {
             let inverse = reattach_recipe(doc, *node)?;
             edit::apply(doc, &SemanticEdit::DetachNode { node: *node })?;
@@ -135,4 +146,22 @@ pub(super) fn invert(
             operation: description,
         }),
     }
+}
+
+fn remove_empty_node(
+    doc: &mut Document,
+    node: NodeId,
+) -> Result<(InverseRecipe, usize), EditError> {
+    let n = doc.node(node)?;
+    if n.text.len_bytes() != 0 || n.slots.iter().any(|slot| !slot.is_empty()) {
+        return Ok((
+            InverseRecipe::Batch {
+                recipes: Vec::new(),
+            },
+            0,
+        ));
+    }
+    let inverse = reattach_recipe(doc, node)?;
+    edit::apply(doc, &SemanticEdit::DetachNode { node })?;
+    Ok((inverse, 0))
 }

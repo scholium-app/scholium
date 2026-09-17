@@ -50,6 +50,18 @@ pub enum EditError {
         /// 槽位下标。
         slot: usize,
     },
+    /// 槽内子节点插入位置越界。
+    #[error("节点 {node:?} 槽位 {slot} 的位置 {index} 超出子节点数量 {len}")]
+    InvalidSlotIndex {
+        /// 所属节点。
+        node: NodeId,
+        /// 槽位编号。
+        slot: usize,
+        /// 请求的子节点插入位置（不是字节偏移）。
+        index: usize,
+        /// 槽内子节点数量。
+        len: usize,
+    },
     /// 该节点种类不支持该操作。
     #[error("节点 {node:?}（{kind:?}）不支持 {operation}")]
     Unsupported {

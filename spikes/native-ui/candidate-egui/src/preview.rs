@@ -1,6 +1,8 @@
 //! Coalescing background preview; no compiler or filesystem IO on the UI thread.
+mod pages;
 mod worker;
 use eframe::egui;
+use pages::Pages;
 use scholium_spike_core::Editor;
 use std::sync::{Arc, Mutex, mpsc};
 use std::time::{Duration, Instant};
@@ -12,7 +14,7 @@ pub(super) struct Request {
 struct Completed {
     revision: u64,
     elapsed: Duration,
-    image: Result<egui::ColorImage, String>,
+    image: Result<Pages, String>,
 }
 
 #[derive(Default)]
@@ -23,12 +25,23 @@ pub(super) struct Preview {
     submitted: Option<u64>,
     adopted: Option<u64>,
     texture: Option<egui::TextureHandle>,
+    pages: Option<Pages>,
+    page: usize,
+    loaded_page: Option<usize>,
+    zoom: f32,
     status: String,
     due: Option<(u64, Instant)>,
 }
 
 impl Preview {
-    pub(super) fn draw(&mut self, ui: &mut egui::Ui, core: &Editor) {
+    pub(super) fn draw(
+        &mut self,
+        ui: &mut egui::Ui,
+        core: &Editor,
+    ) -> Option<scholium_spike_core::NodeId> {
+        if self.zoom == 0.0 {
+            self.zoom = 1.0;
+        }
         ui.heading("Typst 快速预览");
         ui.checkbox(&mut self.enabled, "启用后台预览");
         if self.enabled {
@@ -40,12 +53,7 @@ impl Preview {
             core.revision()
         ));
         ui.label(&self.status);
-        if let Some(texture) = &self.texture {
-            ui.add(egui::Image::new(texture).fit_to_exact_size(egui::vec2(
-                ui.available_width(),
-                ui.available_width() * texture.size_vec2().y / texture.size_vec2().x,
-            )));
-        }
+        self.draw_pages(ui, core.revision())
     }
 
     fn poll(&mut self, ctx: &egui::Context, core: &Editor) {
@@ -82,14 +90,12 @@ impl Preview {
                 }
                 match result.image {
                     Ok(image) => {
-                        self.texture = Some(ctx.load_texture(
-                            "typst-preview",
-                            image,
-                            egui::TextureOptions::LINEAR,
-                        ));
+                        self.page = self.page.min(image.images.len().saturating_sub(1));
+                        self.pages = Some(image);
+                        self.loaded_page = None;
                         self.adopted = Some(result.revision);
                         self.status = format!(
-                            "首页预览 · 编译及栅格化 {:.0} ms",
+                            "多页预览 · 编译及栅格化 {:.0} ms",
                             result.elapsed.as_secs_f64() * 1000.0
                         );
                     }
@@ -117,7 +123,10 @@ mod tests {
         send.send(Completed {
             revision: 0,
             elapsed: Duration::ZERO,
-            image: Ok(egui::ColorImage::new([1, 1], vec![egui::Color32::WHITE])),
+            image: Ok(Pages {
+                images: vec![egui::ColorImage::new([1, 1], vec![egui::Color32::WHITE])],
+                markers: Vec::new(),
+            }),
         })
         .expect("send");
         preview.poll(&ctx, &core);

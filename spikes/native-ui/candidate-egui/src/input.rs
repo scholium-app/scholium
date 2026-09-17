@@ -73,36 +73,20 @@ impl SpikeApp {
     }
 
     pub(super) fn insert_text(&mut self, text: &str, intent: Intent) {
-        let (node, at, mut edits) = if self.selection.is_collapsed() {
-            let Some((node, at)) = self.target() else {
-                self.last_event = "没有可编辑的文本槽位".to_string();
+        let (caret, edits) = match scholium_spike_core::selection_edit::replacement(
+            self.core.document(),
+            self.selection,
+            text,
+        ) {
+            Ok(plan) => plan,
+            Err(error) => {
+                self.last_event = error.to_string();
                 return;
-            };
-            (node, at, Vec::new())
-        } else {
-            match scholium_spike_core::selection_edit::deletion(
-                self.core.document(),
-                self.selection,
-            ) {
-                Ok((Cursor::Text { node, byte }, edits)) => (node, byte, edits),
-                Ok(_) => return,
-                Err(error) => {
-                    self.last_event = error.to_string();
-                    return;
-                }
             }
         };
-        edits.push(SemanticEdit::InsertText {
-            node,
-            at,
-            text: text.to_string(),
-        });
         match self.core.apply_batch(LOCAL, intent, &edits) {
             Ok(Some(_)) => {
-                self.focus = Cursor::Text {
-                    node,
-                    byte: at + text.len(),
-                };
+                self.focus = caret;
                 self.selection = Selection::collapsed(self.focus);
                 self.last_event = format!("core 收到 {intent:?}：\"{text}\"");
             }
@@ -343,6 +327,10 @@ impl SpikeApp {
             return;
         };
         for edit in edits {
+            if let SemanticEdit::DetachNode { node } = edit {
+                self.paint_selected_subtree(painter, origin, node);
+                continue;
+            }
             let SemanticEdit::DeleteRange { node, start, end } = edit else {
                 continue;
             };

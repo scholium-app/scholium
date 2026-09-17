@@ -16,6 +16,7 @@ mod host;
 mod ir;
 mod latex;
 mod pdf_evidence;
+mod pdf_sandbox;
 mod packages;
 mod plan;
 mod typst_host;

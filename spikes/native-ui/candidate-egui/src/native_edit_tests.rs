@@ -129,19 +129,19 @@ fn ime_navigation_does_not_move_the_document_caret() {
 }
 
 #[test]
-fn unsupported_slot_selection_never_mutates_document_or_history() {
+fn invalid_slot_selection_never_mutates_document_or_history() {
     let (mut app, _) = setup();
     let before = app.plain_text();
     let actions = app.core.history().len();
     app.selection.focus = Cursor::Slot {
         node: app.core.document().root(),
         slot: 0,
-        index: 1,
+        index: usize::MAX,
     };
     app.delete_backward();
     assert_eq!(app.plain_text(), before);
     assert_eq!(app.core.history().len(), actions);
-    assert!(app.last_event.contains("selection needs text endpoints"));
+    assert!(app.last_event.contains("超出"));
 }
 
 #[test]
@@ -201,4 +201,23 @@ fn source_100k_lines_records_layout_and_local_edit_cost() {
         }
     }
     assert_eq!(app.source_buffer.matches('X').count(), 1);
+}
+
+#[test]
+fn whole_node_selection_can_be_replaced_and_undone_in_one_action() {
+    let (mut app, _) = setup();
+    let before = app.plain_text();
+    app.wrap(NodeKind::Sqrt);
+    let wrapped = app.plain_text();
+    app.select_node();
+    let actions = app.core.history().len();
+    app.insert_text("替换", Intent::ImeCommit);
+    assert_eq!(app.core.history().len(), actions + 1);
+    assert!(app.plain_text().starts_with("替换"));
+    app.undo();
+    assert_eq!(app.plain_text(), wrapped);
+    assert!(
+        app.plain_text()
+            .contains(before.split('$').next().expect("first segment"))
+    );
 }

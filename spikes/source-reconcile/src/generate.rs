@@ -64,9 +64,7 @@ impl Generated {
 
     /// 按源码字节偏移定位行号。
     pub fn line_at_byte(&self, byte: usize) -> Option<usize> {
-        self.lines
-            .iter()
-            .rposition(|info| info.start_byte <= byte)
+        self.lines.iter().rposition(|info| info.start_byte <= byte)
     }
 
     /// 找第一个属于指定种类节点的行号。
@@ -86,11 +84,19 @@ pub fn generate(document: &Document, dialect: Dialect) -> Generated {
     let mut lines = Vec::new();
     let mut sink = String::new();
 
-    for (index, child) in document.slot(document.root(), 0).unwrap_or(&[]).iter().enumerate() {
+    for (index, child) in document
+        .slot(document.root(), 0)
+        .unwrap_or(&[])
+        .iter()
+        .enumerate()
+    {
         let Ok(node) = document.node(*child) else {
             continue;
         };
-        if !matches!(node.kind, NodeKind::Paragraph | NodeKind::Heading | NodeKind::Math) {
+        if !matches!(
+            node.kind,
+            NodeKind::Paragraph | NodeKind::Heading | NodeKind::Math
+        ) {
             continue;
         }
         let mut spans = Vec::new();
@@ -275,7 +281,7 @@ fn emit_inline(
                 Dialect::Latex => "^",
                 Dialect::Typst => "^",
             };
-            if let Some(child) = document.slot(node, 2).unwrap_or(&[]).first() {
+            if !document.slot(node, 2).unwrap_or(&[]).is_empty() {
                 out.push_str(marker);
                 let brace_open = match dialect {
                     Dialect::Latex => "{",
@@ -286,10 +292,10 @@ fn emit_inline(
                     Dialect::Typst => ")",
                 };
                 out.push_str(brace_open);
-                emit_inline(document, *child, dialect, out, spans, Origin { parent: node, slot: 2, index: 0 });
+                emit_slot(document, node, 2, dialect, out, spans);
                 out.push_str(brace_close);
             }
-            if let Some(child) = document.slot(node, 1).unwrap_or(&[]).first() {
+            if !document.slot(node, 1).unwrap_or(&[]).is_empty() {
                 out.push('_');
                 let brace_open = match dialect {
                     Dialect::Latex => "{",
@@ -300,7 +306,7 @@ fn emit_inline(
                     Dialect::Typst => ")",
                 };
                 out.push_str(brace_open);
-                emit_inline(document, *child, dialect, out, spans, Origin { parent: node, slot: 1, index: 0 });
+                emit_slot(document, node, 1, dialect, out, spans);
                 out.push_str(brace_close);
             }
         }
@@ -367,7 +373,7 @@ fn emit_inline(
     });
 }
 
-/// 发出某个槽位第 0 个子节点。
+/// 按顺序发出槽位的所有子节点，不丢弃边界输入生成的新文本叶子。
 fn emit_slot(
     document: &Document,
     node: NodeId,
@@ -376,7 +382,7 @@ fn emit_slot(
     out: &mut String,
     spans: &mut Vec<InlineSpan>,
 ) {
-    if let Some(child) = document.slot(node, slot).unwrap_or(&[]).first() {
+    for (index, child) in document.slot(node, slot).unwrap_or(&[]).iter().enumerate() {
         emit_inline(
             document,
             *child,
@@ -386,7 +392,7 @@ fn emit_slot(
             Origin {
                 parent: node,
                 slot,
-                index: 0,
+                index,
             },
         );
     }

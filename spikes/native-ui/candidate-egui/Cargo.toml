@@ -9,6 +9,7 @@ license = "MIT OR Apache-2.0"
 [workspace]
 
 [dependencies]
+serde_json = "=1.0.151"
 scholium-spike-reconcile = { path = "../../source-reconcile" }
 image = { version = "=0.25.10", default-features = false, features = ["png"] }
 scholium-spike-core = { path = "../core" }

@@ -7,11 +7,13 @@
 //! 与其它候选相同的约束：正文权威在 core，UI 只保存投影；结构绘制的是**同一份** `core::layout`。
 
 mod accessibility;
+mod frame_metrics;
 mod input;
 mod math_accessibility;
 #[cfg(test)]
 mod native_edit_tests;
 mod preview;
+mod selection_ui;
 mod source_ui;
 mod structure_ui;
 
@@ -31,6 +33,9 @@ const CJK_FONT_PATH: &str = "/usr/share/fonts/adobe-source-han-serif/SourceHanSe
 pub struct SpikeApp {
     core: Editor,
     layout: Layout,
+    layout_revision: u64,
+    accessible_cache: Option<accessibility::RunCache>,
+    frame_metrics: frame_metrics::FrameMetrics,
     focus: Cursor,
     source: scholium_spike_reconcile::Session,
     preview: preview::Preview,
@@ -78,6 +83,13 @@ impl SpikeApp {
 
         let mut core = Editor::new();
         fixture::build_standard(&mut core);
+        if let Some(count) = std::env::var("SCHOLIUM_SPIKE_PARAGRAPHS")
+            .ok()
+            .and_then(|v| v.parse::<usize>().ok())
+            .filter(|n| *n <= 512)
+        {
+            fixture::build_large(&mut core, count);
+        }
         let layout = layout_document(core.document());
         let focus_source = std::env::var("SCHOLIUM_FOCUS_SOURCE").is_ok();
         let source = scholium_spike_reconcile::Session::new(
@@ -92,7 +104,11 @@ impl SpikeApp {
                 .expect("文档有文本叶子")
         };
 
+        let layout_revision = core.revision();
         Self {
+            layout_revision,
+            accessible_cache: None,
+            frame_metrics: Default::default(),
             core,
             layout,
             focus,
@@ -133,6 +149,12 @@ impl SpikeApp {
                     content,
                     ..
                 } => {
+                    let top = origin.y + Item::top_of(*baseline, *size);
+                    if top > painter.clip_rect().max.y
+                        || top + size * 1.2 < painter.clip_rect().min.y
+                    {
+                        continue;
+                    }
                     painter.text(
                         // 布局给的是基线，绘制需要上沿；换算走 core 的统一约定。
                         origin + egui::vec2(*x, Item::top_of(*baseline, *size)),
@@ -167,7 +189,10 @@ impl SpikeApp {
     pub fn draw(&mut self, ui: &mut egui::Ui) {
         let ctx = ui.ctx().clone();
         self.handle_input(&ctx);
-        self.layout = layout_document(self.core.document());
+        if self.layout_revision != self.core.revision() {
+            self.layout = layout_document(self.core.document());
+            self.layout_revision = self.core.revision();
+        }
 
         // 事件时间线打到 stdout，便于脚本取证而不必读截图。
         if self.last_event != self.printed {
@@ -190,7 +215,19 @@ impl SpikeApp {
                     self.interrupt_ime = true;
                     self.preedit.clear();
                 }
-                self.preview.draw(&mut columns[2], &self.core);
+                if let Some(node) = self.preview.draw(&mut columns[2], &self.core)
+                    && let Some(leaf) = self.core.document().first_text_descendant(node)
+                {
+                    self.focus = Cursor::Text {
+                        node: leaf,
+                        byte: 0,
+                    };
+                    self.selection = Selection::collapsed(self.focus);
+                    self.last_event = format!("预览定位 → {:?}", node);
+                    if let Some(id) = self.structure_id {
+                        ctx.memory_mut(|memory| memory.request_focus(id));
+                    }
+                }
             });
 
             ui.separator();
@@ -236,7 +273,8 @@ fn install_cjk_font(ctx: &egui::Context, bytes: Vec<u8>) -> Result<(), String> {
 }
 
 impl eframe::App for SpikeApp {
-    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+    fn ui(&mut self, ui: &mut egui::Ui, frame: &mut eframe::Frame) {
+        self.frame_metrics.observe(frame);
         self.draw(ui);
     }
 }
@@ -291,6 +329,9 @@ impl SpikeApp {
     /// 测试与基准用：替换核心文档并立即重算布局。
     pub fn replace_document_for_test(&mut self, core: Editor) {
         self.core = core;
-        self.layout = layout_document(self.core.document());
+        if self.layout_revision != self.core.revision() {
+            self.layout = layout_document(self.core.document());
+            self.layout_revision = self.core.revision();
+        }
     }
 }

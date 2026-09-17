@@ -3,10 +3,7 @@ use std::path::Path;
 
 /// 用 `pdfimages -list` 数栅格图像；工具失败不能当作零图像。
 pub(crate) fn raster_images(pdf: &Path) -> std::io::Result<usize> {
-    let output = std::process::Command::new("pdfimages")
-        .arg("-list")
-        .arg(pdf)
-        .output()?;
+    let output = crate::pdf_sandbox::run(pdf, crate::pdf_sandbox::Probe::Images)?;
     if !output.status.success() {
         return Err(std::io::Error::other(format!(
             "pdfimages {}: {}",

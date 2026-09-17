@@ -29,7 +29,7 @@ pub(super) fn run(pending: Arc<Mutex<Option<Request>>>, send: mpsc::Sender<Compl
     }
 }
 
-fn compile(request: &Request) -> Result<egui::ColorImage, String> {
+fn compile(request: &Request) -> Result<Pages, String> {
     let stamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_err(|e| e.to_string())?
@@ -41,7 +41,7 @@ fn compile(request: &Request) -> Result<egui::ColorImage, String> {
     result.map_err(|error| error.to_string())
 }
 
-fn compile_at(request: &Request, root: &Path) -> std::io::Result<egui::ColorImage> {
+fn compile_at(request: &Request, root: &Path) -> std::io::Result<Pages> {
     let input = root.join("input");
     let output = root.join("output");
     let tools = root.join("tools");
@@ -53,10 +53,7 @@ fn compile_at(request: &Request, root: &Path) -> std::io::Result<egui::ColorImag
         .unwrap_or_else(|| PathBuf::from("/tmp/scholium-typst-toolchain/bin/typst"));
     fs::copy(typst, tools.join("typst"))?;
     let generated = generate::generate(&request.document, Dialect::Typst);
-    fs::write(
-        input.join("main.typ"),
-        format!("#set text(font: \"Noto Serif CJK SC\")\n{}", generated.text),
-    )?;
+    fs::write(input.join("main.typ"), mapped_source(&generated))?;
     let run = Command::new("/usr/bin/bash")
         .arg(Path::new(env!("CARGO_MANIFEST_DIR")).join("../../toolchain-sandbox.sh"))
         .args([input.as_os_str(), output.as_os_str()])
@@ -78,12 +75,124 @@ fn compile_at(request: &Request, root: &Path) -> std::io::Result<egui::ColorImag
             String::from_utf8_lossy(&run.stderr).into_owned(),
         ));
     }
-    let bytes = fs::read(output.join("page-1.png"))?;
-    let image = image::load_from_memory(&bytes)
-        .map_err(std::io::Error::other)?
-        .to_rgba8();
-    Ok(egui::ColorImage::from_rgba_unmultiplied(
-        [image.width() as usize, image.height() as usize],
-        image.as_raw(),
-    ))
+    let query = Command::new("/usr/bin/bash")
+        .arg(Path::new(env!("CARGO_MANIFEST_DIR")).join("../../toolchain-sandbox.sh"))
+        .args([input.as_os_str(), output.as_os_str()])
+        .args([
+            "10",
+            "/toolchain/typst",
+            "query",
+            "--root",
+            "/project",
+            "/project/main.typ",
+            "<scholium-map>",
+            "--field",
+            "value",
+        ])
+        .env("SCHOLIUM_SPIKE_TOOLS", root.join("tools"))
+        .output()?;
+    if !query.status.success() {
+        return Err(std::io::Error::other(
+            String::from_utf8_lossy(&query.stderr).into_owned(),
+        ));
+    }
+    let images = read_pages(&output)?;
+    let markers = read_markers(&query.stdout, &generated, images.len())?;
+    Ok(Pages { images, markers })
+}
+
+fn mapped_source(generated: &generate::Generated) -> String {
+    let mut source = String::from("#set text(font: \"Noto Serif CJK SC\")\n");
+    for (i, line) in generated.lines.iter().enumerate() {
+        source.push_str(&format!("#context [#metadata({{ let p = here().position(); (node: {}, page: p.page, x: p.x / 1pt, y: p.y / 1pt) }}) <scholium-map>]\n", line.node.index()));
+        source.push_str(generated.line(i));
+        source.push_str("\n\n");
+    }
+    source
+}
+
+const MAX_PAGES: usize = 100;
+const MAX_PIXELS: usize = 32 * 1024 * 1024;
+
+fn read_pages(output: &Path) -> std::io::Result<Vec<egui::ColorImage>> {
+    let mut paths = Vec::new();
+    for entry in fs::read_dir(output)? {
+        let path = entry?.path();
+        let number = path
+            .file_stem()
+            .and_then(|s| s.to_str())
+            .and_then(|s| s.strip_prefix("page-"))
+            .and_then(|s| s.parse::<usize>().ok());
+        if let Some(number) = number {
+            paths.push((number, path));
+        }
+    }
+    paths.sort_by_key(|(number, _)| *number);
+    if paths.is_empty() || paths.len() > MAX_PAGES {
+        return Err(std::io::Error::other("preview page count outside 1..=100"));
+    }
+    let mut images = Vec::new();
+    let mut pixels = 0;
+    for (offset, (number, path)) in paths.into_iter().enumerate() {
+        if number != offset + 1 {
+            return Err(std::io::Error::other("non-contiguous preview pages"));
+        }
+        let mut reader = image::ImageReader::open(path)?;
+        let mut limits = image::Limits::default();
+        limits.max_alloc = Some(((MAX_PIXELS - pixels) * 4) as u64);
+        limits.max_image_width = Some(4096);
+        limits.max_image_height = Some(4096);
+        reader.limits(limits);
+        let image = reader.decode().map_err(std::io::Error::other)?.to_rgba8();
+        pixels += image.width() as usize * image.height() as usize;
+        if pixels > MAX_PIXELS {
+            return Err(std::io::Error::other("preview exceeds pixel budget"));
+        }
+        images.push(egui::ColorImage::from_rgba_unmultiplied(
+            [image.width() as usize, image.height() as usize],
+            image.as_raw(),
+        ));
+    }
+    Ok(images)
+}
+
+fn read_markers(
+    bytes: &[u8],
+    generated: &generate::Generated,
+    page_count: usize,
+) -> std::io::Result<Vec<super::pages::Marker>> {
+    let values: Vec<serde_json::Value> =
+        serde_json::from_slice(bytes).map_err(std::io::Error::other)?;
+    let mut markers = Vec::new();
+    for value in values {
+        let node = value["node"]
+            .as_u64()
+            .and_then(|id| {
+                generated
+                    .lines
+                    .iter()
+                    .find(|line| line.node.index() as u64 == id)
+            })
+            .map(|line| line.node);
+        let (Some(node), Some(page), Some(x), Some(y)) = (
+            node,
+            value["page"].as_u64(),
+            value["x"].as_f64(),
+            value["y"].as_f64(),
+        ) else {
+            return Err(std::io::Error::other("invalid preview marker"));
+        };
+        if page == 0 || page > page_count as u64 || !x.is_finite() || !y.is_finite() {
+            return Err(std::io::Error::other("preview marker outside pages"));
+        }
+        markers.push(super::pages::Marker {
+            node,
+            page: page as usize - 1,
+            point: egui::pos2(x as f32, y as f32),
+        });
+    }
+    if markers.len() != generated.lines.len() {
+        return Err(std::io::Error::other("missing preview markers"));
+    }
+    Ok(markers)
 }

@@ -189,6 +189,16 @@ fn attribute(
         .iter()
         .filter(|span| span.start <= change.start && change.old_end <= span.end)
         .collect();
+    // Zero-width placeholders share the preceding leaf's end offset. Source insertion
+    // at that boundary extends visible text instead of silently filling a hidden sibling.
+    if candidates.iter().any(|span| {
+        span.start < span.end
+            && document
+                .node(span.node)
+                .is_ok_and(|node| node.kind.is_text())
+    }) {
+        candidates.retain(|span| span.start < span.end);
+    }
     candidates.sort_by_key(|span| span.end - span.start);
 
     let Some(innermost) = candidates.first() else {

@@ -66,6 +66,11 @@ pub enum InverseRecipe {
         /// 子树身份。
         node: NodeId,
     },
+    /// 删除本地新建的空文本/段落；有后续内容时保留，避免撤销吞掉远端输入。
+    RemoveEmptyNode {
+        /// 本地新建节点。
+        node: NodeId,
+    },
     /// 本次插入的字符身份。撤销即按身份删除，不受期间远端插入影响。
     TextInserted {
         /// 目标文本叶子。
@@ -104,6 +109,8 @@ pub struct Action {
     pub recipe: InverseRecipe,
     /// 是否已被本 actor 撤销。
     pub undone: bool,
+    /// 若为撤销补偿，记录其原动作；补偿不再次进入普通 undo 候选。
+    pub compensates: Option<ActionId>,
 }
 
 /// 动作历史：追加日志 + actor 作用域 undo。
@@ -146,6 +153,7 @@ impl History {
             revision,
             recipe,
             undone: false,
+            compensates: None,
         });
         id
     }
@@ -154,7 +162,7 @@ impl History {
     pub fn last_undoable(&self, actor: ActorId) -> Option<usize> {
         self.actions
             .iter()
-            .rposition(|a| a.actor == actor && !a.undone)
+            .rposition(|a| a.actor == actor && !a.undone && a.compensates.is_none())
     }
 
     /// 标记某动作已被撤销。
@@ -351,6 +359,10 @@ impl Editor {
             self.doc.revision(),
             compensation_recipe,
         );
+        if let Some(record) = self.history.actions.last_mut() {
+            record.compensates = Some(action.id);
+        }
+        self.typing = None;
         Ok(Some(UndoOutcome {
             undone: action.id,
             compensation,

@@ -3,6 +3,7 @@ use super::*;
 use egui::accesskit::{self, Action, ActionData, Role, TextPosition, TextSelection};
 use scholium_spike_core::layout::SourceSpan;
 
+#[derive(Clone)]
 struct TextRun {
     id: egui::Id,
     source: SourceSpan,
@@ -10,6 +11,13 @@ struct TextRun {
     rect: egui::Rect,
     positions: Vec<f32>,
     widths: Vec<f32>,
+}
+
+pub(super) struct RunCache {
+    revision: u64,
+    origin: egui::Pos2,
+    parent: egui::Id,
+    runs: Vec<TextRun>,
 }
 
 impl TextRun {
@@ -77,7 +85,14 @@ impl TextRun {
 }
 
 impl SpikeApp {
-    fn accessible_runs(&self, parent: egui::Id, origin: egui::Pos2) -> Vec<TextRun> {
+    fn accessible_runs(&mut self, parent: egui::Id, origin: egui::Pos2) -> Vec<TextRun> {
+        if let Some(cache) = &self.accessible_cache
+            && cache.revision == self.core.revision()
+            && cache.origin == origin
+            && cache.parent == parent
+        {
+            return cache.runs.clone();
+        }
         let mut runs: Vec<_> = self
             .layout
             .items
@@ -93,13 +108,11 @@ impl SpikeApp {
                 else {
                     return None;
                 };
-                let end = self
-                    .layout
-                    .caret(source.node, source.start_byte + content.len())?;
                 let local = Layout {
                     items: vec![item.clone()],
                     ..Default::default()
                 };
+                let end = local.caret(source.node, source.start_byte + content.len())?;
                 Some(TextRun {
                     id: parent.with(source.node.index()).with(source.start_byte),
                     source: *source,
@@ -129,6 +142,12 @@ impl SpikeApp {
             })
             .collect();
         self.sort_runs(&mut runs);
+        self.accessible_cache = Some(RunCache {
+            revision: self.core.revision(),
+            origin,
+            parent,
+            runs: runs.clone(),
+        });
         runs
     }
 
@@ -201,9 +220,14 @@ impl SpikeApp {
             node.set_role(Role::MultilineTextInput);
             node.add_action(Action::SetTextSelection);
             if let (Some(anchor), Some(focus)) = (
-                runs.iter()
-                    .find_map(|run| run.encode(self.selection.anchor)),
-                runs.iter().find_map(|run| run.encode(self.selection.focus)),
+                runs.iter().find_map(|run| {
+                    self.text_endpoint(self.selection.anchor)
+                        .and_then(|cursor| run.encode(cursor))
+                }),
+                runs.iter().find_map(|run| {
+                    self.text_endpoint(self.selection.focus)
+                        .and_then(|cursor| run.encode(cursor))
+                }),
             ) {
                 node.set_text_selection(TextSelection { anchor, focus });
             }

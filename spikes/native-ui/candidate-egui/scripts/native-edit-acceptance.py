@@ -203,6 +203,70 @@ def math_edit():
         assert w.text() == original
 
 
+def slot_selection():
+    with Window('slot-selection') as w:
+        call('fcitx5-remote', '-c')
+        original = w.text()
+        w.select(0, 0)
+        w.action('包裹为根式')
+        wrapped = w.source().queryText().getText(0, -1)
+        w.action('选择整节点')
+        assert w.body().getNSelections() == 1, 'slot selection missing from AT-SPI'
+        start, end = w.body().getSelection(0)
+        assert start == 0 and end > 0, (start, end)
+        actions = w.history()
+        w.type('REPLACED')
+        assert w.text().startswith('REPLACED')
+        w.key(29, 44)
+        # ydotool submits separate keystrokes; undo once per resulting action.
+        for _ in range(len('REPLACED')):
+            if w.text() == original: break
+            previous = w.text()
+            w.key(29, 44)
+            assert w.text() != previous, 'undo stopped restoring selected structure'
+        assert w.text() == original, 'bounded undo sequence did not restore original'
+        assert w.source().queryText().getText(0, -1) == wrapped
+        w.action('选择整节点')
+        w.key(14)
+        w.type('AFTERCUT')
+        assert 'AFTERCUT' in w.text(), 'typing after slot deletion failed'
+
+
+def multipage_preview():
+    saved_count = os.environ.get('SCHOLIUM_SPIKE_PARAGRAPHS')
+    saved_metrics = os.environ.get('SCHOLIUM_SPIKE_FRAME_METRICS')
+    os.environ['SCHOLIUM_SPIKE_PARAGRAPHS'] = '256'
+    os.environ['SCHOLIUM_SPIKE_FRAME_METRICS'] = '1'
+    try:
+        with Window('multipage-preview') as w:
+            call('fcitx5-remote', '-c')
+            w.action('启用后台预览')
+            def current():
+                return any(re.search(r'预览 revision Some\((\d+)\) / 正文 \1$', n.name or '') for n in w.nodes())
+            wait_for(current, 'large preview did not compile', timeout=60)
+            label = next(n.name for n in w.nodes() if re.match(r'第 1 / \d+ 页$', n.name or ''))
+            count = int(label.split('/')[1].split()[0])
+            assert count >= 20, label
+            w.action('下一页')
+            assert any(n.name == f'第 2 / {count} 页' for n in w.nodes())
+            marker = next(n.name for n in w.nodes() if (n.name or '').startswith('定位段落 '))
+            before_caret = w.body().caretOffset
+            w.action(marker)
+            assert w.body().caretOffset != before_caret, 'preview marker did not move body caret'
+            slider = next(n for n in w.nodes() if n.getRoleName() == 'slider' and '缩放' in (n.name or ''))
+            slider.queryValue().currentValue = 1.5
+            time.sleep(0.5)
+            assert abs(slider.queryValue().currentValue - 1.5) < 0.01
+            w.action('上一页')
+            assert any(n.name == f'第 1 / {count} 页' for n in w.nodes())
+            time.sleep(4)
+            (OUT / 'preview-pages.txt').write_text(label + '\n' + w.path.read_text())
+    finally:
+        for key, value in [('SCHOLIUM_SPIKE_PARAGRAPHS', saved_count), ('SCHOLIUM_SPIKE_FRAME_METRICS', saved_metrics)]:
+            if value is None: os.environ.pop(key, None)
+            else: os.environ[key] = value
+
+
 def unicode_clipboard():
     with Window('unicode') as w:
         call('fcitx5-remote', '-c')
@@ -319,7 +383,7 @@ try:
     for name in saved:
         prop(name, 'true')
     call('systemctl', '--user', 'start', 'ydotool')
-    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard]:
+    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview]:
         if len(sys.argv) > 2 and case.__name__ not in sys.argv[2:]:
             continue
         try:

@@ -2,9 +2,9 @@
 //!
 //! 不猜测、不复用上一次结果：每轮都重新编译并重新解析产物。
 
+use crate::pdf_sandbox::{self, Probe};
 use std::collections::BTreeMap;
 use std::path::Path;
-use std::process::Command;
 mod sandbox;
 
 #[cfg(test)]
@@ -116,7 +116,7 @@ pub(crate) fn parse_aux(text: &str) -> BTreeMap<String, (String, u64)> {
 
 /// PDF 页数（`pdfinfo`）。
 pub(crate) fn pdf_pages(pdf: &Path) -> usize {
-    let output = Command::new("pdfinfo").arg(pdf).output();
+    let output = pdf_sandbox::run(pdf, Probe::Info);
     let Ok(output) = output else { return 0 };
     let text = String::from_utf8_lossy(&output.stdout);
     text.lines()
@@ -127,11 +127,7 @@ pub(crate) fn pdf_pages(pdf: &Path) -> usize {
 
 /// 第 `page` 页的文本（`pdftotext`）。
 pub(crate) fn pdf_page_text(pdf: &Path, page: usize) -> String {
-    let output = Command::new("pdftotext")
-        .args(["-f", &page.to_string(), "-l", &page.to_string()])
-        .arg(pdf)
-        .arg("-")
-        .output();
+    let output = pdf_sandbox::run(pdf, Probe::Text(Some(page)));
     match output {
         Ok(output) => String::from_utf8_lossy(&output.stdout).to_string(),
         Err(_) => String::new(),
@@ -140,10 +136,7 @@ pub(crate) fn pdf_page_text(pdf: &Path, page: usize) -> String {
 
 /// 链接列表（`pdftohtml -xml` 的 `<a href="...#锚">`），带所在页。
 pub(crate) fn pdf_links(pdf: &Path) -> Vec<(u64, String)> {
-    let output = Command::new("pdftohtml")
-        .args(["-xml", "-stdout", "-i", "-q"])
-        .arg(pdf)
-        .output();
+    let output = pdf_sandbox::run(pdf, Probe::Links);
     let Ok(output) = output else {
         return Vec::new();
     };

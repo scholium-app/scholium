@@ -67,7 +67,7 @@ pub(super) fn rebuild_and_compare(
 }
 
 fn pdf_text(path: &Path) -> io::Result<String> {
-    let output = Command::new("pdftotext").arg(path).arg("-").output()?;
+    let output = crate::pdf_sandbox::run(path, crate::pdf_sandbox::Probe::Text(None))?;
     if !output.status.success() {
         return Err(io::Error::other("pdftotext failed"));
     }
@@ -88,10 +88,7 @@ fn compare(original: &Path, rebuilt: &Path) -> io::Result<()> {
         )));
     }
     for path in [original, rebuilt] {
-        let probe = Command::new("pdftohtml")
-            .args(["-xml", "-stdout", "-i", "-q"])
-            .arg(path)
-            .output()?;
+        let probe = crate::pdf_sandbox::run(path, crate::pdf_sandbox::Probe::Links)?;
         if !probe.status.success() {
             return Err(io::Error::other("link inspection failed"));
         }
