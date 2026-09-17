@@ -7,7 +7,7 @@
 - 日期：2026-09-16
 - 执行者：ation_ciger
 - 关联：[报告 0007](0007-crdt-race.md)（自研最小实现，接口语义的参照）、[报告 0013](0013-crdt-prescreen.md)（预筛）
-- 代码：[`spikes/crdt-engines/`](../../spikes/crdt-engines/)
+- 代码：[`spikes/crdt-engines/`](../../spikes/crdt-engines)
 
 ## 问题与判据
 

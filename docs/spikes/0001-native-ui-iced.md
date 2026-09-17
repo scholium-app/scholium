@@ -3,19 +3,19 @@
 > **有效性（2026-09-17 登记）**：候选层结论，只记录 Iced 在该验收集下的 Fail 与框架级原因；框架选型已由 [ADR 0006](../adr/0006-native-ui-framework.md) 固定为 egui。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
 
 - 结论：**Fail**（可访问性项不通过，且是框架级缺口；其余判据多为 Pass，预览项未测）
-- 对应验证项：[路线图阶段 0 第 1 项](../ROADMAP.md)
+- 对应验证项：[路线图阶段 0 第 1 项](../plan/ROADMAP.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
 - 关联 ADR：[0002 原生技术栈与 UI 验证顺序](../adr/0002-native-ui-validation-order.md)；最终选型 ADR 待完成
 
 > **状态：候选结论 Fail。** 共用核心与 Iced 适配层已实现，冒烟、渲染后端与真实输入法（经 fcitx5 注入）
 > 都有可复现证据；**可访问性项实测不通过**，原因是 Iced 当前不发布任何可访问对象树。
-> 按 [原生 UI 验证计划](../NATIVE_UI_VALIDATION.md) 第 1 节，候选产出结论后才进入下一候选，
+> 按 [原生 UI 验证计划](../plan/NATIVE_UI_VALIDATION.md) 第 1 节，候选产出结论后才进入下一候选，
 > 因此可以推进 GPUI 比较；这不等于最终选型。
 
 ## 问题与判据
 
-原生 UI 候选能否支撑结构编辑器。通过判据是 [原生 UI 验证计划](../NATIVE_UI_VALIDATION.md) 第 4 节的验收表，
+原生 UI 候选能否支撑结构编辑器。通过判据是 [原生 UI 验证计划](../plan/NATIVE_UI_VALIDATION.md) 第 4 节的验收表，
 所有候选使用同一最小工程与同一组输入动作。
 
 ## 环境

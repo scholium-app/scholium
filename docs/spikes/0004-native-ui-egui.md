@@ -6,7 +6,7 @@
 > [报告 0016](0016-working-tree-status.md)，当前出口判定见[报告 0012](0012-exit-criteria.md)。
 
 - 结论：**通过共同验收的可验证部分**（可访问性与输入法均实测可用；选区与增量布局未做，见文末「第 1 项结论」）
-- 对应验证项：[路线图阶段 0 第 1 项](../ROADMAP.md)
+- 对应验证项：[路线图阶段 0 第 1 项](../plan/ROADMAP.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
 - 关联 ADR：[0002 原生技术栈与 UI 验证顺序](../adr/0002-native-ui-validation-order.md)

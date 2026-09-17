@@ -1,10 +1,10 @@
 # Scholium 设计文档
 
-这里是正式实现的设计依据。`PLAN.md` 只保存项目总览，不再承载全部设计。
+这里是正式实现的设计依据（**规范，现在时**）。计划见 [`plan/`](plan/PLAN.md)（将来时），开发日志见 [`log/`](log/README.md)（过去时）。
 
 ## 阅读顺序
 
-先读 [项目总览](PLAN.md) 了解"做什么"和"从哪里开始"，再按下列顺序深入。
+先读 [项目总览](plan/PLAN.md) 了解"做什么"和"从哪里开始"，再按下列顺序深入。
 
 1. [产品定义](PRODUCT.md)：两种工作形态、用户工作流和首发边界。
 2. [编辑体验](EXPERIENCE.md)：视觉编辑、模式、焦点、数学输入和 Source Studio。
@@ -17,7 +17,7 @@
 8. [格式系统](FORMATS.md)：LaTeX、Typst、Markdown、BibTeX、导入导出和复制。
 9. [安全模型](SECURITY.md)：不可信项目、构建隔离、服务端权限。
 10. [测试策略](TESTING.md)：属性测试、夹具、收敛、恢复和兼容性。
-11. [路线图](ROADMAP.md)：阶段、交付物、出口条件和依赖关系。
+11. [路线图](plan/ROADMAP.md)：阶段、交付物、出口条件和依赖关系。
 12. [模块索引](modules/README.md)：每个 crate、应用和服务的内部设计。
 13. [ADR 索引](adr/README.md)：经过验证的技术选择与替代方案。
     [原生依赖登记](NATIVE_DEPENDENCIES.md)：C/C++/Zig 与需编译本地代码的依赖（ABI / 所有权 / 线程 / 销毁顺序）。
@@ -29,12 +29,17 @@
 - [`archive/`](archive/README.md) 保存废弃原型的背景、实验结果和阶段记录。
 - 历史记录不构成正式架构约束；只有本索引列出的文档定义新实现。
 - 尚未验证的技术选择必须标记为“待验证”，不能写成既成事实；验证报告见 [`spikes/`](spikes/README.md)。
-- **体裁分工**（检索前先判体裁，不要把不同体裁当同一依据）：[`PLAN.md`](PLAN.md)、[`ROADMAP.md`](ROADMAP.md)、
-  [`TECH_STACK.md`](TECH_STACK.md)、[`WASM.md`](WASM.md)、[`NATIVE_UI_VALIDATION.md`](NATIVE_UI_VALIDATION.md)
-  是**计划**，只定义要做什么、什么算通过；[报告 0012](spikes/0012-exit-criteria.md) 是**阶段状态的唯一来源**；
-  [`spikes/`](spikes/README.md) 其余报告是**证据**，只作追溯；[`adr/`](adr/README.md) 是**裁决**；
-  本索引下列顶层文档与 [`modules/`](modules/README.md) 是**规范**（`modules/` 只描述各自 crate 内部，
-  缺其约定的七节时不得作为实现依据）；[`archive/`](archive/README.md) 是**弃用原型**，不得作为实现规范引用。
+- **目录即体裁**（检索前先判体裁，不要把不同体裁当同一依据）：
+
+  | 目录 | 体裁 | 时态 | 能否作为依据 |
+  |---|---|---|---|
+  | 本目录顶层、[`modules/`](modules/README.md) | 规范 | 现在时：系统应该怎样 | 能（`modules/` 缺其约定的七节时不能） |
+  | [`plan/`](plan/PLAN.md) | 计划 | 将来时：要做什么、什么算通过 | 只定义判据，不能当现状 |
+  | [`log/`](log/README.md) | 开发日志 | 过去时：做到哪了 | **不能**，只作追溯 |
+  | [`spikes/`](spikes/README.md) | 验证证据 | 过去时：可复现结论 | 只作追溯；当前判定见 [报告 0012](spikes/0012-exit-criteria.md) |
+  | [`adr/`](adr/README.md) | 裁决 | 已定 | 能 |
+  | `research/` | 外部资料 | — | 只作参考 |
+  | [`archive/`](archive/README.md) | 弃用原型 | 已弃 | **不能**，不得作为实现规范引用 |
 - **状态单一来源**：其他文件里出现的进度、结论与出口判定一律只是副本，不构成当前判定；
   与[报告 0012](spikes/0012-exit-criteria.md) 冲突时以 0012 为准。
 
@@ -44,7 +49,7 @@
 - 原生结构项目以语义文档图为真；外部源码项目以 lossless CST/source 为真。
 - Typst 提供快速交互预览，LaTeX 可作为最终发布与验证后端。
 - 桌面 UI、核心与服务端优先 Rust，必要时使用 C/C++/Zig；采用原生窗口/文本/绘制，不采用 npm 或 WebView。
-- UI 按 [原生 UI 验证计划](NATIVE_UI_VALIDATION.md) 的顺序验证后**已选定 egui / eframe 0.36.2**（[ADR 0006](adr/0006-native-ui-framework.md)）：Iced 缺可访问性、GPUI 缺文本输入控件、EUI-NEO 无无障碍不投入、Slint 被许可证政策阻断。
+- UI 按 [原生 UI 验证计划](plan/NATIVE_UI_VALIDATION.md) 的顺序验证后**已选定 egui / eframe 0.36.2**（[ADR 0006](adr/0006-native-ui-framework.md)）：Iced 缺可访问性、GPUI 缺文本输入控件、EUI-NEO 无无障碍不投入、Slint 被许可证政策阻断。
 - 标准源文件可脱离 Scholium 使用；协作历史是增强层，不是文件可读性的前提。
 
 - 同一共享项目分支在团队范围内只允许一种 LaTeX/Typst 源码语言写入，编译器不受此限制。
@@ -54,10 +59,10 @@
 
 ## 技术验证入口
 
-- [阶段 0 出口条件逐条判定](spikes/0012-exit-criteria.md)：**当前阶段状态的权威页**；条件本身的定义见[路线图](ROADMAP.md)。
-- [原生 UI 验证计划](NATIVE_UI_VALIDATION.md)：固定候选顺序、共同验收集与报告要求。
-- [全栈候选与验证顺序](TECH_STACK.md)：库候选、替代方案和验收，不限于 GUI。
-- [WASM 兼容计划](WASM.md)：共享核心、浏览器宿主与桌面能力边界。
+- [阶段 0 出口条件逐条判定](spikes/0012-exit-criteria.md)：**当前阶段状态的权威页**；条件本身的定义见[路线图](plan/ROADMAP.md)。
+- [原生 UI 验证计划](plan/NATIVE_UI_VALIDATION.md)：固定候选顺序、共同验收集与报告要求。
+- [全栈候选与验证顺序](plan/TECH_STACK.md)：库候选、替代方案和验收，不限于 GUI。
+- [WASM 兼容计划](plan/WASM.md)：共享核心、浏览器宿主与桌面能力边界。
 - [阶段 0 验证报告](spikes/README.md)：报告规则、模板与当前状态。
   [最新工作区复核](spikes/0016-working-tree-status.md)：新增实现、复现命令与未关闭的出口条件。
 - [Mogan LaTeX 实现参考](research/MOGAN_LATEX.md)：固定提交源码依据与独立 Rust 实现方向。

@@ -1,12 +1,10 @@
 # 实施路线图
 
-> 原生编辑逐项验收见[报告 0021](spikes/0021-native-edit-acceptance.md)：真实 IME、双源码、数学编辑、拖选/滚动与 Unicode 桌面场景通过；完整共同验收仍 Fail，槽位选区、大源码和未接入的窗口流程继续阻断。
-> Typst 进程隔离和运行时白名单的后续进展见[报告 0018](spikes/0018-typst-worker-isolation.md)，条件 6 仍部分满足。
-> 后续入口隔离进展见[报告 0017](spikes/0017-mixed-build-isolation.md)：普通混合构建 LaTeX 已接入统一沙箱，条件 6 仍部分满足。
-> 以上只记时点状态。本文件定义**交付与出口条件**；**当前逐条判定以[报告 0012](spikes/0012-exit-criteria.md) 为准**（阶段状态的唯一来源）。
+> 本文件定义**交付与出口条件**（计划）；**进度与出口条件的当前判定见[报告 0012](../spikes/0012-exit-criteria.md)**，
+> 各阶段的时点状态叙述见 [log/stage0-progress.md](../log/stage0-progress.md)。
 路线按产品风险推进。首先验证结构编辑、源码 reconcile、团队单一源码语言和全范围混合构建，随后尽早完成
 打开—编辑—保存—重开—双目标输出闭环。团队语言限制不是编译限制，混用范围不能缩减为公式/图像。
-产品要求见 [混合源码与团队编辑](MIXED_SOURCE_EDITING.md)，实现方案仍待验证。
+产品要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md)，实现方案仍待验证。
 
 ## 阶段 0：七项否决性验证（工期由验证范围重估）
 
@@ -15,10 +13,10 @@
 1. 原生结构/源码编辑 spike：严格按 Iced → GPUI → C++ EUI-NEO → Slint 或 egui 依次验证；
    每个候选运行同一组嵌套文本、数学结构、TreeSelection、中文 IME、源码编辑和无障碍脚本。
    具体任务、进入下一候选的条件与报告见 [原生 UI 验证计划](NATIVE_UI_VALIDATION.md)；
-   进度见[报告 0001](spikes/0001-native-ui-iced.md)：**Iced 结论 Fail**（无 accesskit）；
-   [报告 0002](spikes/0002-native-ui-gpui.md)：**GPUI 结论 Fail**（同样无无障碍，且核心没有文本输入控件）；
-   [报告 0003](spikes/0003-native-ui-prescreen.md)：EUI-NEO 无无障碍不投入、Slint 被许可证政策阻断；
-   [报告 0004](spikes/0004-native-ui-egui.md)：egui 可访问性与输入法均实测可用，
+   进度见[报告 0001](../spikes/0001-native-ui-iced.md)：**Iced 结论 Fail**（无 accesskit）；
+   [报告 0002](../spikes/0002-native-ui-gpui.md)：**GPUI 结论 Fail**（同样无无障碍，且核心没有文本输入控件）；
+   [报告 0003](../spikes/0003-native-ui-prescreen.md)：EUI-NEO 无无障碍不投入、Slint 被许可证政策阻断；
+   [报告 0004](../spikes/0004-native-ui-egui.md)：egui 可访问性与输入法均实测可用，
    是唯一同时具备两者的候选（最终判定见下）。
    无障碍测试必须先启用会话开关（`org.a11y.Status IsEnabled`），否则是假阴性；
    输入法的自动注入在共享会话里不稳定，只能作参考，不能据一次运行否定框架。
@@ -26,10 +24,10 @@
    锁定 eframe/egui 0.36.2 + winit 0.30.13 + accesskit 0.24.1，平台 Arch Linux / niri 26.04 / fcitx5 5.1.22；
    已补：共享核心的选区模型（拖拽、Shift 扩展、同叶删除，含 headless 测试）；
    以及候选的结构编辑命令（包裹/解除/循环变体 + 界面按钮，含 headless 测试）；
-   后续已补：文本端点跨节点删除、纯文本复制/剪切、源码事务应用与后台预览，见[报告 0016](spikes/0016-working-tree-status.md)。
+   后续已补：文本端点跨节点删除、纯文本复制/剪切、源码事务应用与后台预览，见[报告 0016](../spikes/0016-working-tree-status.md)。
    仍缺槽位端点支持和新路径的真实窗口共同验收；正式渲染质量、增量布局未完成。
 2. Typst 映射 spike：20 页 SDG 生成 Typst、增量编译、NodeId ↔ glyph/preview 双向定位。
-   进度见[报告 0005](spikes/0005-typst-mapping.md)：**结论 Pass（机制，含行内结构坐标）**——20 页编译约 220 ms，
+   进度见[报告 0005](../spikes/0005-typst-mapping.md)：**结论 Pass（机制，含行内结构坐标）**——20 页编译约 220 ms，
    锚点 2 050/2 050 解析出页码坐标，分数/上下标反查 40/40；改一处后增量编译约 180 ms（冷的 30%）。
    由此确定：预览必须异步去抖、按百毫秒级定 p95，不能按 16 ms 帧预算设计。
    行内结构坐标已补齐（分数/上下标有区间、反查 40/40），已渲染首页叠加锚点核对通过；
@@ -37,33 +35,33 @@
    （8 字一块插值误差平均 0.24 pt，反查 36/38 完全一致）。尚未覆盖：跨页结构与跨行文本块。
    出口条件第 3 条实测：单字符路径 p95 21 ms、最坏（改首段）208 ms，**不满足 16 ms 的字面要求**，
    同步编译耗时不能直接作为 UI 帧耗时。后续已接异步编译，headless UI 逻辑 p95 1.76 ms，
-   但真实窗口呈现仍待验收（[报告 0016](spikes/0016-working-tree-status.md)）；旧 revision 不闪回已有结果门及过期结果测试。
+   但真实窗口呈现仍待验收（[报告 0016](../spikes/0016-working-tree-status.md)）；旧 revision 不闪回已有结果门及过期结果测试。
 3. 源码 reconcile spike：同一小文档生成 LaTeX/Typst，手改受支持结构后可靠映射回 SDG；未知语法变 Raw。
-   进度见[报告 0006](spikes/0006-source-reconcile.md)：**结论 Pass（限定范围）**——两种方言 8/8 用例通过，
+   进度见[报告 0006](../spikes/0006-source-reconcile.md)：**结论 Pass（限定范围）**——两种方言 8/8 用例通过，
    Raw 原文逐字保留且往返一致；结构级重构（增删行、重排、文本中间新建结构）一律报冲突，未支持。
-   后续已接入 egui 的 revision 事务会话，整份草稿校验后原子应用；补测见[报告 0016](spikes/0016-working-tree-status.md)。
+   后续已接入 egui 的 revision 事务会话，整份草稿校验后原子应用；补测见[报告 0016](../spikes/0016-working-tree-status.md)。
 4. CRDT 赛马：共享树和共享文本的两人离线编辑、本地 undo、快照与 10 万次动作。
-   进度见[报告 0007](spikes/0007-crdt-race.md)：**结论 Pass（自研最小实现）**——136 个用例逐条通过：
+   进度见[报告 0007](../spikes/0007-crdt-race.md)：**结论 Pass（自研最小实现）**——136 个用例逐条通过：
    收敛 J1 14/14、本地 undo 不回滚远端 J2 5/5、快照 J3 5/5、10 万动作 3.7 s（重复运行 2.8–6.0 s 波动；堆增量 87.5 MiB）、
-   随机化收敛 J5 110 轮全部收敛。引擎选型已由[报告 0014](spikes/0014-crdt-engines.md)关闭（选定 Loro 1.16.0，ADR 0009 Accepted）。**未覆盖**：
+   随机化收敛 J5 110 轮全部收敛。引擎选型已由[报告 0014](../spikes/0014-crdt-engines.md)关闭（选定 Loro 1.16.0，ADR 0009 Accepted）。**未覆盖**：
    树语义的并发移动成环与 wrap/unwrap 非原子、撤销的 Action 分组与三方确认。
 5. 构建/恢复 spike：两种引擎隔离构建、WAL 与未提交草稿恢复、外部源码修改冲突。
-   进度见[报告 0008](spikes/0008-build-recovery.md)：**结论 Pass（机制）**——15 个用例组全部通过
+   进度见[报告 0008](../spikes/0008-build-recovery.md)：**结论 Pass（机制）**——15 个用例组全部通过
    （隔离产物 14+6+6+3+3、WAL 6+6+12+7+3、冲突 8+4+2+3、随机截断 169），268 行 PASS / 0 FAIL；
    签名隔离与毒饵对照证明『构建 A 不读 B 的中间文件』，SIGKILL 撕裂恢复落在记录边界，
    外部改动被拒且不静默覆盖。**缺口**：Typst 路径未产出 PDF（无 typst-pdf 依赖）、夹具仅 1 页、
    隔离只覆盖沙箱目录而非产品真实写盘路径、SIGKILL 不等于断电。
 6. 团队语言协调 spike：同语言多人编辑，切换屏障、epoch 隔离、服务重启、网络分区、旧包和恶意写集验证。
-   进度见[报告 0009](spikes/0009-team-language.md)：**结论 Pass（内存模型 + 确定性时序）**——60 个用例
+   进度见[报告 0009](../spikes/0009-team-language.md)：**结论 Pass（内存模型 + 确定性时序）**——60 个用例
    60/60 通过，每条判据都有成功夹具与失败夹具；真实网络、多进程、磁盘 fsync 与解析器均未验证，
    写集校验只是字符串抽检、不足以宣称能阻止恶意客户端。
 7. 混合构建 spike：正文/跨页表格、公式/图表、自定义宏、模板作用域、双向引用/最终页码/链接；
    分别以 LaTeX 和 Typst 为宿主输出，验证标准源码包与混合重建包。不能只做截图嵌入。
-   进度见[报告 0010](spikes/0010-mixed-build.md)：**结论 部分 Pass**——19 个夹具按适用宿主执行，**36/36 次运行通过**，
+   进度见[报告 0010](../spikes/0010-mixed-build.md)：**结论 部分 Pass**——19 个夹具按适用宿主执行，**36/36 次运行通过**，
    六类内容各有成功与失败夹具，并给出三类支持矩阵（源码级支持 / 能编译但语义不完整 / 没做）；
    LaTeX 宿主 18 次、Typst 宿主 18 次，两者都既做宿主也做被嵌入方；最终件 `pdfimages` 栅格图像 0 个（矢量非截图）；
    引用振荡在两种宿主都构造出真实无不动点反馈，第 3 轮检出后停止且不发布正式产物。
-   后续标准包 / 实验混合快照包已有 28/28 次干净环境重建证据，见[报告 0016](spikes/0016-working-tree-status.md)。
+   后续标准包 / 实验混合快照包已有 28/28 次干净环境重建证据，见[报告 0016](../spikes/0016-working-tree-status.md)。
    **未验证**：行内矢量嵌入（仅块级）、
    组件内部符号与链接保真、复杂浮动体与超长文档规模。
 
@@ -81,8 +79,8 @@
 - 两种宿主的最终引用、页码、链接有效；引用反馈有轮数上限，失败阻止正式输出。
 - 标准目标包与混合重建包在声明的干净环境可构建，无法支持的组合被准确阻断。
 
-> 自动门禁修复历史见[报告 0015](spikes/0015-verification-review.md)，最新工作区复测见[报告 0016](spikes/0016-working-tree-status.md)：**32/32 自动检查通过**。
-> **以上共 10 条。** 当前逐条判定见[报告 0012](spikes/0012-exit-criteria.md)：**6 条满足（限定范围）、4 条部分满足，阶段 0 尚未关闭**。
+> 自动门禁修复历史见[报告 0015](../spikes/0015-verification-review.md)，最新工作区复测见[报告 0016](../spikes/0016-working-tree-status.md)：**32/32 自动检查通过**。
+> **以上共 10 条。** 当前逐条判定见[报告 0012](../spikes/0012-exit-criteria.md)：**6 条满足（限定范围）、4 条部分满足，阶段 0 尚未关闭**。
 > 部分满足项为第 1（报告 0021 的槽位选区、完整共同验收及集成缺口）、第 3（实际窗口帧性能）、
 > 第 6（沙箱可信运行时白名单及入口覆盖）、第 8（行内嵌入与组件内部保真）。
 > 第 10 已有实验包重建证据，但不代表正式格式和完整源码编辑后重建工作流已交付。
@@ -180,6 +178,6 @@ Raw/ForeignSource、宏/模板作用域、跨组件引用与有界多轮构建�
 
 ## 全栈与 WASM 验证补充
 
-阶段 0 的相应 spike 按[全栈候选](TECH_STACK.md)增加 CRDT Loro → Yrs → Automerge、本地存储 SQLite/rusqlite → redb、LaTeX TeX Live → Tectonic 比较，并采用[Mogan 调研](research/MOGAN_LATEX.md)中的独立转换/模板夹具。GUI 顺序不变。
+阶段 0 的相应 spike 按[全栈候选](TECH_STACK.md)增加 CRDT Loro → Yrs → Automerge、本地存储 SQLite/rusqlite → redb、LaTeX TeX Live → Tectonic 比较，并采用[Mogan 调研](../research/MOGAN_LATEX.md)中的独立转换/模板夹具。GUI 顺序不变。
 
 尽早运行原生与 WASM 共享核心测试；浏览器 smoke、Typst Worker、持久化/预览适配按[WASM 计划](WASM.md)逐项报告。选型前必须披露 WASM 阻塞依赖；完整浏览器发行与 LaTeX 本地 WASM 后端仍为待验证范围，不能将网页演示作为原生编辑器验收。

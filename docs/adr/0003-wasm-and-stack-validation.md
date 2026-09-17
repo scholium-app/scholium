@@ -21,7 +21,7 @@
 
 ## 决策
 
-在 ADR 0002 的原生语言约束与 GUI 顺序上，补充[全栈候选](../TECH_STACK.md)和[WASM 计划](../WASM.md)。
+在 ADR 0002 的原生语言约束与 GUI 顺序上，补充[全栈候选](../plan/TECH_STACK.md)和[WASM 计划](../plan/WASM.md)。
 优先使核心可移植，再验证浏览器宿主。浏览器可使用必要的工具生成加载/绑定胶水，不引入 npm/Node.js 或
 JS/TS 业务编辑器；桌面原生路线不变。这是对 ADR 0002 禁止浏览器编辑器路线的有限补充，不是恢复旧 Web 原型。
 
@@ -30,7 +30,7 @@ LaTeX 参考[Mogan 已阅读源码](../research/MOGAN_LATEX.md)的架构结论�
 
 ## 验证方法
 
-按 [WASM 计划](../WASM.md) 与 [全栈候选](../TECH_STACK.md) 执行：纯逻辑 crate 先在同一语料下通过原生与
+按 [WASM 计划](../plan/WASM.md) 与 [全栈候选](../plan/TECH_STACK.md) 执行：纯逻辑 crate 先在同一语料下通过原生与
 `wasm32-unknown-unknown` 的编译**与运行**测试，再验证浏览器宿主、Typst Worker、PDF/SVG 与持久化适配。
 每项记录锁定版本、平台、可复现命令与 Pass/Fail/Blocked，报告放 `docs/spikes/`。仅 `cargo check` 通过
 不算运行通过，浏览器脚本也不能替代原生 UI 验收。

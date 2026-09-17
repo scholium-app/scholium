@@ -1,6 +1,6 @@
 # 原生 UI 验证工程
 
-阶段 0 第 1 项验证的共用工程，规格见 [原生 UI 验证计划](../../docs/NATIVE_UI_VALIDATION.md) 第 4 节。
+阶段 0 第 1 项验证的共用工程，规格见 [原生 UI 验证计划](../../docs/plan/NATIVE_UI_VALIDATION.md) 第 4 节。
 
 ## 结构
 

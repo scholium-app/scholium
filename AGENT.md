@@ -18,20 +18,24 @@
    LaTeX 验证构建为准，UI 必须始终显示当前后端和 revision。
 7. **阶段出口优先。** 阶段 0 的七项否决性验证——原生结构/源码编辑、Typst 映射、源码 reconcile、CRDT 赛马、
    构建与恢复、团队语言协调、混合构建——全部通过前，不搭生产脚手架，不做 AI、CAS、绘图、幻灯片或插件市场。
-   清单与出口条件见 `docs/ROADMAP.md`，报告规则见 `docs/spikes/README.md`，
+   清单与出口条件见 `docs/plan/ROADMAP.md`，报告规则见 `docs/spikes/README.md`，
    **当前逐条判定见 `docs/spikes/0012-exit-criteria.md`（阶段状态的唯一来源）**。
 
 8. **团队只能同时编辑一种源码语言。** 同一共享项目分支的 LaTeX/Typst 写入受活动语言与 epoch 门禁约束；同语言可多人编辑，编译可并行，不能仅在本机 UI 实现。
 9. **混用是完整产品要求。** 正文、公式、图表、宏、模板、跨片段引用都要有验证路径。Raw 保留不等于支持执行；正式输出不得包含 unresolved 占位。见 `docs/MIXED_SOURCE_EDITING.md`。
 
-10. **原生技术栈。** 应用 UI、核心与服务端优先 Rust；必要时引入 C/C++/Zig。禁止 npm/Node.js、JavaScript/TypeScript 编辑器、WebView/Electron/Tauri 作为应用 UI 或验证依赖。HTML 导出是文件能力，不是 UI 实现。可选浏览器 WASM 允许必要的工具生成加载/绑定胶水，不允许 JS/TS 业务编辑器或 npm/Node.js；见 `docs/WASM.md`。
+10. **原生技术栈。** 应用 UI、核心与服务端优先 Rust；必要时引入 C/C++/Zig。禁止 npm/Node.js、JavaScript/TypeScript 编辑器、WebView/Electron/Tauri 作为应用 UI 或验证依赖。HTML 导出是文件能力，不是 UI 实现。可选浏览器 WASM 允许必要的工具生成加载/绑定胶水，不允许 JS/TS 业务编辑器或 npm/Node.js；见 `docs/plan/WASM.md`。
     C/C++/Zig 依赖（含经由构建脚本编译本地代码的 crate）必须登记在 [docs/NATIVE_DEPENDENCIES.md](docs/NATIVE_DEPENDENCIES.md)，显式声明 ABI、内存所有权、线程约束与销毁顺序。
-11. **UI 验证顺序固定。** 按 Iced → GPUI → C++ EUI-NEO → Slint 或 egui 的顺序，用 `docs/NATIVE_UI_VALIDATION.md` 的同一验收集验证，不以演示能运行替代编辑器可行性。**阶段 0 的 UI 候选比较已完成并选定 egui，阶段 0 整体尚未关闭**（[ADR 0006](docs/adr/0006-native-ui-framework.md)、报告 0001–0004）；更换框架必须新立 ADR 并重跑同一验收集。
+11. **UI 验证顺序固定。** 按 Iced → GPUI → C++ EUI-NEO → Slint 或 egui 的顺序，用 `docs/plan/NATIVE_UI_VALIDATION.md` 的同一验收集验证，不以演示能运行替代编辑器可行性。**阶段 0 的 UI 候选比较已完成并选定 egui，阶段 0 整体尚未关闭**（[ADR 0006](docs/adr/0006-native-ui-framework.md)、报告 0001–0004）；更换框架必须新立 ADR 并重跑同一验收集。
 
 ## 设计文档纪律
 
-- `docs/PLAN.md` 只是总览；产品、体验、架构、数据模型、排版转换、混合源码与团队编辑、协议、历史、格式、
+- `docs/plan/PLAN.md` 只是总览；产品、体验、架构、数据模型、排版转换、混合源码与团队编辑、协议、历史、格式、
   安全、测试、原生 UI 验证、全栈候选、WASM 和路线图各自维护。
+- **文档按体裁分处不同目录，新增文档一律按体裁归位**：规范在 `docs/` 顶层与 `docs/modules/`，
+  计划在 `docs/plan/`，开发日志在 `docs/log/`（只追加、只作追溯，**不得作为实现依据**），
+  验证证据在 `docs/spikes/`，裁决在 `docs/adr/`。**不得把进度或状态写进规范与计划**；
+  阶段状态的当前判定只有一处来源：`docs/spikes/0012-exit-criteria.md`。
 - 修改模块前阅读 `docs/modules/<module>.md`；公共接口、不变量或职责发生变化时，同一提交更新文档。
 - 第三方核心选型、长期存储格式、协议破坏性变化和跨模块边界调整必须新增 ADR。
 - `docs/archive/` 只用于查证废弃原型，不得作为实现规范引用；确需沿用的实验结论应重新验证。

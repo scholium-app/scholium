@@ -9,7 +9,7 @@
 - 对应验证项：阶段 0 出口条件「不可信 LaTeX/Typst 无法执行外部命令或读取项目根外文件」
 - 日期：2026-09-16
 - 执行者：ation_ciger
-- 代码：[`spikes/untrusted-input/`](../../spikes/untrusted-input/)
+- 代码：[`spikes/untrusted-input/`](../../spikes/untrusted-input)
 - 关联 ADR：[0008 源码 reconcile 策略与构建工具链隔离](../adr/0008-reconcile-and-toolchain-isolation.md)（『LaTeX 必须运行在 OS 级沙箱内』这条要求记录在那里）
 
 ## 问题与判据

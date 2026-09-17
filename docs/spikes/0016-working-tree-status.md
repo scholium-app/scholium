@@ -8,7 +8,7 @@
 - 范围：核对实现、运行全量脚本和新增事务/门禁回归、整理文档；本轮未修改实现代码。
 - 平台：Linux 7.2.4-arch1-2；Rust 1.98.0-nightly（bd08c9e71）；bubblewrap 0.12.0；
   TeX Live 2026；Typst CLI 0.15.1；Rust 依赖以各目录 Cargo.lock 为准。
-- 关联：[前轮复核](0015-verification-review.md)、[出口判定](0012-exit-criteria.md)、[路线图](../ROADMAP.md)。
+- 关联：[前轮复核](0015-verification-review.md)、[出口判定](0012-exit-criteria.md)、[路线图](../plan/ROADMAP.md)。
 
 ## 本次自动验证
 

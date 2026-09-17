@@ -7,12 +7,12 @@
 
 - 结论：**部分 Pass**（六类混用的成功路径与失败阻断在两种宿主下全部实测通过；但嵌入语义、超长文档、
   增量构建等范围明确未做，见[失败与不确定性](#失败与不确定性)）
-- 对应验证项：[路线图阶段 0 第 7 项](../ROADMAP.md)
+- 对应验证项：[路线图阶段 0 第 7 项](../plan/ROADMAP.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
 - 关联 ADR：[0001 团队单一源码语言与 LaTeX/Typst 混合项目](../adr/0001-mixed-source-team-editing.md)、[0002 原生技术栈与 UI 验证顺序](../adr/0002-native-ui-validation-order.md)
   （本项大量结论指向"嵌入载体与语义保真"需要新 ADR，见[对设计的影响](#对设计的影响)）
-- 代码：[`spikes/mixed-build/`](../../spikes/mixed-build/)
+- 代码：[`spikes/mixed-build/`](../../spikes/mixed-build)
 - 依赖版本：`typst = 0.15.1`、`typst-layout = 0.15.1`、`typst-kit = 0.15.1`（`embedded-fonts` + `scan-fonts`）、
   `typst-svg = 0.15.1`、`typst-pdf = 0.15.1`；TeX Live 2026 / XeTeX 3.141592653-2.6-0.999998；
   poppler 26.08.0（`pdftotext` / `pdfinfo` / `pdftohtml` / `pdfimages`）

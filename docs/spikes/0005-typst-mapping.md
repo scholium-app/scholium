@@ -3,11 +3,11 @@
 > **有效性（2026-09-17 登记）**：阶段 0 第 2 项的原始证据，结论限于机制与夹具范围；生成、集成与位置映射契约见 [ADR 0007](../adr/0007-typst-integration.md)。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
 
 - 结论：**Pass（机制，含行内结构坐标）**，附一条影响设计的时延结论
-- 对应验证项：[路线图阶段 0 第 2 项](../ROADMAP.md)
+- 对应验证项：[路线图阶段 0 第 2 项](../plan/ROADMAP.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
 - 关联 ADR：[0001 三层历史模型](../adr/0001-mixed-source-team-editing.md)、[0002 原生技术栈与 UI 验证顺序](../adr/0002-native-ui-validation-order.md)
-- 代码：[`spikes/typst-mapping/`](../../spikes/typst-mapping/)
+- 代码：[`spikes/typst-mapping/`](../../spikes/typst-mapping)
 - 依赖版本：`typst = 0.15.1`、`typst-layout = 0.15.1`、`typst-kit = 0.15.1`（features `embedded-fonts`、`scan-fonts`）
 
 ## 要回答的问题

@@ -3,12 +3,12 @@
 > **有效性（2026-09-17 登记）**：阶段 0 第 6 项的原始证据，真实网络／多进程／磁盘／解析器未验证；契约记在 [ADR 0001](../adr/0001-mixed-source-team-editing.md)（仍为 Proposed）。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
 
 - 结论：**Pass（内存模型 + 确定性时序；真实网络 / 多进程 / 磁盘 / 解析器均未验证）**
-- 对应验证项：[路线图阶段 0 第 6 项](../ROADMAP.md)
+- 对应验证项：[路线图阶段 0 第 6 项](../plan/ROADMAP.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
 - 关联 ADR：[ADR 0001 团队单一源码语言与 LaTeX/Typst 混合项目](../adr/0001-mixed-source-team-editing.md)
   （该 ADR 状态为 Proposed，尚未加入指回本报告的反向链接；反向链接应由整合者随提交补上）
-- 代码：[`spikes/language-coordination/`](../../spikes/language-coordination/)
+- 代码：[`spikes/language-coordination/`](../../spikes/language-coordination)
 
 ## 问题与判据
 
@@ -298,7 +298,7 @@ latex`，控制记录不随历史回放倒退。对照夹具下同一旧包被�
 7. **规模与压力未验证**：没有多客户端长时间运行、没有大负载下的队列/日志增长行为。
 8. **客户端交互未验证**：没有真实 IME commit、drain 交互、超时隔离的用户流程；隔离与强制完成是脚本直接调用。
 9. **恶意写集只覆盖 19 类**，未覆盖重放签名伪造、跨 scope 资源引用、编码/转义绕过、许可重放等。
-10. **报告未回链**：`docs/ROADMAP.md` 与 `docs/spikes/README.md` 的对应条目/状态表需由整合者更新
+10. **报告未回链**：`docs/plan/ROADMAP.md` 与 `docs/spikes/README.md` 的对应条目/状态表需由整合者更新
     （本次按约束只新增 spike 目录与本报告）。
 
 ## 对设计的影响

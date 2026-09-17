@@ -88,7 +88,7 @@ key 包含入口内容、依赖内容 hash、profile、工具链版本和安全�
 
 ## 工具链候选与宿主
 
-LaTeX 按 TeX Live 所需引擎（pdfLaTeX/XeLaTeX/LuaLaTeX）→ Tectonic 验证，实际兼容矩阵决定后端，不能假定 Tectonic 完全替换全部引擎。参考[Mogan 工具探测](../research/MOGAN_LATEX.md)报告路径、版本及能力。原生流程使用受控进程；浏览器不能调用本机进程，Typst Worker 与本地 LaTeX WASM 分别验证。远程构建需用户显式选择，缺少后端返回能力诊断而非伪造最终产物。见[WASM](../WASM.md)。
+LaTeX 按 TeX Live 所需引擎（pdfLaTeX/XeLaTeX/LuaLaTeX）→ Tectonic 验证，实际兼容矩阵决定后端，不能假定 Tectonic 完全替换全部引擎。参考[Mogan 工具探测](../research/MOGAN_LATEX.md)报告路径、版本及能力。原生流程使用受控进程；浏览器不能调用本机进程，Typst Worker 与本地 LaTeX WASM 分别验证。远程构建需用户显式选择，缺少后端返回能力诊断而非伪造最终产物。见[WASM](../plan/WASM.md)。
 
 ## 阶段 0 实验进展
 

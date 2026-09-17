@@ -3,11 +3,11 @@
 > **有效性（2026-09-17 登记）**：阶段 0 第 5 项的原始证据；本报告不固化选型（见其关联 ADR 说明）。阶段 0 当前判定见 [报告 0012](0012-exit-criteria.md)。
 
 - 结论：**Pass（机制；四条判据全部逐用例通过，但有一项实现缺口见下）**
-- 对应验证项：[路线图阶段 0 第 5 项](../ROADMAP.md)
+- 对应验证项：[路线图阶段 0 第 5 项](../plan/ROADMAP.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
 - 关联 ADR：尚无（本报告不固化选型；若把 WAL 记录格式与"拒绝静默覆盖"写成正式契约，需新 ADR）；[0008 源码 reconcile 策略与构建工具链隔离](../adr/0008-reconcile-and-toolchain-isolation.md)（隔离构建部分）
-- 代码：[`spikes/recovery/`](../../spikes/recovery/)
+- 代码：[`spikes/recovery/`](../../spikes/recovery)
 - 证据日志：本报告引用的全部输出来自一次连续运行，命令见"复现步骤"
 
 ## 问题与判据

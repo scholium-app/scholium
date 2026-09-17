@@ -87,7 +87,7 @@ CI 跑稳定微基准趋势；发布门禁在固定机器跑场景基准，不�
 
 ## 原生 UI 验证门禁
 
-Iced → GPUI → C++ EUI-NEO → Slint 或 egui 使用 [同一验收集](NATIVE_UI_VALIDATION.md)。
+Iced → GPUI → C++ EUI-NEO → Slint 或 egui 使用 [同一验收集](plan/NATIVE_UI_VALIDATION.md)。
 实测中文预编辑/提交/取消、数学光标、结构选区、大源码、远端编辑、原生可访问树和三平台差异。
 无显示服务器的逻辑测试不能代替真实窗口/输入法测试；浏览器自动化不能作为原生 UI 验收证据。
 检查正常构建与运行无需 Node.js/npm/WebView；原生 FFI 做生命周期和错误边界测试。
@@ -105,7 +105,7 @@ Iced → GPUI → C++ EUI-NEO → Slint 或 egui 使用 [同一验收集](NATIVE
 
 ## WASM 与跨宿主验证
 
-按[WASM 计划](WASM.md)对纯逻辑 crate 执行 `wasm32-unknown-unknown` 编译与实际运行测试（例如无 npm 的 wasm-bindgen-test 工具路径，具体版本待 spike 固定）。复用原生解析、编辑动作、序列化、Unicode 锚点与兼容报告语料，并测试原生/浏览器 CRDT 更新互通。浏览器另测中文 IME、导入/导出、配额耗尽、异常关闭、Worker 取消与断线 epoch；不得把编译成功等同运行成功，或以浏览器脚本替代原生 UI 测试。当前没有 WASM 实测结果。
+按[WASM 计划](plan/WASM.md)对纯逻辑 crate 执行 `wasm32-unknown-unknown` 编译与实际运行测试（例如无 npm 的 wasm-bindgen-test 工具路径，具体版本待 spike 固定）。复用原生解析、编辑动作、序列化、Unicode 锚点与兼容报告语料，并测试原生/浏览器 CRDT 更新互通。浏览器另测中文 IME、导入/导出、配额耗尽、异常关闭、Worker 取消与断线 epoch；不得把编译成功等同运行成功，或以浏览器脚本替代原生 UI 测试。当前没有 WASM 实测结果。
 
 ## 验证纪律（阶段 0 的教训）
 

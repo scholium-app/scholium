@@ -3,7 +3,7 @@
 Scholium 是面向研究写作的本地优先协作工作区，以即时排版的结构化编辑为默认体验，同时直接编辑
 LaTeX、Typst、Markdown 和 BibTeX，提供非线性历史、多人协作、双后端预览、格式转换和“复制为”。
 
-本文件只回答“做什么”和“从哪里开始”。详细设计见 [设计文档索引](README.md)。
+本文件只回答“做什么”和“从哪里开始”。详细设计见 [设计文档索引](../README.md)。
 
 ## 核心原则
 
@@ -30,13 +30,13 @@ LaTeX、Typst、Markdown 和 BibTeX，提供非线性历史、多人协作、双
 ## 实现模块
 
 正式 workspace 由 model、document、storage、history、collab、format、latex、typst、markdown、bib、
-render、build、app 和 sync-server 组成。职责与 API 见 [模块索引](modules/README.md)。
+render、build、app 和 sync-server 组成。职责与 API 见 [模块索引](../modules/README.md)。
 
 ## 实施顺序
 
 先验证结构编辑、源码 reconcile、团队语言切换、完整范围的混合构建、CRDT 与安全恢复，再建立最小编辑/
 文件交换闭环；随后扩展结构输入、混用覆盖、历史、协作和产品化。源码打开保存与双目标输出不推迟到最后。
-每个阶段必须通过出口条件，详见 [路线图](ROADMAP.md) 与 [混合源码与团队编辑](MIXED_SOURCE_EDITING.md)。
+每个阶段必须通过出口条件，详见 [路线图](ROADMAP.md) 与 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md)。
 
 ## 废弃原型处理
 
@@ -45,4 +45,4 @@ render、build、app 和 sync-server 组成。职责与 API 见 [模块索引](m
 
 ## 全栈与可移植性
 
-按[全栈候选](TECH_STACK.md)验证 UI 以外的解析、编译、协作、存储、渲染和服务端；候选不等于最终依赖。优先支持[WASM 核心与浏览器适配](WASM.md)，保持原生桌面路线及已指定 GUI 顺序；完整浏览器发行范围待验证。LaTeX 参考[Mogan 转换分层与模板适配](research/MOGAN_LATEX.md)，独立 Rust 实现。
+按[全栈候选](TECH_STACK.md)验证 UI 以外的解析、编译、协作、存储、渲染和服务端；候选不等于最终依赖。优先支持[WASM 核心与浏览器适配](WASM.md)，保持原生桌面路线及已指定 GUI 顺序；完整浏览器发行范围待验证。LaTeX 参考[Mogan 转换分层与模板适配](../research/MOGAN_LATEX.md)，独立 Rust 实现。

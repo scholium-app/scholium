@@ -77,4 +77,4 @@ apply_text、包含源码写集的 apply_semantic 和共享生成草稿都先经
 
 ## WASM 互通
 
-浏览器与原生共享 schema、相对锚点语义和版本化更新协议，验证双端快照/增量互通、撤销与重连 epoch；引擎 WASM 支持必须实际编译运行。具体候选见[全栈清单](../TECH_STACK.md)。
+浏览器与原生共享 schema、相对锚点语义和版本化更新协议，验证双端快照/增量互通、撤销与重连 epoch；引擎 WASM 支持必须实际编译运行。具体候选见[全栈清单](../plan/TECH_STACK.md)。

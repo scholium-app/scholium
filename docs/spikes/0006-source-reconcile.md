@@ -6,11 +6,11 @@
 > [报告 0016](0016-working-tree-status.md)，当前出口判定见[报告 0012](0012-exit-criteria.md)。
 
 - 结论：**Pass（限定范围）**——受支持结构的受支持编辑可可靠往返；不支持的一律报冲突
-- 对应验证项：[路线图阶段 0 第 3 项](../ROADMAP.md)
+- 对应验证项：[路线图阶段 0 第 3 项](../plan/ROADMAP.md)
 - 日期：2026-09-16
 - 执行者：ation_ciger
 - 关联 ADR：[0001 混合源码与团队编辑](../adr/0001-mixed-source-team-editing.md)
-- 代码：[`spikes/source-reconcile/`](../../spikes/source-reconcile/)
+- 代码：[`spikes/source-reconcile/`](../../spikes/source-reconcile)
 
 ## 问题与判据
 

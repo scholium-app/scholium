@@ -9,12 +9,12 @@
 ## 规则
 
 - 报告按 `NNNN-short-title.md` 命名，模板见 [0000-template.md](0000-template.md)。
-- 每份报告对应 [路线图](../ROADMAP.md) 阶段 0 的一个验证项，必须在 `docs/ROADMAP.md` 对应条目上链接。
+- 每份报告对应 [路线图](../plan/ROADMAP.md) 阶段 0 的一个验证项，必须在 `docs/plan/ROADMAP.md` 对应条目上链接。
 - 结论只能是 `Pass`、`Fail`、`Blocked`。缺系统环境、缺工具链或缺夹具记 `Blocked`，不能记 `Pass`。
 - 报告必须包含锁定版本、真实平台、可复现命令和证据位置；只给结论不给证据视为未完成。
 - 结论需要固化选型时另立 ADR，并在报告和 ADR 之间双向链接。ADR 只记录决策与替换条件，
   原始数据留在本目录。
-- 原生 UI 各候选的报告还必须满足 [原生 UI 验证计划](../NATIVE_UI_VALIDATION.md) 第 5 节的字段要求。
+- 原生 UI 各候选的报告还必须满足 [原生 UI 验证计划](../plan/NATIVE_UI_VALIDATION.md) 第 5 节的字段要求。
 - 可执行验证代码放在仓库根 `spikes/<name>/`，使用 Rust 或必要原生代码构建。
 
 ## 一键复现
@@ -70,7 +70,7 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 **测试前提**：无障碍测试必须在会话 `org.a11y.Status IsEnabled = true` 下进行。
 关闭时 AccessKit 类框架不会注册，结果是**假阴性**——本目录早期记录曾因此出错，已在报告 0001/0002 更正。
 
-阶段 0 七项清单与出口条件见 [路线图](../ROADMAP.md)。
+阶段 0 七项清单与出口条件见 [路线图](../plan/ROADMAP.md)。
 
 ## 状态与复核报告
 

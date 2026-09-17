@@ -1,7 +1,7 @@
 # Spike NNNN：标题
 
 - 结论：Pass / Fail / Blocked
-- 对应验证项：[路线图阶段 0 第 N 项](../ROADMAP.md)
+- 对应验证项：[路线图阶段 0 第 N 项](../plan/ROADMAP.md)
 - 日期：YYYY-MM-DD
 - 执行者：
 - 关联 ADR：（若有，双向链接）
