@@ -166,6 +166,8 @@ Native/ForeignRendered/Bridged/Unresolved；编辑性 NativeEditable/SourceEdita
 
 ## 10. 阶段 0 验证状态
 
+> 本节只记时点结论与边界，属副本；阶段 0 的**当前逐条判定以[报告 0012](spikes/0012-exit-criteria.md) 为准**。
+
 上面的验收清单由阶段 0 的两项否决性验证部分关闭（**不是全部**）：
 
 | 上面的条目 | 阶段 0 验证 | 结论与边界 |

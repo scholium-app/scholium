@@ -29,6 +29,14 @@
 - [`archive/`](archive/README.md) 保存废弃原型的背景、实验结果和阶段记录。
 - 历史记录不构成正式架构约束；只有本索引列出的文档定义新实现。
 - 尚未验证的技术选择必须标记为“待验证”，不能写成既成事实；验证报告见 [`spikes/`](spikes/README.md)。
+- **体裁分工**（检索前先判体裁，不要把不同体裁当同一依据）：[`PLAN.md`](PLAN.md)、[`ROADMAP.md`](ROADMAP.md)、
+  [`TECH_STACK.md`](TECH_STACK.md)、[`WASM.md`](WASM.md)、[`NATIVE_UI_VALIDATION.md`](NATIVE_UI_VALIDATION.md)
+  是**计划**，只定义要做什么、什么算通过；[报告 0012](spikes/0012-exit-criteria.md) 是**阶段状态的唯一来源**；
+  [`spikes/`](spikes/README.md) 其余报告是**证据**，只作追溯；[`adr/`](adr/README.md) 是**裁决**；
+  本索引下列顶层文档与 [`modules/`](modules/README.md) 是**规范**（`modules/` 只描述各自 crate 内部，
+  缺其约定的七节时不得作为实现依据）；[`archive/`](archive/README.md) 是**弃用原型**，不得作为实现规范引用。
+- **状态单一来源**：其他文件里出现的进度、结论与出口判定一律只是副本，不构成当前判定；
+  与[报告 0012](spikes/0012-exit-criteria.md) 冲突时以 0012 为准。
 
 ## 当前基本假设
 
@@ -46,6 +54,7 @@
 
 ## 技术验证入口
 
+- [阶段 0 出口条件逐条判定](spikes/0012-exit-criteria.md)：**当前阶段状态的权威页**；条件本身的定义见[路线图](ROADMAP.md)。
 - [原生 UI 验证计划](NATIVE_UI_VALIDATION.md)：固定候选顺序、共同验收集与报告要求。
 - [全栈候选与验证顺序](TECH_STACK.md)：库候选、替代方案和验收，不限于 GUI。
 - [WASM 兼容计划](WASM.md)：共享核心、浏览器宿主与桌面能力边界。

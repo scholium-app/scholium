@@ -18,7 +18,8 @@
    LaTeX 验证构建为准，UI 必须始终显示当前后端和 revision。
 7. **阶段出口优先。** 阶段 0 的七项否决性验证——原生结构/源码编辑、Typst 映射、源码 reconcile、CRDT 赛马、
    构建与恢复、团队语言协调、混合构建——全部通过前，不搭生产脚手架，不做 AI、CAS、绘图、幻灯片或插件市场。
-   清单、出口条件和证据要求见 `docs/ROADMAP.md` 与 `docs/spikes/README.md`。
+   清单与出口条件见 `docs/ROADMAP.md`，报告规则见 `docs/spikes/README.md`，
+   **当前逐条判定见 `docs/spikes/0012-exit-criteria.md`（阶段状态的唯一来源）**。
 
 8. **团队只能同时编辑一种源码语言。** 同一共享项目分支的 LaTeX/Typst 写入受活动语言与 epoch 门禁约束；同语言可多人编辑，编译可并行，不能仅在本机 UI 实现。
 9. **混用是完整产品要求。** 正文、公式、图表、宏、模板、跨片段引用都要有验证路径。Raw 保留不等于支持执行；正式输出不得包含 unresolved 占位。见 `docs/MIXED_SOURCE_EDITING.md`。

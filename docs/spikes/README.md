@@ -47,7 +47,9 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 ## 当前状态
 
 最新工作区复测与新增实现统一见[报告 0016](0016-working-tree-status.md)；
-下表保留各项原始报告的验证范围，新增能力以 0016 为准。阶段 0 尚未关闭。
+下表保留各项原始报告的验证范围，新增能力以 0016 为准。
+**阶段 0 出口条件的当前逐条判定以[报告 0012](0012-exit-criteria.md) 为准** —— 本节下表与各报告正文都只是它的证据与副本。
+阶段 0 尚未关闭。
 
 | 验证项 | 报告 | 结论 |
 |---|---|---|
@@ -69,3 +71,19 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 关闭时 AccessKit 类框架不会注册，结果是**假阴性**——本目录早期记录曾因此出错，已在报告 0001/0002 更正。
 
 阶段 0 七项清单与出口条件见 [路线图](../ROADMAP.md)。
+
+## 状态与复核报告
+
+上表是**原始验证报告**的范围记录。下面这些是后续的状态、复核与出口判定报告：它们只用于追溯过程，
+不单独作为实现依据；**阶段 0 出口条件的当前逐条判定唯一来源是 0012**，与之不一致时以 0012 为准。
+
+| 性质 | 报告 | 一句话结论 |
+|---|---|---|
+| **出口条件当前判定** | [0012-exit-criteria.md](0012-exit-criteria.md) | **6 条满足、4 条部分满足；阶段 0 尚未关闭**（更新 2026-09-16）。 |
+| 门禁复核 | [0015-verification-review.md](0015-verification-review.md) | Pass（本轮门禁修复）；属历史记录，当前判定见 0012。 |
+| 工作区状态 | [0016-working-tree-status.md](0016-working-tree-status.md) | Pass（本轮自动检查）；阶段 0 尚未关闭。 |
+| 混合构建 LaTeX 入口隔离 | [0017-mixed-build-isolation.md](0017-mixed-build-isolation.md) | Pass（共用入口与相关回归）；出口条件 6 仍部分满足。 |
+| Typst worker 隔离与运行时白名单 | [0018-typst-worker-isolation.md](0018-typst-worker-isolation.md) | Pass（本轮隔离与受影响回归）；出口条件 6 仍部分满足。 |
+| 真实原生窗口复核 | [0019-native-window-review.md](0019-native-window-review.md) | Fail（完整共同验收）；已测源码与预览闭环通过。 |
+| 正文可访问文本与滚动视口 | [0020-body-accessibility-viewport.md](0020-body-accessibility-viewport.md) | Pass（本报告接口与视口范围）；Fail（完整编辑器共同验收）。 |
+| 原生编辑完整清单复核 | [0021-native-edit-acceptance.md](0021-native-edit-acceptance.md) | Fail（整体）；六组限定桌面流程通过，完整共同清单仍有缺口。 |
