@@ -390,6 +390,20 @@ def prop(name, value):
     call('busctl', '--user', 'set-property', 'org.a11y.Bus', '/org/a11y/bus', 'org.a11y.Status', name, 'b', value)
 
 
+def visual_comparison():
+    with Window('visual-comparison') as w:
+        w.action('Typst')
+        source = w.source().queryText().getText(0, -1)
+        (OUT / 'generated.typ').write_text(source)
+        w.action('启用后台预览')
+        wait_for(lambda: any(re.search(r'预览 revision Some\((\d+)\) / 正文 \1$',
+                 n.name or '') for n in w.nodes()), 'preview unavailable', timeout=60)
+        # Capture the same unmodified model revision on both sides.
+        (OUT / 'comparison.typ').write_text(
+            '#set page(width: auto, height: auto, margin: 12pt)\n'
+            '#set text(font: "Source Han Serif CN", size: 20pt)\n' + source)
+
+
 saved = {name: call('busctl', '--user', 'get-property', 'org.a11y.Bus', '/org/a11y/bus',
                     'org.a11y.Status', name).split()[-1] for name in ['IsEnabled', 'ScreenReaderEnabled']}
 ime_name = call('fcitx5-remote', '-n')
@@ -400,7 +414,7 @@ try:
     for name in saved:
         prop(name, 'true')
     call('systemctl', '--user', 'start', 'ydotool')
-    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview]:
+    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison]:
         if len(sys.argv) > 2 and case.__name__ not in sys.argv[2:]:
             continue
         try:

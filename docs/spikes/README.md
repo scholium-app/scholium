@@ -94,4 +94,4 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 | 结构排版与多页桌面复测 | [0023-native-layout-preview.md](SPK-0023-native-layout-preview.md) | 槽位/多页交互通过；修正基线与槽位漏画，性能仅报告实测，完整排版与共同验收未关闭。 |
 | 原生文字与交互几何 | [0024-text-geometry.md](SPK-0024-text-geometry.md) | 文字绘制、光标、命中及字符框统一到字体实测；结构布局尺寸和完整外框仍待完成。 |
 | 数学结构实测布局与选框 | [0025-measured-structure-layout.md](SPK-0025-measured-structure-layout.md) | 实测文字尺寸进入结构布局，选框覆盖节点符号及线条；八组桌面场景通过，伸缩数学符号仍待做。 |
-| Typst 视觉层 | [0026-typst-visual-layer.md](SPK-0026-typst-visual-layer.md) | 左侧当前 revision 使用 Typst 页面视觉层，原生模型负责交互；精确 source map 选区仍待做。 |
+| Typst 视觉层 | [0026-typst-visual-layer.md](SPK-0026-typst-visual-layer.md) | 对比确认 Typst 质量优于拼接；整页覆盖因交互坐标脱钩拒绝交付，保留 source map 方案。 |
