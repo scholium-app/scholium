@@ -8,6 +8,9 @@
 mod checks;
 mod generator;
 mod latency;
+mod scene;
+mod scene_probe;
+mod scene_view;
 mod world;
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -55,6 +58,10 @@ fn main() {
     }
     if std::env::args().nth(1).as_deref() == Some("frame") {
         checks::frame_check();
+        return;
+    }
+    if std::env::args().nth(1).as_deref() == Some("scene") {
+        scene::run();
         return;
     }
 

@@ -55,3 +55,42 @@ Frame 结构：1 页，1 个 group，13 个文本 run，19 个 glyph，2 个 sha
 - [Typst TextItem/Glyph API](https://docs.rs/typst/0.15.1/typst/layout/struct.TextItem.html)
 - [Typst 数学布局源码](https://github.com/typst/typst/tree/main/crates/typst-layout/src/math)
 - [ReX README](https://github.com/cbreeden/rex)
+
+## 2026-09-18：Frame scene 隔离实验
+
+限定实验结论 **Pass**；替换左侧编辑器的完整验收仍 **Fail（未实现）**。
+平台为本机 Linux，锁定 Typst 0.15.1、egui 0.36.2。未改变阶段出口判定。
+
+新增 `scene.rs`、`scene_probe.rs`、`scene_view.rs`：保留 Typst glyph 和 Shape 绘制项目，
+保留 group 层级以保证栅格化一致；独立递归合成 `ancestor * translation * group transform`
+用于命中。字形盒来自实际字体轮廓的包围盒，包含 glyph offset；光标 advance 不当作墨迹宽度。
+命中通过逆变换判断局部墨迹盒，空白不退化为最近节点。遇到裁剪组、图像、链接明确拒绝。
+
+验证夹具明确区分行内和块级公式，矩阵为 `mat(1, 2; 3, 4)`，包含嵌套根式及旋转公式；
+使用内置 Libertinus Serif / New Computer Modern Math，编译警告会使探针失败。
+它是排版诊断夹具，不是已修复 SDG 生成器的证明。
+
+实测结果：
+
+- 720 × 481 图像，346320 像素，与原始 Typst frame 的渲染相比差异 **0**。
+- 提取 49 个非空字形墨迹盒，14 个公式字母中心命中对应源码 span，页边空白无命中。
+- egui 离屏 Context 提交页面纹理，在 0.75 / 1 / 2 倍缩放和非零滚动偏移下校验命中映射。
+- 1 项嵌套平移/旋转及框外拒绝的单元测试通过。
+
+首次展平所有组时出现 375 个差异像素；保留绘制分组后为 0。首次直接假定 Typst bbox 的
+min/max 在 Y 轴已排序，导致无字形盒；归一化后修正。没有放宽像素门槛。
+
+复现：
+
+```sh
+CARGO_HOME="$PWD/spikes/native-ui/.cargo-home" cargo run --release --offline --manifest-path spikes/typst-mapping/Cargo.toml -- scene
+CARGO_HOME="$PWD/spikes/native-ui/.cargo-home" cargo test --release --offline --manifest-path spikes/typst-mapping/Cargo.toml scene::tests
+```
+
+证据：[原图](evidence/SPK-0027/scene/reference-0.png)、[场景重绘](evidence/SPK-0027/scene/scene-0.png)、
+[明确语义的夹具](evidence/SPK-0027/scene/fixture.typ)。
+
+边界：egui 接的是由 scene 重建 frame 后经 typst-render 生成的页面纹理，并非 egui 自行重塑形。
+图像和命中几何同源，但当前没有真实窗口点击、SDG NodeId 映射、字素/合字内部 caret、空槽位、
+Shape 所属节点命中、选区和 IME；本次也没有新接隔离 worker。这些是替换左侧之前必须完成的工作。
+现有字符 chunk 插值不因本实验而获得精确性背书。
