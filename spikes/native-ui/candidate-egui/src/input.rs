@@ -334,6 +334,11 @@ impl SpikeApp {
             let SemanticEdit::DeleteRange { node, start, end } = edit else {
                 continue;
             };
+            if self.typst_editor.enabled {
+                self.typst_editor
+                    .selection(painter, origin, node, start, end);
+                continue;
+            }
             let (Some(from), Some(to)) = (self.text_caret(node, start), self.text_caret(node, end))
             else {
                 continue;
@@ -356,7 +361,7 @@ mod tests {
     #[test]
     fn clipboard_cut_uses_selection_and_empty_cut_is_noop() {
         let ctx = egui::Context::default();
-        let mut app = SpikeApp::new(&ctx, None);
+        let mut app = SpikeApp::new_layout_probe(&ctx, None);
         app.core = Editor::new();
         let node = app
             .core

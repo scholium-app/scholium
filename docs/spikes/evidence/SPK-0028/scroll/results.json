@@ -1,0 +1,7 @@
+[
+  {
+    "case": "pointer_selection",
+    "result": "Fail",
+    "reason": "AssertionError: Typst did not wrap long text"
+  }
+]

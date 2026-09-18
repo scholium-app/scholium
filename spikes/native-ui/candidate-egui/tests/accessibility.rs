@@ -63,7 +63,7 @@ fn undo(app: &mut SpikeApp, ctx: &Context) {
 fn accessible_runs_follow_model_order_instead_of_math_paint_order() {
     let ctx = Context::default();
     ctx.enable_accesskit();
-    let mut app = SpikeApp::new(&ctx, None);
+    let mut app = SpikeApp::new_layout_probe(&ctx, None);
     let tree = frame(&mut app, &ctx, vec![]);
     let (_, body) = tree
         .nodes
@@ -101,7 +101,7 @@ fn accessible_runs_follow_model_order_instead_of_math_paint_order() {
 fn accessible_unicode_selection_cuts_and_undoes_across_leaves() {
     let ctx = Context::default();
     ctx.enable_accesskit();
-    let mut app = SpikeApp::new(&ctx, None);
+    let mut app = SpikeApp::new_layout_probe(&ctx, None);
     frame(&mut app, &ctx, vec![]);
     frame(&mut app, &ctx, vec![]);
     let tree = frame(&mut app, &ctx, vec![Event::Text("中😀e\u{301}".into())]);
@@ -157,7 +157,7 @@ fn accessible_unicode_selection_cuts_and_undoes_across_leaves() {
 fn horizontal_scroll_moves_long_document_origin() {
     let ctx = Context::default();
     ctx.enable_accesskit();
-    let mut app = SpikeApp::new(&ctx, None);
+    let mut app = SpikeApp::new_layout_probe(&ctx, None);
     frame(&mut app, &ctx, vec![]);
     frame(&mut app, &ctx, vec![Event::Text("long text ".repeat(100))]);
     let before = app.structure_origin();

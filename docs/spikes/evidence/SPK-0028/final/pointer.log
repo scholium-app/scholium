@@ -1,0 +1,129 @@
+[event] 启动完成 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[typst-editor] Typst · revision 18 · 1 页 · 22 boxes
+[ime] 输入法锚点 [[26.0 143.6] - [27.5 160.2]]
+[pointer] press=[26.0 151.0] origin=[8.0 127.3] cursor=Text { node: NodeId(2), byte: 0 }
+[event] 已删除选区 | revision 20 | 核心动作 18 | 预编辑事件 0 | IME 提交 0
+[typst-editor] Typst · revision 20 · 1 页 · 16 boxes
+[event] core：撤销 ActionId(18)，删除 0 字符 | revision 21 | 核心动作 19 | 预编辑事件 0 | IME 提交 0
+[typst-editor] Typst · revision 21 · 1 页 · 22 boxes
+[event] core 收到 Typing："S" | revision 22 | 核心动作 20 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 23 | 核心动作 21 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 24 | 核心动作 22 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 25 | 核心动作 23 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 26 | 核心动作 24 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 28 | 核心动作 26 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 29 | 核心动作 27 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 30 | 核心动作 28 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 31 | 核心动作 29 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 32 | 核心动作 30 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 33 | 核心动作 31 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 35 | 核心动作 33 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 36 | 核心动作 34 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 37 | 核心动作 35 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 38 | 核心动作 36 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 39 | 核心动作 37 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 40 | 核心动作 38 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 42 | 核心动作 40 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 43 | 核心动作 41 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 44 | 核心动作 42 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 45 | 核心动作 43 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 46 | 核心动作 44 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 47 | 核心动作 45 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 49 | 核心动作 47 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 50 | 核心动作 48 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 51 | 核心动作 49 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 52 | 核心动作 50 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 53 | 核心动作 51 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 54 | 核心动作 52 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 56 | 核心动作 54 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 57 | 核心动作 55 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 58 | 核心动作 56 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 59 | 核心动作 57 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 60 | 核心动作 58 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 61 | 核心动作 59 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 63 | 核心动作 61 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 64 | 核心动作 62 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 65 | 核心动作 63 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 66 | 核心动作 64 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 67 | 核心动作 65 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 68 | 核心动作 66 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 70 | 核心动作 68 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 71 | 核心动作 69 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 72 | 核心动作 70 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 73 | 核心动作 71 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 74 | 核心动作 72 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 75 | 核心动作 73 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 77 | 核心动作 75 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 78 | 核心动作 76 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 79 | 核心动作 77 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 80 | 核心动作 78 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 81 | 核心动作 79 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 82 | 核心动作 80 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 84 | 核心动作 82 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 85 | 核心动作 83 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 86 | 核心动作 84 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 87 | 核心动作 85 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 88 | 核心动作 86 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 89 | 核心动作 87 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 91 | 核心动作 89 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 92 | 核心动作 90 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 93 | 核心动作 91 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 94 | 核心动作 92 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 95 | 核心动作 93 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 96 | 核心动作 94 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 98 | 核心动作 96 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 99 | 核心动作 97 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 100 | 核心动作 98 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 101 | 核心动作 99 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 102 | 核心动作 100 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 103 | 核心动作 101 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 105 | 核心动作 103 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 106 | 核心动作 104 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 107 | 核心动作 105 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 108 | 核心动作 106 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 109 | 核心动作 107 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 110 | 核心动作 108 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 112 | 核心动作 110 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 113 | 核心动作 111 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 114 | 核心动作 112 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 115 | 核心动作 113 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 116 | 核心动作 114 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 117 | 核心动作 115 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 119 | 核心动作 117 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 120 | 核心动作 118 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 121 | 核心动作 119 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 122 | 核心动作 120 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 123 | 核心动作 121 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 124 | 核心动作 122 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 126 | 核心动作 124 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 127 | 核心动作 125 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 128 | 核心动作 126 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 129 | 核心动作 127 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 130 | 核心动作 128 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 131 | 核心动作 129 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 133 | 核心动作 131 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 134 | 核心动作 132 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 135 | 核心动作 133 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 136 | 核心动作 134 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 137 | 核心动作 135 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 138 | 核心动作 136 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 140 | 核心动作 138 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 141 | 核心动作 139 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 142 | 核心动作 140 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 143 | 核心动作 141 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 144 | 核心动作 142 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 145 | 核心动作 143 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 147 | 核心动作 145 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 148 | 核心动作 146 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 149 | 核心动作 147 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 150 | 核心动作 148 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 151 | 核心动作 149 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 152 | 核心动作 150 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 154 | 核心动作 152 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："S" | revision 155 | 核心动作 153 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："C" | revision 156 | 核心动作 154 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 157 | 核心动作 155 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："O" | revision 158 | 核心动作 156 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 159 | 核心动作 157 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing：" " | revision 161 | 核心动作 159 | 预编辑事件 0 | IME 提交 0
+[typst-editor] Typst · revision 161 · 1 页 · 162 boxes

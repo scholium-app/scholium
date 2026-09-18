@@ -27,6 +27,7 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 | [0009：CRDT 引擎选型](ADR-0009-crdt-engine.md) | **Accepted** | **选定 Loro 1.16.0**：只有它同时具备可移动树与能过滤远端输入的内置 undo，且都端到端跑通（报告 0014）；性能对比留待阶段 1 首个迭代 |
 
 | [0012：Typst worker 与运行时挂载](ADR-0012-typst-worker-isolation.md) | Accepted | 混合构建 Typst 编译/内省/导出进入受控子进程；固定工具及资源白名单（执行者 Codex） |
+| [0013：Typst 编辑场景](ADR-0013-typst-editor-scene.md) | Accepted（spike） | 左侧使用隔离编译的图像与同 revision glyph 几何；过期画面禁用旧坐标交互 |
 
 ## 待补（阶段出口依赖）
 

@@ -124,3 +124,11 @@ core 47 项、egui 34 项通过（2 ignored）；egui Clippy、格式和差异�
 14 个公式字母命中源码 span，egui 离屏纹理及三档缩放/滚动坐标测试通过。
 实现和边界见[报告 0027](../spikes/SPK-0027-structured-typst-frame-research.md)。
 尚未接入真实编辑窗口、SDG 光标和空槽位，不宣称左侧视觉问题已经修复，阶段 0 状态不升级。
+
+## 2026-09-18：左侧切换为 Typst 编辑画面
+
+按用户要求替换左侧，新增隔离编译 helper 返回同 revision 图像与 glyph/shape/source-span 几何，
+用于节点定位、光标、选区、IME、空槽位与 AT-SPI；编译中保留旧画面，停止旧坐标定位。
+左右显示共用编辑投影。真实窗口七组场景通过，失败与复测证据见[报告 0028](../spikes/SPK-0028-typst-editor.md)，
+架构边界见[ADR 0013](../adr/ADR-0013-typst-editor-scene.md)。旧布局只留作显式回归测试探针。
+每次请求仍启动新编译进程，响应优化、完整字符映射和发布源码投影差异待处理；阶段 0 不升级。

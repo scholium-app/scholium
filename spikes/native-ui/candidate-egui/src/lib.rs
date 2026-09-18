@@ -4,7 +4,8 @@
 //! Linux 上经 `accesskit_unix` 接到 AT-SPI；egui 还自带 `TextEdit`，并在 `egui-winit` 里
 //! 处理 `Ime::Preedit` / `Ime::Commit`。
 //!
-//! 与其它候选相同的约束：正文权威在 core，UI 只保存投影；结构绘制的是**同一份** `core::layout`。
+//! 正文权威在 core；桌面绘制、光标与命中使用同 revision 的隔离 Typst 编译产物。
+//! 旧 `core::layout` 仅供显式同步回归探针使用。
 
 mod accessibility;
 mod frame_metrics;
@@ -17,6 +18,7 @@ mod selection_ui;
 mod source_ui;
 mod structure_ui;
 mod text_geometry;
+mod typst_editor;
 
 use std::sync::Arc;
 
@@ -43,6 +45,7 @@ pub struct SpikeApp {
     focus: Cursor,
     source: scholium_spike_reconcile::Session,
     preview: preview::Preview,
+    typst_editor: typst_editor::TypstEditor,
     source_buffer: String,
     /// 输入法预编辑串。只属于 UI，**不进历史**。
     preedit: String,
@@ -73,6 +76,12 @@ pub struct SpikeApp {
 }
 
 impl SpikeApp {
+    /// Synchronous legacy-layout regression harness. Desktop startup uses `new` instead.
+    pub fn new_layout_probe(ctx: &egui::Context, font: Option<Vec<u8>>) -> Self {
+        let mut app = Self::new(ctx, font);
+        app.typst_editor.enabled = false;
+        app
+    }
     /// # Panics
     /// 标准夹具违反“文档至少有一个文本叶子”的不变量时 panic。
     ///
@@ -121,6 +130,7 @@ impl SpikeApp {
             focus,
             source_buffer: source.generated.text.clone(),
             preview: preview::Preview::default(),
+            typst_editor: Default::default(),
             source,
             preedit: String::new(),
             interrupt_ime: false,
@@ -178,7 +188,16 @@ impl SpikeApp {
     pub fn draw(&mut self, ui: &mut egui::Ui) {
         let ctx = ui.ctx().clone();
         self.handle_input(&ctx);
-        self.refresh_text_geometry(ui);
+        if self.typst_editor.enabled {
+            if self.typst_editor.poll(&ctx, &self.core) {
+                self.layout.items = self.typst_editor.layout_items();
+                self.layout.width = self.typst_editor.size.x;
+                self.layout.height = self.typst_editor.size.y;
+                self.accessible_cache = None;
+            }
+        } else {
+            self.refresh_text_geometry(ui);
+        }
 
         // 事件时间线打到 stdout，便于脚本取证而不必读截图。
         if self.last_event != self.printed {

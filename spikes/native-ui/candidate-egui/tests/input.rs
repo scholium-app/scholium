@@ -27,7 +27,7 @@ fn settle(app: &mut SpikeApp, ctx: &Context) {
 }
 
 fn new_app(ctx: &Context) -> SpikeApp {
-    SpikeApp::new(ctx, None)
+    SpikeApp::new_layout_probe(ctx, None)
 }
 
 fn text_event(text: &str) -> Event {

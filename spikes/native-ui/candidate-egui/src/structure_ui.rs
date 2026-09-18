@@ -4,7 +4,10 @@ use super::*;
 impl SpikeApp {
     pub(super) fn draw_structure(&mut self, ui: &mut egui::Ui) {
         ui.vertical(|ui| {
-            ui.heading("正文（结构编辑 · 结构渲染）");
+            ui.heading("正文（结构编辑 · Typst 排版）");
+            if self.typst_editor.enabled {
+                ui.label(&self.typst_editor.status);
+            }
             self.structure_toolbar(ui);
             ui.label(format!("焦点 {:?}", self.focus));
             egui::ScrollArea::both()
@@ -31,11 +34,23 @@ impl SpikeApp {
                     let painter = ui.painter_at(rect);
                     let origin = rect.min + egui::vec2(8.0, 8.0);
                     self.structure_origin = origin;
-                    self.pointer_selection(&response, origin);
-                    self.paint_selection(&painter, origin);
-                    self.paint_structure(&painter, origin, egui::Color32::from_rgb(230, 230, 233));
+                    let current = !self.typst_editor.enabled
+                        || self.typst_editor.current(self.core.revision());
+                    if self.typst_editor.enabled {
+                        self.typst_editor.paint(&painter, origin);
+                    } else {
+                        self.paint_structure(
+                            &painter,
+                            origin,
+                            egui::Color32::from_rgb(230, 230, 233),
+                        );
+                    }
+                    if current {
+                        self.pointer_selection(&response, origin);
+                        self.paint_selection(&painter, origin);
+                    }
                     self.accessible_structure(ui, &response, origin);
-                    if self.structure_focused {
+                    if self.structure_focused && current {
                         self.caret_and_ime(ui, &painter, origin);
                     }
                 });
@@ -96,18 +111,14 @@ impl SpikeApp {
         if down
             && self.press_anchor.is_none()
             && let Some(position) = response.ctx.input(|input| input.pointer.press_origin())
-            && let Some((node, byte)) = self.text_hit(position - origin)
+            && let Some(hit) = self.structure_hit(position - origin)
         {
-            self.press_anchor = Some(Cursor::Text { node, byte });
-            println!(
-                "[pointer] press={position:?} origin={origin:?} node={} byte={byte}",
-                node.index()
-            );
+            self.press_anchor = Some(hit);
+            println!("[pointer] press={position:?} origin={origin:?} cursor={hit:?}");
         }
         if let Some(position) = response.interact_pointer_pos()
-            && let Some((node, byte)) = self.text_hit(position - origin)
+            && let Some(hit) = self.structure_hit(position - origin)
         {
-            let hit = Cursor::Text { node, byte };
             self.focus = hit;
             if down {
                 let anchor = *self.press_anchor.get_or_insert(hit);
@@ -121,10 +132,29 @@ impl SpikeApp {
         }
     }
 
+    fn structure_hit(&self, point: egui::Vec2) -> Option<Cursor> {
+        if self.typst_editor.enabled {
+            return self
+                .typst_editor
+                .current(self.core.revision())
+                .then(|| self.typst_editor.hit(point.to_pos2(), self.core.document()))
+                .flatten();
+        }
+        self.text_hit(point)
+            .map(|(node, byte)| Cursor::Text { node, byte })
+    }
+
     fn caret_and_ime(&mut self, ui: &mut egui::Ui, painter: &egui::Painter, origin: egui::Pos2) {
-        let caret = match self.text_endpoint(self.focus) {
-            Some(Cursor::Text { node, byte }) => self.text_caret(node, byte),
-            _ => None,
+        let caret = if self.typst_editor.enabled {
+            self.typst_editor.caret(self.focus).or_else(|| {
+                self.text_endpoint(self.focus)
+                    .and_then(|c| self.typst_editor.caret(c))
+            })
+        } else {
+            match self.text_endpoint(self.focus) {
+                Some(Cursor::Text { node, byte }) => self.text_caret(node, byte),
+                _ => None,
+            }
         };
         let rect = caret.map(|caret| {
             egui::Rect::from_min_size(
@@ -134,6 +164,15 @@ impl SpikeApp {
         });
         if let Some(rect) = rect {
             painter.rect_filled(rect, 0.0, egui::Color32::from_rgb(120, 190, 255));
+            if !self.preedit.is_empty() {
+                painter.text(
+                    rect.right_bottom(),
+                    egui::Align2::LEFT_TOP,
+                    &self.preedit,
+                    egui::FontId::proportional(16.0),
+                    egui::Color32::LIGHT_BLUE,
+                );
+            }
             if self.visible_focus != Some(self.focus) && self.press_anchor.is_none() {
                 ui.scroll_to_rect(rect.expand(8.0), None);
             }

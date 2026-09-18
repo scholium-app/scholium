@@ -7,6 +7,7 @@
 
 mod checks;
 mod generator;
+mod editor_export;
 mod latency;
 mod scene;
 mod scene_probe;
@@ -37,6 +38,13 @@ struct Spot {
 }
 
 fn main() {
+    if std::env::args().nth(1).as_deref() == Some("editor-export") {
+        if let Err(error) = editor_export::run() {
+            eprintln!("{error}");
+            std::process::exit(1);
+        }
+        return;
+    }
     if std::env::args().nth(1).as_deref() == Some("probe") {
         checks::probe();
         return;

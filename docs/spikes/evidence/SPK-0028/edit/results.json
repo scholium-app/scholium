@@ -1,0 +1,29 @@
+[
+  {
+    "case": "ime",
+    "result": "Pass"
+  },
+  {
+    "case": "math_edit",
+    "result": "Fail",
+    "reason": "AssertionError: unwrap lost editing focus or surviving leaf"
+  },
+  {
+    "case": "accessibility",
+    "result": "Pass"
+  },
+  {
+    "case": "pointer_selection",
+    "result": "Fail",
+    "reason": "AssertionError: [0, 9]"
+  },
+  {
+    "case": "unicode_clipboard",
+    "result": "Pass"
+  },
+  {
+    "case": "slot_selection",
+    "result": "Fail",
+    "reason": "AssertionError: slot selection missing from AT-SPI"
+  }
+]

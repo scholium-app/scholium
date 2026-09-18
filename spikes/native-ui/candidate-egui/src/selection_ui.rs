@@ -37,6 +37,23 @@ impl SpikeApp {
         origin: egui::Pos2,
         node: NodeId,
     ) {
+        if self.typst_editor.enabled {
+            if let Some(rect) = self.typst_editor.bounds(self.core.document(), node) {
+                let rect = rect.translate(origin.to_vec2()).expand(3.0);
+                painter.rect_filled(
+                    rect,
+                    2.0,
+                    egui::Color32::from_rgba_unmultiplied(58, 86, 132, 65),
+                );
+                painter.rect_stroke(
+                    rect,
+                    2.0,
+                    egui::Stroke::new(1.0, egui::Color32::BLUE),
+                    egui::StrokeKind::Outside,
+                );
+            }
+            return;
+        }
         if let Some(bounds) = self.layout.bounds.iter().find(|bounds| bounds.node == node) {
             let rect = egui::Rect::from_min_size(
                 origin + egui::vec2(bounds.x, bounds.y),

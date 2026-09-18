@@ -53,7 +53,10 @@ fn compile_at(request: &Request, root: &Path) -> std::io::Result<Pages> {
         .unwrap_or_else(|| PathBuf::from("/tmp/scholium-typst-toolchain/bin/typst"));
     fs::copy(typst, tools.join("typst"))?;
     let generated = generate::generate(&request.document, Dialect::Typst);
-    fs::write(input.join("main.typ"), mapped_source(&generated))?;
+    fs::write(
+        input.join("main.typ"),
+        crate::typst_editor::preview_source(&request.document),
+    )?;
     let run = Command::new("/usr/bin/bash")
         .arg(Path::new(env!("CARGO_MANIFEST_DIR")).join("../../toolchain-sandbox.sh"))
         .args([input.as_os_str(), output.as_os_str()])
@@ -99,16 +102,6 @@ fn compile_at(request: &Request, root: &Path) -> std::io::Result<Pages> {
     let images = read_pages(&output)?;
     let markers = read_markers(&query.stdout, &generated, images.len())?;
     Ok(Pages { images, markers })
-}
-
-fn mapped_source(generated: &generate::Generated) -> String {
-    let mut source = String::from("#set text(font: \"Noto Serif CJK SC\")\n");
-    for (i, line) in generated.lines.iter().enumerate() {
-        source.push_str(&format!("#context [#metadata({{ let p = here().position(); (node: {}, page: p.page, x: p.x / 1pt, y: p.y / 1pt) }}) <scholium-map>]\n", line.node.index()));
-        source.push_str(generated.line(i));
-        source.push_str("\n\n");
-    }
-    source
 }
 
 const MAX_PAGES: usize = 100;

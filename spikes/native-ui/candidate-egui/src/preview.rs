@@ -141,7 +141,7 @@ mod integration_tests {
     #[ignore = "requires Linux bwrap and Typst CLI 0.15.1; run by verify-stage0 preview"]
     fn actual_preview_completes_while_ui_keeps_drawing() {
         let ctx = egui::Context::default();
-        let mut app = crate::SpikeApp::new(&ctx, None);
+        let mut app = crate::SpikeApp::new_layout_probe(&ctx, None);
         app.preview.enabled = true;
         let start = Instant::now();
         let mut samples = Vec::new();

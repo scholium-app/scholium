@@ -18,7 +18,7 @@ fn frame(app: &mut SpikeApp, ctx: &egui::Context, events: Vec<egui::Event>) -> b
 
 fn setup() -> (SpikeApp, egui::Context) {
     let ctx = egui::Context::default();
-    let mut app = SpikeApp::new(&ctx, None);
+    let mut app = SpikeApp::new_layout_probe(&ctx, None);
     frame(&mut app, &ctx, vec![]);
     frame(&mut app, &ctx, vec![]);
     (app, ctx)

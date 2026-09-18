@@ -70,7 +70,7 @@ mod tests {
     #[test]
     fn description_preserves_nested_slots_and_matrix_cell_order() {
         let ctx = egui::Context::default();
-        let mut app = SpikeApp::new(&ctx, None);
+        let mut app = SpikeApp::new_layout_probe(&ctx, None);
         let math = app
             .core
             .document()

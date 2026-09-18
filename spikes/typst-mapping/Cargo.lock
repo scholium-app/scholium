@@ -1939,6 +1939,7 @@ version = "0.0.0"
 dependencies = [
  "egui",
  "scholium-spike-core",
+ "serde_json",
  "tiny-skia",
  "typst",
  "typst-kit",

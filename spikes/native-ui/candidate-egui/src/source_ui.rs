@@ -63,7 +63,7 @@ mod tests {
     #[test]
     fn source_commit_changes_body_and_conflict_keeps_draft() {
         let ctx = egui::Context::default();
-        let mut app = SpikeApp::new(&ctx, None);
+        let mut app = SpikeApp::new_layout_probe(&ctx, None);
         app.core = Editor::new();
         let node = app
             .core

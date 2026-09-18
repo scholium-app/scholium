@@ -124,12 +124,31 @@ impl SpikeApp {
     }
 
     pub(super) fn text_caret(&self, node: NodeId, byte: usize) -> Option<egui::Rect> {
+        if self.typst_editor.enabled {
+            return self
+                .typst_editor
+                .current(self.core.revision())
+                .then(|| self.typst_editor.caret(Cursor::Text { node, byte }))
+                .flatten();
+        }
         self.text_geometry
             .get(*self.text_geometry_index.get(&node)?)?
             .caret(byte)
     }
 
     pub(super) fn text_hit(&self, position: egui::Vec2) -> Option<(NodeId, usize)> {
+        if self.typst_editor.enabled {
+            if !self.typst_editor.current(self.core.revision()) {
+                return None;
+            }
+            return match self
+                .typst_editor
+                .hit(position.to_pos2(), self.core.document())
+            {
+                Some(Cursor::Text { node, byte }) => Some((node, byte)),
+                _ => None,
+            };
+        }
         let mut best: Option<(f32, NodeId, usize)> = None;
         for run in &self.text_geometry {
             let Some(source) = run.source else { continue };

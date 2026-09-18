@@ -26,7 +26,7 @@ fn frame_with(app: &mut SpikeApp, ctx: &Context, events: Vec<Event>) -> f64 {
 
 fn measure(paragraphs: usize, frames: usize) -> (f64, f64) {
     let ctx = Context::default();
-    let mut app = SpikeApp::new(&ctx, None);
+    let mut app = SpikeApp::new_layout_probe(&ctx, None);
     if paragraphs > 0 {
         let mut core = Editor::new();
         fixture::build_large(&mut core, paragraphs);

@@ -53,6 +53,7 @@ class Window:
                                             if a.get_process_id() == self.process.pid), None), 'AT-SPI missing')
             wait_for(lambda: any(n.name == '正文结构编辑器' for n in self.nodes()), 'body missing')
             time.sleep(0.5)
+            self.wait_current()
             return self
         except Exception:
             self.process.terminate()
@@ -98,7 +99,16 @@ class Window:
         return next(n for n in self.nodes() if n.getRoleName() == 'entry' and n.name != '正文结构编辑器')
 
     def text(self):
+        self.wait_current()
         return self.body().getText(0, -1)
+
+    def wait_current(self):
+        def ready():
+            nodes = self.nodes()
+            revisions = [re.search(r'^revision (\d+) /', n.name or '') for n in nodes]
+            revision = next((m.group(1) for m in revisions if m), None)
+            return revision and any((n.name or '').startswith(f'Typst · revision {revision} ·') for n in nodes)
+        wait_for(ready, 'current Typst editor scene unavailable', timeout=30)
 
     def focus_guard(self):
         current = next((w for w in json.loads(call('niri', 'msg', '--json', 'windows')) if w.get('is_focused')), None)
@@ -108,11 +118,13 @@ class Window:
         self.focus_guard()
         call('ydotool', 'key', *[f'{k}:1' for k in keys], *[f'{k}:0' for k in reversed(keys)])
         time.sleep(0.3)
+        self.wait_current()
 
     def type(self, value):
         self.focus_guard()
         call('ydotool', 'type', value)
         time.sleep(0.4)
+        self.wait_current()
 
     def select(self, start, end):
         assert self.body().setSelection(0, start, end)
@@ -121,6 +133,7 @@ class Window:
     def action(self, name):
         assert self.named(name).queryAction().doAction(0)
         time.sleep(0.5)
+        self.wait_current()
 
     def history(self):
         matches = re.findall(r'核心动作 (\d+)', self.path.read_text())
@@ -370,10 +383,14 @@ def pointer_selection():
 
 def scroll_viewport(w):
     w.select(0, 0)
-    w.type('SCROLL' * 20)
+    w.type('SCROLL ' * 20)
     time.sleep(0.6)
     left_before = w.body().getCharacterExtents(0, pyatspi.WINDOW_COORDS)[0]
-    assert left_before < 0, 'typing did not reveal the caret beyond viewport'
+    # Typst now wraps at page width; typing no longer requires horizontal overflow.
+    # Verify the compiled caret's vertical movement independently of viewport scrolling.
+    first_y = w.body().getCharacterExtents(0, pyatspi.WINDOW_COORDS)[1]
+    last_y = w.body().getCharacterExtents(119, pyatspi.WINDOW_COORDS)[1]
+    assert last_y > first_y, 'Typst did not wrap long text'
     w.focus_guard()
     call('ydotool', 'mousemove', '--wheel', '-x', '8', '-y', '0')
     time.sleep(0.8)
