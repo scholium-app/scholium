@@ -178,11 +178,6 @@ impl SpikeApp {
     pub fn draw(&mut self, ui: &mut egui::Ui) {
         let ctx = ui.ctx().clone();
         self.handle_input(&ctx);
-        if self.layout_revision != self.core.revision() {
-            self.layout = layout_document(self.core.document());
-            self.layout_revision = self.core.revision();
-        }
-
         self.refresh_text_geometry(ui);
 
         // 事件时间线打到 stdout，便于脚本取证而不必读截图。

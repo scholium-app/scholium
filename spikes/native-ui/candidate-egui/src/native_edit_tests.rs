@@ -25,6 +25,75 @@ fn setup() -> (SpikeApp, egui::Context) {
 }
 
 #[test]
+fn measured_structure_boxes_contain_children_and_fraction_rule() {
+    let (mut app, ctx) = setup();
+    app.wrap(NodeKind::Sqrt);
+    frame(&mut app, &ctx, vec![]);
+    let rect = |bounds: &scholium_spike_core::layout::NodeBounds| {
+        egui::Rect::from_min_size(
+            egui::pos2(bounds.x, bounds.y),
+            egui::vec2(bounds.width, bounds.height),
+        )
+    };
+    for bounds in &app.layout.bounds {
+        let node = app.core.document().node(bounds.node).expect("node");
+        for child in node.slots.iter().flatten() {
+            let child = app
+                .layout
+                .bounds
+                .iter()
+                .find(|b| b.node == *child)
+                .expect("child bounds");
+            assert!(rect(bounds).expand(0.01).contains_rect(rect(child)));
+        }
+        if node.kind.is_text() {
+            let run = &app.text_geometry[app.text_geometry_index[&bounds.node]];
+            assert!((bounds.width - run.galley.size().x.max(6.0)).abs() < 0.01);
+        }
+        if node.kind == NodeKind::Fraction {
+            let numerator = node.slots[0][0];
+            let run = &app.text_geometry[app.text_geometry_index[&numerator]];
+            assert!(bounds.width >= run.galley.size().x + 4.0);
+        }
+    }
+    let sqrt = app
+        .layout
+        .bounds
+        .iter()
+        .find(|b| app.core.document().node(b.node).expect("node").kind == NodeKind::Sqrt)
+        .expect("sqrt");
+    let child = app.core.document().node(sqrt.node).expect("node").slots[0][0];
+    let child = app
+        .layout
+        .bounds
+        .iter()
+        .find(|b| b.node == child)
+        .expect("child");
+    assert!(
+        sqrt.x < child.x && sqrt.y < child.y,
+        "outer box includes radical and overline"
+    );
+}
+
+#[test]
+fn empty_math_slot_keeps_measured_caret_and_box() {
+    let (mut app, ctx) = setup();
+    app.wrap(NodeKind::Fraction);
+    frame(&mut app, &ctx, vec![]);
+    let empty = app
+        .layout
+        .bounds
+        .iter()
+        .find(|b| {
+            let node = app.core.document().node(b.node).expect("node");
+            node.kind.is_text() && node.text.len_bytes() == 0
+        })
+        .expect("empty denominator");
+    assert!(empty.width >= 6.0 && empty.height > 0.0);
+    assert!(app.text_caret(empty.node, 0).expect("empty caret").height() > 0.0);
+}
+
+#[test]
 fn proportional_font_carets_and_hits_follow_painted_glyphs() {
     let (mut app, ctx) = setup();
     app.insert_text("Wiie\u{301}👩\u{200d}💻", Intent::Typing);

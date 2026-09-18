@@ -6,20 +6,23 @@
 //! # 坐标系与度量约定
 //!
 //! - 所有坐标相对所属布局的左上角，单位是逻辑像素。
-//! - [`Item::Text`] 给出的是**基线**纵坐标，不是绘制框上沿。渲染方必须用
-//!   [`Item::top_of`] 换算出上沿，不能各自猜字体度量——早期版本就是因为各方各自按
-//!   "文本框上沿"摆放，上下标相对基线偏了一整行。
+//! - [`Item::Text`] 给出的是**基线**纵坐标。传入 [`TextMeasurer`] 时渲染方使用同一字体
+//!   引擎的 ascent；未传入时使用 [`Item::top_of`] 的近似换算。
 //! - [`ASCENT_RATIO`] 是"基线到绘制框上沿"相对字号的近似比例。这是**近似值**
 //!   （真值取决于字体 ascent），但所有图元共用同一个近似：同字号文本一定精确对齐，
 //!   不同字号之间只有与字号差成正比的小误差。
 //! - 上下标偏移用排版惯例（上标 −0.42em、下标 +0.20em），不再用临时常数。
 //!
-//! 这是刻意简化的布局器：不做字距调整、换行、双向文本或真字体度量。
+//! 这是刻意简化的布局器：可注入真字体度量，但不实现自动换行、双向文本或数学字体常量。
 //! 它够用来比较"候选能否渲染结构"，不足以评估排版质量。
 
 use crate::doc::{Document, NodeKind};
 use crate::ids::NodeId;
 use unicode_segmentation::UnicodeSegmentation;
+mod matrix;
+mod measure;
+use matrix::matrix;
+pub use measure::{NodeBounds, TextMeasure, TextMeasurer};
 
 /// 基线到绘制框上沿相对字号的比例（近似值，见模块说明）。
 pub const ASCENT_RATIO: f32 = 0.88;
@@ -86,9 +89,11 @@ impl Item {
     }
 }
 
-/// 布局度量。全部是近似值，见模块说明。
+/// 结构布局参数；文本尺寸可由原生字体引擎提供。
 #[derive(Clone, Copy, Debug)]
-pub struct Metrics {
+pub struct Metrics<'a> {
+    /// Optional font engine; absent for the approximate comparison layout.
+    pub text_measurer: Option<&'a dyn TextMeasurer>,
     /// 正文字号。
     pub font_size: f32,
     /// 分数线与分子/分母的间距。
@@ -103,9 +108,10 @@ pub struct Metrics {
     pub rule_thickness: f32,
 }
 
-impl Default for Metrics {
+impl Default for Metrics<'_> {
     fn default() -> Self {
         Self {
+            text_measurer: None,
             font_size: 20.0,
             line_gap: 4.0,
             script_scale: 0.7,
@@ -116,7 +122,7 @@ impl Default for Metrics {
     }
 }
 
-impl Metrics {
+impl Metrics<'_> {
     /// 按比例缩放度量，用于上下标等嵌套场景。
     fn scaled(self, factor: f32) -> Self {
         Self {
@@ -133,6 +139,8 @@ impl Metrics {
 /// 布局结果。
 #[derive(Clone, Debug, Default)]
 pub struct Layout {
+    /// Complete semantic-node boxes, including synthetic symbols and rules.
+    pub bounds: Vec<NodeBounds>,
     /// 图元，坐标相对本布局原点。
     pub items: Vec<Item>,
     /// 外框宽度。
@@ -229,7 +237,7 @@ pub fn layout_node(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
         return Layout::default();
     };
 
-    match current.kind {
+    let mut layout = match current.kind {
         NodeKind::Text | NodeKind::Raw => {
             let content = doc.text_of(node).unwrap_or_default();
             text_layout_at(
@@ -253,7 +261,15 @@ pub fn layout_node(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
         NodeKind::Script => script(doc, node, metrics),
         NodeKind::Delimited => delimited(doc, node, metrics),
         NodeKind::Matrix => matrix(doc, node, metrics),
-    }
+    };
+    layout.bounds.push(NodeBounds {
+        node,
+        x: 0.0,
+        y: 0.0,
+        width: layout.width,
+        height: layout.height,
+    });
+    layout
 }
 
 /// 文本的近似宽度：CJK 按 1em，其余按 0.6em。
@@ -278,11 +294,20 @@ fn text_layout(content: &str, metrics: Metrics) -> Layout {
 /// 单段文本，并记录它来自哪个节点的哪个字节区间。
 fn text_layout_at(content: &str, metrics: Metrics, source: Option<SourceSpan>) -> Layout {
     let size = metrics.font_size;
-    if content.is_empty() {
+    if content.is_empty() && metrics.text_measurer.is_none() {
         return Layout::default();
     }
-    let baseline = ASCENT_RATIO * size;
+    let measured = metrics
+        .text_measurer
+        .map(|engine| engine.measure(content, size))
+        .unwrap_or(TextMeasure {
+            width: text_width(content, size),
+            height: size * 1.2,
+            baseline: ASCENT_RATIO * size,
+        });
+    let baseline = measured.baseline;
     Layout {
+        bounds: Vec::new(),
         items: vec![Item::Text {
             x: 0.0,
             baseline,
@@ -290,14 +315,20 @@ fn text_layout_at(content: &str, metrics: Metrics, source: Option<SourceSpan>) -
             content: content.to_string(),
             source,
         }],
-        width: text_width(content, size),
-        height: size * 1.2,
+        width: measured
+            .width
+            .max(if content.is_empty() { 6.0 } else { 0.0 }),
+        height: measured.height,
         baseline,
     }
 }
 
-fn shift(items: &mut [Item], dx: f32, dy: f32) {
-    for item in items.iter_mut() {
+fn shift(layout: &mut Layout, dx: f32, dy: f32) {
+    for bounds in &mut layout.bounds {
+        bounds.x += dx;
+        bounds.y += dy;
+    }
+    for item in &mut layout.items {
         match item {
             Item::Text { x, baseline, .. } => {
                 *x += dx;
@@ -313,17 +344,25 @@ fn shift(items: &mut [Item], dx: f32, dy: f32) {
 
 /// 把整块布局整体下移，保证没有负坐标。
 fn drop_to_origin(layout: &mut Layout) {
-    let lowest = layout
-        .items
-        .iter()
-        .map(|item| match item {
-            Item::Text { baseline, size, .. } => Item::top_of(*baseline, *size),
-            Item::Rule { y, .. } => *y,
-        })
-        .fold(f32::MAX, f32::min);
+    let lowest = if layout.bounds.is_empty() {
+        layout
+            .items
+            .iter()
+            .map(|item| match item {
+                Item::Text { baseline, size, .. } => Item::top_of(*baseline, *size),
+                Item::Rule { y, .. } => *y,
+            })
+            .fold(f32::MAX, f32::min)
+    } else {
+        layout
+            .bounds
+            .iter()
+            .map(|bounds| bounds.y)
+            .fold(f32::MAX, f32::min)
+    };
     if lowest < 0.0 {
         let dy = -lowest;
-        shift(&mut layout.items, 0.0, dy);
+        shift(layout, 0.0, dy);
         layout.baseline += dy;
         layout.height += dy;
     }
@@ -337,16 +376,19 @@ fn inline(parts: Vec<Layout>, gap: f32) -> Layout {
     }
     let baseline = parts.iter().map(|p| p.baseline).fold(f32::MIN, f32::max);
     let mut items = Vec::new();
+    let mut bounds = Vec::new();
     let mut x = 0.0_f32;
     let mut height = 0.0_f32;
     for mut part in parts {
         let dy = baseline - part.baseline;
-        shift(&mut part.items, x, dy);
+        shift(&mut part, x, dy);
+        bounds.extend(part.bounds);
         items.extend(part.items);
         x += part.width + gap;
         height = height.max(dy + part.height);
     }
     Layout {
+        bounds,
         items,
         width: (x - gap).max(0.0),
         height,
@@ -361,15 +403,18 @@ fn block(parts: Vec<Layout>, gap: f32) -> Layout {
     }
     let baseline = parts.first().map(|p| p.baseline).unwrap_or(0.0);
     let mut items = Vec::new();
+    let mut bounds = Vec::new();
     let mut y = 0.0_f32;
     let mut width = 0.0_f32;
     for mut part in parts {
-        shift(&mut part.items, 0.0, y);
+        shift(&mut part, 0.0, y);
+        bounds.extend(part.bounds);
         items.extend(part.items);
         width = width.max(part.width);
         y += part.height + gap;
     }
     Layout {
+        bounds,
         items,
         width,
         height: (y - gap).max(0.0),
@@ -406,7 +451,9 @@ fn fraction(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
 
     let mut items = Vec::new();
     let mut top = numerator;
-    shift(&mut top.items, (width - top.width) / 2.0, 0.0);
+    let top_x = (width - top.width) / 2.0;
+    shift(&mut top, top_x, 0.0);
+    let mut bounds = top.bounds;
     items.extend(top.items);
 
     items.push(Item::Rule {
@@ -417,15 +464,14 @@ fn fraction(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
     });
 
     let mut bottom = denominator;
-    shift(
-        &mut bottom.items,
-        (width - bottom.width) / 2.0,
-        denominator_y,
-    );
+    let bottom_x = (width - bottom.width) / 2.0;
+    shift(&mut bottom, bottom_x, denominator_y);
+    bounds.extend(bottom.bounds);
     let height = denominator_y + bottom.height;
     items.extend(bottom.items);
 
     Layout {
+        bounds,
         items,
         width,
         height,
@@ -436,17 +482,17 @@ fn fraction(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
 /// 根式：上横线 + 根号 + 被开方数，三者基线一致。
 fn sqrt(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
     let radicand = slot_inline(doc, node, 0, metrics);
-    let sign = text_layout("\u{221A}", metrics);
+    let mut sign = text_layout("\u{221A}", metrics);
     let sign_width = sign.width;
     let overlay = metrics.rule_thickness + metrics.line_gap * 0.5;
 
     let mut body = radicand;
-    shift(&mut body.items, sign_width, overlay);
+    shift(&mut body, sign_width, overlay);
     let body_baseline = body.baseline + overlay;
     let body_height = body.height + overlay;
 
-    let mut sign_items = sign.items;
-    shift(&mut sign_items, 0.0, body_baseline - sign.baseline);
+    let sign_y = body_baseline - sign.baseline;
+    shift(&mut sign, 0.0, sign_y);
 
     let mut items = vec![Item::Rule {
         x: sign_width,
@@ -454,13 +500,14 @@ fn sqrt(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
         width: body.width,
         height: metrics.rule_thickness,
     }];
-    items.extend(sign_items);
+    items.extend(sign.items);
     items.extend(body.items);
 
     Layout {
+        bounds: body.bounds,
         items,
         width: sign_width + body.width,
-        height: body_height,
+        height: body_height.max(sign_y + sign.height),
         baseline: body_baseline,
     }
 }
@@ -486,11 +533,13 @@ fn script(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
     let subscript_baseline = base_baseline + SUBSCRIPT_SHIFT * metrics.font_size;
 
     let mut items = base.items;
+    let mut bounds = base.bounds;
 
     let sup_height = if sup_width > 0.0 {
         let mut sup = superscript;
         let dy = superscript_baseline - sup.baseline;
-        shift(&mut sup.items, script_x, dy);
+        shift(&mut sup, script_x, dy);
+        bounds.extend(sup.bounds);
         let height = dy + sup.height;
         items.extend(sup.items);
         height.max(0.0)
@@ -501,7 +550,8 @@ fn script(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
     let sub_height = if sub_width > 0.0 {
         let mut sub = subscript;
         let dy = subscript_baseline - sub.baseline;
-        shift(&mut sub.items, script_x, dy);
+        shift(&mut sub, script_x, dy);
+        bounds.extend(sub.bounds);
         let height = dy + sub.height;
         items.extend(sub.items);
         height.max(0.0)
@@ -510,6 +560,7 @@ fn script(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
     };
 
     let mut layout = Layout {
+        bounds,
         items,
         width: base_width + sub_width.max(sup_width),
         height: base_height.max(sup_height).max(sub_height),
@@ -525,55 +576,4 @@ fn delimited(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
     let body = slot_inline(doc, node, 0, metrics);
     let close = text_layout(")", metrics);
     inline(vec![open, body, close], metrics.font_size * 0.15)
-}
-
-/// 矩阵：单元格按固定列数排成网格。
-///
-/// 简化：列数固定为 2（只有一个单元格时为 1 列），不读取文档里的行列声明。
-fn matrix(doc: &Document, node: NodeId, metrics: Metrics) -> Layout {
-    let cells = slot_layouts(doc, node, 0, metrics);
-    if cells.is_empty() {
-        return Layout::default();
-    }
-    let columns = if cells.len() > 1 { 2 } else { 1 };
-    let row_count = cells.len().div_ceil(columns);
-    let mut column_widths = vec![0.0_f32; columns];
-    let mut row_heights = vec![0.0_f32; row_count];
-    for (index, cell) in cells.iter().enumerate() {
-        let column = index % columns;
-        let row = index / columns;
-        column_widths[column] = column_widths[column].max(cell.width);
-        row_heights[row] = row_heights[row].max(cell.height);
-    }
-
-    let pad = metrics.cell_padding;
-    let mut items = Vec::new();
-    let mut y = 0.0_f32;
-    for row in 0..row_count {
-        let mut x = 0.0_f32;
-        for column in 0..columns {
-            let index = row * columns + column;
-            if let Some(cell) = cells.get(index) {
-                let mut placed = cell.clone();
-                shift(
-                    &mut placed.items,
-                    x + (column_widths[column] - placed.width) / 2.0,
-                    y + (row_heights[row] - placed.height) / 2.0,
-                );
-                items.extend(placed.items);
-            }
-            x += column_widths[column] + pad;
-        }
-        y += row_heights[row] + pad;
-    }
-
-    let width = column_widths.iter().sum::<f32>() + pad * (columns.saturating_sub(1) as f32);
-    let height = row_heights.iter().sum::<f32>() + pad * (row_count.saturating_sub(1) as f32);
-    Layout {
-        items,
-        width,
-        height,
-        // 矩阵按垂直中心对齐正文轴线。
-        baseline: height / 2.0,
-    }
 }

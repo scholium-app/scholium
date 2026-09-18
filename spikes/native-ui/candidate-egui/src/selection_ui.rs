@@ -37,25 +37,11 @@ impl SpikeApp {
         origin: egui::Pos2,
         node: NodeId,
     ) {
-        let doc = self.core.document();
-        let mut stack = vec![node];
-        let mut bounds: Option<egui::Rect> = None;
-        while let Some(node) = stack.pop() {
-            let Ok(n) = doc.node(node) else {
-                continue;
-            };
-            stack.extend(n.slots.iter().flatten().copied());
-            let (Some(from), Some(to)) = (
-                self.text_caret(node, 0),
-                self.text_caret(node, n.text.len_bytes()),
-            ) else {
-                continue;
-            };
-            let mut rect = from.union(to).translate(origin.to_vec2());
-            rect.max.x = rect.max.x.max(rect.min.x + 6.0);
-            bounds = Some(bounds.map_or(rect, |old| old.union(rect)));
-        }
-        if let Some(rect) = bounds {
+        if let Some(bounds) = self.layout.bounds.iter().find(|bounds| bounds.node == node) {
+            let rect = egui::Rect::from_min_size(
+                origin + egui::vec2(bounds.x, bounds.y),
+                egui::vec2(bounds.width.max(6.0), bounds.height.max(6.0)),
+            );
             painter.rect_filled(
                 rect.expand(3.0),
                 2.0,

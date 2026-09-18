@@ -1,6 +1,46 @@
 //! Native font geometry in document-local logical pixels, shared by paint and input.
 use super::*;
 use scholium_spike_core::layout::SourceSpan;
+use scholium_spike_core::layout::{Metrics, TextMeasure, TextMeasurer, layout_node};
+
+struct NativeFonts<'a>(&'a egui::Painter);
+
+impl std::fmt::Debug for NativeFonts<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("NativeFonts")
+    }
+}
+
+impl NativeFonts<'_> {
+    fn layout(&self, content: &str, size: f32) -> (Arc<egui::Galley>, f32) {
+        let galley = self.0.layout_no_wrap(
+            content.into(),
+            egui::FontId::proportional(size),
+            egui::Color32::PLACEHOLDER,
+        );
+        let baseline = if content.is_empty() {
+            self.layout("M", size).1
+        } else {
+            galley
+                .rows
+                .first()
+                .and_then(|row| row.glyphs.first().map(|glyph| row.pos.y + glyph.pos.y))
+                .unwrap_or(0.0)
+        };
+        (galley, baseline)
+    }
+}
+
+impl TextMeasurer for NativeFonts<'_> {
+    fn measure(&self, content: &str, size: f32) -> TextMeasure {
+        let (galley, baseline) = self.layout(content, size);
+        TextMeasure {
+            width: galley.size().x,
+            height: galley.size().y,
+            baseline,
+        }
+    }
+}
 
 pub(super) struct TextGeometry {
     pub source: Option<SourceSpan>,
@@ -31,6 +71,16 @@ impl SpikeApp {
         if self.text_geometry_key == Some(key) {
             return;
         }
+        let fonts = NativeFonts(ui.painter());
+        self.layout = layout_node(
+            self.core.document(),
+            self.core.document().root(),
+            Metrics {
+                text_measurer: Some(&fonts),
+                ..Metrics::default()
+            },
+        );
+        self.layout_revision = self.core.revision();
         self.text_geometry = self
             .layout
             .items
@@ -46,16 +96,7 @@ impl SpikeApp {
                 else {
                     return None;
                 };
-                let galley = ui.painter().layout_no_wrap(
-                    content.clone(),
-                    egui::FontId::proportional(*size),
-                    egui::Color32::PLACEHOLDER,
-                );
-                let font_baseline = galley
-                    .rows
-                    .first()
-                    .and_then(|row| row.glyphs.first().map(|glyph| row.pos.y + glyph.pos.y))
-                    .unwrap_or(0.0);
+                let (galley, font_baseline) = fonts.layout(content, *size);
                 Some(TextGeometry {
                     source: *source,
                     origin: egui::pos2(*x, *baseline - font_baseline),
