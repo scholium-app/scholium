@@ -83,3 +83,35 @@ helper 返回对应源码范围的可编辑框。透明字形方案会被 Typst 
 证据：[结果](evidence/SPK-0028/theme/results.json)、[左右画面](evidence/SPK-0028/theme/visual-comparison.png)、
 [空叶子输入](evidence/SPK-0028/theme/empty-slot.png)。本轮仅视觉检查深色主题，未声称浅色桌面验收。
 这些修复未改变逐请求启动编译进程的路径，不宣称输入延迟已解决。
+
+## 减少编辑编译启动开销（2026-09-18）
+
+逐请求沙箱原先会探测和挂载整套 TeX、PDF 与 shell 工具。编辑 helper 改用受信固定的
+`typst-editor` 清单，仅保留 helper、依赖动态库、prlimit 和字体；原清单仍为其它调用的默认值。
+没有改为 UI 进程内编译，也没有取消原有网络/文件隔离、20 秒墙钟超时与 CPU/地址空间/文件上限。
+
+同一源码、同一 release helper，每个清单交替采样五次，不设置固定毫秒通过线。
+最终采样在构建和其它测试结束后执行；[首轮](evidence/SPK-0028/latency/sandbox-during-build.json)
+与构建有重叠并出现首轮异常高值，保留供追溯。采用[最终原始数据](evidence/SPK-0028/latency/sandbox.json)：
+
+| 测量（墙钟） | 原清单中位数 | 编辑清单中位数 |
+| --- | ---: | ---: |
+| 启动沙箱并执行 prlimit --version | 522.93 ms | 47.39 ms |
+| 启动沙箱、编译并导出 PNG/几何 | 1044.10 ms | 546.44 ms |
+
+后者下降约 48%；只说明该单页夹具的编译导出路径，不是键入到屏幕更新的端到端延迟。
+计时不含 helper 复制（另测 25.79 ms）、UI 图片解码、队列等待和 GPU 上传，也不是右侧预览的计时。
+两清单十次输出的 PNG 与 scene JSON 哈希完全一致。
+
+新增可复现检查：输入可读但不可写、输出可写、宿主 hostname 与环境变量不可见、shell/TeX 不可见、
+字体可见、超时结束、未知清单拒绝。三项真实沙箱映射测试、35 项常规回归（5 ignored，
+其中三项沙箱测试另行执行）、Clippy、格式和 shell 语法检查通过。
+真实窗口数学编辑、左右画面和空叶子输入三项通过；人工复核背景、公式与末尾空位置的截图。
+[桌面结果与截图](evidence/SPK-0028/latency/results.json)保留在同目录。
+
+```sh
+python spikes/native-ui/candidate-egui/scripts/editor-sandbox-check.py /tmp/scholium-editor-sandbox.json
+```
+
+仍然每次冷启动 Typst，约半秒编译等待依然可感知；持久 World、字体与增量缓存尚未接入，
+不能据此宣称即时编辑已经完成。阶段 0 不升级。

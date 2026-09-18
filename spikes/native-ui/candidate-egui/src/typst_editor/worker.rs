@@ -50,6 +50,7 @@ fn compile_at(
         .args([input.as_os_str(), output.as_os_str()])
         .args(["20", "/toolchain/renderer", "editor-export"])
         .env("SCHOLIUM_SPIKE_TOOLS", tools)
+        .env("SCHOLIUM_SANDBOX_PROFILE", "typst-editor")
         .output()?;
     if !command.status.success() {
         return Err(String::from_utf8_lossy(&command.stderr).into_owned().into());

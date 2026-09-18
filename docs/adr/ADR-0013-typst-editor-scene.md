@@ -15,6 +15,8 @@
 桌面默认使用隔离 Typst helper，一次编译导出 PNG 与 glyph/shape/source-span JSON。
 后台队列仅保留最新请求，主线程只接受匹配当前 SDG revision 的结果，图片、几何原子更新。
 UI 不链接编译器；helper 仍经过 ADR 0012 的 OS 沙箱、资源限制与运行时白名单。
+编辑 helper 使用受信调用方选定的 `typst-editor` 运行时清单，仅提供 helper、所需动态库、
+prlimit 和字体资源；其它工具链默认仍用原清单。缩小挂载集合不改变隔离方式、超时或资源上限。
 
 source span 通过只读编辑投影映射到 NodeId/UTF-8 byte 或空槽位 Cursor；光标、命中、
 选区、IME 锚点与 AccessKit 使用同一批几何。过期画面可以保留，但不提供旧坐标点击或光标。

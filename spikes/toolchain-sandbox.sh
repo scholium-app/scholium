@@ -32,17 +32,29 @@ mount_libraries() {
     /^[[:space:]]*\// {print $1}
   ')
 }
-for tool in bash sh xelatex xetex xdvipdfmx kpsewhich paper paperconf prlimit \
-            bwrap timeout realpath ldd awk cp mv cat touch readlink sleep dd \
-            pdfinfo pdftotext pdftohtml pdfimages; do
+# Profiles are selected by trusted callers, never by document content.
+# The editor helper needs fonts and its own libraries, not the TeX runtime.
+case "${SCHOLIUM_SANDBOX_PROFILE:-full}" in
+  full)
+    runtime_tools=(bash sh xelatex xetex xdvipdfmx kpsewhich paper paperconf prlimit
+      bwrap timeout realpath ldd awk cp mv cat touch readlink sleep dd
+      pdfinfo pdftotext pdftohtml pdfimages)
+    runtime_paths=(/usr/lib/locale /usr/share/fonts /usr/share/fontconfig /usr/share/texmf-dist
+      /usr/share/texmf /etc/fonts /etc/texmf /etc/paperspecs /etc/papersize /var/lib/texmf)
+    mount_file /usr/lib/localepaper
+    mount_libraries /usr/lib/localepaper
+    ;;
+  typst-editor)
+    runtime_tools=(prlimit)
+    runtime_paths=(/usr/share/fonts /usr/share/fontconfig /etc/fonts)
+    ;;
+  *) echo 'unknown sandbox profile' >&2; exit 2 ;;
+esac
+for tool in "${runtime_tools[@]}"; do
   mount_file "/usr/bin/$tool"
   mount_libraries "/usr/bin/$tool"
 done
-mount_file /usr/lib/localepaper
-mount_libraries /usr/lib/localepaper
-for runtime in /usr/lib/locale /usr/share/fonts /usr/share/fontconfig /usr/share/texmf-dist \
-               /usr/share/texmf /etc/fonts /etc/texmf /etc/paperspecs \
-               /etc/papersize /var/lib/texmf; do
+for runtime in "${runtime_paths[@]}"; do
   [ ! -e "$runtime" ] || mounts+=(--ro-bind "$runtime" "$runtime")
 done
 # Optional trusted toolchain directory, supplied by the harness, never package data.

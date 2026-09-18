@@ -1,0 +1,72 @@
+{
+  "isolation": "pass",
+  "timeout": "pass",
+  "invalid_profile": "pass",
+  "identical_artifacts": {
+    "scene.json": "c2e0fd9b838e9432e12247f3fe570194b45542a198a98927bd44a21f2f6ef4d4",
+    "page-0.png": "32255fe9d18cb16b9d66c7bf26c027db3f15ee85c18fc8cff3ad3730eba97443"
+  },
+  "helper_copy_ms": 25.79,
+  "runs": [
+    {
+      "run": 1,
+      "profile": "full",
+      "startup_ms": 445.63,
+      "render_ms": 902.59
+    },
+    {
+      "run": 1,
+      "profile": "typst-editor",
+      "startup_ms": 47.82,
+      "render_ms": 528.37
+    },
+    {
+      "run": 2,
+      "profile": "full",
+      "startup_ms": 522.93,
+      "render_ms": 1044.1
+    },
+    {
+      "run": 2,
+      "profile": "typst-editor",
+      "startup_ms": 56.54,
+      "render_ms": 554.11
+    },
+    {
+      "run": 3,
+      "profile": "full",
+      "startup_ms": 464.91,
+      "render_ms": 1066.64
+    },
+    {
+      "run": 3,
+      "profile": "typst-editor",
+      "startup_ms": 43.91,
+      "render_ms": 546.44
+    },
+    {
+      "run": 4,
+      "profile": "full",
+      "startup_ms": 580.35,
+      "render_ms": 1032.42
+    },
+    {
+      "run": 4,
+      "profile": "typst-editor",
+      "startup_ms": 47.39,
+      "render_ms": 543.58
+    },
+    {
+      "run": 5,
+      "profile": "full",
+      "startup_ms": 573.16,
+      "render_ms": 1091.36
+    },
+    {
+      "run": 5,
+      "profile": "typst-editor",
+      "startup_ms": 44.07,
+      "render_ms": 560.76
+    }
+  ]
+}
