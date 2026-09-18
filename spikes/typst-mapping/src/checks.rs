@@ -9,6 +9,7 @@ use typst::foundations::Label;
 use typst::introspection::Introspector;
 use typst::utils::PicoStr;
 use typst_layout::PagedDocument;
+use typst::layout::{Frame, FrameItem};
 
 use crate::generator::{Generation, Side};
 use crate::world::SpikeWorld;
@@ -350,6 +351,75 @@ pub(crate) fn render_check() {
             begin.x,
             begin.y
         );
+    }
+}
+
+/// 检查 Typst 的结构化 Frame 是否保留数学绘制与 glyph 几何。
+///
+/// 这项探针不依赖整页 PNG，也不把锚点坐标当作字符盒；它递归读取布局后的
+/// frame、group、text run 和 shape，确认后续可以在同一套布局上实现绘制和命中。
+pub(crate) fn frame_check() {
+    let mut editor = Editor::new();
+    fixture::build_standard(&mut editor);
+    let generation = crate::generator::generate(editor.document());
+    let Some(document) = compile(&generation) else {
+        return;
+    };
+    let mut summary = FrameSummary::default();
+    for page in document.pages() {
+        visit_frame(&page.frame, &mut summary);
+    }
+    println!(
+        "Frame 结构：{} 页，{} 个 group，{} 个文本 run，{} 个 glyph，{} 个 shape，{} 个 tag",
+        document.pages().len(),
+        summary.groups,
+        summary.text_runs,
+        summary.glyphs,
+        summary.shapes,
+        summary.tags,
+    );
+    println!(
+        "文本 source range：{} 个 glyph 带 range，{} 个 glyph 带非空 source span",
+        summary.ranged_glyphs, summary.spanned_glyphs
+    );
+}
+
+#[derive(Default)]
+struct FrameSummary {
+    groups: usize,
+    text_runs: usize,
+    glyphs: usize,
+    ranged_glyphs: usize,
+    spanned_glyphs: usize,
+    shapes: usize,
+    tags: usize,
+}
+
+fn visit_frame(frame: &Frame, summary: &mut FrameSummary) {
+    for (_, item) in frame.items() {
+        match item {
+            FrameItem::Group(group) => {
+                summary.groups += 1;
+                visit_frame(&group.frame, summary);
+            }
+            FrameItem::Text(text) => {
+                summary.text_runs += 1;
+                summary.glyphs += text.glyphs.len();
+                summary.ranged_glyphs += text
+                    .glyphs
+                    .iter()
+                    .filter(|glyph| glyph.range.start < glyph.range.end)
+                    .count();
+                summary.spanned_glyphs += text
+                    .glyphs
+                    .iter()
+                    .filter(|glyph| !glyph.span.0.is_detached())
+                    .count();
+            }
+            FrameItem::Shape(_, _) => summary.shapes += 1,
+            FrameItem::Tag(_) => summary.tags += 1,
+            FrameItem::Image(_, _, _) | FrameItem::Link(_, _) => {}
+        }
     }
 }
 

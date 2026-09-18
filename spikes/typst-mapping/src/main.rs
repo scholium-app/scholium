@@ -53,6 +53,10 @@ fn main() {
         checks::render_check();
         return;
     }
+    if std::env::args().nth(1).as_deref() == Some("frame") {
+        checks::frame_check();
+        return;
+    }
 
     let mut editor = Editor::new();
     fixture::build_large(&mut editor, PARAGRAPHS);
