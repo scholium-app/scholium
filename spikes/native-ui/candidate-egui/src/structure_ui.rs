@@ -32,8 +32,17 @@ impl SpikeApp {
                     let origin = rect.min + egui::vec2(8.0, 8.0);
                     self.structure_origin = origin;
                     self.pointer_selection(&response, origin);
+                    let painted_typst =
+                        self.preview
+                            .paint_embedded_page(&painter, rect, self.core.revision());
+                    if !painted_typst {
+                        self.paint_structure(
+                            &painter,
+                            origin,
+                            egui::Color32::from_rgb(230, 230, 233),
+                        );
+                    }
                     self.paint_selection(&painter, origin);
-                    self.paint_structure(&painter, origin, egui::Color32::from_rgb(230, 230, 233));
                     self.accessible_structure(ui, &response, origin);
                     if self.structure_focused {
                         self.caret_and_ime(ui, &painter, origin);

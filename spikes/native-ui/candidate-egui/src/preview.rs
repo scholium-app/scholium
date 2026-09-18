@@ -34,6 +34,48 @@ pub(super) struct Preview {
 }
 
 impl Preview {
+    pub(super) fn current_for(&self, revision: u64) -> bool {
+        self.adopted == Some(revision)
+            && self
+                .pages
+                .as_ref()
+                .is_some_and(|pages| !pages.images.is_empty())
+    }
+
+    pub(super) fn paint_embedded_page(
+        &mut self,
+        painter: &egui::Painter,
+        rect: egui::Rect,
+        revision: u64,
+    ) -> bool {
+        if !self.current_for(revision) {
+            return false;
+        }
+        let Some(pages) = &self.pages else {
+            return false;
+        };
+        let Some(image) = pages.images.first().cloned() else {
+            return false;
+        };
+        let texture = self.texture.get_or_insert_with(|| {
+            painter.ctx().load_texture(
+                "typst-preview-embedded",
+                image,
+                egui::TextureOptions::LINEAR,
+            )
+        });
+        let size = texture.size_vec2();
+        let scale = (rect.width() / size.x).min(rect.height() / size.y).min(1.0);
+        let target = egui::Rect::from_min_size(rect.min, size * scale);
+        painter.image(
+            texture.id(),
+            target,
+            egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)),
+            egui::Color32::WHITE,
+        );
+        true
+    }
+
     pub(super) fn draw(
         &mut self,
         ui: &mut egui::Ui,
@@ -56,7 +98,7 @@ impl Preview {
         self.draw_pages(ui, core.revision())
     }
 
-    fn poll(&mut self, ctx: &egui::Context, core: &Editor) {
+    pub(super) fn poll(&mut self, ctx: &egui::Context, core: &Editor) {
         if self.pending.is_none() {
             let pending = Arc::new(Mutex::new(None));
             let (send, receive) = mpsc::channel();
