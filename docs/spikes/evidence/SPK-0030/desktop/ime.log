@@ -1,0 +1,22 @@
+[event] 启动完成 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=18 elapsed_ms=375.214
+[typst-editor] Typst · revision 18 · 1 页 · 22 boxes
+[typst-editor-tiles] revision=18 uploaded=70
+[ime] 输入法锚点 [[26.0 143.6] - [27.5 160.2]]
+[event] 预编辑「n」（未进历史） | revision 18 | 核心动作 17 | 预编辑事件 1 | IME 提交 0
+[event] 预编辑「ni」（未进历史） | revision 18 | 核心动作 17 | 预编辑事件 3 | IME 提交 0
+[event] 预编辑「ni h」（未进历史） | revision 18 | 核心动作 17 | 预编辑事件 5 | IME 提交 0
+[event] 预编辑「ni ha」（未进历史） | revision 18 | 核心动作 17 | 预编辑事件 7 | IME 提交 0
+[event] 预编辑「ni hao」（未进历史） | revision 18 | 核心动作 17 | 预编辑事件 9 | IME 提交 0
+[event] 预编辑「」（未进历史） | revision 18 | 核心动作 17 | 预编辑事件 11 | IME 提交 0
+[event] 预编辑「n」（未进历史） | revision 18 | 核心动作 17 | 预编辑事件 12 | IME 提交 0
+[event] 预编辑「ni」（未进历史） | revision 18 | 核心动作 17 | 预编辑事件 14 | IME 提交 0
+[event] 预编辑「ni h」（未进历史） | revision 18 | 核心动作 17 | 预编辑事件 16 | IME 提交 0
+[event] 预编辑「ni ha」（未进历史） | revision 18 | 核心动作 17 | 预编辑事件 18 | IME 提交 0
+[event] 预编辑「ni hao」（未进历史） | revision 18 | 核心动作 17 | 预编辑事件 20 | IME 提交 0
+[event] 预编辑「」（未进历史） | revision 19 | 核心动作 18 | 预编辑事件 23 | IME 提交 1
+[typst-editor-worker] revision=19 elapsed_ms=20.079
+[typst-editor] Typst · revision 19 · 1 页 · 24 boxes
+[typst-editor-tiles] revision=19 uploaded=4
+[event] 预编辑「n」（未进历史） | revision 19 | 核心动作 18 | 预编辑事件 24 | IME 提交 1
+[event] 预编辑「ni」（未进历史） | revision 19 | 核心动作 18 | 预编辑事件 26 | IME 提交 1

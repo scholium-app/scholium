@@ -1,0 +1,10 @@
+[event] 启动完成 | revision 2578 | 核心动作 2577 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=2578 elapsed_ms=2138.068
+[typst-editor] Typst · revision 2578 · 26 页 · 10152 boxes
+[typst-editor-tiles] revision=2578 uploaded=1820
+[ime] 输入法锚点 [[26.0 143.6] - [27.5 160.2]]
+[frame-cpu] samples=120 p95_ms=126.441 max_ms=2992.219 excludes_gpu_present=true
+[frame-cpu] samples=120 p95_ms=106.463 max_ms=126.816 excludes_gpu_present=true
+[event] 预览定位 → NodeId(117) | revision 2578 | 核心动作 2577 | 预编辑事件 0 | IME 提交 0
+[frame-cpu] samples=120 p95_ms=100.481 max_ms=152.331 excludes_gpu_present=true
+[frame-cpu] samples=120 p95_ms=92.443 max_ms=108.138 excludes_gpu_present=true

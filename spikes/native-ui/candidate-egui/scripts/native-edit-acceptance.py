@@ -297,6 +297,38 @@ def frame_cpu_measurement():
     }, indent=2))
 
 
+def large_document_edit():
+    saved_count = os.environ.get('SCHOLIUM_SPIKE_PARAGRAPHS')
+    os.environ['SCHOLIUM_SPIKE_PARAGRAPHS'] = '256'
+    try:
+        with Window('large-document-edit') as w:
+            call('fcitx5-remote', '-c')
+            before = w.text()
+            status = next(n.name for n in w.nodes() if (n.name or '').startswith('Typst · revision'))
+            pages = int(re.search(r'· (\d+) 页$', status).group(1))
+            assert pages >= 20, 'large editing fixture must actually span at least 20 pages'
+            w.select(0, 0)
+            w.type('LARGE')
+            assert w.text() == 'LARGE' + before, 'large-document typing corrupted content'
+            w.select(0, 5)
+            w.key(14)
+            assert w.text() == before, 'large-document selected deletion failed'
+            w.key(29, 44)
+            assert w.text() == 'LARGE' + before, 'large-document undo failed'
+            length = len(w.text())
+            w.select(length, length)
+            w.type('END')
+            assert w.text() == 'LARGE' + before + 'END', 'last-page edit failed'
+            (OUT / 'large-document-edit-summary.json').write_text(json.dumps(
+                {'paragraphs': 256, 'pages': pages, 'original_characters': len(before),
+                 'checks': ['first-page typing', 'selected deletion', 'undo', 'last-page typing']}, indent=2))
+    finally:
+        if saved_count is None:
+            os.environ.pop('SCHOLIUM_SPIKE_PARAGRAPHS', None)
+        else:
+            os.environ['SCHOLIUM_SPIKE_PARAGRAPHS'] = saved_count
+
+
 def unicode_clipboard():
     with Window('unicode') as w:
         call('fcitx5-remote', '-c')
@@ -477,7 +509,7 @@ try:
     for name in saved:
         prop(name, 'true')
     call('systemctl', '--user', 'start', 'ydotool')
-    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing]:
+    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit]:
         if len(sys.argv) > 2 and case.__name__ not in sys.argv[2:]:
             continue
         try:

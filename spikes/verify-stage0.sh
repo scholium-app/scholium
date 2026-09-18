@@ -16,6 +16,13 @@ case "$ONLY" in
 esac
 LOG_DIR="$(mktemp -d "${TMPDIR:-/tmp}/scholium-stage0.XXXXXX")" || exit 1
 printf '本次日志：%s\n' "$LOG_DIR"
+# Package checks recreate their output tree. Preserve an explicitly selected CLI
+# before that happens, even when it was selected from a previous exported package.
+typst_cli="${SCHOLIUM_TYPST_BIN:-/tmp/scholium-typst-toolchain/bin/typst}"
+if [ -f "$typst_cli" ]; then
+  cp "$typst_cli" "$LOG_DIR/typst-cli" || exit 1
+  export SCHOLIUM_TYPST_BIN="$LOG_DIR/typst-cli"
+fi
 pass=0
 fail=0
 declare -a FAILED

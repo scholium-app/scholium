@@ -67,6 +67,36 @@ fn startup_focuses_the_document_area() {
 }
 
 #[test]
+fn undo_uses_key_event_modifiers_when_control_is_released_in_the_same_frame() {
+    let ctx = Context::default();
+    let mut app = new_app(&ctx);
+    settle(&mut app, &ctx);
+    let before = app.plain_text();
+    frame(&mut app, &ctx, vec![text_event("UNDO")]);
+    assert_ne!(app.plain_text(), before);
+    let modifiers = Modifiers {
+        ctrl: true,
+        command: true,
+        ..Default::default()
+    };
+    frame(
+        &mut app,
+        &ctx,
+        vec![
+            key_event(Key::Z, modifiers),
+            Event::Key {
+                key: Key::Z,
+                physical_key: None,
+                pressed: false,
+                repeat: false,
+                modifiers: Modifiers::default(),
+            },
+        ],
+    );
+    assert_eq!(app.plain_text(), before);
+}
+
+#[test]
 fn preedit_does_not_touch_history_and_commit_adds_exactly_one_action() {
     let ctx = Context::default();
     let mut app = new_app(&ctx);

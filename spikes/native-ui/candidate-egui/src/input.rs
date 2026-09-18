@@ -181,7 +181,13 @@ impl SpikeApp {
                 input.key_pressed(egui::Key::ArrowLeft),
                 input.key_pressed(egui::Key::ArrowRight),
                 input.key_pressed(egui::Key::Backspace),
-                input.modifiers.command && input.key_pressed(egui::Key::Z),
+                // A slow frame can contain both key-down and modifier release.
+                // Shortcut meaning comes from the key event, not the final frame state.
+                input.events.iter().any(|event| {
+                    matches!(event,
+                    egui::Event::Key { key: egui::Key::Z, pressed: true, modifiers, .. }
+                        if modifiers.command)
+                }),
                 input.modifiers.shift,
             )
         });

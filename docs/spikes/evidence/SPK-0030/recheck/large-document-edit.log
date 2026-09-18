@@ -1,0 +1,25 @@
+[event] 启动完成 | revision 2578 | 核心动作 2577 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=2578 elapsed_ms=2140.543
+[typst-editor] Typst · revision 2578 · 26 页 · 10152 boxes
+[typst-editor-tiles] revision=2578 uploaded=1820
+[ime] 输入法锚点 [[26.0 143.6] - [27.5 160.2]]
+[event] core 收到 Typing："L" | revision 2579 | 核心动作 2578 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 2581 | 核心动作 2580 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："G" | revision 2582 | 核心动作 2581 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："E" | revision 2583 | 核心动作 2582 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=2579 elapsed_ms=652.600
+[typst-editor-worker] revision=2583 elapsed_ms=691.917
+[typst-editor] Typst · revision 2583 · 26 页 · 10157 boxes
+[typst-editor-tiles] revision=2583 uploaded=5
+[event] 已删除选区 | revision 2584 | 核心动作 2583 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=2584 elapsed_ms=602.854
+[typst-editor] Typst · revision 2584 · 26 页 · 10152 boxes
+[typst-editor-tiles] revision=2584 uploaded=5
+[event] core：撤销 ActionId(2583)，删除 0 字符 | revision 2585 | 核心动作 2584 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=2585 elapsed_ms=683.505
+[typst-editor] Typst · revision 2585 · 26 页 · 10157 boxes
+[typst-editor-tiles] revision=2585 uploaded=5
+[event] core 收到 Typing："D" | revision 2588 | 核心动作 2587 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=2588 elapsed_ms=625.834
+[typst-editor] Typst · revision 2588 · 26 页 · 10159 boxes
+[typst-editor-tiles] revision=2588 uploaded=1

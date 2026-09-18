@@ -1,0 +1,40 @@
+   Compiling scholium-spike-core v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/native-ui/core)
+   Compiling scholium-spike-iced v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/native-ui/candidate-iced)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.91s
+     Running unittests src/lib.rs (spikes/native-ui/candidate-iced/target/debug/deps/scholium_spike_iced-4bfd1f1bbd37880b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/gpu_probe.rs (spikes/native-ui/candidate-iced/target/debug/deps/gpu_probe-090162e09d87e9bc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (spikes/native-ui/candidate-iced/target/debug/deps/scholium_spike_iced-61a2106e7e66a403)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/input.rs (spikes/native-ui/candidate-iced/target/debug/deps/input-824412c0378d0f92)
+
+running 8 tests
+test backspace_deletes_one_grapheme ... ok
+test typing_zwj_emoji_then_backspace_does_not_split_grapheme ... ok
+test arrow_keys_do_not_corrupt_the_document ... ok
+test undo_reverts_the_local_typing ... ok
+test typing_inserts_text_and_advances_the_caret ... ok
+test source_edit_action_moves_input_focus_and_read_only_write_is_rejected ... ok
+test ime_commit_is_ignored_after_focus_moves_to_source_pane ... ok
+test preedit_does_not_touch_history_and_commit_adds_exactly_one_action ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+   Doc-tests scholium_spike_iced
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

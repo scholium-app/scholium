@@ -1,0 +1,8 @@
+本次日志：/tmp/scholium-stage0.DhTex1
+
+=== 真实后台编译期间的原生 UI 帧验证（需要 Typst CLI 0.15.1） ===
+  PASS  async preview
+
+=== 汇总 ===
+  通过 1 项，失败 0 项
+  本次所选检查通过；阶段出口仍以报告中的未完成项为准。

@@ -1,0 +1,11 @@
+{
+  "paragraphs": 256,
+  "pages": 26,
+  "original_characters": 9378,
+  "checks": [
+    "first-page typing",
+    "selected deletion",
+    "undo",
+    "last-page typing"
+  ]
+}

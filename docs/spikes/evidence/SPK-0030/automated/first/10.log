@@ -1,0 +1,14 @@
+    Finished `release` profile [optimized] target(s) in 0.10s
+     Running `spikes/typst-mapping/target/release/scholium-spike-typst latency`
+基准：256 段，首次编译 140 ms，20 页
+重新生成源码（20 次）：中位 1.0 ms，均值 0.9 ms，p95 1.1 ms，最大 1.1 ms
+重新编译（持久 World）（20 次）：中位 12.8 ms，均值 12.8 ms，p95 13.8 ms，最大 13.8 ms
+单字符路径合计（生成 + 编译）（20 次）：中位 13.8 ms，均值 13.8 ms，p95 14.9 ms，最大 14.9 ms
+最坏情况：改首段（源码整体平移）（5 次）：中位 15.0 ms，均值 15.3 ms，p95 17.7 ms，最大 17.7 ms
+说明：以上是**逻辑侧**的完成时间；编译应在后台线程进行，帧内只做入队与取用最新结果。
+
+=== 旧 revision 不闪回 ===
+  [PASS] 顺序到达 1..5：已采纳 5，闪回 false，忽略旧结果 0
+  [PASS] 乱序到达 [2,5,3,4,1]：已采纳 5（应为 5），忽略旧结果 3 次，闪回 false
+  [PASS(有区分度)] 对照（朴素门，谁最后到用谁）：最终采纳 1，闪回 true —— 本用例应抓出它
+  [PASS] 失败结果不影响门（跳过的 4 不落地）：已采纳 5

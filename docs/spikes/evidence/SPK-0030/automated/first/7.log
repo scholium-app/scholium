@@ -1,0 +1,18 @@
+    Finished `release` profile [optimized] target(s) in 0.13s
+     Running `spikes/typst-mapping/target/release/scholium-spike-typst`
+SDG：257 段 / 2819 节点
+生成：0.70 ms，源码 111034 字节，源码映射 257 节点，锚点 2050
+首次编译：487 ms，20 页
+锚点解析：2050 / 2050（节点 1025 个有起点，513 个起止同行可作区间）
+  跨页覆盖：20 页有锚点（20 页非空），每页 36..53 个
+  按类型（同行区间/总数）：Fraction 256/256，Math 0/256，Paragraph 1/257，Script 256/256
+  Fraction 反查：40 / 40 命中（覆盖 19 页，第 Some(1)..Some(19) 页）；示例 节点 7 第 1 页 x∈[288.0, 296.0] 
+  Script 反查：40 / 40 命中（覆盖 19 页，第 Some(1)..Some(19) 页）；示例 节点 10 第 1 页 x∈[296.0, 307.3] 
+  Sqrt：无样本
+  Matrix：无样本
+  Math 反查：40 / 40 命中（覆盖 19 页，第 Some(1)..Some(19) 页）；示例 节点 5 第 1 页 x∈[70.9, 70.9] 
+源码偏移 54662 → 节点 1400（期望 1400）
+缓存探针（内容未变）：换新 World 14 ms，同 World 0 ms
+改动一处 + 持久 World：12 ms（冷编译的 3%），20 页
+改动一处 + 新建 World：404 ms（冷编译的 83%）；重新生成源码 0.81 ms
+  新建 World 编译后 20 页

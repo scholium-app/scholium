@@ -1,0 +1,6 @@
+    Finished `release` profile [optimized] target(s) in 0.10s
+     Running `spikes/typst-mapping/target/release/scholium-spike-typst charmap`
+文本：37 字符 / 99 字节；基准偏移 38 个
+插值误差（块宽 8 字符，27/38 个偏移可比较，跨行排除 13）：平均 0.24 pt，最大 0.85 pt（偏移 45）
+中位字宽 13.75 pt → 误差约 0.017 字（平均）/ 0.062 字（最大）
+反查（同一行基准点之间）：完全一致 36 / 38，±1 字符内 36 / 38

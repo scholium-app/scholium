@@ -1,0 +1,20 @@
+   Compiling scholium-spike-egui v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/native-ui/candidate-egui)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.19s
+     Running tests/input.rs (spikes/native-ui/candidate-egui/target/debug/deps/input-28a095c2b967e1cb)
+
+running 13 tests
+test startup_focuses_the_document_area ... ok
+test wrapping_the_focused_node_creates_a_structure ... ok
+test dragging_in_the_document_selects_a_range ... ok
+test typing_inserts_text_and_advances_the_caret ... ok
+test unwrapping_removes_the_structure_and_keeps_content ... ok
+test undo_reverts_the_local_typing ... ok
+test undo_uses_key_event_modifiers_when_control_is_released_in_the_same_frame ... ok
+test arrow_keys_do_not_corrupt_the_document ... ok
+test clicking_in_the_document_moves_the_caret ... ok
+test backspace_deletes_one_grapheme ... ok
+test backspace_deletes_exactly_the_selected_range ... ok
+test preedit_does_not_touch_history_and_commit_adds_exactly_one_action ... ok
+test typing_zwj_emoji_then_backspace_does_not_split_grapheme ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s

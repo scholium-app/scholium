@@ -1,0 +1,494 @@
+[event] 启动完成 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=18 elapsed_ms=415.451
+[typst-editor] Typst · revision 18 · 1 页 · 22 boxes
+[typst-editor-tiles] revision=18 uploaded=70
+[ime] 输入法锚点 [[26.0 143.6] - [27.5 160.2]]
+[pointer] press=[26.0 151.0] origin=[8.0 127.3] cursor=Text { node: NodeId(2), byte: 0 }
+[event] 已删除选区 | revision 20 | 核心动作 18 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=20 elapsed_ms=13.249
+[typst-editor] Typst · revision 20 · 1 页 · 16 boxes
+[typst-editor-tiles] revision=20 uploaded=4
+[event] core：撤销 ActionId(18)，删除 0 字符 | revision 21 | 核心动作 19 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=21 elapsed_ms=13.851
+[typst-editor] Typst · revision 21 · 1 页 · 22 boxes
+[typst-editor-tiles] revision=21 uploaded=4
+[event] core 收到 Typing："S" | revision 22 | 核心动作 20 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=22 elapsed_ms=15.604
+[typst-editor] Typst · revision 22 · 1 页 · 23 boxes
+[typst-editor-tiles] revision=22 uploaded=4
+[event] core 收到 Typing："C" | revision 23 | 核心动作 21 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=23 elapsed_ms=15.146
+[typst-editor] Typst · revision 23 · 1 页 · 24 boxes
+[typst-editor-tiles] revision=23 uploaded=4
+[event] core 收到 Typing："R" | revision 24 | 核心动作 22 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=24 elapsed_ms=13.881
+[typst-editor] Typst · revision 24 · 1 页 · 25 boxes
+[typst-editor-tiles] revision=24 uploaded=4
+[event] core 收到 Typing："O" | revision 25 | 核心动作 23 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=25 elapsed_ms=14.680
+[typst-editor] Typst · revision 25 · 1 页 · 26 boxes
+[typst-editor-tiles] revision=25 uploaded=5
+[event] core 收到 Typing："L" | revision 26 | 核心动作 24 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=26 elapsed_ms=20.772
+[typst-editor-worker] revision=27 elapsed_ms=13.817
+[typst-editor] Typst · revision 27 · 1 页 · 28 boxes
+[typst-editor-tiles] revision=27 uploaded=5
+[event] core 收到 Typing：" " | revision 28 | 核心动作 26 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=28 elapsed_ms=11.303
+[typst-editor] Typst · revision 28 · 1 页 · 29 boxes
+[typst-editor-tiles] revision=28 uploaded=0
+[event] core 收到 Typing："S" | revision 29 | 核心动作 27 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=29 elapsed_ms=13.435
+[typst-editor] Typst · revision 29 · 1 页 · 30 boxes
+[typst-editor-tiles] revision=29 uploaded=4
+[event] core 收到 Typing："C" | revision 30 | 核心动作 28 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=30 elapsed_ms=13.644
+[typst-editor] Typst · revision 30 · 1 页 · 31 boxes
+[typst-editor-tiles] revision=30 uploaded=4
+[event] core 收到 Typing："R" | revision 31 | 核心动作 29 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=31 elapsed_ms=13.800
+[typst-editor] Typst · revision 31 · 1 页 · 32 boxes
+[typst-editor-tiles] revision=31 uploaded=4
+[event] core 收到 Typing："O" | revision 32 | 核心动作 30 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=32 elapsed_ms=18.384
+[event] core 收到 Typing："L" | revision 33 | 核心动作 31 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=33 elapsed_ms=14.644
+[typst-editor] Typst · revision 33 · 1 页 · 34 boxes
+[typst-editor-tiles] revision=33 uploaded=5
+[typst-editor-worker] revision=34 elapsed_ms=19.944
+[typst-editor] Typst · revision 34 · 1 页 · 35 boxes
+[typst-editor-tiles] revision=34 uploaded=5
+[event] core 收到 Typing：" " | revision 35 | 核心动作 33 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=35 elapsed_ms=15.149
+[typst-editor] Typst · revision 35 · 1 页 · 36 boxes
+[typst-editor-tiles] revision=35 uploaded=0
+[event] core 收到 Typing："S" | revision 36 | 核心动作 34 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=36 elapsed_ms=14.384
+[typst-editor] Typst · revision 36 · 1 页 · 37 boxes
+[typst-editor-tiles] revision=36 uploaded=4
+[event] core 收到 Typing："C" | revision 37 | 核心动作 35 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=37 elapsed_ms=13.729
+[typst-editor] Typst · revision 37 · 1 页 · 38 boxes
+[typst-editor-tiles] revision=37 uploaded=4
+[event] core 收到 Typing："R" | revision 38 | 核心动作 36 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=38 elapsed_ms=13.584
+[typst-editor] Typst · revision 38 · 1 页 · 39 boxes
+[typst-editor-tiles] revision=38 uploaded=4
+[event] core 收到 Typing："O" | revision 39 | 核心动作 37 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=39 elapsed_ms=13.943
+[typst-editor] Typst · revision 39 · 1 页 · 40 boxes
+[typst-editor-tiles] revision=39 uploaded=4
+[event] core 收到 Typing："L" | revision 40 | 核心动作 38 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=40 elapsed_ms=14.272
+[typst-editor] Typst · revision 40 · 1 页 · 41 boxes
+[typst-editor-tiles] revision=40 uploaded=5
+[typst-editor-worker] revision=41 elapsed_ms=14.609
+[typst-editor] Typst · revision 41 · 1 页 · 42 boxes
+[typst-editor-tiles] revision=41 uploaded=5
+[event] core 收到 Typing：" " | revision 42 | 核心动作 40 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=42 elapsed_ms=11.925
+[typst-editor] Typst · revision 42 · 1 页 · 43 boxes
+[typst-editor-tiles] revision=42 uploaded=0
+[event] core 收到 Typing："S" | revision 43 | 核心动作 41 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=43 elapsed_ms=13.958
+[typst-editor] Typst · revision 43 · 1 页 · 44 boxes
+[typst-editor-tiles] revision=43 uploaded=4
+[event] core 收到 Typing："C" | revision 44 | 核心动作 42 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=44 elapsed_ms=14.265
+[typst-editor] Typst · revision 44 · 1 页 · 45 boxes
+[typst-editor-tiles] revision=44 uploaded=6
+[event] core 收到 Typing："R" | revision 45 | 核心动作 43 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=45 elapsed_ms=13.072
+[typst-editor] Typst · revision 45 · 1 页 · 46 boxes
+[typst-editor-tiles] revision=45 uploaded=3
+[event] core 收到 Typing："O" | revision 46 | 核心动作 44 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=46 elapsed_ms=17.073
+[typst-editor] Typst · revision 46 · 1 页 · 47 boxes
+[typst-editor-tiles] revision=46 uploaded=3
+[event] core 收到 Typing："L" | revision 47 | 核心动作 45 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=47 elapsed_ms=14.888
+[typst-editor] Typst · revision 47 · 1 页 · 48 boxes
+[typst-editor-tiles] revision=47 uploaded=3
+[typst-editor-worker] revision=48 elapsed_ms=13.221
+[typst-editor] Typst · revision 48 · 1 页 · 49 boxes
+[typst-editor-tiles] revision=48 uploaded=3
+[event] core 收到 Typing：" " | revision 49 | 核心动作 47 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=49 elapsed_ms=17.747
+[typst-editor] Typst · revision 49 · 1 页 · 50 boxes
+[typst-editor-tiles] revision=49 uploaded=0
+[event] core 收到 Typing："S" | revision 50 | 核心动作 48 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=50 elapsed_ms=21.302
+[typst-editor] Typst · revision 50 · 1 页 · 51 boxes
+[typst-editor-tiles] revision=50 uploaded=2
+[event] core 收到 Typing："C" | revision 51 | 核心动作 49 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=51 elapsed_ms=18.111
+[typst-editor] Typst · revision 51 · 1 页 · 52 boxes
+[typst-editor-tiles] revision=51 uploaded=2
+[event] core 收到 Typing："R" | revision 52 | 核心动作 50 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=52 elapsed_ms=18.628
+[event] core 收到 Typing："O" | revision 53 | 核心动作 51 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=53 elapsed_ms=17.040
+[typst-editor] Typst · revision 53 · 1 页 · 54 boxes
+[typst-editor-tiles] revision=53 uploaded=3
+[event] core 收到 Typing："L" | revision 54 | 核心动作 52 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=54 elapsed_ms=12.977
+[typst-editor] Typst · revision 54 · 1 页 · 55 boxes
+[typst-editor-tiles] revision=54 uploaded=3
+[typst-editor-worker] revision=55 elapsed_ms=14.358
+[typst-editor] Typst · revision 55 · 1 页 · 56 boxes
+[typst-editor-tiles] revision=55 uploaded=6
+[event] core 收到 Typing：" " | revision 56 | 核心动作 54 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=56 elapsed_ms=11.486
+[typst-editor] Typst · revision 56 · 1 页 · 57 boxes
+[typst-editor-tiles] revision=56 uploaded=0
+[event] core 收到 Typing："S" | revision 57 | 核心动作 55 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=57 elapsed_ms=15.967
+[typst-editor] Typst · revision 57 · 1 页 · 58 boxes
+[typst-editor-tiles] revision=57 uploaded=3
+[event] core 收到 Typing："C" | revision 58 | 核心动作 56 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=58 elapsed_ms=17.410
+[typst-editor] Typst · revision 58 · 1 页 · 59 boxes
+[typst-editor-tiles] revision=58 uploaded=2
+[event] core 收到 Typing："R" | revision 59 | 核心动作 57 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=59 elapsed_ms=20.115
+[event] core 收到 Typing："O" | revision 60 | 核心动作 58 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=60 elapsed_ms=14.931
+[typst-editor] Typst · revision 60 · 1 页 · 61 boxes
+[typst-editor-tiles] revision=60 uploaded=5
+[event] core 收到 Typing："L" | revision 61 | 核心动作 59 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=61 elapsed_ms=14.919
+[typst-editor] Typst · revision 61 · 1 页 · 62 boxes
+[typst-editor-tiles] revision=61 uploaded=2
+[typst-editor-worker] revision=62 elapsed_ms=14.200
+[typst-editor] Typst · revision 62 · 1 页 · 63 boxes
+[typst-editor-tiles] revision=62 uploaded=5
+[event] core 收到 Typing：" " | revision 63 | 核心动作 61 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=63 elapsed_ms=17.881
+[typst-editor] Typst · revision 63 · 1 页 · 64 boxes
+[typst-editor-tiles] revision=63 uploaded=0
+[event] core 收到 Typing："S" | revision 64 | 核心动作 62 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=64 elapsed_ms=19.355
+[event] core 收到 Typing："C" | revision 65 | 核心动作 63 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=65 elapsed_ms=14.604
+[typst-editor] Typst · revision 65 · 1 页 · 66 boxes
+[typst-editor-tiles] revision=65 uploaded=6
+[event] core 收到 Typing："R" | revision 66 | 核心动作 64 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=66 elapsed_ms=16.570
+[typst-editor] Typst · revision 66 · 1 页 · 67 boxes
+[typst-editor-tiles] revision=66 uploaded=7
+[event] core 收到 Typing："O" | revision 67 | 核心动作 65 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=67 elapsed_ms=12.395
+[typst-editor] Typst · revision 67 · 1 页 · 68 boxes
+[typst-editor-tiles] revision=67 uploaded=1
+[event] core 收到 Typing："L" | revision 68 | 核心动作 66 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=68 elapsed_ms=15.083
+[typst-editor] Typst · revision 68 · 1 页 · 69 boxes
+[typst-editor-tiles] revision=68 uploaded=7
+[typst-editor-worker] revision=69 elapsed_ms=14.255
+[typst-editor] Typst · revision 69 · 1 页 · 70 boxes
+[typst-editor-tiles] revision=69 uploaded=4
+[event] core 收到 Typing：" " | revision 70 | 核心动作 68 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=70 elapsed_ms=11.899
+[typst-editor] Typst · revision 70 · 1 页 · 71 boxes
+[typst-editor-tiles] revision=70 uploaded=0
+[event] core 收到 Typing："S" | revision 71 | 核心动作 69 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=71 elapsed_ms=14.659
+[typst-editor] Typst · revision 71 · 1 页 · 72 boxes
+[typst-editor-tiles] revision=71 uploaded=4
+[event] core 收到 Typing："C" | revision 72 | 核心动作 70 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=72 elapsed_ms=20.710
+[event] core 收到 Typing："R" | revision 73 | 核心动作 71 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=73 elapsed_ms=15.571
+[typst-editor] Typst · revision 73 · 1 页 · 74 boxes
+[typst-editor-tiles] revision=73 uploaded=4
+[event] core 收到 Typing："O" | revision 74 | 核心动作 72 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=74 elapsed_ms=23.511
+[event] core 收到 Typing："L" | revision 75 | 核心动作 73 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=75 elapsed_ms=14.479
+[typst-editor] Typst · revision 75 · 1 页 · 76 boxes
+[typst-editor-tiles] revision=75 uploaded=5
+[typst-editor-worker] revision=76 elapsed_ms=14.461
+[typst-editor] Typst · revision 76 · 1 页 · 77 boxes
+[typst-editor-tiles] revision=76 uploaded=5
+[event] core 收到 Typing：" " | revision 77 | 核心动作 75 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=77 elapsed_ms=12.285
+[typst-editor] Typst · revision 77 · 1 页 · 78 boxes
+[typst-editor-tiles] revision=77 uploaded=0
+[event] core 收到 Typing："S" | revision 78 | 核心动作 76 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=78 elapsed_ms=14.177
+[typst-editor] Typst · revision 78 · 1 页 · 79 boxes
+[typst-editor-tiles] revision=78 uploaded=4
+[event] core 收到 Typing："C" | revision 79 | 核心动作 77 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=79 elapsed_ms=14.397
+[typst-editor] Typst · revision 79 · 1 页 · 80 boxes
+[typst-editor-tiles] revision=79 uploaded=4
+[event] core 收到 Typing："R" | revision 80 | 核心动作 78 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=80 elapsed_ms=16.480
+[typst-editor] Typst · revision 80 · 1 页 · 81 boxes
+[typst-editor-tiles] revision=80 uploaded=4
+[event] core 收到 Typing："O" | revision 81 | 核心动作 79 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=81 elapsed_ms=16.361
+[typst-editor] Typst · revision 81 · 1 页 · 82 boxes
+[typst-editor-tiles] revision=81 uploaded=4
+[event] core 收到 Typing："L" | revision 82 | 核心动作 80 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=82 elapsed_ms=20.788
+[typst-editor-worker] revision=83 elapsed_ms=18.474
+[typst-editor] Typst · revision 83 · 1 页 · 84 boxes
+[typst-editor-tiles] revision=83 uploaded=5
+[event] core 收到 Typing：" " | revision 84 | 核心动作 82 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=84 elapsed_ms=16.286
+[event] core 收到 Typing："S" | revision 85 | 核心动作 83 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=85 elapsed_ms=15.293
+[typst-editor] Typst · revision 85 · 1 页 · 86 boxes
+[typst-editor-tiles] revision=85 uploaded=4
+[event] core 收到 Typing："C" | revision 86 | 核心动作 84 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=86 elapsed_ms=16.845
+[typst-editor] Typst · revision 86 · 1 页 · 87 boxes
+[typst-editor-tiles] revision=86 uploaded=8
+[event] core 收到 Typing："R" | revision 87 | 核心动作 85 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=87 elapsed_ms=14.245
+[event] core 收到 Typing："O" | revision 88 | 核心动作 86 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=88 elapsed_ms=14.272
+[typst-editor] Typst · revision 88 · 1 页 · 89 boxes
+[typst-editor-tiles] revision=88 uploaded=3
+[event] core 收到 Typing："L" | revision 89 | 核心动作 87 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=89 elapsed_ms=14.436
+[typst-editor] Typst · revision 89 · 1 页 · 90 boxes
+[typst-editor-tiles] revision=89 uploaded=3
+[typst-editor-worker] revision=90 elapsed_ms=14.538
+[typst-editor] Typst · revision 90 · 1 页 · 91 boxes
+[typst-editor-tiles] revision=90 uploaded=3
+[event] core 收到 Typing：" " | revision 91 | 核心动作 89 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=91 elapsed_ms=12.603
+[typst-editor] Typst · revision 91 · 1 页 · 92 boxes
+[typst-editor-tiles] revision=91 uploaded=0
+[event] core 收到 Typing："S" | revision 92 | 核心动作 90 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=92 elapsed_ms=13.267
+[typst-editor] Typst · revision 92 · 1 页 · 93 boxes
+[typst-editor-tiles] revision=92 uploaded=2
+[event] core 收到 Typing："C" | revision 93 | 核心动作 91 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=93 elapsed_ms=13.363
+[typst-editor] Typst · revision 93 · 1 页 · 94 boxes
+[typst-editor-tiles] revision=93 uploaded=2
+[event] core 收到 Typing："R" | revision 94 | 核心动作 92 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=94 elapsed_ms=13.995
+[typst-editor] Typst · revision 94 · 1 页 · 95 boxes
+[typst-editor-tiles] revision=94 uploaded=3
+[event] core 收到 Typing："O" | revision 95 | 核心动作 93 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=95 elapsed_ms=13.839
+[typst-editor] Typst · revision 95 · 1 页 · 96 boxes
+[typst-editor-tiles] revision=95 uploaded=3
+[event] core 收到 Typing："L" | revision 96 | 核心动作 94 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=96 elapsed_ms=13.801
+[typst-editor] Typst · revision 96 · 1 页 · 97 boxes
+[typst-editor-tiles] revision=96 uploaded=3
+[typst-editor-worker] revision=97 elapsed_ms=16.760
+[typst-editor] Typst · revision 97 · 1 页 · 98 boxes
+[typst-editor-tiles] revision=97 uploaded=9
+[event] core 收到 Typing：" " | revision 98 | 核心动作 96 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=98 elapsed_ms=12.572
+[typst-editor] Typst · revision 98 · 1 页 · 99 boxes
+[typst-editor-tiles] revision=98 uploaded=0
+[event] core 收到 Typing："S" | revision 99 | 核心动作 97 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=99 elapsed_ms=13.558
+[typst-editor] Typst · revision 99 · 1 页 · 100 boxes
+[typst-editor-tiles] revision=99 uploaded=3
+[event] core 收到 Typing："C" | revision 100 | 核心动作 98 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=100 elapsed_ms=13.060
+[typst-editor] Typst · revision 100 · 1 页 · 101 boxes
+[typst-editor-tiles] revision=100 uploaded=2
+[event] core 收到 Typing："R" | revision 101 | 核心动作 99 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=101 elapsed_ms=16.631
+[typst-editor] Typst · revision 101 · 1 页 · 102 boxes
+[typst-editor-tiles] revision=101 uploaded=8
+[event] core 收到 Typing："O" | revision 102 | 核心动作 100 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=102 elapsed_ms=16.721
+[typst-editor] Typst · revision 102 · 1 页 · 103 boxes
+[typst-editor-tiles] revision=102 uploaded=8
+[event] core 收到 Typing："L" | revision 103 | 核心动作 101 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=103 elapsed_ms=13.246
+[typst-editor] Typst · revision 103 · 1 页 · 104 boxes
+[typst-editor-tiles] revision=103 uploaded=2
+[typst-editor-worker] revision=104 elapsed_ms=25.407
+[typst-editor] Typst · revision 104 · 1 页 · 105 boxes
+[typst-editor-tiles] revision=104 uploaded=8
+[event] core 收到 Typing：" " | revision 105 | 核心动作 103 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=105 elapsed_ms=16.417
+[typst-editor] Typst · revision 105 · 1 页 · 106 boxes
+[typst-editor-tiles] revision=105 uploaded=0
+[event] core 收到 Typing："S" | revision 106 | 核心动作 104 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=106 elapsed_ms=15.156
+[typst-editor] Typst · revision 106 · 1 页 · 107 boxes
+[typst-editor-tiles] revision=106 uploaded=2
+[event] core 收到 Typing："C" | revision 107 | 核心动作 105 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=107 elapsed_ms=26.625
+[typst-editor] Typst · revision 107 · 1 页 · 108 boxes
+[typst-editor-tiles] revision=107 uploaded=9
+[event] core 收到 Typing："R" | revision 108 | 核心动作 106 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=108 elapsed_ms=15.813
+[typst-editor] Typst · revision 108 · 1 页 · 109 boxes
+[typst-editor-tiles] revision=108 uploaded=11
+[event] core 收到 Typing："O" | revision 109 | 核心动作 107 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=109 elapsed_ms=13.444
+[typst-editor] Typst · revision 109 · 1 页 · 110 boxes
+[typst-editor-tiles] revision=109 uploaded=1
+[event] core 收到 Typing："L" | revision 110 | 核心动作 108 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=110 elapsed_ms=23.666
+[typst-editor] Typst · revision 110 · 1 页 · 111 boxes
+[typst-editor-tiles] revision=110 uploaded=12
+[typst-editor-worker] revision=111 elapsed_ms=17.717
+[event] core 收到 Typing：" " | revision 112 | 核心动作 110 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=112 elapsed_ms=11.269
+[typst-editor] Typst · revision 112 · 1 页 · 113 boxes
+[typst-editor-tiles] revision=112 uploaded=8
+[event] core 收到 Typing："S" | revision 113 | 核心动作 111 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=113 elapsed_ms=19.568
+[event] core 收到 Typing："C" | revision 114 | 核心动作 112 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=114 elapsed_ms=19.179
+[event] core 收到 Typing："R" | revision 115 | 核心动作 113 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=115 elapsed_ms=15.924
+[typst-editor] Typst · revision 115 · 1 页 · 116 boxes
+[typst-editor-tiles] revision=115 uploaded=8
+[event] core 收到 Typing："O" | revision 116 | 核心动作 114 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=116 elapsed_ms=22.660
+[event] core 收到 Typing："L" | revision 117 | 核心动作 115 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=117 elapsed_ms=28.593
+[typst-editor] Typst · revision 117 · 1 页 · 118 boxes
+[typst-editor-tiles] revision=117 uploaded=10
+[typst-editor-worker] revision=118 elapsed_ms=19.495
+[event] core 收到 Typing：" " | revision 119 | 核心动作 117 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=119 elapsed_ms=12.001
+[typst-editor] Typst · revision 119 · 1 页 · 120 boxes
+[typst-editor-tiles] revision=119 uploaded=10
+[event] core 收到 Typing："S" | revision 120 | 核心动作 118 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=120 elapsed_ms=18.847
+[event] core 收到 Typing："C" | revision 121 | 核心动作 119 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=121 elapsed_ms=34.496
+[event] core 收到 Typing："R" | revision 122 | 核心动作 120 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=122 elapsed_ms=25.048
+[typst-editor] Typst · revision 122 · 1 页 · 123 boxes
+[typst-editor-tiles] revision=122 uploaded=8
+[event] core 收到 Typing："O" | revision 123 | 核心动作 121 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=123 elapsed_ms=22.447
+[event] core 收到 Typing："L" | revision 124 | 核心动作 122 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=124 elapsed_ms=23.820
+[typst-editor-worker] revision=125 elapsed_ms=18.745
+[event] core 收到 Typing：" " | revision 126 | 核心动作 124 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=126 elapsed_ms=16.762
+[typst-editor] Typst · revision 126 · 1 页 · 127 boxes
+[typst-editor-tiles] revision=126 uploaded=10
+[event] core 收到 Typing："S" | revision 127 | 核心动作 125 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=127 elapsed_ms=21.547
+[typst-editor] Typst · revision 127 · 1 页 · 128 boxes
+[typst-editor-tiles] revision=127 uploaded=8
+[event] core 收到 Typing："C" | revision 128 | 核心动作 126 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=128 elapsed_ms=15.530
+[typst-editor] Typst · revision 128 · 1 页 · 129 boxes
+[typst-editor-tiles] revision=128 uploaded=10
+[event] core 收到 Typing："R" | revision 129 | 核心动作 127 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=129 elapsed_ms=14.151
+[typst-editor] Typst · revision 129 · 1 页 · 130 boxes
+[typst-editor-tiles] revision=129 uploaded=6
+[event] core 收到 Typing："O" | revision 130 | 核心动作 128 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=130 elapsed_ms=16.123
+[typst-editor] Typst · revision 130 · 1 页 · 131 boxes
+[typst-editor-tiles] revision=130 uploaded=6
+[event] core 收到 Typing："L" | revision 131 | 核心动作 129 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=131 elapsed_ms=15.022
+[typst-editor] Typst · revision 131 · 1 页 · 132 boxes
+[typst-editor-tiles] revision=131 uploaded=6
+[typst-editor-worker] revision=132 elapsed_ms=15.823
+[typst-editor] Typst · revision 132 · 1 页 · 133 boxes
+[typst-editor-tiles] revision=132 uploaded=6
+[event] core 收到 Typing：" " | revision 133 | 核心动作 131 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=133 elapsed_ms=12.702
+[typst-editor] Typst · revision 133 · 1 页 · 134 boxes
+[typst-editor-tiles] revision=133 uploaded=0
+[event] core 收到 Typing："S" | revision 134 | 核心动作 132 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=134 elapsed_ms=25.555
+[event] core 收到 Typing："C" | revision 135 | 核心动作 133 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=135 elapsed_ms=24.115
+[typst-editor] Typst · revision 135 · 1 页 · 136 boxes
+[typst-editor-tiles] revision=135 uploaded=4
+[event] core 收到 Typing："R" | revision 136 | 核心动作 134 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=136 elapsed_ms=25.413
+[event] core 收到 Typing："O" | revision 137 | 核心动作 135 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："L" | revision 138 | 核心动作 136 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=137 elapsed_ms=18.107
+[typst-editor-worker] revision=138 elapsed_ms=16.420
+[typst-editor] Typst · revision 138 · 1 页 · 139 boxes
+[typst-editor-tiles] revision=138 uploaded=6
+[typst-editor-worker] revision=139 elapsed_ms=17.667
+[event] core 收到 Typing：" " | revision 140 | 核心动作 138 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=140 elapsed_ms=14.714
+[typst-editor] Typst · revision 140 · 1 页 · 141 boxes
+[typst-editor-tiles] revision=140 uploaded=9
+[event] core 收到 Typing："S" | revision 141 | 核心动作 139 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=141 elapsed_ms=14.818
+[typst-editor] Typst · revision 141 · 1 页 · 142 boxes
+[typst-editor-tiles] revision=141 uploaded=6
+[event] core 收到 Typing："C" | revision 142 | 核心动作 140 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："R" | revision 143 | 核心动作 141 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=142 elapsed_ms=19.896
+[typst-editor-worker] revision=143 elapsed_ms=16.630
+[typst-editor] Typst · revision 143 · 1 页 · 144 boxes
+[typst-editor-tiles] revision=143 uploaded=7
+[event] core 收到 Typing："O" | revision 144 | 核心动作 142 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=144 elapsed_ms=17.740
+[typst-editor] Typst · revision 144 · 1 页 · 145 boxes
+[typst-editor-tiles] revision=144 uploaded=7
+[event] core 收到 Typing："L" | revision 145 | 核心动作 143 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=145 elapsed_ms=16.280
+[typst-editor] Typst · revision 145 · 1 页 · 146 boxes
+[typst-editor-tiles] revision=145 uploaded=4
+[typst-editor-worker] revision=146 elapsed_ms=17.580
+[typst-editor] Typst · revision 146 · 1 页 · 147 boxes
+[typst-editor-tiles] revision=146 uploaded=7
+[event] core 收到 Typing：" " | revision 147 | 核心动作 145 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=147 elapsed_ms=13.145
+[typst-editor] Typst · revision 147 · 1 页 · 148 boxes
+[typst-editor-tiles] revision=147 uploaded=0
+[event] core 收到 Typing："S" | revision 148 | 核心动作 146 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=148 elapsed_ms=16.130
+[typst-editor] Typst · revision 148 · 1 页 · 149 boxes
+[typst-editor-tiles] revision=148 uploaded=4
+[event] core 收到 Typing："C" | revision 149 | 核心动作 147 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=149 elapsed_ms=17.641
+[event] core 收到 Typing："O" | revision 151 | 核心动作 149 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=151 elapsed_ms=18.200
+[event] core 收到 Typing："L" | revision 152 | 核心动作 150 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=152 elapsed_ms=15.319
+[typst-editor] Typst · revision 152 · 1 页 · 153 boxes
+[typst-editor-tiles] revision=152 uploaded=14
+[typst-editor-worker] revision=153 elapsed_ms=13.641
+[typst-editor] Typst · revision 153 · 1 页 · 154 boxes
+[typst-editor-tiles] revision=153 uploaded=4
+[event] core 收到 Typing：" " | revision 154 | 核心动作 152 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=154 elapsed_ms=12.630
+[typst-editor] Typst · revision 154 · 1 页 · 155 boxes
+[typst-editor-tiles] revision=154 uploaded=0
+[event] core 收到 Typing："S" | revision 155 | 核心动作 153 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=155 elapsed_ms=15.338
+[typst-editor] Typst · revision 155 · 1 页 · 156 boxes
+[typst-editor-tiles] revision=155 uploaded=4
+[event] core 收到 Typing："C" | revision 156 | 核心动作 154 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=156 elapsed_ms=15.607
+[typst-editor] Typst · revision 156 · 1 页 · 157 boxes
+[typst-editor-tiles] revision=156 uploaded=4
+[event] core 收到 Typing："R" | revision 157 | 核心动作 155 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=157 elapsed_ms=15.473
+[typst-editor] Typst · revision 157 · 1 页 · 158 boxes
+[typst-editor-tiles] revision=157 uploaded=4
+[event] core 收到 Typing："O" | revision 158 | 核心动作 156 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=158 elapsed_ms=18.184
+[typst-editor] Typst · revision 158 · 1 页 · 159 boxes
+[typst-editor-tiles] revision=158 uploaded=5
+[event] core 收到 Typing："L" | revision 159 | 核心动作 157 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=159 elapsed_ms=28.136
+[typst-editor-worker] revision=160 elapsed_ms=17.837
+[typst-editor] Typst · revision 160 · 1 页 · 161 boxes
+[typst-editor-tiles] revision=160 uploaded=5
+[event] core 收到 Typing：" " | revision 161 | 核心动作 159 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=161 elapsed_ms=37.157
+[typst-editor] Typst · revision 161 · 1 页 · 162 boxes
+[typst-editor-tiles] revision=161 uploaded=0

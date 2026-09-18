@@ -1,0 +1,85 @@
+   Compiling scholium-spike-core v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/native-ui/core)
+   Compiling scholium-spike-reconcile v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/source-reconcile)
+    Finished `release` profile [optimized] target(s) in 1.17s
+     Running `spikes/source-reconcile/target/release/scholium-spike-reconcile`
+=== Latex ===
+生成源码：
+  | 正文与 
+  | \[\frac{a}{b}\]
+原始语义图：Document(Paragraph(Text("正文与 ")),Math(Fraction(Text("a"),Text("")Text("b"),Text("")),Text("")))
+行映射自检：PASS（2 行）
+
+  [PASS] 无编辑（期望：不动语义图）
+        归因：无改动
+        应用：无改动
+        检查[语义图不变]：PASS Document(Paragraph(Text("正文与 ")),Math(Fraction(Text("a"),Text("")Text("b"),Text("")),Text("")))
+  [PASS] 段落文本局部改字（期望：归因到文本叶子 + 往返一致）
+        归因：节点 2 的 [6..6) → "以及"
+        应用：替换为 "以及"
+        检查[包含]：PASS Document(Paragraph(Text("正文以及与 ")),Math(Fraction(Text("a"),Text("")Text("b"),Text("")),Text("")))
+        检查[往返一致]：PASS 再生成="正文以及与 \n\\[\\frac{a}{b}\\]\n"
+  [PASS] 结构内部叶子改字（期望：归因到内层叶子 + 往返一致）
+        归因：节点 8 的 [1..1) → "b"
+        应用：替换为 "b"
+        检查[包含]：PASS Document(Paragraph(Text("正文与 ")),Math(Fraction(Text("ab"),Text("")Text("b"),Text("")),Text("")))
+        检查[往返一致]：PASS 再生成="正文与 \n\\[\\frac{ab}{b}\\]\n"
+  [PASS] 整体换成受支持结构（期望：Wrap 成根式 + 往返一致）
+        归因：节点 8 包裹为 sqrt|a
+        应用：包裹为 sqrt
+        检查[包含]：PASS Document(Paragraph(Text("正文与 ")),Math(Fraction(Sqrt(Text("a")),Text("")Text("b"),Text("")),Text("")))
+        检查[往返一致]：PASS 再生成="正文与 \n\\[\\frac{\\sqrt{a}}{b}\\]\n"
+  [PASS] 未知语法（期望：落成 Raw、原文逐字保留 + 往返一致）
+        归因：叶子 2 的 [0..6) → Raw("\\customcmd{正文}")
+        应用：拆分为前缀 + Raw("\\customcmd{正文}") + 后缀
+        检查[包含]：PASS Document(Paragraph(Text(""),Raw("\\customcmd{正文}"),Text("与 ")),Math(Fraction(Text("a"),Text("")Text("b"),Text("")),Text("")))
+        检查[往返一致]：PASS 再生成="\\customcmd{正文}与 \n\\[\\frac{a}{b}\\]\n"
+  [PASS] 跨节点编辑（期望：冲突（拒绝猜测））
+        归因：冲突 —— 编辑区间 [9..11) 只覆盖结构节点 5 的一部分（节点范围 [2..13)），结构节点不支持局部改写
+        应用：被拒绝 —— 编辑区间 [9..11) 只覆盖结构节点 5 的一部分（节点范围 [2..13)），结构节点不支持局部改写
+  [PASS] 括号不闭合（期望：冲突（拒绝，不猜））
+        归因：冲突 —— 编辑区间 [12..13) 只覆盖结构节点 5 的一部分（节点范围 [2..13)），结构节点不支持局部改写
+        应用：被拒绝 —— 编辑区间 [12..13) 只覆盖结构节点 5 的一部分（节点范围 [2..13)），结构节点不支持局部改写
+  [PASS] 增删行（期望：冲突（明确不支持））
+        归因：冲突 —— 行数从 2 变为 3：增删行属于结构级编辑，当前不支持自动归因
+        应用：被拒绝 —— 行数从 2 变为 3：增删行属于结构级编辑，当前不支持自动归因
+
+=== Typst ===
+生成源码：
+  | 正文与 
+  | $ frac(a, b) $
+原始语义图：Document(Paragraph(Text("正文与 ")),Math(Fraction(Text("a"),Text("")Text("b"),Text("")),Text("")))
+行映射自检：PASS（2 行）
+
+  [PASS] 无编辑（期望：不动语义图）
+        归因：无改动
+        应用：无改动
+        检查[语义图不变]：PASS Document(Paragraph(Text("正文与 ")),Math(Fraction(Text("a"),Text("")Text("b"),Text("")),Text("")))
+  [PASS] 段落文本局部改字（期望：归因到文本叶子 + 往返一致）
+        归因：节点 2 的 [6..6) → "以及"
+        应用：替换为 "以及"
+        检查[包含]：PASS Document(Paragraph(Text("正文以及与 ")),Math(Fraction(Text("a"),Text("")Text("b"),Text("")),Text("")))
+        检查[往返一致]：PASS 再生成="正文以及与 \n$ frac(a, b) $\n"
+  [PASS] 结构内部叶子改字（期望：归因到内层叶子 + 往返一致）
+        归因：节点 8 的 [1..1) → "b"
+        应用：替换为 "b"
+        检查[包含]：PASS Document(Paragraph(Text("正文与 ")),Math(Fraction(Text("ab"),Text("")Text("b"),Text("")),Text("")))
+        检查[往返一致]：PASS 再生成="正文与 \n$ frac(ab, b) $\n"
+  [PASS] 整体换成受支持结构（期望：Wrap 成根式 + 往返一致）
+        归因：节点 8 包裹为 sqrt|a
+        应用：包裹为 sqrt
+        检查[包含]：PASS Document(Paragraph(Text("正文与 ")),Math(Fraction(Sqrt(Text("a")),Text("")Text("b"),Text("")),Text("")))
+        检查[往返一致]：PASS 再生成="正文与 \n$ frac(sqrt(a), b) $\n"
+  [PASS] 未知语法（期望：落成 Raw、原文逐字保留 + 往返一致）
+        归因：叶子 2 的 [0..6) → Raw("#customcmd[正文]")
+        应用：拆分为前缀 + Raw("#customcmd[正文]") + 后缀
+        检查[包含]：PASS Document(Paragraph(Text(""),Raw("#customcmd[正文]"),Text("与 ")),Math(Fraction(Text("a"),Text("")Text("b"),Text("")),Text("")))
+        检查[往返一致]：PASS 再生成="#customcmd[正文]与 \n$ frac(a, b) $\n"
+  [PASS] 跨节点编辑（期望：冲突（拒绝猜测））
+        归因：冲突 —— 编辑区间 [8..10) 只覆盖结构节点 5 的一部分（节点范围 [2..12)），结构节点不支持局部改写
+        应用：被拒绝 —— 编辑区间 [8..10) 只覆盖结构节点 5 的一部分（节点范围 [2..12)），结构节点不支持局部改写
+  [PASS] 括号不闭合（期望：冲突（拒绝，不猜））
+        归因：冲突 —— 编辑区间 [11..12) 只覆盖结构节点 5 的一部分（节点范围 [2..12)），结构节点不支持局部改写
+        应用：被拒绝 —— 编辑区间 [11..12) 只覆盖结构节点 5 的一部分（节点范围 [2..12)），结构节点不支持局部改写
+  [PASS] 增删行（期望：冲突（明确不支持））
+        归因：冲突 —— 行数从 2 变为 3：增删行属于结构级编辑，当前不支持自动归因
+        应用：被拒绝 —— 行数从 2 变为 3：增删行属于结构级编辑，当前不支持自动归因
