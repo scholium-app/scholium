@@ -18,7 +18,7 @@ pub(super) struct Projection {
 impl Projection {
     pub fn new(doc: &Document) -> Self {
         let mut out = Self {
-            source: "#set page(width: 440pt, height: 620pt, margin: 18pt)\n#set text(font: (\"Libertinus Serif\", \"Noto Serif CJK SC\"), size: 16pt, ligatures: false)\n#show math.equation: set text(font: \"New Computer Modern Math\")\n".into(),
+            source: "#set page(width: 440pt, height: 620pt, margin: 18pt, fill: none)\n#set text(font: (\"Libertinus Serif\", \"Noto Serif CJK SC\"), size: 16pt, ligatures: false, fill: white)\n#show math.equation: set text(font: \"New Computer Modern Math\")\n".into(),
             spans: Vec::new(),
         };
         out.node(doc, doc.root(), false);
@@ -47,9 +47,11 @@ impl Projection {
 
     fn leaf(&mut self, node: NodeId, cursor: Cursor, text: &str, math: bool) {
         let start = self.source.len();
-        // Empty slots have a real, compiler-positioned editing affordance.
-        let shown = if text.is_empty() { "□" } else { text };
-        if math && shown.len() == 1 && shown.as_bytes()[0].is_ascii_alphanumeric() {
+        // Metadata survives layout without painting a placeholder glyph.
+        let shown = text;
+        if text.is_empty() {
+            self.source.push_str(&format!("#box(width: 0.4em, height: 1em, baseline: 80%)[#context [#metadata(text.size / 1pt) <scholium-empty-{start}>]]"));
+        } else if math && shown.len() == 1 && shown.as_bytes()[0].is_ascii_alphanumeric() {
             self.source.push_str(shown);
         } else {
             self.source.push_str("#text(");

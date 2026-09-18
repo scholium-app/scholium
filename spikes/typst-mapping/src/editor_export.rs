@@ -2,7 +2,10 @@
 use serde_json::{Value, json};
 use std::error::Error;
 use typst::WorldExt;
+use typst::foundations::Label;
+use typst::introspection::Introspector;
 use typst::layout::{Frame, FrameItem, Point, Rect, Transform};
+use typst::utils::PicoStr;
 use typst_layout::PagedDocument;
 
 pub(crate) fn run() -> Result<(), Box<dyn Error>> {
@@ -13,6 +16,7 @@ pub(crate) fn run() -> Result<(), Box<dyn Error>> {
         return Err(format!("compiler warnings: {:?}", result.warnings).into());
     }
     let document = result.output.map_err(|e| format!("compile: {e:?}"))?;
+    let empty = empty_slots(&document)?;
     if document.pages().len() > 100 {
         return Err("too many pages".into());
     }
@@ -21,6 +25,12 @@ pub(crate) fn run() -> Result<(), Box<dyn Error>> {
     for (index, page) in document.pages().iter().enumerate() {
         let mut boxes = Vec::new();
         collect(&page.frame, Transform::identity(), &world, &mut boxes)?;
+        boxes.extend(
+            empty
+                .iter()
+                .filter(|(page, _)| *page == index + 1)
+                .map(|(_, value)| value.clone()),
+        );
         let options = typst_render::RenderOptions {
             pixel_per_pt: 2.0.into(),
             render_bleed: false,
@@ -37,6 +47,46 @@ pub(crate) fn run() -> Result<(), Box<dyn Error>> {
     }
     std::fs::write("/work/scene.json", serde_json::to_vec(&pages)?)?;
     Ok(())
+}
+
+fn empty_slots(document: &PagedDocument) -> Result<Vec<(usize, Value)>, Box<dyn Error>> {
+    let bytes = match std::fs::read("/project/empty.json") {
+        Ok(bytes) => bytes,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(vec![]),
+        Err(e) => return Err(e.into()),
+    };
+    let ranges: Vec<[usize; 2]> = serde_json::from_slice(&bytes)?;
+    let introspector = document.introspector();
+    ranges
+        .into_iter()
+        .map(|[start, end]| {
+            let name = format!("scholium-empty-{start}");
+            let label = Label::new(PicoStr::intern(&name)).ok_or("empty label")?;
+            let content = introspector
+                .query_label(label)
+                .map_err(|_| "missing empty slot")?;
+            let position = content
+                .location()
+                .and_then(|loc| introspector.position(loc))
+                .ok_or("missing empty slot position")?;
+            let size = match content
+                .get_by_name("value")
+                .map_err(|_| "missing empty size")?
+            {
+                typst::foundations::Value::Float(n) => n,
+                typst::foundations::Value::Int(n) => n as f64,
+                _ => return Err("invalid empty slot size".into()),
+            };
+            let x = position.point.x.to_pt();
+            let y = position.point.y.to_pt();
+            Ok((
+                position.page.get(),
+                json!({"start": start, "end": end,
+            "offset": 0, "length": 0, "text": "", "ink": [x, y, x + size * 0.4, y + size],
+            "x": x, "y": y + size * 0.8, "size": size, "advance": size * 0.4, "shape": false}),
+            ))
+        })
+        .collect()
 }
 
 fn rectangle(rect: Rect, transform: Transform) -> [f64; 4] {

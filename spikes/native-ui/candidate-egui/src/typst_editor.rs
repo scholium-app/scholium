@@ -155,7 +155,7 @@ impl TypstEditor {
         );
     }
 
-    pub fn paint(&self, painter: &egui::Painter, origin: egui::Pos2) {
+    pub fn paint(&self, painter: &egui::Painter, origin: egui::Pos2, color: egui::Color32) {
         for page in &self.pages {
             let rect = egui::Rect::from_min_size(origin + egui::vec2(0.0, page.y), page.size);
             if painter.clip_rect().intersects(rect) {
@@ -163,7 +163,7 @@ impl TypstEditor {
                     page.texture.id(),
                     rect,
                     egui::Rect::from_min_max(egui::Pos2::ZERO, egui::pos2(1.0, 1.0)),
-                    egui::Color32::WHITE,
+                    color,
                 );
             }
         }
@@ -285,6 +285,49 @@ impl TypstEditor {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    #[ignore = "requires built Typst helper and Linux sandbox"]
+    fn page_and_empty_slots_are_transparent_but_still_have_carets() {
+        let mut core = Editor::new();
+        fixture::build_standard(&mut core);
+        let pages = worker::compile(core.document()).expect("compile");
+        let mut empty_count = 0;
+        for page in pages {
+            assert_eq!(
+                page.image.pixels[0].a(),
+                0,
+                "page must use the window background"
+            );
+            assert!(
+                page.image.pixels.iter().any(|p| p.a() > 0),
+                "text must remain visible"
+            );
+            for cell in page
+                .cells
+                .iter()
+                .filter(|c| c.cursor.is_some() && c.text.is_empty())
+            {
+                empty_count += 1;
+                assert!(cell.rect.width() > 0.0 && cell.rect.height() > 0.0);
+                // Worker raster is 2 px per Typst point; inspect the actual slot area.
+                for y in (cell.rect.top() * 2.0).ceil() as usize
+                    ..(cell.rect.bottom() * 2.0).floor() as usize
+                {
+                    for x in (cell.rect.left() * 2.0).ceil() as usize
+                        ..(cell.rect.right() * 2.0).floor() as usize
+                    {
+                        assert_eq!(
+                            page.image.pixels[y * page.image.size[0] + x].a(),
+                            0,
+                            "empty slot must not paint a square"
+                        );
+                    }
+                }
+            }
+        }
+        assert!(empty_count > 0, "fixture needs an editable empty slot");
+    }
 
     #[test]
     fn stale_compilation_never_installs_pages_or_geometry() {
@@ -420,6 +463,13 @@ mod tests {
         for cell in &view.cells {
             if let Some(cursor) = cell.cursor {
                 assert!(view.caret(cursor).is_some());
+                if cell.text.is_empty() {
+                    assert_eq!(
+                        view.hit(cell.rect.center(), core.document()),
+                        Some(cursor),
+                        "invisible slot must remain clickable"
+                    );
+                }
             }
         }
     }

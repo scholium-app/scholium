@@ -37,7 +37,8 @@ impl SpikeApp {
                     let current = !self.typst_editor.enabled
                         || self.typst_editor.current(self.core.revision());
                     if self.typst_editor.enabled {
-                        self.typst_editor.paint(&painter, origin);
+                        self.typst_editor
+                            .paint(&painter, origin, ui.visuals().text_color());
                     } else {
                         self.paint_structure(
                             &painter,

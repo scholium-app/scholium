@@ -49,7 +49,11 @@ impl Preview {
         egui::ScrollArea::both()
             .id_salt("preview_pages")
             .show(ui, |ui| {
-                let response = ui.add(egui::Image::new(texture).fit_to_exact_size(size * scale));
+                let response = ui.add(
+                    egui::Image::new(texture)
+                        .tint(ui.visuals().text_color())
+                        .fit_to_exact_size(size * scale),
+                );
                 if self.adopted != Some(revision) {
                     return;
                 }

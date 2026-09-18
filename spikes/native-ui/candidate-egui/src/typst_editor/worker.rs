@@ -38,6 +38,13 @@ fn compile_at(
     fs::copy(helper, tools.join("renderer"))?;
     let projection = projection::Projection::new(doc);
     fs::write(input.join("main.typ"), &projection.source)?;
+    let empty: Vec<_> = projection
+        .spans
+        .iter()
+        .filter(|span| span.cursor.is_some() && span.text.is_empty())
+        .map(|span| [span.start, span.end])
+        .collect();
+    fs::write(input.join("empty.json"), serde_json::to_vec(&empty)?)?;
     let command = Command::new("/usr/bin/bash")
         .arg(manifest.join("../../toolchain-sandbox.sh"))
         .args([input.as_os_str(), output.as_os_str()])

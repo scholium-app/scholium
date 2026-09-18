@@ -421,6 +421,18 @@ def visual_comparison():
             '#set text(font: "Source Han Serif CN", size: 20pt)\n' + source)
 
 
+def empty_slot():
+    with Window('empty-slot') as w:
+        call('fcitx5-remote', '-c')
+        before = w.text()
+        assert '□' not in before
+        w.select(len(before), len(before))
+        w.key(106)  # Move from the last math leaf into the empty trailing text leaf.
+        assert any('node: NodeId(4), byte: 0' in (n.name or '') for n in w.nodes()), 'empty leaf not focused'
+        w.type('END')
+        assert w.text() == before + 'END', 'invisible empty leaf not editable'
+
+
 saved = {name: call('busctl', '--user', 'get-property', 'org.a11y.Bus', '/org/a11y/bus',
                     'org.a11y.Status', name).split()[-1] for name in ['IsEnabled', 'ScreenReaderEnabled']}
 ime_name = call('fcitx5-remote', '-n')
@@ -431,7 +443,7 @@ try:
     for name in saved:
         prop(name, 'true')
     call('systemctl', '--user', 'start', 'ydotool')
-    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison]:
+    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot]:
         if len(sys.argv) > 2 and case.__name__ not in sys.argv[2:]:
             continue
         try:

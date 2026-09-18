@@ -1,0 +1,10 @@
+[
+  {
+    "case": "visual_comparison",
+    "result": "Pass"
+  },
+  {
+    "case": "empty_slot",
+    "result": "Pass"
+  }
+]
