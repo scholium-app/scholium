@@ -1,0 +1,67 @@
+   Compiling scholium-spike-egui v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/native-ui/candidate-egui)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.62s
+     Running unittests src/lib.rs (spikes/native-ui/candidate-egui/target/debug/deps/scholium_spike_egui-3ba5f87ec0b0e4d4)
+
+running 9 tests
+test typst_editor::session::tests::parent_death_fixture ... ok
+test typst_editor::session::tests::exited_worker_is_detected_before_reuse ... ok
+test typst_editor::session::tests::killing_parent_terminates_resident_process_tree ... ok
+node 2 byte 0..3 "结"
+node 2 byte 3..6 "构"
+node 2 byte 6..9 "渲"
+node 2 byte 9..12 "染"
+node 2 byte 12..15 "夹"
+node 2 byte 15..18 "具"
+node 2 byte 18..21 "："
+node 6 byte 0..1 "a"
+node 7 byte 0..1 "b"
+node 9 byte 0..1 "x"
+node 11 byte 0..1 "2"
+node 10 byte 0..1 "1"
+node 13 byte 0..1 "1"
+node 17 byte 0..1 "3"
+node 16 byte 0..1 "2"
+node 15 byte 0..1 "y"
+node 4 byte 0..0 ""
+[typst-editor] Typst · revision 18 · 1 页 · 22 boxes
+[typst-editor-tiles] revision=18 uploaded=70
+test typst_editor::tests::compiled_editor_maps_all_fixture_text_and_rejects_stale_geometry ... ok
+test typst_editor::tests::compiler_preserves_quoted_math_spaces_and_escaped_text ... ok
+test typst_editor::tests::page_and_empty_slots_are_transparent_but_still_have_carets ... ok
+test typst_editor::session::tests::timeout_drops_session_and_next_session_can_compile ... ok
+continuous_worker_ms=[29.487878, 28.679133, 31.707766999999997, 24.127769999999998, 24.964835, 27.601339, 25.051401000000002, 26.542831999999997, 29.750974, 24.820407, 29.188644999999998, 23.884642]
+test typst_editor::incremental_tests::continuous_edits_reuse_tiles_and_skipped_results_keep_complete_scenes ... ok
+test typst_editor::incremental_tests::later_page_edit_preserves_earlier_pages_and_page_removal_is_complete ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 21 filtered out; finished in 2.62s
+
+     Running unittests src/main.rs (spikes/native-ui/candidate-egui/target/debug/deps/scholium_spike_egui-fed824a74cef5678)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/accessibility.rs (spikes/native-ui/candidate-egui/target/debug/deps/accessibility-3d69eb08a32b67fb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/input.rs (spikes/native-ui/candidate-egui/target/debug/deps/input-28a095c2b967e1cb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/perf.rs (spikes/native-ui/candidate-egui/target/debug/deps/perf-8f5afe893d82f8e9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/window_layout.rs (spikes/native-ui/candidate-egui/target/debug/deps/window_layout-087e47b0a783b90a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+

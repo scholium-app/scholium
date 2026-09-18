@@ -433,6 +433,40 @@ def empty_slot():
         assert w.text() == before + 'END', 'invisible empty leaf not editable'
 
 
+def continuous_typing():
+    with Window('continuous-typing') as w:
+        call('fcitx5-remote', '-c')
+        before = w.text()
+        w.select(0, 0)
+        w.focus_guard()
+        previous = w.path.read_text().count('[typst-editor-tiles]')
+        text = 'continuousinputtest'
+        started = time.monotonic()
+        process = subprocess.Popen(['ydotool', 'type', '--key-delay', '40', text])
+        samples = []
+        captured = False
+        while process.poll() is None:
+            nodes = w.nodes()
+            body = next(n for n in nodes if n.name == '正文结构编辑器')
+            extents = body.queryComponent().getExtents(pyatspi.DESKTOP_COORDS)
+            samples.append({'elapsed_ms': (time.monotonic() - started) * 1000,
+                            'origin': [extents.x, extents.y],
+                            'adopted': w.path.read_text().count('[typst-editor-tiles]') - previous})
+            if not captured and samples[-1]['adopted'] >= 3:
+                call('niri', 'msg', 'action', 'screenshot-window', '--id', str(w.window['id']),
+                     '--path', str(OUT / 'continuous-typing-during.png'), '-p', 'false')
+                captured = True
+            time.sleep(0.02)
+        assert process.returncode == 0
+        w.wait_current()
+        assert w.text() == text + before, 'continuous input lost or reordered text'
+        assert samples and samples[-1]['adopted'] >= 3, 'no intermediate scenes during typing'
+        assert len({tuple(s['origin']) for s in samples}) == 1, 'canvas moved during compilation'
+        updates = [int(n) for n in re.findall(r'uploaded=(\d+)', w.path.read_text())][previous:]
+        assert updates and all(n < 70 for n in updates), 'typing uploaded an entire single-page raster'
+        (OUT / 'continuous-typing-samples.json').write_text(json.dumps(samples, indent=2))
+
+
 saved = {name: call('busctl', '--user', 'get-property', 'org.a11y.Bus', '/org/a11y/bus',
                     'org.a11y.Status', name).split()[-1] for name in ['IsEnabled', 'ScreenReaderEnabled']}
 ime_name = call('fcitx5-remote', '-n')
@@ -443,7 +477,7 @@ try:
     for name in saved:
         prop(name, 'true')
     call('systemctl', '--user', 'start', 'ydotool')
-    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot]:
+    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing]:
         if len(sys.argv) > 2 and case.__name__ not in sys.argv[2:]:
             continue
         try:

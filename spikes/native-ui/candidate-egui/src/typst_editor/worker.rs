@@ -1,80 +1,107 @@
 //! Compiler helper runs behind the existing sandbox, never in the UI process.
 use super::*;
-use std::{fs, path::Path, process::Command};
+use std::{collections::HashMap, fs, path::Path};
+
+// Physical raster pixels; must match the helper's tile transport.
+const TILE_PIXELS: usize = 128;
+
+#[derive(Clone)]
+pub(super) struct Tile {
+    pub at: [usize; 2],
+    pub image: Arc<egui::ColorImage>,
+}
 
 pub(super) struct ResultPage {
-    pub image: egui::ColorImage,
+    pub raster: [usize; 2],
+    pub tiles: Vec<Tile>,
     pub size: egui::Vec2,
     pub cells: Vec<Cell>,
 }
 
-pub(super) fn compile(doc: &scholium_spike_core::Document) -> Result<Vec<ResultPage>, String> {
-    let stamp = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .map_err(|e| e.to_string())?
-        .as_nanos();
-    let root = std::env::temp_dir().join(format!("scholium-editor-{}-{stamp}", std::process::id()));
-    let result = compile_at(doc, &root).map_err(|e| e.to_string());
-    let _ = fs::remove_dir_all(root);
-    result
+#[derive(Default)]
+pub(super) struct Compiler {
+    session: Option<session::Session>,
+    cache: HashMap<u64, Arc<egui::ColorImage>>,
 }
 
-fn compile_at(
-    doc: &scholium_spike_core::Document,
-    root: &Path,
-) -> Result<Vec<ResultPage>, Box<dyn std::error::Error>> {
-    let input = root.join("input");
-    let output = root.join("output");
-    let tools = root.join("tools");
-    for path in [&input, &output, &tools] {
-        fs::create_dir_all(path)?;
+impl Compiler {
+    pub fn compile(
+        &mut self,
+        doc: &scholium_spike_core::Document,
+    ) -> Result<Vec<ResultPage>, String> {
+        if self.session.as_mut().is_some_and(|s| s.expired()) {
+            self.session = None;
+            self.cache.clear();
+        }
+        let result = self.compile_inner(doc).map_err(|e| e.to_string());
+        if result.is_err() {
+            self.session = None;
+            self.cache.clear();
+        }
+        result
     }
-    let manifest = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let helper = std::env::var_os("SCHOLIUM_EDITOR_RENDERER")
-        .map(std::path::PathBuf::from)
-        .unwrap_or_else(|| {
-            manifest.join("../../typst-mapping/target/release/scholium-spike-typst")
-        });
-    fs::copy(helper, tools.join("renderer"))?;
-    let projection = projection::Projection::new(doc);
-    fs::write(input.join("main.typ"), &projection.source)?;
-    let empty: Vec<_> = projection
-        .spans
-        .iter()
-        .filter(|span| span.cursor.is_some() && span.text.is_empty())
-        .map(|span| [span.start, span.end])
-        .collect();
-    fs::write(input.join("empty.json"), serde_json::to_vec(&empty)?)?;
-    let command = Command::new("/usr/bin/bash")
-        .arg(manifest.join("../../toolchain-sandbox.sh"))
-        .args([input.as_os_str(), output.as_os_str()])
-        .args(["20", "/toolchain/renderer", "editor-export"])
-        .env("SCHOLIUM_SPIKE_TOOLS", tools)
-        .env("SCHOLIUM_SANDBOX_PROFILE", "typst-editor")
-        .output()?;
-    if !command.status.success() {
-        return Err(String::from_utf8_lossy(&command.stderr).into_owned().into());
+
+    fn compile_inner(
+        &mut self,
+        doc: &scholium_spike_core::Document,
+    ) -> Result<Vec<ResultPage>, Box<dyn std::error::Error>> {
+        if self.session.is_none() {
+            self.session = Some(session::Session::start()?);
+        }
+        let session = self.session.as_mut().ok_or("missing session")?;
+        let projection = projection::Projection::new(doc);
+        fs::write(session.root.join("input/main.typ"), &projection.source)?;
+        let empty: Vec<_> = projection
+            .spans
+            .iter()
+            .filter(|s| s.cursor.is_some() && s.text.is_empty())
+            .map(|s| [s.start, s.end])
+            .collect();
+        fs::write(
+            session.root.join("input/empty.json"),
+            serde_json::to_vec(&empty)?,
+        )?;
+        session.request()?;
+        let output = session.root.join("output");
+        if fs::metadata(output.join("scene.json"))?.len() > 32 * 1024 * 1024 {
+            return Err("geometry budget exceeded".into());
+        }
+        let values: Vec<serde_json::Value> =
+            serde_json::from_slice(&fs::read(output.join("scene.json"))?)?;
+        if values.is_empty() || values.len() > 100 {
+            return Err("invalid page count".into());
+        }
+        let pixels = values.iter().try_fold(0usize, |sum, value| {
+            let [width, height]: [usize; 2] = serde_json::from_value(value["raster"].clone())?;
+            if width == 0 || height == 0 || width > 4096 || height > 4096 {
+                return Err("invalid raster size".into());
+            }
+            Ok::<_, Box<dyn std::error::Error>>(sum + width * height)
+        })?;
+        if pixels > 32 * 1024 * 1024 {
+            return Err("scene pixel budget exceeded".into());
+        }
+        let mut retained = HashMap::new();
+        let pages = values
+            .iter()
+            .map(|value| read_page(value, &output, &projection, &self.cache, &mut retained))
+            .collect::<Result<_, _>>()?;
+        self.cache = retained;
+        Ok(pages)
     }
-    let bytes = fs::read(output.join("scene.json"))?;
-    if bytes.len() > 32 * 1024 * 1024 {
-        return Err("geometry budget exceeded".into());
-    }
-    let values: Vec<serde_json::Value> = serde_json::from_slice(&bytes)?;
-    if values.is_empty() || values.len() > 100 {
-        return Err("invalid page count".into());
-    }
-    values
-        .iter()
-        .enumerate()
-        .map(|(index, page)| read_page(page, index, &output, &projection))
-        .collect()
+}
+
+#[cfg(test)]
+pub(super) fn compile(doc: &scholium_spike_core::Document) -> Result<Vec<ResultPage>, String> {
+    Compiler::default().compile(doc)
 }
 
 fn read_page(
     value: &serde_json::Value,
-    index: usize,
     output: &Path,
     projection: &projection::Projection,
+    cache: &HashMap<u64, Arc<egui::ColorImage>>,
+    retained: &mut HashMap<u64, Arc<egui::ColorImage>>,
 ) -> Result<ResultPage, Box<dyn std::error::Error>> {
     let number = |key: &str| {
         value[key]
@@ -83,24 +110,84 @@ fn read_page(
             .ok_or("invalid page size")
     };
     let size = egui::vec2(number("width")? as f32, number("height")? as f32);
-    let mut reader = image::ImageReader::open(output.join(format!("page-{index}.png")))?;
-    let mut limits = image::Limits::default();
-    limits.max_alloc = Some(128 * 1024 * 1024);
-    limits.max_image_width = Some(4096);
-    limits.max_image_height = Some(4096);
-    reader.limits(limits);
-    let pixels = reader.decode()?.to_rgba8();
-    let image = egui::ColorImage::from_rgba_unmultiplied(
-        [pixels.width() as usize, pixels.height() as usize],
-        pixels.as_raw(),
-    );
+    let raster: [usize; 2] = serde_json::from_value(value["raster"].clone())?;
+    if raster.contains(&0) || raster.iter().any(|n| *n > 4096) {
+        return Err("invalid raster size".into());
+    }
+    let values = value["tiles"].as_array().ok_or("missing tiles")?;
+    let columns = raster[0].div_ceil(TILE_PIXELS);
+    if values.len() != columns * raster[1].div_ceil(TILE_PIXELS) {
+        return Err("incomplete tile grid".into());
+    }
+    let tiles: Vec<Tile> = values
+        .iter()
+        .map(|v| read_tile(v, raster, output, cache, retained))
+        .collect::<Result<_, _>>()?;
+    for (index, tile) in tiles.iter().enumerate() {
+        let at = [index % columns * TILE_PIXELS, index / columns * TILE_PIXELS];
+        let size = [
+            TILE_PIXELS.min(raster[0] - at[0]),
+            TILE_PIXELS.min(raster[1] - at[1]),
+        ];
+        if tile.at != at || tile.image.size != size {
+            return Err("invalid tile grid".into());
+        }
+    }
     let mut cells = Vec::new();
     for b in value["boxes"].as_array().ok_or("missing boxes")? {
         if let Some(cell) = read_cell(b, projection)? {
             cells.push(cell);
         }
     }
-    Ok(ResultPage { image, size, cells })
+    Ok(ResultPage {
+        raster,
+        tiles,
+        size,
+        cells,
+    })
+}
+
+fn read_tile(
+    value: &serde_json::Value,
+    raster: [usize; 2],
+    output: &Path,
+    cache: &HashMap<u64, Arc<egui::ColorImage>>,
+    retained: &mut HashMap<u64, Arc<egui::ColorImage>>,
+) -> Result<Tile, Box<dyn std::error::Error>> {
+    let id = value["id"].as_u64().ok_or("missing tile id")?;
+    let n = |k: &str| {
+        value[k]
+            .as_u64()
+            .filter(|n| *n <= 4096)
+            .map(|n| n as usize)
+            .ok_or("invalid tile bounds")
+    };
+    let at = [n("x")?, n("y")?];
+    let size = [n("width")?, n("height")?];
+    if size.contains(&0)
+        || size.iter().any(|n| *n > TILE_PIXELS)
+        || at[0] + size[0] > raster[0]
+        || at[1] + size[1] > raster[1]
+    {
+        return Err("tile outside page".into());
+    }
+    let image = if let Some(image) = cache.get(&id) {
+        image.clone()
+    } else {
+        let path = output.join(format!("tile-{id}.rgba"));
+        if fs::metadata(&path)?.len() != (size[0] * size[1] * 4) as u64 {
+            return Err("invalid tile length".into());
+        }
+        Arc::new(egui::ColorImage::from_rgba_unmultiplied(
+            size,
+            &fs::read(path)?,
+        ))
+    };
+    if image.size != size {
+        return Err("tile size changed".into());
+    }
+    retained.insert(id, image.clone());
+    Ok(Tile { at, image })
 }
 
 fn read_cell(

@@ -28,7 +28,7 @@ impl SpikeWorld {
     /// 替换主文件源码。**不重建 World**，因此缓存仍然有效。
     pub fn set_source(&self, text: String) {
         if let Ok(mut source) = self.source.lock() {
-            *source = Source::new(self.main, text);
+            source.replace(&text);
         }
     }
 

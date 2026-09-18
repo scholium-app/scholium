@@ -6,7 +6,8 @@ impl SpikeApp {
         ui.vertical(|ui| {
             ui.heading("正文（结构编辑 · Typst 排版）");
             if self.typst_editor.enabled {
-                ui.label(&self.typst_editor.status);
+                ui.add(egui::Label::new(&self.typst_editor.status).truncate())
+                    .on_hover_text(&self.typst_editor.status);
             }
             self.structure_toolbar(ui);
             ui.label(format!("焦点 {:?}", self.focus));

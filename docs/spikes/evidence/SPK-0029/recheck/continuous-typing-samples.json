@@ -1,0 +1,154 @@
+[
+  {
+    "elapsed_ms": 35.73906699989493,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 1
+  },
+  {
+    "elapsed_ms": 93.92471099999966,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 1
+  },
+  {
+    "elapsed_ms": 149.83936099997663,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 3
+  },
+  {
+    "elapsed_ms": 214.7647809999853,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 4
+  },
+  {
+    "elapsed_ms": 264.56828899995344,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 5
+  },
+  {
+    "elapsed_ms": 330.9836720000021,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 6
+  },
+  {
+    "elapsed_ms": 378.9848349999829,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 6
+  },
+  {
+    "elapsed_ms": 446.44992499991076,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 7
+  },
+  {
+    "elapsed_ms": 515.2223189999177,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 9
+  },
+  {
+    "elapsed_ms": 568.4137299999747,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 10
+  },
+  {
+    "elapsed_ms": 617.9237079999211,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 10
+  },
+  {
+    "elapsed_ms": 666.7857919999278,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 11
+  },
+  {
+    "elapsed_ms": 737.312610999993,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 12
+  },
+  {
+    "elapsed_ms": 807.193201999894,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 13
+  },
+  {
+    "elapsed_ms": 876.0479129999794,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 15
+  },
+  {
+    "elapsed_ms": 936.1803099999406,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 16
+  },
+  {
+    "elapsed_ms": 986.3031799999362,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 16
+  },
+  {
+    "elapsed_ms": 1041.7716270000028,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 17
+  },
+  {
+    "elapsed_ms": 1097.5163509999675,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 18
+  }
+]

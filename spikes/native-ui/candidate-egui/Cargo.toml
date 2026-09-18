@@ -17,6 +17,7 @@ scholium-spike-core = { path = "../core" }
 # 这是前三个候选都不具备的能力。
 eframe = "=0.36.2"
 egui = "=0.36.2"
+libc = "=0.2.189"
 
 [lints.clippy]
 too_many_lines = "warn"

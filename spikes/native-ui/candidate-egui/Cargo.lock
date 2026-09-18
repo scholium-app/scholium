@@ -2648,6 +2648,7 @@ dependencies = [
  "eframe",
  "egui",
  "image",
+ "libc",
  "scholium-spike-core",
  "scholium-spike-reconcile",
  "serde_json",

@@ -1,9 +1,13 @@
 //! Revision-gated Typst editor pages with compiler-derived input geometry.
+#[cfg(test)]
+mod incremental_tests;
 mod projection;
+mod session;
 mod worker;
 use super::*;
 use std::sync::{Mutex, mpsc};
 
+#[derive(Debug, PartialEq)]
 pub(super) struct Cell {
     node: NodeId,
     cursor: Option<Cursor>,
@@ -16,6 +20,33 @@ struct Page {
     texture: egui::TextureHandle,
     size: egui::Vec2,
     y: f32,
+    tiles: Vec<worker::Tile>,
+}
+
+impl Page {
+    fn update(&mut self, raster: [usize; 2], tiles: Vec<worker::Tile>) -> usize {
+        if self.texture.size() != raster {
+            self.texture.set(
+                egui::ColorImage::filled(raster, egui::Color32::TRANSPARENT),
+                egui::TextureOptions::LINEAR,
+            );
+            self.tiles.clear();
+        }
+        let mut uploads = 0;
+        for (i, tile) in tiles.iter().enumerate() {
+            if !self
+                .tiles
+                .get(i)
+                .is_some_and(|old| old.at == tile.at && Arc::ptr_eq(&old.image, &tile.image))
+            {
+                self.texture
+                    .set_partial(tile.at, tile.image.clone(), egui::TextureOptions::LINEAR);
+                uploads += 1;
+            }
+        }
+        self.tiles = tiles;
+        uploads
+    }
 }
 
 type Job = (u64, scholium_spike_core::Document);
@@ -32,6 +63,7 @@ pub(super) struct TypstEditor {
     submitted: Option<u64>,
     queue: Option<Arc<Mutex<Option<Job>>>>,
     receive: Option<mpsc::Receiver<Finished>>,
+    worker_thread: Option<std::thread::Thread>,
     pages: Vec<Page>,
     cells: Vec<Cell>,
     pub size: egui::Vec2,
@@ -46,6 +78,7 @@ impl Default for TypstEditor {
             submitted: None,
             queue: None,
             receive: None,
+            worker_thread: None,
             pages: vec![],
             cells: vec![],
             size: egui::vec2(440.0, 620.0),
@@ -62,7 +95,7 @@ impl TypstEditor {
         if !self.enabled {
             return false;
         }
-        self.start_worker();
+        self.start_worker(ctx);
         self.submit(core);
         let mut adopted = false;
         while let Some(result) = self.receive.as_ref().and_then(|r| r.try_recv().ok()) {
@@ -86,25 +119,35 @@ impl TypstEditor {
         adopted
     }
 
-    fn start_worker(&mut self) {
+    fn start_worker(&mut self, ctx: &egui::Context) {
         if self.queue.is_none() {
             let queue: Arc<Mutex<Option<Job>>> = Arc::new(Mutex::new(None));
             let pending = queue.clone();
             let (send, receive) = mpsc::channel();
-            std::thread::spawn(move || {
+            let repaint = ctx.clone();
+            let thread = std::thread::spawn(move || {
+                let mut compiler = worker::Compiler::default();
                 while Arc::strong_count(&pending) > 1 {
                     let request = pending.lock().ok().and_then(|mut slot| slot.take());
                     if let Some((revision, doc)) = request {
-                        if send.send((revision, worker::compile(&doc))).is_err() {
+                        let started = std::time::Instant::now();
+                        let result = compiler.compile(&doc);
+                        println!(
+                            "[typst-editor-worker] revision={revision} elapsed_ms={:.3}",
+                            started.elapsed().as_secs_f64() * 1000.0
+                        );
+                        if send.send((revision, result)).is_err() {
                             break;
                         }
+                        repaint.request_repaint();
                     } else {
-                        std::thread::sleep(std::time::Duration::from_millis(10));
+                        std::thread::park_timeout(std::time::Duration::from_secs(1));
                     }
                 }
             });
             self.queue = Some(queue);
             self.receive = Some(receive);
+            self.worker_thread = Some(thread.thread().clone());
         }
     }
 
@@ -115,6 +158,9 @@ impl TypstEditor {
         {
             *slot = Some((core.revision(), core.document().clone()));
             self.submitted = Some(core.revision());
+            if let Some(thread) = &self.worker_thread {
+                thread.unpark();
+            }
             self.status = format!(
                 "Typst 排版中 · 画面 {:?} / 正文 {} · 暂停旧画面定位",
                 self.revision,
@@ -124,25 +170,33 @@ impl TypstEditor {
     }
 
     fn adopt(&mut self, ctx: &egui::Context, revision: u64, pages: Vec<worker::ResultPage>) {
-        self.pages.clear();
+        self.pages.truncate(pages.len());
         self.cells.clear();
         let mut y = 0.0_f32;
         let mut width = 0.0_f32;
+        let mut uploads = 0;
         for (index, page) in pages.into_iter().enumerate() {
             width = width.max(page.size.x);
             self.cells.extend(page.cells.into_iter().map(|mut cell| {
                 cell.rect = cell.rect.translate(egui::vec2(0.0, y));
                 cell
             }));
-            self.pages.push(Page {
-                texture: ctx.load_texture(
-                    format!("editor-{revision}-{index}"),
-                    page.image,
-                    egui::TextureOptions::LINEAR,
-                ),
-                size: page.size,
-                y,
-            });
+            if index == self.pages.len() {
+                self.pages.push(Page {
+                    texture: ctx.load_texture(
+                        format!("editor-page-{index}"),
+                        egui::ColorImage::filled(page.raster, egui::Color32::TRANSPARENT),
+                        egui::TextureOptions::LINEAR,
+                    ),
+                    size: page.size,
+                    y,
+                    tiles: vec![],
+                });
+            }
+            let previous = &mut self.pages[index];
+            uploads += previous.update(page.raster, page.tiles);
+            previous.size = page.size;
+            previous.y = y;
             y += page.size.y + 16.0;
         }
         self.size = egui::vec2(width, y);
@@ -153,6 +207,7 @@ impl TypstEditor {
             self.status,
             self.cells.len()
         );
+        println!("[typst-editor-tiles] revision={revision} uploaded={uploads}");
     }
 
     pub fn paint(&self, painter: &egui::Painter, origin: egui::Pos2, color: egui::Color32) {
@@ -286,6 +341,43 @@ impl TypstEditor {
 mod tests {
     use super::*;
 
+    pub(super) fn flattened_image(page: &worker::ResultPage) -> egui::ColorImage {
+        let mut image = egui::ColorImage::filled(page.raster, egui::Color32::TRANSPARENT);
+        for tile in &page.tiles {
+            for (y, row) in tile.image.pixels.chunks(tile.image.size[0]).enumerate() {
+                let start = (tile.at[1] + y) * page.raster[0] + tile.at[0];
+                image.pixels[start..start + row.len()].copy_from_slice(row);
+            }
+        }
+        image
+    }
+
+    #[test]
+    fn editing_keeps_the_existing_page_texture() {
+        let ctx = egui::Context::default();
+        let mut view = TypstEditor::default();
+        let page = || worker::ResultPage {
+            raster: [16, 16],
+            tiles: vec![worker::Tile {
+                at: [0, 0],
+                image: Arc::new(egui::ColorImage::filled(
+                    [16, 16],
+                    egui::Color32::TRANSPARENT,
+                )),
+            }],
+            size: egui::vec2(8.0, 8.0),
+            cells: vec![],
+        };
+        view.adopt(&ctx, 1, vec![page()]);
+        let id = view.pages[0].texture.id();
+        view.adopt(&ctx, 2, vec![page()]);
+        assert_eq!(
+            view.pages[0].texture.id(),
+            id,
+            "editing must not replace a page texture"
+        );
+    }
+
     #[test]
     #[ignore = "requires built Typst helper and Linux sandbox"]
     fn page_and_empty_slots_are_transparent_but_still_have_carets() {
@@ -294,13 +386,14 @@ mod tests {
         let pages = worker::compile(core.document()).expect("compile");
         let mut empty_count = 0;
         for page in pages {
+            let image = flattened_image(&page);
             assert_eq!(
-                page.image.pixels[0].a(),
+                image.pixels[0].a(),
                 0,
                 "page must use the window background"
             );
             assert!(
-                page.image.pixels.iter().any(|p| p.a() > 0),
+                image.pixels.iter().any(|p| p.a() > 0),
                 "text must remain visible"
             );
             for cell in page
@@ -318,7 +411,7 @@ mod tests {
                         ..(cell.rect.right() * 2.0).floor() as usize
                     {
                         assert_eq!(
-                            page.image.pixels[y * page.image.size[0] + x].a(),
+                            image.pixels[y * image.size[0] + x].a(),
                             0,
                             "empty slot must not paint a square"
                         );

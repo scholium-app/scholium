@@ -56,6 +56,8 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 - RawTypst 不在其他方言生成时静默丢失。
 - source span 找不到 NodeId 时标记 derived，不猜测最近节点。
 - package/network 访问遵守 build/security policy。
+- 复用 World 和字体缓存时，源码更新必须使依赖缓存正确失效；源码 span 按当前 Source 解析，
+  不复用前一 revision 的字节范围。缓存淘汰受会话资源限制约束。
 
 ## 失败处理
 

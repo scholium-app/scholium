@@ -49,7 +49,7 @@ pub(crate) fn run() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn empty_slots(document: &PagedDocument) -> Result<Vec<(usize, Value)>, Box<dyn Error>> {
+pub(crate) fn empty_slots(document: &PagedDocument) -> Result<Vec<(usize, Value)>, Box<dyn Error>> {
     let bytes = match std::fs::read("/project/empty.json") {
         Ok(bytes) => bytes,
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(vec![]),
@@ -110,7 +110,7 @@ fn rectangle(rect: Rect, transform: Transform) -> [f64; 4] {
     [min.x.to_pt(), min.y.to_pt(), max.x.to_pt(), max.y.to_pt()]
 }
 
-fn collect(
+pub(crate) fn collect(
     frame: &Frame,
     parent: Transform,
     world: &dyn typst::World,

@@ -40,5 +40,8 @@ source span 通过只读编辑投影映射到 NodeId/UTF-8 byte 或空槽位 Cur
 
 ## 替换条件
 
+后续持久会话与局部纹理上传已由 [ADR 0014](ADR-0014-resident-typst-editor.md)细化；
+本 ADR 的同 revision 图像/几何合约继续有效。
+
 后续可在同样的 revision 与 source-map 合约下接持久隔离 worker、瓦片或矢量场景。
 必须重新验证视觉和真实编辑交互，不能以旧布局回退掩盖失败。
