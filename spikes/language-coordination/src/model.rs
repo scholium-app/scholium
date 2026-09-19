@@ -9,7 +9,7 @@ use crate::error::RejectReason;
 
 /// 团队共享分支受协调的源码方言。
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub(crate) enum Dialect {
+pub enum Dialect {
     /// LaTeX。
     Latex,
     /// Typst。

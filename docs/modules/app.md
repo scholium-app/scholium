@@ -105,6 +105,10 @@ RequestSourceDialectSwitch 展示待冲刷成员、超时隔离和草稿处置�
 实验会话 UI/IO 边界见 [ADR 0015](../adr/ADR-0015-ui-session-recovery-spike.md)：
 恢复语义树与独立草稿，加载结果须通过编辑变化门禁，重开重置渲染会话；不含历史/身份恢复。
 
+团队窗口模拟接口见 [ADR 0016](../adr/ADR-0016-team-window-gate-spike.md)：
+当前语言投影选择不授予共享写权限，源码候选必须在协调检查与 reconcile 都成功后发布。
+三成员模拟不替代认证/网络，实验正文只读，不序列化为单人恢复文件。
+
 [报告 0021](../spikes/SPK-0021-native-edit-acceptance.md) 补真实 Rime 合成/取消/编辑区焦点切换、
 双源码草稿、鼠标拖选/滚动、Unicode 剪贴板和数学描述取证。正文组合失焦请求平台中断，
 选区替换是单个核心动作，退格/撤销/解除结构后修复光标，拖选按实际 press origin 锚定。

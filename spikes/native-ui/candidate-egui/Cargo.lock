@@ -2650,9 +2650,17 @@ dependencies = [
  "image",
  "libc",
  "scholium-spike-core",
+ "scholium-spike-language-coordination",
  "scholium-spike-reconcile",
  "serde",
  "serde_json",
+ "thiserror 2.0.20",
+]
+
+[[package]]
+name = "scholium-spike-language-coordination"
+version = "0.0.0"
+dependencies = [
  "thiserror 2.0.20",
 ]
 

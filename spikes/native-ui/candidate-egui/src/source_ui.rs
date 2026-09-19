@@ -16,6 +16,7 @@ impl SpikeApp {
                     if ui.add_enabled(!dirty, egui::Button::new(label)).clicked() {
                         self.source = Session::new(&self.core, dialect);
                         self.source_buffer = self.source.generated.text.clone();
+                        self.team_regenerated();
                     }
                 }
             });
@@ -23,10 +24,12 @@ impl SpikeApp {
                 "{:?} · 基于 revision {}",
                 self.source.dialect, self.source.revision
             ));
-            let response = ui.add(
-                egui::TextEdit::multiline(&mut self.source_buffer)
-                    .id(egui::Id::new("source_editor")),
-            );
+            let response = ui.add(egui::TextEdit::multiline(&mut self.source_buffer).id(
+                self.team.as_ref().map_or_else(
+                    || egui::Id::new("source_editor"),
+                    |team| egui::Id::new(("team_source", team.selected)),
+                ),
+            ));
             if response.has_focus() {
                 self.structure_focused = false;
             }
@@ -44,12 +47,17 @@ impl SpikeApp {
             if ui.button("丢弃草稿并从正文生成").clicked() {
                 self.source = Session::new(&self.core, self.source.dialect);
                 self.source_buffer = self.source.generated.text.clone();
+                self.team_regenerated();
             }
             ui.label("当前仅支持单处可归因编辑；冲突时不修改正文。");
         });
     }
 
     fn commit_source(&mut self) {
+        if self.team.is_some() {
+            self.commit_team_source();
+            return;
+        }
         self.last_event = match self.source.commit(&mut self.core, &self.source_buffer) {
             Ok(()) => "源码已应用到正文".to_owned(),
             Err(error) => error.to_string(),

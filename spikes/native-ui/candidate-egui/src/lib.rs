@@ -18,6 +18,7 @@ mod selection_ui;
 mod session_file;
 mod source_ui;
 mod structure_ui;
+mod team_ui;
 mod text_geometry;
 mod typst_editor;
 
@@ -35,6 +36,7 @@ const LOCAL: ActorId = ActorId(1);
 const CJK_FONT_PATH: &str = "/usr/share/fonts/adobe-source-han-serif/SourceHanSerifCN-Regular.otf";
 /// egui 候选的应用状态。
 pub struct SpikeApp {
+    team: Option<team_ui::TeamUi>,
     session_file: Option<session_file::SessionFile>,
     core: Editor,
     layout: Layout,
@@ -120,8 +122,15 @@ impl SpikeApp {
         };
 
         let layout_revision = core.revision();
+        let team = team_ui::TeamUi::from_env(&core);
+        let session_file = if team.is_none() {
+            session_file::SessionFile::from_env()
+        } else {
+            None
+        };
         Self {
-            session_file: session_file::SessionFile::from_env(),
+            team,
+            session_file,
             layout_revision,
             accessible_cache: None,
             text_geometry: Vec::new(),
@@ -190,8 +199,11 @@ impl SpikeApp {
     /// 画一帧。与 eframe 解耦，因此可以在无窗口的测试里用 `Context::run_ui` 驱动。
     pub fn draw(&mut self, ui: &mut egui::Ui) {
         let ctx = ui.ctx().clone();
+        self.draw_team(ui);
         self.session_toolbar(ui);
-        self.handle_input(&ctx);
+        if self.team.is_none() {
+            self.handle_input(&ctx);
+        }
         if self.typst_editor.enabled {
             if self.typst_editor.poll(&ctx, &self.core) {
                 self.layout.items = self.typst_editor.layout_items();
@@ -218,7 +230,7 @@ impl SpikeApp {
 
         ui.vertical(|ui| {
             ui.columns(3, |columns| {
-                self.draw_structure(&mut columns[0]);
+                columns[0].add_enabled_ui(self.team.is_none(), |ui| self.draw_structure(ui));
                 self.draw_source(&mut columns[1]);
                 if !self.structure_focused && !self.preedit.is_empty() {
                     self.interrupt_ime = true;

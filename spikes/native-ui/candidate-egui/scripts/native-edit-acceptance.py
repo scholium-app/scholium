@@ -592,6 +592,68 @@ def session_typst_recovery():
             os.environ['SCHOLIUM_SPIKE_SESSION'] = previous
 
 
+def team_language_gate():
+    previous = os.environ.get('SCHOLIUM_SPIKE_TEAM')
+    os.environ['SCHOLIUM_SPIKE_TEAM'] = '1'
+    try:
+        with Window('team-language') as w:
+            call('fcitx5-remote', '-c')
+
+            def prepend(text):
+                assert w.source().queryComponent().grabFocus()
+                time.sleep(0.3)
+                w.key(29, 102)
+                w.type(text)
+
+            def contains(message):
+                return any(message in (n.name or '') for n in w.nodes())
+
+            original = w.text()
+            for member, text in [('Alice', 'AAA'), ('Bob', 'BBB'), ('Carol', 'CCC')]:
+                w.action(member)
+                prepend(text)
+                w.action('应用源码')
+            accepted = 'CCCBBBAAA' + original
+            assert w.text() == accepted, 'same-language clients failed'
+            w.action('Alice')
+            prepend('DRAFT')
+            draft = w.source().queryText().getText(0, -1)
+            w.action('模拟离线')
+            w.action('应用源码')
+            assert contains('NetworkUnreachable') and w.text() == accepted
+            w.action('模拟离线')
+            w.action('请求切换到 Typst')
+            w.action('应用源码')
+            assert contains('冻结') and w.text() == accepted
+            w.action('保留草稿并确认切换')
+            w.action('完成团队切换')
+            assert contains('DrainIncomplete')
+            for member in ['Bob', 'Carol']:
+                w.action(member)
+                w.action('保留草稿并确认切换')
+            w.action('完成团队切换')
+            w.action('Alice')
+            assert w.source().queryText().getText(0, -1) == draft
+            w.action('获取当前许可')
+            w.action('应用源码')
+            assert contains('SourceEpochStale') and w.text() == accepted
+            w.action('丢弃草稿并从正文生成')
+            prepend('WRONGLANG')
+            w.action('应用源码')
+            assert contains('DialectNotActive') and w.text() == accepted
+            w.action('丢弃草稿并从正文生成')
+            w.action('Typst')
+            prepend('TYPST')
+            w.action('应用源码')
+            assert w.text() == 'TYPST' + accepted
+            assert contains('已接受 4')
+    finally:
+        if previous is None:
+            os.environ.pop('SCHOLIUM_SPIKE_TEAM', None)
+        else:
+            os.environ['SCHOLIUM_SPIKE_TEAM'] = previous
+
+
 saved = {name: call('busctl', '--user', 'get-property', 'org.a11y.Bus', '/org/a11y/bus',
                     'org.a11y.Status', name).split()[-1] for name in ['IsEnabled', 'ScreenReaderEnabled']}
 ime_name = call('fcitx5-remote', '-n')
@@ -602,7 +664,7 @@ try:
     for name in saved:
         prop(name, 'true')
     call('systemctl', '--user', 'start', 'ydotool')
-    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit, session_recovery, session_typst_recovery]:
+    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit, session_recovery, session_typst_recovery, team_language_gate]:
         if len(sys.argv) > 2 and case.__name__ not in sys.argv[2:]:
             continue
         try:

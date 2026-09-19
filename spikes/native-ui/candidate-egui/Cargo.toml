@@ -13,6 +13,7 @@ serde_json = "=1.0.151"
 serde = { version = "=1.0.229", features = ["derive"] }
 thiserror = "=2.0.20"
 scholium-spike-reconcile = { path = "../../source-reconcile" }
+scholium-spike-language-coordination = { path = "../../language-coordination" }
 image = { version = "=0.25.10", default-features = false, features = ["png"] }
 scholium-spike-core = { path = "../core" }
 # 锁定候选版本。默认 feature 已包含 `accesskit`（Linux 走 accesskit_unix → AT-SPI），

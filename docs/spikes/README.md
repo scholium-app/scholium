@@ -96,3 +96,4 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 | 数学结构实测布局与选框 | [0025-measured-structure-layout.md](SPK-0025-measured-structure-layout.md) | 实测文字尺寸进入结构布局，选框覆盖节点符号及线条；八组桌面场景通过，伸缩数学符号仍待做。 |
 | Typst 视觉层 | [0026-typst-visual-layer.md](SPK-0026-typst-visual-layer.md) | 对比确认 Typst 质量优于拼接；整页覆盖因交互坐标脱钩拒绝交付，保留 source map 方案。 |
 | 窗口实验会话恢复 | [0031-ui-session-recovery.md](SPK-0031-ui-session-recovery.md) | 单文件语义内容与当前语言草稿保存/重开/恢复通过；不含正式历史身份或项目格式。 |
+| 团队语言窗口门禁 | [0032-team-window-gate.md](SPK-0032-team-window-gate.md) | 单窗口三成员顺序提交/切换/旧草稿拒绝通过；不含真实网络和协作撤销。 |
