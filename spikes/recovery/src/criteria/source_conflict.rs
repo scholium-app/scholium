@@ -64,7 +64,11 @@ fn case_external_change(checks: &mut Checks, root: &Path, source_text: &str) -> 
     checks.expect(
         result.disk_text == external,
         "磁盘内容仍是外部版本（未被静默覆盖）",
-        &format!("磁盘 {} B / app 想写 {} B", result.disk_text.len(), app_text.len()),
+        &format!(
+            "磁盘 {} B / app 想写 {} B",
+            result.disk_text.len(),
+            app_text.len()
+        ),
     );
     checks.expect(
         fsutil::hash_file(&path)? == external_hash,
@@ -77,9 +81,9 @@ fn case_external_change(checks: &mut Checks, root: &Path, source_text: &str) -> 
         "磁盘文本不含 'app edit'",
     );
 
-    let report = result.report.ok_or_else(|| {
-        crate::error::SpikeError::Core("拒写却没有报告".to_string())
-    })?;
+    let report = result
+        .report
+        .ok_or_else(|| crate::error::SpikeError::Core("拒写却没有报告".to_string()))?;
     let rendered = report.render();
     println!("{rendered}");
     checks.expect(
@@ -98,7 +102,10 @@ fn case_external_change(checks: &mut Checks, root: &Path, source_text: &str) -> 
         &format!("差异 {} 行", report.diff_lines.len()),
     );
     checks.expect(
-        report.diff_lines.iter().any(|diff| diff.current.contains("external edit")),
+        report
+            .diff_lines
+            .iter()
+            .any(|diff| diff.current.contains("external edit")),
         "差异行内容指出了外部改动的那一行",
         &report
             .diff_lines
@@ -191,7 +198,10 @@ fn case_removed_file(checks: &mut Checks, root: &Path, source_text: &str) -> Res
         "应用没有偷偷把文件重建出来",
         &format!("exists={}", path.exists()),
     );
-    let rendered = result.report.map(|report| report.render()).unwrap_or_default();
+    let rendered = result
+        .report
+        .map(|report| report.render())
+        .unwrap_or_default();
     checks.expect(
         rendered.contains("removed"),
         "报告写明判定为 removed",

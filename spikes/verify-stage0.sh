@@ -114,6 +114,7 @@ if want security; then
   run "Typst worker isolation" cargo test --release --offline --manifest-path spikes/mixed-build/Cargo.toml --test typst_isolation
   run "PDF artifact probe isolation" cargo test --release --offline --manifest-path spikes/mixed-build/Cargo.toml --bin scholium-spike-mixed-build pdf_sandbox::tests
   run "runtime mount allowlist" bash spikes/tests/runtime-mounts.sh
+  run "recovery compiler isolation" cargo run --release --offline --manifest-path spikes/recovery/Cargo.toml -- security
 fi
 
 # ---------- 出口条件：许可与来源 ----------

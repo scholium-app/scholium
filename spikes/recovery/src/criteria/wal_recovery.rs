@@ -117,7 +117,10 @@ fn case_synthetic_rewrite(checks: &mut Checks, root: &Path) -> Result<()> {
     checks.expect(
         recovered.records[1].payload == replacement,
         "恢复出的负载是改写后的内容（数据确实被替换，而不是被丢弃）",
-        &format!("前 8 字节={:?}", &recovered.records[1].payload[..8.min(payload_len)]),
+        &format!(
+            "前 8 字节={:?}",
+            &recovered.records[1].payload[..8.min(payload_len)]
+        ),
     );
     checks.expect(
         recovered.records[0] == baseline[0] && recovered.records[2] == baseline[2],
@@ -196,7 +199,10 @@ fn case_normal_close(checks: &mut Checks, root: &Path) -> Result<()> {
     checks.expect(
         spawned.output.succeeded(),
         "子进程正常退出（退出码 0）",
-        &format!("code={:?} signal={:?}", spawned.output.code, spawned.output.signal),
+        &format!(
+            "code={:?} signal={:?}",
+            spawned.output.code, spawned.output.signal
+        ),
     );
 
     let recovered = recovery::recover(&spawned.log)?;
@@ -275,7 +281,10 @@ fn payload_tear_case(checks: &mut Checks, root: &Path) -> Result<usize> {
     checks.expect(
         spawned.killed(),
         "子进程被 SIGKILL 杀死（不是返回错误）",
-        &format!("code={:?} signal={:?}", spawned.output.code, spawned.output.signal),
+        &format!(
+            "code={:?} signal={:?}",
+            spawned.output.code, spawned.output.signal
+        ),
     );
     let raw = crate::fsutil::read_file(&spawned.log)?;
     // 崩溃前应完整落盘的字节数 = 前 CRASH_SEQ-1 条记录的长度之和。
@@ -324,7 +333,11 @@ fn payload_tear_case(checks: &mut Checks, root: &Path) -> Result<usize> {
                 .map(|seq| crash::fixture_record(seq).encoded_len())
                 .sum::<usize>(),
         "恢复点等于已恢复记录的长度之和（只能落在记录边界上）",
-        &format!("good_bytes={} 条数={}", recovered.good_bytes, recovered.records.len()),
+        &format!(
+            "good_bytes={} 条数={}",
+            recovered.good_bytes,
+            recovered.records.len()
+        ),
     );
 
     // 落盘修复：截断到 good_bytes 后再恢复必须无缺陷且记录数不变。
@@ -372,9 +385,16 @@ fn header_tear_case(checks: &mut Checks, root: &Path, complete: usize) -> Result
         &format!("signal={:?}", header_case.output.signal),
     );
     checks.expect(
-        matches!(header_recovered.defect, Some(TailDefect::TruncatedHeader { .. })),
+        matches!(
+            header_recovered.defect,
+            Some(TailDefect::TruncatedHeader { .. })
+        ),
         "缺陷分类为头截断",
-        &format!("残缺 {} B，{:?}", header_raw.len() - complete, header_recovered.defect),
+        &format!(
+            "残缺 {} B，{:?}",
+            header_raw.len() - complete,
+            header_recovered.defect
+        ),
     );
     checks.expect(
         header_recovered.records.len() as u64 == CRASH_SEQ - 1,
@@ -445,9 +465,15 @@ fn case_tail_corrupted(checks: &mut Checks, root: &Path) -> Result<()> {
         ),
     );
     checks.expect(
-        recovered.records == (1..RECORDS - 1).map(crash::fixture_record).collect::<Vec<_>>(),
+        recovered.records
+            == (1..RECORDS - 1)
+                .map(crash::fixture_record)
+                .collect::<Vec<_>>(),
         "丢弃损坏记录后，之前的记录逐字节完好",
-        &format!("末条 seq={}", recovered.records.last().map(|r| r.seq).unwrap_or(0)),
+        &format!(
+            "末条 seq={}",
+            recovered.records.last().map(|r| r.seq).unwrap_or(0)
+        ),
     );
 
     recovery::truncate_to_good(&spawned.log, &recovered)?;
@@ -466,9 +492,14 @@ fn spawn_writer(root: &Path, label: &str, args: &[&str]) -> Result<Spawned> {
     std::fs::create_dir_all(&dir).map_err(crate::error::io_context(&dir))?;
     let log = dir.join("draft.wal");
 
-    let executable = std::env::current_exe()
-        .map_err(crate::error::io_context(std::path::Path::new("<current_exe>")))?;
-    let mut full: Vec<String> = vec!["writer".to_string(), "--wal".to_string(), log.display().to_string()];
+    let executable = std::env::current_exe().map_err(crate::error::io_context(
+        std::path::Path::new("<current_exe>"),
+    ))?;
+    let mut full: Vec<String> = vec![
+        "writer".to_string(),
+        "--wal".to_string(),
+        log.display().to_string(),
+    ];
     full.extend(args.iter().map(|arg| arg.to_string()));
 
     let output = process::spawn_inherit(

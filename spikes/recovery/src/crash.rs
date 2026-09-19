@@ -63,7 +63,9 @@ pub fn run(args: &[String]) -> Result<()> {
                 )));
             }
             if !(1..=4096).contains(&chunk) {
-                return Err(SpikeError::Core(format!("chunk 必须落在 [1, 4096]，收到 {chunk}")));
+                return Err(SpikeError::Core(format!(
+                    "chunk 必须落在 [1, 4096]，收到 {chunk}"
+                )));
             }
             if kill_after == 0 || kill_after > 64 {
                 return Err(SpikeError::Core(format!(
@@ -101,7 +103,12 @@ pub fn write_normal(path: &Path, count: u64) -> Result<()> {
 /// # Errors
 ///
 /// 写入失败，或参数根本制造不出残缺（此时明确报错，不返回 Ok）。
-pub fn crash_mid_record(path: &Path, seq: u64, chunk: usize, kill_after_chunks: usize) -> Result<()> {
+pub fn crash_mid_record(
+    path: &Path,
+    seq: u64,
+    chunk: usize,
+    kill_after_chunks: usize,
+) -> Result<()> {
     write_normal(path, seq - 1)?;
 
     // 只用 `.append(true)`（它已隐含可写；clippy 的

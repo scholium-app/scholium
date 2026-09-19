@@ -1,5 +1,5 @@
 //! 两种引擎的隔离构建：同一个构建请求要么进 LaTeX，要么进 Typst，
-//! 每条路径都有**独占的沙箱目录**，中间文件只出现在沙箱里，产物原子落回输出目录。
+//! 每条路径都有独占输出目录与 OS 隔离 worker；产物验证完成后才返回成功。
 //!
 //! 隔离模型（三条都必须在判据里被断言，不能只在注释里声称）：
 //!
@@ -13,6 +13,7 @@ pub mod latex;
 pub mod plan;
 pub mod sandbox;
 pub mod typst;
+pub(crate) mod worker;
 
 use std::path::{Path, PathBuf};
 use std::time::Instant;
@@ -25,7 +26,7 @@ use crate::fsutil;
 pub enum Engine {
     /// LaTeX，经 TeX Live 的 `latexmk` + `xelatex` 子进程。
     Latex,
-    /// Typst，经 `typst` crate 在进程内编译。
+    /// Typst，经隔离 worker 中的 `typst` crate 编译。
     Typst,
 }
 
@@ -119,6 +120,7 @@ pub struct CompiledProduct {
 /// 沙箱创建失败、源码写不进去、引擎可执行文件缺失或编译失败、
 /// 输出目录已被另一个写者占用。
 pub fn build(request: &BuildRequest) -> Result<BuildOutcome> {
+    worker::validate(request)?;
     // 先建目录再拿锁：DirLock 是 `create_new` 一个文件，目录不存在时错误会是
     // "No such file or directory"，与"锁被占用"混在一起，不利于诊断。
     std::fs::create_dir_all(&request.out_dir)
@@ -127,16 +129,11 @@ pub fn build(request: &BuildRequest) -> Result<BuildOutcome> {
     fsutil::write_file(&request.source_path, request.source_text.as_bytes())?;
 
     let started = Instant::now();
-    let product = match request.engine {
-        Engine::Latex => latex::compile(request)?,
-        Engine::Typst => typst::compile(request)?,
-    };
+    let (product, product_signature) = worker::compile(request)?;
     let elapsed_ms = started.elapsed().as_millis();
 
     let product_bytes = fsutil::read_file(&product.product_path)?;
     let product_hash = fsutil::sha256_hex(&product_bytes);
-    let product_signature =
-        product_signature(request.engine, &product.product_path, product.pages)?;
     let sandbox_files = fsutil::list_names(&request.out_dir)?;
     let output_digest = digest_dir(&request.out_dir)?;
 
@@ -177,7 +174,11 @@ pub fn product_signature(
         Engine::Latex => {
             let output = match crate::process::run(
                 "pdftotext",
-                &["-q".to_string(), path.display().to_string(), "-".to_string()],
+                &[
+                    "-q".to_string(),
+                    path.display().to_string(),
+                    "-".to_string(),
+                ],
                 Path::new("."),
             ) {
                 Ok(output) if output.succeeded() => output,

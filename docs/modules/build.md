@@ -111,8 +111,10 @@ LaTeX 按 TeX Live 所需引擎（pdfLaTeX/XeLaTeX/LuaLaTeX）→ Tectonic 验�
 
 PDF 产物检查使用受信调用方固定选择的 `pdf-probe` 清单，见
 [ADR 0017](../adr/ADR-0017-pdf-probe-runtime.md)：四个 Poppler 工具与字体资源在同一 OS 隔离/预算下执行，
-不暴露 TeX 工具树。入口审查见[报告 0033](../spikes/SPK-0033-build-entry-audit.md)；旧 recovery
-暂存目录不等于安全沙箱，不能接入不可信项目。声明的运行时只读资源是根外访问例外。
+不暴露 TeX 工具树。入口审查见[报告 0033](../spikes/SPK-0033-build-entry-audit.md)。恢复实验的编译与探针
+按 [ADR 0019](../adr/ADR-0019-recovery-worker-isolation.md) 使用独立 worker；暂存目录本身不提供隔离。
+工具版本查询同样禁用项目配置。跨进程产物签名必须来自稳定序列化的排版结果，不能使用内部对象身份哈希。
+输出接收上限不得等同运行时总配额；声明的运行时只读资源是根外访问例外。
 
 同语言源码 include 与宿主共享引擎原生标签空间，编号/页码从宿主最终编译获取，不能套用矢量
 组件锚点。行内 include 仅接受已声明支持的行内内容，块级/未验证内容显式拒绝；

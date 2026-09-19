@@ -1,7 +1,6 @@
 //! 子进程封装：运行外部工具、捕获输出、判断是否被信号杀死。
 //!
-//! 两种构建路径都要用（LaTeX 走 TeX Live 子进程，Typst 走进程内 crate 但页数用外部
-//! `pdfinfo` 读），崩溃夹具也要用（它自己就是被启动的子进程），所以这里统一。
+//! 编译工具与 PDF 探针只由隔离 worker 调用；崩溃夹具另有继承输出的启动路径。
 
 use std::path::Path;
 use std::process::Command;

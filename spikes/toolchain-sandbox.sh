@@ -35,7 +35,7 @@ mount_libraries() {
 # Profiles are selected by trusted callers, never by document content.
 # The editor helper needs fonts and its own libraries, not the TeX runtime.
 case "${SCHOLIUM_SANDBOX_PROFILE:-full}" in
-  full)
+  full|recovery)
     runtime_tools=(bash sh xelatex xetex xdvipdfmx kpsewhich paper paperconf prlimit
       bwrap timeout realpath ldd awk cp mv cat touch readlink sleep dd
       pdfinfo pdftotext pdftohtml pdfimages)
@@ -43,6 +43,10 @@ case "${SCHOLIUM_SANDBOX_PROFILE:-full}" in
       /usr/share/texmf /etc/fonts /etc/texmf /etc/paperspecs /etc/papersize /var/lib/texmf)
     mount_file /usr/lib/localepaper
     mount_libraries /usr/lib/localepaper
+    if [ "${SCHOLIUM_SANDBOX_PROFILE:-full}" = recovery ]; then
+      runtime_tools+=(env perl latexmk)
+      runtime_paths+=(/usr/lib/perl5 /usr/share/perl5)
+    fi
     ;;
   typst-editor)
     runtime_tools=(prlimit)

@@ -23,9 +23,7 @@ pub fn compile(request: &BuildRequest) -> Result<CompiledProduct> {
     // 调用方要能区分"引擎跑了但文档编译不过"和"隔离/锁/路径出错"。
     process::run_checked("latexmk", &args, &request.out_dir)?;
 
-    let product_path = request
-        .out_dir
-        .join(format!("{}.pdf", request.job_name));
+    let product_path = request.out_dir.join(format!("{}.pdf", request.job_name));
     if !product_path.exists() {
         return Err(SpikeError::Core(format!(
             "latexmk 成功但产物缺失: {}（沙箱文件: {:?}）",
@@ -40,7 +38,7 @@ pub fn compile(request: &BuildRequest) -> Result<CompiledProduct> {
         pages,
         engine_note: format!(
             "{}；{}",
-            process::version_line("latexmk", &["-v"]),
+            process::version_line("latexmk", &["-norc", "-v"]),
             process::version_line("xelatex", &["--version"])
         ),
     })
@@ -53,6 +51,8 @@ pub fn compile(request: &BuildRequest) -> Result<CompiledProduct> {
 fn latexmk_args(request: &BuildRequest, staged: &Path) -> Vec<String> {
     vec![
         "-pdfxe".to_string(),
+        "-norc".to_string(),
+        "-no-shell-escape".to_string(),
         "-interaction=nonstopmode".to_string(),
         "-halt-on-error".to_string(),
         "-file-line-error".to_string(),

@@ -23,6 +23,7 @@ sha2 = "=0.10.9"
 typst = "=0.15.1"
 # PagedDocument 在 typst-layout 里，需要直接依赖。
 typst-layout = "=0.15.1"
+typst-svg = "=0.15.1"
 # 字体来源（内置 + 系统扫描）。
 typst-kit = { version = "=0.15.1", features = ["embedded-fonts", "scan-fonts"] }
 # 随机截断用固定种子。注意：这些是**可执行判据的实现依赖**，必须放在

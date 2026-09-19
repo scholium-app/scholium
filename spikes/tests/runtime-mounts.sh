@@ -35,3 +35,14 @@ SCHOLIUM_SANDBOX_PROFILE=pdf-probe SCHOLIUM_HOST_SENTINEL=private \
 '
 test "$(cat "$work/output/pdf-probe-control")" = PDF-PROBE-OK
 printf 'PASS: PDF probe exposes inspection tools, read-only input and writable output; omits TeX and unrelated tools\n'
+SCHOLIUM_SANDBOX_PROFILE=recovery \
+  bash "$root/spikes/toolchain-sandbox.sh" "$work/input" "$work/output" 10 /bin/sh -ec '
+  test -x /usr/bin/latexmk
+  test -x /usr/bin/perl
+  test ! -e /etc/hostname
+  test ! -e /usr/bin/curl
+  latexmk -norc -v > /work/latexmk-version
+  if (printf changed > /project/control) 2>/dev/null; then exit 1; fi
+'
+test -s "$work/output/latexmk-version"
+printf 'PASS: recovery profile runs latexmk and preserves input/host boundaries\n'

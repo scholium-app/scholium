@@ -1,20 +1,12 @@
-//! Typst 引擎：**进程内**编译，不落中间文件。
-//!
-//! 与 LaTeX 路径的差异必须在报告里写清：Typst 没有外部子进程，因此
-//! "中间文件隔离"对它而言是**结构性的**（编译在内存里，唯一落盘的是产物），
-//! 而 LaTeX 的隔离是**靠沙箱目录实现的**。判据要求"中间文件与产物分目录隔离"，
-//! 对 Typst 的验证方式是断言它的隔离目录里只有源文件与产物，没有任何引擎中间文件。
+//! Typst 引擎：由 OS 隔离 worker 调用，不落引擎中间文件。
 //!
 //! 另一个真实差异：**Typst 的持久化表示不是字节流**。本 spike 的依赖清单里没有
 //! `typst-pdf`，因此产物是"编译成功 + 页数 + 页内容哈希"的确定性文本。
-//! 这个哈希来自 `PagedDocument` 的每一页，页数或页面内容一变哈希就变，
+//! 这个哈希来自每页编译后的 SVG，页数或页面内容一变哈希就变，
 //! 足以支撑隔离判据；但它**不是 PDF**，报告里把这一点列为缺口。
 
 pub mod world;
 
-use std::hash::{Hash, Hasher};
-
-use typst::World as _;
 use typst::diag::Warned;
 use typst_layout::PagedDocument;
 
@@ -43,27 +35,20 @@ pub fn compile(request: &BuildRequest) -> Result<CompiledProduct> {
     let pages = document.pages().len();
     let page_hash = page_content_hash(&document);
 
-    // 库哈希把 Typst 版本/标准库内容钉进产物：换 typst 版本时产物必然变化，
-    // 不会出现"A 仍然产出同样的字节"这种假隔离通过。
-    let library_hash = {
-        let mut hasher = std::collections::hash_map::DefaultHasher::new();
-        world.library().hash(&mut hasher);
-        hasher.finish()
-    };
-
-    let product_path = request
-        .out_dir
-        .join(format!("{}.{}", request.job_name, request.engine.product_ext()));
-    let product = format!(
-        "typst-paged\npages={pages}\npage-hash={page_hash}\nlibrary-hash={library_hash:016x}\n"
-    );
+    let product_path = request.out_dir.join(format!(
+        "{}.{}",
+        request.job_name,
+        request.engine.product_ext()
+    ));
+    let product =
+        format!("typst-paged\npages={pages}\npage-hash={page_hash}\nengine={TYPST_VERSION_NOTE}\n");
     fsutil::write_file(&product_path, product.as_bytes())?;
 
     Ok(CompiledProduct {
         product_path,
         pages: Some(pages),
         engine_note: format!(
-            "{TYPST_VERSION_NOTE} 进程内编译；warnings={}；page-hash={page_hash}",
+            "{TYPST_VERSION_NOTE} 沙箱 worker 编译；warnings={}；page-hash={page_hash}",
             warnings.len()
         ),
     })
@@ -72,14 +57,17 @@ pub fn compile(request: &BuildRequest) -> Result<CompiledProduct> {
 /// 写进产物与证据行的 Typst 版本。
 ///
 /// 硬编码在这里**只用于人读的证据行**，不是锁定机制；锁定机制是 `Cargo.toml` 的
-/// `=0.15.1` 与 `Cargo.lock` 的实际解析结果（报告里抄录 lock 文件）。Typst 是库依赖，
-/// 没有 `typst --version` 可问；运行时的库哈希则用来证明"编译进来的确实是这一份"。
+/// `=0.15.1` 与 `Cargo.lock` 的实际解析结果。Typst 是库依赖，没有独立 CLI 版本查询。
 const TYPST_VERSION_NOTE: &str = "typst 0.15.1";
 
-/// 页内容的确定性哈希：`PagedDocument` 自己实现了 `Hash`（页与文档信息都参与，
-/// introspector 由页派生因此不重复计入）。
+/// 页 SVG 的确定性内容签名，不使用含进程内标识的内部 Hash。
 fn page_content_hash(document: &PagedDocument) -> String {
-    let mut hasher = std::collections::hash_map::DefaultHasher::new();
-    document.hash(&mut hasher);
-    fsutil::sha256_hex(format!("typst-paged:{:016x}", hasher.finish()).as_bytes())[..16].to_string()
+    // Internal Hash contains process-local identities. Rendered SVG gives independent
+    // workers the same content signature and still detects glyph/layout changes.
+    let hashes: Vec<_> = document
+        .pages()
+        .iter()
+        .map(|page| fsutil::sha256_hex(typst_svg::svg(page, &Default::default()).as_bytes()))
+        .collect();
+    fsutil::sha256_hex(hashes.join("\n").as_bytes())[..16].to_string()
 }

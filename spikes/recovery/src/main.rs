@@ -27,6 +27,8 @@ use error::{Result, SpikeError};
 fn main() -> Result<()> {
     let args: Vec<String> = std::env::args().collect();
     match cli::subcommand(&args) {
+        Some(command) if command == "build-worker" => build::worker::work(&args),
+        Some(command) if command == "security" => criteria::build_security::run(),
         // 崩溃夹具以子进程身份启动；只有这一条路径会走 writer。
         Some(command) if command == "writer" => crash::run(&args),
         Some(other) => Err(SpikeError::Core(format!("未知子命令: {other}"))),
@@ -85,7 +87,10 @@ fn run_round(round: usize) -> Result<(bool, String)> {
     fsutil::write_file(&workspace.join(".keep"), b"workspace root\n")?;
 
     let mut checks = Checks::new();
-    println!("Scholium 阶段 0 第 5 项 spike：构建/恢复（第 {} 轮）", round + 1);
+    println!(
+        "Scholium 阶段 0 第 5 项 spike：构建/恢复（第 {} 轮）",
+        round + 1
+    );
     println!("工作目录: {}\n", workspace.display());
 
     criteria::build_isolation::run(&mut checks, &workspace)?;

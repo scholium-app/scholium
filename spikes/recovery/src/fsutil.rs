@@ -132,12 +132,9 @@ impl DirLock {
                 let _ = writeln!(file, "pid={}", std::process::id());
                 Ok(Self { path })
             }
-            Err(source) if source.kind() == std::io::ErrorKind::AlreadyExists => {
-                Err(SpikeError::Core(format!(
-                    "构建目录已被占用: {}",
-                    path.display()
-                )))
-            }
+            Err(source) if source.kind() == std::io::ErrorKind::AlreadyExists => Err(
+                SpikeError::Core(format!("构建目录已被占用: {}", path.display())),
+            ),
             Err(source) => Err(io_context(&path)(source)),
         }
     }

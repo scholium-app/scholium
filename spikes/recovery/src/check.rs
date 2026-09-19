@@ -66,7 +66,11 @@ impl Checks {
     ///
     /// `detail` 是**已经算好的证据文本**，不是结论；打印它是为了失败时能直接看到数字。
     pub fn expect(&mut self, condition: bool, label: &str, detail: &str) -> bool {
-        let verdict = if condition { Verdict::Pass } else { Verdict::Fail };
+        let verdict = if condition {
+            Verdict::Pass
+        } else {
+            Verdict::Fail
+        };
         let marker = match verdict {
             Verdict::Pass => "PASS",
             Verdict::Fail => "FAIL",

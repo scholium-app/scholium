@@ -40,7 +40,7 @@ ForeignSource 的 LaTeX/Typst 宏、模板、构建桥接和预生成资源都�
 普通混合构建 LaTeX 入口的接入与覆盖矩阵见[报告 0017](spikes/SPK-0017-mixed-build-isolation.md)。
 [报告 0018](spikes/SPK-0018-typst-worker-isolation.md) 将普通混合构建 Typst 编译/导出也移入沙箱 worker，
 并用工具文件和运行时资源目录白名单替代整个 `/usr`。可信资源仍是项目根外只读例外；
-宿主侧产物探针、旧恢复实验及总资源配额尚未全部统一。
+PDF 探针隔离依据 ADR 0017，恢复实验的编译/探针隔离依据 ADR 0019；总资源配额尚未全部统一。
 
 ## 4. 同步与身份
 

@@ -40,14 +40,8 @@ impl Project {
 
         let latex_dir = root.join("project/latex");
         let typst_dir = root.join("project/typst");
-        fsutil::write_file(
-            &latex_dir.join("main.tex"),
-            latex_source.as_bytes(),
-        )?;
-        fsutil::write_file(
-            &typst_dir.join("main.typ"),
-            typst_source.as_bytes(),
-        )?;
+        fsutil::write_file(&latex_dir.join("main.tex"), latex_source.as_bytes())?;
+        fsutil::write_file(&typst_dir.join("main.typ"), typst_source.as_bytes())?;
 
         Ok(Self {
             latex_dir,
@@ -122,112 +116,8 @@ pub fn run(checks: &mut Checks, workspace: &Path) -> Result<()> {
     Ok(())
 }
 
-/// 用例 1：两条路径各自构建成功，中间文件只落在自己的沙箱。
-fn case_isolated_outputs(
-    checks: &mut Checks,
-    project: &Project,
-) -> Result<Vec<(Engine, BuildOutcome)>> {
-    checks.case("build.isolated-outputs");
-    let mut outcomes = Vec::new();
-
-    for engine in [Engine::Latex, Engine::Typst] {
-        let outcome = build::build(&project.request(engine))?;
-        checks.note(
-            &format!("{} 构建", engine.slug()),
-            &format!(
-                "{} ms / {} B / 页数 {:?} / 产物 {} / {}",
-                outcome.elapsed_ms,
-                outcome.product_bytes,
-                outcome.pages,
-                outcome.product_path.display(),
-                outcome.engine_note
-            ),
-        );
-        checks.note(
-            &format!("{}.输出目录内容哈希", engine.slug()),
-            &digest_summary(&outcome),
-        );
-        checks.expect(
-            outcome.product_bytes > 0,
-            &format!("{}.产物非空", engine.slug()),
-            &format!("{} B", outcome.product_bytes),
-        );
-        checks.expect(
-            outcome.source_hash == project.request(engine).source_hash,
-            &format!("{}.产物记录了输入哈希", engine.slug()),
-            &format!("source_hash={}", &outcome.source_hash[..16]),
-        );
-        checks.expect(
-            outcome.product_signature.is_some(),
-            &format!("{}.拿到了跨运行稳定的产物签名", engine.slug()),
-            &format!(
-                "signature={:?}；产物文件哈希 {}（{}）",
-                outcome.product_signature.as_deref().map(short),
-                short(&outcome.product_hash),
-                match engine {
-                    // xelatex 把运行时间与随机 PDF ID 写进 PDF，文件哈希跨运行不稳定。
-                    Engine::Latex => "PDF 含时间戳，文件哈希跨运行会变，判据用签名",
-                    Engine::Typst => "文本产物，文件哈希与签名同值",
-                }
-            ),
-        );
-
-        // 源目录只应有源码与**被命名的**沙箱子目录；任何引擎中间文件出现在源码旁边
-        // 都算泄漏。这里把"隔离目录本身"列入允许项，不把 `.build` 当成产物。
-        let source_dir = project.source_dir(engine);
-        let allowed = [project.source_name(engine), SANDBOX_DIR.to_string()];
-        let leaked: Vec<String> = fsutil::list_names(source_dir)?
-            .into_iter()
-            .filter(|name| !allowed.contains(name))
-            .collect();
-        checks.expect(
-            leaked.is_empty(),
-            &format!("{}.源目录无中间文件泄漏", engine.slug()),
-            &format!(
-                "目录={} 内容={:?} 多余项={leaked:?}",
-                source_dir.display(),
-                fsutil::list_names(source_dir)?
-            ),
-        );
-
-        let intermediates = intermediate_files(engine, &outcome.sandbox_files);
-        match engine {
-            Engine::Latex => {
-                checks.expect(
-                    intermediates.len() >= 3,
-                    "latex.确实产生了中间文件（否则隔离无从验证）",
-                    &format!("{:?}", intermediates),
-                );
-            }
-            Engine::Typst => {
-                checks.expect(
-                    intermediates.is_empty(),
-                    "typst.不产生中间文件",
-                    &format!("沙箱文件={:?}", outcome.sandbox_files),
-                );
-            }
-        }
-        checks.expect(
-            outcome.sandbox_files.contains(&format!("main.{}", engine.product_ext())),
-            &format!("{}.产物写在沙箱里", engine.slug()),
-            &format!("main.{}", engine.product_ext()),
-        );
-        outcomes.push((engine, outcome));
-    }
-
-    let (latex, typst) = (&outcomes[0].1, &outcomes[1].1);
-    checks.expect(
-        latex.sandbox_files != typst.sandbox_files,
-        "两条路径的沙箱内容不同（目录确实分离）",
-        &format!("latex={:?} typst={:?}", latex.sandbox_files, typst.sandbox_files),
-    );
-    checks.expect(
-        latex.product_hash != typst.product_hash,
-        "两条路径产物不同名同哈希（不是同一份文件）",
-        &format!("latex={} typst={}", &latex.product_hash[..16], &typst.product_hash[..16]),
-    );
-    Ok(outcomes)
-}
+mod baseline;
+use baseline::case_isolated_outputs;
 
 /// 用例 2：B 沙箱里放"改变 aux 语义"的毒饵，A 的产物必须不变。
 ///
@@ -292,7 +182,10 @@ fn case_decoys_do_not_leak(
     checks.expect(
         after.product_bytes == baseline_latex.product_bytes,
         "A 产物字节数一致",
-        &format!("{} vs {}", baseline_latex.product_bytes, after.product_bytes),
+        &format!(
+            "{} vs {}",
+            baseline_latex.product_bytes, after.product_bytes
+        ),
     );
     checks.expect(
         fsutil::read_file(&decoy)? == poisoned,
@@ -307,12 +200,10 @@ fn case_decoys_do_not_leak(
     request.source_path = project.sandbox(Engine::Latex).join("control.tex");
     // 插在 `\end{document}` **之前**：追加到文件末尾只是把文字放到文档外，
     // 页面上什么都不出现，签名当然不变——第一次就是这么被骗过去的。
-    request.source_text = request
-        .source_text
-        .replace(
-            "\\end{document}",
-            "\\par\\noindent CONTROL-PROBE-9117\n\\end{document}",
-        );
+    request.source_text = request.source_text.replace(
+        "\\end{document}",
+        "\\par\\noindent CONTROL-PROBE-9117\n\\end{document}",
+    );
     request.source_hash = fsutil::sha256_hex(request.source_text.as_bytes());
     let control = build::build(&request)?;
     checks.expect(
@@ -352,22 +243,37 @@ fn case_concurrent_builds(
 
     checks.note(
         "并发耗时",
-        &format!("latex={} ms typst={} ms", latex_outcome.elapsed_ms, typst_outcome.elapsed_ms),
+        &format!(
+            "latex={} ms typst={} ms",
+            latex_outcome.elapsed_ms, typst_outcome.elapsed_ms
+        ),
     );
     checks.expect(
         latex_outcome.product_signature == baseline[0].1.product_signature,
         "并发 latex 产物签名与串行基线一致",
-        &format!("{} vs {}", signature(&latex_outcome), signature(&baseline[0].1)),
+        &format!(
+            "{} vs {}",
+            signature(&latex_outcome),
+            signature(&baseline[0].1)
+        ),
     );
     checks.expect(
         typst_outcome.product_signature == baseline[1].1.product_signature,
         "并发 typst 产物签名与串行基线一致",
-        &format!("{} vs {}", signature(&typst_outcome), signature(&baseline[1].1)),
+        &format!(
+            "{} vs {}",
+            signature(&typst_outcome),
+            signature(&baseline[1].1)
+        ),
     );
     checks.expect(
         latex_outcome.product_signature != typst_outcome.product_signature,
         "两条路径的产物签名不同（没有互相写进对方文件）",
-        &format!("{} vs {}", signature(&latex_outcome), signature(&typst_outcome)),
+        &format!(
+            "{} vs {}",
+            signature(&latex_outcome),
+            signature(&typst_outcome)
+        ),
     );
     // typst 沙箱里只允许出现"我们故意植入的毒饵"；任何其它 LaTeX 中间文件都算越界。
     let typst_foreign: Vec<&String> = typst_outcome
@@ -376,7 +282,10 @@ fn case_concurrent_builds(
         .filter(|name| name.ends_with(".aux") && !project.planted.contains(name))
         .collect();
     checks.expect(
-        latex_outcome.sandbox_files.iter().any(|name| name.ends_with(".aux"))
+        latex_outcome
+            .sandbox_files
+            .iter()
+            .any(|name| name.ends_with(".aux"))
             && typst_foreign.is_empty(),
         "并发后中间文件仍只落在 latex 沙箱",
         &format!(
@@ -393,7 +302,10 @@ fn case_concurrent_builds(
     checks.expect(
         conflict.is_err(),
         "同目录并发写被锁拒绝",
-        &format!("锁={lock_path} 结果={:?}", conflict.err().map(|error| error.to_string())),
+        &format!(
+            "锁={lock_path} 结果={:?}",
+            conflict.err().map(|error| error.to_string())
+        ),
     );
     drop(lock);
 
@@ -427,7 +339,9 @@ fn run_thread(
         Ok(result) => result,
         Err(_) => {
             checks.expect(false, &format!("{label} 线程未 panic"), "join 返回 Err");
-            Err(crate::error::SpikeError::Core(format!("{label} 线程 panic")))
+            Err(crate::error::SpikeError::Core(format!(
+                "{label} 线程 panic"
+            )))
         }
     }
 }
@@ -455,7 +369,11 @@ fn case_own_source_is_read(checks: &mut Checks, project: &Project) -> Result<()>
     checks.expect(
         after.product_hash != base.product_hash,
         "改自己的源码 → 产物变化（输入确实被读取）",
-        &format!("{} → {}", &base.product_hash[..16], &after.product_hash[..16]),
+        &format!(
+            "{} → {}",
+            &base.product_hash[..16],
+            &after.product_hash[..16]
+        ),
     );
     checks.expect(
         after.product_bytes > 0 && after.pages.is_some(),
@@ -486,7 +404,11 @@ fn case_output_dir_lock(checks: &mut Checks, project: &Project) -> Result<()> {
     let control = build::build(&request)?;
     checks.note(
         "锁用例对照构建",
-        &format!("{} ms / signature {}", control.elapsed_ms, signature(&control)),
+        &format!(
+            "{} ms / signature {}",
+            control.elapsed_ms,
+            signature(&control)
+        ),
     );
     // 清掉对照产物，确保后面"被拒绝后目录里只有锁"这一步是真的没写东西。
     for name in fsutil::list_names(&out_dir)? {

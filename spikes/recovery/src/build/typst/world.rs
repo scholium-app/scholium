@@ -67,17 +67,13 @@ impl typst::World for SpikeWorld {
                 .unwrap_or_else(|poisoned| poisoned.into_inner());
             Ok(source.clone())
         } else {
-            Err(FileError::NotFound(
-                id.vpath().get_without_slash().into(),
-            ))
+            Err(FileError::NotFound(id.vpath().get_without_slash().into()))
         }
     }
 
     fn file(&self, id: FileId) -> FileResult<Bytes> {
         // 单文件编译：除主文件外不解析任何资源。正式实现需要受控的资源解析。
-        Err(FileError::NotFound(
-            id.vpath().get_without_slash().into(),
-        ))
+        Err(FileError::NotFound(id.vpath().get_without_slash().into()))
     }
 
     fn font(&self, index: usize) -> Option<Font> {

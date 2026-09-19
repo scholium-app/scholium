@@ -229,3 +229,15 @@ XYZ 目的地，源码覆盖层按相同变换装配。深公式裁剪、XeLaTeX
 并抽出构建状态初始化，最终格式与 Clippy 检查通过。
 见[报告 0035](../spikes/SPK-0035-vector-fidelity.md)、[ADR 0018](../adr/ADR-0018-vector-fidelity-bridge.md)。
 条件 8 按声明支持/拒绝矩阵满足，阶段 0 整体仍未关闭；任意 PDF 批注/表单和完整可访问语义不包含在内。
+
+## 2026-09-19：恢复实验的编译与探针隔离
+
+以 `a0f9dc6` 继续剩余安全边界，recovery 两引擎及 PDF 探针进入 OS 隔离 worker，
+保留 latexmk 多轮与 WAL 强杀夹具。新增输入/输出接收上限、超时、shell 与项目配置拒绝对照。
+真实测试发现旧 worker 分发遗漏、Typst 内部 Hash 跨进程不稳定，以及版本查询仍执行 latexmkrc；
+分别修复分发、改用逐页 SVG 签名、版本查询加 `-norc`。失败证据全部保留。
+恢复两轮各 15/15 且结果一致，安全对照 7/7、护栏单测 3/3、共用安全门禁 6/6、
+recovery 格式/Clippy/许可与 runner 自测通过；全 crate 格式化后拆出旧基线长函数，未改共享 core 格式。
+见 [报告 0036](../spikes/SPK-0036-recovery-worker-isolation.md) 与
+[ADR 0019](../adr/ADR-0019-recovery-worker-isolation.md)。输出接收上限不是执行期间总配额；
+资源树例外、研究 helper、总资源与原生解析/宿主解码边界仍保留。原生综合验收本轮未扩展，阶段状态不升级。

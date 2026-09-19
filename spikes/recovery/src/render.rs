@@ -90,7 +90,9 @@ fn emit_latex_inline(document: &Document, node: NodeId, out: &mut String) {
         return;
     };
     match current.kind {
-        NodeKind::Text | NodeKind::Raw => out.push_str(&escape_latex(&document.text_of(node).unwrap_or_default())),
+        NodeKind::Text | NodeKind::Raw => {
+            out.push_str(&escape_latex(&document.text_of(node).unwrap_or_default()))
+        }
         NodeKind::Document | NodeKind::Paragraph | NodeKind::Heading => {
             for child in document.slot(node, 0).unwrap_or(&[]) {
                 emit_latex_inline(document, *child, out);
@@ -158,7 +160,9 @@ fn emit_typst_inline(document: &Document, node: NodeId, out: &mut String) {
         return;
     };
     match current.kind {
-        NodeKind::Text | NodeKind::Raw => out.push_str(&escape_typst(&document.text_of(node).unwrap_or_default())),
+        NodeKind::Text | NodeKind::Raw => {
+            out.push_str(&escape_typst(&document.text_of(node).unwrap_or_default()))
+        }
         NodeKind::Document | NodeKind::Paragraph | NodeKind::Heading => {
             for child in document.slot(node, 0).unwrap_or(&[]) {
                 emit_typst_inline(document, *child, out);

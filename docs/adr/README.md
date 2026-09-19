@@ -33,6 +33,7 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 
 [ADR 0017](ADR-0017-pdf-probe-runtime.md)为 PDF 产物探针固定独立最小用途清单。
 [ADR 0018](ADR-0018-vector-fidelity-bridge.md)区分语义转换与源引擎矢量载体，规定行内度量和链接注释覆盖层。
+[ADR 0019](ADR-0019-recovery-worker-isolation.md)将恢复实验的编译/探针隔离，并规定跨进程稳定签名。
 
 [ADR 0016](ADR-0016-team-window-gate-spike.md)限定团队门禁的单窗口模拟适配，不替代正式协作协议。
 

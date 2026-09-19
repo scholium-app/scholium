@@ -1,0 +1,18 @@
+  [PASS] 良性输入真实编译并提取签名 — Latexmk, John Collins, 15 June 2025. Version 4.87；XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026/Arch Linux)
+  [PASS] 良性输入真实编译并提取签名 — typst 0.15.1 沙箱 worker 编译；warnings=0；page-hash=d70c205e4267e1a5
+  [PASS] 根外文件不可见且引擎正常工作 — EOF branch compiled
+  [PASS] Typst 明确拒绝文件读取 — Error: Core("Typst 编译失败: file not found (searched at tmp/recovery-security-836300-0/private.tex)")
+
+  [FAIL] shell escape 和项目 latexmkrc 均禁用 — marker absent; engine log disabled
+  [PASS] 循环被墙钟上限终止且无旧产物 — Err(CommandFailed { program: "recovery sandbox", code: Some(124), stderr: "worker failed (124 = wall timeout): exit status: 124" }); elapsed=10.368657929s
+  [FAIL] 循环被墙钟上限终止且无旧产物 — Err(CommandFailed { program: "recovery sandbox", code: Some(1), stderr: "worker failed (124 = wall timeout): exit status: 1" }); elapsed=857.190816ms
+
+== 逐用例汇总 ==
+  [PASS] security.latex.positive            1/1 断言通过
+  [PASS] security.typst.positive            1/1 断言通过
+  [PASS] security.latex.outside-read        1/1 断言通过
+  [PASS] security.typst.outside-read        1/1 断言通过
+  [FAIL] security.latex.commands            0/1 断言通过 首个失败: shell escape 和项目 latexmkrc 均禁用 — marker absent; engine log disabled
+  [PASS] security.latex.timeout             1/1 断言通过
+  [FAIL] security.typst.timeout             0/1 断言通过 首个失败: 循环被墙钟上限终止且无旧产物 — Err(CommandFailed { program: "recovery sandbox", code: Some(1), stderr: "worker failed (124 = wall timeout): exit status: 1" }); elapsed=857.190816ms
+Error: Core("security checks failed")
