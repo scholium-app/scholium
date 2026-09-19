@@ -42,6 +42,7 @@ pub fn run() -> Result<()> {
     outside_reads(&mut checks, scratch.root())?;
     command_execution(&mut checks, scratch.root())?;
     timeouts(&mut checks, scratch.root())?;
+    rejected_output(&mut checks, scratch.root())?;
     if checks.finish() {
         Ok(())
     } else {
@@ -49,6 +50,29 @@ pub fn run() -> Result<()> {
             "security checks failed".into(),
         ))
     }
+}
+
+fn rejected_output(checks: &mut Checks, root: &Path) -> Result<()> {
+    checks.case("security.latex.output-rejection");
+    let source = latex(concat!(
+        "\\newcount\\n \\n=0 \\newwrite\\out ",
+        "\\loop\\immediate\\openout\\out=extra-\\the\\n.txt ",
+        "\\immediate\\write\\out{x}\\immediate\\closeout\\out ",
+        "\\advance\\n by1 \\ifnum\\n<260 \\repeat CONTROL"
+    ));
+    let req = request(&root.join("output-rejection"), Engine::Latex, &source);
+    let result = build::build(&req);
+    checks.expect(
+        matches!(&result, Err(crate::error::SpikeError::Core(message))
+            if message.contains("output tree"))
+            && !req.out_dir.join("main.pdf").exists(),
+        "输出超过文件数上限时拒绝且清理产物",
+        &format!(
+            "{result:?}; pdf_exists={}",
+            req.out_dir.join("main.pdf").exists()
+        ),
+    );
+    Ok(())
 }
 
 fn outside_reads(checks: &mut Checks, root: &Path) -> Result<()> {
@@ -110,6 +134,12 @@ fn timeouts(checks: &mut Checks, root: &Path) -> Result<()> {
         (Engine::Typst, "#let fib(n, seed) = if n < 2 { seed } else { fib(n - 1, seed * 2) + fib(n - 2, seed * 2 + 1) }\n#fib(40, 1)".into()),
     ] {
         checks.case(&format!("security.{}.timeout", engine.slug()));
+        let control = match engine {
+            Engine::Latex => latex("TIMEOUT-CONTROL"),
+            Engine::Typst => "TIMEOUT-CONTROL".into(),
+        };
+        let prior = build::build(&request(root, engine, &control))?;
+        checks.expect(prior.product_path.is_file(), "超时前确有可用产物", "positive control");
         let start = Instant::now();
         let req = request(root, engine, &source);
         let result = build::build(&req);

@@ -1,5 +1,7 @@
 # Spike 0036：恢复实验编译入口隔离
 
+> 后续验收见 [报告 0037](SPK-0037-recovery-acceptance.md)：补齐超量输出拒绝时的产物清理。
+
 - 日期：2026-09-19；基线 `a0f9dc6` 加本轮修改。
 - 决策：[ADR 0019](../adr/ADR-0019-recovery-worker-isolation.md)。
 - 本轮关闭旧 recovery 公开 build 路径的无 OS 隔离缺口；条件 6 仍部分满足，当前状态见 [0012](SPK-0012-exit-criteria.md)。

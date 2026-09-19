@@ -108,12 +108,26 @@ pub(super) fn compile(request: &BuildRequest) -> Result<(CompiledProduct, Option
             fs::remove_file(&path).map_err(io_context(&path))?;
         }
     }
-    let status = launch(request, &input, &tools)?;
+    let result = launch(request, &input, &tools)
+        .and_then(|status| collect(request, status, product.clone()));
+    if result.is_err() {
+        // Unlink only this entry's artifact; never follow a worker-created symlink.
+        match fs::remove_file(&product) {
+            Ok(()) => (),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => (),
+            Err(error) => return Err(io_context(&product)(error)),
+        }
+    }
+    result
+}
+
+fn collect(
+    request: &BuildRequest,
+    status: std::process::ExitStatus,
+    product: PathBuf,
+) -> Result<(CompiledProduct, Option<String>)> {
     validate_output(&request.out_dir)?;
     if !status.success() {
-        if product.exists() {
-            fs::remove_file(&product).map_err(io_context(&product))?;
-        }
         return Err(SpikeError::CommandFailed {
             program: "recovery sandbox".into(),
             code: status.code(),

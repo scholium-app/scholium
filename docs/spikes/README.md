@@ -101,3 +101,4 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 | 源码组件行内与引用 | [0034-native-include-fidelity.md](SPK-0034-native-include-fidelity.md) | 修复同语言 include 内部符号双向链接，双宿主 PDF 行内检查通过；跨语言矢量行内与内部注释仍未覆盖。 |
 | 跨语言矢量保真 | [0035-vector-fidelity.md](SPK-0035-vector-fidelity.md) | 紧致行盒/下沉量、深公式裁剪、链接矩形与同页精确目标；显式 Convert 与注释拒绝矩阵。 |
 | 恢复实验 worker 隔离 | [0036-recovery-worker-isolation.md](SPK-0036-recovery-worker-isolation.md) | 两轮恢复、真实构建安全与输入/产物护栏；跨进程排版签名，禁用版本查询执行项目配置。 |
+| 恢复隔离验收 | [0037-recovery-acceptance.md](SPK-0037-recovery-acceptance.md) | 修复超量输出拒绝时残留 PDF；双轮恢复与新增安全回归。 |
