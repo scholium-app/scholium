@@ -29,7 +29,11 @@ pub(crate) fn make_bad_columns(host: Dialect) -> Project {
     project(
         "bad-columns",
         host,
-        vec![heading("列数不匹配"), table, para("该表应当在计划阶段被拒绝。")],
+        vec![
+            heading("列数不匹配"),
+            table,
+            para("该表应当在计划阶段被拒绝。"),
+        ],
     )
 }
 
@@ -88,10 +92,7 @@ pub(crate) fn make_unsupported_math(host: Dialect) -> Project {
         host,
         vec![
             heading("不受支持的公式命令"),
-            equation(
-                "eq:bad",
-                call("notacommand", vec![frac(num(1), num(2))]),
-            ),
+            equation("eq:bad", call("notacommand", vec![frac(num(1), num(2))])),
             para("该公式应当在计划阶段被拒绝。"),
         ],
     )
@@ -124,13 +125,11 @@ pub(crate) fn plot_component(host: Dialect) -> Component {
         id: "g2-draw".to_string(),
         dialect: opposite(host),
         scope: "g2".to_string(),
-        body: vec![
-            Block::Figure {
-                label: format!("{}:plot", opposite(host).name()),
-                caption: "外语绘图".to_string(),
-                plot: wave(),
-            },
-        ],
+        body: vec![Block::Figure {
+            label: format!("{}:plot", opposite(host).name()),
+            caption: "外语绘图".to_string(),
+            plot: wave(),
+        }],
         bridge: Bridge::Vector,
         placement: Placement::Block,
         depends_on: Vec::new(),

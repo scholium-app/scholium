@@ -80,16 +80,11 @@ impl Ctx<'_> {
             Some(resolved) => resolved.number.clone(),
             None => "?".to_string(),
         };
-        // 跨引擎目标只能落到"组件所在位置"这一粒度上，链接指向组件锚点。
-        let anchor = resolved.map(|resolved| resolved.owner.clone());
-        match (self.dialect, anchor) {
-            (Dialect::Latex, Some(owner)) if self.owner == "host" => {
-                format!("\\hyperref[comp:{owner}]{{{value}}}")
-            }
-            (Dialect::Typst, Some(owner)) if self.owner == "host" => {
-                format!("#link(<comp:{owner}>)[{value}]")
-            }
-            _ => value,
+        match (self.dialect, native_owner(self.project, self.owner)) {
+            (Dialect::Latex, true) => format!("\\hyperlink{{sch:{target}}}{{{value}}}"),
+            (Dialect::Typst, true) => format!("#link(<sch:{target}>)[{value}]"),
+            (Dialect::Latex, false) => format!("\\href{{scholium-ref:{target}}}{{{value}}}"),
+            (Dialect::Typst, false) => format!("#link(\"scholium-ref:{target}\")[{value}]"),
         }
     }
 
@@ -108,8 +103,9 @@ impl Ctx<'_> {
 pub(crate) fn native_owner(project: &Project, owner: &str) -> bool {
     owner == "host"
         || project.component(owner).is_some_and(|component| {
-            matches!(component.bridge, crate::ir::Bridge::Include)
-                && component.dialect == project.host
+            matches!(component.bridge, crate::ir::Bridge::Convert)
+                || (matches!(component.bridge, crate::ir::Bridge::Include)
+                    && component.dialect == project.host)
         })
 }
 
@@ -160,14 +156,14 @@ pub(crate) fn host_source(ctx: &Ctx<'_>) -> Result<String, Diagnostic> {
     let mut document = String::new();
     document.push_str(&out);
     document.push_str("\\end{document}\n");
-    Ok(document.replace("\\begin{document}\n", &format!("\\begin{{document}}\n{defs}")))
+    Ok(document.replace(
+        "\\begin{document}\n",
+        &format!("\\begin{{document}}\n{defs}"),
+    ))
 }
 
 /// 生成同方言组件的片段（被宿主 `\input`）。
-pub(crate) fn include_fragment(
-    ctx: &Ctx<'_>,
-    component: &Component,
-) -> Result<String, Diagnostic> {
+pub(crate) fn include_fragment(ctx: &Ctx<'_>, component: &Component) -> Result<String, Diagnostic> {
     let mut out = String::new();
     let mut defs = String::new();
     for decl in ctx
@@ -191,6 +187,9 @@ pub(crate) fn standalone_source(
     ctx: &Ctx<'_>,
     component: &Component,
 ) -> Result<String, Diagnostic> {
+    if component.placement == crate::ir::Placement::Inline {
+        return crate::inline_vector::source(ctx, component);
+    }
     let mut out = String::new();
     out.push_str(&preamble(ctx.project, component.dialect));
     out.push_str("\\begin{document}\n");
@@ -234,6 +233,9 @@ pub(crate) fn preamble(project: &Project, _dialect: Dialect) -> String {
 
 /// 生成一个块的 LaTeX 源码。
 fn latex_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Diagnostic> {
+    if let Some(label) = block.label() {
+        let _ = writeln!(out, "\\hypertarget{{sch:{label}}}{{}}");
+    }
     match block {
         Block::Heading { level, text } => {
             let command = if *level <= 1 { "section" } else { "subsection" };
@@ -244,7 +246,11 @@ fn latex_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
         }
         Block::PageBreak => out.push_str("\\newpage\n"),
         Block::Table(spec) => latex_longtable(spec, out),
-        Block::Equation { label, math, display } => {
+        Block::Equation {
+            label,
+            math,
+            display,
+        } => {
             let body = math.to_latex()?;
             if *display {
                 let marker = marker_for(label);
@@ -256,18 +262,21 @@ fn latex_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
                 let _ = writeln!(out, "${body}$");
             }
         }
-        Block::Figure { label, caption, plot } => latex_plot(label, caption, plot, out),
+        Block::Figure {
+            label,
+            caption,
+            plot,
+        } => latex_plot(label, caption, plot, out),
         Block::ForeignFigure {
             label,
             caption,
             component,
         } => {
-            let width = 0.55;
             let _ = write!(
                 out,
                 "\\begin{{figure}}[htbp]\n\\centering\n\
                  \\phantomsection\\label{{comp:{component}}}%\n\
-                 \\includegraphics[width={width}\\linewidth]{{{component}.pdf}}\n\
+                 \\input{{{component}-embed.tex}}\n\
                  \\caption{{{} {}}}\n\\label{{{label}}}\n\\end{{figure}}\n",
                 escape_latex(caption),
                 marker_for(label)
@@ -277,8 +286,8 @@ fn latex_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
             let Some(found) = ctx.project.component(component) else {
                 return Ok(());
             };
-            if found.placement == crate::ir::Placement::Inline && found.dialect != ctx.dialect {
-                inline_foreign(found, ctx, out)?;
+            if matches!(found.bridge, crate::ir::Bridge::Vector) {
+                let _ = writeln!(out, "\\input{{{component}-embed.tex}}");
                 return Ok(());
             }
             if ctx.unscoped {
@@ -306,29 +315,6 @@ fn latex_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
             let _ = writeln!(out, "\\vspace*{{{height:.2}pt}}");
         }
     }
-    Ok(())
-}
-
-/// Render the verified inline subset in the host engine. A foreign vector is
-/// only a block carrier; inline content must enter the host line box so its
-/// baseline and links remain part of the final document.
-fn inline_foreign(
-    component: &Component,
-    ctx: &Ctx<'_>,
-    out: &mut String,
-) -> Result<(), Diagnostic> {
-    out.push(' ');
-    for block in &component.body {
-        match block {
-            Block::Para(text) => out.push_str(&escape_latex(text)),
-            Block::Equation { math, display: false, .. } => {
-                write!(out, "${}$", math.to_latex()?).expect("String write cannot fail");
-            }
-            Block::Ref { target, page } => out.push_str(&ctx.reference(target, *page)),
-            _ => return Err(Diagnostic::new("inline-content-unsupported", format!("行内组件 `{}` 含未验证内容", component.id))),
-        }
-    }
-    out.push(' ');
     Ok(())
 }
 

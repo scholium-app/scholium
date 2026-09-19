@@ -11,6 +11,7 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+lopdf = { version = "=0.38.0", default-features = false }
 # 锁定候选版本；编译后端版本必须随报告记录。
 typst = "=0.15.1"
 # PagedDocument / Page 等产物类型在 typst-layout 里，需要直接依赖。

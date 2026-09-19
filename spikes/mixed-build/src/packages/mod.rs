@@ -90,9 +90,16 @@ fn export(project: &Project, built: &Path, package: &Path, mixed: bool) -> io::R
     let main = format!("main.{}", extension(project.host));
     fs::copy(built.join(&main), package.join(&main))?;
     for component in &project.components {
-        let source = format!("{}.{}", component.id, extension(component.dialect));
+        let dialect = if matches!(component.bridge, Bridge::Convert) {
+            project.host
+        } else {
+            component.dialect
+        };
+        let source = format!("{}.{}", component.id, extension(dialect));
         fs::copy(built.join(&source), package.join(&source))?;
         if !mixed && matches!(component.bridge, Bridge::Vector) {
+            let overlay = format!("{}-embed.{}", component.id, extension(project.host));
+            fs::copy(built.join(&overlay), package.join(&overlay))?;
             let artifact = format!("{}.pdf", component.id);
             fs::copy(built.join(&artifact), package.join(&artifact))?;
         }
@@ -121,7 +128,7 @@ fn export(project: &Project, built: &Path, package: &Path, mixed: bool) -> io::R
          Standard package needs only its target compiler. Foreign source regeneration needs the other compiler.\n\
          Mixed package needs this version of the spike driver plus XeLaTeX; Typst 0.15.1 is linked in the driver.\n\
          Mixed snapshot.json is the authority for regeneration; included source is a preserved generated projection. Hand-editing that projection is not imported.\n\
-         Embedded foreign content stays artifact-only in the target language. Internal component links/reflow are not preserved.\n"
+         Vector content keeps source-engine paint; supported internal link annotations are reconstructed in host coordinates. Convert explicitly regenerates the supported semantic subset. Other annotation types, arbitrary reflow and PDF accessibility tags are not preserved; unsupported annotations block the build.\n"
         ),
     )?;
     Ok(())

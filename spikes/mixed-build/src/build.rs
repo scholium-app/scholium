@@ -89,9 +89,8 @@ enum HostStop {
     NotConverged,
 }
 
-/// 执行混合构建。
-pub(crate) fn build(project: &Project, plan: &Plan, dir: &Path, max_rounds: usize) -> BuildOutput {
-    let mut output = BuildOutput {
+fn initial_output() -> BuildOutput {
+    BuildOutput {
         outcome: Outcome::NotConverged,
         diagnostics: Vec::new(),
         rounds: Vec::new(),
@@ -99,7 +98,12 @@ pub(crate) fn build(project: &Project, plan: &Plan, dir: &Path, max_rounds: usiz
         component_log: Vec::new(),
         component_text: BTreeMap::new(),
         component_artifacts: BTreeMap::new(),
-    };
+    }
+}
+
+/// 执行混合构建。
+pub(crate) fn build(project: &Project, plan: &Plan, dir: &Path, max_rounds: usize) -> BuildOutput {
+    let mut output = initial_output();
     if let Err(error) = std::fs::create_dir_all(dir) {
         output.diagnostics.push(Diagnostic::new(
             "io",
@@ -133,7 +137,14 @@ pub(crate) fn build(project: &Project, plan: &Plan, dir: &Path, max_rounds: usiz
         }
 
         let observation = match assemble_host(
-            project, plan, dir, &table, &probes, &anchors, &mut next, &mut output,
+            project,
+            plan,
+            dir,
+            &table,
+            &probes,
+            &anchors,
+            &mut next,
+            &mut output,
         ) {
             Ok(observation) => observation,
             Err((stop, problem)) => {
@@ -162,10 +173,7 @@ pub(crate) fn build(project: &Project, plan: &Plan, dir: &Path, max_rounds: usiz
             output.outcome = Outcome::Success;
             return output;
         }
-        if let Some(previous) = seen
-            .iter()
-            .position(|entry| *entry == observed_signature)
-        {
+        if let Some(previous) = seen.iter().position(|entry| *entry == observed_signature) {
             output.diagnostics.push(
                 Diagnostic::new(
                     "reference-oscillation",
@@ -232,9 +240,13 @@ fn build_components(
             owner: &component.id,
             unscoped: project.unscoped_control,
         };
-        if matches!(component.bridge, Bridge::Include) {
+        if matches!(component.bridge, Bridge::Include | Bridge::Convert) {
+            let ctx = Ctx {
+                dialect: project.host,
+                ..ctx
+            };
             // 同方言：只产出可被宿主 `\input` / `#include` 的源码片段。
-            let (path, source) = match component.dialect {
+            let (path, source) = match project.host {
                 Dialect::Latex => (
                     dir.join(format!("{}.tex", component.id)),
                     generate::include_fragment(&ctx, component),
@@ -272,6 +284,7 @@ fn build_components(
             format!("{}（{}）", observed.text, component.dialect.name()),
         );
         if matches!(component.bridge, Bridge::Vector) {
+            crate::vector_pdf::overlay::write(project, &component.id, dir)?;
             output.component_artifacts.insert(
                 component.id.clone(),
                 dir.join(format!("{}.pdf", component.id)),
@@ -331,6 +344,9 @@ fn compile_latex_component(
         "组件 {} LaTeX 编译成功，{} 页，产物 {}.pdf",
         component.id, run.pages, component.id
     ));
+    if component.placement == crate::ir::Placement::Inline {
+        crate::inline_vector::latex_depth(dir, &component.id)?;
+    }
     Ok(ComponentObserved {
         numbers: run
             .labels
@@ -366,6 +382,16 @@ fn compile_typst_component(
         ));
     }
     let artifact = export_component(dir, component, &run)?;
+    if component.placement == crate::ir::Placement::Inline {
+        let depth = run
+            .inline_depth
+            .ok_or_else(|| Diagnostic::new("inline-metrics", "missing Typst line baseline"))?;
+        std::fs::write(
+            dir.join(format!("{}-depth.json", component.id)),
+            depth.to_string(),
+        )
+        .map_err(|e| Diagnostic::new("inline-metrics", e.to_string()))?;
+    }
     output
         .component_log
         .push(format!("组件 {} Typst 编译成功，{artifact}", component.id));
@@ -418,9 +444,9 @@ fn assemble_host(
     let _ = std::fs::write(&source_path, &source);
 
     match plan.host {
-        Dialect::Latex => observe_latex(dir, project, plan, next).map_err(|problem| {
-            (HostStop::Failed, problem)
-        }),
+        Dialect::Latex => {
+            observe_latex(dir, project, plan, next).map_err(|problem| (HostStop::Failed, problem))
+        }
         Dialect::Typst => {
             let mut typst_probes = probes.to_vec();
             typst_probes.extend(anchors.iter().cloned());
@@ -457,9 +483,8 @@ fn assemble_host(
                     ),
                 ));
             }
-            observe_typst(&run, dir, project, plan, next).map_err(|problem| {
-                (HostStop::Failed, problem)
-            })
+            observe_typst(&run, dir, project, plan, next)
+                .map_err(|problem| (HostStop::Failed, problem))
         }
     }
 }

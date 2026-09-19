@@ -6,7 +6,7 @@
 use std::collections::BTreeMap;
 
 use crate::diag::Diagnostic;
-use crate::ir::{Bridge, Block, Dialect, MacroDecl, Placement, Project, SymbolInfo, SymbolKind};
+use crate::ir::{Block, Bridge, Dialect, MacroDecl, Placement, Project, SymbolInfo, SymbolKind};
 
 /// 校验通过后的可执行计划。
 pub(crate) struct Plan {
@@ -88,6 +88,7 @@ pub(crate) fn plan(project: &Project) -> Result<Plan, Vec<Diagnostic>> {
         }
     }
     check_inline_content(project, &mut problems);
+    crate::conversion::validate(project, &mut problems);
     detect_cycles(project, &mut problems);
 
     // ---- 符号表 ----
@@ -125,10 +126,7 @@ pub(crate) fn plan(project: &Project) -> Result<Plan, Vec<Diagnostic>> {
     // ---- 宏表：按 (名字, 作用域) 唯一 ----
     for decl in &project.macros {
         let bucket = macros.entry(decl.name.clone()).or_default();
-        if let Some(previous) = bucket
-            .iter()
-            .find(|existing| existing.scope == decl.scope)
-        {
+        if let Some(previous) = bucket.iter().find(|existing| existing.scope == decl.scope) {
             problems.push(Diagnostic::new(
                 "scope-conflict",
                 format!(
@@ -171,7 +169,11 @@ pub(crate) fn plan(project: &Project) -> Result<Plan, Vec<Diagnostic>> {
         return Err(problems);
     }
 
-    let mut steps = vec![format!("宿主 = {}（{}）", project.host.name(), project.name)];
+    let mut steps = vec![format!(
+        "宿主 = {}（{}）",
+        project.host.name(),
+        project.name
+    )];
     for component in &project.components {
         let bridge = match &component.bridge {
             Bridge::Macro { contract } => format!("macro（合约 {contract}）"),
@@ -187,7 +189,15 @@ pub(crate) fn plan(project: &Project) -> Result<Plan, Vec<Diagnostic>> {
     }
     let symbol_list = symbols
         .values()
-        .map(|symbol| format!("{}:{}@{}/{}", symbol.id, symbol.kind.name(), symbol.owner, symbol.scope))
+        .map(|symbol| {
+            format!(
+                "{}:{}@{}/{}",
+                symbol.id,
+                symbol.kind.name(),
+                symbol.owner,
+                symbol.scope
+            )
+        })
         .collect::<Vec<_>>()
         .join(", ");
     steps.push(format!("符号表 {symbol_list}"));
@@ -211,12 +221,20 @@ fn check_inline_content(project: &Project, problems: &mut Vec<Diagnostic>) {
         {
             continue;
         }
-        let supported = component.body.iter().all(|block| matches!(block,
-            Block::Equation { display: false, .. } | Block::Ref { .. })
-            || matches!(block, Block::Para(text) if !text.contains(['\n', '\r'])));
+        let supported = component.body.iter().all(|block| {
+            matches!(
+                block,
+                Block::Equation { display: false, .. } | Block::Ref { .. }
+            ) || matches!(block, Block::Para(text) if !text.contains(['\n', '\r']))
+        });
         if !supported {
-            problems.push(Diagnostic::new("inline-content-unsupported",
-                format!("行内组件 `{}` 含块级或未验证内容；仅支持单行文本、行内公式与引用", component.id)));
+            problems.push(Diagnostic::new(
+                "inline-content-unsupported",
+                format!(
+                    "行内组件 `{}` 含块级或未验证内容；仅支持单行文本、行内公式与引用",
+                    component.id
+                ),
+            ));
         }
     }
 }
@@ -272,7 +290,9 @@ fn check_blocks(
                     problems.push(problem.hint(format!("公式 `{label}` 无法源生成为宿主源码")));
                 }
             }
-            Block::ForeignFigure { label, component, .. } => match project.component(component) {
+            Block::ForeignFigure {
+                label, component, ..
+            } => match project.component(component) {
                 None => problems.push(Diagnostic::new(
                     "component-missing",
                     format!("`{label}` 要求嵌入不存在的组件 `{component}`"),

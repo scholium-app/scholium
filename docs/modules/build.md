@@ -92,6 +92,11 @@ key 包含入口内容、依赖内容 hash、profile、工具链版本和安全�
 
 ## 工具链候选与宿主
 
+混排载体合约见 [ADR 0018](../adr/ADR-0018-vector-fidelity-bridge.md)：`Convert` 显式转换已有语义 IR，
+`Vector` 保留源引擎排版。行内载体携带 PDF bp 单位的宽高/下沉量；注释覆盖层与绘制内容使用同一变换。
+PDF 解析必须位于受限 worker，不能在协调器/UI 解析；不支持的注释/动作/目的地必须阻止发布。
+生成的覆盖层属于标准包重建输入，不允许仅最终 PDF 有效而标准包丢失链接。
+
 LaTeX 按 TeX Live 所需引擎（pdfLaTeX/XeLaTeX/LuaLaTeX）→ Tectonic 验证，实际兼容矩阵决定后端，不能假定 Tectonic 完全替换全部引擎。参考[Mogan 工具探测](../research/MOGAN_LATEX.md)报告路径、版本及能力。原生流程使用受控进程；浏览器不能调用本机进程，Typst Worker 与本地 LaTeX WASM 分别验证。远程构建需用户显式选择，缺少后端返回能力诊断而非伪造最终产物。见[WASM](../plan/WASM.md)。
 
 ## 阶段 0 实验进展

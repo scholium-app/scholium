@@ -54,9 +54,7 @@ pub(crate) fn observe_latex(
     // 先取组件锚点所在页：跨引擎引用的"最终页码"必须来自宿主装配结果。
     let mut anchor_pages: BTreeMap<String, u64> = BTreeMap::new();
     for (label, (_, page)) in &run.labels {
-        observation
-            .label_pages
-            .insert(label.clone(), *page);
+        observation.label_pages.insert(label.clone(), *page);
         if let Some(id) = label.strip_prefix("comp:") {
             anchor_pages.insert(id.to_string(), *page);
         }
@@ -95,7 +93,10 @@ pub(crate) fn observe_typst(
     let pdf_path = dir.join("main.pdf");
     if run.ok {
         typst_host::export_pdf(run, &pdf_path).map_err(|error| {
-            Diagnostic::new("host-pdf-export", format!("宿主 Typst 导出 PDF 失败：{error}"))
+            Diagnostic::new(
+                "host-pdf-export",
+                format!("宿主 Typst 导出 PDF 失败：{error}"),
+            )
         })?;
     }
     let mut observation = Observation {
@@ -201,7 +202,10 @@ pub(crate) fn export_component(
     if !svg.contains("<path") {
         return Err(Diagnostic::new(
             "component-artifact",
-            format!("组件 `{}` 的 SVG 不含路径数据，可能是位图载体", component.id),
+            format!(
+                "组件 `{}` 的 SVG 不含路径数据，可能是位图载体",
+                component.id
+            ),
         ));
     }
     let bytes = typst_host::export_pdf(run, &pdf_path).map_err(|error| {
@@ -223,6 +227,10 @@ pub(crate) fn export_component(
 pub(crate) fn component_files(dir: &Path, project: &Project) -> Vec<(String, Entry)> {
     let mut files = Vec::new();
     for component in &project.components {
+        let overlay = format!("{}-embed.typ", component.id);
+        if let Ok(text) = std::fs::read_to_string(dir.join(&overlay)) {
+            files.push((overlay, Entry::Text(text)));
+        }
         let artifact = format!("{}.pdf", component.id);
         if let Ok(bytes) = std::fs::read(dir.join(&artifact)) {
             files.push((artifact, Entry::Bytes(bytes)));
@@ -245,7 +253,8 @@ pub(crate) fn signature(table: &RefTable) -> String {
         .iter()
         .map(|(id, resolved)| {
             format!(
-                "{id}={}/{}",
+                "{id}@{}={}/{}",
+                resolved.owner,
                 resolved.number,
                 resolved
                     .page

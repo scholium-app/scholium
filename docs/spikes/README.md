@@ -99,3 +99,4 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 | 团队语言窗口门禁 | [0032-team-window-gate.md](SPK-0032-team-window-gate.md) | 单窗口三成员顺序提交/切换/旧草稿拒绝通过；不含真实网络和协作撤销。 |
 | 构建入口与运行时审查 | [0033-build-entry-audit.md](SPK-0033-build-entry-audit.md) | PDF 探针白名单收紧，安全 5/5、混合构建 36/36；旧受信实验与资源例外明确，安全出口不升级。 |
 | 源码组件行内与引用 | [0034-native-include-fidelity.md](SPK-0034-native-include-fidelity.md) | 修复同语言 include 内部符号双向链接，双宿主 PDF 行内检查通过；跨语言矢量行内与内部注释仍未覆盖。 |
+| 跨语言矢量保真 | [0035-vector-fidelity.md](SPK-0035-vector-fidelity.md) | 紧致行盒/下沉量、深公式裁剪、链接矩形与同页精确目标；显式 Convert 与注释拒绝矩阵。 |

@@ -1,0 +1,54 @@
+   Compiling scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build)
+    Finished `release` profile [optimized] target(s) in 6.46s
+     Running unittests src/main.rs (spikes/mixed-build/target/release/deps/scholium_spike_mixed_build-246e40b6f8dc5ba7)
+
+running 14 tests
+test fidelity_tests::inline_equations_cannot_publish_unresolved_number_references ... ok
+test fidelity_tests::vector_repetition_and_wrong_placement_are_rejected ... ok
+test fidelity_tests::inline_source_include_rejects_block_content ... ok
+test pdf_evidence::tests::unreadable_pdf_does_not_count_as_vector ... ok
+test fidelity_tests::conversion_never_silently_accepts_raw_or_macros ... ok
+test packages::tests::traversal_component_is_rejected_before_export ... ok
+test fidelity_tests::foreign_inline_conversion_accepts_verified_inline_subset ... ok
+test latex::tests::symlink_input_is_rejected_before_compilation ... ok
+test vector_pdf::tests::annotations_outside_link_subset_fail_instead_of_disappearing ... ok
+test vector_pdf::tests::unsafe_actions_and_uris_fail_but_https_is_preserved ... ok
+test pdf_sandbox::tests::rejects_symlinks_oversize_and_malformed_artifacts ... ok
+test latex::tests::failed_compile_cannot_leave_a_previous_pdf_as_current_output ... ok
+test pdf_sandbox::tests::reduced_profile_inspects_a_valid_pdf_with_all_four_tools ... ok
+test latex::tests::compiler_preserves_project_inputs_but_cannot_read_private_files ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.34s
+
+     Running tests/exit_status.rs (spikes/mixed-build/target/release/deps/exit_status-0adac5fef107001c)
+
+running 2 tests
+test unknown_fixture_is_an_error ... ok
+test sandbox_tools_ignore_host_path_and_setup_failures_reach_the_caller ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.97s
+
+     Running tests/include_links.rs (spikes/mixed-build/target/release/deps/include_links-be632dc711298138)
+
+running 3 tests
+test included_internal_symbols_link_both_ways_in_both_hosts ... ok
+test deep_vector_formula_keeps_same_source_baseline ... ok
+test foreign_inline_bridges_preserve_host_line_and_destination ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 26.19s
+
+     Running tests/typst_isolation.rs (spikes/mixed-build/target/release/deps/typst_isolation-9be5e0ab22e223d3)
+
+running 3 tests
+test ordinary_typst_rebuild_still_publishes_a_pdf ... ok
+test undeclared_resources_do_not_become_available_inside_worker ... ok
+test expensive_typst_is_stopped_by_worker_budget_without_publishing ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.32s
+
+     Running tests/vector_links.rs (spikes/mixed-build/target/release/deps/vector_links-b049a59b9852f3a3)
+
+running 1 test
+test vector_links_and_exact_destinations_survive_both_hosts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.75s

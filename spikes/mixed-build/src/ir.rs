@@ -57,33 +57,127 @@ struct SymMap {
 
 /// 受支持的符号表。
 const SYMBOLS: &[SymMap] = &[
-    SymMap { name: "alpha", latex: "\\alpha", typst: "alpha" },
-    SymMap { name: "beta", latex: "\\beta", typst: "beta" },
-    SymMap { name: "gamma", latex: "\\gamma", typst: "gamma" },
-    SymMap { name: "delta", latex: "\\delta", typst: "delta" },
-    SymMap { name: "lambda", latex: "\\lambda", typst: "lambda" },
-    SymMap { name: "mu", latex: "\\mu", typst: "mu" },
-    SymMap { name: "pi", latex: "\\pi", typst: "pi" },
-    SymMap { name: "sigma", latex: "\\sigma", typst: "sigma" },
-    SymMap { name: "theta", latex: "\\theta", typst: "theta" },
-    SymMap { name: "omega", latex: "\\omega", typst: "omega" },
-    SymMap { name: "infty", latex: "\\infty", typst: "infinity" },
-    SymMap { name: "cdot", latex: "\\cdot", typst: "dot" },
-    SymMap { name: "pm", latex: "\\pm", typst: "plus.minus" },
-    SymMap { name: "times", latex: "\\times", typst: "times" },
-    SymMap { name: "le", latex: "\\le", typst: "lt.eq" },
-    SymMap { name: "ge", latex: "\\ge", typst: "gt.eq" },
-    SymMap { name: "ne", latex: "\\ne", typst: "eq.not" },
-    SymMap { name: "approx", latex: "\\approx", typst: "approx" },
-    SymMap { name: "to", latex: "\\to", typst: "arrow.r" },
-    SymMap { name: "partial", latex: "\\partial", typst: "diff" },
-    SymMap { name: "sum", latex: "\\sum", typst: "sum" },
-    SymMap { name: "prod", latex: "\\prod", typst: "product" },
-    SymMap { name: "int", latex: "\\int", typst: "integral" },
+    SymMap {
+        name: "alpha",
+        latex: "\\alpha",
+        typst: "alpha",
+    },
+    SymMap {
+        name: "beta",
+        latex: "\\beta",
+        typst: "beta",
+    },
+    SymMap {
+        name: "gamma",
+        latex: "\\gamma",
+        typst: "gamma",
+    },
+    SymMap {
+        name: "delta",
+        latex: "\\delta",
+        typst: "delta",
+    },
+    SymMap {
+        name: "lambda",
+        latex: "\\lambda",
+        typst: "lambda",
+    },
+    SymMap {
+        name: "mu",
+        latex: "\\mu",
+        typst: "mu",
+    },
+    SymMap {
+        name: "pi",
+        latex: "\\pi",
+        typst: "pi",
+    },
+    SymMap {
+        name: "sigma",
+        latex: "\\sigma",
+        typst: "sigma",
+    },
+    SymMap {
+        name: "theta",
+        latex: "\\theta",
+        typst: "theta",
+    },
+    SymMap {
+        name: "omega",
+        latex: "\\omega",
+        typst: "omega",
+    },
+    SymMap {
+        name: "infty",
+        latex: "\\infty",
+        typst: "infinity",
+    },
+    SymMap {
+        name: "cdot",
+        latex: "\\cdot",
+        typst: "dot",
+    },
+    SymMap {
+        name: "pm",
+        latex: "\\pm",
+        typst: "plus.minus",
+    },
+    SymMap {
+        name: "times",
+        latex: "\\times",
+        typst: "times",
+    },
+    SymMap {
+        name: "le",
+        latex: "\\le",
+        typst: "lt.eq",
+    },
+    SymMap {
+        name: "ge",
+        latex: "\\ge",
+        typst: "gt.eq",
+    },
+    SymMap {
+        name: "ne",
+        latex: "\\ne",
+        typst: "eq.not",
+    },
+    SymMap {
+        name: "approx",
+        latex: "\\approx",
+        typst: "approx",
+    },
+    SymMap {
+        name: "to",
+        latex: "\\to",
+        typst: "arrow.r",
+    },
+    SymMap {
+        name: "partial",
+        latex: "\\partial",
+        typst: "diff",
+    },
+    SymMap {
+        name: "sum",
+        latex: "\\sum",
+        typst: "sum",
+    },
+    SymMap {
+        name: "prod",
+        latex: "\\prod",
+        typst: "product",
+    },
+    SymMap {
+        name: "int",
+        latex: "\\int",
+        typst: "integral",
+    },
 ];
 
 /// 受支持的函数名。
-const FUNCTIONS: &[&str] = &["sin", "cos", "tan", "log", "ln", "exp", "lim", "det", "max", "min"];
+const FUNCTIONS: &[&str] = &[
+    "sin", "cos", "tan", "log", "ln", "exp", "lim", "det", "max", "min",
+];
 
 impl Math {
     /// 检查是否落在受支持子集内；返回第一条不支持项的诊断。
@@ -378,6 +472,8 @@ pub(crate) struct MacroDecl {
 pub(crate) enum Bridge {
     /// 同方言：作为真实源码 `\input` / `#include`，语义完整。
     Include,
+    /// Explicit conversion of the supported semantic subset into host source.
+    Convert,
     /// 异方言：编译为矢量载体后嵌入，布局保真但语义冻结。
     Vector,
     /// 异方言宏：按声明合约在宿主侧重实现。
@@ -389,6 +485,7 @@ impl Bridge {
     pub(crate) fn name(&self) -> &'static str {
         match self {
             Self::Include => "include",
+            Self::Convert => "convert",
             Self::Vector => "vector",
             Self::Macro { .. } => "macro",
         }
@@ -459,10 +556,12 @@ impl Project {
     /// 遍历宿主与全部组件里的块。
     pub(crate) fn all_blocks(&self) -> impl Iterator<Item = (&str, &Block)> {
         let host = self.body.iter().map(|block| ("host", block));
-        let components = self
-            .components
-            .iter()
-            .flat_map(|component| component.body.iter().map(move |block| (component.id.as_str(), block)));
+        let components = self.components.iter().flat_map(|component| {
+            component
+                .body
+                .iter()
+                .map(move |block| (component.id.as_str(), block))
+        });
         host.chain(components)
     }
 

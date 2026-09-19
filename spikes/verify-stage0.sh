@@ -91,6 +91,8 @@ if want items; then
     run "$s" cargo run --release --offline --manifest-path "spikes/$s/Cargo.toml"
   done
   run "source include fidelity" cargo test --release --offline --manifest-path spikes/mixed-build/Cargo.toml --test include_links
+  run "vector annotation fidelity" cargo test --release --offline --manifest-path spikes/mixed-build/Cargo.toml --test vector_links
+  run "PDF annotation boundary" cargo test --release --offline --manifest-path spikes/mixed-build/Cargo.toml --bin scholium-spike-mixed-build vector_pdf::tests
   run "inline placement gate" cargo test --release --offline --manifest-path spikes/mixed-build/Cargo.toml --bin scholium-spike-mixed-build fidelity_tests
 fi
 

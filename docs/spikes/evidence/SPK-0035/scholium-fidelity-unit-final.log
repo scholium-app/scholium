@@ -1,0 +1,21 @@
+   Compiling scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build)
+    Finished `release` profile [optimized] target(s) in 2.73s
+     Running unittests src/main.rs (spikes/mixed-build/target/release/deps/scholium_spike_mixed_build-246e40b6f8dc5ba7)
+
+running 14 tests
+test fidelity_tests::inline_equations_cannot_publish_unresolved_number_references ... ok
+test fidelity_tests::inline_source_include_rejects_block_content ... ok
+test fidelity_tests::vector_repetition_and_wrong_placement_are_rejected ... ok
+test fidelity_tests::foreign_inline_conversion_accepts_verified_inline_subset ... ok
+test fidelity_tests::conversion_never_silently_accepts_raw_or_macros ... ok
+test packages::tests::traversal_component_is_rejected_before_export ... ok
+test latex::tests::symlink_input_is_rejected_before_compilation ... ok
+test pdf_evidence::tests::unreadable_pdf_does_not_count_as_vector ... ok
+test vector_pdf::tests::annotations_outside_link_subset_fail_instead_of_disappearing ... ok
+test vector_pdf::tests::unsafe_actions_and_uris_fail_but_https_is_preserved ... ok
+test pdf_sandbox::tests::rejects_symlinks_oversize_and_malformed_artifacts ... ok
+test latex::tests::failed_compile_cannot_leave_a_previous_pdf_as_current_output ... ok
+test pdf_sandbox::tests::reduced_profile_inspects_a_valid_pdf_with_all_four_tools ... ok
+test latex::tests::compiler_preserves_project_inputs_but_cannot_read_private_files ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.34s

@@ -8,22 +8,25 @@
 //! - `cargo run --release -- <id>`    只跑某个夹具（id 见夹具列表）
 
 mod build;
+mod conversion;
 mod diag;
+#[cfg(test)]
+mod fidelity_tests;
 mod fixtures;
 mod generate;
 mod generate_typst;
 mod host;
+mod inline_vector;
 mod ir;
 mod latex;
+mod packages;
 mod pdf_evidence;
 mod pdf_sandbox;
-mod packages;
 mod plan;
 mod typst_host;
+mod vector_pdf;
 mod verify;
 mod world;
-#[cfg(test)]
-mod fidelity_tests;
 
 use std::path::PathBuf;
 
@@ -31,6 +34,9 @@ use diag::Evidence;
 use ir::Dialect;
 
 fn main() -> std::process::ExitCode {
+    if let Some(result) = vector_pdf::worker::dispatch() {
+        return result;
+    }
     if let Some(result) = typst_host::worker::dispatch() {
         return result;
     }

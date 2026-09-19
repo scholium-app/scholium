@@ -49,33 +49,37 @@ fn included_internal_symbols_link_both_ways_in_both_hosts() {
 }
 
 #[test]
-fn foreign_inline_vector_preserves_host_line_and_destination() {
-    for host in ["Latex", "Typst"] {
-        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join(format!("out/foreign-inline-{host}-{}", std::process::id()));
-        fs::create_dir_all(&root).expect("fixture");
-        fs::write(
-            root.join("snapshot.json"),
-            serde_json::to_vec(&foreign_inline_snapshot(host)).expect("json"),
-        )
-        .expect("write");
-        let output = Command::new(env!("CARGO_BIN_EXE_scholium-spike-mixed-build"))
-            .args(["--rebuild"])
-            .arg(&root)
-            .arg(root.join("rebuilt"))
-            .output()
-            .expect("driver");
-        assert!(
-            output.status.success(),
-            "{host}: {}",
-            String::from_utf8_lossy(&output.stderr)
-        );
-        let xml = inspect_pdf(&root);
-        assert_inline(&xml);
-        assert!(
-            xml.contains("#1\""),
-            "{host}: inline destination missing: {xml}"
-        );
+fn foreign_inline_bridges_preserve_host_line_and_destination() {
+    for bridge in ["Convert", "Vector"] {
+        for host in ["Latex", "Typst"] {
+            let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(format!(
+                "out/foreign-inline-{bridge}-{host}-{}",
+                std::process::id()
+            ));
+            fs::create_dir_all(&root).expect("fixture");
+            fs::write(
+                root.join("snapshot.json"),
+                serde_json::to_vec(&foreign_inline_snapshot(host, bridge)).expect("json"),
+            )
+            .expect("write");
+            let output = Command::new(env!("CARGO_BIN_EXE_scholium-spike-mixed-build"))
+                .args(["--rebuild"])
+                .arg(&root)
+                .arg(root.join("rebuilt"))
+                .output()
+                .expect("driver");
+            assert!(
+                output.status.success(),
+                "{host}: {}",
+                String::from_utf8_lossy(&output.stderr)
+            );
+            let xml = inspect_pdf(&root);
+            assert_inline(&xml);
+            assert!(
+                xml.contains("#1\""),
+                "{host}: inline destination missing: {xml}"
+            );
+        }
     }
 }
 
@@ -175,14 +179,114 @@ fn snapshot(dialect: &str) -> serde_json::Value {
             "depends_on":[],"body":[{"Equation":{"label":"eq:inline","math":{"Ident":"x"},"display":false}}]}]}})
 }
 
-fn foreign_inline_snapshot(host: &str) -> serde_json::Value {
+fn foreign_inline_snapshot(host: &str, bridge: &str) -> serde_json::Value {
     let foreign = if host == "Latex" { "Typst" } else { "Latex" };
     let mut value = snapshot(host);
     let components = value["project"]["components"]
         .as_array_mut()
         .expect("components");
     components[1]["dialect"] = json!(foreign);
-    components[1]["bridge"] = json!("Vector");
+    components[1]["bridge"] = json!(bridge);
     components[1]["body"] = json!([{"Equation":{"label":"eq:inline","math":{"Ident":"x"},"display":false}}, {"Ref":{"target":"eq:host","page":true}}]);
     value
+}
+
+#[test]
+fn deep_vector_formula_keeps_same_source_baseline() {
+    for host in ["Latex", "Typst"] {
+        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join(format!("out/deep-inline-{host}-{}", std::process::id()));
+        fs::create_dir_all(&root).expect("fixture");
+        let value = deep_snapshot(host);
+        fs::write(
+            root.join("snapshot.json"),
+            serde_json::to_vec(&value).expect("json"),
+        )
+        .expect("write");
+        let run = Command::new(env!("CARGO_BIN_EXE_scholium-spike-mixed-build"))
+            .arg("--rebuild")
+            .arg(&root)
+            .arg(root.join("rebuilt"))
+            .output()
+            .expect("driver");
+        assert!(
+            run.status.success(),
+            "{}",
+            String::from_utf8_lossy(&run.stderr)
+        );
+        let xml = inspect_pdf(&root);
+        fs::write(root.join("links.xml"), &xml).expect("evidence");
+        assert_baseline(&xml);
+        let read = |name: &str| -> serde_json::Value {
+            serde_json::from_slice(
+                &fs::read(root.join(format!("rebuilt/{name}.json"))).expect("metrics"),
+            )
+            .expect("json")
+        };
+        let depth = read("deep-depth").as_f64().expect("depth");
+        let simple_depth = read("inline-depth").as_f64().expect("depth");
+        assert!(
+            depth > simple_depth + 1.0,
+            "deep denominator must change measured descent"
+        );
+        // The fixture's nested fraction is taller than 20bp in both source
+        // engines. The old font-strut crop was only 11.67bp and cut off ink.
+        assert!(read("deep-geometry")["size"][1].as_f64().expect("height") > 20.0);
+        println!(
+            "{host}: simple depth {simple_depth}, deep depth {depth}; {}",
+            root.display()
+        );
+    }
+}
+
+fn deep_snapshot(host: &str) -> serde_json::Value {
+    let mut value = foreign_inline_snapshot(host, "Vector");
+    let simple = json!({"Equation":{"label":"eq:simple","math":{"Ident":"g"},"display":false}});
+    let deep = json!({"Equation":{"label":"eq:deep","math":{"Frac":[{"Sqrt":{"Sup":[{"Ident":"a"},{"Num":2}]}},{"Frac":[{"Num":1},{"Sub":[{"Ident":"b"},{"Num":2}]}]}]},"display":false}});
+    let mut other = value["project"]["components"][1].clone();
+    other["id"] = json!("deep");
+    other["scope"] = json!("deep");
+    other["body"] = json!([simple.clone(), deep]);
+    other["body"][0]["Equation"]["label"] = json!("eq:sentinel");
+    value["project"]["components"][1]["body"] = json!([simple]);
+    value["project"]["components"]
+        .as_array_mut()
+        .expect("components")
+        .push(other);
+    value["project"]["components"]
+        .as_array_mut()
+        .expect("components")
+        .remove(0);
+    value["project"]["body"] = json!([{"Para":"INLINELEFT"},{"IncludeSection":{"component":"inline"}},
+        {"Para":"GAP"},{"IncludeSection":{"component":"deep"}},{"Para":"INLINERIGHT"}]);
+    value
+}
+
+fn assert_baseline(xml: &str) {
+    let sentinels: Vec<_> = xml
+        .lines()
+        .filter(|line| {
+            let mut in_tag = false;
+            let text: String = line
+                .chars()
+                .filter(|c| match c {
+                    '<' => {
+                        in_tag = true;
+                        false
+                    }
+                    '>' => {
+                        in_tag = false;
+                        false
+                    }
+                    _ => !in_tag,
+                })
+                .collect();
+            matches!(text.trim(), "g" | "𝑔")
+        })
+        .collect();
+    assert_eq!(sentinels.len(), 2, "missing baseline sentinels: {xml}");
+    assert!(
+        (coordinate(sentinels[0], "top") - coordinate(sentinels[1], "top")).abs() <= 1,
+        "source baseline differs after embedding: {xml}"
+    );
 }

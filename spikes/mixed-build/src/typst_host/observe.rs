@@ -1,5 +1,14 @@
 //! Read layout evidence inside the isolated worker.
 use super::*;
+pub(super) fn baseline(frame: &Frame) -> Option<f64> {
+    if frame.has_baseline() {
+        return Some(frame.baseline().to_pt());
+    }
+    frame.items().find_map(|(pos, item)| match item {
+        FrameItem::Group(group) => baseline(&group.frame).map(|b| pos.y.to_pt() + b),
+        _ => None,
+    })
+}
 /// 某标签所在的物理页码。
 pub(super) fn label_position(
     introspector: &typst_layout::PagedIntrospector,

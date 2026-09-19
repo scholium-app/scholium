@@ -32,10 +32,7 @@ pub(crate) fn host_source(ctx: &Ctx<'_>) -> Result<String, Diagnostic> {
 }
 
 /// 生成同方言组件片段（被宿主 `#include`）。
-pub(crate) fn include_fragment(
-    ctx: &Ctx<'_>,
-    component: &Component,
-) -> Result<String, Diagnostic> {
+pub(crate) fn include_fragment(ctx: &Ctx<'_>, component: &Component) -> Result<String, Diagnostic> {
     let mut out = String::new();
     for decl in ctx
         .plan
@@ -57,6 +54,9 @@ pub(crate) fn standalone_source(
     ctx: &Ctx<'_>,
     component: &Component,
 ) -> Result<String, Diagnostic> {
+    if component.placement == crate::ir::Placement::Inline {
+        return crate::inline_vector::source(ctx, component);
+    }
     let mut out = preamble(ctx.project, false);
     for decl in ctx
         .plan
@@ -75,11 +75,7 @@ pub(crate) fn standalone_source(
 
 /// Typst 前言。
 pub(crate) fn preamble(project: &Project, host: bool) -> String {
-    let (width, height) = if host {
-        project.page
-    } else {
-        COMPONENT_PAGE
-    };
+    let (width, height) = if host { project.page } else { COMPONENT_PAGE };
     let mut out = String::new();
     let _ = write!(
         out,
@@ -125,7 +121,11 @@ fn typst_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
                 number_probe("figure.where(kind: table)", &spec.label)
             );
         }
-        Block::Equation { label, math, display } => {
+        Block::Equation {
+            label,
+            math,
+            display,
+        } => {
             let body = math.to_typst()?;
             if *display {
                 let _ = write!(
@@ -139,7 +139,11 @@ fn typst_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
                 let _ = writeln!(out, "${body}$");
             }
         }
-        Block::Figure { label, caption, plot } => {
+        Block::Figure {
+            label,
+            caption,
+            plot,
+        } => {
             let _ = write!(
                 out,
                 "#figure(\n{},\n  kind: \"figure\",\n  supplement: [图],\n  caption: [{} {}],\n) <{}>\n{}\n",
@@ -158,7 +162,7 @@ fn typst_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
             let _ = write!(
                 out,
                 "#metadata(none) <comp:{component}>\n\
-                 #figure(\n  image(\"{component}.pdf\", width: 55%),\n  \
+                 #figure(\n  include \"{component}-embed.typ\",\n  \
                  kind: \"figure\",\n  supplement: [图],\n  caption: [{} {}],\n) <{}>\n{}\n",
                 escape_typst(caption),
                 crate::generate::marker_for(label),
@@ -167,11 +171,12 @@ fn typst_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
             );
         }
         Block::IncludeSection { component } => {
-            if let Some(found) = ctx.project.component(component)
-                && found.placement == crate::ir::Placement::Inline
-                && found.dialect != ctx.dialect
+            if ctx
+                .project
+                .component(component)
+                .is_some_and(|c| matches!(c.bridge, crate::ir::Bridge::Vector))
             {
-                inline_foreign(found, ctx, out)?;
+                let _ = writeln!(out, "#include \"{component}-embed.typ\"");
                 return Ok(());
             }
             if ctx.unscoped {
@@ -209,28 +214,6 @@ fn typst_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
             let _ = writeln!(out, "#block(height: {height:.2}pt)");
         }
     }
-    Ok(())
-}
-
-/// Render the verified inline subset in the host line box. This is the
-/// cross-language bridge; block-level foreign content still uses a vector.
-fn inline_foreign(
-    component: &Component,
-    ctx: &Ctx<'_>,
-    out: &mut String,
-) -> Result<(), Diagnostic> {
-    out.push(' ');
-    for block in &component.body {
-        match block {
-            Block::Para(text) => out.push_str(&escape_typst(text)),
-            Block::Equation { math, display: false, .. } => {
-                write!(out, "${}$", math.to_typst()?).expect("String write cannot fail");
-            }
-            Block::Ref { target, page } => out.push_str(&ctx.reference(target, *page)),
-            _ => return Err(Diagnostic::new("inline-content-unsupported", format!("行内组件 `{}` 含未验证内容", component.id))),
-        }
-    }
-    out.push(' ');
     Ok(())
 }
 
@@ -291,7 +274,11 @@ fn plot_box(plot: &PlotSpec) -> String {
     let mut curve = String::from("#place(top + left, curve(\n");
     for (index, (x, y)) in plot.points.iter().enumerate() {
         let (px, py) = map(*x, *y);
-        let call = if index == 0 { "curve.move" } else { "curve.line" };
+        let call = if index == 0 {
+            "curve.move"
+        } else {
+            "curve.line"
+        };
         let _ = writeln!(curve, "      {call}(({px:.1}pt, {py:.1}pt)),");
     }
     curve.push_str("      stroke: 1pt + blue,\n    ))");
@@ -303,9 +290,7 @@ fn plot_box(plot: &PlotSpec) -> String {
 
 /// 编号探针：把引擎分配的编号写进带标签的元数据，构建循环据此读回。
 fn number_probe(counter: &str, label: &str) -> String {
-    format!(
-        "#context [#metadata(str(counter({counter}).get().first())) <num:{label}>]"
-    )
+    format!("#context [#metadata(str(counter({counter}).get().first())) <num:{label}>]")
 }
 
 /// 宏定义。

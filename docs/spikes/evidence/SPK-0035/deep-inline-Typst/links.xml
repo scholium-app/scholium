@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pdf2xml SYSTEM "pdf2xml.dtd">
+
+<pdf2xml producer="poppler" version="26.08.0">
+<page number="1" position="absolute" top="0" left="0" height="1080" width="630">
+	<fontspec id="0" size="17" family="AYTUGF+LibertinusSerif" color="#000000"/>
+	<fontspec id="1" size="16" family="VBUSPG+CMMI10" color="#000000"/>
+	<fontspec id="2" size="16" family="JZPHNL+CMMI10" color="#000000"/>
+	<fontspec id="3" size="12" family="HZZAFZ+CMSY8" color="#000000"/>
+	<fontspec id="4" size="12" family="TZSENW+CMMI8" color="#000000"/>
+	<fontspec id="5" size="9" family="JOHSZC+CMR6" color="#000000"/>
+	<fontspec id="6" size="9" family="DDEFBY+CMMI6" color="#000000"/>
+<text top="75" left="72" width="91" height="19" font="0">INLINELEFT </text>
+<text top="79" left="175" width="8" height="15" font="1"><i>g</i></text>
+<text top="75" left="188" width="36" height="19" font="0">GAP </text>
+<text top="79" left="237" width="8" height="15" font="2"><i>g</i></text>
+<text top="62" left="255" width="11" height="16" font="3"><i>√</i></text>
+<text top="75" left="266" width="7" height="11" font="4"><i>a</i></text>
+<text top="74" left="273" width="5" height="8" font="5">2</text>
+<text top="87" left="264" width="5" height="8" font="5">1</text>
+<text top="96" left="262" width="5" height="8" font="6"><i>b</i></text>
+<text top="99" left="266" width="5" height="8" font="5">2</text>
+<text top="75" left="285" width="99" height="19" font="0">INLINERIGHT</text>
+<text top="1026" left="311" width="8" height="19" font="0">1</text>
+</page>
+</pdf2xml>

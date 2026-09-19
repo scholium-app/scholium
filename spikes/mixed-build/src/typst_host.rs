@@ -33,6 +33,8 @@ pub(crate) struct LinkRecord {
 /// 一次 Typst 编译的观测结果。
 #[derive(Default, Serialize, Deserialize)]
 pub(crate) struct TypstRun {
+    /// First explicit line-frame baseline, converted to descent in PDF bp.
+    pub(crate) inline_depth: Option<f64>,
     /// 编译产物。
     pub(crate) pdf: Vec<u8>,
     /// First-page SVG evidence, exported in the worker.
@@ -100,6 +102,10 @@ fn compile_local(main: &str, files: &[(String, Entry)], probes: &[String]) -> Ty
     };
     run.ok = true;
     let document = &document;
+    run.inline_depth = document
+        .pages()
+        .first()
+        .and_then(|p| baseline(&p.frame).map(|b| p.frame.height().to_pt() - b));
     for (index, page) in document.pages().iter().enumerate() {
         run.text_pages.push(page_text(page));
         collect_links(&page.frame, (index + 1) as u64, document, &mut run.links);
@@ -115,7 +121,7 @@ fn compile_local(main: &str, files: &[(String, Entry)], probes: &[String]) -> Ty
             run.numbers.insert(probe.clone(), number);
         }
     }
-    match pdf_bytes(document) {
+    match pdf_bytes(document, probes) {
         Ok(bytes) => run.pdf = bytes,
         Err(error) => {
             run.ok = false;
@@ -139,12 +145,31 @@ fn page_svg(document: &PagedDocument, page: usize) -> Option<String> {
 }
 
 /// 把文档导出为真实 PDF。
-fn pdf_bytes(document: &PagedDocument) -> Result<Vec<u8>, String> {
+fn pdf_bytes(document: &PagedDocument, probes: &[String]) -> Result<Vec<u8>, String> {
     let options = typst_pdf::PdfOptions {
         ident: typst::foundations::Smart::Auto,
         ..Default::default()
     };
-    match typst_pdf::pdf(document, &options) {
+    let introspector = document.introspector();
+    let anchors: Vec<_> = probes
+        .iter()
+        .filter_map(|name| {
+            let label = Label::new(PicoStr::intern(name))?;
+            let content = introspector.query_label(label).ok().or_else(|| {
+                let label = Label::new(PicoStr::intern(&format!("sch:{name}")))?;
+                introspector.query_label(label).ok()
+            })?;
+            let location = content.location()?;
+            Some((location, format!("sch:{name}").into()))
+        })
+        .collect();
+    let resolver = typst::model::LateLinkResolver::new(None, introspector.as_ref());
+    match typst_pdf::pdf_in_bundle(
+        document,
+        &options,
+        &anchors,
+        typst::comemo::Track::track(&resolver),
+    ) {
         Ok(bytes) => Ok(bytes),
         Err(errors) => Err(errors
             .iter()
