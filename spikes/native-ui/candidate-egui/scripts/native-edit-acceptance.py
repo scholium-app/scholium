@@ -592,6 +592,57 @@ def session_typst_recovery():
             os.environ['SCHOLIUM_SPIKE_SESSION'] = previous
 
 
+def team_ime_barrier():
+    previous = os.environ.get('SCHOLIUM_SPIKE_TEAM')
+    os.environ['SCHOLIUM_SPIKE_TEAM'] = '1'
+    try:
+        with Window('team-ime') as w:
+            call('fcitx5-remote', '-c')
+            assert w.source().queryComponent().grabFocus()
+            time.sleep(0.3)
+            w.key(29, 102)
+            original = w.text()
+            draft = w.source().queryText().getText(0, -1)
+            call('fcitx5-remote', '-s', 'rime')
+            call('fcitx5-remote', '-o')
+            time.sleep(0.5)
+            w.type('nihao')
+            wait_for(lambda: any('输入法组合中' in (n.name or '') for n in w.nodes()), 'composition barrier missing')
+            for name in ['Bob', '请求切换到 Typst', '应用源码', '丢弃草稿并从正文生成']:
+                # AccessKit's AT-SPI adapter reports ENABLED for some disabled button roles.
+                # Exercise the action and verify the authority/draft instead of trusting that flag.
+                try:
+                    w.named(name).queryAction().doAction(0)
+                except NotImplementedError:
+                    pass
+                time.sleep(0.3)
+                assert any('输入法组合中' in (n.name or '') for n in w.nodes()), f'{name} interrupted composition'
+                assert any('Alice 许可 epoch 1' in (n.name or '') for n in w.nodes()), f'{name} changed actor/epoch'
+                assert not any('正在切换到' in (n.name or '') for n in w.nodes()), f'{name} started language switch'
+            assert w.text() == original, 'preedit published to shared body'
+            w.key(1)
+            wait_for(lambda: not any('输入法组合中' in (n.name or '') for n in w.nodes()), 'cancel did not release barrier')
+            assert w.source().queryText().getText(0, -1) == draft
+            w.type('nihao')
+            w.key(57)
+            wait_for(lambda: not any('输入法组合中' in (n.name or '') for n in w.nodes()), 'commit did not release barrier')
+            committed = w.source().queryText().getText(0, -1)
+            assert committed != draft and any('\u4e00' <= c <= '\u9fff' for c in committed[:2])
+            assert w.text() == original, 'IME bypassed explicit source commit'
+            call('fcitx5-remote', '-c')
+            w.action('Bob')
+            assert w.source().queryText().getText(0, -1) == draft, 'Alice composition leaked into Bob'
+            w.action('Alice')
+            assert w.source().queryText().getText(0, -1) == committed
+            w.action('应用源码')
+            assert w.text() != original and any('已接受 1' in (n.name or '') for n in w.nodes())
+    finally:
+        if previous is None:
+            os.environ.pop('SCHOLIUM_SPIKE_TEAM', None)
+        else:
+            os.environ['SCHOLIUM_SPIKE_TEAM'] = previous
+
+
 def team_language_gate():
     previous = os.environ.get('SCHOLIUM_SPIKE_TEAM')
     os.environ['SCHOLIUM_SPIKE_TEAM'] = '1'
@@ -664,7 +715,7 @@ try:
     for name in saved:
         prop(name, 'true')
     call('systemctl', '--user', 'start', 'ydotool')
-    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit, session_recovery, session_typst_recovery, team_language_gate]:
+    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit, session_recovery, session_typst_recovery, team_language_gate, team_ime_barrier]:
         if len(sys.argv) > 2 and case.__name__ not in sys.argv[2:]:
             continue
         try:

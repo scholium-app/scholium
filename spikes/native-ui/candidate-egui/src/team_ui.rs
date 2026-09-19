@@ -9,6 +9,8 @@ pub(super) struct TeamUi {
     drafts: [(Session, String); 3],
     epochs: [u64; 3],
     message: String,
+    composing: bool,
+    composition_frame: bool,
 }
 
 impl TeamUi {
@@ -23,6 +25,8 @@ impl TeamUi {
             selected: 0,
             epochs: [1; 3],
             message: String::new(),
+            composing: false,
+            composition_frame: false,
             drafts: std::array::from_fn(|_| {
                 let source = Session::new(core, Dialect::Latex);
                 let text = source.generated.text.clone();
@@ -33,6 +37,43 @@ impl TeamUi {
 }
 
 impl SpikeApp {
+    pub(super) fn source_composition_blocked(&self) -> bool {
+        self.team
+            .as_ref()
+            .is_some_and(|team| team.composition_frame)
+    }
+
+    pub(super) fn observe_team_ime(&mut self, ctx: &egui::Context) {
+        let Some(team) = &mut self.team else {
+            return;
+        };
+        let focused =
+            ctx.memory(|memory| memory.has_focus(egui::Id::new(("team_source", team.selected))));
+        team.composition_frame = team.composing;
+        if !focused && !team.composing {
+            return;
+        }
+        ctx.input(|input| {
+            for event in &input.events {
+                match event {
+                    egui::Event::Ime(egui::ImeEvent::Preedit { text, .. }) => {
+                        team.composing = !text.is_empty();
+                        team.composition_frame = true;
+                    }
+                    egui::Event::Ime(egui::ImeEvent::Commit(_)) => {
+                        team.composing = false;
+                        team.composition_frame = true;
+                    }
+                    _ => {}
+                }
+            }
+        });
+        // The finishing event must reach the old TextEdit before any actor/epoch changes.
+        if team.composition_frame {
+            ctx.request_repaint();
+        }
+    }
+
     pub(super) fn draw_team(&mut self, ui: &mut egui::Ui) {
         let Some(mut team) = self.team.take() else {
             return;
@@ -40,9 +81,11 @@ impl SpikeApp {
         let mut selected = team.selected;
         ui.horizontal_wrapped(|ui| {
             ui.label("团队门禁 spike · 三成员模拟 · 正文只读");
-            for (index, name) in MEMBERS.iter().enumerate() {
-                ui.selectable_value(&mut selected, index, *name);
-            }
+            ui.add_enabled_ui(!team.composition_frame, |ui| {
+                for (index, name) in MEMBERS.iter().enumerate() {
+                    ui.selectable_value(&mut selected, index, *name);
+                }
+            });
         });
         if selected != team.selected {
             team.drafts[team.selected] = (self.source.clone(), self.source_buffer.clone());
@@ -54,7 +97,10 @@ impl SpikeApp {
             "活动语言 {:?} · epoch {} · {} 许可 epoch {} · 已接受 {}",
             status.dialect, status.epoch, MEMBERS[selected], status.client_epoch, status.accepted
         ));
-        team_controls(ui, &mut team);
+        ui.add_enabled_ui(!team.composition_frame, |ui| team_controls(ui, &mut team));
+        if team.composition_frame {
+            ui.label("输入法组合中：请先选词或取消，再提交或切换成员/语言");
+        }
         ui.label(format!(
             "本地草稿 epoch {} · {}",
             team.epochs[selected], team.message
@@ -69,6 +115,10 @@ impl SpikeApp {
     }
 
     pub(super) fn commit_team_source(&mut self) {
+        if self.source_composition_blocked() {
+            self.last_event = "输入法组合尚未结束，未提交源码".into();
+            return;
+        }
         let Some(team) = &mut self.team else {
             return;
         };

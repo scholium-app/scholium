@@ -6,6 +6,91 @@ fn app() -> SpikeApp {
     app
 }
 
+fn ime_frame(app: &mut SpikeApp, ctx: &egui::Context, events: Vec<egui::Event>) {
+    let mut output = ctx.run_ui(
+        egui::RawInput {
+            events,
+            ..Default::default()
+        },
+        |ui| app.draw(ui),
+    );
+    output.textures_delta.clear();
+}
+
+#[test]
+fn composition_cannot_publish_and_finishing_frame_keeps_actor_epoch() {
+    let ctx = egui::Context::default();
+    let mut app = app();
+    app.focus_source = true;
+    ime_frame(&mut app, &ctx, vec![]);
+    ime_frame(&mut app, &ctx, vec![]);
+    let before = app.plain_text();
+    let history = app.core.history().len();
+    ime_frame(
+        &mut app,
+        &ctx,
+        vec![egui::Event::Ime(egui::ImeEvent::Preedit {
+            text: "nihao".into(),
+            active_range_chars: None,
+        })],
+    );
+    assert!(app.source_buffer.contains("nihao"));
+    assert!(app.source_composition_blocked());
+    app.commit_team_source();
+    assert_eq!(app.plain_text(), before);
+    assert_eq!(app.core.history().len(), history);
+    assert_eq!(
+        app.team
+            .as_ref()
+            .expect("team")
+            .coordinator
+            .status(0)
+            .accepted,
+        0
+    );
+    ime_frame(
+        &mut app,
+        &ctx,
+        vec![egui::Event::Ime(egui::ImeEvent::Commit("你好".into()))],
+    );
+    assert!(
+        app.source_composition_blocked(),
+        "commit must reach the original editor this frame"
+    );
+    assert!(app.source_buffer.contains("你好"));
+    assert!(!app.source_buffer.contains("nihao"));
+    ime_frame(&mut app, &ctx, vec![]);
+    assert!(!app.source_composition_blocked());
+    assert_eq!(app.team.as_ref().expect("team").selected, 0);
+    assert_eq!(app.team.as_ref().expect("team").epochs[0], 1);
+}
+
+#[test]
+fn cancelled_composition_restores_draft_without_history() {
+    let ctx = egui::Context::default();
+    let mut app = app();
+    app.focus_source = true;
+    ime_frame(&mut app, &ctx, vec![]);
+    ime_frame(&mut app, &ctx, vec![]);
+    let draft = app.source_buffer.clone();
+    let history = app.core.history().len();
+    for text in ["zhong", ""] {
+        ime_frame(
+            &mut app,
+            &ctx,
+            vec![egui::Event::Ime(egui::ImeEvent::Preedit {
+                text: text.into(),
+                active_range_chars: None,
+            })],
+        );
+        assert!(app.source_composition_blocked());
+    }
+    ime_frame(&mut app, &ctx, vec![]);
+    assert!(!app.source_composition_blocked());
+    assert_eq!(app.source_buffer, draft);
+    assert_eq!(app.core.history().len(), history);
+}
+
 #[test]
 fn coordinator_and_reconcile_publish_together_or_not_at_all() {
     let mut app = app();

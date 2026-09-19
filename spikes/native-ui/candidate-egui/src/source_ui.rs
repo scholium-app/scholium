@@ -6,20 +6,13 @@ impl SpikeApp {
     pub(super) fn draw_source(&mut self, ui: &mut egui::Ui) {
         ui.vertical(|ui| {
             ui.heading("源码 Source Studio");
+            let composition_blocked = self.source_composition_blocked();
             let dirty = self.source_buffer != self.source.generated.text;
-            if !dirty && self.source.revision != self.core.revision() {
+            if !composition_blocked && !dirty && self.source.revision != self.core.revision() {
                 self.source = Session::new(&self.core, self.source.dialect);
                 self.source_buffer = self.source.generated.text.clone();
             }
-            ui.horizontal(|ui| {
-                for (label, dialect) in [("LaTeX", Dialect::Latex), ("Typst", Dialect::Typst)] {
-                    if ui.add_enabled(!dirty, egui::Button::new(label)).clicked() {
-                        self.source = Session::new(&self.core, dialect);
-                        self.source_buffer = self.source.generated.text.clone();
-                        self.team_regenerated();
-                    }
-                }
-            });
+            self.source_dialect_controls(ui, !dirty && !composition_blocked);
             ui.label(format!(
                 "{:?} · 基于 revision {}",
                 self.source.dialect, self.source.revision
@@ -38,18 +31,39 @@ impl SpikeApp {
                 self.focus_source = false;
                 self.initial_focus_done = true;
             }
-            if ui.button("应用源码").clicked() {
+            if ui
+                .add_enabled(!composition_blocked, egui::Button::new("应用源码"))
+                .clicked()
+            {
                 self.commit_source();
             }
             if self.source.revision != self.core.revision() && dirty {
                 ui.label("正文已改变。草稿保留；复制草稿后可从正文重新生成。");
             }
-            if ui.button("丢弃草稿并从正文生成").clicked() {
+            if ui
+                .add_enabled(
+                    !composition_blocked,
+                    egui::Button::new("丢弃草稿并从正文生成"),
+                )
+                .clicked()
+            {
                 self.source = Session::new(&self.core, self.source.dialect);
                 self.source_buffer = self.source.generated.text.clone();
                 self.team_regenerated();
             }
             ui.label("当前仅支持单处可归因编辑；冲突时不修改正文。");
+        });
+    }
+
+    fn source_dialect_controls(&mut self, ui: &mut egui::Ui, enabled: bool) {
+        ui.horizontal(|ui| {
+            for (label, dialect) in [("LaTeX", Dialect::Latex), ("Typst", Dialect::Typst)] {
+                if ui.add_enabled(enabled, egui::Button::new(label)).clicked() {
+                    self.source = Session::new(&self.core, dialect);
+                    self.source_buffer = self.source.generated.text.clone();
+                    self.team_regenerated();
+                }
+            }
         });
     }
 

@@ -199,6 +199,7 @@ impl SpikeApp {
     /// 画一帧。与 eframe 解耦，因此可以在无窗口的测试里用 `Context::run_ui` 驱动。
     pub fn draw(&mut self, ui: &mut egui::Ui) {
         let ctx = ui.ctx().clone();
+        self.observe_team_ime(&ctx);
         self.draw_team(ui);
         self.session_toolbar(ui);
         if self.team.is_none() {
