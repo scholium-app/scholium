@@ -43,6 +43,8 @@ class Window:
             [str(BINARY)],
             stdout=self.log, stderr=self.log)
         self.app = None
+        self.crash = False
+        self.graceful = False
 
     def __enter__(self):
         try:
@@ -78,7 +80,12 @@ class Window:
                 records.append(record)
             (OUT / f'{self.name}.json').write_text(json.dumps(records, ensure_ascii=False, indent=2))
         finally:
-            self.process.terminate()
+            if self.graceful:
+                call('niri', 'msg', 'action', 'close-window', '--id', str(self.window['id']))
+            elif self.crash:
+                self.process.kill()
+            else:
+                self.process.terminate()
             self.process.wait(timeout=5)
             self.log.close()
 
@@ -499,6 +506,92 @@ def continuous_typing():
         (OUT / 'continuous-typing-samples.json').write_text(json.dumps(samples, indent=2))
 
 
+def session_recovery():
+    path = OUT / 'recovery.session.json'
+    path.unlink(missing_ok=True)
+    previous = os.environ.get('SCHOLIUM_SPIKE_SESSION')
+    os.environ['SCHOLIUM_SPIKE_SESSION'] = str(path)
+
+    def durable(w):
+        wait_for(lambda: any(n.name == '会话已持久化' for n in w.nodes()) and
+                 not any(n.name == '有未持久化修改' for n in w.nodes()), 'checkpoint not durable')
+
+    try:
+        with Window('session-save-crash') as w:
+            call('fcitx5-remote', '-c')
+            w.select(0, 0)
+            w.type('RECOVER')
+            body = w.text()
+            w.action('保存会话')
+            durable(w)
+            w.action('重新打开会话')
+            assert w.text() == body
+            assert w.source().queryComponent().grabFocus()
+            w.key(29, 30)
+            w.type('\\frac{unfinished')
+            draft = w.source().queryText().getText(0, -1)
+            durable(w)
+            assert json.loads(path.read_text())['source'] == draft
+            assert w.text() == body, 'draft changed authoritative body'
+            w.crash = True
+        with Window('session-recovered') as w:
+            assert w.text() == body, 'body lost after SIGKILL'
+            assert w.source().queryText().getText(0, -1) == draft, 'invalid draft lost'
+            w.action('重新打开会话')
+            assert w.source().queryText().getText(0, -1) == draft
+            path.write_text('external-corruption')
+            w.select(0, 0)
+            w.type('KEEP')
+            wait_for(lambda: any('文件已被外部修改' in (n.name or '') for n in w.nodes()), 'external conflict missing')
+            assert w.text() == 'KEEP' + body
+            assert path.read_text() == 'external-corruption', 'external change overwritten'
+        with Window('session-corrupt-open') as w:
+            wait_for(lambda: any('会话错误' in (n.name or '') for n in w.nodes()), 'load error missing')
+            w.select(0, 0)
+            before = w.text()
+            w.type('EDITABLE')
+            assert w.text() == 'EDITABLE' + before
+            assert path.read_text() == 'external-corruption'
+    finally:
+        if previous is None:
+            os.environ.pop('SCHOLIUM_SPIKE_SESSION', None)
+        else:
+            os.environ['SCHOLIUM_SPIKE_SESSION'] = previous
+
+
+def session_typst_recovery():
+    path = OUT / 'typst.session.json'
+    path.unlink(missing_ok=True)
+    previous = os.environ.get('SCHOLIUM_SPIKE_SESSION')
+    os.environ['SCHOLIUM_SPIKE_SESSION'] = str(path)
+    try:
+        with Window('session-typst-close') as w:
+            call('fcitx5-remote', '-c')
+            w.action('Typst')
+            assert w.source().queryComponent().grabFocus()
+            w.key(29, 30)
+            w.type('unfinished [')
+            draft = w.source().queryText().getText(0, -1)
+            w.select(0, 0)
+            w.type('STALE')
+            body = w.text()
+            wait_for(lambda: any(n.name == '会话已持久化' for n in w.nodes()) and
+                     not any(n.name == '有未持久化修改' for n in w.nodes()), 'Typst draft not durable')
+            w.graceful = True
+        with Window('session-typst-stale-recovered') as w:
+            assert w.text() == body
+            assert w.source().queryText().getText(0, -1) == draft
+            assert json.loads(path.read_text())['dialect'] == 'Typst'
+            w.action('应用源码')
+            assert w.text() == body, 'stale draft replaced body'
+            assert w.source().queryText().getText(0, -1) == draft
+    finally:
+        if previous is None:
+            os.environ.pop('SCHOLIUM_SPIKE_SESSION', None)
+        else:
+            os.environ['SCHOLIUM_SPIKE_SESSION'] = previous
+
+
 saved = {name: call('busctl', '--user', 'get-property', 'org.a11y.Bus', '/org/a11y/bus',
                     'org.a11y.Status', name).split()[-1] for name in ['IsEnabled', 'ScreenReaderEnabled']}
 ime_name = call('fcitx5-remote', '-n')
@@ -509,7 +602,7 @@ try:
     for name in saved:
         prop(name, 'true')
     call('systemctl', '--user', 'start', 'ydotool')
-    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit]:
+    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit, session_recovery, session_typst_recovery]:
         if len(sys.argv) > 2 and case.__name__ not in sys.argv[2:]:
             continue
         try:

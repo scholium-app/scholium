@@ -2651,7 +2651,9 @@ dependencies = [
  "libc",
  "scholium-spike-core",
  "scholium-spike-reconcile",
+ "serde",
  "serde_json",
+ "thiserror 2.0.20",
 ]
 
 [[package]]

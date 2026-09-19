@@ -15,6 +15,7 @@ mod math_accessibility;
 mod native_edit_tests;
 mod preview;
 mod selection_ui;
+mod session_file;
 mod source_ui;
 mod structure_ui;
 mod text_geometry;
@@ -34,6 +35,7 @@ const LOCAL: ActorId = ActorId(1);
 const CJK_FONT_PATH: &str = "/usr/share/fonts/adobe-source-han-serif/SourceHanSerifCN-Regular.otf";
 /// egui 候选的应用状态。
 pub struct SpikeApp {
+    session_file: Option<session_file::SessionFile>,
     core: Editor,
     layout: Layout,
     layout_revision: u64,
@@ -119,6 +121,7 @@ impl SpikeApp {
 
         let layout_revision = core.revision();
         Self {
+            session_file: session_file::SessionFile::from_env(),
             layout_revision,
             accessible_cache: None,
             text_geometry: Vec::new(),
@@ -187,6 +190,7 @@ impl SpikeApp {
     /// 画一帧。与 eframe 解耦，因此可以在无窗口的测试里用 `Context::run_ui` 驱动。
     pub fn draw(&mut self, ui: &mut egui::Ui) {
         let ctx = ui.ctx().clone();
+        self.session_toolbar(ui);
         self.handle_input(&ctx);
         if self.typst_editor.enabled {
             if self.typst_editor.poll(&ctx, &self.core) {
@@ -281,6 +285,7 @@ impl eframe::App for SpikeApp {
     fn ui(&mut self, ui: &mut egui::Ui, frame: &mut eframe::Frame) {
         self.frame_metrics.observe(frame);
         self.draw(ui);
+        self.session_close(ui.ctx());
     }
 }
 

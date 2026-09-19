@@ -1,0 +1,7 @@
+[
+  {
+    "case": "session_typst_recovery",
+    "result": "Fail",
+    "reason": "Error: atspi_error: Unknown object '/org/a11y/atspi/accessible/0/27355942736141256582125210394085556224' (1)"
+  }
+]

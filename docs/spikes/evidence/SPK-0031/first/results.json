@@ -1,0 +1,7 @@
+[
+  {
+    "case": "session_recovery",
+    "result": "Fail",
+    "reason": "AssertionError: focus changed; injection stopped"
+  }
+]

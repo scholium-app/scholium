@@ -31,6 +31,8 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 
 ## 待补（阶段出口依赖）
 
+[ADR 0015](ADR-0015-ui-session-recovery-spike.md)限定实验会话恢复，不关闭正式 WAL/快照与 schema 决策。
+
 下表是必须补齐的 ADR。"缺文件"表示尚未建立；关闭阶段是该 ADR 必须完成的最晚阶段，对应验证项见
 [路线图](../plan/ROADMAP.md)。每项在开始前必须指定负责人并登记到本表，未指定不得开工。
 
