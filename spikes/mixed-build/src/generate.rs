@@ -277,6 +277,10 @@ fn latex_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
             let Some(found) = ctx.project.component(component) else {
                 return Ok(());
             };
+            if found.placement == crate::ir::Placement::Inline && found.dialect != ctx.dialect {
+                inline_foreign(found, ctx, out)?;
+                return Ok(());
+            }
             if ctx.unscoped {
                 let _ = writeln!(out, "\\input{{{}}}", found.id);
             } else {
@@ -302,6 +306,29 @@ fn latex_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
             let _ = writeln!(out, "\\vspace*{{{height:.2}pt}}");
         }
     }
+    Ok(())
+}
+
+/// Render the verified inline subset in the host engine. A foreign vector is
+/// only a block carrier; inline content must enter the host line box so its
+/// baseline and links remain part of the final document.
+fn inline_foreign(
+    component: &Component,
+    ctx: &Ctx<'_>,
+    out: &mut String,
+) -> Result<(), Diagnostic> {
+    out.push(' ');
+    for block in &component.body {
+        match block {
+            Block::Para(text) => out.push_str(&escape_latex(text)),
+            Block::Equation { math, display: false, .. } => {
+                write!(out, "${}$", math.to_latex()?).expect("String write cannot fail");
+            }
+            Block::Ref { target, page } => out.push_str(&ctx.reference(target, *page)),
+            _ => return Err(Diagnostic::new("inline-content-unsupported", format!("行内组件 `{}` 含未验证内容", component.id))),
+        }
+    }
+    out.push(' ');
     Ok(())
 }
 

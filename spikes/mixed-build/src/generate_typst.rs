@@ -97,6 +97,7 @@ pub(crate) fn preamble(project: &Project, host: bool) -> String {
 }
 
 /// 生成一个块的 Typst 源码。
+#[allow(clippy::too_many_lines)]
 fn typst_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Diagnostic> {
     match block {
         Block::Heading { level, text } => {
@@ -166,6 +167,13 @@ fn typst_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
             );
         }
         Block::IncludeSection { component } => {
+            if let Some(found) = ctx.project.component(component)
+                && found.placement == crate::ir::Placement::Inline
+                && found.dialect != ctx.dialect
+            {
+                inline_foreign(found, ctx, out)?;
+                return Ok(());
+            }
             if ctx.unscoped {
                 // 对照实现：`#include` 在 Typst 里**不会**把定义泄漏进包含者作用域，
                 // 所以这里改成把组件源码原样内联，模拟"直接拼接源码"的天真实现。
@@ -201,6 +209,28 @@ fn typst_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Dia
             let _ = writeln!(out, "#block(height: {height:.2}pt)");
         }
     }
+    Ok(())
+}
+
+/// Render the verified inline subset in the host line box. This is the
+/// cross-language bridge; block-level foreign content still uses a vector.
+fn inline_foreign(
+    component: &Component,
+    ctx: &Ctx<'_>,
+    out: &mut String,
+) -> Result<(), Diagnostic> {
+    out.push(' ');
+    for block in &component.body {
+        match block {
+            Block::Para(text) => out.push_str(&escape_typst(text)),
+            Block::Equation { math, display: false, .. } => {
+                write!(out, "${}$", math.to_typst()?).expect("String write cannot fail");
+            }
+            Block::Ref { target, page } => out.push_str(&ctx.reference(target, *page)),
+            _ => return Err(Diagnostic::new("inline-content-unsupported", format!("行内组件 `{}` 含未验证内容", component.id))),
+        }
+    }
+    out.push(' ');
     Ok(())
 }
 

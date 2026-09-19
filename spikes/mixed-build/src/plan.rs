@@ -65,7 +65,7 @@ pub(crate) fn plan(project: &Project) -> Result<Plan, Vec<Diagnostic>> {
             _ => {}
         }
         if component.placement == Placement::Inline
-            && matches!(component.bridge, Bridge::Vector | Bridge::Macro { .. })
+            && matches!(component.bridge, Bridge::Macro { .. })
         {
             problems.push(
                 Diagnostic::new(
@@ -206,7 +206,9 @@ pub(crate) fn plan(project: &Project) -> Result<Plan, Vec<Diagnostic>> {
 
 fn check_inline_content(project: &Project, problems: &mut Vec<Diagnostic>) {
     for component in &project.components {
-        if component.placement != Placement::Inline || !matches!(component.bridge, Bridge::Include) {
+        if component.placement != Placement::Inline
+            || matches!(component.bridge, Bridge::Macro { .. })
+        {
             continue;
         }
         let supported = component.body.iter().all(|block| matches!(block,

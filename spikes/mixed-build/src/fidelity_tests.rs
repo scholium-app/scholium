@@ -23,17 +23,19 @@ fn inline_source_include_rejects_block_content() {
 }
 
 #[test]
-fn foreign_inline_vector_is_still_explicitly_rejected() {
+fn foreign_inline_vector_accepts_verified_inline_subset() {
     for host in [Dialect::Latex, Dialect::Typst] {
         let mut project = fixtures::make_refs(host);
+        project.components[0].body = vec![Block::Equation {
+            label: "eq:foreign".to_owned(),
+            math: crate::ir::Math::Ident("x".to_owned()),
+            display: false,
+        }];
         project.components[0].placement = Placement::Inline;
-        let problems = plan::plan(&project)
-            .err()
-            .expect("unsupported vector baseline");
         assert!(
-            problems
-                .iter()
-                .any(|p| p.code == "inline-embed-unsupported")
+            plan::plan(&project).is_ok(),
+            "verified inline subset: {:?}",
+            plan::plan(&project).err()
         );
     }
 }

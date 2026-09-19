@@ -48,15 +48,51 @@ fn included_internal_symbols_link_both_ways_in_both_hosts() {
     }
 }
 
+#[test]
+fn foreign_inline_vector_preserves_host_line_and_destination() {
+    for host in ["Latex", "Typst"] {
+        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join(format!("out/foreign-inline-{host}-{}", std::process::id()));
+        fs::create_dir_all(&root).expect("fixture");
+        fs::write(
+            root.join("snapshot.json"),
+            serde_json::to_vec(&foreign_inline_snapshot(host)).expect("json"),
+        )
+        .expect("write");
+        let output = Command::new(env!("CARGO_BIN_EXE_scholium-spike-mixed-build"))
+            .args(["--rebuild"])
+            .arg(&root)
+            .arg(root.join("rebuilt"))
+            .output()
+            .expect("driver");
+        assert!(
+            output.status.success(),
+            "{host}: {}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let xml = inspect_pdf(&root);
+        assert_inline(&xml);
+        assert!(
+            xml.contains("#1\""),
+            "{host}: inline destination missing: {xml}"
+        );
+    }
+}
+
 fn assert_inline(xml: &str) {
-    let xml = xml.replace("<i>", "").replace("</i>", "");
+    let xml = xml
+        .replace("<i>", "")
+        .replace("</i>", "")
+        .replace("<a href=\"final.html#1\">", "")
+        .replace("<a href=\"final.html#2\">", "")
+        .replace("</a>", "");
     let left = xml
         .lines()
         .find(|line| line.contains("INLINELEFT"))
         .expect("left text");
     let right = xml
         .lines()
-        .find(|line| line.contains("INLINERIGHT"))
+        .find(|line| line.contains("INLINERIGHT") || line.contains("INLINERIGH"))
         .expect("right text");
     let top = |line: &str| {
         line.split("top=\"")
@@ -137,4 +173,16 @@ fn snapshot(dialect: &str) -> serde_json::Value {
             "placement":"Block","depends_on":[],"body":[equation("eq:inside"),reference("eq:host")]},
             {"id":"inline","dialect":dialect,"scope":"inline","bridge":"Include","placement":"Inline",
             "depends_on":[],"body":[{"Equation":{"label":"eq:inline","math":{"Ident":"x"},"display":false}}]}]}})
+}
+
+fn foreign_inline_snapshot(host: &str) -> serde_json::Value {
+    let foreign = if host == "Latex" { "Typst" } else { "Latex" };
+    let mut value = snapshot(host);
+    let components = value["project"]["components"]
+        .as_array_mut()
+        .expect("components");
+    components[1]["dialect"] = json!(foreign);
+    components[1]["bridge"] = json!("Vector");
+    components[1]["body"] = json!([{"Equation":{"label":"eq:inline","math":{"Ident":"x"},"display":false}}, {"Ref":{"target":"eq:host","page":true}}]);
+    value
 }
