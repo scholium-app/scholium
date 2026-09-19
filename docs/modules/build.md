@@ -103,3 +103,8 @@ LaTeX 按 TeX Live 所需引擎（pdfLaTeX/XeLaTeX/LuaLaTeX）→ Tectonic 验�
 当前 mixed-build spike 的 Typst 编译、内省和 PDF/SVG 导出已进入独立沙箱 worker，
 见[报告 0018](../spikes/SPK-0018-typst-worker-isolation.md)与[ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。
 每次新进程不保留增量缓存；临时 JSON 不是正式存储或网络协议。
+
+PDF 产物检查使用受信调用方固定选择的 `pdf-probe` 清单，见
+[ADR 0017](../adr/ADR-0017-pdf-probe-runtime.md)：四个 Poppler 工具与字体资源在同一 OS 隔离/预算下执行，
+不暴露 TeX 工具树。入口审查见[报告 0033](../spikes/SPK-0033-build-entry-audit.md)；旧 recovery
+暂存目录不等于安全沙箱，不能接入不可信项目。声明的运行时只读资源是根外访问例外。

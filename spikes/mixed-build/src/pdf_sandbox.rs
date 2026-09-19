@@ -71,6 +71,7 @@ pub(crate) fn run(pdf: &Path, probe: Probe) -> io::Result<Output> {
         ])
         .args(args)
         .env_clear()
+        .env("SCHOLIUM_SANDBOX_PROFILE", "pdf-probe")
         .env("PATH", "/usr/bin")
         .output()?;
     // File redirection puts decompression output under RLIMIT_FSIZE rather than a growing pipe.
@@ -128,6 +129,48 @@ fn read_limited(path: &Path, limit: u64) -> io::Result<Vec<u8>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn reduced_profile_inspects_a_valid_pdf_with_all_four_tools() {
+        let scratch = Scratch::new().expect("scratch");
+        let path = scratch.0.join("valid.pdf");
+        let stream = "BT /F1 12 Tf 20 100 Td (BENIGNCONTROL) Tj ET\n";
+        let objects = [
+            "<< /Type /Catalog /Pages 2 0 R >>".into(),
+            "<< /Type /Pages /Kids [3 0 R] /Count 1 >>".into(),
+            "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 200 200] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>".into(),
+            "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>".into(),
+            format!("<< /Length {} >>\nstream\n{stream}endstream", stream.len()),
+        ];
+        let mut pdf = String::from("%PDF-1.4\n");
+        let mut offsets = Vec::new();
+        for (index, object) in objects.iter().enumerate() {
+            offsets.push(pdf.len());
+            pdf.push_str(&format!("{} 0 obj\n{object}\nendobj\n", index + 1));
+        }
+        let xref = pdf.len();
+        pdf.push_str("xref\n0 6\n0000000000 65535 f \n");
+        for offset in offsets {
+            pdf.push_str(&format!("{offset:010} 00000 n \n"));
+        }
+        pdf.push_str(&format!(
+            "trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n"
+        ));
+        fs::write(&path, pdf).expect("fixture");
+        assert!(
+            String::from_utf8_lossy(&run(&path, Probe::Info).expect("info").stdout)
+                .contains("Pages:")
+        );
+        assert!(
+            String::from_utf8_lossy(&run(&path, Probe::Text(None)).expect("text").stdout)
+                .contains("BENIGNCONTROL")
+        );
+        assert!(
+            String::from_utf8_lossy(&run(&path, Probe::Links).expect("links").stdout)
+                .contains("<page")
+        );
+        assert!(run(&path, Probe::Images).expect("images").status.success());
+    }
+
     #[test]
     fn rejects_symlinks_oversize_and_malformed_artifacts() {
         let scratch = Scratch::new().expect("scratch");

@@ -19,3 +19,19 @@ bash "$root/spikes/toolchain-sandbox.sh" "$work/input" "$work/output" 10 /bin/sh
 '
 test "$(cat "$work/output/control")" = OK
 printf 'PASS: runtime allowlist exposes tools/resources but omits unrelated host trees\n'
+SCHOLIUM_SANDBOX_PROFILE=pdf-probe SCHOLIUM_HOST_SENTINEL=private \
+  bash "$root/spikes/toolchain-sandbox.sh" "$work/input" "$work/output" 10 /bin/sh -ec '
+  read -r value < /project/control || test "$value" = CONTROL
+  test "$value" = CONTROL
+  test -z "${SCHOLIUM_HOST_SENTINEL:-}"
+  for tool in pdfinfo pdftotext pdftohtml pdfimages; do test -x /usr/bin/$tool; done
+  for tool in xelatex xetex kpsewhich bash bwrap curl cp; do test ! -e /usr/bin/$tool; done
+  test ! -e /usr/share/texmf-dist
+  test ! -e /etc/hostname
+  test ! -e /usr/share/doc
+  test -d /usr/share/fonts
+  if (printf changed > /project/control) 2>/dev/null; then exit 1; fi
+  printf PDF-PROBE-OK > /work/pdf-probe-control
+'
+test "$(cat "$work/output/pdf-probe-control")" = PDF-PROBE-OK
+printf 'PASS: PDF probe exposes inspection tools, read-only input and writable output; omits TeX and unrelated tools\n'

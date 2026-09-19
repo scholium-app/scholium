@@ -108,6 +108,7 @@ if want security; then
   run "untrusted-input" cargo run --release --offline --manifest-path spikes/untrusted-input/Cargo.toml
   run "mixed-build compiler isolation" cargo test --release --offline --manifest-path spikes/mixed-build/Cargo.toml --bin scholium-spike-mixed-build latex::tests
   run "Typst worker isolation" cargo test --release --offline --manifest-path spikes/mixed-build/Cargo.toml --test typst_isolation
+  run "PDF artifact probe isolation" cargo test --release --offline --manifest-path spikes/mixed-build/Cargo.toml --bin scholium-spike-mixed-build pdf_sandbox::tests
   run "runtime mount allowlist" bash spikes/tests/runtime-mounts.sh
 fi
 

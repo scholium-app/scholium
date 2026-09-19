@@ -48,6 +48,10 @@ case "${SCHOLIUM_SANDBOX_PROFILE:-full}" in
     runtime_tools=(prlimit)
     runtime_paths=(/usr/share/fonts /usr/share/fontconfig /etc/fonts)
     ;;
+  pdf-probe)
+    runtime_tools=(sh prlimit pdfinfo pdftotext pdftohtml pdfimages)
+    runtime_paths=(/usr/share/fonts /usr/share/fontconfig /etc/fonts /usr/share/poppler)
+    ;;
   *) echo 'unknown sandbox profile' >&2; exit 2 ;;
 esac
 for tool in "${runtime_tools[@]}"; do

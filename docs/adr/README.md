@@ -31,6 +31,8 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 
 ## 待补（阶段出口依赖）
 
+[ADR 0017](ADR-0017-pdf-probe-runtime.md)为 PDF 产物探针固定独立最小用途清单。
+
 [ADR 0016](ADR-0016-team-window-gate-spike.md)限定团队门禁的单窗口模拟适配，不替代正式协作协议。
 
 [ADR 0015](ADR-0015-ui-session-recovery-spike.md)限定实验会话恢复，不关闭正式 WAL/快照与 schema 决策。

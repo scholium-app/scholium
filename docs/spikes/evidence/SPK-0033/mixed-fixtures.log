@@ -1,0 +1,541 @@
+   Compiling scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build)
+    Finished `release` profile [optimized] target(s) in 5.33s
+     Running `spikes/mixed-build/target/release/scholium-spike-mixed-build`
+=== 混合构建 spike（阶段 0 第 7 项）===
+仓库：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build
+产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out
+宿主：xelatex（TeX Live 2026）+ typst crate 0.15.1
+
+---- 夹具 T1-longtable [1 正文+跨页表格] / 宿主 latex / 期望 成功 ----
+  意图：同一份 IR 在两种宿主各自生成跨页表格，表头在续页重复
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/T1-longtable-latex
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = latex（longtable） ｜ 符号表 tab:long:table@host/host ｜ 符号 1 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[tab:long=1/1] ｜ 第2轮 用[tab:long=1/1] 观测[tab:long=1/1] 收敛
+    [PASS] 发布最终产物：25289 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/T1-longtable-latex/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/T1-longtable-latex/main.tex
+    [PASS] 页数：3 页
+    [PASS] 表格跨页：含填充行的页数 3 / 总页数 3
+    [PASS] 表头在续页重复：含表头的页数 3
+    [PASS] 表格页码：读回值 = 标记实际所在页：标记 `MKtablong` 在 Some(1)，读回 Some(1)
+    [PASS] 表格编号读回：编号 "1"
+    [PASS] 正文引用出现在产物中：查找 `表1`
+    [PASS] 页码引用与真实页一致：查找 `第1页`
+  → 夹具判定：Pass
+
+---- 夹具 T1-longtable [1 正文+跨页表格] / 宿主 typst / 期望 成功 ----
+  意图：同一份 IR 在两种宿主各自生成跨页表格，表头在续页重复
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/T1-longtable-typst
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = typst（longtable） ｜ 符号表 tab:long:table@host/host ｜ 符号 1 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[tab:long=1/1] ｜ 第2轮 用[tab:long=1/1] 观测[tab:long=1/1] 收敛
+    [PASS] 发布最终产物：82536 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/T1-longtable-typst/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/T1-longtable-typst/main.typ
+    [PASS] 页数：3 页
+    [PASS] 表格跨页：含填充行的页数 3 / 总页数 3
+    [PASS] 表头在续页重复：含表头的页数 3
+    [PASS] 表格页码：读回值 = 标记实际所在页：标记 `MKtablong` 在 Some(1)，读回 Some(1)
+    [PASS] 表格编号读回：编号 "1"
+    [PASS] 正文引用出现在产物中：查找 `表1`
+    [PASS] 页码引用与真实页一致：查找 `第1页`
+  → 夹具判定：Pass
+
+---- 夹具 T1-bad-cols [1 正文+跨页表格] / 宿主 latex / 期望 被拒绝 ----
+  意图：行格数与声明列数不符，必须在计划阶段拒绝而不是静默错位
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/T1-bad-cols-latex
+  结果：plan-rejected（期望 被拒绝）
+    [PASS] 计划阶段拒绝：1 条诊断
+    [PASS] 诊断可读：[table-columns] `tab:bad` 第 9 行有 1 格，声明列数为 3（提示：列数不匹配会让表格静默错位，必须在计划阶段拒绝）
+    [PASS] 命中预期诊断码 `table-columns`：实际诊断码 ["table-columns"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 T1-bad-cols [1 正文+跨页表格] / 宿主 typst / 期望 被拒绝 ----
+  意图：行格数与声明列数不符，必须在计划阶段拒绝而不是静默错位
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/T1-bad-cols-typst
+  结果：plan-rejected（期望 被拒绝）
+    [PASS] 计划阶段拒绝：1 条诊断
+    [PASS] 诊断可读：[table-columns] `tab:bad` 第 9 行有 1 格，声明列数为 3（提示：列数不匹配会让表格静默错位，必须在计划阶段拒绝）
+    [PASS] 命中预期诊断码 `table-columns`：实际诊断码 ["table-columns"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 E1-equation [2 公式] / 宿主 latex / 期望 成功 ----
+  意图：行内公式 + 两个编号公式 + 编号引用与页码引用
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/E1-equation-latex
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = latex（equations） ｜ 符号表 eq:inline:equation@host/host, eq:int:equation@host/host, eq:mass:equation@host/host ｜ 符号 3 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[eq:int=2/1, eq:mass=1/1] ｜ 第2轮 用[eq:int=2/1, eq:mass=1/1] 观测[eq:int=2/1, eq:mass=1/1] 收敛
+    [PASS] 发布最终产物：24939 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/E1-equation-latex/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/E1-equation-latex/main.tex
+    [PASS] 页数：1 页
+    [PASS] 两个公式编号正确且互异：eq:mass="1" eq:int="2"
+    [PASS] eq:mass 页码：读回值 = 标记实际所在页：标记 `MKeqmass` 在 Some(1)，读回 Some(1)
+    [PASS] eq:mass 标记与编号都在产物里：标记 Some(1)，编号 "1"
+    [PASS] eq:int 页码：读回值 = 标记实际所在页：标记 `MKeqint` 在 Some(1)，读回 Some(1)
+    [PASS] eq:int 标记与编号都在产物里：标记 Some(1)，编号 "2"
+    [PASS] eq:int 的页码引用与真实页一致：查找 `第1页`
+  → 夹具判定：Pass
+
+---- 夹具 E1-equation [2 公式] / 宿主 typst / 期望 成功 ----
+  意图：行内公式 + 两个编号公式 + 编号引用与页码引用
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/E1-equation-typst
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = typst（equations） ｜ 符号表 eq:inline:equation@host/host, eq:int:equation@host/host, eq:mass:equation@host/host ｜ 符号 3 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[eq:inline=?/-, eq:int=2/1, eq:mass=1/1] ｜ 第2轮 用[eq:inline=?/-, eq:int=2/1, eq:mass=1/1] 观测[eq:inline=?/-, eq:int=2/1, eq:mass=1/1] 收敛
+    [PASS] 发布最终产物：21507 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/E1-equation-typst/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/E1-equation-typst/main.typ
+    [PASS] 页数：1 页
+    [PASS] 两个公式编号正确且互异：eq:mass="1" eq:int="2"
+    [PASS] eq:mass 页码：读回值 = 标记实际所在页：标记 `MKeqmass` 在 Some(1)，读回 Some(1)
+    [PASS] eq:mass 标记与编号都在产物里：标记 Some(1)，编号 "1"
+    [PASS] eq:int 页码：读回值 = 标记实际所在页：标记 `MKeqint` 在 Some(1)，读回 Some(1)
+    [PASS] eq:int 标记与编号都在产物里：标记 Some(1)，编号 "2"
+    [PASS] eq:int 的页码引用与真实页一致：查找 `第1页`
+  → 夹具判定：Pass
+
+---- 夹具 E1-unsupported [2 公式] / 宿主 latex / 期望 被拒绝 ----
+  意图：公式含受支持子集之外的命令，翻译器必须拒绝
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/E1-unsupported-latex
+  结果：plan-rejected（期望 被拒绝）
+    [PASS] 计划阶段拒绝：1 条诊断
+    [PASS] 诊断可读：[math-call-unsupported] 数学命令 `notacommand` 不在受支持命令表内（提示：公式 `eq:bad` 无法源生成为宿主源码）
+    [PASS] 命中预期诊断码 `math-call-unsupported`：实际诊断码 ["math-call-unsupported"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 E1-unsupported [2 公式] / 宿主 typst / 期望 被拒绝 ----
+  意图：公式含受支持子集之外的命令，翻译器必须拒绝
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/E1-unsupported-typst
+  结果：plan-rejected（期望 被拒绝）
+    [PASS] 计划阶段拒绝：1 条诊断
+    [PASS] 诊断可读：[math-call-unsupported] 数学命令 `notacommand` 不在受支持命令表内（提示：公式 `eq:bad` 无法源生成为宿主源码）
+    [PASS] 命中预期诊断码 `math-call-unsupported`：实际诊断码 ["math-call-unsupported"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 G1-plot-native [3 图表] / 宿主 latex / 期望 成功 ----
+  意图：宿主原生绘图：LaTeX 用 pgfplots，Typst 用 curve
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G1-plot-native-latex
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = latex（native-plot） ｜ 符号表 fig:native:figure@host/host ｜ 符号 1 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[fig:native=1/1] ｜ 第2轮 用[fig:native=1/1] 观测[fig:native=1/1] 收敛
+    [PASS] 发布最终产物：21064 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G1-plot-native-latex/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G1-plot-native-latex/main.tex
+    [PASS] 页数：1 页
+    [PASS] fig:native 页码：读回值 = 标记实际所在页：标记 `MKfignative` 在 Some(1)，读回 Some(1)
+    [PASS] fig:native 编号读回：编号 "1"
+    [PASS] fig:native 引用出现在产物中：查找 `图1`
+    [PASS] fig:native 最终件为矢量（无栅格图像）：pdfimages 列出 Ok(0) 个栅格图像（宿主 latex）
+  → 夹具判定：Pass
+
+---- 夹具 G1-plot-native [3 图表] / 宿主 typst / 期望 成功 ----
+  意图：宿主原生绘图：LaTeX 用 pgfplots，Typst 用 curve
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G1-plot-native-typst
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = typst（native-plot） ｜ 符号表 fig:native:figure@host/host ｜ 符号 1 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[fig:native=1/1] ｜ 第2轮 用[fig:native=1/1] 观测[fig:native=1/1] 收敛
+    [PASS] 发布最终产物：15108 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G1-plot-native-typst/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G1-plot-native-typst/main.typ
+    [PASS] 页数：1 页
+    [PASS] fig:native 页码：读回值 = 标记实际所在页：标记 `MKfignative` 在 Some(1)，读回 Some(1)
+    [PASS] fig:native 编号读回：编号 "1"
+    [PASS] fig:native 引用出现在产物中：查找 `图1`
+    [PASS] fig:native 最终件为矢量（无栅格图像）：pdfimages 列出 Ok(0) 个栅格图像（宿主 typst）
+  → 夹具判定：Pass
+
+---- 夹具 G2-plot-foreign [3 图表] / 宿主 latex / 期望 成功 ----
+  意图：跨引擎矢量嵌入：LaTeX 宿主嵌 Typst 绘图，反之嵌 pgfplots
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G2-plot-foreign-latex
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = latex（foreign-plot） ｜ 组件 g2-draw = typst 源码 / vector 桥接 / 作用域 g2 ｜ 符号表 fig:foreign:figure@host/host, typst:plot:figure@g2-draw/g2 ｜ 符号 2 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[fig:foreign=1/1, typst:plot=1/1] ｜ 第2轮 用[fig:foreign=1/1, typst:plot=1/1] 观测[fig:foreign=1/1, typst:plot=1/1] 收敛
+    [PASS] 组件构建：组件 g2-draw Typst 编译成功，矢量产物 g2-draw.pdf（10443 字节 PDF，24514 字节 SVG，含 17 条路径） ｜ 组件 g2-draw Typst 编译成功，矢量产物 g2-draw.pdf（10443 字节 PDF，24514 字节 SVG，含 17 条路径）
+    [PASS] 发布最终产物：24815 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G2-plot-foreign-latex/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G2-plot-foreign-latex/main.tex
+    [PASS] 页数：1 页
+    [PASS] fig:foreign 页码：读回值 = 标记实际所在页：标记 `MKfigforeign` 在 Some(1)，读回 Some(1)
+    [PASS] fig:foreign 编号读回：编号 "1"
+    [PASS] fig:foreign 引用出现在产物中：查找 `图1`
+    [PASS] fig:foreign 最终件为矢量（无栅格图像）：pdfimages 列出 Ok(0) 个栅格图像（宿主 latex）
+    [PASS] 组件有非空矢量产物：10443 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G2-plot-foreign-latex/g2-draw.pdf
+    [PASS] Typst 组件 SVG 含路径数据（不是位图）：17 条 <path>
+    [PASS] 组件独立编译产物是矢量：pdfimages 结果 Ok(0)
+  → 夹具判定：Pass
+
+---- 夹具 G2-plot-foreign [3 图表] / 宿主 typst / 期望 成功 ----
+  意图：跨引擎矢量嵌入：LaTeX 宿主嵌 Typst 绘图，反之嵌 pgfplots
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G2-plot-foreign-typst
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = typst（foreign-plot） ｜ 组件 g2-draw = latex 源码 / vector 桥接 / 作用域 g2 ｜ 符号表 fig:foreign:figure@host/host, latex:plot:figure@g2-draw/g2 ｜ 符号 2 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[fig:foreign=1/1, latex:plot=1/1] ｜ 第2轮 用[fig:foreign=1/1, latex:plot=1/1] 观测[fig:foreign=1/1, latex:plot=1/1] 收敛
+    [PASS] 组件构建：组件 g2-draw LaTeX 编译成功，1 页，产物 g2-draw.pdf ｜ 组件 g2-draw LaTeX 编译成功，1 页，产物 g2-draw.pdf
+    [PASS] 发布最终产物：30361 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G2-plot-foreign-typst/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G2-plot-foreign-typst/main.typ
+    [PASS] 页数：1 页
+    [PASS] fig:foreign 页码：读回值 = 标记实际所在页：标记 `MKfigforeign` 在 Some(1)，读回 Some(1)
+    [PASS] fig:foreign 编号读回：编号 "1"
+    [PASS] fig:foreign 引用出现在产物中：查找 `图1`
+    [PASS] fig:foreign 最终件为矢量（无栅格图像）：pdfimages 列出 Ok(0) 个栅格图像（宿主 typst）
+    [PASS] 组件有非空矢量产物：13136 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G2-plot-foreign-typst/g2-draw.pdf
+    [PASS] LaTeX 组件产物为矢量（无 SVG 中间件，直接 PDF）：由 xelatex 直接产出矢量 PDF
+    [PASS] 组件独立编译产物是矢量：pdfimages 结果 Ok(0)
+  → 夹具判定：Pass
+
+---- 夹具 G3-foreign-multipage [3 图表] / 宿主 latex / 期望 被拒绝 ----
+  意图：外语组件跨页，超出现有单页矢量嵌入载体能力，必须阻断
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G3-foreign-multipage-latex
+  结果：host-failed（期望 被拒绝）
+    [PASS] 计划接受：宿主 = latex（multipage-component） ｜ 组件 g2-draw = typst 源码 / vector 桥接 / 作用域 g2 ｜ 符号表 fig:big:figure@host/host ｜ 符号 1 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 构建诊断：[component-multipage-unsupported] 组件 `g2-draw` 编译出 2 页；当前受支持载体只有单页矢量嵌入
+    [PASS] 轮数记录：
+    [PASS] 被拒绝或编译失败：结果 host-failed
+    [PASS] 诊断可读：[component-multipage-unsupported] 组件 `g2-draw` 编译出 2 页；当前受支持载体只有单页矢量嵌入
+    [PASS] 命中预期诊断码 `component-multipage-unsupported`：实际诊断码 ["component-multipage-unsupported"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 G3-foreign-multipage [3 图表] / 宿主 typst / 期望 被拒绝 ----
+  意图：外语组件跨页，超出现有单页矢量嵌入载体能力，必须阻断
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/G3-foreign-multipage-typst
+  结果：host-failed（期望 被拒绝）
+    [PASS] 计划接受：宿主 = typst（multipage-component） ｜ 组件 g2-draw = latex 源码 / vector 桥接 / 作用域 g2 ｜ 符号表 fig:big:figure@host/host ｜ 符号 1 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 构建诊断：[component-multipage-unsupported] 组件 `g2-draw` 编译出 2 页；当前受支持载体只有单页矢量嵌入
+    [PASS] 轮数记录：
+    [PASS] 被拒绝或编译失败：结果 host-failed
+    [PASS] 诊断可读：[component-multipage-unsupported] 组件 `g2-draw` 编译出 2 页；当前受支持载体只有单页矢量嵌入
+    [PASS] 命中预期诊断码 `component-multipage-unsupported`：实际诊断码 ["component-multipage-unsupported"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 M1-macro [4 自定义宏] / 宿主 latex / 期望 成功 ----
+  意图：宿主自有宏 + 跨语言宏按声明合约在宿主侧重实现
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/M1-macro-latex
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = latex（macros） ｜ 组件 m-lib = typst 源码 / macro（合约 int-multiply-v1） 桥接 / 作用域 m-lib ｜ 符号表  ｜ 符号 0 个，宏 2 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[(空)] 收敛
+    [PASS] 组件构建：组件 m-lib Typst 编译成功，矢量产物 m-lib.pdf（11231 字节 PDF，35036 字节 SVG，含 16 条路径）
+    [PASS] 发布最终产物：14774 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/M1-macro-latex/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/M1-macro-latex/main.tex
+    [PASS] 页数：1 页
+    [PASS] 宿主自有宏 doubles(21) = 42：产物中 42 出现 2 次
+    [PASS] 跨语言宏在宿主侧按合约生效：1自定义宏宿主自有宏：42；跨语言宏：42。1
+    [PASS] 宏名未被原样输出（确实展开）：查找 `doubles`/`triple`
+    [PASS] 外语组件侧独立编译也得到 42（语义一致）：1.外语宏库外语侧结果： 421（typst）
+  → 夹具判定：Pass
+
+---- 夹具 M1-macro [4 自定义宏] / 宿主 typst / 期望 成功 ----
+  意图：宿主自有宏 + 跨语言宏按声明合约在宿主侧重实现
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/M1-macro-typst
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = typst（macros） ｜ 组件 m-lib = latex 源码 / macro（合约 int-multiply-v1） 桥接 / 作用域 m-lib ｜ 符号表  ｜ 符号 0 个，宏 2 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[(空)] 收敛
+    [PASS] 组件构建：组件 m-lib LaTeX 编译成功，1 页，产物 m-lib.pdf
+    [PASS] 发布最终产物：11795 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/M1-macro-typst/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/M1-macro-typst/main.typ
+    [PASS] 页数：1 页
+    [PASS] 宿主自有宏 doubles(21) = 42：产物中 42 出现 2 次
+    [PASS] 跨语言宏在宿主侧按合约生效：1.自定义宏宿主自有宏：42；跨语言宏：42。1
+    [PASS] 宏名未被原样输出（确实展开）：查找 `doubles`/`triple`
+    [PASS] 外语组件侧独立编译也得到 42（语义一致）：1 外语宏库
+外语侧结果：42
+
+1
+
+
+（latex）
+  → 夹具判定：Pass
+
+---- 夹具 M1-undeclared [4 自定义宏] / 宿主 latex / 期望 被拒绝 ----
+  意图：使用未声明的宏必须被计划拒绝
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/M1-undeclared-latex
+  结果：plan-rejected（期望 被拒绝）
+    [PASS] 计划阶段拒绝：1 条诊断
+    [PASS] 诊断可读：[macro-undeclared] `host` 使用了未声明的宏 `mystery`（提示：宏必须先声明定义方与（跨语言时的）桥接合约）
+    [PASS] 命中预期诊断码 `macro-undeclared`：实际诊断码 ["macro-undeclared"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 M1-undeclared [4 自定义宏] / 宿主 typst / 期望 被拒绝 ----
+  意图：使用未声明的宏必须被计划拒绝
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/M1-undeclared-typst
+  结果：plan-rejected（期望 被拒绝）
+    [PASS] 计划阶段拒绝：1 条诊断
+    [PASS] 诊断可读：[macro-undeclared] `host` 使用了未声明的宏 `mystery`（提示：宏必须先声明定义方与（跨语言时的）桥接合约）
+    [PASS] 命中预期诊断码 `macro-undeclared`：实际诊断码 ["macro-undeclared"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 M2-recursive [4 自定义宏] / 宿主 latex / 期望 被拒绝 ----
+  意图：递归宏由真实 TeX 编译失败兜住（TeX capacity exceeded）
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/M2-recursive-latex
+  结果：host-failed（期望 被拒绝）
+    [PASS] 计划接受：宿主 = latex（recursive-macro） ｜ 符号表  ｜ 符号 0 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 构建诊断：[host-compile-failed] 宿主 LaTeX 编译失败：xelatex 非零退出（1）
+    [PASS] 轮数记录：
+    [PASS] 被拒绝或编译失败：结果 host-failed
+    [PASS] 诊断可读：[host-compile-failed] 宿主 LaTeX 编译失败：xelatex 非零退出（1）
+    [PASS] 命中预期诊断码 `host-compile-failed`：实际诊断码 ["host-compile-failed"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 S1-scope [5 模板作用域] / 宿主 latex / 期望 成功 ----
+  意图：两个组件作用域定义同名宏且取值不同，互不泄漏
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-scope-latex
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = latex（scopes） ｜ 组件 s-a = latex 源码 / include 桥接 / 作用域 s-a ｜ 组件 s-b = latex 源码 / include 桥接 / 作用域 s-b ｜ 符号表  ｜ 符号 0 个，宏 2 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[(空)] 收敛
+    [PASS] 发布最终产物：15290 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-scope-latex/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-scope-latex/main.tex
+    [PASS] 页数：1 页
+    [PASS] 两个作用域取值各自出现一次（无泄漏）：取值-A 1 次，取值-B 1 次
+  → 夹具判定：Pass
+
+---- 夹具 S1-scope [5 模板作用域] / 宿主 typst / 期望 成功 ----
+  意图：两个组件作用域定义同名宏且取值不同，互不泄漏
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-scope-typst
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = typst（scopes） ｜ 组件 s-a = typst 源码 / include 桥接 / 作用域 s-a ｜ 组件 s-b = typst 源码 / include 桥接 / 作用域 s-b ｜ 符号表  ｜ 符号 0 个，宏 2 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[(空)] 收敛
+    [PASS] 发布最终产物：12097 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-scope-typst/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-scope-typst/main.typ
+    [PASS] 页数：1 页
+    [PASS] 两个作用域取值各自出现一次（无泄漏）：取值-A 1 次，取值-B 1 次
+  → 夹具判定：Pass
+
+---- 夹具 S1-scope-control [5 模板作用域] / 宿主 latex / 期望 成功 ----
+  意图：对照实现：关闭作用域隔离后同名宏互相覆盖，应当检测到泄漏
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-scope-control-latex
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = latex（scope-control） ｜ 组件 s-a = latex 源码 / include 桥接 / 作用域 s-a ｜ 组件 s-b = latex 源码 / include 桥接 / 作用域 s-b ｜ 符号表  ｜ 符号 0 个，宏 1 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[(空)] 收敛
+    [PASS] 发布最终产物：15084 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-scope-control-latex/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-scope-control-latex/main.tex
+    [PASS] 页数：1 页
+    [PASS] 对照实现确实泄漏（s-b 取到了 s-a 的值）：取值-A 出现 2 次，取值-B 出现 0 次
+  → 夹具判定：Pass
+
+---- 夹具 S1-scope-control [5 模板作用域] / 宿主 typst / 期望 成功 ----
+  意图：对照实现：关闭作用域隔离后同名宏互相覆盖，应当检测到泄漏
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-scope-control-typst
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = typst（scope-control） ｜ 组件 s-a = typst 源码 / include 桥接 / 作用域 s-a ｜ 组件 s-b = typst 源码 / include 桥接 / 作用域 s-b ｜ 符号表  ｜ 符号 0 个，宏 1 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[(空)] 收敛
+    [PASS] 发布最终产物：11945 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-scope-control-typst/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-scope-control-typst/main.typ
+    [PASS] 页数：1 页
+    [PASS] 对照实现确实泄漏（s-b 取到了 s-a 的值）：取值-A 出现 2 次，取值-B 出现 0 次
+  → 夹具判定：Pass
+
+---- 夹具 S1-leak [5 模板作用域] / 宿主 latex / 期望 被拒绝 ----
+  意图：跨作用域使用他人宏且无合约，必须被计划拒绝
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-leak-latex
+  结果：plan-rejected（期望 被拒绝）
+    [PASS] 计划阶段拒绝：1 条诊断
+    [PASS] 诊断可读：[scope-leak] 组件作用域 `s-b` 使用了作用域 `s-a` 的宏 `mark`；作用域之间不得互相泄漏（提示：要么把宏移入本作用域，要么声明跨语言/跨作用域桥接合约）
+    [PASS] 命中预期诊断码 `scope-leak`：实际诊断码 ["scope-leak"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 S1-leak [5 模板作用域] / 宿主 typst / 期望 被拒绝 ----
+  意图：跨作用域使用他人宏且无合约，必须被计划拒绝
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-leak-typst
+  结果：plan-rejected（期望 被拒绝）
+    [PASS] 计划阶段拒绝：1 条诊断
+    [PASS] 诊断可读：[scope-leak] 组件作用域 `s-b` 使用了作用域 `s-a` 的宏 `mark`；作用域之间不得互相泄漏（提示：要么把宏移入本作用域，要么声明跨语言/跨作用域桥接合约）
+    [PASS] 命中预期诊断码 `scope-leak`：实际诊断码 ["scope-leak"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 S1-conflict [5 模板作用域] / 宿主 latex / 期望 被拒绝 ----
+  意图：同一作用域内同名宏重复定义必须被拒绝
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-conflict-latex
+  结果：plan-rejected（期望 被拒绝）
+    [PASS] 计划阶段拒绝：1 条诊断
+    [PASS] 诊断可读：[scope-conflict] 作用域 `s-a` 内宏 `mark` 被 `s-a` 与 `s-a` 重复定义，最后一个会静默覆盖
+    [PASS] 命中预期诊断码 `scope-conflict`：实际诊断码 ["scope-conflict"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 S1-conflict [5 模板作用域] / 宿主 typst / 期望 被拒绝 ----
+  意图：同一作用域内同名宏重复定义必须被拒绝
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/S1-conflict-typst
+  结果：plan-rejected（期望 被拒绝）
+    [PASS] 计划阶段拒绝：1 条诊断
+    [PASS] 诊断可读：[scope-conflict] 作用域 `s-a` 内宏 `mark` 被 `s-a` 与 `s-a` 重复定义，最后一个会静默覆盖
+    [PASS] 命中预期诊断码 `scope-conflict`：实际诊断码 ["scope-conflict"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 R1-refs [6 双向引用/页码/链接] / 宿主 latex / 期望 成功 ----
+  意图：宿主↔外语组件双向引用、最终页码与链接（多轮解析）
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/R1-refs-latex
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = latex（refs） ｜ 组件 r-lib = typst 源码 / vector 桥接 / 作用域 r-lib ｜ 符号表 eq:foreign:equation@r-lib/r-lib, eq:host:equation@host/host, fig:bridge:figure@host/host ｜ 符号 3 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[eq:foreign=1/1, eq:host=1/1, fig:bridge=1/1] ｜ 第2轮 用[eq:foreign=1/1, eq:host=1/1, fig:bridge=1/1] 观测[eq:foreign=1/1, eq:host=1/1, fig:bridge=1/1] 收敛
+    [PASS] 组件构建：组件 r-lib Typst 编译成功，矢量产物 r-lib.pdf（12785 字节 PDF，40156 字节 SVG，含 27 条路径） ｜ 组件 r-lib Typst 编译成功，矢量产物 r-lib.pdf（12612 字节 PDF，39285 字节 SVG，含 26 条路径）
+    [PASS] 发布最终产物：32250 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/R1-refs-latex/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/R1-refs-latex/main.tex
+    [PASS] 页数：1 页
+    [PASS] 宿主公式编号读回：eq:host="1"
+    [PASS] 宿主公式页码：读回值 = 标记实际所在页：标记在 Some(1)，读回 Some(1)
+    [PASS] 跨引擎图页码：读回值 = 标记实际所在页：标记在 Some(1)，读回 Some(1)
+    [PASS] 跨引擎符号编号：宿主引用值 = 组件自身引擎分配的编号：组件自身编号 (1), 宿主引用文本查找 `外语组件中的公式编号1`
+    [PASS] 外语组件内部引用宿主编号（反向引用）：17MKeqforeign(1)外语组件引用宿主： 11（typst）
+    [PASS] 交付件里存在链接：5 条链接：[(1, Some(1)), (1, Some(1)), (1, Some(1)), (1, Some(1)), (1, Some(1))]
+    [PASS] 存在指向宿主公式页的链接：目标页 Some(1)，链接 [(1, Some(1)), (1, Some(1)), (1, Some(1)), (1, Some(1)), (1, Some(1))]
+    [PASS] 链接目标均可解析到交付件内的页：无法解析的链接 0 条
+    [PASS] 外部 URL 链接（若有）也被记录：本夹具无外部 URL 链接
+  → 夹具判定：Pass
+
+---- 夹具 R1-refs [6 双向引用/页码/链接] / 宿主 typst / 期望 成功 ----
+  意图：宿主↔外语组件双向引用、最终页码与链接（多轮解析）
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/R1-refs-typst
+  结果：success（期望 成功）
+    [PASS] 计划接受：宿主 = typst（refs） ｜ 组件 r-lib = latex 源码 / vector 桥接 / 作用域 r-lib ｜ 符号表 eq:foreign:equation@r-lib/r-lib, eq:host:equation@host/host, fig:bridge:figure@host/host ｜ 符号 3 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[eq:foreign=1/1, eq:host=1/1, fig:bridge=1/1] ｜ 第2轮 用[eq:foreign=1/1, eq:host=1/1, fig:bridge=1/1] 观测[eq:foreign=1/1, eq:host=1/1, fig:bridge=1/1] 收敛
+    [PASS] 组件构建：组件 r-lib LaTeX 编译成功，1 页，产物 r-lib.pdf ｜ 组件 r-lib LaTeX 编译成功，1 页，产物 r-lib.pdf
+    [PASS] 发布最终产物：35360 字节 /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/R1-refs-typst/final.pdf
+    [PASS] 宿主源码存在：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/R1-refs-typst/main.typ
+    [PASS] 页数：1 页
+    [PASS] 宿主公式编号读回：eq:host="1"
+    [PASS] 宿主公式页码：读回值 = 标记实际所在页：标记在 Some(1)，读回 Some(1)
+    [PASS] 跨引擎图页码：读回值 = 标记实际所在页：标记在 Some(1)，读回 Some(1)
+    [PASS] 跨引擎符号编号：宿主引用值 = 组件自身引擎分配的编号：组件自身编号 (1), 宿主引用文本查找 `外语组件中的公式编号1`
+    [PASS] 外语组件内部引用宿主编号（反向引用）：1
+MKeqforeign
+7
+外语组件引用宿主：1
+
+1
+
+(1)
+
+
+（latex）
+    [PASS] 交付件里存在链接：5 条链接：[(1, Some(1)), (1, Some(1)), (1, Some(1)), (1, Some(1)), (1, Some(1))]
+    [PASS] 存在指向宿主公式页的链接：目标页 Some(1)，链接 [(1, Some(1)), (1, Some(1)), (1, Some(1)), (1, Some(1)), (1, Some(1))]
+    [PASS] 链接目标均可解析到交付件内的页：无法解析的链接 0 条
+    [PASS] 外部 URL 链接（若有）也被记录：本夹具无外部 URL 链接
+  → 夹具判定：Pass
+
+---- 夹具 R1-dangling [6 双向引用/页码/链接] / 宿主 latex / 期望 被拒绝 ----
+  意图：悬空引用（未定义符号）必须被拒绝，不允许留下 ??
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/R1-dangling-latex
+  结果：plan-rejected（期望 被拒绝）
+    [PASS] 计划阶段拒绝：1 条诊断
+    [PASS] 诊断可读：[ref-dangling] `host` 引用了未定义的符号 `eq:missing`（提示：悬空引用会在产物里留下 `??`，必须在计划阶段拒绝）
+    [PASS] 命中预期诊断码 `ref-dangling`：实际诊断码 ["ref-dangling"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 R1-dangling [6 双向引用/页码/链接] / 宿主 typst / 期望 被拒绝 ----
+  意图：悬空引用（未定义符号）必须被拒绝，不允许留下 ??
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/R1-dangling-typst
+  结果：plan-rejected（期望 被拒绝）
+    [PASS] 计划阶段拒绝：1 条诊断
+    [PASS] 诊断可读：[ref-dangling] `host` 引用了未定义的符号 `eq:missing`（提示：悬空引用会在产物里留下 `??`，必须在计划阶段拒绝）
+    [PASS] 命中预期诊断码 `ref-dangling`：实际诊断码 ["ref-dangling"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 R1-raw-foreign [6 双向引用/页码/链接] / 宿主 latex / 期望 被拒绝 ----
+  意图：宿主里内联外语原文而未提升为组件，必须被拒绝
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/R1-raw-foreign-latex
+  结果：plan-rejected（期望 被拒绝）
+    [PASS] 计划阶段拒绝：1 条诊断
+    [PASS] 诊断可读：[raw-foreign-unrouted] `host` 是 latex 文件，却直接内联了 typst 原文：`$ x = 1 $`（提示：外语原文必须提升为声明了桥接的组件，否则宿主编译器会拒绝或误解它）
+    [PASS] 命中预期诊断码 `raw-foreign-unrouted`：实际诊断码 ["raw-foreign-unrouted"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 R1-raw-foreign [6 双向引用/页码/链接] / 宿主 typst / 期望 被拒绝 ----
+  意图：宿主里内联外语原文而未提升为组件，必须被拒绝
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/R1-raw-foreign-typst
+  结果：plan-rejected（期望 被拒绝）
+    [PASS] 计划阶段拒绝：1 条诊断
+    [PASS] 诊断可读：[raw-foreign-unrouted] `host` 是 typst 文件，却直接内联了 latex 原文：`\begin{equation}x=1\end{equation`（提示：外语原文必须提升为声明了桥接的组件，否则宿主编译器会拒绝或误解它）
+    [PASS] 命中预期诊断码 `raw-foreign-unrouted`：实际诊断码 ["raw-foreign-unrouted"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 OSC-1-feedback [附加：引用振荡上限] / 宿主 latex / 期望 被拒绝 ----
+  意图：页码反馈改变版面高度，形成无不动点的振荡；必须检测并停止
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/OSC-1-feedback-latex
+  结果：not-converged（期望 被拒绝）
+    [PASS] 计划接受：宿主 = latex（oscillation） ｜ 符号表 pg:probe:equation@host/host ｜ 符号 1 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 构建诊断：[reference-oscillation] 引用反馈振荡：第 1 轮与第 3 轮解析出同一张引用表，但中间一轮不同，说明存在周期性反馈回路（提示：已在第 3 轮停止（上限 4 轮），不发布正式产物） ｜ [reference-round] 第 1 轮：使用 (空) / 观测 pg:probe=1/2 ｜ [reference-round] 第 2 轮：使用 pg:probe=1/2 / 观测 pg:probe=1/1 ｜ [reference-round] 第 3 轮：使用 pg:probe=1/1 / 观测 pg:probe=1/2
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[pg:probe=1/2] ｜ 第2轮 用[pg:probe=1/2] 观测[pg:probe=1/1] ｜ 第3轮 用[pg:probe=1/1] 观测[pg:probe=1/2]
+    [PASS] 被拒绝或编译失败：结果 not-converged
+    [PASS] 诊断可读：[reference-oscillation] 引用反馈振荡：第 1 轮与第 3 轮解析出同一张引用表，但中间一轮不同，说明存在周期性反馈回路（提示：已在第 3 轮停止（上限 4 轮），不发布正式产物） ｜ [reference-round] 第 1 轮：使用 (空) / 观测 pg:probe=1/2 ｜ [reference-round] 第 2 轮：使用 pg:probe=1/2 / 观测 pg:probe=1/1 ｜ [reference-round] 第 3 轮：使用 pg:probe=1/1 / 观测 pg:probe=1/2
+    [PASS] 命中预期诊断码 `reference-oscillation`：实际诊断码 ["reference-oscillation", "reference-round", "reference-round", "reference-round"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 OSC-1-feedback [附加：引用振荡上限] / 宿主 typst / 期望 被拒绝 ----
+  意图：页码反馈改变版面高度，形成无不动点的振荡；必须检测并停止
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/OSC-1-feedback-typst
+  结果：not-converged（期望 被拒绝）
+    [PASS] 计划接受：宿主 = typst（oscillation） ｜ 符号表 pg:probe:equation@host/host ｜ 符号 1 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 构建诊断：[reference-oscillation] 引用反馈振荡：第 1 轮与第 3 轮解析出同一张引用表，但中间一轮不同，说明存在周期性反馈回路（提示：已在第 3 轮停止（上限 4 轮），不发布正式产物） ｜ [reference-round] 第 1 轮：使用 (空) / 观测 pg:probe=1/2 ｜ [reference-round] 第 2 轮：使用 pg:probe=1/2 / 观测 pg:probe=1/1 ｜ [reference-round] 第 3 轮：使用 pg:probe=1/1 / 观测 pg:probe=1/2
+    [PASS] 轮数记录：第1轮 用[(空)] 观测[pg:probe=1/2] ｜ 第2轮 用[pg:probe=1/2] 观测[pg:probe=1/1] ｜ 第3轮 用[pg:probe=1/1] 观测[pg:probe=1/2]
+    [PASS] 被拒绝或编译失败：结果 not-converged
+    [PASS] 诊断可读：[reference-oscillation] 引用反馈振荡：第 1 轮与第 3 轮解析出同一张引用表，但中间一轮不同，说明存在周期性反馈回路（提示：已在第 3 轮停止（上限 4 轮），不发布正式产物） ｜ [reference-round] 第 1 轮：使用 (空) / 观测 pg:probe=1/2 ｜ [reference-round] 第 2 轮：使用 pg:probe=1/2 / 观测 pg:probe=1/1 ｜ [reference-round] 第 3 轮：使用 pg:probe=1/1 / 观测 pg:probe=1/2
+    [PASS] 命中预期诊断码 `reference-oscillation`：实际诊断码 ["reference-oscillation", "reference-round", "reference-round", "reference-round"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+---- 夹具 OSC-2-engine [附加：引用振荡上限] / 宿主 typst / 期望 被拒绝 ----
+  意图：Typst 引擎自身 5 次内省后不收敛，必须当作硬失败
+  产物目录：/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/OSC-2-engine-typst
+  结果：not-converged（期望 被拒绝）
+    [PASS] 计划接受：宿主 = typst（engine-divergence） ｜ 符号表  ｜ 符号 0 个，宏 0 个，引用轮数上限由构建循环控制
+    [PASS] 构建诊断：[engine-non-convergence] Typst 引擎在 5 次内省后仍未收敛：document did not converge within five attempts；value of the page counter did not converge；value of the page counter did not converge（提示：引擎级不收敛被当作硬失败，不发布正式产物）
+    [PASS] 轮数记录：
+    [PASS] 被拒绝或编译失败：结果 not-converged
+    [PASS] 诊断可读：[engine-non-convergence] Typst 引擎在 5 次内省后仍未收敛：document did not converge within five attempts；value of the page counter did not converge；value of the page counter did not converge（提示：引擎级不收敛被当作硬失败，不发布正式产物）
+    [PASS] 命中预期诊断码 `engine-non-convergence`：实际诊断码 ["engine-non-convergence"]
+    [PASS] 未发布最终产物：final.pdf 不存在
+  → 夹具判定：Pass
+
+=== 逐夹具汇总（每个夹具单独判定，不看总数）===
+  T1-longtable         latex  success         11 条断言  Pass
+  T1-longtable         typst  success         11 条断言  Pass
+  T1-bad-cols          latex  plan-rejected    4 条断言  Pass
+  T1-bad-cols          typst  plan-rejected    4 条断言  Pass
+  E1-equation          latex  success         11 条断言  Pass
+  E1-equation          typst  success         11 条断言  Pass
+  E1-unsupported       latex  plan-rejected    4 条断言  Pass
+  E1-unsupported       typst  plan-rejected    4 条断言  Pass
+  G1-plot-native       latex  success          9 条断言  Pass
+  G1-plot-native       typst  success          9 条断言  Pass
+  G2-plot-foreign      latex  success         13 条断言  Pass
+  G2-plot-foreign      typst  success         13 条断言  Pass
+  G3-foreign-multipage latex  host-failed      7 条断言  Pass
+  G3-foreign-multipage typst  host-failed      7 条断言  Pass
+  M1-macro             latex  success         10 条断言  Pass
+  M1-macro             typst  success         10 条断言  Pass
+  M1-undeclared        latex  plan-rejected    4 条断言  Pass
+  M1-undeclared        typst  plan-rejected    4 条断言  Pass
+  M2-recursive         latex  host-failed      7 条断言  Pass
+  S1-scope             latex  success          6 条断言  Pass
+  S1-scope             typst  success          6 条断言  Pass
+  S1-scope-control     latex  success          6 条断言  Pass
+  S1-scope-control     typst  success          6 条断言  Pass
+  S1-leak              latex  plan-rejected    4 条断言  Pass
+  S1-leak              typst  plan-rejected    4 条断言  Pass
+  S1-conflict          latex  plan-rejected    4 条断言  Pass
+  S1-conflict          typst  plan-rejected    4 条断言  Pass
+  R1-refs              latex  success         15 条断言  Pass
+  R1-refs              typst  success         15 条断言  Pass
+  R1-dangling          latex  plan-rejected    4 条断言  Pass
+  R1-dangling          typst  plan-rejected    4 条断言  Pass
+  R1-raw-foreign       latex  plan-rejected    4 条断言  Pass
+  R1-raw-foreign       typst  plan-rejected    4 条断言  Pass
+  OSC-1-feedback       latex  not-converged    7 条断言  Pass
+  OSC-1-feedback       typst  not-converged    7 条断言  Pass
+  OSC-2-engine         typst  not-converged    7 条断言  Pass
+
+汇总：36 / 36 个夹具运行通过
+全部夹具通过。
+覆盖：LaTeX 宿主 18 次、Typst 宿主 18 次

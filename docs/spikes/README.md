@@ -97,3 +97,4 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 | Typst 视觉层 | [0026-typst-visual-layer.md](SPK-0026-typst-visual-layer.md) | 对比确认 Typst 质量优于拼接；整页覆盖因交互坐标脱钩拒绝交付，保留 source map 方案。 |
 | 窗口实验会话恢复 | [0031-ui-session-recovery.md](SPK-0031-ui-session-recovery.md) | 单文件语义内容与当前语言草稿保存/重开/恢复通过；不含正式历史身份或项目格式。 |
 | 团队语言窗口门禁 | [0032-team-window-gate.md](SPK-0032-team-window-gate.md) | 单窗口三成员顺序提交/切换/旧草稿拒绝通过；不含真实网络和协作撤销。 |
+| 构建入口与运行时审查 | [0033-build-entry-audit.md](SPK-0033-build-entry-audit.md) | PDF 探针白名单收紧，安全 5/5、混合构建 36/36；旧受信实验与资源例外明确，安全出口不升级。 |
