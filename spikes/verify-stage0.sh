@@ -90,6 +90,8 @@ if want items; then
   for s in crdt-race crdt-engines recovery language-coordination mixed-build; do
     run "$s" cargo run --release --offline --manifest-path "spikes/$s/Cargo.toml"
   done
+  run "source include fidelity" cargo test --release --offline --manifest-path spikes/mixed-build/Cargo.toml --test include_links
+  run "inline placement gate" cargo test --release --offline --manifest-path spikes/mixed-build/Cargo.toml --bin scholium-spike-mixed-build fidelity_tests
 fi
 
 # ---------- 可交付包与真实后台预览 ----------

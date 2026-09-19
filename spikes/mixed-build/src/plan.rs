@@ -87,6 +87,7 @@ pub(crate) fn plan(project: &Project) -> Result<Plan, Vec<Diagnostic>> {
             }
         }
     }
+    check_inline_content(project, &mut problems);
     detect_cycles(project, &mut problems);
 
     // ---- 符号表 ----
@@ -201,6 +202,21 @@ pub(crate) fn plan(project: &Project) -> Result<Plan, Vec<Diagnostic>> {
         macros,
         steps,
     })
+}
+
+fn check_inline_content(project: &Project, problems: &mut Vec<Diagnostic>) {
+    for component in &project.components {
+        if component.placement != Placement::Inline || !matches!(component.bridge, Bridge::Include) {
+            continue;
+        }
+        let supported = component.body.iter().all(|block| matches!(block,
+            Block::Equation { display: false, .. } | Block::Ref { .. })
+            || matches!(block, Block::Para(text) if !text.contains(['\n', '\r'])));
+        if !supported {
+            problems.push(Diagnostic::new("inline-content-unsupported",
+                format!("行内组件 `{}` 含块级或未验证内容；仅支持单行文本、行内公式与引用", component.id)));
+        }
+    }
 }
 
 /// 对全部块做逐条校验。

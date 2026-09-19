@@ -22,6 +22,8 @@ mod plan;
 mod typst_host;
 mod verify;
 mod world;
+#[cfg(test)]
+mod fidelity_tests;
 
 use std::path::PathBuf;
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pdf2xml SYSTEM "pdf2xml.dtd">
+
+<pdf2xml producer="poppler" version="26.08.0">
+<page number="1" position="absolute" top="0" left="0" height="1080" width="630">
+	<fontspec id="0" size="17" family="HLXGCH+LibertinusSerif" color="#000000"/>
+	<fontspec id="1" size="17" family="JPVGZS+NewCMMath-Book-Identity-H" color="#000000"/>
+<text top="69" left="72" width="91" height="19" font="0">INLINELEFT </text>
+<text top="70" left="163" width="9" height="17" font="1">𝑥</text>
+<text top="69" left="172" width="103" height="19" font="0"> INLINERIGHT</text>
+<text top="101" left="271" width="88" height="17" font="1">7 MKeqhost</text>
+<text top="101" left="537" width="21" height="17" font="1">(1)</text>
+<text top="134" left="72" width="8" height="19" font="0"><a href="final.html#2">2</a></text>
+<text top="1026" left="311" width="8" height="19" font="0">1</text>
+</page>
+<page number="2" position="absolute" top="0" left="0" height="1080" width="630">
+<text top="70" left="265" width="99" height="17" font="1">7 MKeqinside</text>
+<text top="70" left="537" width="21" height="17" font="1">(2)</text>
+<text top="103" left="72" width="8" height="19" font="0"><a href="final.html#1">1</a></text>
+<text top="1026" left="311" width="8" height="19" font="0">2</text>
+</page>
+</pdf2xml>

@@ -48,7 +48,11 @@ impl Ctx<'_> {
             .plan
             .symbols
             .get(target)
-            .map(|info| info.owner == self.owner)
+            .map(|info| {
+                info.owner == self.owner
+                    || (native_owner(self.project, self.owner)
+                        && native_owner(self.project, &info.owner))
+            })
             .unwrap_or(false);
         if native {
             return match self.dialect {
@@ -98,6 +102,15 @@ impl Ctx<'_> {
             .unwrap_or(1) as f64;
         (base - slope * page).max(1.0)
     }
+}
+
+/// Source includes share the host label namespace; vector components do not.
+pub(crate) fn native_owner(project: &Project, owner: &str) -> bool {
+    owner == "host"
+        || project.component(owner).is_some_and(|component| {
+            matches!(component.bridge, crate::ir::Bridge::Include)
+                && component.dialect == project.host
+        })
 }
 
 /// 页内标记串：把符号 id 变成只含字母数字的标记，作为"该元素真实所在页"的独立证据。

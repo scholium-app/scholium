@@ -68,7 +68,7 @@ pub(crate) fn observe_latex(
         observation
             .label_numbers
             .insert(symbol.id.clone(), number.clone());
-        if symbol.owner == "host" {
+        if crate::generate::native_owner(project, &symbol.owner) {
             let page = run.labels.get(&symbol.id).map(|value| value.1);
             next.insert(
                 symbol.id.clone(),
@@ -123,7 +123,7 @@ pub(crate) fn observe_typst(
         }
     }
     for symbol in plan.symbols.values() {
-        if symbol.owner != "host" {
+        if !crate::generate::native_owner(project, &symbol.owner) {
             continue;
         }
         let number = run
