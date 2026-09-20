@@ -16,6 +16,8 @@ bash "$root/spikes/toolchain-sandbox.sh" "$work/input" "$work/output" 10 /bin/sh
   test ! -e /usr/bin/curl
   test ! -e /usr/lib/chromium
   test ! -e /etc/hostname
+  sentinel=literal-data
+  test "${sentinel}" = literal-data
 '
 test "$(cat "$work/output/control")" = OK
 printf 'PASS: runtime allowlist exposes tools/resources but omits unrelated host trees\n'

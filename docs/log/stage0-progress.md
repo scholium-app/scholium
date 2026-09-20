@@ -280,3 +280,9 @@ recovery 格式/Clippy/许可与 runner 自测通过；全 crate 格式化后拆
 桌面首轮 19/20，修复 Text 接口后相关 8/8；UI 默认 55 passed/11 ignored、Clippy 通过。
 报告 0040、ADR 0021/0022 记录范围；共享工作输出总配额原型尚未接入，正式 parser/存储/schema
 裁决等出口边界仍保留，不宣称 P0 关闭。
+
+## 2026-09-20：总输出配额取消路径否决
+
+继续实现 512 MiB 共享 tmpfs 输出原型，正常挂载与连续预览通过，1 秒超时却留下失效 output
+符号链接及 backup。按失败证据撤下目录替换方案，现有 host-bind 不变，见报告 0041。
+独立修复 systemd-run 默认 argv 环境展开，显式 --expand-environment=no 并加变量语义回归。

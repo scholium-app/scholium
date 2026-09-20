@@ -80,7 +80,7 @@ if [ -e /run/scholium-resource-policy ] && [ ! -e /usr/bin/systemd-run ]; then
 else
   [ -x /usr/bin/systemd-run ] || { echo 'user cgroup supervisor unavailable' >&2; exit 2; }
   resource_scope=(/usr/bin/env "XDG_RUNTIME_DIR=/run/user/$UID"
-    /usr/bin/systemd-run --user --scope --quiet
+    /usr/bin/systemd-run --user --scope --quiet --expand-environment=no
     -p MemoryMax=2G -p MemorySwapMax=0 -p TasksMax=64 -p OOMPolicy=kill --)
   mounts+=(--ro-bind /usr/bin/prlimit /run/scholium-resource-policy)
 fi
