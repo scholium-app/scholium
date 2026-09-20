@@ -1,0 +1,19 @@
+[replicas] 完成 | A="LOCAL共同文本" B="共同文本" pending=1
+[replicas] 完成 | A="SECONDLOCAL共同文本" B="共同文本" pending=2
+[replicas] 完成 | A="SECONDLOCAL共同文本" B="REMOTE共同文本" pending=3
+[replicas] 完成 | A="SECONDLOCALREMOTE共同文本" B="SECONDLOCALREMOTE共同文本" pending=0
+[replicas] 完成 | A="LOCALREMOTE共同文本" B="SECONDLOCALREMOTE共同文本" pending=1
+[replicas] 完成 | A="LOCALREMOTE共同文本" B="LOCALREMOTE共同文本" pending=0
+[replicas] 完成 | A="REMOTE共同文本" B="LOCALREMOTE共同文本" pending=1
+[replicas] 完成 | A="REMOTE共同文本" B="REMOTE共同文本" pending=0
+[replicas] 完成 | A="REMOTE共同文本" B="REMOTE共同文本" pending=0
+[replicas] 拒绝：切换等待确认：新提交已冻结，草稿保留 | A="REMOTE共同文本" B="REMOTE共同文本" pending=0
+[replicas] 完成 | A="REMOTE共同文本" B="REMOTE共同文本" pending=0
+[replicas] 拒绝：SourceEpochStale(got=1, current=2) | A="REMOTE共同文本" B="REMOTE共同文本" pending=0
+[replicas] 完成 | A="REMOTE共同文本" B="REMOTE共同文本" pending=0
+[replicas] 完成 | A="REMOTE共同文本" B="NEWREMOTE共同文本" pending=1
+[replicas] 完成 | A="NEWREMOTE共同文本" B="NEWREMOTE共同文本" pending=0
+[replicas] 完成 | A="NEWREMOTE共同文本" B="NEWREMOTE共同文本" pending=0
+[replicas] 拒绝：等待消息交付及两端输入法结束；草稿保留 | A="NEWREMOTE共同文本" B="NEWREMOTE共同文本" pending=0
+[replicas] 完成 | A="NEWREMOTE共同文本" B="NEWREMOTE共同文本" pending=0
+[replicas] 拒绝：SourceEpochStale(got=2, current=3) | A="NEWREMOTE共同文本" B="NEWREMOTE共同文本" pending=0

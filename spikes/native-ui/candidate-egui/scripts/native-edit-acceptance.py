@@ -37,6 +37,7 @@ def wait_for(predicate, message, timeout=8):
 class Window:
     def __init__(self, name):
         self.name = name
+        self.replicas = 'SCHOLIUM_SPIKE_REPLICAS' in os.environ
         self.path = OUT / f'{name}.log'
         self.log = self.path.open('w')
         self.process = subprocess.Popen(
@@ -53,7 +54,8 @@ class Window:
             call('niri', 'msg', 'action', 'focus-window', '--id', str(self.window['id']))
             self.app = wait_for(lambda: next((a for a in pyatspi.Registry.getDesktop(0)
                                             if a.get_process_id() == self.process.pid), None), 'AT-SPI missing')
-            wait_for(lambda: any(n.name == '正文结构编辑器' for n in self.nodes()), 'body missing')
+            expected = '源码权威 · Loro 双副本实验' if self.replicas else '正文结构编辑器'
+            wait_for(lambda: any(n.name == expected for n in self.nodes()), 'editor missing')
             time.sleep(0.5)
             self.wait_current()
             return self
@@ -110,6 +112,8 @@ class Window:
         return self.body().getText(0, -1)
 
     def wait_current(self):
+        if self.replicas:
+            return
         def ready():
             nodes = self.nodes()
             revisions = [re.search(r'^revision (\d+) /', n.name or '') for n in nodes]
@@ -592,6 +596,87 @@ def session_typst_recovery():
             os.environ['SCHOLIUM_SPIKE_SESSION'] = previous
 
 
+def replica_collaboration():
+    previous = os.environ.get('SCHOLIUM_SPIKE_REPLICAS')
+    os.environ['SCHOLIUM_SPIKE_REPLICAS'] = '1'
+    try:
+        with Window('replica-collaboration') as w:
+            call('fcitx5-remote', '-c')
+
+            def accepted(name):
+                prefix = name + ' 已接受正文：'
+                return next(n.name[len(prefix):] for n in w.nodes() if (n.name or '').startswith(prefix))
+
+            def entry(index):
+                return [n for n in w.nodes() if n.getRoleName() == 'entry'][index]
+
+            def prepend(index, text):
+                assert entry(index).queryComponent().grabFocus()
+                time.sleep(0.3)
+                w.key(29, 102)
+                w.type(text)
+
+            original = accepted('Alice')
+            prepend(0, 'LOCAL')
+            w.action('应用 Alice')
+            prepend(0, 'SECOND')
+            w.action('应用 Alice')
+            prepend(1, 'REMOTE')
+            w.action('应用 Bob')
+            assert accepted('Alice') != accepted('Bob'), 'delivery was not delayed'
+            w.action('逆序并重复交付')
+            assert accepted('Alice') == accepted('Bob')
+            assert all(word in accepted('Alice') for word in ['LOCAL', 'SECOND', 'REMOTE'])
+            w.action('撤销 Alice')
+            w.action('交付消息')
+            assert accepted('Alice') == accepted('Bob')
+            assert 'SECOND' not in accepted('Bob') and 'REMOTE' in accepted('Bob')
+            w.action('撤销 Alice')
+            w.action('逆序并重复交付')
+            assert accepted('Alice') == accepted('Bob') == 'REMOTE' + original
+            prepend(1, 'OLD')
+            draft = entry(1).queryText().getText(0, -1)
+            w.action('请求语言切换')
+            w.action('应用 Bob')
+            assert accepted('Bob') == 'REMOTE' + original
+            w.action('完成语言切换')
+            assert entry(1).queryText().getText(0, -1) == draft
+            w.action('应用 Bob')
+            assert any('SourceEpochStale' in (n.name or '') for n in w.nodes())
+            w.action('重新生成 Bob')
+            prepend(1, 'NEW')
+            w.action('应用 Bob')
+            w.action('逆序并重复交付')
+            assert accepted('Alice') == accepted('Bob') == 'NEWREMOTE' + original
+            assert entry(1).queryComponent().grabFocus()
+            time.sleep(0.3)
+            w.key(29, 102)
+            call('fcitx5-remote', '-s', 'rime')
+            call('fcitx5-remote', '-o')
+            time.sleep(0.5)
+            w.type('nihao')
+            wait_for(lambda: any('Bob 输入法组合中' in (n.name or '') for n in w.nodes()), 'Bob composition missing')
+            w.action('请求语言切换')
+            w.action('完成语言切换')
+            assert any('等待消息交付及两端输入法结束' in (n.name or '') for n in w.nodes())
+            assert any('活动语言 Typst · epoch 2' in (n.name or '') for n in w.nodes())
+            w.key(57)
+            wait_for(lambda: not any('Bob 输入法组合中' in (n.name or '') for n in w.nodes()), 'Bob composition did not finish')
+            composed = entry(1).queryText().getText(0, -1)
+            assert composed != accepted('Bob'), 'unsubmitted Chinese draft missing'
+            call('fcitx5-remote', '-c')
+            w.action('完成语言切换')
+            w.action('应用 Bob')
+            assert any('SourceEpochStale' in (n.name or '') for n in w.nodes())
+            assert entry(1).queryText().getText(0, -1) == composed
+            assert accepted('Alice') == accepted('Bob') == 'NEWREMOTE' + original
+    finally:
+        if previous is None:
+            os.environ.pop('SCHOLIUM_SPIKE_REPLICAS', None)
+        else:
+            os.environ['SCHOLIUM_SPIKE_REPLICAS'] = previous
+
+
 def team_ime_barrier():
     previous = os.environ.get('SCHOLIUM_SPIKE_TEAM')
     os.environ['SCHOLIUM_SPIKE_TEAM'] = '1'
@@ -715,7 +800,7 @@ try:
     for name in saved:
         prop(name, 'true')
     call('systemctl', '--user', 'start', 'ydotool')
-    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit, session_recovery, session_typst_recovery, team_language_gate, team_ime_barrier]:
+    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit, session_recovery, session_typst_recovery, team_language_gate, team_ime_barrier, replica_collaboration]:
         if len(sys.argv) > 2 and case.__name__ not in sys.argv[2:]:
             continue
         try:

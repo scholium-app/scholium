@@ -103,3 +103,4 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 | 恢复实验 worker 隔离 | [0036-recovery-worker-isolation.md](SPK-0036-recovery-worker-isolation.md) | 两轮恢复、真实构建安全与输入/产物护栏；跨进程排版签名，禁用版本查询执行项目配置。 |
 | 恢复隔离验收 | [0037-recovery-acceptance.md](SPK-0037-recovery-acceptance.md) | 修复超量输出拒绝时残留 PDF；双轮恢复与新增安全回归。 |
 | 团队 IME 屏障 | [0038-team-ime-barrier.md](SPK-0038-team-ime-barrier.md) | 组合输入暂停成员/语言切换与提交，真实 rime 和辅助功能动作验证；非远端 IME drain。 |
+| 源码双副本窗口 | [0039-native-source-replicas.md](SPK-0039-native-source-replicas.md) | 独立 Loro 增量、乱序重复收敛、本地 undo 保留远端、双端 IME/epoch 门禁；非共享 SDG。 |

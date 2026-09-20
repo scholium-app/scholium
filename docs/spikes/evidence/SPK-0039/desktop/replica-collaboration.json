@@ -1,0 +1,288 @@
+[
+  {
+    "role": "application",
+    "name": "scholium-spike-egui",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Application"
+    ]
+  },
+  {
+    "role": "frame",
+    "name": "",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Component"
+    ]
+  },
+  {
+    "role": "label",
+    "name": "源码权威 · Loro 双副本实验",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "源码权威 · Loro 双副本实验",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "label",
+    "name": "仅纯文字片段；两个独立副本，手动交付消息；无网络、无持久化",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "仅纯文字片段；两个独立副本，手动交付消息；无网络、无持久化",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "label",
+    "name": "活动语言 Latex · epoch 3 · 待交付 0 · 已接受 6",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "活动语言 Latex · epoch 3 · 待交付 0 · 已接受 6",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "button",
+    "name": "交付消息",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "button",
+    "name": "逆序并重复交付",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "button",
+    "name": "请求语言切换",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "button",
+    "name": "完成语言切换",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "label",
+    "name": "Alice",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "Alice",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "label",
+    "name": "Alice 已接受正文：NEWREMOTE共同文本",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "Alice 已接受正文：NEWREMOTE共同文本",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "label",
+    "name": "Alice 草稿 Latex / epoch 1",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "Alice 草稿 Latex / epoch 1",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "entry",
+    "name": "",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "NEWREMOTE共同文本",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "button",
+    "name": "应用 Alice",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "button",
+    "name": "撤销 Alice",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "button",
+    "name": "重新生成 Alice",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "label",
+    "name": "Bob",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "Bob",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "label",
+    "name": "Bob 已接受正文：NEWREMOTE共同文本",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "Bob 已接受正文：NEWREMOTE共同文本",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "label",
+    "name": "Bob 草稿 Typst / epoch 2",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "Bob 草稿 Typst / epoch 2",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "entry",
+    "name": "",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "你好NEWREMOTE共同文本",
+    "caret": 2,
+    "selections": []
+  },
+  {
+    "role": "button",
+    "name": "应用 Bob",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "button",
+    "name": "撤销 Bob",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "button",
+    "name": "重新生成 Bob",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "label",
+    "name": "拒绝：SourceEpochStale(got=2, current=3)",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "拒绝：SourceEpochStale(got=2, current=3)",
+    "caret": -1,
+    "selections": []
+  }
+]

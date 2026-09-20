@@ -8,6 +8,7 @@
 //! 旧 `core::layout` 仅供显式同步回归探针使用。
 
 mod accessibility;
+mod collab_ui;
 mod frame_metrics;
 mod input;
 mod math_accessibility;
@@ -36,6 +37,7 @@ const LOCAL: ActorId = ActorId(1);
 const CJK_FONT_PATH: &str = "/usr/share/fonts/adobe-source-han-serif/SourceHanSerifCN-Regular.otf";
 /// egui 候选的应用状态。
 pub struct SpikeApp {
+    collab: Option<collab_ui::CollabUi>,
     team: Option<team_ui::TeamUi>,
     session_file: Option<session_file::SessionFile>,
     core: Editor,
@@ -123,12 +125,14 @@ impl SpikeApp {
 
         let layout_revision = core.revision();
         let team = team_ui::TeamUi::from_env(&core);
-        let session_file = if team.is_none() {
-            session_file::SessionFile::from_env()
-        } else {
-            None
-        };
+        let session_file =
+            if team.is_none() && std::env::var_os("SCHOLIUM_SPIKE_REPLICAS").is_none() {
+                session_file::SessionFile::from_env()
+            } else {
+                None
+            };
         Self {
+            collab: collab_ui::CollabUi::from_env(),
             team,
             session_file,
             layout_revision,
@@ -198,6 +202,10 @@ impl SpikeApp {
 impl SpikeApp {
     /// 画一帧。与 eframe 解耦，因此可以在无窗口的测试里用 `Context::run_ui` 驱动。
     pub fn draw(&mut self, ui: &mut egui::Ui) {
+        if let Some(collab) = &mut self.collab {
+            collab.draw(ui);
+            return;
+        }
         let ctx = ui.ctx().clone();
         self.observe_team_ime(&ctx);
         self.draw_team(ui);
