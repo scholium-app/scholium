@@ -1,0 +1,9 @@
+    Finished `release` profile [optimized] target(s) in 0.15s
+     Running unittests src/main.rs (spikes/mixed-build/target/release/deps/scholium_spike_mixed_build-246e40b6f8dc5ba7)
+
+running 2 tests
+test pdf_sandbox::tests::rejects_symlinks_oversize_and_malformed_artifacts ... ok
+test pdf_sandbox::tests::reduced_profile_inspects_a_valid_pdf_with_all_four_tools ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 1.08s
+

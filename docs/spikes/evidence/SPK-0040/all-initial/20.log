@@ -1,0 +1,12 @@
+    Finished `release` profile [optimized] target(s) in 0.15s
+     Running unittests src/main.rs (spikes/mixed-build/target/release/deps/scholium_spike_mixed_build-246e40b6f8dc5ba7)
+
+running 5 tests
+test fidelity_tests::foreign_inline_conversion_accepts_verified_inline_subset ... ok
+test fidelity_tests::inline_source_include_rejects_block_content ... ok
+test fidelity_tests::inline_equations_cannot_publish_unresolved_number_references ... ok
+test fidelity_tests::conversion_never_silently_accepts_raw_or_macros ... ok
+test fidelity_tests::vector_repetition_and_wrong_placement_are_rejected ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+

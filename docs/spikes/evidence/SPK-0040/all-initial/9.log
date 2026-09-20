@@ -1,0 +1,14 @@
+    Finished `release` profile [optimized] target(s) in 0.15s
+     Running `spikes/typst-mapping/target/release/scholium-spike-typst render`
+渲染：1786 × 2526 像素，比例 3 px/pt
+绘制锚点标记 12 个
+自动不变量：检查 1 行，违例 0 处（同一行内 x 顺序应与文档顺序一致、同层区间不应重叠）
+墨迹存在性：0 个结构的区间内完全没有内容（应为 0）
+已保存 /home/ation_ciger/Projects/Mogan/scholium/spikes/typst-mapping/artifacts/anchor-overlay.png
+已保存 /home/ation_ciger/Projects/Mogan/scholium/spikes/typst-mapping/artifacts/anchor-overlay-zoom.png
+    Paragraph 节点 1 起点 (70.9, 70.9) pt
+    Math 节点 3 起点 (70.9, 91.6) pt
+    Fraction 节点 5 起点 (264.2, 107.5) pt
+    Script 节点 8 起点 (272.2, 107.5) pt
+    Matrix 节点 12 起点 (283.5, 107.5) pt
+    Sqrt 节点 14 起点 (316.2, 107.5) pt

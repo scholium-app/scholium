@@ -269,3 +269,14 @@ recovery 格式/Clippy/许可与 runner 自测通过；全 crate 格式化后拆
 切换与 Bob 真实中文组合 drain 通过并核对截图。见[报告 0039](../spikes/SPK-0039-native-source-replicas.md)
 和[ADR 0020](../adr/ADR-0020-native-source-replicas.md)。本轮是单窗口受信队列的纯文本源码片段，
 不修改 SDG 权威，不宣称结构协作、生产网络、持久化或原生完整验收完成。
+
+## 2026-09-20：大源码、Orca 与资源树验收
+
+基于 959e1f1 持续推进 P0。补源码滚动视口、命名、egui/AccessKit 可追溯补丁，
+发布构建十万行窗口操作通过；真实 Orca 焦点/文本/选区有语音输出证据。
+综合桌面验收暴露排版期间 AT-SPI Text 接口短暂消失，修复为权威文本持续发布、几何等待当前结果。
+整树 cgroup 内存/任务配额、256 MiB 临时空间及实际 EAGAIN/ENOSPC/OOM 对照通过。
+完整自动首轮 40/42；两项旧超时夹具被新增内存配额提前终止，换低分配计算夹具后安全 7/7。
+桌面首轮 19/20，修复 Text 接口后相关 8/8；UI 默认 55 passed/11 ignored、Clippy 通过。
+报告 0040、ADR 0021/0022 记录范围；共享工作输出总配额原型尚未接入，正式 parser/存储/schema
+裁决等出口边界仍保留，不宣称 P0 关闭。

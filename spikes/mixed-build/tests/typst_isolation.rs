@@ -68,9 +68,9 @@ fn ordinary_typst_rebuild_still_publishes_a_pdf() {
 
 #[test]
 fn expensive_typst_is_stopped_by_worker_budget_without_publishing() {
-    // Distinct seeds prevent memoization from collapsing the exponential work.
+    // A non-allocating loop isolates wall time from the independent memory limit.
     let fixture = Fixture::new(
-        "#let fib(n, seed) = if n < 2 { seed } else { fib(n - 1, seed * 2) + fib(n - 2, seed * 2 + 1) }\n#fib(40, 1)",
+        "#{ for a in range(10000) { for b in range(10000) { for c in range(10000) { let x = a + b + c } } } }",
     );
     let result = fixture.run();
     assert!(!result.status.success());

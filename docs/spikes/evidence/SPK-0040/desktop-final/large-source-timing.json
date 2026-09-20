@@ -1,0 +1,8 @@
+{
+  "lines": 100000,
+  "bytes": 1800000,
+  "open_seconds": 1.2644537019950803,
+  "tail_edit_observation_seconds": 0.6210960519965738,
+  "peak_rss": "538672 kB",
+  "timing_includes_harness_waits": true
+}

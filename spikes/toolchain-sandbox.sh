@@ -72,12 +72,24 @@ if [ -n "${SCHOLIUM_SPIKE_TOOLS:-}" ]; then
     [ ! -f "$executable" ] || mount_libraries "$executable"
   done
 fi
-exec /usr/bin/timeout --kill-after=2s "${seconds}s" \
+# Nested package builds inherit the outer cgroup. This marker is a read-only
+# mount created here, outside /project and /work; document environment is cleared.
+resource_scope=()
+if [ -e /run/scholium-resource-policy ] && [ ! -e /usr/bin/systemd-run ]; then
+  mounts+=(--ro-bind /run/scholium-resource-policy /run/scholium-resource-policy)
+else
+  [ -x /usr/bin/systemd-run ] || { echo 'user cgroup supervisor unavailable' >&2; exit 2; }
+  resource_scope=(/usr/bin/env "XDG_RUNTIME_DIR=/run/user/$UID"
+    /usr/bin/systemd-run --user --scope --quiet
+    -p MemoryMax=2G -p MemorySwapMax=0 -p TasksMax=64 -p OOMPolicy=kill --)
+  mounts+=(--ro-bind /usr/bin/prlimit /run/scholium-resource-policy)
+fi
+exec "${resource_scope[@]}" /usr/bin/timeout --kill-after=2s "${seconds}s" \
   /usr/bin/bwrap --unshare-all --die-with-parent --new-session --cap-drop ALL \
   --clearenv --setenv PATH /usr/bin --setenv HOME /tmp \
   --setenv LANG C.UTF-8 --setenv TEXMFVAR /tmp/texmf-var \
   --setenv TEXMFCONFIG /tmp/texmf-config --setenv TEXMFHOME /tmp/texmf-home \
   --setenv TEXINPUTS /project: --setenv TEXPICTS /project: \
-  "${mounts[@]}" --proc /proc --dev /dev --tmpfs /tmp \
+  "${mounts[@]}" --proc /proc --dev /dev --size 268435456 --tmpfs /tmp \
   --ro-bind "$input" /project --bind "$output" /work --chdir /work \
   /usr/bin/prlimit --as=4294967296 --fsize=67108864 --cpu=30 --nofile=128 -- "$@"

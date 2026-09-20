@@ -131,7 +131,7 @@ fn command_execution(checks: &mut Checks, root: &Path) -> Result<()> {
 fn timeouts(checks: &mut Checks, root: &Path) -> Result<()> {
     for (engine, source) in [
         (Engine::Latex, latex("\\loop\\iftrue\\repeat")),
-        (Engine::Typst, "#let fib(n, seed) = if n < 2 { seed } else { fib(n - 1, seed * 2) + fib(n - 2, seed * 2 + 1) }\n#fib(40, 1)".into()),
+        (Engine::Typst, "#{ for a in range(10000) { for b in range(10000) { for c in range(10000) { let x = a + b + c } } } }".into()),
     ] {
         checks.case(&format!("security.{}.timeout", engine.slug()));
         let control = match engine {

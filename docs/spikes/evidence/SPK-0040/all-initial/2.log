@@ -1,0 +1,108 @@
+   Compiling scholium-spike-egui v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/native-ui/candidate-egui)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.52s
+     Running unittests src/lib.rs (spikes/native-ui/candidate-egui/target/debug/deps/scholium_spike_egui-0da95f3376abead3)
+
+running 46 tests
+test native_edit_tests::source_100k_lines_records_layout_and_local_edit_cost ... ignored, manual 100000-line source benchmark; run with --ignored --nocapture
+test math_accessibility::tests::description_preserves_nested_slots_and_matrix_cell_order ... ok
+test collab_ui::model::tests::offline_rejection_preserves_draft_and_creates_no_update ... ok
+test collab_ui::model::tests::unicode_splices_and_unsupported_input_are_explicit ... ok
+test preview::integration_tests::actual_preview_completes_while_ui_keeps_drawing ... ignored, requires Linux bwrap and Typst CLI 0.15.1; run by verify-stage0 preview
+test preview::tests::stale_success_cannot_replace_current_document_preview ... ok
+test collab_ui::model::tests::regenerating_same_epoch_draft_does_not_erase_local_undo ... ok
+test session_file::tests::failed_open_and_late_open_preserve_current_edits ... ok
+test session_file::tests::atomic_store_refuses_external_changes_and_corrupt_load ... ok
+test session_file::tests::malformed_schema_parent_slot_and_variant_are_rejected ... ok
+test input::tests::clipboard_cut_uses_selection_and_empty_cut_is_noop ... ok
+test collab_ui::model::tests::language_barrier_drains_accepted_updates_and_quarantines_old_drafts ... ok
+test session_file::tests::semantic_content_and_invalid_source_survive_reopen ... ok
+test source_ui::tests::source_commit_changes_body_and_conflict_keeps_draft ... ok
+test team_ui::tests::barrier_requires_all_members_and_refresh_does_not_rebase_an_old_draft ... ok
+test session_file::tests::stale_draft_remains_stale_after_reopening ... ok
+test collab_ui::model::tests::dirty_draft_survives_remote_delivery_and_cannot_overwrite_it ... ok
+test team_ui::tests::coordinator_and_reconcile_publish_together_or_not_at_all ... ok
+test typst_editor::incremental_tests::continuous_edits_reuse_tiles_and_skipped_results_keep_complete_scenes ... ignored, requires built Typst helper and Linux sandbox
+test typst_editor::incremental_tests::later_page_edit_preserves_earlier_pages_and_page_removal_is_complete ... ignored, requires built Typst helper and Linux sandbox
+test typst_editor::session::tests::exited_worker_is_detected_before_reuse ... ignored, requires built Typst helper and Linux sandbox
+test typst_editor::session::tests::killing_parent_terminates_resident_process_tree ... ignored, requires built Typst helper and Linux sandbox
+test typst_editor::session::tests::parent_death_fixture ... ignored, subprocess fixture for parent-death test
+test typst_editor::session::tests::timeout_drops_session_and_next_session_can_compile ... ignored, requires built Typst helper and Linux sandbox
+test typst_editor::tests::compiled_editor_maps_all_fixture_text_and_rejects_stale_geometry ... ignored, requires built Typst helper and Linux sandbox
+test typst_editor::tests::compiler_preserves_quoted_math_spaces_and_escaped_text ... ignored, requires built Typst helper and Linux sandbox
+test typst_editor::tests::page_and_empty_slots_are_transparent_but_still_have_carets ... ignored, requires built Typst helper and Linux sandbox
+test typst_editor::tests::editing_keeps_the_existing_page_texture ... ok
+test typst_editor::tests::stale_compilation_never_installs_pages_or_geometry ... ok
+test team_ui::tests::offline_and_nonactive_source_cannot_mutate_the_shared_body ... ok
+test collab_ui::model::tests::delayed_reversed_duplicate_updates_converge_and_undo_keeps_remote ... ok
+test native_edit_tests::invalid_slot_selection_never_mutates_document_or_history ... ok
+test native_edit_tests::focus_transfer_cancels_body_preedit_without_mutating_history ... ok
+test native_edit_tests::drag_anchor_uses_press_position_when_motion_arrives_in_the_same_frame ... ok
+test native_edit_tests::consecutive_backspaces_keep_a_collapsed_valid_selection ... ok
+test team_ui::tests::composition_cannot_publish_and_finishing_frame_keeps_actor_epoch ... ok
+test native_edit_tests::replacing_a_selection_is_one_undoable_action ... ok
+test native_edit_tests::measured_structure_boxes_contain_children_and_fraction_rule ... ok
+test native_edit_tests::ime_navigation_does_not_move_the_document_caret ... ok
+test team_ui::tests::cancelled_composition_restores_draft_without_history ... ok
+test native_edit_tests::whole_node_selection_can_be_replaced_and_undone_in_one_action ... ok
+test native_edit_tests::unwrapping_keeps_the_edit_position_in_the_surviving_content ... ok
+test native_edit_tests::undo_leaves_a_valid_caret_for_the_next_input ... ok
+test native_edit_tests::empty_math_slot_keeps_measured_caret_and_box ... ok
+test native_edit_tests::proportional_font_carets_and_hits_follow_painted_glyphs ... ok
+test native_edit_tests::geometry_cache_tracks_edit_undo_and_display_scale ... ok
+
+test result: ok. 35 passed; 0 failed; 11 ignored; 0 measured; 0 filtered out; finished in 0.21s
+
+     Running unittests src/main.rs (spikes/native-ui/candidate-egui/target/debug/deps/scholium_spike_egui-bb028edd4a9c7bbd)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/accessibility.rs (spikes/native-ui/candidate-egui/target/debug/deps/accessibility-f53d831880e4e14a)
+
+running 3 tests
+test accessible_runs_follow_model_order_instead_of_math_paint_order ... ok
+test accessible_unicode_selection_cuts_and_undoes_across_leaves ... ok
+test horizontal_scroll_moves_long_document_origin ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+     Running tests/input.rs (spikes/native-ui/candidate-egui/target/debug/deps/input-3048ff33e4a810b1)
+
+running 13 tests
+test wrapping_the_focused_node_creates_a_structure ... ok
+test clicking_in_the_document_moves_the_caret ... ok
+test arrow_keys_do_not_corrupt_the_document ... ok
+test unwrapping_removes_the_structure_and_keeps_content ... ok
+test undo_reverts_the_local_typing ... ok
+test undo_uses_key_event_modifiers_when_control_is_released_in_the_same_frame ... ok
+test dragging_in_the_document_selects_a_range ... ok
+test typing_zwj_emoji_then_backspace_does_not_split_grapheme ... ok
+test startup_focuses_the_document_area ... ok
+test backspace_deletes_exactly_the_selected_range ... ok
+test typing_inserts_text_and_advances_the_caret ... ok
+test backspace_deletes_one_grapheme ... ok
+test preedit_does_not_touch_history_and_commit_adds_exactly_one_action ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+
+     Running tests/perf.rs (spikes/native-ui/candidate-egui/target/debug/deps/perf-50c16af3c39b841c)
+
+running 1 test
+test frame_cost_scales_with_document_size ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 12.42s
+
+     Running tests/window_layout.rs (spikes/native-ui/candidate-egui/target/debug/deps/window_layout-8d8ff036d248c5f1)
+
+running 1 test
+test preview_controls_fit_a_tiled_window ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+   Doc-tests scholium_spike_egui
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

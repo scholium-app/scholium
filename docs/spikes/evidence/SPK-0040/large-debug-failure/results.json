@@ -1,0 +1,7 @@
+[
+  {
+    "case": "large_source_window",
+    "result": "Fail",
+    "reason": "Error: atspi_error: Did not receive a reply. Possible causes include: the remote application did not send a reply, the message bus security policy blocked the reply, the reply timeout expired, or the network connection was broken. (1)"
+  }
+]

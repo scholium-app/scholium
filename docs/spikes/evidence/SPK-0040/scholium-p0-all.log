@@ -1,0 +1,92 @@
+本次日志：/tmp/scholium-stage0.thg9oA
+
+=== 共享核心（语义图 / 光标 / 语义编辑 / 布局） ===
+  PASS  核心测试
+
+=== 第 1 项 原生 UI（egui 选定；iced 对照） ===
+  PASS  egui 输入契约与性能测试
+  PASS  iced 输入契约测试
+  PASS  候选 iced 构建
+  PASS  候选 gpui 构建
+  PASS  候选 egui 构建
+
+=== 第 2 项 Typst 映射（生成 / 定位 / 渲染比对 / 时延） ===
+  PASS  typst-mapping 主流程
+  PASS  typst-mapping 字符级映射
+  PASS  typst-mapping 渲染比对
+  PASS  typst-mapping 时延与结果门
+
+=== 第 3 项 源码 reconcile ===
+  PASS  source-reconcile
+
+=== 第 4–7 项 ===
+  PASS  crdt-race
+  PASS  crdt-engines
+  PASS  recovery
+  PASS  language-coordination
+  PASS  mixed-build
+  PASS  source include fidelity
+  PASS  vector annotation fidelity
+  PASS  PDF annotation boundary
+  PASS  inline placement gate
+
+=== 标准包与混合包的干净环境重建（需要 Typst CLI 0.15.1） ===
+  PASS  export packages
+
+=== 真实后台编译期间的原生 UI 帧验证（需要 Typst CLI 0.15.1） ===
+  PASS  async preview
+
+=== 出口条件 安全（不受信源码隔离） ===
+  PASS  untrusted-input
+  PASS  mixed-build compiler isolation
+  FAIL  Typst worker isolation
+        
+        note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+        
+        
+        failures:
+            expensive_typst_is_stopped_by_worker_budget_without_publishing
+        
+        test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.75s
+        
+        error: test failed, to rerun pass `--test typst_isolation`
+        完整日志：/tmp/scholium-stage0.thg9oA/25.log
+  PASS  PDF artifact probe isolation
+  PASS  runtime mount allowlist
+  PASS  process tree resource limits
+  FAIL  recovery compiler isolation
+        == 逐用例汇总 ==
+          [PASS] security.latex.positive            1/1 断言通过
+          [PASS] security.typst.positive            1/1 断言通过
+          [PASS] security.latex.outside-read        1/1 断言通过
+          [PASS] security.typst.outside-read        1/1 断言通过
+          [PASS] security.latex.commands            1/1 断言通过
+          [PASS] security.latex.timeout             2/2 断言通过
+          [FAIL] security.typst.timeout             1/2 断言通过 首个失败: 循环被墙钟上限终止且无旧产物 — Err(CommandFailed { program: "recovery sandbox", code: None, stderr: "worker failed (124 = wall timeout): signal: 9 (SIGKILL)" }); elapsed=8.970606872s
+          [PASS] security.latex.output-rejection    1/1 断言通过
+        Error: Core("security checks failed")
+        完整日志：/tmp/scholium-stage0.thg9oA/29.log
+
+=== 出口条件 许可与来源（cargo deny：licenses / bans / sources） ===
+  PASS  deny core
+  PASS  deny candidate-iced
+  PASS  deny candidate-gpui
+  PASS  deny candidate-egui
+  PASS  deny typst-mapping
+  PASS  deny source-reconcile
+  PASS  deny untrusted-input
+  PASS  deny crdt-race
+  PASS  deny crdt-engines
+  PASS  deny recovery
+  PASS  deny language-coordination
+  PASS  deny mixed-build
+  提示：advisories 需要联网，本脚本在离线环境跳过该项（CI 必须跑）。
+
+=== 出口条件 无 npm / Node.js / WebView ===
+  PASS  仓库内无 npm/Node 工程
+
+=== 汇总 ===
+  通过 40 项，失败 2 项
+  失败项：
+    - Typst worker isolation
+    - recovery compiler isolation

@@ -1,0 +1,284 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.47
+   Compiling bitflags v2.13.2
+   Compiling cfg-if v1.0.4
+   Compiling once_cell v1.21.4
+   Compiling log v0.4.34
+   Compiling libm v0.2.16
+   Compiling libc v0.2.189
+   Compiling pin-project-lite v0.2.17
+   Compiling autocfg v1.5.1
+   Compiling rustix v1.1.4
+   Compiling smallvec v1.16.1
+   Compiling linux-raw-sys v0.12.1
+   Compiling memchr v2.8.3
+   Compiling pkg-config v0.3.34
+   Compiling slab v0.4.12
+   Compiling shlex v2.0.1
+   Compiling thiserror v2.0.20
+   Compiling find-msvc-tools v0.1.12
+   Compiling libloading v0.8.9
+   Compiling futures-core v0.3.34
+   Compiling downcast-rs v1.2.1
+   Compiling scoped-tls v1.0.1
+   Compiling dlib v0.5.3
+   Compiling hashbrown v0.17.1
+   Compiling equivalent v1.0.2
+   Compiling arrayvec v0.7.8
+   Compiling wayland-client v0.31.15
+   Compiling futures-io v0.3.34
+   Compiling cc v1.4.6
+   Compiling cfg_aliases v0.2.2
+   Compiling zerocopy v0.8.57
+   Compiling version_check v0.9.5
+   Compiling serde_core v1.0.229
+   Compiling tracing-core v0.1.36
+   Compiling raw-window-handle v0.6.2
+   Compiling futures-sink v0.3.34
+   Compiling serde v1.0.229
+   Compiling futures-channel v0.3.34
+   Compiling fastrand v2.5.0
+   Compiling num-traits v0.2.19
+   Compiling parking v2.2.1
+   Compiling rustc-hash v1.1.0
+   Compiling smol_str v0.2.2
+   Compiling winnow v1.0.4
+   Compiling futures-task v0.3.34
+   Compiling slotmap v1.1.1
+   Compiling web-time v1.1.0
+   Compiling crossbeam-utils v0.8.23
+   Compiling rustc-hash v2.1.3
+   Compiling lilt v0.8.2
+   Compiling roxmltree v0.20.0
+   Compiling wayland-sys v0.31.11
+   Compiling bytes v1.12.1
+   Compiling parking_lot_core v0.9.12
+   Compiling glam v0.25.0
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling naga v27.0.3
+   Compiling quick-xml v0.41.0
+   Compiling indexmap v2.14.2
+   Compiling unicode-segmentation v1.13.3
+   Compiling tinyvec v1.13.3
+   Compiling yazi v0.2.1
+   Compiling syn v3.0.5
+   Compiling syn v2.0.119
+   Compiling zeno v0.3.3
+   Compiling unicode-width v0.2.2
+   Compiling fontconfig-parser v0.5.8
+   Compiling bit-vec v0.8.0
+   Compiling core_maths v0.1.1
+   Compiling ash v0.38.0+1.3.281
+   Compiling memmap2 v0.9.11
+   Compiling ttf-parser v0.25.1
+   Compiling khronos-egl v6.0.0
+   Compiling foldhash v0.1.5
+   Compiling scopeguard v1.2.0
+   Compiling as-raw-xcb-connection v1.0.1
+   Compiling foldhash v0.2.0
+   Compiling hashbrown v0.15.5
+   Compiling lock_api v0.4.14
+   Compiling bit-set v0.8.0
+   Compiling codespan-reporting v0.12.0
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling concurrent-queue v2.5.0
+   Compiling hashbrown v0.16.1
+   Compiling event-listener v5.4.2
+   Compiling wgpu-hal v27.0.4
+   Compiling spirv v0.3.0+sdk-1.3.268.0
+   Compiling wayland-scanner v0.31.11
+   Compiling gpu-descriptor-types v0.2.0
+   Compiling wayland-backend v0.3.17
+   Compiling gpu-alloc-types v0.3.1
+   Compiling linebender_resource_handle v0.1.1
+   Compiling xcursor v0.3.11
+   Compiling euclid v0.22.14
+   Compiling unicode-script v0.5.8
+   Compiling xkeysym v0.2.1
+   Compiling self_cell v1.3.0
+   Compiling hexf-parse v0.2.1
+   Compiling unicode-linebreak v0.1.5
+   Compiling toml_edit v0.25.15+spec-1.1.0
+   Compiling x11rb-protocol v0.13.2
+   Compiling sys-locale v0.3.2
+   Compiling unicode-bidi v0.3.18
+   Compiling cursor-icon v1.2.0
+   Compiling rangemap v1.8.0
+   Compiling gpu-descriptor v0.3.2
+   Compiling ordered-float v5.5.0
+   Compiling gpu-alloc v0.6.2
+   Compiling event-listener-strategy v0.5.4
+   Compiling parking_lot v0.12.5
+   Compiling futures-lite v2.6.1
+   Compiling glow v0.16.0
+   Compiling renderdoc-sys v1.1.0
+   Compiling strict-num v0.1.1
+   Compiling lyon_geom v1.0.19
+   Compiling proc-macro-crate v3.5.0
+   Compiling arrayref v0.3.9
+   Compiling thiserror v1.0.69
+   Compiling profiling v1.0.18
+   Compiling rustix v0.38.44
+   Compiling endi v1.1.1
+   Compiling async-io v2.6.0
+   Compiling wgpu-core v27.0.3
+   Compiling litrs v1.0.0
+   Compiling linux-raw-sys v0.4.15
+   Compiling errno v0.3.14
+   Compiling tiny-xlib v0.2.5
+   Compiling lyon_path v1.0.19
+   Compiling wgpu v27.0.1
+   Compiling async-task v4.7.1
+   Compiling smithay-client-toolkit v0.20.0
+   Compiling svg_fmt v0.4.5
+   Compiling signal-hook-registry v1.4.8
+   Compiling fontdb v0.23.0
+   Compiling async-channel v2.5.0
+   Compiling float_next_after v1.0.0
+   Compiling ctor v0.10.1
+   Compiling static_assertions v1.1.0
+   Compiling document-features v0.2.12
+   Compiling atomic-waker v1.1.2
+   Compiling getrandom v0.3.4
+   Compiling smithay-client-toolkit v0.19.2
+   Compiling piper v0.2.5
+   Compiling lyon_tessellation v1.0.22
+   Compiling lyon_algorithms v1.0.21
+   Compiling etagere v0.2.15
+   Compiling owned_ttf_parser v0.25.1
+   Compiling async-lock v3.4.2
+   Compiling x11-dl v2.21.0
+   Compiling ahash v0.8.12
+   Compiling lru v0.16.4
+   Compiling android-build v0.1.4
+   Compiling ab_glyph_rasterizer v0.1.10
+   Compiling blocking v1.7.0
+   Compiling guillotiere v0.6.2
+   Compiling async-executor v1.14.0
+   Compiling ab_glyph v0.2.32
+   Compiling uuid v1.26.1
+   Compiling async-broadcast v0.7.2
+   Compiling kurbo v0.10.4
+   Compiling lyon v1.0.19
+   Compiling winit v0.30.13
+   Compiling ordered-stream v0.2.0
+   Compiling mundy v0.2.3
+   Compiling hex v0.4.3
+   Compiling xkbcommon-dl v0.4.2
+   Compiling percent-encoding v2.3.2
+   Compiling dpi v0.1.2
+   Compiling zerocopy-derive v0.8.57
+   Compiling tracing-attributes v0.1.31
+   Compiling enumflags2_derive v0.7.12
+   Compiling thiserror-impl v1.0.69
+   Compiling async-recursion v1.1.1
+   Compiling bytemuck_derive v1.12.1
+   Compiling thiserror-impl v2.0.20
+   Compiling serde_derive v1.0.229
+   Compiling futures-macro v0.3.34
+   Compiling serde_repr v0.1.21
+   Compiling async-trait v0.1.92
+   Compiling futures-util v0.3.34
+   Compiling tracing v0.1.44
+   Compiling bytemuck v1.25.2
+   Compiling iced_core v0.14.0
+   Compiling scholium-spike-core v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/native-ui/core)
+   Compiling font-types v0.10.1
+   Compiling font-types v0.12.5
+   Compiling wgpu-types v27.0.1
+   Compiling tiny-skia-path v0.11.4
+   Compiling polling v3.11.0
+   Compiling gethostname v1.1.0
+   Compiling calloop v0.14.4
+   Compiling read-fonts v0.41.0
+   Compiling read-fonts v0.35.0
+   Compiling calloop v0.13.0
+   Compiling wayland-csd-frame v0.3.0
+   Compiling tiny-skia v0.11.4
+   Compiling async-signal v0.2.14
+   Compiling async-process v2.5.0
+   Compiling futures-executor v0.3.34
+   Compiling wayland-protocols v0.32.13
+   Compiling wayland-cursor v0.31.14
+   Compiling calloop-wayland-source v0.4.1
+   Compiling calloop-wayland-source v0.3.0
+   Compiling zvariant_utils v4.2.0
+   Compiling zcheapstr v1.1.0
+   Compiling enumflags2 v0.7.12
+   Compiling futures v0.3.34
+   Compiling iced_futures v0.14.0
+   Compiling iced_debug v0.14.0
+   Compiling iced_runtime v0.14.0
+   Compiling zvariant_derive v5.15.0
+   Compiling half v2.7.1
+   Compiling zvariant v5.15.0
+   Compiling zbus_names v4.3.4
+   Compiling harfrust v0.3.2
+   Compiling skrifa v0.37.0
+   Compiling skrifa v0.44.0
+   Compiling zbus_macros v5.19.0
+   Compiling wayland-protocols-wlr v0.3.12
+   Compiling wayland-protocols-experimental v20250721.0.1
+   Compiling wayland-protocols-misc v0.3.12
+   Compiling wayland-protocols-plasma v0.3.12
+   Compiling x11rb v0.13.2
+   Compiling zbus v5.19.0
+   Compiling swash v0.2.10
+   Compiling sctk-adwaita v0.10.1
+   Compiling smithay-clipboard v0.7.3
+   Compiling softbuffer v0.4.8
+   Compiling clipboard_x11 v0.4.3
+   Compiling clipboard_wayland v0.2.2
+   Compiling window_clipboard v0.5.1
+   Compiling cosmic-text v0.15.0
+   Compiling iced_graphics v0.14.0
+   Compiling iced_tiny_skia v0.14.1
+   Compiling iced_program v0.14.0
+   Compiling wgpu-core-deps-windows-linux-android v27.0.0
+   Compiling iced_winit v0.14.1
+   Compiling cryoglyph v0.1.0
+   Compiling iced_wgpu v0.14.0
+   Compiling iced_renderer v0.14.0
+   Compiling iced_widget v0.14.2
+   Compiling iced v0.14.0
+   Compiling scholium-spike-iced v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/native-ui/candidate-iced)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 38.90s
+     Running unittests src/lib.rs (spikes/native-ui/candidate-iced/target/debug/deps/scholium_spike_iced-4bfd1f1bbd37880b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/gpu_probe.rs (spikes/native-ui/candidate-iced/target/debug/deps/gpu_probe-090162e09d87e9bc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (spikes/native-ui/candidate-iced/target/debug/deps/scholium_spike_iced-61a2106e7e66a403)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/input.rs (spikes/native-ui/candidate-iced/target/debug/deps/input-824412c0378d0f92)
+
+running 8 tests
+test arrow_keys_do_not_corrupt_the_document ... ok
+test preedit_does_not_touch_history_and_commit_adds_exactly_one_action ... ok
+test typing_inserts_text_and_advances_the_caret ... ok
+test backspace_deletes_one_grapheme ... ok
+test undo_reverts_the_local_typing ... ok
+test typing_zwj_emoji_then_backspace_does_not_split_grapheme ... ok
+test ime_commit_is_ignored_after_focus_moves_to_source_pane ... ok
+test source_edit_action_moves_input_focus_and_read_only_write_is_rejected ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+
+   Doc-tests scholium_spike_iced
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

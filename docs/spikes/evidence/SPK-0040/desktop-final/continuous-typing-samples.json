@@ -1,0 +1,282 @@
+[
+  {
+    "elapsed_ms": 13.071244989987463,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 0
+  },
+  {
+    "elapsed_ms": 44.95677999511827,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 1
+  },
+  {
+    "elapsed_ms": 75.3884849982569,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 1
+  },
+  {
+    "elapsed_ms": 107.92851699807215,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 2
+  },
+  {
+    "elapsed_ms": 142.10043298953678,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 2
+  },
+  {
+    "elapsed_ms": 176.09319799521472,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 3
+  },
+  {
+    "elapsed_ms": 224.83266599010676,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 3
+  },
+  {
+    "elapsed_ms": 260.7334939966677,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 4
+  },
+  {
+    "elapsed_ms": 292.50412399414927,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 5
+  },
+  {
+    "elapsed_ms": 320.4797229991527,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 5
+  },
+  {
+    "elapsed_ms": 352.9172309936257,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 6
+  },
+  {
+    "elapsed_ms": 388.17455699609127,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 6
+  },
+  {
+    "elapsed_ms": 416.4017199946102,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 7
+  },
+  {
+    "elapsed_ms": 445.57822599017527,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 7
+  },
+  {
+    "elapsed_ms": 472.39741099474486,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 8
+  },
+  {
+    "elapsed_ms": 501.10567499359604,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 8
+  },
+  {
+    "elapsed_ms": 533.286424994003,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 9
+  },
+  {
+    "elapsed_ms": 560.3654799924698,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 9
+  },
+  {
+    "elapsed_ms": 591.7373789998237,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 10
+  },
+  {
+    "elapsed_ms": 623.0012099986197,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 10
+  },
+  {
+    "elapsed_ms": 654.0140699944459,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 11
+  },
+  {
+    "elapsed_ms": 687.0273559907218,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 11
+  },
+  {
+    "elapsed_ms": 717.2707829886349,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 12
+  },
+  {
+    "elapsed_ms": 750.7469309930457,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 12
+  },
+  {
+    "elapsed_ms": 779.5034609880531,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 13
+  },
+  {
+    "elapsed_ms": 808.3142699906603,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 13
+  },
+  {
+    "elapsed_ms": 836.4285729912808,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 14
+  },
+  {
+    "elapsed_ms": 866.9925750000402,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 14
+  },
+  {
+    "elapsed_ms": 898.3435349946376,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 15
+  },
+  {
+    "elapsed_ms": 934.2959679925116,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 16
+  },
+  {
+    "elapsed_ms": 966.0372729995288,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 16
+  },
+  {
+    "elapsed_ms": 997.7073459886014,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 17
+  },
+  {
+    "elapsed_ms": 1024.8214099992765,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 17
+  },
+  {
+    "elapsed_ms": 1056.1732599890092,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 18
+  },
+  {
+    "elapsed_ms": 1085.8788399928017,
+    "origin": [
+      0,
+      179
+    ],
+    "adopted": 18
+  }
+]

@@ -8,6 +8,10 @@ license = "MIT OR Apache-2.0"
 # 独立 workspace：候选不共享 workspace，避免 feature 合并与锁定版本互相影响。
 [workspace]
 
+[patch.crates-io]
+egui = { path = "../vendor/egui" }
+accesskit_atspi_common = { path = "../vendor/accesskit_atspi_common" }
+
 [dependencies]
 loro = { version = "=1.16.0", default-features = false }
 serde_json = "=1.0.151"

@@ -17,12 +17,23 @@ impl SpikeApp {
                 "{:?} · 基于 revision {}",
                 self.source.dialect, self.source.revision
             ));
-            let response = ui.add(egui::TextEdit::multiline(&mut self.source_buffer).id(
-                self.team.as_ref().map_or_else(
-                    || egui::Id::new("source_editor"),
-                    |team| egui::Id::new(("team_source", team.selected)),
-                ),
-            ));
+            // Keep draft actions reachable even when the draft exceeds the viewport.
+            let response = egui::ScrollArea::both()
+                .id_salt("source_viewport")
+                .animated(false)
+                .max_height((ui.available_height() - 140.0).max(100.0))
+                .show(ui, |ui| {
+                    ui.add(egui::TextEdit::multiline(&mut self.source_buffer).id(
+                        self.team.as_ref().map_or_else(
+                            || egui::Id::new("source_editor"),
+                            |team| egui::Id::new(("team_source", team.selected)),
+                        ),
+                    ))
+                })
+                .inner;
+            ui.ctx().accesskit_node_builder(response.id, |node| {
+                node.set_label(format!("{:?} 源码编辑器", self.source.dialect));
+            });
             if response.has_focus() {
                 self.structure_focused = false;
             }
@@ -82,6 +93,53 @@ impl SpikeApp {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn accessible_source(offset: f32) -> egui::accesskit::TreeUpdate {
+        let ctx = egui::Context::default();
+        ctx.enable_accesskit();
+        let mut text = "中😀\nsecond\n".repeat(30);
+        let mut output = ctx.run_ui(Default::default(), |ui| {
+            egui::ScrollArea::vertical()
+                .max_height(100.0)
+                .vertical_scroll_offset(offset)
+                .show(ui, |ui| {
+                    ui.add(egui::TextEdit::multiline(&mut text).id(egui::Id::new("draft")));
+                });
+        });
+        output.textures_delta.clear();
+        output
+            .platform_output
+            .accesskit_update
+            .expect("enabled tree")
+    }
+
+    #[test]
+    fn scrolling_preserves_accessible_text_positions_and_moves_one_transform() {
+        use egui::accesskit::Role;
+        let before = accessible_source(0.0);
+        let after = accessible_source(50.0);
+        let runs = |tree: &egui::accesskit::TreeUpdate| {
+            tree.nodes
+                .iter()
+                .filter(|(_, n)| n.role() == Role::TextRun)
+                .map(|(id, n)| (*id, n.value().map(str::to_owned), n.bounds()))
+                .collect::<Vec<_>>()
+        };
+        assert!(!runs(&before).is_empty());
+        assert_eq!(runs(&before), runs(&after));
+        let container = egui::Id::new("draft").with("text_geometry").accesskit_id();
+        let transform = |tree: &egui::accesskit::TreeUpdate| {
+            tree.nodes
+                .iter()
+                .find(|(id, _)| *id == container)
+                .expect("text geometry parent")
+                .1
+                .transform()
+                .cloned()
+        };
+        assert_ne!(transform(&before), transform(&after));
+    }
+
     #[test]
     fn source_commit_changes_body_and_conflict_keeps_draft() {
         let ctx = egui::Context::default();

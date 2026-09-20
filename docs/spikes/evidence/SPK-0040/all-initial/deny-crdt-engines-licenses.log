@@ -1,0 +1,49 @@
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium/deny.toml:24:6
+   │
+24 │     "0BSD",
+   │      ━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium/deny.toml:17:6
+   │
+17 │     "Apache-2.0 WITH LLVM-exception",
+   │      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium/deny.toml:19:6
+   │
+19 │     "BSD-3-Clause",
+   │      ━━━━━━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium/deny.toml:27:6
+   │
+27 │     "CC0-1.0",
+   │      ━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium/deny.toml:22:6
+   │
+22 │     "ISC",
+   │      ━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium/deny.toml:32:6
+   │
+32 │     "OFL-1.1",
+   │      ━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium/deny.toml:33:6
+   │
+33 │     "Ubuntu-font-1.0",
+   │      ━━━━━━━━━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium/deny.toml:25:6
+   │
+25 │     "Unicode-DFS-2016",
+   │      ━━━━━━━━━━━━━━━━ unmatched license allowance
+
+licenses ok

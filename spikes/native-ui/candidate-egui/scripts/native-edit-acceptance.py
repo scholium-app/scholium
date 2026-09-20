@@ -203,6 +203,7 @@ def source_dialects():
         assert w.text() == before, 'invalid draft changed authority'
         assert w.source().queryText().getText(0, -1) == draft, 'invalid draft lost'
         advertised_enabled = w.named('LaTeX').getState().contains(pyatspi.STATE_ENABLED)
+        assert not advertised_enabled, 'disabled language button advertised as enabled'
         w.action('LaTeX')
         assert w.source().queryText().getText(0, -1) == draft, 'dirty dialect switch discarded draft'
         assert any((n.name or '').startswith('Typst ·') for n in w.nodes()), 'dirty dialect switch allowed'
@@ -367,6 +368,39 @@ def accessibility():
         w.key(15)  # Tab leaves body for next native control.
         assert any(n.getState().contains(pyatspi.STATE_FOCUSED) and n.name != '正文结构编辑器' for n in w.nodes())
         assert any(n.getRoleName() == 'math' and '分子' in (n.name or '') for n in w.nodes()), 'math semantics missing'
+
+
+def screen_reader():
+    # Start only after focusing our own window; do not capture other applications.
+    with Window('screen-reader') as w:
+        path = OUT / 'orca.log'
+        with (OUT / 'orca-process.log').open('w') as log:
+            reader = subprocess.Popen(['orca', '--debug', '--debug-file', str(path)],
+                                      stdout=log, stderr=log, env=dict(os.environ, PYTHONUNBUFFERED='1'))
+            try:
+                time.sleep(3)
+                assert reader.poll() is None, 'Orca exited during startup'
+                w.action('LaTeX')
+                assert w.named('正文结构编辑器').queryComponent().grabFocus()
+                time.sleep(1)
+                w.select(0, 1)
+                w.key(106)  # Right: real caret notification.
+                assert w.source().queryComponent().grabFocus()
+                time.sleep(1)
+                w.key(29, 102)
+                call('fcitx5-remote', '-c')
+                w.type('READER')
+                w.key(42, 105)  # Shift+Left: real selection notification.
+                w.key(15)  # Tab to commit action.
+                time.sleep(2)
+            finally:
+                reader.terminate()
+                reader.wait(timeout=10)
+            speech = [line for line in path.read_text().splitlines() if 'SPEECH OUTPUT:' in line]
+            (OUT / 'orca-speech.txt').write_text('\n'.join(speech))
+            assert any('正文结构编辑器' in line for line in speech), 'body focus not spoken'
+            assert any('应用源码' in line for line in speech), 'button focus not spoken'
+            assert 'text-selection-changed' in path.read_text(), 'selection notification missing'
 
 
 def pointer_selection():
@@ -596,6 +630,59 @@ def session_typst_recovery():
             os.environ['SCHOLIUM_SPIKE_SESSION'] = previous
 
 
+def large_source_window():
+    path = OUT / 'large-source.session.json'
+    path.unlink(missing_ok=True)
+    previous = os.environ.get('SCHOLIUM_SPIKE_SESSION')
+    os.environ['SCHOLIUM_SPIKE_SESSION'] = str(path)
+    try:
+        with Window('large-source-seed') as w:
+            w.action('保存会话')
+            wait_for(lambda: path.exists(), 'seed not saved')
+            w.graceful = True
+        snapshot = json.loads(path.read_text())
+        source = 'source 0123456789\n' * 100_000
+        snapshot['source'] = source
+        path.write_text(json.dumps(snapshot, ensure_ascii=False))
+        start = time.monotonic()
+        with Window('large-source-window') as w:
+            opened = time.monotonic() - start
+            call('fcitx5-remote', '-c')
+            editor = w.source()
+            text = editor.queryText()
+            assert text.getText(0, -1) == source
+            assert editor.queryComponent().grabFocus()
+            wait_for(lambda: editor.getState().contains(pyatspi.STATE_FOCUSED),
+                     'large source did not receive focus', timeout=30)
+            w.key(29, 107)  # Ctrl+End scrolls to the last line.
+            wait_for(lambda: text.caretOffset == len(source), 'end navigation failed', timeout=30)
+            before = time.monotonic()
+            w.type('TAIL')
+            edited = time.monotonic() - before
+            wait_for(lambda: text.getText(0, -1) == source + 'TAIL', 'tail edit missing', timeout=30)
+            # The caret must be on screen, not merely changed in the buffer.
+            bounds = w.app[0].queryComponent().getExtents(pyatspi.DESKTOP_COORDS)
+            wait_for(lambda: bounds.y <= text.getCharacterExtents(
+                len(source) + 3, pyatspi.DESKTOP_COORDS)[1] < bounds.y + bounds.height,
+                'tail caret is outside viewport', timeout=30)
+            w.key(29, 102)
+            w.type('HEAD')
+            assert text.getText(0, -1) == 'HEAD' + source + 'TAIL'
+            status = Path(f'/proc/{w.process.pid}/status').read_text()
+            memory = re.search(r'^VmHWM:\s+(.*)$', status, re.M).group(1)
+            (OUT / 'large-source-timing.json').write_text(json.dumps({
+                'lines': 100_000, 'bytes': len(source), 'open_seconds': opened,
+                'tail_edit_observation_seconds': edited, 'peak_rss': memory,
+                'timing_includes_harness_waits': True}, indent=2))
+            w.graceful = True
+        assert json.loads(path.read_text())['source'] == 'HEAD' + source + 'TAIL'
+    finally:
+        if previous is None:
+            os.environ.pop('SCHOLIUM_SPIKE_SESSION', None)
+        else:
+            os.environ['SCHOLIUM_SPIKE_SESSION'] = previous
+
+
 def replica_collaboration():
     previous = os.environ.get('SCHOLIUM_SPIKE_REPLICAS')
     os.environ['SCHOLIUM_SPIKE_REPLICAS'] = '1'
@@ -800,7 +887,7 @@ try:
     for name in saved:
         prop(name, 'true')
     call('systemctl', '--user', 'start', 'ydotool')
-    for case in [ime, source_dialects, math_edit, accessibility, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit, session_recovery, session_typst_recovery, team_language_gate, team_ime_barrier, replica_collaboration]:
+    for case in [ime, source_dialects, math_edit, accessibility, screen_reader, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit, session_recovery, session_typst_recovery, large_source_window, team_language_gate, team_ime_barrier, replica_collaboration]:
         if len(sys.argv) > 2 and case.__name__ not in sys.argv[2:]:
             continue
         try:

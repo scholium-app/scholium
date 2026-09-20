@@ -1,0 +1,3 @@
+PASS: runtime allowlist exposes tools/resources but omits unrelated host trees
+PASS: PDF probe exposes inspection tools, read-only input and writable output; omits TeX and unrelated tools
+PASS: recovery profile runs latexmk and preserves input/host boundaries

@@ -8,7 +8,7 @@ struct TextRun {
     id: egui::Id,
     source: SourceSpan,
     text: String,
-    rect: egui::Rect,
+    rect: Option<egui::Rect>,
     positions: Vec<f32>,
     widths: Vec<f32>,
 }
@@ -57,7 +57,7 @@ impl TextRun {
             ui.new_child(
                 egui::UiBuilder::new()
                     .id(self.id)
-                    .max_rect(self.rect)
+                    .max_rect(self.rect.unwrap_or(egui::Rect::NOTHING))
                     .accessibility_parent(parent),
             ),
         );
@@ -71,21 +71,26 @@ impl TextRun {
                     .collect::<Vec<_>>(),
             );
             node.set_value(self.text.clone());
-            node.set_character_positions(self.positions.clone());
-            node.set_character_widths(self.widths.clone());
-            // Screen logical pixels, using the same approximate metrics as the spike canvas.
-            node.set_bounds(accesskit::Rect {
-                x0: self.rect.min.x.into(),
-                y0: self.rect.min.y.into(),
-                x1: self.rect.max.x.into(),
-                y1: self.rect.max.y.into(),
-            });
+            if let Some(rect) = self.rect {
+                node.set_character_positions(self.positions.clone());
+                node.set_character_widths(self.widths.clone());
+                // Screen logical pixels from the current compiler scene.
+                node.set_bounds(accesskit::Rect {
+                    x0: rect.min.x.into(),
+                    y0: rect.min.y.into(),
+                    x1: rect.max.x.into(),
+                    y1: rect.max.y.into(),
+                });
+            }
         });
     }
 }
 
 impl SpikeApp {
     fn accessible_runs(&mut self, parent: egui::Id, origin: egui::Pos2) -> Vec<TextRun> {
+        if self.typst_editor.enabled && !self.typst_editor.current(self.core.revision()) {
+            return self.pending_text_runs(parent);
+        }
         if let Some(cache) = &self.accessible_cache
             && cache.revision == self.core.revision()
             && cache.origin == origin
@@ -131,7 +136,7 @@ impl SpikeApp {
                             Some(end.left() - start.left())
                         })
                         .collect(),
-                    rect: start.union(end).translate(origin.to_vec2()),
+                    rect: Some(start.union(end).translate(origin.to_vec2())),
                 })
             })
             .collect();
@@ -142,6 +147,33 @@ impl SpikeApp {
             parent,
             runs: runs.clone(),
         });
+        runs
+    }
+
+    fn pending_text_runs(&self, parent: egui::Id) -> Vec<TextRun> {
+        // Text comes from the authority even while geometry is stale. Removing
+        // all TextRuns temporarily deregisters AT-SPI Text and breaks readers.
+        let mut stack = vec![self.core.document().root()];
+        let mut runs = Vec::new();
+        while let Some(id) = stack.pop() {
+            let Ok(node) = self.core.document().node(id) else {
+                continue;
+            };
+            stack.extend(node.slots.iter().flatten().rev().copied());
+            if node.kind.is_text() {
+                runs.push(TextRun {
+                    id: parent.with(id.index()).with(0usize),
+                    source: SourceSpan {
+                        node: id,
+                        start_byte: 0,
+                    },
+                    text: node.text.as_string(),
+                    rect: None,
+                    positions: Vec::new(),
+                    widths: Vec::new(),
+                });
+            }
+        }
         runs
     }
 
@@ -230,5 +262,28 @@ impl SpikeApp {
             run.publish(ui, response.id);
         }
         self.accessible_math(ui, response.id);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn pending_compilation_exposes_current_text_without_stale_geometry() {
+        let ctx = egui::Context::default();
+        let mut app = SpikeApp::new_layout_probe(&ctx, None);
+        app.typst_editor.enabled = true;
+        app.insert_text("pending😀", Intent::Typing);
+        let runs = app.accessible_runs(egui::Id::new("body"), egui::Pos2::ZERO);
+        assert!(!runs.is_empty());
+        assert!(runs.iter().all(|run| run.rect.is_none()));
+        assert!(
+            runs.iter()
+                .map(|run| run.text.as_str())
+                .collect::<String>()
+                .starts_with("pending😀")
+        );
+        assert!(runs.iter().any(|run| run.encode(app.focus).is_some()));
     }
 }

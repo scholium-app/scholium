@@ -1,0 +1,7 @@
+[event] 启动完成 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[event] 恢复实验会话（新撤销范围） | revision 37 | 核心动作 36 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=18 elapsed_ms=612.472
+[typst-editor-worker] revision=37 elapsed_ms=598.054
+[typst-editor] Typst · revision 37 · 1 页 · 22 boxes
+[typst-editor-tiles] revision=37 uploaded=70
+[ime] 输入法锚点 [[26.0 167.6] - [27.5 184.2]]

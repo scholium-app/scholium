@@ -1,0 +1,10 @@
+    Finished `release` profile [optimized] target(s) in 0.15s
+     Running tests/include_links.rs (spikes/mixed-build/target/release/deps/include_links-be632dc711298138)
+
+running 3 tests
+test included_internal_symbols_link_both_ways_in_both_hosts ... ok
+test deep_vector_formula_keeps_same_source_baseline ... ok
+test foreign_inline_bridges_preserve_host_line_and_destination ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 28.22s
+
