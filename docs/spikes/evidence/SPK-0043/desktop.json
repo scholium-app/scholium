@@ -1,0 +1,31 @@
+[
+  {
+    "case": "ime",
+    "result": "Pass"
+  },
+  {
+    "case": "math_screen_reader",
+    "result": "Fail",
+    "reason": "AssertionError: focus changed; injection stopped"
+  },
+  {
+    "case": "unicode_clipboard",
+    "result": "Pass"
+  },
+  {
+    "case": "multipage_preview",
+    "result": "Pass"
+  },
+  {
+    "case": "frame_cpu_measurement",
+    "result": "Pass"
+  },
+  {
+    "case": "empty_slot",
+    "result": "Pass"
+  },
+  {
+    "case": "continuous_typing",
+    "result": "Pass"
+  }
+]

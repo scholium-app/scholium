@@ -57,43 +57,47 @@ fn compile_at(request: &Request, root: &Path) -> std::io::Result<Pages> {
         input.join("main.typ"),
         crate::typst_editor::preview_source(&request.document),
     )?;
-    let run = Command::new("/usr/bin/bash")
-        .arg(Path::new(env!("CARGO_MANIFEST_DIR")).join("../../toolchain-sandbox.sh"))
-        .args([input.as_os_str(), output.as_os_str()])
-        .args([
-            "10",
-            "/toolchain/typst",
-            "compile",
-            "--root",
-            "/project",
-            "--ppi",
-            "72",
-            "/project/main.typ",
-            "/work/page-{p}.png",
-        ])
-        .env("SCHOLIUM_SPIKE_TOOLS", tools)
-        .output()?;
+    let run = crate::artifact_io::command_output(
+        Command::new("/usr/bin/bash")
+            .arg(Path::new(env!("CARGO_MANIFEST_DIR")).join("../../toolchain-sandbox.sh"))
+            .args([input.as_os_str(), output.as_os_str()])
+            .args([
+                "10",
+                "/toolchain/typst",
+                "compile",
+                "--root",
+                "/project",
+                "--ppi",
+                "72",
+                "/project/main.typ",
+                "/work/page-{p}.png",
+            ])
+            .env("SCHOLIUM_SPIKE_TOOLS", tools),
+        root,
+    )?;
     if !run.status.success() {
         return Err(std::io::Error::other(
             String::from_utf8_lossy(&run.stderr).into_owned(),
         ));
     }
-    let query = Command::new("/usr/bin/bash")
-        .arg(Path::new(env!("CARGO_MANIFEST_DIR")).join("../../toolchain-sandbox.sh"))
-        .args([input.as_os_str(), output.as_os_str()])
-        .args([
-            "10",
-            "/toolchain/typst",
-            "query",
-            "--root",
-            "/project",
-            "/project/main.typ",
-            "<scholium-map>",
-            "--field",
-            "value",
-        ])
-        .env("SCHOLIUM_SPIKE_TOOLS", root.join("tools"))
-        .output()?;
+    let query = crate::artifact_io::command_output(
+        Command::new("/usr/bin/bash")
+            .arg(Path::new(env!("CARGO_MANIFEST_DIR")).join("../../toolchain-sandbox.sh"))
+            .args([input.as_os_str(), output.as_os_str()])
+            .args([
+                "10",
+                "/toolchain/typst",
+                "query",
+                "--root",
+                "/project",
+                "/project/main.typ",
+                "<scholium-map>",
+                "--field",
+                "value",
+            ])
+            .env("SCHOLIUM_SPIKE_TOOLS", root.join("tools")),
+        root,
+    )?;
     if !query.status.success() {
         return Err(std::io::Error::other(
             String::from_utf8_lossy(&query.stderr).into_owned(),
@@ -106,15 +110,20 @@ fn compile_at(request: &Request, root: &Path) -> std::io::Result<Pages> {
 
 const MAX_PAGES: usize = 100;
 const MAX_PIXELS: usize = 32 * 1024 * 1024;
+const MAX_PNG_BYTES: u64 = 64 * 1024 * 1024;
+
+#[cfg(test)]
+mod tests;
 
 fn read_pages(output: &Path) -> std::io::Result<Vec<egui::ColorImage>> {
     let mut paths = Vec::new();
     for entry in fs::read_dir(output)? {
         let path = entry?.path();
         let number = path
-            .file_stem()
+            .file_name()
             .and_then(|s| s.to_str())
             .and_then(|s| s.strip_prefix("page-"))
+            .and_then(|s| s.strip_suffix(".png"))
             .and_then(|s| s.parse::<usize>().ok());
         if let Some(number) = number {
             paths.push((number, path));
@@ -130,7 +139,12 @@ fn read_pages(output: &Path) -> std::io::Result<Vec<egui::ColorImage>> {
         if number != offset + 1 {
             return Err(std::io::Error::other("non-contiguous preview pages"));
         }
-        let mut reader = image::ImageReader::open(path)?;
+        let bytes = crate::artifact_io::read(&path, MAX_PNG_BYTES)?;
+        if !bytes.starts_with(b"\x89PNG\r\n\x1a\n") {
+            return Err(std::io::Error::other("invalid preview PNG signature"));
+        }
+        let mut reader =
+            image::ImageReader::with_format(std::io::Cursor::new(bytes), image::ImageFormat::Png);
         let mut limits = image::Limits::default();
         limits.max_alloc = Some(((MAX_PIXELS - pixels) * 4) as u64);
         limits.max_image_width = Some(4096);
@@ -175,7 +189,11 @@ fn read_markers(
         ) else {
             return Err(std::io::Error::other("invalid preview marker"));
         };
-        if page == 0 || page > page_count as u64 || !x.is_finite() || !y.is_finite() {
+        if page == 0
+            || page > page_count as u64
+            || !(x as f32).is_finite()
+            || !(y as f32).is_finite()
+        {
             return Err(std::io::Error::other("preview marker outside pages"));
         }
         markers.push(super::pages::Marker {

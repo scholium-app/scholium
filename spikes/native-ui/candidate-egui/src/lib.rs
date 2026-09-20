@@ -8,6 +8,7 @@
 //! 旧 `core::layout` 仅供显式同步回归探针使用。
 
 mod accessibility;
+mod artifact_io;
 mod collab_ui;
 mod frame_metrics;
 mod input;

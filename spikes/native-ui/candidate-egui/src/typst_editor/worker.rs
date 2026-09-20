@@ -4,6 +4,11 @@ use std::{collections::HashMap, fs, path::Path};
 
 // Physical raster pixels; must match the helper's tile transport.
 const TILE_PIXELS: usize = 128;
+const MAX_GEOMETRY_BYTES: u64 = 32 * 1024 * 1024;
+const MAX_COORDINATE: f32 = 1_000_000.0;
+
+#[cfg(test)]
+mod tests;
 
 #[derive(Clone)]
 pub(super) struct Tile {
@@ -63,11 +68,10 @@ impl Compiler {
         )?;
         session.request()?;
         let output = session.root.join("output");
-        if fs::metadata(output.join("scene.json"))?.len() > 32 * 1024 * 1024 {
-            return Err("geometry budget exceeded".into());
-        }
-        let values: Vec<serde_json::Value> =
-            serde_json::from_slice(&fs::read(output.join("scene.json"))?)?;
+        let values: Vec<serde_json::Value> = serde_json::from_slice(&crate::artifact_io::read(
+            &output.join("scene.json"),
+            MAX_GEOMETRY_BYTES,
+        )?)?;
         if values.is_empty() || values.len() > 100 {
             return Err("invalid page count".into());
         }
@@ -106,7 +110,7 @@ fn read_page(
     let number = |key: &str| {
         value[key]
             .as_f64()
-            .filter(|n| n.is_finite() && *n > 0.0)
+            .filter(|n| n.is_finite() && *n > 0.0 && *n <= MAX_COORDINATE as f64)
             .ok_or("invalid page size")
     };
     let size = egui::vec2(number("width")? as f32, number("height")? as f32);
@@ -175,13 +179,12 @@ fn read_tile(
         image.clone()
     } else {
         let path = output.join(format!("tile-{id}.rgba"));
-        if fs::metadata(&path)?.len() != (size[0] * size[1] * 4) as u64 {
+        let expected = size[0] * size[1] * 4;
+        let bytes = crate::artifact_io::read(&path, expected as u64)?;
+        if bytes.len() != expected {
             return Err("invalid tile length".into());
         }
-        Arc::new(egui::ColorImage::from_rgba_unmultiplied(
-            size,
-            &fs::read(path)?,
-        ))
+        Arc::new(egui::ColorImage::from_rgba_unmultiplied(size, &bytes))
     };
     if image.size != size {
         return Err("tile size changed".into());
@@ -196,6 +199,9 @@ fn read_cell(
 ) -> Result<Option<Cell>, Box<dyn std::error::Error>> {
     let start = b["start"].as_u64().ok_or("missing span")? as usize;
     let end = b["end"].as_u64().ok_or("missing span")? as usize;
+    if start > end || end > projection.source.len() {
+        return Err("invalid source span".into());
+    }
     let Some(span) = projection
         .spans
         .iter()
@@ -205,9 +211,18 @@ fn read_cell(
         return Ok(None);
     };
     let raw: [f32; 4] = serde_json::from_value(b["ink"].clone())?;
+    if raw
+        .iter()
+        .any(|n| !n.is_finite() || n.abs() > MAX_COORDINATE)
+        || raw[0] > raw[2]
+        || raw[1] > raw[3]
+    {
+        return Err("invalid ink geometry".into());
+    }
     let ink = egui::Rect::from_two_pos(egui::pos2(raw[0], raw[1]), egui::pos2(raw[2], raw[3]));
     let shape = b["shape"].as_bool().unwrap_or(true);
-    if shape {
+    // Generated delimiters and math operators map to structure spans, not editable text.
+    if shape || span.cursor.is_none() {
         return Ok(Some(Cell {
             node: span.node,
             cursor: None,
@@ -216,29 +231,67 @@ fn read_cell(
             text: String::new(),
         }));
     }
-    let x = b["x"].as_f64().ok_or("missing x")? as f32;
-    let y = b["y"].as_f64().ok_or("missing y")? as f32;
-    let size = b["size"].as_f64().ok_or("missing size")? as f32;
-    let advance = b["advance"].as_f64().ok_or("missing advance")? as f32;
+    read_text_cell(b, span, ink).map(Some)
+}
+
+fn read_text_cell(
+    b: &serde_json::Value,
+    span: &projection::Span,
+    ink: egui::Rect,
+) -> Result<Cell, Box<dyn std::error::Error>> {
+    let coordinate = |key: &str| {
+        b[key]
+            .as_f64()
+            .map(|n| n as f32)
+            .filter(|n| n.is_finite() && n.abs() <= MAX_COORDINATE)
+            .ok_or("invalid text geometry")
+    };
+    let x = coordinate("x")?;
+    let y = coordinate("y")?;
+    let size = coordinate("size")?;
+    let advance = coordinate("advance")?;
+    if size <= 0.0 {
+        return Err("invalid text size".into());
+    }
     let rect = egui::Rect::from_min_max(
         egui::pos2(x, y - size * 0.8),
         egui::pos2(x + advance.max(1.0), y + size * 0.2),
     )
     .union(ink);
-    let offset = b["offset"].as_u64().unwrap_or(0) as usize;
-    let length = b["length"].as_u64().unwrap_or(0) as usize;
-    let byte = offset.min(span.text.len());
-    let end_byte = (offset + length).min(span.text.len());
-    let text = span.text.get(byte..end_byte).unwrap_or("").to_owned();
+    let (byte, end_byte) = text_range(b, &span.text)?;
+    let text = span.text[byte..end_byte].to_owned();
     let cursor = span.cursor.map(|c| match c {
         Cursor::Text { node, .. } => Cursor::Text { node, byte },
         other => other,
     });
-    Ok(Some(Cell {
+    Ok(Cell {
         node: span.node,
         cursor,
         end: end_byte,
         rect,
         text,
-    }))
+    })
+}
+
+fn text_range(
+    b: &serde_json::Value,
+    text: &str,
+) -> Result<(usize, usize), Box<dyn std::error::Error>> {
+    let byte = usize::try_from(b["offset"].as_u64().ok_or("missing offset")?)?;
+    let length = usize::try_from(b["length"].as_u64().ok_or("missing length")?)?;
+    let end = byte.checked_add(length).ok_or("text range overflow")?;
+    let glyph = b["text"].as_str().ok_or("missing glyph text")?;
+    let tail = text.get(byte..).ok_or("invalid text offset")?;
+    if length != glyph.len() {
+        return Err("inconsistent glyph length".into());
+    }
+    // Typst transforms a one-byte math letter into a four-byte styled Unicode
+    // glyph. Its source offset remains unchanged; only that final scalar expands.
+    let end = if end > text.len() && tail.chars().count() == 1 && glyph.chars().count() == 1 {
+        text.len()
+    } else {
+        end
+    };
+    text.get(byte..end).ok_or("invalid text range")?;
+    Ok((byte, end))
 }

@@ -293,3 +293,11 @@ recovery 格式/Clippy/许可与 runner 自测通过；全 crate 格式化后拆
 增加由当前语义树生成的 polite live 槽位路径，覆盖嵌套、空内容和编辑/撤销变化。
 真实窗口相关 5/5，空槽补测再次通过；UI 默认 56 passed / 11 ignored，Clippy 通过。
 报告 0042 保留失败对照与 Orca speech output；条件 1 仍部分满足，P0 尚未关闭。
+
+## 2026-09-20：宿主产物接收护栏
+
+4d2c935 已推送。继续审查发现 worker 字符范围溢出与 f32 非有限坐标可进入宿主，
+先失败复现后修复；区分 Typst 数学样式字形长度与原文字节、结构装饰符号与可编辑文本。
+场景/瓦片/PNG 用普通文件有界读取，拒绝 symlink/FIFO；预览 stdout/stderr 与长驻响应队列有界。
+默认 UI 62 passed / 11 ignored，含 ignored 库测试 55 passed，Clippy 通过；窗口 6/7，
+被焦点保护中止的读屏独立补跑通过。见报告 0043，未把宿主解码与 /work 总配额标记已关闭。

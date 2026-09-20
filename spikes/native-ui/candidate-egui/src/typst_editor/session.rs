@@ -61,7 +61,8 @@ impl Session {
             .spawn()?;
         let input = child.stdin.take();
         let stdout = child.stdout.take().ok_or("missing worker stdout")?;
-        let (send, responses) = mpsc::channel();
+        // One request is in flight. A noisy worker must not grow a host queue.
+        let (send, responses) = mpsc::sync_channel(1);
         std::thread::spawn(move || {
             let mut reader = BufReader::new(stdout);
             loop {
