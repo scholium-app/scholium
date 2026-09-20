@@ -403,6 +403,61 @@ def screen_reader():
             assert 'text-selection-changed' in path.read_text(), 'selection notification missing'
 
 
+def math_screen_reader():
+    with Window('math-screen-reader') as w:
+        path = OUT / 'orca-math.log'
+        with (OUT / 'orca-math-process.log').open('w') as log:
+            reader = subprocess.Popen(['orca', '--debug', '--debug-file', str(path)],
+                                      stdout=log, stderr=log, env=dict(os.environ, PYTHONUNBUFFERED='1'))
+            try:
+                time.sleep(3)
+                assert reader.poll() is None, 'Orca exited during startup'
+                call('fcitx5-remote', '-c')
+                original = w.text()
+                w.select(original.index('a'), original.index('a'))
+                time.sleep(1)
+                w.key(108)
+                time.sleep(1)
+                assert w.body().caretOffset == original.index('b')
+                w.key(103)
+                w.action('包裹为根式')
+                w.key(106)
+                time.sleep(1)
+                w.type('Q')
+                time.sleep(1)
+                w.key(29, 44)
+                numerator = w.text().index('a')
+                w.select(numerator, numerator + 1)
+                w.key(14)
+                time.sleep(1)
+                assert '根式被开方项：空' in next(n.name for n in w.nodes()
+                                                       if n.getRoleName() == 'status bar')
+                w.key(29, 44)
+                time.sleep(1)
+                base = w.text().index('x')
+                w.select(base, base)
+                time.sleep(1)
+                w.key(108)
+                time.sleep(1)
+                w.key(108)
+                time.sleep(1)
+                matrix = w.text().index('123')
+                w.select(matrix, matrix)
+                time.sleep(1)
+                w.key(108)
+                time.sleep(1)
+                w.key(108)
+                time.sleep(2)
+            finally:
+                reader.terminate()
+                reader.wait(timeout=10)
+            speech = [line for line in path.read_text().splitlines() if 'SPEECH OUTPUT:' in line]
+            (OUT / 'orca-math-speech.txt').write_text('\n'.join(speech))
+            for expected in ['分数分子', '分数分母', '根式被开方项', '下标', '上标',
+                             '矩阵单元格 1', '矩阵单元格 2', '矩阵单元格 3', 'Qa', '根式被开方项：空']:
+                assert any(expected in line for line in speech), f'math context not spoken: {expected}'
+
+
 def pointer_selection():
     with Window('pointer') as w:
         call('fcitx5-remote', '-c')
@@ -887,7 +942,7 @@ try:
     for name in saved:
         prop(name, 'true')
     call('systemctl', '--user', 'start', 'ydotool')
-    for case in [ime, source_dialects, math_edit, accessibility, screen_reader, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit, session_recovery, session_typst_recovery, large_source_window, team_language_gate, team_ime_barrier, replica_collaboration]:
+    for case in [ime, source_dialects, math_edit, accessibility, screen_reader, math_screen_reader, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit, session_recovery, session_typst_recovery, large_source_window, team_language_gate, team_ime_barrier, replica_collaboration]:
         if len(sys.argv) > 2 and case.__name__ not in sys.argv[2:]:
             continue
         try:

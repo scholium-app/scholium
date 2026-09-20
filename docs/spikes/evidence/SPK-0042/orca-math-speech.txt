@@ -1,0 +1,40 @@
+20:14:37.365155 - SPEECH OUTPUT: '屏幕阅读器启用。' {'established': False}
+20:14:40.124542 - SPEECH OUTPUT: '正文结构编辑器' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:40.125303 - SPEECH OUTPUT: 'entry' {'established': False}
+20:14:40.125733 - SPEECH OUTPUT: 'a.' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:40.148304 - SPEECH OUTPUT: '分数分子：a' {'established': False}
+20:14:40.834680 - SPEECH OUTPUT: '分数分母：b' {'established': False}
+20:14:40.864282 - SPEECH OUTPUT: 'b' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:42.203899 - SPEECH OUTPUT: '分数分子：a' {'established': False}
+20:14:42.232324 - SPEECH OUTPUT: 'Latex 源码编辑器' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:42.232854 - SPEECH OUTPUT: 'entry.' {'established': False}
+20:14:42.599799 - SPEECH OUTPUT: '分数分子，根式被开方项：a' {'established': False}
+20:14:42.653337 - SPEECH OUTPUT: '正文结构编辑器' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:42.653989 - SPEECH OUTPUT: 'entry' {'established': False}
+20:14:42.654372 - SPEECH OUTPUT: 'a.' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:44.464584 - SPEECH OUTPUT: '左 Shift' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:44.488632 - SPEECH OUTPUT: 'Q' {'established': 'False', 'family': "{'dialect': '', 'gender': 'None', 'lang': 'C', 'name': '', 'variant': 'None'}"}
+20:14:44.527378 - SPEECH OUTPUT: '分数分子，根式被开方项：Qa' {'established': False}
+20:14:45.932856 - SPEECH OUTPUT: '左 Control 键' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:45.965814 - SPEECH OUTPUT: '分数分子，根式被开方项：a' {'established': False}
+20:14:45.982263 - SPEECH OUTPUT: '撤销' {'established': False}
+20:14:46.345309 - SPEECH OUTPUT: '分数分母：b' {'established': False}
+20:14:46.364213 - SPEECH OUTPUT: 'a' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:46.365212 - SPEECH OUTPUT: '已选中' {'established': False}
+20:14:46.759596 - SPEECH OUTPUT: '退格键' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:46.789468 - SPEECH OUTPUT: '分数分子，根式被开方项：空' {'established': False}
+20:14:48.146273 - SPEECH OUTPUT: '左 Control 键' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:48.182693 - SPEECH OUTPUT: '分数分子，根式被开方项：a' {'established': False}
+20:14:48.205762 - SPEECH OUTPUT: '撤销' {'established': False}
+20:14:49.553495 - SPEECH OUTPUT: '底数：x' {'established': False}
+20:14:50.992550 - SPEECH OUTPUT: '下标：1' {'established': False}
+20:14:51.020315 - SPEECH OUTPUT: '1' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:52.380382 - SPEECH OUTPUT: '上标：2' {'established': False}
+20:14:52.416038 - SPEECH OUTPUT: '2' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:53.726587 - SPEECH OUTPUT: '矩阵单元格 1：1' {'established': False}
+20:14:53.748743 - SPEECH OUTPUT: '1' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:55.158801 - SPEECH OUTPUT: '矩阵单元格 2：2' {'established': False}
+20:14:55.179718 - SPEECH OUTPUT: '2' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:56.514568 - SPEECH OUTPUT: '矩阵单元格 3：3' {'established': False}
+20:14:56.535333 - SPEECH OUTPUT: '3' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+20:14:58.860274 - SPEECH OUTPUT: '屏幕阅读器关闭。' {'established': False}

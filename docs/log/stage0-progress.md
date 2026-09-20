@@ -286,3 +286,10 @@ recovery 格式/Clippy/许可与 runner 自测通过；全 crate 格式化后拆
 继续实现 512 MiB 共享 tmpfs 输出原型，正常挂载与连续预览通过，1 秒超时却留下失效 output
 符号链接及 backup。按失败证据撤下目录替换方案，现有 host-bind 不变，见报告 0041。
 独立修复 systemd-run 默认 argv 环境展开，显式 --expand-environment=no 并加变量语义回归。
+
+## 2026-09-20：数学槽位真实读屏
+
+提交 17cebba 已推送；安全复测 7/7。数学读屏新测试先在旧版复现缺少分子播报，
+增加由当前语义树生成的 polite live 槽位路径，覆盖嵌套、空内容和编辑/撤销变化。
+真实窗口相关 5/5，空槽补测再次通过；UI 默认 56 passed / 11 ignored，Clippy 通过。
+报告 0042 保留失败对照与 Orca speech output；条件 1 仍部分满足，P0 尚未关闭。

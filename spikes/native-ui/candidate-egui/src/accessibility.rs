@@ -261,7 +261,7 @@ impl SpikeApp {
         for run in runs {
             run.publish(ui, response.id);
         }
-        self.accessible_math(ui, response.id);
+        self.accessible_math(ui, response.id, response.has_focus());
     }
 }
 
