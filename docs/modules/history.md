@@ -38,6 +38,9 @@ src/
 记录 TextInserted、TextDeleted、SemanticForwardInverse、ResourcesAdded、ResourcesMoved 等 recipe。
 recipe 使用 RelativeAnchor 和上下文 hash，不保存可执行闭包或第三方库对象。大删除内容可存 blob hash。
 
+阶段 0 核心的单槽 Wrap 补偿仅记录新建 wrapper 身份，Undo 解除该层并保留当前子节点及远端文字；
+不恢复旧树快照。多槽解包和结构 redo 没有可靠配方时仍明确拒绝，不能伪装成功。
+
 ## 不变量
 
 - 历史 append-only；只允许移动 branch ref，不能改写 Action/Checkpoint。

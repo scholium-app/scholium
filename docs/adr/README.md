@@ -31,6 +31,8 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 
 ## 待补（阶段出口依赖）
 
+[ADR 0023](ADR-0023-stage0-feasibility-boundary.md)依据用户要求固定阶段 0 可行性边界，纠正下表的阶段归属。
+
 [ADR 0021](ADR-0021-native-accessibility-patches.md)记录源码视口与可追溯 egui/AccessKit 补丁。
 [ADR 0022](ADR-0022-process-tree-resource-limits.md)规定 cgroup 进程树和 tmpfs 临时空间预算。
 
@@ -48,10 +50,10 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 
 | 主题 | 关闭阶段 | 依赖验证项 | 状态 |
 |---|---|---|---|
-| LaTeX/Typst parser 的正式实现（本阶段只用行+范围归因） | 0 | 阶段 0 第 3、7 项 | 部分关闭：策略已定（ADR 0008），解析器待实现 |
+| LaTeX/Typst parser 的正式实现 | 1，源码理解扩展前 | 正式源码适配器 | P0 子集策略由 ADR 0008 裁决；正式实现待阶段 1，依据 ADR 0023 |
 | CRDT engine（Loro → Yrs → Automerge） | 0 | 阶段 0 第 4 项 | **已关闭**：ADR 0009 Accepted，选定 Loro 1.16.0（报告 0014） |
-| WAL、快照与内容寻址格式 | 0 | 阶段 0 第 5 项 | 缺文件 |
-| 原生语义文档持久化 schema | 0 | 阶段 0 第 5 项 | 缺文件 |
+| WAL、快照与内容寻址格式 | 1，存储开工前 | 正式 storage；先比较 SQLite/rusqlite → redb | 缺文件；P0 恢复机制证据保留，阶段归属依据 ADR 0023 |
+| 原生语义文档持久化 schema | 1，存储开工前 | 原生身份/历史恢复 | 缺文件；ADR 0015 的实验 DTO 不转正，阶段归属依据 ADR 0023 |
 | Markdown 方言基线 | 3 | 阶段 3 | 缺文件 |
 | sync-server 数据库与 blob 存储 | 5 | 阶段 5 | 缺文件 |
 | 端到端加密是否进入首发 | 5 | 阶段 5 | 缺文件 |

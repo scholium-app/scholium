@@ -1,0 +1,36 @@
+   Compiling scholium-spike-core v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/native-ui/core)
+   Compiling scholium-spike-reconcile v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/source-reconcile)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.01s
+     Running unittests src/lib.rs (spikes/source-reconcile/target/debug/deps/scholium_spike_reconcile-ea69aa840177b5be)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (spikes/source-reconcile/target/debug/deps/scholium_spike_reconcile-82dabb62c971d481)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/session.rs (spikes/source-reconcile/target/debug/deps/session-be0e1a225b66065c)
+
+running 3 tests
+test multiple_changed_lines_cannot_partially_commit ... ok
+test incomplete_markup_in_a_text_leaf_stays_an_uncommitted_draft ... ok
+test source_change_updates_document_and_stale_draft_is_retained ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/slot_projection.rs (spikes/source-reconcile/target/debug/deps/slot_projection-097346674f6b100c)
+
+running 1 test
+test every_math_slot_child_is_projected_in_both_dialects ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests scholium_spike_reconcile
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

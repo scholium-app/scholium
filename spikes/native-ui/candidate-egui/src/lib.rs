@@ -16,6 +16,7 @@ mod math_accessibility;
 #[cfg(test)]
 mod native_edit_tests;
 mod preview;
+mod remote_probe;
 mod selection_ui;
 mod session_file;
 mod source_ui;

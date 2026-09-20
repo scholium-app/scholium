@@ -4,6 +4,9 @@
 - 日期：2026-09-20；执行负责人：Codex
 - 前序：ADR 0008、0012、0017、0019。
 
+> 阶段归属后续由 [ADR 0023](ADR-0023-stage0-feasibility-boundary.md)调整：/work 总配额仍未实现，
+> 改为阶段 1 面向不可信项目交付前的必要门禁；下文技术边界与失败证据不变。
+
 prlimit 的地址空间、文件大小与 CPU 限制是单进程/单文件边界，不能约束整个编译进程树。
 统一沙箱入口在 bubblewrap 外使用 systemd 用户 transient scope，设置 MemoryMax=2 GiB、
 MemorySwapMax=0、TasksMax=64、OOMPolicy=kill；缺少用户管理器或控制器时失败，不退回弱隔离。

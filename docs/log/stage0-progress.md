@@ -301,3 +301,12 @@ recovery 格式/Clippy/许可与 runner 自测通过；全 crate 格式化后拆
 场景/瓦片/PNG 用普通文件有界读取，拒绝 symlink/FIFO；预览 stdout/stderr 与长驻响应队列有界。
 默认 UI 62 passed / 11 ignored，含 ignored 库测试 55 passed，Clippy 通过；窗口 6/7，
 被焦点保护中止的读屏独立补跑通过。见报告 0043，未把宿主解码与 /work 总配额标记已关闭。
+
+## 2026-09-20：按用户要求核对 P0 必要范围并收尾
+
+用户明确要求 spike 不再打磨过多细节。按原路线图核对后，ADR 0023 显式修订运行时白名单判据，
+正式 parser、永久存储/schema、shared SDG adapter、总输出配额与跨平台验收转到阶段 1/对应能力交付门禁，
+不把未实现项说成已实现。补结构窗口远端动作直接验收，发现并修复根式/定界符单槽包裹无撤销配方。
+真实窗口 3/3、安全 7/7、UI 默认 63 passed / 11 ignored、core 47 passed、reconcile 4 passed，UI Clippy 通过。
+core 独立严格 Clippy 有 18 条既有诊断，HEAD 副本同样失败，保留记录而不扩展本轮清理。
+报告 0044 记录范围依据与正负证据；报告 0012 按固定可行性范围判定 10 条满足，阶段 0 收尾。

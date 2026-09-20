@@ -74,7 +74,7 @@
 - Typst 快速预览在后台运行，编译期间编辑与导航可用，旧 revision 不闪回；分别记录 UI CPU 帧耗时、输入响应与编译/栅格化延迟，注明平台、构建模式及文档规模，不以未经验证的固定 15/16 ms 作为通过门槛。
 - 受支持 LaTeX/Typst source edit 可 round-trip，Raw 不丢失。
 - 两端收敛且本地撤销保留远端输入。
-- 不可信 LaTeX/Typst 无法执行外部命令或读取项目根外文件。
+- 不可信 LaTeX/Typst 的正常入口必须运行在 OS 沙箱内，不能任意执行项目命令，不能读取项目输入、工作区与受信运行时白名单之外的宿主文件；白名单由受信代码固定，不由项目扩展（[ADR 0023](../adr/ADR-0023-stage0-feasibility-boundary.md)）。
 - 同一共享分支无两种源码语言同时可写窗口；离线及被隔离输入可恢复，旧 epoch 不自动回灌。
 - 六类混用内容各有可复现成功夹具及失败夹具；明确支持的模板/工具链/桥接矩阵。
 - 两种宿主的最终引用、页码、链接有效；引用反馈有轮数上限，失败阻止正式输出。
@@ -89,6 +89,11 @@
 
 实现 model、document、collab engine adapter、storage WAL 和 app 最小壳。支持段落、heading、粗体/强调、
 行内/独立数学、分数、根式、上下标、定界符；实现 TreeCursor、selection、focus、undo 和 Typst 快速预览。
+
+正式实现前置与交付门禁（[ADR 0023](../adr/ADR-0023-stage0-feasibility-boundary.md)）：存储开工前比较
+SQLite/rusqlite → redb 并裁决 WAL/快照/内容寻址和永久 schema；源码理解扩展前裁决 parser；
+shared SDG adapter 验证树身份、结构并发与 actor undo。面向不可信项目交付前补齐 /work 总配额和
+宿主解码/IPC 安全审查。跨平台辅助功能在对应平台交付前验证，不反向扩大阶段 0 的 Linux 夹具验收。
 
 出口：用户不打开源码即可完成一页含中英文和公式的笔记；点击预览定位、光标、IME、保存、强杀恢复
 全部通过；所有共享正文写入均产生 Action，未提交源码草稿也有独立持久化记录。

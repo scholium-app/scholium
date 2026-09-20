@@ -45,6 +45,11 @@ pub enum Intent {
 /// 反向配方。只保存身份与上下文，不保存可执行闭包。
 #[derive(Clone, Debug)]
 pub enum InverseRecipe {
+    /// Undo a single-slot wrapper without replacing the surviving children.
+    UnwrapCreated {
+        /// Wrapper created by this actor.
+        node: NodeId,
+    },
     /// 按逆序执行多个局部补偿，不保存整文档快照。
     Batch {
         /// 按正向编辑顺序记录的逆配方。
@@ -401,6 +406,13 @@ fn deletion_anchor(doc: &Document, edit: &SemanticEdit) -> Option<CharId> {
 
 fn recipe_for(edit: &SemanticEdit, outcome: &EditOutcome, anchor: Option<CharId>) -> InverseRecipe {
     match edit {
+        SemanticEdit::Wrap {
+            kind: NodeKind::Sqrt | NodeKind::Delimited,
+            ..
+        } if outcome.created.is_some() => InverseRecipe::UnwrapCreated {
+            // Successful Wrap always records the newly created wrapper.
+            node: outcome.created.expect("successful wrapper creation"),
+        },
         SemanticEdit::InsertText { node, .. } => InverseRecipe::TextInserted {
             node: *node,
             ids: outcome.inserted.clone(),

@@ -10,6 +10,7 @@ impl SpikeApp {
                     .on_hover_text(&self.typst_editor.status);
             }
             self.structure_toolbar(ui);
+            self.remote_probe_control(ui);
             ui.label(format!("焦点 {:?}", self.focus));
             egui::ScrollArea::both()
                 .id_salt("structure_viewport")

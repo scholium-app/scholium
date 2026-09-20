@@ -81,6 +81,15 @@ pub(super) fn invert(
     recipe: &InverseRecipe,
 ) -> Result<(InverseRecipe, usize), EditError> {
     match recipe {
+        InverseRecipe::UnwrapCreated { node } => {
+            edit::apply(doc, &SemanticEdit::Unwrap { node: *node })?;
+            Ok((
+                InverseRecipe::StructuralIrreversible {
+                    description: "redo of structural compensation is outside this spike",
+                },
+                0,
+            ))
+        }
         InverseRecipe::Batch { recipes } => {
             let mut inverse = Vec::new();
             let mut removed = 0;

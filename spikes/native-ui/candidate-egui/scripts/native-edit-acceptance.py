@@ -230,6 +230,33 @@ def math_edit():
         assert w.text() == original
 
 
+def structure_remote_undo():
+    previous = os.environ.get('SCHOLIUM_SPIKE_REMOTE_ACTION')
+    os.environ['SCHOLIUM_SPIKE_REMOTE_ACTION'] = '1'
+    try:
+        with Window('structure-remote-undo') as w:
+            call('fcitx5-remote', '-c')
+            original = w.text()
+            numerator = original.index('a')
+            w.select(numerator, numerator)
+            w.type('Q')
+            w.action('包裹为根式')
+            w.action('模拟远端追加 REMOTE')
+            assert 'QaREMOTE' in w.text()
+            w.key(29, 44)
+            assert 'QaREMOTE' in w.text()
+            assert '\\sqrt{QaREMOTE}' not in w.source().queryText().getText(0, -1)
+            w.key(29, 44)
+            assert w.text() == original[:numerator + 1] + 'REMOTE' + original[numerator + 1:]
+            w.type('Z')
+            assert 'REMOTE' in w.text() and 'Z' in w.text(), 'undo left unusable caret'
+    finally:
+        if previous is None:
+            os.environ.pop('SCHOLIUM_SPIKE_REMOTE_ACTION', None)
+        else:
+            os.environ['SCHOLIUM_SPIKE_REMOTE_ACTION'] = previous
+
+
 def slot_selection():
     with Window('slot-selection') as w:
         call('fcitx5-remote', '-c')
@@ -942,7 +969,7 @@ try:
     for name in saved:
         prop(name, 'true')
     call('systemctl', '--user', 'start', 'ydotool')
-    for case in [ime, source_dialects, math_edit, accessibility, screen_reader, math_screen_reader, pointer_selection, unicode_clipboard, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit, session_recovery, session_typst_recovery, large_source_window, team_language_gate, team_ime_barrier, replica_collaboration]:
+    for case in [ime, source_dialects, math_edit, accessibility, screen_reader, math_screen_reader, pointer_selection, unicode_clipboard, structure_remote_undo, slot_selection, multipage_preview, visual_comparison, empty_slot, continuous_typing, large_document_edit, session_recovery, session_typst_recovery, large_source_window, team_language_gate, team_ime_barrier, replica_collaboration]:
         if len(sys.argv) > 2 and case.__name__ not in sys.argv[2:]:
             continue
         try:

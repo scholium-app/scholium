@@ -101,6 +101,9 @@ RequestSourceDialectSwitch 展示待冲刷成员、超时隔离和草稿处置�
 
 ## 阶段 0 窗口证据
 
+[报告 0044](../spikes/SPK-0044-stage0-scope-review.md)以显式开关注入受信远端语义动作，验证结构窗口
+本地包裹/文字撤销保留远端内容。入口仅用于原生验收，不是网络或共享 SDG adapter；阶段边界见 ADR 0023。
+
 [报告 0019](../spikes/SPK-0019-native-window-review.md) 记录真实源码/剪贴板/预览闭环，
 并修复候选窄窗口面板溢出和正文失焦后从无障碍树消失。
 [报告 0020](../spikes/SPK-0020-body-accessibility-viewport.md) 补正文 Text/选区操作和双轴视口；

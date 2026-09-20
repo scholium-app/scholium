@@ -1,0 +1,210 @@
+    Checking scholium-spike-core v0.0.0 (/tmp/scholium-core-baseline.9tYTXu/spikes/native-ui/core)
+error: docs for function returning `Result` missing `# Errors` section
+   --> src/action.rs:264:5
+    |
+264 | /     pub fn preedit_commit(
+265 | |         &mut self,
+266 | |         actor: ActorId,
+267 | |         node: NodeId,
+268 | |         at: usize,
+269 | |     ) -> Result<Option<ActionId>, EditError> {
+    | |____________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_errors_doc
+    = note: `-D clippy::missing-errors-doc` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::missing_errors_doc)]`
+
+error: docs for function returning `Result` missing `# Errors` section
+   --> src/action.rs:282:5
+    |
+282 | /     pub fn apply(
+283 | |         &mut self,
+284 | |         actor: ActorId,
+285 | |         intent: Intent,
+286 | |         edit: SemanticEdit,
+287 | |     ) -> Result<Option<ActionId>, EditError> {
+    | |____________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_errors_doc
+
+error: docs for function returning `Result` missing `# Errors` section
+   --> src/action.rs:305:5
+    |
+305 | /     pub fn apply_at(
+306 | |         &mut self,
+307 | |         actor: ActorId,
+308 | |         intent: Intent,
+309 | |         expected_revision: u64,
+310 | |         edit: SemanticEdit,
+311 | |     ) -> Result<Option<ActionId>, EditError> {
+    | |____________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_errors_doc
+
+error: docs for function returning `Result` missing `# Errors` section
+   --> src/action.rs:323:5
+    |
+323 |     pub fn apply_remote(&mut self, remote: RemoteEdit) -> Result<EditOutcome, EditError> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_errors_doc
+
+error: docs for function returning `Result` missing `# Errors` section
+   --> src/action.rs:344:5
+    |
+344 |     pub fn undo(&mut self, actor: ActorId) -> Result<Option<UndoOutcome>, EditError> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_errors_doc
+
+error: docs for function returning `Result` missing `# Errors` section
+  --> src/cursor.rs:65:1
+   |
+65 | / pub fn move_cursor(
+66 | |     doc: &Document,
+67 | |     cursor: Cursor,
+68 | |     direction: Direction,
+69 | | ) -> Result<Option<Cursor>, EditError> {
+   | |______________________________________^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_errors_doc
+
+error: docs for function returning `Result` missing `# Errors` section
+   --> src/doc.rs:153:5
+    |
+153 |     pub fn node(&self, id: NodeId) -> Result<&Node, EditError> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_errors_doc
+
+error: docs for function returning `Result` missing `# Errors` section
+   --> src/doc.rs:158:5
+    |
+158 |     pub fn node_mut(&mut self, id: NodeId) -> Result<&mut Node, EditError> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_errors_doc
+
+error: docs for function returning `Result` missing `# Errors` section
+   --> src/doc.rs:177:5
+    |
+177 | /     pub fn create(
+178 | |         &mut self,
+179 | |         kind: NodeKind,
+180 | |         parent: Option<NodeId>,
+181 | |         slot: usize,
+182 | |         index: usize,
+183 | |     ) -> Result<NodeId, EditError> {
+    | |__________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_errors_doc
+
+error: docs for function returning `Result` missing `# Errors` section
+   --> src/doc.rs:223:5
+    |
+223 |     pub fn slot(&self, node: NodeId, slot: usize) -> Result<&[NodeId], EditError> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_errors_doc
+
+error: docs for function returning `Result` missing `# Errors` section
+   --> src/doc.rs:236:5
+    |
+236 |     pub fn text_of(&self, node: NodeId) -> Result<String, EditError> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_errors_doc
+
+error: docs for function returning `Result` missing `# Errors` section
+  --> src/edit.rs:93:1
+   |
+93 | pub fn apply(doc: &mut Document, edit: &SemanticEdit) -> Result<EditOutcome, EditError> {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_errors_doc
+
+error: docs for function which may panic missing `# Panics` section
+  --> src/fixture.rs:17:1
+   |
+17 | pub fn build_standard(core: &mut Editor) -> NodeId {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+note: first possible panic found here
+  --> src/fixture.rs:21:9
+   |
+21 | /         document
+22 | |             .slot(root, 0)
+23 | |             .expect("根节点有 blocks 槽位")
+24 | |             .first()
+25 | |             .copied()
+26 | |             .expect("文档至少有一个段落")
+   | |_________________________________________^
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_panics_doc
+   = note: `-D clippy::missing-panics-doc` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::missing_panics_doc)]`
+
+error: the loop variable `row` is used to index `row_heights`
+  --> src/layout/matrix.rs:27:16
+   |
+27 |     for row in 0..row_count {
+   |                ^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#needless_range_loop
+   = note: `-D clippy::needless-range-loop` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::needless_range_loop)]`
+help: consider using an iterator and enumerate()
+   |
+27 -     for row in 0..row_count {
+27 +     for (row, <item>) in row_heights.iter().enumerate().take(row_count) {
+   |
+
+error: the loop variable `column` is used to index `column_widths`
+  --> src/layout/matrix.rs:29:23
+   |
+29 |         for column in 0..columns {
+   |                       ^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#needless_range_loop
+help: consider using an iterator and enumerate()
+   |
+29 -         for column in 0..columns {
+29 +         for (column, <item>) in column_widths.iter().enumerate().take(columns) {
+   |
+
+error: docs for function returning `Result` missing `# Errors` section
+  --> src/source.rs:88:5
+   |
+88 |     pub fn set_text(&mut self, text: &str) -> Result<(), EditError> {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_errors_doc
+
+error: docs for function returning `Result` missing `# Errors` section
+   --> src/source.rs:127:5
+    |
+127 |     pub fn replace(&mut self, start: usize, end: usize, text: &str) -> Result<(), EditError> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_errors_doc
+
+error: called `filter(..).next_back()` on an `DoubleEndedIterator`. This is more succinctly expressed by calling `.rfind(..)` instead
+   --> src/text.rs:109:9
+    |
+109 | /         self.grapheme_boundaries()
+110 | |             .into_iter()
+111 | |             .filter(|b| *b < byte)
+112 | |             .next_back()
+    | |________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#filter_next
+    = note: `-D clippy::filter-next` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::filter_next)]`
+help: try
+    |
+109 ~         self.grapheme_boundaries()
+110 +             .into_iter().rfind(|b| *b < byte)
+    |
+
+error: could not compile `scholium-spike-core` (lib test) due to 18 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `scholium-spike-core` (lib) due to 18 previous errors
