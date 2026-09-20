@@ -1,0 +1,271 @@
+   Compiling scholium-spike-language-coordination v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/language-coordination)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.15s
+     Running `spikes/language-coordination/target/debug/scholium-spike-language-coordination`
+Scholium spike：阶段 0 第 6 项 — 团队语言协调
+模型：内存协调者 + 确定性逻辑时钟；无真实网络 / 无真实多进程
+
+=== C1 同语言多人编辑：多人并发写入并收敛 ===
+[C1 成功夹具] c1.success.three_writers_converge -> PASS
+    期望: 9/9 接受；两种投递顺序渲染一致；9/9 标记都在
+    实际: accepted=9/9 timeline=9 identical=true markers=9/9
+    说明: 文档 93 字节；三个 LaTeX 客户端交错提交
+[C1 对照] c1.control.arrival_order_diverges -> PASS
+    期望: 按到达顺序拼接会因投递顺序不同而不同（证明收敛断言有齿）
+    实际: identical=false
+    说明: 对照组故意不作确定性排序
+[C1 失败夹具] c1.failure.expired_permit_rejected -> PASS
+    期望: PermitExpired 且该写入不进入共享内容
+    实际: reject(PermitExpired(id=4, expires_at=19, tick=24))
+    说明: 许可 TTL=1 tick，推进 5 tick 后提交
+[C1 失败夹具] c1.failure.unknown_permit_rejected -> PASS
+    期望: PermitUnknown 且写集为空
+    实际: reject(PermitUnknown(id=4242))
+    说明: mallory 不是成员，携带伪造许可 ID 4242
+
+=== C2 切换屏障：不存在两种语言同时可写的窗口 ===
+[C2 成功夹具] c2.success.before_barrier_old_language_writable -> PASS
+    期望: 屏障前 LaTeX 写入被接受
+    实际: accept(receipt=1, epoch=1, ops=1)
+    说明: epoch=1 active=latex
+[C2 成功夹具] c2.drain.in_flight_flush_accepted -> PASS
+    期望: 屏障期间旧语言在途写入提交完成
+    实际: accept(receipt=2, epoch=1, ops=1)
+    说明: Draining 下仍允许 from 方言冲刷
+[C2 失败夹具] c2.drain.target_language_rejected -> PASS
+    期望: TargetDialectNotYetActive
+    实际: reject(TargetDialectNotYetActive(target=typst))
+    说明: 屏障期间不存在目标语言可写窗口
+[C2 失败夹具] c2.drain.incomplete_barrier_blocked -> PASS
+    期望: DrainIncomplete（显式 force 才能跳过等待）
+    实际: Err(DrainIncomplete { missing: ["alice", "bob"] })
+    说明: 两个成员都未 ack drain
+[C2 成功夹具] c2.barrier.committed_atomically -> PASS
+    期望: Ok(epoch=2, to=typst, revoked=2)
+    实际: Ok(SwitchOutcome { from: Latex, to: Typst, epoch: 2, revoked_permits: 2, flushed_ops: 1, tick: 11 })
+    说明: 旧许可撤销与新语言提交在同一次原子提交内
+[C2 成功夹具] c2.success.switch_requested -> PASS
+    期望: Ok(target_epoch=2)
+    实际: Ok(2)
+    说明: alice 发起 LaTeX → Typst
+[C2 失败夹具] c2.after.old_epoch_rejected -> PASS
+    期望: SourceEpochStale(got=1, current=2)
+    实际: reject(SourceEpochStale(got=1, current=2))
+    说明: 旧 epoch 包不得进入共享内容
+[C2 失败夹具] c2.after.revoked_permit_rejected -> PASS
+    期望: PermitRevoked
+    实际: reject(PermitRevoked(id=1))
+    说明: 即使声明了新 epoch，旧许可也不可用
+[C2 成功夹具] c2.after.new_language_writable -> PASS
+    期望: Typst 写入被接受
+    实际: accept(receipt=3, epoch=2, ops=1)
+    说明: active=typst epoch=2
+[C2 成功夹具] c2.timeline.no_cross_dialect_write_window -> PASS
+    期望: 0 个跨方言许可窗口重叠，0 处无屏障的语言变化，撤销→发放间隔 ≥1
+    实际: overlaps=0 unbridged_changes=0 min_gap=Some(3)
+    说明: 扫描全部许可区间 [issued, revoked) 与接受序列；间隔是撤销与下一次发放的逻辑 tick 差
+[C2 对照] c2.control.trust_token_opens_two_languages -> PASS
+    期望: 对照实现同时接受 latex 与 typst 写入，扫描器报 ≥1 重叠
+    实际: switch=true typst_accepted=true latex_accepted=true overlaps=2 unbridged=1
+    说明: 策略 TrustPermitToken：不校验当前 epoch / 活动语言 / 撤销
+
+=== C3 epoch 隔离：切换递增 epoch，旧 epoch 拒绝且不自动回灌 ===
+[C3 成功夹具] c3.success.epoch_monotonic -> PASS
+    期望: 接受/切换 epoch 依次为 1,2,2,3，最终 3
+    实际: (Some(1), Some(2), Some(2), Some(3), 3, Some(3), Some(2))
+    说明: LaTeX(1) → Typst(2) → LaTeX(3)，epoch 不复用
+[C3 失败夹具] c3.failure.old_epoch_rejected -> PASS
+    期望: SourceEpochStale(got=1, current=3)
+    实际: reject(SourceEpochStale(got=1, current=3))
+    说明: 旧 epoch 包不得进入共享内容
+[C3 失败夹具] c3.failure.no_auto_backfill -> PASS
+    期望: 被拒文本两种语言的正文都不存在，且保留为本地草稿
+    实际: backfilled=false drafted=true
+    说明: 拒绝不等于删除输入；也不能悄悄转换成新语言的写入
+[C3 成功夹具] c3.success.control_record_survives_replay -> PASS
+    期望: 回放 3 个 epoch 的历史后控制记录仍是 epoch=3 / latex
+    实际: recovered_epoch=Ok(3)
+    说明: 语言控制记录不随历史回放倒退（HISTORY_COLLABORATION 第 11 节）
+[C3 对照] c3.control.trust_token_accepts_stale_epoch -> PASS
+    期望: 对照实现接受 epoch=1 的写入并登记到 epoch=2
+    实际: switch_epoch=Some(2) decision=accept(receipt=2, epoch=2, ops=1) accepted_epoch=Some(2)
+    说明: 证明 epoch 检查确实是隔离的来源，而不是恒真
+
+=== C4 服务重启：活动语言 / epoch / 待冲刷队列可安全重建 ===
+[C4 成功夹具] c4.success.preconditions -> PASS
+    期望: 两次写入已接受、屏障已开始、队列入队 1 条
+    实际: started=Ok(2) writes=accept(receipt=1, epoch=1, ops=1)/accept(receipt=2, epoch=1, ops=1) queued=accept(receipt=3, epoch=1, ops=1)/[[bob#2]] before=active=latex epoch=1 phase=Draining { from: Latex, to: Typst, target_epoch: 2 } queue=1 permits_probe=2 members=2 applied=3 drafts=0
+    说明: 屏障中旧语言写入既提交也入队
+[C4 成功夹具] c4.success.state_restored_exactly -> PASS
+    期望: 恢复后 active/epoch/phase/队列/许可/成员/已应用全部一致
+    实际: before=active=latex epoch=1 phase=Draining { from: Latex, to: Typst, target_epoch: 2 } queue=1 permits_probe=2 members=2 applied=3 drafts=0 after=Some("active=latex epoch=1 phase=Draining { from: Latex, to: Typst, target_epoch: 2 } queue=1 permits_probe=2 members=2 applied=3 drafts=0")
+    说明: records=Ok(9) truncated_tail=None
+[C4 成功夹具] c4.success.pending_queue_flushed_after_restart -> PASS
+    期望: 重启后完成切换：epoch=2 / typst，队列写入仍在旧语言正文中
+    实际: completed=Ok((2, Typst, 1)) queued_present=true
+    说明: 待提交队列未丢失
+[C4 失败夹具] c4.failure.torn_tail_truncated -> PASS
+    期望: 截断最后 5 字节：报告 truncated_tail 且队列退回 0 条
+    实际: truncated_tail=Some(69) drain_queue=Some(0)
+    说明: 尾部半写的 DrainQueued 记录要么全在、要么全不在
+[C4 失败夹具] c4.failure.mid_log_corruption_refuses_autostart -> PASS
+    期望: MidLogCorruption(offset=第二条记录起点)
+    实际: Err(MidLogCorruption { offset: 59, detail: "checksum mismatch" })
+    说明: 不允许用默认 LaTeX epoch=1 顶替损坏的控制记录
+[C4 失败夹具] c4.failure.empty_log_refuses_autostart -> PASS
+    期望: NoControlRecord
+    实际: Err(NoControlRecord)
+    说明: 不能因 presence 清空就重新开放语言写入
+
+=== C5 网络分区：隔离写入必须被拒绝或重放，恢复后不双写 ===
+[C5 成功夹具] C5.success.connected_side_writes -> PASS
+    期望: 连接侧 LaTeX 写入与切换后 Typst 写入均被接受
+    实际: a1=accept(receipt=1, epoch=1, ops=1) switch=Ok(2) commit=Ok((2, Typst)) a2=accept(receipt=2, epoch=2, ops=1)
+    说明: 分区期间只有连接侧能写入
+[C5 失败夹具] c5.partition.isolated_write_not_accepted -> PASS
+    期望: NetworkUnreachable 且重放前没有任何接受记录包含该标记
+    实际: reject(NetworkUnreachable(actor=bob))
+    说明: bob_seq=1 写入留在本地草稿
+[C5 失败夹具] c5.reconnect.stale_draft_rejected -> PASS
+    期望: SourceEpochStale(got=1, current=2) 且没有回执
+    实际: reject(SourceEpochStale(got=1, current=2))
+    说明: 隔离期间的写入不能被静默接受
+[C5 成功夹具] c5.reconnect.authorized_replay_accepted -> PASS
+    期望: 重新授权后 Typst 重放被接受一次
+    实际: refreshed=true replay=accept(receipt=3, epoch=2, ops=1)
+    说明: epoch=2 active=typst
+[C5 成功夹具] c5.success.no_double_write -> PASS
+    期望: 重连后标记恰好出现 1 次，只有重放序号有回执
+    实际: occurrences=1 receipts_ok=true
+    说明: 旧草稿被拒 + 新 epoch 重放一次 = 恰好一次
+[C5 对照] c5.control.trust_token_accepts_isolated_draft -> PASS
+    期望: 对照实现静默接受隔离期间的旧草稿
+    实际: switch=Some((2, Typst)) decision=accept(receipt=2, epoch=2, ops=1) occurrences=1
+    说明: 证明 epoch / 撤销检查是分区隔离的来源
+
+=== C6 旧包处理：重复包返回原回执，旧包被拒并给出原因 ===
+[C6 成功夹具] c6.success.confirmed_duplicate_returns_receipt -> PASS
+    期望: 重复包返回原回执，已应用操作数不增加
+    实际: first=accept(receipt=1, epoch=1, ops=1) duplicate=accept(receipt=1, epoch=1, ops=1) receipt=Some(1)/Some(1)
+    说明: switch=Some(2)
+[C6 失败夹具] c6.failure.stale_epoch_rejected -> PASS
+    期望: SourceEpochStale(got=1, current=2)
+    实际: reject(SourceEpochStale(got=1, current=2))
+    说明: 旧包必须给出明确原因且不进入共享内容
+[C6 失败夹具] c6.failure.protocol_version_rejected -> PASS
+    期望: ProtocolVersionUnsupported(got=1, supported=3)
+    实际: reject(ProtocolVersionUnsupported(got=1, supported=3))
+    说明: 旧包必须给出明确原因且不进入共享内容
+[C6 失败夹具] c6.failure.sequence_rollback_rejected -> PASS
+    期望: SequenceRollback(seq=4, last_accepted=5)
+    实际: reject(SequenceRollback(seq=4, last_accepted=5))
+    说明: 旧包必须给出明确原因且不进入共享内容
+[C6 失败夹具] c6.failure.duplicate_seq_conflict_rejected -> PASS
+    期望: DuplicateSeqConflict(seq=5)
+    实际: reject(DuplicateSeqConflict(seq=5))
+    说明: 旧包必须给出明确原因且不进入共享内容
+[C6 成功夹具] c6.success.no_old_packet_leaked_into_content -> PASS
+    期望: 被拒旧包未进入正文；正文只保留 p1 与 p5
+    实际: applied=2 p1=1 p5=1
+    说明: p2/p_bad/p4/p5b 全部被拒
+
+=== C7 恶意写集：逐条拒绝并给出原因 ===
+[C7 成功夹具] c7.success.baseline_valid_packet_accepted -> PASS
+    期望: 合法 LaTeX 写入被接受
+    实际: accept(receipt=1, epoch=1, ops=1)
+    说明: 结构性校验不能退化为一律拒绝
+[C7 失败夹具] protocol_unsupported -> PASS
+    期望: ProtocolVersionUnsupported(got=1, supported=3)
+    实际: reject(ProtocolVersionUnsupported(got=1, supported=3))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] scope_mismatch -> PASS
+    期望: ScopeMismatch(expected=proj-scholium/branch-main, got=proj-other/branch-x)
+    实际: reject(ScopeMismatch(expected=proj-scholium/branch-main, got=proj-other/branch-x))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] forged_epoch -> PASS
+    期望: EpochForged(got=1001, current=1)
+    实际: reject(EpochForged(got=1001, current=1))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] forged_epoch_max -> PASS
+    期望: EpochForged(got=18446744073709551615, current=1)
+    实际: reject(EpochForged(got=18446744073709551615, current=1))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] stale_epoch -> PASS
+    期望: SourceEpochStale(got=0, current=1)
+    实际: reject(SourceEpochStale(got=0, current=1))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] path_traversal -> PASS
+    期望: PathOutOfScope(path="../other/secret.tex")
+    实际: reject(PathOutOfScope(path="../other/secret.tex"))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] path_absolute -> PASS
+    期望: PathOutOfScope(path="/etc/passwd.tex")
+    实际: reject(PathOutOfScope(path="/etc/passwd.tex"))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] path_wrong_extension -> PASS
+    期望: DialectExtensionMismatch(path="notes.txt", expected_ext=.tex)
+    实际: reject(DialectExtensionMismatch(path="notes.txt", expected_ext=.tex))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] path_control_byte -> PASS
+    期望: MalformedPath(path="bad\0.tex")
+    实际: reject(MalformedPath(path="bad\0.tex"))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] declared_dialect_mismatch -> PASS
+    期望: DeclaredDialectMismatch(declared=latex, op=typst)
+    实际: reject(DeclaredDialectMismatch(declared=latex, op=typst))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] mixed_dialect_write_set -> PASS
+    期望: MixedDialectWriteSet(dialects=["latex", "typst"])
+    实际: reject(MixedDialectWriteSet(dialects=["latex", "typst"]))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] content_dialect_mismatch -> PASS
+    期望: ContentDialectMismatch(declared=latex, foreign_marker="#let ")
+    实际: reject(ContentDialectMismatch(declared=latex, foreign_marker="#let "))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] malformed_payload -> PASS
+    期望: MalformedPayload(detail=control byte in payload)
+    实际: reject(MalformedPayload(detail=control byte in payload))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] oversized_payload -> PASS
+    期望: PayloadTooLarge(got=70034, max=65536)
+    实际: reject(PayloadTooLarge(got=70034, max=65536))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] too_many_ops -> PASS
+    期望: TooManyOps(got=65, max=64)
+    实际: reject(TooManyOps(got=65, max=64))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] empty_write_set -> PASS
+    期望: EmptyWriteSet
+    实际: reject(EmptyWriteSet)
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] permit_unknown -> PASS
+    期望: PermitUnknown(id=4242)
+    实际: reject(PermitUnknown(id=4242))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] permit_not_owner -> PASS
+    期望: PermitNotOwner(id=1, owner=alice, actor=bob)
+    实际: reject(PermitNotOwner(id=1, owner=alice, actor=bob))
+    说明: 每条恶意写集都要有独立断言
+[C7 失败夹具] dialect_not_active -> PASS
+    期望: DialectNotActive(active=latex, requested=typst)
+    实际: reject(DialectNotActive(active=latex, requested=typst))
+    说明: 每条恶意写集都要有独立断言
+[C7 成功夹具] c7.success.no_attack_content_in_shared_content -> PASS
+    期望: 0 条攻击内容进入正文，正文只有 1 条基线写入
+    实际: attacks=19 leaked=[] applied=1 baseline=1
+    说明: 逐条拒绝且不产生副作用
+[C7 对照] c7.control.skip_structural_validation_accepts_attacks -> PASS
+    期望: 对照实现接受了内容方言矛盾与混语言写集
+    实际: content=accept(receipt=1, epoch=1, ops=1) mixed=accept(receipt=2, epoch=1, ops=2)
+    说明: 证明结构级校验确实是恶意写集的拦截来源
+
+=== 判据汇总（逐用例） ===
+C1 同语言多人编辑：多人并发写入并收敛: cases=4 pass=4 fail=0 [成功夹具=1 失败夹具=2 对照=1] -> PASS
+C2 切换屏障：不存在两种语言同时可写的窗口: cases=11 pass=11 fail=0 [成功夹具=6 失败夹具=4 对照=1] -> PASS
+C3 epoch 隔离：切换递增 epoch，旧 epoch 拒绝且不自动回灌: cases=5 pass=5 fail=0 [成功夹具=2 失败夹具=2 对照=1] -> PASS
+C4 服务重启：活动语言 / epoch / 待冲刷队列可安全重建: cases=6 pass=6 fail=0 [成功夹具=3 失败夹具=3 对照=0] -> PASS
+C5 网络分区：隔离写入必须被拒绝或重放，恢复后不双写: cases=6 pass=6 fail=0 [成功夹具=3 失败夹具=2 对照=1] -> PASS
+C6 旧包处理：重复包返回原回执，旧包被拒并给出原因: cases=6 pass=6 fail=0 [成功夹具=2 失败夹具=4 对照=0] -> PASS
+C7 恶意写集：逐条拒绝并给出原因: cases=22 pass=22 fail=0 [成功夹具=2 失败夹具=19 对照=1] -> PASS
+总计: cases=60 pass=60 fail=0 -> PASS
+
+未验证范围：真实网络分区、真实多进程、真实磁盘 fsync、真实 CRDT 合并算法、真实 LaTeX/Typst 解析器；见报告 0009 的“失败与不确定性”。

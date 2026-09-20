@@ -1,0 +1,48 @@
+# 原生 UI 验证工程
+
+阶段 0 第 1 项验证的共用工程，规格见 [原生 UI 验证计划](../../docs/plan/NATIVE_UI_VALIDATION.md) 第 4 节。
+
+## 结构
+
+```text
+spikes/native-ui/
+├── core/            独立 Rust 文档核心（无 UI、无 IO）+ 共用布局器，所有候选共用
+├── candidate-iced/  第一个候选：Iced，自带 Cargo.lock
+├── candidate-gpui/  第二个候选：GPUI，已验证后淘汰，保留作对照
+└── candidate-egui/  选定候选；结构编辑、源码草稿应用与后台 Typst 预览
+```
+
+每个候选目录都是独立 workspace，通过 path 依赖引用 `core/`。这样候选之间不会发生 cargo
+feature 合并，也不会有 UI 状态或类型泄漏进核心，符合"候选需要独立目录与锁定版本"。
+
+## 核心边界
+
+`core/` 只实现被 UI 验收项直接压到的模型能力，不是正式架构：
+
+- 语义节点与固定槽位、树光标与结构导航
+- 字符级稳定身份，使本地 undo 能精确定位自己插入的内容而不依赖"最近一次编辑"
+- Action 分组、IME preedit 排除、actor 作用域的本地 undo
+- 源码面板的方言与可写性模型（团队语言门禁在模型层的占位实现）
+- 大文本缓冲区，用于源码视图性能采样
+- **共用布局器** `layout.rs`：把语义图布局成 `Text` / `Rule` 图元（分数线、上下标位置、矩阵网格、
+  根号上横线），每个候选绘制**同一份布局**
+
+最后一条是候选可比性的前提：如果把正文投影成纯文本，比较的就只是"各框架渲染字符串的能力"，
+而不是"渲染结构的能力"，"数学结构"这项验收也会退化成模型层测试。
+
+**注意：正文的结构渲染是临时实现，不是设计。** 它用固定字形宽度、不做换行，根号是用文本字符
+加一条横线拼出来的，只是为了"各候选画同一份图元"从而可比。正式渲染方式等语义树（AST）与渲染
+分层确定后重做，不要照此扩展，也不要把它当成约定。
+
+核心不实现 CRDT 收敛、真实 reconcile、持久化或语言切换协议——它们分别是阶段 0 第 3、4、5、6 项。
+egui 候选已通过 path 依赖接入 `source-reconcile` 的事务会话；后台预览调用沙箱内的 Typst CLI。
+当前新增能力与测试边界见[报告 0016](../../docs/spikes/SPK-0016-working-tree-status.md)。
+每个候选必须用同一组验收脚本跑核心，见各候选目录与 `docs/spikes/` 的报告。
+
+## 诊断脚本
+
+- `candidate-iced/scripts/smoke.sh [default|wgpu|tiny-skia]`：启动 → 合成器确认窗口 → 按窗口 ID 截图 → 干净退出。
+- `candidate-iced/scripts/compare-backends.sh [次数]`：对比各后端的首窗口时间、稳态 CPU、内存与 stderr 噪声。
+- `candidate-iced/src/bin/gpu_probe.rs`：枚举 wgpu 适配器并尝试创建设备。渲染异常时**先跑它**，
+  以区分"后端选择问题"和"GPU 设备节点对该进程不可见"——后者会让 Mesa 打印 zink/dri2 报错，
+  看起来像驱动坏了，实际只是没有 `/dev/dri`。

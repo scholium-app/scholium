@@ -1,0 +1,35 @@
+[package]
+name = "scholium-spike-typst"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "MIT OR Apache-2.0"
+
+# 独立 workspace，不进入正式 workspace 依赖图。
+[workspace]
+
+[dependencies]
+scholium-spike-core = { path = "../native-ui/core" }
+# 锁定候选版本；编译后端版本必须随报告记录。
+typst = "=0.15.1"
+# PagedDocument 等产物类型在 typst-layout 里，需要直接依赖。
+typst-layout = "=0.15.1"
+# 系统字体加载等辅助能力（正式实现需要自行控制字体来源与许可证）。
+typst-kit = { version = "=0.15.1", features = ["embedded-fonts", "scan-fonts"] }
+typst-render = "=0.15.1"
+tiny-skia = "0.12.0"
+egui = "=0.36.2"
+serde_json = "=1.0.151"
+comemo = "=0.5.1"
+
+[lints.clippy]
+too_many_lines = "warn"
+cognitive_complexity = "warn"
+too_many_arguments = "warn"
+unwrap_used = "warn"
+missing_panics_doc = "warn"
+missing_errors_doc = "warn"
+undocumented_unsafe_blocks = "deny"
+
+[lints.rust]
+missing_docs = "warn"

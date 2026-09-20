@@ -91,4 +91,4 @@ src/
 离线编辑者不能阻止切换永久完成，但未确认修改保留在其草稿/fork；UI 显示隔离成员。控制状态不得进入 presence。
 新增竞争切换、故障事务、服务恢复、许可伪造、撤权竞态、旧包和隐藏写集测试。
 
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。

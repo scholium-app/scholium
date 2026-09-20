@@ -1,0 +1,34 @@
+   Compiling scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build)
+    Finished `release` profile [optimized] target(s) in 5.48s
+     Running `spikes/mixed-build/target/release/scholium-spike-mixed-build --packages`
+[PASS] T1-longtable-latex/standard: clean rebuild, pages/text/links/vector checked
+[PASS] T1-longtable-latex/mixed: clean rebuild, pages/text/links/vector checked
+[PASS] T1-longtable-typst/standard: clean rebuild, pages/text/links/vector checked
+[PASS] T1-longtable-typst/mixed: clean rebuild, pages/text/links/vector checked
+[PASS] E1-equation-latex/standard: clean rebuild, pages/text/links/vector checked
+[PASS] E1-equation-latex/mixed: clean rebuild, pages/text/links/vector checked
+[PASS] E1-equation-typst/standard: clean rebuild, pages/text/links/vector checked
+[PASS] E1-equation-typst/mixed: clean rebuild, pages/text/links/vector checked
+[PASS] G1-plot-native-latex/standard: clean rebuild, pages/text/links/vector checked
+[PASS] G1-plot-native-latex/mixed: clean rebuild, pages/text/links/vector checked
+[PASS] G1-plot-native-typst/standard: clean rebuild, pages/text/links/vector checked
+[PASS] G1-plot-native-typst/mixed: clean rebuild, pages/text/links/vector checked
+[PASS] G2-plot-foreign-latex/standard: clean rebuild, pages/text/links/vector checked
+[PASS] G2-plot-foreign-latex: missing component rejected by compiler
+[PASS] G2-plot-foreign-latex/mixed: clean rebuild, pages/text/links/vector checked
+[PASS] G2-plot-foreign-typst/standard: clean rebuild, pages/text/links/vector checked
+[PASS] G2-plot-foreign-typst: missing component rejected by compiler
+[PASS] G2-plot-foreign-typst/mixed: clean rebuild, pages/text/links/vector checked
+[PASS] M1-macro-latex/standard: clean rebuild, pages/text/links/vector checked
+[PASS] M1-macro-latex/mixed: clean rebuild, pages/text/links/vector checked
+[PASS] M1-macro-typst/standard: clean rebuild, pages/text/links/vector checked
+[PASS] M1-macro-typst/mixed: clean rebuild, pages/text/links/vector checked
+[PASS] S1-scope-latex/standard: clean rebuild, pages/text/links/vector checked
+[PASS] S1-scope-latex/mixed: clean rebuild, pages/text/links/vector checked
+[PASS] S1-scope-typst/standard: clean rebuild, pages/text/links/vector checked
+[PASS] S1-scope-typst/mixed: clean rebuild, pages/text/links/vector checked
+[PASS] R1-refs-latex/standard: clean rebuild, pages/text/links/vector checked
+[PASS] R1-refs-latex/mixed: clean rebuild, pages/text/links/vector checked
+[PASS] R1-refs-typst/standard: clean rebuild, pages/text/links/vector checked
+[PASS] R1-refs-typst/mixed: clean rebuild, pages/text/links/vector checked
+packages: 28/28 passed; artifacts /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/packages

@@ -7,8 +7,9 @@
 
 ## 状态
 
-项目已完成重新立项，废弃实现已经删除，当前仓库只保留设计文档和空白 workspace。
-旧实验结果仍可在归档文档和 Git 历史中查阅。
+项目已完成重新立项，当前处于阶段 0 技术验证：设计文档与独立 spike 已落库，正式 workspace 仍为空。
+验证进度、已知缺口和复现命令见 [阶段 0 报告](docs/spikes/README.md)；尚未满足全部阶段出口条件。
+废弃实现已经删除，旧实验结果仍可在归档文档和 Git 历史中查阅。
 
 新方案聚焦 Liii STEM 式结构编辑体验、LaTeX/Typst 源码模式、双后端预览、非线性历史、
 local-first 多人协作和可解释格式转换。从 [设计文档索引](docs/README.md) 开始阅读。
@@ -16,8 +17,8 @@ local-first 多人协作和可解释格式转换。从 [设计文档索引](docs
 ## 原生技术栈
 
 应用 UI、核心与服务端优先 Rust，必要时混用 C/C++/Zig；构建以 Cargo 为主，原生依赖可使用 CMake 等工具。
-UI 验证顺序为 **Iced → GPUI → C++ EUI-NEO → Slint 或 egui**，最终选型待验证；不采用 npm/JavaScript/WebView 编辑器。
-具体验收与 FFI 边界见 [原生 UI 验证计划](docs/NATIVE_UI_VALIDATION.md)。
+UI 验证顺序为 **Iced → GPUI → C++ EUI-NEO → Slint 或 egui**，已选定 egui / eframe 0.36.2（[ADR 0006](docs/adr/ADR-0006-native-ui-framework.md)）；不采用 npm/JavaScript/WebView 编辑器。
+具体验收与 FFI 边界见 [原生 UI 验证计划](docs/plan/NATIVE_UI_VALIDATION.md)。
 
 ## 设计目标
 
@@ -41,11 +42,11 @@ UI 验证顺序为 **Iced → GPUI → C++ EUI-NEO → Slint 或 egui**，最终
 ## 许可证
 
 本项目以 **MIT OR Apache-2.0** 双许可发布，使用者可任选其一：[LICENSE-MIT](LICENSE-MIT) 或
-[LICENSE-APACHE](LICENSE-APACHE)。决策依据见 [ADR 0004](docs/adr/0004-project-license.md)。
+[LICENSE-APACHE](LICENSE-APACHE)。决策依据见 [ADR 0004](docs/adr/ADR-0004-project-license.md)。
 
 正式实现不移植 TeXmacs/Mogan 或废弃原型实现；新增依赖必须通过 `cargo deny` 许可证检查，
 允许与禁止的许可类别见 [AGENT.md](AGENT.md) 的许可证政策一节。
 
 ## 全栈与 WASM
 
-[全栈候选](docs/TECH_STACK.md)记录编辑核心、解析/编译、渲染、协作、存储及服务端的验证方向；[WASM 计划](docs/WASM.md)优先保证 Rust 核心可移植。[Mogan LaTeX 调研](docs/research/MOGAN_LATEX.md)记录源码依据与可借鉴边界。当前均为设计与待验证项。
+[全栈候选](docs/plan/TECH_STACK.md)记录编辑核心、解析/编译、渲染、协作、存储及服务端的验证方向；[WASM 计划](docs/plan/WASM.md)优先保证 Rust 核心可移植。[Mogan LaTeX 调研](docs/research/MOGAN_LATEX.md)记录源码依据与可借鉴边界。已验证的选型与仍待验证的范围见 [spike 状态索引](docs/spikes/README.md)。

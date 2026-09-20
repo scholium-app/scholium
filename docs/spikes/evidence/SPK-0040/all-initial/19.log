@@ -1,0 +1,10 @@
+   Compiling scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build)
+    Finished `release` profile [optimized] target(s) in 2.63s
+     Running unittests src/main.rs (spikes/mixed-build/target/release/deps/scholium_spike_mixed_build-246e40b6f8dc5ba7)
+
+running 2 tests
+test vector_pdf::tests::annotations_outside_link_subset_fail_instead_of_disappearing ... ok
+test vector_pdf::tests::unsafe_actions_and_uris_fail_but_https_is_preserved ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+

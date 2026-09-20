@@ -1,0 +1,20 @@
+   Compiling scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build)
+    Finished `release` profile [optimized] target(s) in 0.87s
+     Running tests/include_links.rs (spikes/mixed-build/target/release/deps/include_links-d41c02bbd4720679)
+
+running 1 test
+Latex: native include links 1→2 and 2→1 verified; /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/include-links-Latex-134644
+
+thread 'included_internal_symbols_link_both_ways_in_both_hosts' (134645) panicked at tests/include_links.rs:98:10:
+inline formula
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test included_internal_symbols_link_both_ways_in_both_hosts ... FAILED
+
+failures:
+
+failures:
+    included_internal_symbols_link_both_ways_in_both_hosts
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.58s
+
+error: test failed, to rerun pass `--test include_links`

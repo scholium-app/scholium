@@ -1,0 +1,14 @@
+[
+  {
+    "case": "math_edit",
+    "result": "Pass"
+  },
+  {
+    "case": "visual_comparison",
+    "result": "Pass"
+  },
+  {
+    "case": "empty_slot",
+    "result": "Pass"
+  }
+]

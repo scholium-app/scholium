@@ -1,0 +1,184 @@
+//! Source draft UI: explicit commit with revision and whole-draft round-trip checks.
+use super::*;
+use scholium_spike_reconcile::{Session, generate::Dialect};
+
+impl SpikeApp {
+    pub(super) fn draw_source(&mut self, ui: &mut egui::Ui) {
+        ui.vertical(|ui| {
+            ui.heading("源码 Source Studio");
+            let composition_blocked = self.source_composition_blocked();
+            let dirty = self.source_buffer != self.source.generated.text;
+            if !composition_blocked && !dirty && self.source.revision != self.core.revision() {
+                self.source = Session::new(&self.core, self.source.dialect);
+                self.source_buffer = self.source.generated.text.clone();
+            }
+            self.source_dialect_controls(ui, !dirty && !composition_blocked);
+            ui.label(format!(
+                "{:?} · 基于 revision {}",
+                self.source.dialect, self.source.revision
+            ));
+            // Keep draft actions reachable even when the draft exceeds the viewport.
+            let response = egui::ScrollArea::both()
+                .id_salt("source_viewport")
+                .animated(false)
+                .max_height((ui.available_height() - 140.0).max(100.0))
+                .show(ui, |ui| {
+                    ui.add(egui::TextEdit::multiline(&mut self.source_buffer).id(
+                        self.team.as_ref().map_or_else(
+                            || egui::Id::new("source_editor"),
+                            |team| egui::Id::new(("team_source", team.selected)),
+                        ),
+                    ))
+                })
+                .inner;
+            ui.ctx().accesskit_node_builder(response.id, |node| {
+                node.set_label(format!("{:?} 源码编辑器", self.source.dialect));
+            });
+            if response.has_focus() {
+                self.structure_focused = false;
+            }
+            if self.focus_source {
+                response.request_focus();
+                self.focus_source = false;
+                self.initial_focus_done = true;
+            }
+            if ui
+                .add_enabled(!composition_blocked, egui::Button::new("应用源码"))
+                .clicked()
+            {
+                self.commit_source();
+            }
+            if self.source.revision != self.core.revision() && dirty {
+                ui.label("正文已改变。草稿保留；复制草稿后可从正文重新生成。");
+            }
+            if ui
+                .add_enabled(
+                    !composition_blocked,
+                    egui::Button::new("丢弃草稿并从正文生成"),
+                )
+                .clicked()
+            {
+                self.source = Session::new(&self.core, self.source.dialect);
+                self.source_buffer = self.source.generated.text.clone();
+                self.team_regenerated();
+            }
+            ui.label("当前仅支持单处可归因编辑；冲突时不修改正文。");
+        });
+    }
+
+    fn source_dialect_controls(&mut self, ui: &mut egui::Ui, enabled: bool) {
+        ui.horizontal(|ui| {
+            for (label, dialect) in [("LaTeX", Dialect::Latex), ("Typst", Dialect::Typst)] {
+                if ui.add_enabled(enabled, egui::Button::new(label)).clicked() {
+                    self.source = Session::new(&self.core, dialect);
+                    self.source_buffer = self.source.generated.text.clone();
+                    self.team_regenerated();
+                }
+            }
+        });
+    }
+
+    fn commit_source(&mut self) {
+        if self.team.is_some() {
+            self.commit_team_source();
+            return;
+        }
+        self.last_event = match self.source.commit(&mut self.core, &self.source_buffer) {
+            Ok(()) => "源码已应用到正文".to_owned(),
+            Err(error) => error.to_string(),
+        };
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn accessible_source(offset: f32) -> egui::accesskit::TreeUpdate {
+        let ctx = egui::Context::default();
+        ctx.enable_accesskit();
+        let mut text = "中😀\nsecond\n".repeat(30);
+        let mut output = ctx.run_ui(Default::default(), |ui| {
+            egui::ScrollArea::vertical()
+                .max_height(100.0)
+                .vertical_scroll_offset(offset)
+                .show(ui, |ui| {
+                    ui.add(egui::TextEdit::multiline(&mut text).id(egui::Id::new("draft")));
+                });
+        });
+        output.textures_delta.clear();
+        output
+            .platform_output
+            .accesskit_update
+            .expect("enabled tree")
+    }
+
+    #[test]
+    fn scrolling_preserves_accessible_text_positions_and_moves_one_transform() {
+        use egui::accesskit::Role;
+        let before = accessible_source(0.0);
+        let after = accessible_source(50.0);
+        let runs = |tree: &egui::accesskit::TreeUpdate| {
+            tree.nodes
+                .iter()
+                .filter(|(_, n)| n.role() == Role::TextRun)
+                .map(|(id, n)| (*id, n.value().map(str::to_owned), n.bounds()))
+                .collect::<Vec<_>>()
+        };
+        assert!(!runs(&before).is_empty());
+        assert_eq!(runs(&before), runs(&after));
+        let container = egui::Id::new("draft").with("text_geometry").accesskit_id();
+        let transform = |tree: &egui::accesskit::TreeUpdate| {
+            tree.nodes
+                .iter()
+                .find(|(id, _)| *id == container)
+                .expect("text geometry parent")
+                .1
+                .transform()
+                .cloned()
+        };
+        assert_ne!(transform(&before), transform(&after));
+    }
+
+    #[test]
+    fn source_commit_changes_body_and_conflict_keeps_draft() {
+        let ctx = egui::Context::default();
+        let mut app = SpikeApp::new_layout_probe(&ctx, None);
+        app.core = Editor::new();
+        let node = app
+            .core
+            .document()
+            .first_text_descendant(app.core.document().root())
+            .expect("leaf");
+        app.core
+            .apply(
+                LOCAL,
+                Intent::Typing,
+                SemanticEdit::InsertText {
+                    node,
+                    at: 0,
+                    text: "hello".into(),
+                },
+            )
+            .expect("text");
+        app.source = Session::new(&app.core, Dialect::Latex);
+        app.source_buffer = app.source.generated.text.replace("hello", "你好");
+        app.commit_source();
+        assert!(app.plain_text().contains("你好"));
+        app.source_buffer = app.source_buffer.replace("你好", "draft");
+        app.core
+            .apply(
+                LOCAL,
+                Intent::Typing,
+                SemanticEdit::InsertText {
+                    node,
+                    at: 0,
+                    text: "external".into(),
+                },
+            )
+            .expect("text");
+        app.commit_source();
+        assert!(app.source_buffer.contains("draft"));
+        assert!(app.plain_text().contains("external你好"));
+    }
+}

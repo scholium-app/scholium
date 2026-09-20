@@ -1,0 +1,22 @@
+    Checking scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build)
+error: this function has too many lines (103/100)
+  --> src/build.rs:93:1
+   |
+93 | pub(crate) fn build(project: &Project, plan: &Plan, dir: &Path, max_rounds: usize) -> BuildOutput {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_lines
+   = note: `-D clippy::too-many-lines` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::too_many_lines)]`
+
+error: this function has too many lines (107/100)
+  --> src/generate_typst.rs:93:1
+   |
+93 | fn typst_block(block: &Block, ctx: &Ctx<'_>, out: &mut String) -> Result<(), Diagnostic> {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_lines
+
+error: could not compile `scholium-spike-mixed-build` (bin "scholium-spike-mixed-build") due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `scholium-spike-mixed-build` (bin "scholium-spike-mixed-build" test) due to 2 previous errors

@@ -1,0 +1,35 @@
+[
+  {
+    "case": "ime",
+    "result": "Pass"
+  },
+  {
+    "case": "source_dialects",
+    "result": "Pass"
+  },
+  {
+    "case": "math_edit",
+    "result": "Pass"
+  },
+  {
+    "case": "accessibility",
+    "result": "Pass"
+  },
+  {
+    "case": "pointer_selection",
+    "result": "Pass"
+  },
+  {
+    "case": "unicode_clipboard",
+    "result": "Pass"
+  },
+  {
+    "case": "slot_selection",
+    "result": "Pass"
+  },
+  {
+    "case": "multipage_preview",
+    "result": "Fail",
+    "reason": "AssertionError: large preview did not compile"
+  }
+]

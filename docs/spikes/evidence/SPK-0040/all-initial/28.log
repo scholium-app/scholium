@@ -1,0 +1,2 @@
+PASS: aggregate temporary storage stops at 256 MiB across multiple files
+PASS: kernel cgroup enforces 2 GiB, no swap, 64 tasks, grouped OOM

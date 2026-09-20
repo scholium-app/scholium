@@ -1,0 +1,45 @@
+   Compiling scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build)
+    Finished `release` profile [optimized] target(s) in 5.42s
+     Running tests/include_links.rs (spikes/mixed-build/target/release/deps/include_links-d41c02bbd4720679)
+
+running 1 test
+
+thread 'included_internal_symbols_link_both_ways_in_both_hosts' (132703) panicked at tests/include_links.rs:53:5:
+inline formula missing: <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pdf2xml SYSTEM "pdf2xml.dtd">
+
+<pdf2xml producer="poppler" version="26.08.0">
+<page number="1" position="absolute" top="0" left="0" height="1075" width="627">
+	<fontspec id="0" size="16" family="VTWIFZ+NotoSerif" color="#000000"/>
+	<fontspec id="1" size="16" family="VITKQN+CMMI10" color="#000000"/>
+	<fontspec id="2" size="16" family="NAJCME+CMR10" color="#000000"/>
+	<fontspec id="3" size="16" family="VTWIFZ+NotoSerif" color="#0000ff"/>
+<text top="71" left="72" width="97" height="22" font="0">INLINELEFT</text>
+<text top="77" left="173" width="9" height="15" font="1"><i>x</i></text>
+<text top="71" left="191" width="109" height="22" font="0">INLINERIGHT</text>
+<text top="114" left="268" width="8" height="15" font="2">7</text>
+<text top="108" left="281" width="79" height="22" font="0">MKeqhost</text>
+<text top="108" left="535" width="20" height="22" font="0">(1)</text>
+<text top="145" left="72" width="9" height="22" font="3"><a href="final.html#2">2</a></text>
+<text top="1032" left="309" width="9" height="22" font="0">1</text>
+</page>
+<page number="2" position="absolute" top="0" left="0" height="1075" width="627">
+<text top="97" left="261" width="8" height="15" font="2">7</text>
+<text top="91" left="274" width="93" height="22" font="0">MKeqinside</text>
+<text top="91" left="535" width="20" height="22" font="0">(2)</text>
+<text top="121" left="72" width="9" height="22" font="3"><a href="final.html#1">1</a></text>
+<text top="1032" left="309" width="9" height="22" font="0">2</text>
+</page>
+</pdf2xml>
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test included_internal_symbols_link_both_ways_in_both_hosts ... FAILED
+
+failures:
+
+failures:
+    included_internal_symbols_link_both_ways_in_both_hosts
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.60s
+
+error: test failed, to rerun pass `--test include_links`

@@ -1,0 +1,10 @@
+[
+  {
+    "case": "ime",
+    "result": "Pass"
+  },
+  {
+    "case": "continuous_typing",
+    "result": "Pass"
+  }
+]

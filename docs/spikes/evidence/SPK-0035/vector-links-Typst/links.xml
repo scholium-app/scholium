@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pdf2xml SYSTEM "pdf2xml.dtd">
+
+<pdf2xml producer="poppler" version="26.08.0">
+<page number="1" position="absolute" top="0" left="0" height="1200" width="780">
+	<fontspec id="0" size="17" family="QQZMKZ+NewCMMath-Book-Identity-H" color="#000000"/>
+	<fontspec id="1" size="17" family="WKNRQS+LibertinusSerif" color="#000000"/>
+	<fontspec id="2" size="7" family="CLKBKF+CMR10" color="#000000"/>
+	<fontspec id="3" size="7" family="ZOUTEY+NotoSerif" color="#000000"/>
+	<fontspec id="4" size="7" family="ZOUTEY+NotoSerif" color="#0000ff"/>
+	<fontspec id="5" size="7" family="ZOUTEY+NotoSerif" color="#ec008b"/>
+	<fontspec id="6" size="17" family="FBPERK+KaiTi" color="#000000"/>
+<text top="70" left="346" width="88" height="17" font="0">7 MKeqhost</text>
+<text top="70" left="687" width="21" height="17" font="0">(1)</text>
+<text top="103" left="72" width="19" height="19" font="1"><a href="document.html#1">1 2</a></text>
+<text top="181" left="375" width="4" height="7" font="2">7</text>
+<text top="178" left="381" width="25" height="10" font="3">MKeqa</text>
+<text top="178" left="523" width="9" height="10" font="3">(1)</text>
+<text top="192" left="247" width="104" height="10" font="3">Spacing between destinations</text>
+<text top="204" left="375" width="4" height="7" font="2">7</text>
+<text top="201" left="380" width="25" height="10" font="3">MKeqb</text>
+<text top="201" left="523" width="9" height="10" font="3">(2)</text>
+<text top="214" left="247" width="10" height="10" font="4"><a href="document.html#1">1 2</a></text>
+<text top="214" left="259" width="45" height="10" font="5"><a href="document.html#1">1 </a><a href="https://example.org/fidelity">EXTERNAL</a></text>
+<text top="655" left="388" width="4" height="10" font="3">1</text>
+<text top="683" left="301" width="17" height="17" font="6">图</text>
+<text top="683" left="318" width="161" height="19" font="1"> 1 vector MKfigforeign</text>
+<text top="1146" left="386" width="8" height="19" font="1">1</text>
+</page>
+</pdf2xml>

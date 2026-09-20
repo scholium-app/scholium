@@ -1,0 +1,78 @@
+本次日志：/tmp/scholium-stage0.3vNjMR
+
+=== 共享核心（语义图 / 光标 / 语义编辑 / 布局） ===
+  PASS  核心测试
+
+=== 第 1 项 原生 UI（egui 选定；iced 对照） ===
+  PASS  egui 输入契约与性能测试
+  PASS  iced 输入契约测试
+  PASS  候选 iced 构建
+  PASS  候选 gpui 构建
+  PASS  候选 egui 构建
+
+=== 第 2 项 Typst 映射（生成 / 定位 / 渲染比对 / 时延） ===
+  PASS  typst-mapping 主流程
+  PASS  typst-mapping 字符级映射
+  PASS  typst-mapping 渲染比对
+  PASS  typst-mapping 时延与结果门
+
+=== 第 3 项 源码 reconcile ===
+  PASS  source-reconcile
+
+=== 第 4–7 项 ===
+  PASS  crdt-race
+  PASS  crdt-engines
+  PASS  recovery
+  PASS  language-coordination
+  PASS  mixed-build
+
+=== 标准包与混合包的干净环境重建（需要 Typst CLI 0.15.1） ===
+  FAIL  export packages
+            Finished `release` profile [optimized] target(s) in 0.08s
+             Running `spikes/mixed-build/target/release/scholium-spike-mixed-build --packages`
+        [FAIL] No such file or directory (os error 2)
+        完整日志：/tmp/scholium-stage0.3vNjMR/17.log
+
+=== 真实后台编译期间的原生 UI 帧验证（需要 Typst CLI 0.15.1） ===
+  FAIL  async preview
+        test preview::integration_tests::actual_preview_completes_while_ui_keeps_drawing ... FAILED
+        
+        failures:
+        
+        failures:
+            preview::integration_tests::actual_preview_completes_while_ui_keeps_drawing
+        
+        test result: FAILED. 10 passed; 1 failed; 0 ignored; 0 measured; 19 filtered out; finished in 20.01s
+        
+        error: test failed, to rerun pass `--lib`
+        完整日志：/tmp/scholium-stage0.3vNjMR/18.log
+
+=== 出口条件 安全（不受信源码隔离） ===
+  PASS  untrusted-input
+  PASS  mixed-build compiler isolation
+  PASS  Typst worker isolation
+  PASS  runtime mount allowlist
+
+=== 出口条件 许可与来源（cargo deny：licenses / bans / sources） ===
+  PASS  deny core
+  PASS  deny candidate-iced
+  PASS  deny candidate-gpui
+  PASS  deny candidate-egui
+  PASS  deny typst-mapping
+  PASS  deny source-reconcile
+  PASS  deny untrusted-input
+  PASS  deny crdt-race
+  PASS  deny crdt-engines
+  PASS  deny recovery
+  PASS  deny language-coordination
+  PASS  deny mixed-build
+  提示：advisories 需要联网，本脚本在离线环境跳过该项（CI 必须跑）。
+
+=== 出口条件 无 npm / Node.js / WebView ===
+  PASS  仓库内无 npm/Node 工程
+
+=== 汇总 ===
+  通过 33 项，失败 2 项
+  失败项：
+    - export packages
+    - async preview

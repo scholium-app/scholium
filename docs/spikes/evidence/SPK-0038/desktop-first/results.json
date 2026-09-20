@@ -1,0 +1,11 @@
+[
+  {
+    "case": "team_language_gate",
+    "result": "Pass"
+  },
+  {
+    "case": "team_ime_barrier",
+    "result": "Fail",
+    "reason": "AssertionError: Bob enabled during preedit"
+  }
+]

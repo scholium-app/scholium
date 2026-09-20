@@ -1,0 +1,14 @@
+[
+  {
+    "case": "slot_selection",
+    "result": "Pass"
+  },
+  {
+    "case": "multipage_preview",
+    "result": "Pass"
+  },
+  {
+    "case": "frame_cpu_measurement",
+    "result": "Pass"
+  }
+]

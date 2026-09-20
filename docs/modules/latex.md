@@ -89,7 +89,7 @@ LaTeX 主入口引用 Typst 组件需显式绑定与生成资源，不能直接�
 支持的跨引擎宏/参数桥接输出声明式合约，不运行任意宏推断参数。模板全局副作用只能在声明宿主/章节范围生效。
 新增混合正文、跨页表格、自定义宏、模板、双向引用及标准工具链包的真实夹具，未支持组合给明确诊断。
 
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
 
 ## 候选与参考实现
 

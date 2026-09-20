@@ -1,0 +1,22 @@
+   Compiling scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build)
+    Finished `release` profile [optimized] target(s) in 1.92s
+     Running unittests src/main.rs (spikes/mixed-build/target/release/deps/scholium_spike_mixed_build-045a9ff5eabf80e8)
+
+running 1 test
+test fidelity_tests::inline_source_include_rejects_block_content ... FAILED
+
+failures:
+
+---- fidelity_tests::inline_source_include_rejects_block_content stdout ----
+
+thread 'fidelity_tests::inline_source_include_rejects_block_content' (132474) panicked at src/fidelity_tests.rs:13:9:
+assertion failed: problems.iter().any(|p| p.code == "inline-content-unsupported")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    fidelity_tests::inline_source_include_rejects_block_content
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--bin scholium-spike-mixed-build`

@@ -1,0 +1,19 @@
+    Finished `release` profile [optimized] target(s) in 0.14s
+     Running `spikes/crdt-engines/target/release/scholium-spike-crdt-engines`
+=== Loro 1.16.0 ===
+  [PASS] 两副本离线编辑后收敛：A="你好world" B="你好world"
+  [PASS] 本地撤销保留远端输入：撤销前="XYZLOCALhello-remote" 撤销后="LOCALhello-remote"
+  [PASS] 快照往返：原始="快照内容" 恢复="快照内容"，快照 261 字节
+  [PASS] 可移动树（create + mov）：根数=2，移动后深度值变化=true；API：create/roots/mov/mov_to/mov_after/mov_before/delete/get_meta
+  Loro 1.16.0：4/4 通过
+
+=== Yrs 0.27.4 ===
+  [PASS] 两副本离线编辑后收敛：A="你好world" B="你好world"
+  [PASS] 快照往返（state update）：原始="你好world" 恢复="你好world"，快照 35 字节
+  Yrs 0.27.4：2/2 通过
+
+=== Automerge 0.11.0 ===
+  [PASS] 两副本离线编辑后收敛：A="world你好" B="world你好"
+  [PASS] 快照往返（save/load）：原始="world你好" 恢复="world你好"，快照 246 字节
+  Automerge 0.11.0：2/2 通过
+

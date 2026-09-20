@@ -1,0 +1,24 @@
+   Compiling scholium-spike-egui v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/native-ui/candidate-egui)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.62s
+     Running unittests src/lib.rs (spikes/native-ui/candidate-egui/target/debug/deps/scholium_spike_egui-0da95f3376abead3)
+
+running 1 test
+test remote_probe::tests::remote_input_survives_local_structural_and_text_undo ... FAILED
+
+failures:
+
+---- remote_probe::tests::remote_input_survives_local_structural_and_text_undo stdout ----
+
+thread 'remote_probe::tests::remote_input_survives_local_structural_and_text_undo' (1466159) panicked at src/remote_probe.rs:48:9:
+assertion `left == right` failed
+  left: "Q结构渲染夹具：REMOTE"
+ right: "结构渲染夹具：REMOTE"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    remote_probe::tests::remote_input_survives_local_structural_and_text_undo
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 55 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--lib`

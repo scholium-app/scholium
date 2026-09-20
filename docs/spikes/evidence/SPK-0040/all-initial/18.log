@@ -1,0 +1,8 @@
+    Finished `release` profile [optimized] target(s) in 0.16s
+     Running tests/vector_links.rs (spikes/mixed-build/target/release/deps/vector_links-b049a59b9852f3a3)
+
+running 1 test
+test vector_links_and_exact_destinations_survive_both_hosts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.51s
+

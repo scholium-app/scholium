@@ -1,0 +1,10 @@
+[
+  {
+    "case": "ime",
+    "result": "Pass"
+  },
+  {
+    "case": "slot_selection",
+    "result": "Pass"
+  }
+]

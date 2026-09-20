@@ -1,0 +1,80 @@
+[event] 启动完成 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=18 elapsed_ms=357.572
+[typst-editor] Typst · revision 18 · 1 页 · 22 boxes
+[typst-editor-tiles] revision=18 uploaded=70
+[ime] 输入法锚点 [[26.0 143.6] - [27.5 160.2]]
+[event] core 收到 Typing："c" | revision 19 | 核心动作 18 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=19 elapsed_ms=21.268
+[typst-editor] Typst · revision 19 · 1 页 · 23 boxes
+[typst-editor-tiles] revision=19 uploaded=4
+[event] core 收到 Typing："o" | revision 20 | 核心动作 19 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=20 elapsed_ms=17.563
+[typst-editor] Typst · revision 20 · 1 页 · 24 boxes
+[typst-editor-tiles] revision=20 uploaded=4
+[event] core 收到 Typing："n" | revision 21 | 核心动作 20 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=21 elapsed_ms=17.006
+[typst-editor] Typst · revision 21 · 1 页 · 25 boxes
+[typst-editor-tiles] revision=21 uploaded=4
+[event] core 收到 Typing："t" | revision 22 | 核心动作 21 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=22 elapsed_ms=13.530
+[typst-editor] Typst · revision 22 · 1 页 · 26 boxes
+[typst-editor-tiles] revision=22 uploaded=4
+[event] core 收到 Typing："i" | revision 23 | 核心动作 22 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=23 elapsed_ms=13.003
+[typst-editor] Typst · revision 23 · 1 页 · 27 boxes
+[typst-editor-tiles] revision=23 uploaded=4
+[event] core 收到 Typing："n" | revision 24 | 核心动作 23 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=24 elapsed_ms=13.758
+[typst-editor] Typst · revision 24 · 1 页 · 28 boxes
+[typst-editor-tiles] revision=24 uploaded=5
+[event] core 收到 Typing："u" | revision 25 | 核心动作 24 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=25 elapsed_ms=11.886
+[typst-editor] Typst · revision 25 · 1 页 · 29 boxes
+[typst-editor-tiles] revision=25 uploaded=5
+[event] core 收到 Typing："o" | revision 26 | 核心动作 25 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=26 elapsed_ms=11.786
+[typst-editor] Typst · revision 26 · 1 页 · 30 boxes
+[typst-editor-tiles] revision=26 uploaded=4
+[event] core 收到 Typing："u" | revision 27 | 核心动作 26 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=27 elapsed_ms=17.394
+[typst-editor] Typst · revision 27 · 1 页 · 31 boxes
+[typst-editor-tiles] revision=27 uploaded=4
+[event] core 收到 Typing："s" | revision 28 | 核心动作 27 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=28 elapsed_ms=19.603
+[typst-editor] Typst · revision 28 · 1 页 · 32 boxes
+[typst-editor-tiles] revision=28 uploaded=4
+[event] core 收到 Typing："i" | revision 29 | 核心动作 28 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=29 elapsed_ms=23.571
+[typst-editor] Typst · revision 29 · 1 页 · 33 boxes
+[typst-editor-tiles] revision=29 uploaded=4
+[event] core 收到 Typing："n" | revision 30 | 核心动作 29 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=30 elapsed_ms=22.728
+[typst-editor] Typst · revision 30 · 1 页 · 34 boxes
+[typst-editor-tiles] revision=30 uploaded=4
+[event] core 收到 Typing："p" | revision 31 | 核心动作 30 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=31 elapsed_ms=17.089
+[typst-editor] Typst · revision 31 · 1 页 · 35 boxes
+[typst-editor-tiles] revision=31 uploaded=4
+[event] core 收到 Typing："u" | revision 32 | 核心动作 31 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=32 elapsed_ms=19.851
+[typst-editor] Typst · revision 32 · 1 页 · 36 boxes
+[typst-editor-tiles] revision=32 uploaded=5
+[event] core 收到 Typing："t" | revision 33 | 核心动作 32 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=33 elapsed_ms=30.538
+[typst-editor] Typst · revision 33 · 1 页 · 37 boxes
+[typst-editor-tiles] revision=33 uploaded=5
+[typst-editor-worker] revision=34 elapsed_ms=24.068
+[typst-editor] Typst · revision 34 · 1 页 · 38 boxes
+[typst-editor-tiles] revision=34 uploaded=5
+[event] core 收到 Typing："e" | revision 35 | 核心动作 34 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=35 elapsed_ms=22.659
+[typst-editor] Typst · revision 35 · 1 页 · 39 boxes
+[typst-editor-tiles] revision=35 uploaded=4
+[event] core 收到 Typing："s" | revision 36 | 核心动作 35 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=36 elapsed_ms=17.924
+[typst-editor] Typst · revision 36 · 1 页 · 40 boxes
+[typst-editor-tiles] revision=36 uploaded=4
+[event] core 收到 Typing："t" | revision 37 | 核心动作 36 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=37 elapsed_ms=20.713
+[typst-editor] Typst · revision 37 · 1 页 · 41 boxes
+[typst-editor-tiles] revision=37 uploaded=4

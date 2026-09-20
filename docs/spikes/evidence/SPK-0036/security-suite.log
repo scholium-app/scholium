@@ -1,0 +1,13 @@
+本次日志：/tmp/scholium-stage0.prYCfi
+
+=== 出口条件 安全（不受信源码隔离） ===
+  PASS  untrusted-input
+  PASS  mixed-build compiler isolation
+  PASS  Typst worker isolation
+  PASS  PDF artifact probe isolation
+  PASS  runtime mount allowlist
+  PASS  recovery compiler isolation
+
+=== 汇总 ===
+  通过 6 项，失败 0 项
+  本次所选检查通过；阶段出口仍以报告中的未完成项为准。

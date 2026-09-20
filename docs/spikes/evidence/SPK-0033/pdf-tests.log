@@ -1,0 +1,9 @@
+   Compiling scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build)
+    Finished `release` profile [optimized] target(s) in 2.56s
+     Running unittests src/main.rs (spikes/mixed-build/target/release/deps/scholium_spike_mixed_build-045a9ff5eabf80e8)
+
+running 2 tests
+test pdf_sandbox::tests::rejects_symlinks_oversize_and_malformed_artifacts ... ok
+test pdf_sandbox::tests::reduced_profile_inspects_a_valid_pdf_with_all_four_tools ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.67s

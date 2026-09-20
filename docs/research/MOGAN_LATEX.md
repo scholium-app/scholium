@@ -27,4 +27,4 @@
 - 损坏输入、verbatim、catcode 变化及动态 include：保留原文并报告不确定，禁止危险重写。
 - LaTeX/Typst 混用：正文、公式、图表、宏、模板及跨片段引用全部有夹具；导出两种目标包、保存重开和最终 PDF 分开验收。
 
-最终模块边界见 [LaTeX 模块](../modules/latex.md)、[构建模块](../modules/build.md)与[全栈候选](../TECH_STACK.md)。
+最终模块边界见 [LaTeX 模块](../modules/latex.md)、[构建模块](../modules/build.md)与[全栈候选](../plan/TECH_STACK.md)。

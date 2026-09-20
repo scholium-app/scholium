@@ -1,0 +1,117 @@
+# SPK-0028：左侧替换为 Typst 编辑画面
+
+- 日期：2026-09-18
+- 结论：**Pass（下述限定窗口场景）**；完整共同验收未关闭
+- 关联：阶段 0 原生编辑与 Typst 映射；[ADR 0013](../adr/ADR-0013-typst-editor-scene.md)
+- 平台：当前 Linux / niri Wayland / fcitx5-Rime / AT-SPI；egui 0.36.2、Typst 0.15.1
+
+## 实现
+
+左侧默认替换为 Typst 栅格化页面。隔离 helper 一次编译输出页面图片和 glyph/shape 的源码 span、
+位置、advance 与墨迹框；UI 从编辑投影中的源范围反查 NodeId 和 UTF-8 byte。
+图片、光标、命中、选区、IME 和无障碍字符框使用同 revision 坐标，不再叠加旧自绘光标。
+后台只保留最新待处理请求，过期结果不采纳；编译中保留旧画面并显示版本，禁用旧坐标定位。
+键盘编辑仍作用于当前 SDG，不阻塞 UI 等待编译。
+
+helper 使用既有 `toolchain-sandbox.sh`，保留隔离网络、项目只读、输出目录可写、时间和资源限制。
+UI 不链接 Typst。左右显示共用编辑投影：真正行内数学、两列矩阵与受控数学字体；空槽位有编译器
+定位的空盒与 metadata，保留光标和命中框但不绘制方框；它们不写入模型或 Source Studio 的可写源码。
+
+## 真实窗口验证
+
+最终证据：[结果 JSON](evidence/SPK-0028/final/results.json)、
+[左右画面](evidence/SPK-0028/final/visual-comparison.png)、
+[包含根号的整节点选区](evidence/SPK-0028/final/slot-selection-highlight.png)。
+
+七组通过：
+
+1. 真实 Rime 预编辑、取消、提交及焦点切换。
+2. 分子/分母导航、包裹根式、解除结构、继续输入和撤销。
+3. AT-SPI 选择、焦点与数学语义。
+4. 跨正文/公式拖选、剪切/撤销、长文本换行与水平滚动。
+5. ZWJ emoji / 组合字符剪贴板及字素删除。
+6. 整节点选择、替换、撤销、删除后继续输入。
+7. 左右显示均采纳当前 revision，人工检查截图确认公式和选区几何。
+
+测试脚本等待当前 Typst revision 后再读取几何，不再使用固定 0.3 秒假定排版已完成。
+旧滚动断言要求长文本永不换行，与页面排版冲突；新夹具包含单词间空格，检查换行后的字符 Y
+坐标并继续验证水平滚动。没有将长不可断行串的溢出视为已修复。
+
+失败证据保留在 `first/`、`edit/`、`recheck/`、`scroll/`：
+数学字符串初版丢失 glyph source span（画面有字、交互缺字），改为 `#text(...)` 后通过；
+分子边缘初版误命中相邻底数，改为实际框距离与垂直位置排序后通过。
+旧长行断言先失败，随后明确更换为换行/滚动场景。
+
+## 自动验证与复现
+
+- egui 常规回归（含新增旧结果门）：35 项通过；常规运行 4 项 ignored，其中两项新编译测试另行执行。
+- 新增独立旧结果门测试，以及两项需要真实沙箱的编译测试：标准夹具每个文本叶子均有坐标、空叶子可定位、
+  转义字符/空格/多字符数学内容的投影重建不丢字。两项沙箱测试显式运行通过。
+- egui Clippy `--all-targets -- -D warnings` 通过。
+- 旧字体布局相关 headless 测试显式调用 `new_layout_probe`，只用于保留已有回归，不声称验证新后端。
+  新后端通过独立编译测试和上述真实窗口场景验证。
+
+```sh
+# 构建 helper 与桌面程序并启动（无需 Node/WebView）。
+bash spikes/native-ui/candidate-egui/scripts/run-typst-editor.sh
+
+CARGO_HOME="$PWD/spikes/native-ui/.cargo-home" cargo test --offline --manifest-path spikes/native-ui/candidate-egui/Cargo.toml
+CARGO_HOME="$PWD/spikes/native-ui/.cargo-home" cargo test --offline --manifest-path spikes/native-ui/candidate-egui/Cargo.toml typst_editor::tests -- --ignored --nocapture
+SCHOLIUM_TYPST_BIN="$PWD/spikes/mixed-build/out/packages/toolchain/typst" /usr/bin/python spikes/native-ui/candidate-egui/scripts/native-edit-acceptance.py /tmp/scholium-typst-editor ime math_edit accessibility pointer_selection slot_selection unicode_clipboard visual_comparison
+```
+
+## 剩余边界
+
+每次编辑仍启动新编译进程，尚未做持久 World 或瓦片更新，键入到新画面的延迟可感知；本轮没有
+建立端到端延迟分位数，不承诺固定毫秒预算。页面宽度当前固定，极长无空格文本可能溢出。
+完整双向文本、合字内部插入位、全部结构变体、图像/链接/裁剪/变换、所有大文档场景未验收。
+helper 明确拒绝不支持的 frame 类型。
+
+Source Studio 仍使用原有 reconcile 投影，显示投影已统一，但发布源码中的矩阵行列/行内规则等
+旧差异尚需单独修正；本轮不把显示投影冒充发布源码一致性验证。结构变体继承原 spike 的未完成边界。
+右侧是 Typst 快速显示，不是 LaTeX 最终输出。阶段 0 不升级。
+
+## 主题背景与空槽位修复（2026-09-18）
+
+用户反馈背景与窗口不一致、末尾出现方框。显示投影改为透明页面和白色前景，左右画面均按 UI
+主题文字色着色；目前仅覆盖单色内容。空槽位改用无可见内容的 box，metadata 提供编译位置与字号，
+helper 返回对应源码范围的可编辑框。透明字形方案会被 Typst 优化掉，不能用于提供空槽位映射。
+
+新增真实沙箱回归检查页角透明、正文仍有墨迹、空槽位无墨迹且有有效光标框；包括空槽位命中的
+三项编译映射测试通过，egui Clippy 通过。真实窗口 `visual_comparison` 与 `empty_slot` 通过，
+人工检查确认背景融合、左右数学仍显示、末尾无方框，并能在原空叶子输入 `END`。
+证据：[结果](evidence/SPK-0028/theme/results.json)、[左右画面](evidence/SPK-0028/theme/visual-comparison.png)、
+[空叶子输入](evidence/SPK-0028/theme/empty-slot.png)。本轮仅视觉检查深色主题，未声称浅色桌面验收。
+这些修复未改变逐请求启动编译进程的路径，不宣称输入延迟已解决。
+
+## 减少编辑编译启动开销（2026-09-18）
+
+逐请求沙箱原先会探测和挂载整套 TeX、PDF 与 shell 工具。编辑 helper 改用受信固定的
+`typst-editor` 清单，仅保留 helper、依赖动态库、prlimit 和字体；原清单仍为其它调用的默认值。
+没有改为 UI 进程内编译，也没有取消原有网络/文件隔离、20 秒墙钟超时与 CPU/地址空间/文件上限。
+
+同一源码、同一 release helper，每个清单交替采样五次，不设置固定毫秒通过线。
+最终采样在构建和其它测试结束后执行；[首轮](evidence/SPK-0028/latency/sandbox-during-build.json)
+与构建有重叠并出现首轮异常高值，保留供追溯。采用[最终原始数据](evidence/SPK-0028/latency/sandbox.json)：
+
+| 测量（墙钟） | 原清单中位数 | 编辑清单中位数 |
+| --- | ---: | ---: |
+| 启动沙箱并执行 prlimit --version | 522.93 ms | 47.39 ms |
+| 启动沙箱、编译并导出 PNG/几何 | 1044.10 ms | 546.44 ms |
+
+后者下降约 48%；只说明该单页夹具的编译导出路径，不是键入到屏幕更新的端到端延迟。
+计时不含 helper 复制（另测 25.79 ms）、UI 图片解码、队列等待和 GPU 上传，也不是右侧预览的计时。
+两清单十次输出的 PNG 与 scene JSON 哈希完全一致。
+
+新增可复现检查：输入可读但不可写、输出可写、宿主 hostname 与环境变量不可见、shell/TeX 不可见、
+字体可见、超时结束、未知清单拒绝。三项真实沙箱映射测试、35 项常规回归（5 ignored，
+其中三项沙箱测试另行执行）、Clippy、格式和 shell 语法检查通过。
+真实窗口数学编辑、左右画面和空叶子输入三项通过；人工复核背景、公式与末尾空位置的截图。
+[桌面结果与截图](evidence/SPK-0028/latency/results.json)保留在同目录。
+
+```sh
+python spikes/native-ui/candidate-egui/scripts/editor-sandbox-check.py /tmp/scholium-editor-sandbox.json
+```
+
+仍然每次冷启动 Typst，约半秒编译等待依然可感知；持久 World、字体与增量缓存尚未接入，
+不能据此宣称即时编辑已经完成。阶段 0 不升级。

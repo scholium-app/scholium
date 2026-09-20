@@ -1,0 +1,10 @@
+    Finished `release` profile [optimized] target(s) in 0.16s
+     Running unittests src/main.rs (spikes/mixed-build/target/release/deps/scholium_spike_mixed_build-246e40b6f8dc5ba7)
+
+running 3 tests
+test latex::tests::symlink_input_is_rejected_before_compilation ... ok
+test latex::tests::failed_compile_cannot_leave_a_previous_pdf_as_current_output ... ok
+test latex::tests::compiler_preserves_project_inputs_but_cannot_read_private_files ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 2.70s
+

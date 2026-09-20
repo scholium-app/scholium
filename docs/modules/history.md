@@ -38,6 +38,9 @@ src/
 记录 TextInserted、TextDeleted、SemanticForwardInverse、ResourcesAdded、ResourcesMoved 等 recipe。
 recipe 使用 RelativeAnchor 和上下文 hash，不保存可执行闭包或第三方库对象。大删除内容可存 blob hash。
 
+阶段 0 核心的单槽 Wrap 补偿仅记录新建 wrapper 身份，Undo 解除该层并保留当前子节点及远端文字；
+不恢复旧树快照。多槽解包和结构 redo 没有可靠配方时仍明确拒绝，不能伪装成功。
+
 ## 不变量
 
 - 历史 append-only；只允许移动 branch ref，不能改写 Action/Checkpoint。
@@ -67,4 +70,4 @@ undo/revert/cherry-pick/merge 若修改源码，按当前活动语言取得新�
 两语言组合计划经可恢复步骤和团队切换执行；独立分支可各用一种语言，合并不得覆盖目标分支控制状态。
 未合入草稿独立恢复，不冒充共享 Action。新增 epoch 不回退、双语言合并、源码 inverse 与混合引用冲突测试。
 
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。

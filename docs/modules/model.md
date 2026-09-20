@@ -56,4 +56,4 @@ ExportRequest 的领域 DTO；具体字段见 [数据模型](../DATA_MODEL.md)�
 控制 epoch 不进入正文 CRDT/可回退历史；组件原文引用唯一资源。纯语义与源码写集必须可区分，不能信任 UI 标签。
 能力报告分别描述保真度、执行途径、编辑性、可移植性及 unresolved 原因。新增写集/schema/引用合约测试。
 
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。

@@ -1,0 +1,83 @@
+[
+  {
+    "case": "ime",
+    "result": "Pass"
+  },
+  {
+    "case": "source_dialects",
+    "result": "Pass"
+  },
+  {
+    "case": "math_edit",
+    "result": "Pass"
+  },
+  {
+    "case": "accessibility",
+    "result": "Pass"
+  },
+  {
+    "case": "screen_reader",
+    "result": "Pass"
+  },
+  {
+    "case": "pointer_selection",
+    "result": "Pass"
+  },
+  {
+    "case": "unicode_clipboard",
+    "result": "Pass"
+  },
+  {
+    "case": "slot_selection",
+    "result": "Pass"
+  },
+  {
+    "case": "multipage_preview",
+    "result": "Pass"
+  },
+  {
+    "case": "frame_cpu_measurement",
+    "result": "Pass"
+  },
+  {
+    "case": "visual_comparison",
+    "result": "Pass"
+  },
+  {
+    "case": "empty_slot",
+    "result": "Pass"
+  },
+  {
+    "case": "continuous_typing",
+    "result": "Fail",
+    "reason": "NotImplementedError: "
+  },
+  {
+    "case": "large_document_edit",
+    "result": "Pass"
+  },
+  {
+    "case": "session_recovery",
+    "result": "Pass"
+  },
+  {
+    "case": "session_typst_recovery",
+    "result": "Pass"
+  },
+  {
+    "case": "large_source_window",
+    "result": "Pass"
+  },
+  {
+    "case": "team_language_gate",
+    "result": "Pass"
+  },
+  {
+    "case": "team_ime_barrier",
+    "result": "Pass"
+  },
+  {
+    "case": "replica_collaboration",
+    "result": "Pass"
+  }
+]

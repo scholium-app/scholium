@@ -1,0 +1,19 @@
+   Compiling scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build)
+    Finished `release` profile [optimized] target(s) in 6.03s
+     Running tests/vector_links.rs (spikes/mixed-build/target/release/deps/vector_links-b049a59b9852f3a3)
+
+running 1 test
+
+thread 'vector_links_and_exact_destinations_survive_both_hosts' (519564) panicked at tests/vector_links.rs:56:9:
+click rectangle not transformed with vector
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test vector_links_and_exact_destinations_survive_both_hosts ... FAILED
+
+failures:
+
+failures:
+    vector_links_and_exact_destinations_survive_both_hosts
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.51s
+
+error: test failed, to rerun pass `--test vector_links`

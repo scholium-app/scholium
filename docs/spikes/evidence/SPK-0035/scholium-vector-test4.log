@@ -1,0 +1,10 @@
+   Compiling scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build)
+    Finished `release` profile [optimized] target(s) in 5.99s
+     Running tests/vector_links.rs (spikes/mixed-build/target/release/deps/vector_links-b049a59b9852f3a3)
+
+running 1 test
+Latex: exact vector links verified: /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/vector-links-Latex-568263
+Typst: exact vector links verified: /home/ation_ciger/Projects/Mogan/scholium/spikes/mixed-build/out/vector-links-Typst-568263
+test vector_links_and_exact_destinations_survive_both_hosts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.26s

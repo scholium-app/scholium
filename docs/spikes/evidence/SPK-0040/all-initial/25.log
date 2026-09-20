@@ -1,0 +1,24 @@
+    Finished `release` profile [optimized] target(s) in 0.15s
+     Running tests/typst_isolation.rs (spikes/mixed-build/target/release/deps/typst_isolation-9be5e0ab22e223d3)
+
+running 3 tests
+test undeclared_resources_do_not_become_available_inside_worker ... ok
+test ordinary_typst_rebuild_still_publishes_a_pdf ... ok
+test expensive_typst_is_stopped_by_worker_budget_without_publishing ... FAILED
+
+failures:
+
+---- expensive_typst_is_stopped_by_worker_budget_without_publishing stdout ----
+
+thread 'expensive_typst_is_stopped_by_worker_budget_without_publishing' (1355488) panicked at tests/typst_isolation.rs:82:5:
+[FAIL] [Diagnostic { code: "host-compile-failed", message: "宿主 Typst 编译失败：typst-worker-failed: signal: 9 (SIGKILL)", hint: None }]
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    expensive_typst_is_stopped_by_worker_budget_without_publishing
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.75s
+
+error: test failed, to rerun pass `--test typst_isolation`

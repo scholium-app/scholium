@@ -1,0 +1,13 @@
+[event] 启动完成 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=18 elapsed_ms=363.816
+[typst-editor] Typst · revision 18 · 1 页 · 22 boxes
+[typst-editor-tiles] revision=18 uploaded=70
+[ime] 输入法锚点 [[26.0 143.6] - [27.5 160.2]]
+[event] 源码已应用到正文 | revision 19 | 核心动作 18 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=19 elapsed_ms=18.933
+[typst-editor] Typst · revision 19 · 1 页 · 27 boxes
+[typst-editor-tiles] revision=19 uploaded=5
+[typst-editor-worker] revision=20 elapsed_ms=13.936
+[typst-editor] Typst · revision 20 · 1 页 · 32 boxes
+[typst-editor-tiles] revision=20 uploaded=5
+[event] 源码调和被拒：新片段的分隔符未闭合，草稿保留，不应用正文 | revision 20 | 核心动作 19 | 预编辑事件 0 | IME 提交 0

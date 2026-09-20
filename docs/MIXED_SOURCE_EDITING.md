@@ -1,7 +1,7 @@
 # 混合源码、团队编辑与文件操作
 
 状态：产品要求已确认；协调协议、混合构建和长期持久化细节待阶段 0 验证。
-本文定义跨模块合约；技术方案见 [ADR 0001](adr/0001-mixed-source-team-editing.md)。
+本文定义跨模块合约；技术方案见 [ADR 0001](adr/ADR-0001-mixed-source-team-editing.md)。
 
 ## 1. 已确认要求
 
@@ -163,3 +163,8 @@ Native/ForeignRendered/Bridged/Unresolved；编辑性 NativeEditable/SourceEdita
 5. 同一快照分别导出 LaTeX/Typst 源码包和 PDF，验证最终编号、目录、页码及链接。
 6. 复杂语法、冲突模板、缺依赖、引用不收敛有可定位失败；预览占位不能通过正式输出。
 7. 干净环境验证标准包和混合包的依赖声明，原文保留与目标可编辑性如实报告。
+
+## 10. 阶段 0 验证状态
+
+> 本节的时点版本已移入 [log/stage0-progress.md](log/stage0-progress.md)（开发日志，只作追溯）。
+> 阶段 0 的**当前逐条判定以[报告 0012](spikes/SPK-0012-exit-criteria.md) 为准**。

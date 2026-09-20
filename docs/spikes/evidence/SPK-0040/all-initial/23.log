@@ -1,0 +1,25 @@
+    Finished `release` profile [optimized] target(s) in 0.18s
+     Running `spikes/untrusted-input/target/release/scholium-spike-untrusted`
+证据目录：/tmp/scholium-security-1349958-1789902817516735216
+[PASS] 沙箱内良性文档编译成功
+[PASS] 本次生成真实 PDF
+[PASS] 独立 PDF 读回包含正文
+[PASS] 无沙箱对照确实读到合成诱饵
+[PASS] absolute 越界读取被拒且探针正常结束
+[PASS] parent 越界读取被拒且探针正常结束
+[PASS] symlink 越界读取被拒且探针正常结束
+[PASS] 声明的项目文件可读
+[PASS] 启用 shell 的对照产生标记
+[PASS] 沙箱编译关闭 shell escape
+[PASS] 沙箱进程能写输出且看不到私人文件
+[PASS] 输入挂载只读
+[PASS] 越界写入不影响宿主
+[PASS] 网络 namespace 与宿主隔离
+[PASS] 墙钟超时返回明确状态
+[PASS] 超时后子进程不能继续写入
+[PASS] 单文件输出限制为 64 MiB
+[PASS] 资源限制探针启动成功
+[PASS] Typst 良性文档可编译
+[PASS] Typst 未声明文件访问被拒：#read("/etc/hostname")
+[PASS] Typst 未声明文件访问被拒：#plugin("/bin/sh")
+全部安全夹具通过（Linux spike profile；不是生产沙箱认证）

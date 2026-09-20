@@ -18,18 +18,24 @@
    LaTeX 验证构建为准，UI 必须始终显示当前后端和 revision。
 7. **阶段出口优先。** 阶段 0 的七项否决性验证——原生结构/源码编辑、Typst 映射、源码 reconcile、CRDT 赛马、
    构建与恢复、团队语言协调、混合构建——全部通过前，不搭生产脚手架，不做 AI、CAS、绘图、幻灯片或插件市场。
-   清单、出口条件和证据要求见 `docs/ROADMAP.md` 与 `docs/spikes/README.md`。
+   清单与出口条件见 `docs/plan/ROADMAP.md`，报告规则见 `docs/spikes/README.md`，
+   **当前逐条判定见 `docs/spikes/SPK-0012-exit-criteria.md`（阶段状态的唯一来源）**。
 
 8. **团队只能同时编辑一种源码语言。** 同一共享项目分支的 LaTeX/Typst 写入受活动语言与 epoch 门禁约束；同语言可多人编辑，编译可并行，不能仅在本机 UI 实现。
 9. **混用是完整产品要求。** 正文、公式、图表、宏、模板、跨片段引用都要有验证路径。Raw 保留不等于支持执行；正式输出不得包含 unresolved 占位。见 `docs/MIXED_SOURCE_EDITING.md`。
 
-10. **原生技术栈。** 应用 UI、核心与服务端优先 Rust；必要时引入 C/C++/Zig。禁止 npm/Node.js、JavaScript/TypeScript 编辑器、WebView/Electron/Tauri 作为应用 UI 或验证依赖。HTML 导出是文件能力，不是 UI 实现。可选浏览器 WASM 允许必要的工具生成加载/绑定胶水，不允许 JS/TS 业务编辑器或 npm/Node.js；见 `docs/WASM.md`。
-11. **UI 验证顺序固定。** Iced → GPUI → C++ EUI-NEO → Slint 或 egui；按 `docs/NATIVE_UI_VALIDATION.md` 的同一验收集验证，不以演示能运行替代编辑器可行性，也不提前锁定最终框架。
+10. **原生技术栈。** 应用 UI、核心与服务端优先 Rust；必要时引入 C/C++/Zig。禁止 npm/Node.js、JavaScript/TypeScript 编辑器、WebView/Electron/Tauri 作为应用 UI 或验证依赖。HTML 导出是文件能力，不是 UI 实现。可选浏览器 WASM 允许必要的工具生成加载/绑定胶水，不允许 JS/TS 业务编辑器或 npm/Node.js；见 `docs/plan/WASM.md`。
+    C/C++/Zig 依赖（含经由构建脚本编译本地代码的 crate）必须登记在 [docs/NATIVE_DEPENDENCIES.md](docs/NATIVE_DEPENDENCIES.md)，显式声明 ABI、内存所有权、线程约束与销毁顺序。
+11. **UI 验证顺序固定。** 按 Iced → GPUI → C++ EUI-NEO → Slint 或 egui 的顺序，用 `docs/plan/NATIVE_UI_VALIDATION.md` 的同一验收集验证，不以演示能运行替代编辑器可行性。框架选型见 [ADR 0006](docs/adr/ADR-0006-native-ui-framework.md)，阶段边界见 [ADR 0023](docs/adr/ADR-0023-stage0-feasibility-boundary.md)，当前阶段判定只见报告 0012；更换框架必须新立 ADR 并重跑同一验收集。
 
 ## 设计文档纪律
 
-- `docs/PLAN.md` 只是总览；产品、体验、架构、数据模型、排版转换、混合源码与团队编辑、协议、历史、格式、
+- `docs/plan/PLAN.md` 只是总览；产品、体验、架构、数据模型、排版转换、混合源码与团队编辑、协议、历史、格式、
   安全、测试、原生 UI 验证、全栈候选、WASM 和路线图各自维护。
+- **文档按体裁分处不同目录，新增文档一律按体裁归位**：规范在 `docs/` 顶层与 `docs/modules/`，
+  计划在 `docs/plan/`，开发日志在 `docs/log/`（只追加、只作追溯，**不得作为实现依据**），
+  验证证据在 `docs/spikes/`，裁决在 `docs/adr/`。**不得把进度或状态写进规范与计划**；
+  阶段状态的当前判定只有一处来源：`docs/spikes/SPK-0012-exit-criteria.md`。
 - 修改模块前阅读 `docs/modules/<module>.md`；公共接口、不变量或职责发生变化时，同一提交更新文档。
 - 第三方核心选型、长期存储格式、协议破坏性变化和跨模块边界调整必须新增 ADR。
 - `docs/archive/` 只用于查证废弃原型，不得作为实现规范引用；确需沿用的实验结论应重新验证。
@@ -54,11 +60,13 @@ Signed-off-by: 姓名 <邮箱>
 ## 许可证政策
 
 本项目以 **MIT OR Apache-2.0** 双许可发布（见 [LICENSE-MIT](LICENSE-MIT)、[LICENSE-APACHE](LICENSE-APACHE)），
-决策依据见 [ADR 0004](docs/adr/0004-project-license.md)。新增依赖必须落在下列允许类别内，由 `cargo deny` 强制。
+决策依据见 [ADR 0004](docs/adr/ADR-0004-project-license.md)。新增依赖必须落在下列允许类别内，由 `cargo deny` 强制。
 
 允许，无需额外审批：
 
-- MIT、Apache-2.0、BSD-2-Clause、BSD-3-Clause、ISC、Zlib、0BSD、Unicode-DFS、CC0-1.0、Unlicense。
+- MIT、Apache-2.0、**Apache-2.0 WITH LLVM-exception**（依据 [ADR 0005](docs/adr/ADR-0005-llvm-exception-license.md)）、
+  **BSL-1.0**（Boost Software License，依据 [ADR 0010](docs/adr/ADR-0010-bsl-license.md)）、
+  BSD-2-Clause、BSD-3-Clause、ISC、Zlib、0BSD、Unicode-DFS、Unicode-3.0、CC0-1.0、Unlicense。
 - MPL-2.0：仅作为文件级 copyleft 依赖；修改其文件时按 MPL 公开该文件。
 - 以**独立子进程**调用的外部工具链（例如 TeX Live 的 GPL 系组件）不构成链接，不改变本项目许可；
   但若在安装包中分发其二进制，必须单独履行对应 GPL 义务并登记。
@@ -69,13 +77,16 @@ Signed-off-by: 姓名 <邮箱>
 - GPL-2.0、GPL-3.0、AGPL-3.0、SSPL、BUSL，以及任何"非商业""仅限评估""禁止竞品"条款。
 - 源码可见但受限的自定义许可，例如 **Slint**（GPLv3、商业许可或 Slint Royalty-free 许可，均非宽松）。
   在项目保持双许可的前提下不得链接 Slint；选择它必须先把项目改为对应 copyleft 或取得商业许可。
-- 许可未明确的依赖或代码。**EUI-NEO 的许可证尚未核实**，也未确认上游仓库是否已从
-  `sudoevolve/EUI-NEO` 迁移；在许可证落入允许类别前不得作为候选进入阶段 0 验收。
+- 许可未明确的依赖或代码。
+- EUI-NEO：许可证已核实为 **Apache-2.0**（见[报告 0003](docs/spikes/SPK-0003-native-ui-prescreen.md)），
+  但**无任何无障碍支持**，加上 C++/CMake + FFI 的成本，预筛即不投入（[ADR 0006](docs/adr/ADR-0006-native-ui-framework.md)）。
 
 其他规则：
 
 - 内容类资产单独登记：CSL 样式文件为 CC-BY-SA，打包时保留署名并说明同类共享要求；字体、图标和
-  夹具样本各自声明许可证。
+  夹具样本各自声明许可证。**字体许可**另列一类：`OFL-1.1` 与 `Ubuntu-font-1.0` 允许用于
+  **未修改**的字体资产（须登记来源、字体名与许可，并随分发保留许可文本），依据见
+  [ADR 0011](docs/adr/ADR-0011-font-asset-licenses.md)；其它字体许可仍需单独审批。
 - `deny.toml` 随首个 crate 提交，按上表配置 `licenses.allow`；CI 的 `cargo deny` 失败即阻断。
 - 引入新许可类别、需要例外，或调整本政策，都走新 ADR。
 

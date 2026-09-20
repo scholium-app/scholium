@@ -28,6 +28,8 @@ src/
 
 声明 entry、toolchain id、目标、允许输入、环境变量白名单、网络策略、超时、内存、输出上限和诊断解析器。
 profile 不接受任意 shell 字符串。高级用户命令属于明确的高权限自定义 profile。
+运行时工具与挂载清单由受信调用方选择，不能来自文档内容；选择较小清单不得取消进程隔离、
+只读输入、输出边界或资源限制。未知清单必须拒绝。
 
 ## 构建生命周期
 
@@ -59,7 +61,12 @@ key 包含入口内容、依赖内容 hash、profile、工具链版本和安全�
 - 默认无网络、无 shell escape、无项目根外读取。
 - 旧 revision 构建不能替换当前预览；Typst 快速和 LaTeX 最终 artifact 状态分开。
 - 日志截断必须显式标识，不能悄悄丢尾部。
+- 持久编译会话必须同时限制单请求等待与会话累计资源，监督进程随应用退出；
+  超时/进程退出清空会话派生缓存，不发布半成品，不在 UI 进程内重试编译。
 - artifact 展示前验证 MIME/魔数并隔离 active content。
+- 宿主读取 worker 产物必须对同一个已打开的普通文件检查类型与大小，并限制实际读取字节；
+  不跟随最终符号链接、不阻塞在管道上。场景坐标须在缩窄后的宿主数值类型中仍有限，文本范围须校验溢出和 UTF-8 边界。
+- 长驻 worker 的响应队列和短命工具的 stdout/stderr 接收同样有界；文件接收上限不等于工作目录总配额。
 
 ## 失败处理
 
@@ -84,8 +91,36 @@ key 包含入口内容、依赖内容 hash、profile、工具链版本和安全�
 输出标准目标工具链包或双工具链重建包，分别进行干净环境测试。外语原文保留不代替可构建/可编辑验证。
 新增混合全范围夹具、轮数/组件总预算、沙箱桥接、半成品发布失败和两后端并行测试。
 
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
 
 ## 工具链候选与宿主
 
-LaTeX 按 TeX Live 所需引擎（pdfLaTeX/XeLaTeX/LuaLaTeX）→ Tectonic 验证，实际兼容矩阵决定后端，不能假定 Tectonic 完全替换全部引擎。参考[Mogan 工具探测](../research/MOGAN_LATEX.md)报告路径、版本及能力。原生流程使用受控进程；浏览器不能调用本机进程，Typst Worker 与本地 LaTeX WASM 分别验证。远程构建需用户显式选择，缺少后端返回能力诊断而非伪造最终产物。见[WASM](../WASM.md)。
+混排载体合约见 [ADR 0018](../adr/ADR-0018-vector-fidelity-bridge.md)：`Convert` 显式转换已有语义 IR，
+`Vector` 保留源引擎排版。行内载体携带 PDF bp 单位的宽高/下沉量；注释覆盖层与绘制内容使用同一变换。
+PDF 解析必须位于受限 worker，不能在协调器/UI 解析；不支持的注释/动作/目的地必须阻止发布。
+生成的覆盖层属于标准包重建输入，不允许仅最终 PDF 有效而标准包丢失链接。
+
+LaTeX 按 TeX Live 所需引擎（pdfLaTeX/XeLaTeX/LuaLaTeX）→ Tectonic 验证，实际兼容矩阵决定后端，不能假定 Tectonic 完全替换全部引擎。参考[Mogan 工具探测](../research/MOGAN_LATEX.md)报告路径、版本及能力。原生流程使用受控进程；浏览器不能调用本机进程，Typst Worker 与本地 LaTeX WASM 分别验证。远程构建需用户显式选择，缺少后端返回能力诊断而非伪造最终产物。见[WASM](../plan/WASM.md)。
+
+## 阶段 0 实验进展
+
+[报告 0017](../spikes/SPK-0017-mixed-build-isolation.md) 验证普通混合构建与包重建的 LaTeX 共用沙箱入口，
+输入只读、输出分离，失败不保留当前入口旧 PDF。它是独立 spike，不是本模块的生产实现；
+该轮尚未覆盖的 Typst worker 与运行时挂载已由报告 0018 补充；完整资源树和产物探针隔离仍待实现。
+
+当前 mixed-build spike 的 Typst 编译、内省和 PDF/SVG 导出已进入独立沙箱 worker，
+见[报告 0018](../spikes/SPK-0018-typst-worker-isolation.md)与[ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。
+每次新进程不保留增量缓存；临时 JSON 不是正式存储或网络协议。
+
+PDF 产物检查使用受信调用方固定选择的 `pdf-probe` 清单，见
+[ADR 0017](../adr/ADR-0017-pdf-probe-runtime.md)：四个 Poppler 工具与字体资源在同一 OS 隔离/预算下执行，
+不暴露 TeX 工具树。入口审查见[报告 0033](../spikes/SPK-0033-build-entry-audit.md)。恢复实验的编译与探针
+按 [ADR 0019](../adr/ADR-0019-recovery-worker-isolation.md) 使用独立 worker；暂存目录本身不提供隔离。
+工具版本查询同样禁用项目配置。跨进程产物签名必须来自稳定序列化的排版结果，不能使用内部对象身份哈希。
+输出接收上限不得等同运行时总配额；声明的运行时只读资源是根外访问例外。
+Linux 进程树和临时目录资源护栏见 [ADR 0022](../adr/ADR-0022-process-tree-resource-limits.md)：
+缺用户 cgroup 管理能力即拒绝启动，嵌套 worker 继承上层总预算；/work 的接收检查不代替运行时磁盘配额。
+
+同语言源码 include 与宿主共享引擎原生标签空间，编号/页码从宿主最终编译获取，不能套用矢量
+组件锚点。行内 include 仅接受已声明支持的行内内容，块级/未验证内容显式拒绝；
+双宿主取证与边界见[报告 0034](../spikes/SPK-0034-native-include-fidelity.md)。

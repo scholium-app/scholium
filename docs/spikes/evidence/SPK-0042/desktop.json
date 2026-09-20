@@ -1,0 +1,22 @@
+[
+  {
+    "case": "math_edit",
+    "result": "Pass"
+  },
+  {
+    "case": "accessibility",
+    "result": "Pass"
+  },
+  {
+    "case": "screen_reader",
+    "result": "Pass"
+  },
+  {
+    "case": "math_screen_reader",
+    "result": "Pass"
+  },
+  {
+    "case": "continuous_typing",
+    "result": "Pass"
+  }
+]

@@ -1,0 +1,40 @@
+[package]
+name = "scholium-spike-egui"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "MIT OR Apache-2.0"
+
+# 独立 workspace：候选不共享 workspace，避免 feature 合并与锁定版本互相影响。
+[workspace]
+
+[patch.crates-io]
+egui = { path = "../vendor/egui" }
+accesskit_atspi_common = { path = "../vendor/accesskit_atspi_common" }
+
+[dependencies]
+loro = { version = "=1.16.0", default-features = false }
+serde_json = "=1.0.151"
+serde = { version = "=1.0.229", features = ["derive"] }
+thiserror = "=2.0.20"
+scholium-spike-reconcile = { path = "../../source-reconcile" }
+scholium-spike-language-coordination = { path = "../../language-coordination" }
+image = { version = "=0.25.10", default-features = false, features = ["png"] }
+scholium-spike-core = { path = "../core" }
+# 锁定候选版本。默认 feature 已包含 `accesskit`（Linux 走 accesskit_unix → AT-SPI），
+# 这是前三个候选都不具备的能力。
+eframe = "=0.36.2"
+egui = "=0.36.2"
+libc = "=0.2.189"
+
+[lints.clippy]
+too_many_lines = "warn"
+cognitive_complexity = "warn"
+too_many_arguments = "warn"
+unwrap_used = "warn"
+missing_panics_doc = "warn"
+missing_errors_doc = "warn"
+undocumented_unsafe_blocks = "deny"
+
+[lints.rust]
+missing_docs = "warn"

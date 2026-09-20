@@ -56,6 +56,8 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 - RawTypst 不在其他方言生成时静默丢失。
 - source span 找不到 NodeId 时标记 derived，不猜测最近节点。
 - package/network 访问遵守 build/security policy。
+- 复用 World 和字体缓存时，源码更新必须使依赖缓存正确失效；源码 span 按当前 Source 解析，
+  不复用前一 revision 的字节范围。缓存淘汰受会话资源限制约束。
 
 ## 失败处理
 
@@ -78,8 +80,12 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 Typst 主入口引用 LaTeX 组件使用显式绑定/预生成资源，不把 preamble 当 Typst 代码。编译 API 由 build 的沙箱
 worker 调用，不能在 core 中绕过取消、内存和网络策略。新增正文/模板/引用及载体能力兼容测试。
 
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
 
 ## WASM 验证边界
 
-官方 Rust syntax 与编译引擎作为候选；纯语法和投影优先移植。浏览器编译另测 Worker、版本 features、字体、包资源、缓存、内存与取消；World 通过宿主注入声明资源，不能直接依赖本机文件系统，也不能因为引擎使用 Rust 就宣称 WASM 已可用。见[全栈候选](../TECH_STACK.md)及[WASM](../WASM.md)。
+官方 Rust syntax 与编译引擎作为候选；纯语法和投影优先移植。浏览器编译另测 Worker、版本 features、字体、包资源、缓存、内存与取消；World 通过宿主注入声明资源，不能直接依赖本机文件系统，也不能因为引擎使用 Rust 就宣称 WASM 已可用。见[全栈候选](../plan/TECH_STACK.md)及[WASM](../plan/WASM.md)。
+
+当前 mixed-build spike 的 Typst 编译、内省和 PDF/SVG 导出已进入独立沙箱 worker，
+见[报告 0018](../spikes/SPK-0018-typst-worker-isolation.md)与[ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。
+每次新进程不保留增量缓存；临时 JSON 不是正式存储或网络协议。

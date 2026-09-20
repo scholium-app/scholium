@@ -1,0 +1,4 @@
+[event] 启动完成 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[typst-editor] Typst · revision 18 · 1 页 · 22 boxes
+[ime] 输入法锚点 [[26.0 143.6] - [27.5 160.2]]
+[pointer] press=[26.0 151.0] origin=[8.0 127.3] cursor=Text { node: NodeId(2), byte: 0 }

@@ -1,0 +1,278 @@
+[
+  {
+    "role": "application",
+    "name": "scholium-spike-egui",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Application"
+    ]
+  },
+  {
+    "role": "frame",
+    "name": "",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Component"
+    ]
+  },
+  {
+    "role": "label",
+    "name": "正文（结构编辑 · 结构渲染）",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "正文（结构编辑 · 结构渲染）",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "button",
+    "name": "包裹为分数",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "button",
+    "name": "包裹为根式",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "button",
+    "name": "解除结构",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "button",
+    "name": "循环变体",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "label",
+    "name": "焦点 Text { node: NodeId(2), byte: 6 }",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "焦点 Text { node: NodeId(2), byte: 6 }",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "entry",
+    "name": "正文结构编辑器",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "你好结构渲染夹具：abx12123y",
+    "caret": 2,
+    "selections": []
+  },
+  {
+    "role": "math",
+    "name": "公式：分数（分子：a；分母：b），上下标（底数：x；下标：1；上标：2），矩阵（单元格 1：1；单元格 2：2；单元格 3：3），根式（被开方项：y），",
+    "description": "正文语义图的数学结构；文本位置由正文结构编辑器提供",
+    "interfaces": [
+      "Accessible"
+    ]
+  },
+  {
+    "role": "scroll bar",
+    "name": "",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "label",
+    "name": "源码 Source Studio",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "源码 Source Studio",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "button",
+    "name": "LaTeX",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "button",
+    "name": "Typst",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "label",
+    "name": "Latex · 基于 revision 19",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "Latex · 基于 revision 19",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "entry",
+    "name": "",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "你好结构渲染夹具：$\\frac{a}{b}x^{2}_{1}\\begin{matrix}1 & 2 & 3\\end{matrix}\\sqrt{y}$\nSOURCE",
+    "caret": 81,
+    "selections": []
+  },
+  {
+    "role": "button",
+    "name": "应用源码",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "button",
+    "name": "丢弃草稿并从正文生成",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "label",
+    "name": "当前仅支持单处可归因编辑；冲突时不修改正文。",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "当前仅支持单处可归因编辑；冲突时不修改正文。",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "label",
+    "name": "Typst 快速预览",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "Typst 快速预览",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "check box",
+    "name": "启用后台预览",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  },
+  {
+    "role": "label",
+    "name": "预览 revision None / 正文 19",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "预览 revision None / 正文 19",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "label",
+    "name": "",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ],
+    "text": "",
+    "caret": -1,
+    "selections": []
+  },
+  {
+    "role": "label",
+    "name": "revision 19 / 核心动作 18 / 预编辑事件 27 / IME 提交 1 / CJK 字体 已加载 / 最近：预编辑「ni」（未进历史）",
+    "description": "",
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component"
+    ]
+  }
+]

@@ -74,4 +74,12 @@ plan_edit/plan_reconcile 返回实际源码写集；修改原文、宏、模板�
 共享生成草稿只有活动语言可写；私有草稿独立持久化并带原基线。切换后重建 generation，旧草稿不能覆盖新正文。
 新增组件 scope、交叉引用、语义命令绕过门禁、草稿重定位和模板冲突测试。
 
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/0001-mixed-source-team-editing.md)。
+共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
+
+## 阶段 0 验证核心的选区合约
+
+验证核心的 `Selection` 同时接受文本端点与槽位端点；文档顺序必须区分槽位编号、子节点插入位置及子树内外，
+不能仅按所属节点的前序序号排序。非法字素位置、槽位下标和已脱离节点均拒绝。
+`selection_edit::deletion/replacement` 返回应用于同一 revision 的原子编辑计划与存活光标；完整覆盖子树可摘除，
+部分结构保留，数学槽位保留可编辑子节点。纯文本复制只连接叶子原文，不表示结构化数学剪贴板。
+验证候选通过同步 batch 应用计划；该接口不替代正式 `DocumentPatch` 的 revision 与 CRDT 协议。

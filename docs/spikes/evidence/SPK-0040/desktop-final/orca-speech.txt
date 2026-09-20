@@ -1,0 +1,30 @@
+19:23:49.628281 - SPEECH OUTPUT: '屏幕阅读器启用。' {'established': False}
+19:23:52.406302 - SPEECH OUTPUT: '正文结构编辑器' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:52.407487 - SPEECH OUTPUT: 'entry' {'established': False}
+19:23:52.408967 - SPEECH OUTPUT: '结.' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:53.697800 - SPEECH OUTPUT: '文本已取消选中。' {'established': False}
+19:23:53.738795 - SPEECH OUTPUT: '结' {'established': 'False', 'family': "{'dialect': '', 'gender': 'None', 'lang': 'C', 'name': '', 'variant': 'None'}"}
+19:23:54.081656 - SPEECH OUTPUT: 'Latex 源码编辑器' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:54.082586 - SPEECH OUTPUT: 'entry.' {'established': False}
+19:23:54.107607 - SPEECH OUTPUT: '空' {'established': False}
+19:23:55.062074 - SPEECH OUTPUT: '左 Control 键' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:55.106351 - SPEECH OUTPUT: '结构渲染夹具' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:55.432671 - SPEECH OUTPUT: '左 Shift' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:55.446519 - SPEECH OUTPUT: 'R' {'established': 'False', 'family': "{'dialect': '', 'gender': 'None', 'lang': 'C', 'name': '', 'variant': 'None'}"}
+19:23:55.479686 - SPEECH OUTPUT: '左 Shift' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:55.490804 - SPEECH OUTPUT: 'E' {'established': 'False', 'family': "{'dialect': '', 'gender': 'None', 'lang': 'C', 'name': '', 'variant': 'None'}"}
+19:23:55.518939 - SPEECH OUTPUT: '左 Shift' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:55.536571 - SPEECH OUTPUT: 'A' {'established': 'False', 'family': "{'dialect': '', 'gender': 'None', 'lang': 'C', 'name': '', 'variant': 'None'}"}
+19:23:55.592917 - SPEECH OUTPUT: '左 Shift' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:55.610327 - SPEECH OUTPUT: 'D' {'established': 'False', 'family': "{'dialect': '', 'gender': 'None', 'lang': 'C', 'name': '', 'variant': 'None'}"}
+19:23:55.631522 - SPEECH OUTPUT: '左 Shift' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:55.649051 - SPEECH OUTPUT: 'E' {'established': 'False', 'family': "{'dialect': '', 'gender': 'None', 'lang': 'C', 'name': '', 'variant': 'None'}"}
+19:23:55.676139 - SPEECH OUTPUT: '左 Shift' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:55.687302 - SPEECH OUTPUT: 'R' {'established': 'False', 'family': "{'dialect': '', 'gender': 'None', 'lang': 'C', 'name': '', 'variant': 'None'}"}
+19:23:56.095010 - SPEECH OUTPUT: '左 Shift' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:56.119746 - SPEECH OUTPUT: 'R' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:56.121111 - SPEECH OUTPUT: '已选中' {'established': False}
+19:23:56.478794 - SPEECH OUTPUT: '制表符' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:56.517285 - SPEECH OUTPUT: '应用源码' {'established': False, 'family': {'name': '', 'gender': None, 'lang': 'C', 'dialect': '', 'variant': None}}
+19:23:56.517834 - SPEECH OUTPUT: 'button.' {'established': False}
+19:23:58.813396 - SPEECH OUTPUT: '屏幕阅读器关闭。' {'established': False}

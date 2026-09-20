@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pdf2xml SYSTEM "pdf2xml.dtd">
+
+<pdf2xml producer="poppler" version="26.08.0">
+<page number="1" position="absolute" top="0" left="0" height="1195" width="777">
+	<fontspec id="0" size="16" family="VITKQN+CMR10" color="#000000"/>
+	<fontspec id="1" size="16" family="VTWIFZ+NotoSerif" color="#000000"/>
+	<fontspec id="2" size="16" family="VTWIFZ+NotoSerif" color="#0000ff"/>
+	<fontspec id="3" size="12" family="RBBQCX+NewCMMath-Book-Identity-H" color="#000000"/>
+	<fontspec id="4" size="12" family="TQYRSR+LibertinusSerif" color="#000000"/>
+	<fontspec id="5" size="12" family="KDEUZM+KaiTi" color="#000000"/>
+<text top="97" left="343" width="8" height="15" font="0">7</text>
+<text top="91" left="356" width="79" height="22" font="1">MKeqhost</text>
+<text top="91" left="685" width="20" height="22" font="1">(1)</text>
+<text top="121" left="72" width="23" height="22" font="2"><a href="document.html#1">1 2</a></text>
+<text top="164" left="362" width="48" height="12" font="3">7 MKeqa</text>
+<text top="164" left="537" width="15" height="12" font="3">(1)</text>
+<text top="187" left="221" width="145" height="14" font="4">Spacing between destinations</text>
+<text top="211" left="362" width="49" height="12" font="3">7 MKeqb</text>
+<text top="211" left="537" width="15" height="12" font="3">(2)</text>
+<text top="235" left="221" width="12" height="12" font="5"><a href="document.html#1">式</a></text>
+<text top="235" left="233" width="12" height="14" font="4"><a href="document.html#1"> 1 </a></text>
+<text top="235" left="244" width="12" height="12" font="5"><a href="document.html#1">式</a></text>
+<text top="235" left="256" width="79" height="14" font="4"><a href="document.html#1"> 2 1 </a><a href="https://example.org/fidelity">EXTERNAL</a></text>
+<text top="365" left="384" width="6" height="14" font="4">1</text>
+<text top="392" left="273" width="231" height="22" font="1">Figure 1: vector MKfigforeign</text>
+<text top="1151" left="384" width="9" height="22" font="1">1</text>
+</page>
+</pdf2xml>

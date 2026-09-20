@@ -1,0 +1,11 @@
+   Compiling scholium-spike-recovery v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/recovery)
+    Finished `release` profile [optimized] target(s) in 1.02s
+     Running unittests src/main.rs (spikes/recovery/target/release/deps/scholium_spike_recovery-8a87083160b615da)
+
+running 3 tests
+test build::worker::tests::rejects_nonregular_and_oversized_output_before_reading ... ok
+test build::worker::tests::bounds_worker_messages_and_number_of_files ... ok
+test build::worker::tests::rejects_path_traversal_and_large_source ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

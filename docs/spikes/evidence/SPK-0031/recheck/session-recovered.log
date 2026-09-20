@@ -1,0 +1,19 @@
+[event] 恢复实验会话（新撤销范围） | revision 37 | 核心动作 36 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=37 elapsed_ms=613.255
+[typst-editor] Typst · revision 37 · 1 页 · 29 boxes
+[typst-editor-tiles] revision=37 uploaded=70
+[ime] 输入法锚点 [[26.0 168.2] - [27.5 184.2]]
+[typst-editor-worker] revision=37 elapsed_ms=616.449
+[typst-editor] Typst · revision 37 · 1 页 · 29 boxes
+[typst-editor-tiles] revision=37 uploaded=70
+[event] core 收到 Typing："K" | revision 38 | 核心动作 37 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=38 elapsed_ms=26.734
+[typst-editor] Typst · revision 38 · 1 页 · 30 boxes
+[typst-editor-tiles] revision=38 uploaded=5
+[event] core 收到 Typing："E" | revision 39 | 核心动作 38 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=39 elapsed_ms=20.905
+[typst-editor-worker] revision=40 elapsed_ms=21.500
+[event] core 收到 Typing："P" | revision 41 | 核心动作 40 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=41 elapsed_ms=24.029
+[typst-editor] Typst · revision 41 · 1 页 · 33 boxes
+[typst-editor-tiles] revision=41 uploaded=6

@@ -1,0 +1,42 @@
+{
+  "scope": "256 paragraphs; AT-SPI enabled; eframe CPU timing; excludes GPU presentation",
+  "budget_ms": 16,
+  "result": "Fail",
+  "windows": [
+    {
+      "samples": 120,
+      "p95_ms": 41.666,
+      "max_ms": 301.776
+    },
+    {
+      "samples": 120,
+      "p95_ms": 54.24,
+      "max_ms": 88.728
+    },
+    {
+      "samples": 120,
+      "p95_ms": 51.255,
+      "max_ms": 77.767
+    },
+    {
+      "samples": 120,
+      "p95_ms": 35.836,
+      "max_ms": 45.195
+    },
+    {
+      "samples": 120,
+      "p95_ms": 37.64,
+      "max_ms": 41.312
+    },
+    {
+      "samples": 120,
+      "p95_ms": 38.25,
+      "max_ms": 47.696
+    },
+    {
+      "samples": 120,
+      "p95_ms": 34.87,
+      "max_ms": 52.333
+    }
+  ]
+}

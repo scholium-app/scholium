@@ -1,0 +1,39 @@
+[
+  {
+    "case": "ime",
+    "result": "Pass"
+  },
+  {
+    "case": "source_dialects",
+    "result": "Pass"
+  },
+  {
+    "case": "math_edit",
+    "result": "Pass"
+  },
+  {
+    "case": "accessibility",
+    "result": "Pass"
+  },
+  {
+    "case": "pointer_selection",
+    "result": "Pass"
+  },
+  {
+    "case": "unicode_clipboard",
+    "result": "Pass"
+  },
+  {
+    "case": "slot_selection",
+    "result": "Pass"
+  },
+  {
+    "case": "multipage_preview",
+    "result": "Pass"
+  },
+  {
+    "case": "frame_cpu_budget",
+    "result": "Fail",
+    "reason": "AssertionError: CPU frame p95 exceeds 16 ms: [41.666, 54.24, 51.255, 35.836, 37.64, 38.25, 34.87]"
+  }
+]

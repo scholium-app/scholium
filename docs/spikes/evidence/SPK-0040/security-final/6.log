@@ -1,0 +1,5 @@
+PASS: aggregate temporary storage stops at 256 MiB across multiple files
+PASS: kernel cgroup enforces 2 GiB, no swap, 64 tasks, grouped OOM
+task quota enforced after 60 threads
+spikes/tests/resource-limits.sh: line 44: 1387324 Killed                     SCHOLIUM_SPIKE_TOOLS="$work/tools" bash "$launcher" "$work/input" "$work/output" 20 /toolchain/resource-worker memory > "$work/memory.log" 2>&1
+PASS: three 768 MiB children terminated as a group before wall timeout (status 137)

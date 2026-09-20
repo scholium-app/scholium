@@ -1,0 +1,154 @@
+{
+  "pixel_and_geometry_parity": "pass",
+  "bounded_tile_files": "pass",
+  "warm_median_ms": 10.087898499989478,
+  "runs": [
+    {
+      "edit": 0,
+      "roundtrip_ms": 344.505163000008,
+      "helper_ms": 28.809,
+      "changed_tiles": 140,
+      "total_tiles": 140
+    },
+    {
+      "edit": 1,
+      "roundtrip_ms": 11.111745999983214,
+      "helper_ms": 10.729,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 2,
+      "roundtrip_ms": 10.911474999943493,
+      "helper_ms": 10.431,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 3,
+      "roundtrip_ms": 10.130979999985357,
+      "helper_ms": 9.671,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 4,
+      "roundtrip_ms": 9.689256000001478,
+      "helper_ms": 9.205,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 5,
+      "roundtrip_ms": 9.354409000025043,
+      "helper_ms": 8.91,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 6,
+      "roundtrip_ms": 9.833825999976398,
+      "helper_ms": 9.278,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 7,
+      "roundtrip_ms": 11.014767999995456,
+      "helper_ms": 10.525,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 8,
+      "roundtrip_ms": 9.89027499997519,
+      "helper_ms": 9.422,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 9,
+      "roundtrip_ms": 8.193286999926386,
+      "helper_ms": 7.734,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 10,
+      "roundtrip_ms": 8.286454999961279,
+      "helper_ms": 7.784,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 11,
+      "roundtrip_ms": 8.501884999986942,
+      "helper_ms": 8.006,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 12,
+      "roundtrip_ms": 9.657226000058472,
+      "helper_ms": 9.168,
+      "changed_tiles": 4,
+      "total_tiles": 140
+    },
+    {
+      "edit": 13,
+      "roundtrip_ms": 9.426360000020395,
+      "helper_ms": 9.039,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 14,
+      "roundtrip_ms": 10.0448169999936,
+      "helper_ms": 9.527,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 15,
+      "roundtrip_ms": 13.131052000062482,
+      "helper_ms": 12.512,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 16,
+      "roundtrip_ms": 16.209031000016694,
+      "helper_ms": 15.517,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 17,
+      "roundtrip_ms": 14.949149000017314,
+      "helper_ms": 14.279,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 18,
+      "roundtrip_ms": 17.204709999987244,
+      "helper_ms": 16.516,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 19,
+      "roundtrip_ms": 16.17628600001808,
+      "helper_ms": 15.456,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    },
+    {
+      "edit": 20,
+      "roundtrip_ms": 14.616675999945983,
+      "helper_ms": 13.951,
+      "changed_tiles": 2,
+      "total_tiles": 140
+    }
+  ]
+}

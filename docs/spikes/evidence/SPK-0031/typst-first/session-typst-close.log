@@ -1,0 +1,25 @@
+[event] 启动完成 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=18 elapsed_ms=591.734
+[typst-editor] Typst · revision 18 · 1 页 · 22 boxes
+[typst-editor-tiles] revision=18 uploaded=70
+[ime] 输入法锚点 [[26.0 167.6] - [27.5 184.2]]
+[event] core 收到 Typing："S" | revision 19 | 核心动作 18 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=19 elapsed_ms=22.783
+[typst-editor] Typst · revision 19 · 1 页 · 23 boxes
+[typst-editor-tiles] revision=19 uploaded=4
+[event] core 收到 Typing："T" | revision 20 | 核心动作 19 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=20 elapsed_ms=18.412
+[typst-editor] Typst · revision 20 · 1 页 · 24 boxes
+[typst-editor-tiles] revision=20 uploaded=4
+[event] core 收到 Typing："A" | revision 21 | 核心动作 20 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=21 elapsed_ms=22.742
+[typst-editor] Typst · revision 21 · 1 页 · 25 boxes
+[typst-editor-tiles] revision=21 uploaded=4
+[event] core 收到 Typing："L" | revision 22 | 核心动作 21 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=22 elapsed_ms=21.534
+[typst-editor] Typst · revision 22 · 1 页 · 26 boxes
+[typst-editor-tiles] revision=22 uploaded=5
+[event] core 收到 Typing："E" | revision 23 | 核心动作 22 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=23 elapsed_ms=20.067
+[typst-editor] Typst · revision 23 · 1 页 · 27 boxes
+[typst-editor-tiles] revision=23 uploaded=5

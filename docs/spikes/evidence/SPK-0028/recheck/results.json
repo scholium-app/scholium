@@ -1,0 +1,15 @@
+[
+  {
+    "case": "math_edit",
+    "result": "Pass"
+  },
+  {
+    "case": "pointer_selection",
+    "result": "Fail",
+    "reason": "AssertionError: typing did not reveal the caret beyond viewport"
+  },
+  {
+    "case": "slot_selection",
+    "result": "Pass"
+  }
+]

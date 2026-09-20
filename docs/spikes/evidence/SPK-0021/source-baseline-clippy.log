@@ -1,0 +1,29 @@
+    Checking scholium-spike-core v0.0.0 (/tmp/scholium-native-baseline.FukeFR/spikes/native-ui/core)
+    Checking scholium-spike-reconcile v0.0.0 (/tmp/scholium-native-baseline.FukeFR/spikes/source-reconcile)
+error: this function has too many lines (125/100)
+ --> src/apply.rs:5:1
+  |
+5 | pub(crate) fn apply(editor: &mut Editor, outcome: &Reconciled) -> Result<String, String> {
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_lines
+  = note: `-D clippy::too-many-lines` implied by `-D warnings`
+  = help: to override `-D warnings` add `#[allow(clippy::too_many_lines)]`
+
+error: this function has too many lines (155/100)
+   --> src/generate.rs:203:1
+    |
+203 | / fn emit_inline(
+204 | |     document: &Document,
+205 | |     node: NodeId,
+206 | |     dialect: Dialect,
+...   |
+209 | |     origin: Origin,
+210 | | ) {
+    | |_^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_lines
+
+error: could not compile `scholium-spike-reconcile` (lib) due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `scholium-spike-reconcile` (lib test) due to 2 previous errors

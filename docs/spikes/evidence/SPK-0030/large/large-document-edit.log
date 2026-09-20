@@ -1,0 +1,16 @@
+[event] 启动完成 | revision 2578 | 核心动作 2577 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=2578 elapsed_ms=2259.241
+[typst-editor] Typst · revision 2578 · 26 页 · 10152 boxes
+[typst-editor-tiles] revision=2578 uploaded=1820
+[ime] 输入法锚点 [[26.0 143.6] - [27.5 160.2]]
+[event] core 收到 Typing："L" | revision 2579 | 核心动作 2578 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："G" | revision 2582 | 核心动作 2581 | 预编辑事件 0 | IME 提交 0
+[event] core 收到 Typing："E" | revision 2583 | 核心动作 2582 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=2579 elapsed_ms=631.573
+[typst-editor-worker] revision=2583 elapsed_ms=662.756
+[typst-editor] Typst · revision 2583 · 26 页 · 10157 boxes
+[typst-editor-tiles] revision=2583 uploaded=5
+[event] 已删除选区 | revision 2584 | 核心动作 2583 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=2584 elapsed_ms=695.196
+[typst-editor] Typst · revision 2584 · 26 页 · 10152 boxes
+[typst-editor-tiles] revision=2584 uploaded=5

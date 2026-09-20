@@ -6,7 +6,7 @@
 源码编辑器、工具栏、预览和面板；核心负责语义文档、源文件、CRDT、历史、格式投影、排版和同步。
 两者通过带版本的命令/事件协议通信。同进程 Rust 通道优先；构建隔离仍使用子进程，独立 core 进程需验证后决定。
 应用逻辑优先 Rust，必要时通过 C ABI 或经验证的 C++ 桥接引入 C/C++/Zig，不使用 npm/JS 编辑器或 WebView。
-UI 按 [原生 UI 验证计划](NATIVE_UI_VALIDATION.md) 验证 Iced → GPUI → C++ EUI-NEO → Slint 或 egui。
+UI 按 [原生 UI 验证计划](plan/NATIVE_UI_VALIDATION.md) 验证 Iced → GPUI → C++ EUI-NEO → Slint 或 egui。
 框架状态只保存视图投影，原生编辑控件不能成为第二份权威文档。
 
 ```text
@@ -141,8 +141,8 @@ Envelope { protocol_version, request_id, project_id, actor_id, payload }
 
 结构编辑器框架、源码编辑器、CRDT、Typst 集成、TeX 工具链和转换后端都必须先完成 spike 与 ADR。模块边界先稳定，
 具体第三方库允许替换；任何库类型泄漏到 `model` 或长期存储格式都视为门禁失败。
-团队语言协调与全范围混合构建另见 [ADR 0001](adr/0001-mixed-source-team-editing.md)，实现尚待验证。
+阶段 0 已关闭的门禁：[原生框架](adr/ADR-0006-native-ui-framework.md)（egui）、[Typst 集成](adr/ADR-0007-typst-integration.md)、[reconcile 与工具链隔离](adr/ADR-0008-reconcile-and-toolchain-isolation.md)、[CRDT 引擎](adr/ADR-0009-crdt-engine.md)（Loro）；团队语言协调与全范围混合构建的验证见[报告 0009](spikes/SPK-0009-team-language.md) 与[报告 0010](spikes/SPK-0010-mixed-build.md)，**协调协议与桥接的正式实现仍待做**（见 [ADR 0001](adr/ADR-0001-mixed-source-team-editing.md)，仍为 Proposed）。
 
 ## 全栈选型与 WASM 宿主
 
-候选统一维护于[TECH_STACK](TECH_STACK.md)，移植边界见[WASM](WASM.md)。model、格式纯逻辑、history 与协议层不得直接依赖文件、进程、GUI、具体数据库或 Tokio 多线程运行时。原生用 Tokio/CPU workers 和 OS 适配；浏览器用 futures/Worker、异步存储及资源注入适配，同一语义与协议测试跨端运行。可移植核心不泄露平台句柄，C/C++/Zig 依赖必须单独验证 WASM 产物。
+候选统一维护于[TECH_STACK](plan/TECH_STACK.md)，移植边界见[WASM](plan/WASM.md)。model、格式纯逻辑、history 与协议层不得直接依赖文件、进程、GUI、具体数据库或 Tokio 多线程运行时。原生用 Tokio/CPU workers 和 OS 适配；浏览器用 futures/Worker、异步存储及资源注入适配，同一语义与协议测试跨端运行。可移植核心不泄露平台句柄，C/C++/Zig 依赖必须单独验证 WASM 产物。

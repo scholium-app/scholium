@@ -1,0 +1,7 @@
+Scholium 阶段 0 第 5 项 spike：构建/恢复（第 1 轮）
+工作目录: /tmp/scholium-recovery-workspace-r0
+
+
+## 判据 1：两种引擎隔离构建
+  [----] 保留现场: /tmp/scholium-recovery-workspace-r0/c1-825490-0
+Error: CommandFailed { program: "recovery sandbox", code: Some(1), stderr: "worker failed (124 = wall timeout): exit status: 1" }

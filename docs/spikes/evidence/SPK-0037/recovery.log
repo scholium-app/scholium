@@ -1,0 +1,661 @@
+Scholium 阶段 0 第 5 项 spike：构建/恢复（第 1 轮）
+工作目录: /tmp/scholium-recovery-workspace-r0
+
+
+## 判据 1：两种引擎隔离构建
+  [----] latex 构建 — 2649 ms / 11601 B / 页数 Some(1) / 产物 /tmp/scholium-recovery-workspace-r0/c1-881909-0/project/latex/.build/main.pdf / Latexmk, John Collins, 15 June 2025. Version 4.87；XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026/Arch Linux)
+  [----] latex.输出目录内容哈希 — main.aux:fbabe80c main.fdb_latexmk:8f7bb2a0 main.fls:910518f6 main.log:8cc81f03 main.pdf:349f68d3 main.tex:ef82726c main.xdv:af00804d worker-stderr.txt:e3b0c442 worker-stdout.txt:e3b0c442
+  [PASS] latex.产物非空 — 11601 B
+  [PASS] latex.产物记录了输入哈希 — source_hash=ef82726ccd23e2d5
+  [PASS] latex.拿到了跨运行稳定的产物签名 — signature=Some("c0537db58e055d50")；产物文件哈希 349f68d3a4b8178d（PDF 含时间戳，文件哈希跨运行会变，判据用签名）
+  [PASS] latex.源目录无中间文件泄漏 — 目录=/tmp/scholium-recovery-workspace-r0/c1-881909-0/project/latex 内容=[".build", "main.tex"] 多余项=[]
+  [PASS] latex.确实产生了中间文件（否则隔离无从验证） — ["main.aux", "main.fdb_latexmk", "main.fls", "main.log"]
+  [PASS] latex.产物写在沙箱里 — main.pdf
+  [----] typst 构建 — 859 ms / 67 B / 页数 Some(1) / 产物 /tmp/scholium-recovery-workspace-r0/c1-881909-0/project/typst/.build/main.out / typst 0.15.1 沙箱 worker 编译；warnings=0；page-hash=8b482ed39a45ef64
+  [----] typst.输出目录内容哈希 — main.out:e8c7f03f main.typ:ec437cec worker-stderr.txt:e3b0c442 worker-stdout.txt:e3b0c442
+  [PASS] typst.产物非空 — 67 B
+  [PASS] typst.产物记录了输入哈希 — source_hash=ec437cec4648c978
+  [PASS] typst.拿到了跨运行稳定的产物签名 — signature=Some("e8c7f03f09296ad5")；产物文件哈希 e8c7f03f09296ad5（文本产物，文件哈希与签名同值）
+  [PASS] typst.源目录无中间文件泄漏 — 目录=/tmp/scholium-recovery-workspace-r0/c1-881909-0/project/typst 内容=[".build", "main.typ"] 多余项=[]
+  [PASS] typst.不产生中间文件 — 沙箱文件=["LOCK", "main.out", "main.typ", "worker-stderr.txt", "worker-stdout.txt"]
+  [PASS] typst.产物写在沙箱里 — main.out
+  [PASS] 两条路径的沙箱内容不同（目录确实分离） — latex=["LOCK", "main.aux", "main.fdb_latexmk", "main.fls", "main.log", "main.pdf", "main.tex", "main.xdv", "worker-stderr.txt", "worker-stdout.txt"] typst=["LOCK", "main.out", "main.typ", "worker-stderr.txt", "worker-stdout.txt"]
+  [PASS] 两条路径产物不同名同哈希（不是同一份文件） — latex=349f68d3a4b8178d typst=e8c7f03f09296ad5
+  [----] 毒饵 — /tmp/scholium-recovery-workspace-r0/c1-881909-0/project/typst/.build/main.aux ← 内容 "\\relax\n\\@setckpt{999}{\\setcounter{page}{999}}"（原 aux 32 B，语义声明 999 页）
+  [PASS] 毒饵内容与 A 自己的 aux 不同（若被读到必然改变产物） — 毒饵 46 B / 原 32 B
+  [PASS] A 重编产物签名与干净基线一致（没读到 B 的毒饵） — 基线 c0537db58e055d50 vs 有饵 c0537db58e055d50；文件哈希 89049fc3a9c09f4a vs 349f68d3a4b8178d（时间戳不同属正常）
+  [PASS] A 产物字节数一致 — 11601 vs 11601
+  [PASS] B 的毒饵没有被 A 的构建改写 — 毒饵仍为 46 B
+  [PASS] 对照：A 自己的源码变化会改变产物签名（一致性不是恒等） — 对照 6eb1371e5af0aaa7 vs 基线 c0537db58e055d50
+  [PASS] 对照构建本身成功 — 13030 B
+  [----] 并发耗时 — latex=838 ms typst=845 ms
+  [PASS] 并发 latex 产物签名与串行基线一致 — c0537db58e055d50 vs c0537db58e055d50
+  [PASS] 并发 typst 产物签名与串行基线一致 — e8c7f03f09296ad5 vs e8c7f03f09296ad5
+  [PASS] 两条路径的产物签名不同（没有互相写进对方文件） — c0537db58e055d50 vs e8c7f03f09296ad5
+  [PASS] 并发后中间文件仍只落在 latex 沙箱 — latex=["LOCK", "control.aux", "control.fdb_latexmk", "control.fls", "control.log", "control.pdf", "control.tex", "control.xdv", "main.aux", "main.fdb_latexmk", "main.fls", "main.log", "main.pdf", "main.tex", "main.xdv", "worker-stderr.txt", "worker-stdout.txt"] typst=["LOCK", "main.aux", "main.out", "main.typ", "worker-stderr.txt", "worker-stdout.txt"] typst 中非植入的中间文件=[]
+  [PASS] 同目录并发写被锁拒绝 — 锁=/tmp/scholium-recovery-workspace-r0/c1-881909-0/project/latex/.build/LOCK 结果=Some("文档核心拒绝操作: 构建目录已被占用: /tmp/scholium-recovery-workspace-r0/c1-881909-0/project/latex/.build/LOCK")
+  [PASS] 锁释放后可重建且产物签名与基线一致 — c0537db58e055d50
+  [PASS] 探针确实改动了源码字节 — 391 B → 404 B
+  [PASS] 改自己的源码 → 产物变化（输入确实被读取） — c3271de16af23c06 → 230d25d90d2f129c
+  [PASS] 改动后仍然构建成功 — 11601 B / 页数 Some(1)
+  [----] 锁用例对照构建 — 872 ms / signature e8c7f03f09296ad5
+  [PASS] 被占用的输出目录拒绝构建 — 锁=/tmp/scholium-recovery-workspace-r0/c1-881909-0/project/typst/locked-build/LOCK 错误=Some("文档核心拒绝操作: 构建目录已被占用: /tmp/scholium-recovery-workspace-r0/c1-881909-0/project/typst/locked-build/LOCK")
+  [PASS] 被拒绝的构建没有在输出目录留下任何文件 — ["LOCK"]
+  [PASS] 释放锁后重建成功且产物签名与对照一致 — e8c7f03f09296ad5 vs e8c7f03f09296ad5
+
+## 判据 2：WAL 与未提交草稿恢复
+  [PASS] 编码长度与声明一致 — 41 / 41
+  [PASS] 魔数在头部 — [53, 57, 41, 4c]
+  [PASS] 长度字段覆盖整条记录 — 头内 41 / 实际 41
+  [PASS] 单字节翻转被 CRC 拦住 — defect=Some(ChecksumMismatch { expected: 3824451323, actual: 3472265590 })
+  [PASS] 崩溃探针比写完的分块长（否则夹具会变成正常关闭） — 记录 76 B，写完 40×1 B，残缺 36 B
+  [PASS] 头撕裂探针在头部中间就停下 — 头 32 B，写完 20×1 B 后残缺 56 B
+  [PASS] 子进程正常退出（退出码 0） — code=Some(0) signal=None
+  [----] 恢复正常关闭日志 — 文件 527 B，恢复 8 条，good_bytes=527，defect=None
+  [PASS] 记录条数一致 — 8 / 8
+  [PASS] 逐条字节与写入内容一致 — 首条 seq=Some(1) 末条 seq=Some(8)
+  [PASS] 没有尾部缺陷 — None
+  [PASS] 没有字节被丢弃 — discarded=0
+  [PASS] good_bytes 覆盖整个文件 — 527 / 527
+  [PASS] 子进程被 SIGKILL 杀死（不是返回错误） — code=None signal=Some(9)
+  [----] 崩溃现场 — 日志 274 B：完整 234 B + 尾部残缺 40 B
+  [PASS] 尾部确实留下了残缺字节（不是空文件也不是恰好完整） — 274 B > 234 B
+  [PASS] 恢复到崩溃前的最后一条完整记录 — 4 / 4
+  [PASS] 缺陷分类为负载截断 — Some(TruncatedPayload { declared: 76, remaining: 40 })
+  [PASS] good_bytes 正好落在记录边界 — 234 / 234
+  [PASS] 丢弃字节数等于残缺长度 — 40 / 40
+  [PASS] 恢复点等于已恢复记录的长度之和（只能落在记录边界上） — good_bytes=234 条数=4
+  [PASS] 截断修复后再次恢复：无缺陷且记录不变 — defect=None 条数=4 文件=234 B
+  [PASS] 修复后文件长度等于完整部分 — 234 / 234
+  [PASS] 头撕裂场景中子进程也被 SIGKILL — signal=Some(9)
+  [PASS] 缺陷分类为头截断 — 残缺 20 B，Some(TruncatedHeader { remaining: 20 })
+  [PASS] 头撕裂时仍恢复到同一完整边界 — 4 / 4
+  [PASS] 子进程写完后被 SIGKILL（保留坏负载文件） — signal=Some(9)
+  [----] 损坏现场 — 日志 483 B；恢复 6 条；defect=CRC 不匹配: 头内 0xf54bc89d vs 实算 0xd8492710
+  [PASS] 缺陷分类为 CRC 不匹配 — Some(ChecksumMismatch { expected: 4115384477, actual: 3628672784 })
+  [PASS] 恢复到损坏记录之前的那一条 — 6 / 6
+  [PASS] good_bytes 停在损坏记录起点 — 393 / 393
+  [PASS] 被丢弃的正好是那条损坏记录 — 90 / 90
+  [PASS] 丢弃损坏记录后，之前的记录逐字节完好 — 末条 seq=6
+  [PASS] 截断修复后再次恢复：无缺陷且记录不变 — defect=None 条数=6
+  [----] 协同改写 — 第 2 条负载改为 23 字节的 'Z' 并同步重算 CRC — 恢复 4 条，defect=None
+  [PASS] 协同改写（含 CRC）确实不会被结构性校验拦住 —— 这是已知能力上界 — 恢复 4 条，defect=None
+  [PASS] 恢复出的负载是改写后的内容（数据确实被替换，而不是被丢弃） — 前 8 字节=[90, 90, 90, 90, 90, 90, 90, 90]
+  [PASS] 同一条记录前后的记录不受影响 — 第 1 条 seq=1 第 3 条 seq=3
+
+## 判据 3：外部源码修改冲突
+  [PASS] 保存被拒绝，原因是外部改动 — attempt=Rejected(ExternalChange { loaded: "ef82726ccd23e2d5cd8f18daf7e6f1e27bef4c64121ecd848ddc454dc4bcc0d7", current: "92745178d87962d8c4c1d8bf351673d9a7ce6c4013a1e8dbd0448dd69973b525" })
+  [PASS] 磁盘内容仍是外部版本（未被静默覆盖） — 磁盘 423 B / app 想写 402 B
+  [PASS] 磁盘哈希等于外部版本哈希 — 92745178d87962d8
+  [PASS] 磁盘上找不到 app 的改动 — 磁盘文本不含 'app edit'
+源码冲突报告: /tmp/scholium-recovery-workspace-r0/c3-881909-2/conflict/external/main.tex
+  判定: external-change
+  加载时哈希: ef82726ccd23e2d5cd8f18daf7e6f1e27bef4c64121ecd848ddc454dc4bcc0d7
+  当前哈希:   92745178d87962d8c4c1d8bf351673d9a7ce6c4013a1e8dbd0448dd69973b525
+  动作: 拒绝写入（磁盘内容由外部改动，不静默覆盖）
+  差异行数: 1
+    第 12 行（首个差异在第 0 个字符）
+      - 加载: 
+      + 现在: % external edit by another tool
+
+  [PASS] 报告写明判定为 external-change — 报告含判定标签
+  [PASS] 报告同时给出加载哈希与当前哈希 — ef82726ccd23e2d5 / 92745178d87962d8
+  [PASS] 报告列出差异行 — 差异 1 行
+  [PASS] 差异行内容指出了外部改动的那一行 — L12: % external edit by another tool
+  [PASS] 无人改动时保存成功写盘 — Written { new_hash: "bda9d4cb71711985b28d79996c16463b13c24c752f3c8cd9084742dfcbf4b754", bytes: 412 }
+  [PASS] 磁盘内容等于应用写入的内容 — 磁盘 412 B
+  [PASS] 成功路径不产生冲突报告 — report=None
+  [PASS] 返回值报告的哈希与字节数与实际一致 — 412 B / bda9d4cb71711985
+  [PASS] 内容未变时归类为 unchanged — Rejected(Unchanged)
+  [PASS] 磁盘内容未被动过 — 磁盘 391 B
+  [PASS] 文件被删除时归类为 removed — Rejected(Removed)
+  [PASS] 应用没有偷偷把文件重建出来 — exists=false
+  [PASS] 报告写明判定为 removed — 源码冲突报告: /tmp/scholium-recovery-workspace-r0/c3-881909-2/conflict/removed/main.tex |   判定: removed |   动作: 拒绝写入（文件已被外部删除）
+
+## 判据 4：随机截断点（固定种子）
+种子=20260916，轮数=24，记录=200
+  [PASS] 基准日志长度等于全部记录长度之和 — 13379 B / 200 条
+  [轮 1/24] round00(seed=20260916,truncate@13379) 文件 13379 B → 恢复 200 条 / 边界 13379 B / 丢弃 0 B / 无
+  [PASS] round00(seed=20260916,truncate@13379).条数等于截断前的完整记录数 — 200 / 200
+  [PASS] round00(seed=20260916,truncate@13379).恢复内容是基线前缀（逐字节） — 末条 seq=Some(200)
+  [PASS] round00(seed=20260916,truncate@13379).good_bytes 落在真实记录边界 — 13379 / 13379
+  [PASS] round00(seed=20260916,truncate@13379).丢弃字节数 = 文件长度 - 边界 — 0 = 13379 - 13379
+  [PASS] round00(seed=20260916,truncate@13379).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round00(seed=20260916,truncate@13379).切在记录之间 → 无缺陷 — None
+  [PASS] round00(seed=20260916,truncate@13379).重新编码长度等于 good_bytes — 13379 / 13379
+  [轮 2/24] round01(seed=20260916,corrupt@28) 文件 13379 B → 恢复 0 条 / 边界 0 B / 丢弃 13379 B / CRC 不匹配: 头内 0xc5aa0c78 vs 实算 0xc5aa0c87
+  [PASS] round01(seed=20260916,corrupt@28).条数等于截断前的完整记录数 — 0 / 0
+  [PASS] round01(seed=20260916,corrupt@28).恢复内容是基线前缀（逐字节） — 末条 seq=None
+  [PASS] round01(seed=20260916,corrupt@28).good_bytes 落在真实记录边界 — 0 / 0
+  [PASS] round01(seed=20260916,corrupt@28).丢弃字节数 = 文件长度 - 边界 — 13379 = 13379 - 0
+  [PASS] round01(seed=20260916,corrupt@28).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round01(seed=20260916,corrupt@28).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0xc5aa0c78 vs 实算 0xc5aa0c87
+  [PASS] round01(seed=20260916,corrupt@28).重新编码长度等于 good_bytes — 0 / 0
+  [轮 3/24] round02(seed=20260916,truncate@0) 文件 0 B → 恢复 0 条 / 边界 0 B / 丢弃 0 B / 无
+  [PASS] round02(seed=20260916,truncate@0).条数等于截断前的完整记录数 — 0 / 0
+  [PASS] round02(seed=20260916,truncate@0).恢复内容是基线前缀（逐字节） — 末条 seq=None
+  [PASS] round02(seed=20260916,truncate@0).good_bytes 落在真实记录边界 — 0 / 0
+  [PASS] round02(seed=20260916,truncate@0).丢弃字节数 = 文件长度 - 边界 — 0 = 0 - 0
+  [PASS] round02(seed=20260916,truncate@0).恢复器报告的文件长度正确 — 0 / 0
+  [PASS] round02(seed=20260916,truncate@0).切在记录之间 → 无缺陷 — None
+  [PASS] round02(seed=20260916,truncate@0).重新编码长度等于 good_bytes — 0 / 0
+  [轮 4/24] round03(seed=20260916,corrupt@13315) 文件 13379 B → 恢复 198 条 / 边界 13260 B / 丢弃 119 B / CRC 不匹配: 头内 0xeb7f6e20 vs 实算 0xc67d81ad
+  [PASS] round03(seed=20260916,corrupt@13315).条数等于截断前的完整记录数 — 198 / 198
+  [PASS] round03(seed=20260916,corrupt@13315).恢复内容是基线前缀（逐字节） — 末条 seq=Some(198)
+  [PASS] round03(seed=20260916,corrupt@13315).good_bytes 落在真实记录边界 — 13260 / 13260
+  [PASS] round03(seed=20260916,corrupt@13315).丢弃字节数 = 文件长度 - 边界 — 119 = 13379 - 13260
+  [PASS] round03(seed=20260916,corrupt@13315).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round03(seed=20260916,corrupt@13315).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0xeb7f6e20 vs 实算 0xc67d81ad
+  [PASS] round03(seed=20260916,corrupt@13315).重新编码长度等于 good_bytes — 13260 / 13260
+  [轮 5/24] round04(seed=20260916,truncate@5213) 文件 5213 B → 恢复 78 条 / 边界 5208 B / 丢弃 5 B / 尾部头不完整：剩余 5 B，少于 32 B
+  [PASS] round04(seed=20260916,truncate@5213).条数等于截断前的完整记录数 — 78 / 78
+  [PASS] round04(seed=20260916,truncate@5213).恢复内容是基线前缀（逐字节） — 末条 seq=Some(78)
+  [PASS] round04(seed=20260916,truncate@5213).good_bytes 落在真实记录边界 — 5208 / 5208
+  [PASS] round04(seed=20260916,truncate@5213).丢弃字节数 = 文件长度 - 边界 — 5 = 5213 - 5208
+  [PASS] round04(seed=20260916,truncate@5213).恢复器报告的文件长度正确 — 5213 / 5213
+  [PASS] round04(seed=20260916,truncate@5213).切在记录内部 → 必须报出缺陷 — 尾部头不完整：剩余 5 B，少于 32 B
+  [PASS] round04(seed=20260916,truncate@5213).重新编码长度等于 good_bytes — 5208 / 5208
+  [轮 6/24] round05(seed=20260916,corrupt@3254) 文件 13379 B → 恢复 48 条 / 边界 3204 B / 丢弃 10175 B / CRC 不匹配: 头内 0x9be145aa vs 实算 0x96907c7d
+  [PASS] round05(seed=20260916,corrupt@3254).条数等于截断前的完整记录数 — 48 / 48
+  [PASS] round05(seed=20260916,corrupt@3254).恢复内容是基线前缀（逐字节） — 末条 seq=Some(48)
+  [PASS] round05(seed=20260916,corrupt@3254).good_bytes 落在真实记录边界 — 3204 / 3204
+  [PASS] round05(seed=20260916,corrupt@3254).丢弃字节数 = 文件长度 - 边界 — 10175 = 13379 - 3204
+  [PASS] round05(seed=20260916,corrupt@3254).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round05(seed=20260916,corrupt@3254).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0x9be145aa vs 实算 0x96907c7d
+  [PASS] round05(seed=20260916,corrupt@3254).重新编码长度等于 good_bytes — 3204 / 3204
+  [轮 7/24] round06(seed=20260916,truncate@7804) 文件 7804 B → 恢复 117 条 / 边界 7803 B / 丢弃 1 B / 尾部头不完整：剩余 1 B，少于 32 B
+  [PASS] round06(seed=20260916,truncate@7804).条数等于截断前的完整记录数 — 117 / 117
+  [PASS] round06(seed=20260916,truncate@7804).恢复内容是基线前缀（逐字节） — 末条 seq=Some(117)
+  [PASS] round06(seed=20260916,truncate@7804).good_bytes 落在真实记录边界 — 7803 / 7803
+  [PASS] round06(seed=20260916,truncate@7804).丢弃字节数 = 文件长度 - 边界 — 1 = 7804 - 7803
+  [PASS] round06(seed=20260916,truncate@7804).恢复器报告的文件长度正确 — 7804 / 7804
+  [PASS] round06(seed=20260916,truncate@7804).切在记录内部 → 必须报出缺陷 — 尾部头不完整：剩余 1 B，少于 32 B
+  [PASS] round06(seed=20260916,truncate@7804).重新编码长度等于 good_bytes — 7803 / 7803
+  [轮 8/24] round07(seed=20260916,corrupt@2818) 文件 13379 B → 恢复 42 条 / 边界 2796 B / 丢弃 10583 B / CRC 不匹配: 头内 0x8707348e vs 实算 0xbd026d50
+  [PASS] round07(seed=20260916,corrupt@2818).条数等于截断前的完整记录数 — 42 / 42
+  [PASS] round07(seed=20260916,corrupt@2818).恢复内容是基线前缀（逐字节） — 末条 seq=Some(42)
+  [PASS] round07(seed=20260916,corrupt@2818).good_bytes 落在真实记录边界 — 2796 / 2796
+  [PASS] round07(seed=20260916,corrupt@2818).丢弃字节数 = 文件长度 - 边界 — 10583 = 13379 - 2796
+  [PASS] round07(seed=20260916,corrupt@2818).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round07(seed=20260916,corrupt@2818).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0x8707348e vs 实算 0xbd026d50
+  [PASS] round07(seed=20260916,corrupt@2818).重新编码长度等于 good_bytes — 2796 / 2796
+  [轮 9/24] round08(seed=20260916,truncate@8636) 文件 8636 B → 恢复 128 条 / 边界 8609 B / 丢弃 27 B / 尾部头不完整：剩余 27 B，少于 32 B
+  [PASS] round08(seed=20260916,truncate@8636).条数等于截断前的完整记录数 — 128 / 128
+  [PASS] round08(seed=20260916,truncate@8636).恢复内容是基线前缀（逐字节） — 末条 seq=Some(128)
+  [PASS] round08(seed=20260916,truncate@8636).good_bytes 落在真实记录边界 — 8609 / 8609
+  [PASS] round08(seed=20260916,truncate@8636).丢弃字节数 = 文件长度 - 边界 — 27 = 8636 - 8609
+  [PASS] round08(seed=20260916,truncate@8636).恢复器报告的文件长度正确 — 8636 / 8636
+  [PASS] round08(seed=20260916,truncate@8636).切在记录内部 → 必须报出缺陷 — 尾部头不完整：剩余 27 B，少于 32 B
+  [PASS] round08(seed=20260916,truncate@8636).重新编码长度等于 good_bytes — 8609 / 8609
+  [轮 10/24] round09(seed=20260916,corrupt@7123) 文件 13379 B → 恢复 106 条 / 边界 7102 B / 丢弃 6277 B / CRC 不匹配: 头内 0xdc1af383 vs 实算 0xa7d3898f
+  [PASS] round09(seed=20260916,corrupt@7123).条数等于截断前的完整记录数 — 106 / 106
+  [PASS] round09(seed=20260916,corrupt@7123).恢复内容是基线前缀（逐字节） — 末条 seq=Some(106)
+  [PASS] round09(seed=20260916,corrupt@7123).good_bytes 落在真实记录边界 — 7102 / 7102
+  [PASS] round09(seed=20260916,corrupt@7123).丢弃字节数 = 文件长度 - 边界 — 6277 = 13379 - 7102
+  [PASS] round09(seed=20260916,corrupt@7123).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round09(seed=20260916,corrupt@7123).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0xdc1af383 vs 实算 0xa7d3898f
+  [PASS] round09(seed=20260916,corrupt@7123).重新编码长度等于 good_bytes — 7102 / 7102
+  [轮 11/24] round10(seed=20260916,truncate@979) 文件 979 B → 恢复 14 条 / 边界 938 B / 丢弃 41 B / 尾部负载不完整：声明 93 B，实际剩余 41 B
+  [PASS] round10(seed=20260916,truncate@979).条数等于截断前的完整记录数 — 14 / 14
+  [PASS] round10(seed=20260916,truncate@979).恢复内容是基线前缀（逐字节） — 末条 seq=Some(14)
+  [PASS] round10(seed=20260916,truncate@979).good_bytes 落在真实记录边界 — 938 / 938
+  [PASS] round10(seed=20260916,truncate@979).丢弃字节数 = 文件长度 - 边界 — 41 = 979 - 938
+  [PASS] round10(seed=20260916,truncate@979).恢复器报告的文件长度正确 — 979 / 979
+  [PASS] round10(seed=20260916,truncate@979).切在记录内部 → 必须报出缺陷 — 尾部负载不完整：声明 93 B，实际剩余 41 B
+  [PASS] round10(seed=20260916,truncate@979).重新编码长度等于 good_bytes — 938 / 938
+  [轮 12/24] round11(seed=20260916,corrupt@1519) 文件 13379 B → 恢复 22 条 / 边界 1507 B / 丢弃 11872 B / CRC 不匹配: 头内 0xde023445 vs 实算 0x105da2c8
+  [PASS] round11(seed=20260916,corrupt@1519).条数等于截断前的完整记录数 — 22 / 22
+  [PASS] round11(seed=20260916,corrupt@1519).恢复内容是基线前缀（逐字节） — 末条 seq=Some(22)
+  [PASS] round11(seed=20260916,corrupt@1519).good_bytes 落在真实记录边界 — 1507 / 1507
+  [PASS] round11(seed=20260916,corrupt@1519).丢弃字节数 = 文件长度 - 边界 — 11872 = 13379 - 1507
+  [PASS] round11(seed=20260916,corrupt@1519).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round11(seed=20260916,corrupt@1519).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0xde023445 vs 实算 0x105da2c8
+  [PASS] round11(seed=20260916,corrupt@1519).重新编码长度等于 good_bytes — 1507 / 1507
+  [轮 13/24] round12(seed=20260916,truncate@2603) 文件 2603 B → 恢复 38 条 / 边界 2558 B / 丢弃 45 B / 尾部负载不完整：声明 49 B，实际剩余 45 B
+  [PASS] round12(seed=20260916,truncate@2603).条数等于截断前的完整记录数 — 38 / 38
+  [PASS] round12(seed=20260916,truncate@2603).恢复内容是基线前缀（逐字节） — 末条 seq=Some(38)
+  [PASS] round12(seed=20260916,truncate@2603).good_bytes 落在真实记录边界 — 2558 / 2558
+  [PASS] round12(seed=20260916,truncate@2603).丢弃字节数 = 文件长度 - 边界 — 45 = 2603 - 2558
+  [PASS] round12(seed=20260916,truncate@2603).恢复器报告的文件长度正确 — 2603 / 2603
+  [PASS] round12(seed=20260916,truncate@2603).切在记录内部 → 必须报出缺陷 — 尾部负载不完整：声明 49 B，实际剩余 45 B
+  [PASS] round12(seed=20260916,truncate@2603).重新编码长度等于 good_bytes — 2558 / 2558
+  [轮 14/24] round13(seed=20260916,corrupt@1610) 文件 13379 B → 恢复 24 条 / 边界 1600 B / 丢弃 11779 B / CRC 不匹配: 头内 0x20f5f8b8 vs 实算 0xcbc32b74
+  [PASS] round13(seed=20260916,corrupt@1610).条数等于截断前的完整记录数 — 24 / 24
+  [PASS] round13(seed=20260916,corrupt@1610).恢复内容是基线前缀（逐字节） — 末条 seq=Some(24)
+  [PASS] round13(seed=20260916,corrupt@1610).good_bytes 落在真实记录边界 — 1600 / 1600
+  [PASS] round13(seed=20260916,corrupt@1610).丢弃字节数 = 文件长度 - 边界 — 11779 = 13379 - 1600
+  [PASS] round13(seed=20260916,corrupt@1610).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round13(seed=20260916,corrupt@1610).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0x20f5f8b8 vs 实算 0xcbc32b74
+  [PASS] round13(seed=20260916,corrupt@1610).重新编码长度等于 good_bytes — 1600 / 1600
+  [轮 15/24] round14(seed=20260916,truncate@2161) 文件 2161 B → 恢复 32 条 / 边界 2146 B / 丢弃 15 B / 尾部头不完整：剩余 15 B，少于 32 B
+  [PASS] round14(seed=20260916,truncate@2161).条数等于截断前的完整记录数 — 32 / 32
+  [PASS] round14(seed=20260916,truncate@2161).恢复内容是基线前缀（逐字节） — 末条 seq=Some(32)
+  [PASS] round14(seed=20260916,truncate@2161).good_bytes 落在真实记录边界 — 2146 / 2146
+  [PASS] round14(seed=20260916,truncate@2161).丢弃字节数 = 文件长度 - 边界 — 15 = 2161 - 2146
+  [PASS] round14(seed=20260916,truncate@2161).恢复器报告的文件长度正确 — 2161 / 2161
+  [PASS] round14(seed=20260916,truncate@2161).切在记录内部 → 必须报出缺陷 — 尾部头不完整：剩余 15 B，少于 32 B
+  [PASS] round14(seed=20260916,truncate@2161).重新编码长度等于 good_bytes — 2146 / 2146
+  [轮 16/24] round15(seed=20260916,corrupt@2537) 文件 13379 B → 恢复 37 条 / 边界 2516 B / 丢弃 10863 B / CRC 不匹配: 头内 0x16f06f79 vs 实算 0x0e4a5937
+  [PASS] round15(seed=20260916,corrupt@2537).条数等于截断前的完整记录数 — 37 / 37
+  [PASS] round15(seed=20260916,corrupt@2537).恢复内容是基线前缀（逐字节） — 末条 seq=Some(37)
+  [PASS] round15(seed=20260916,corrupt@2537).good_bytes 落在真实记录边界 — 2516 / 2516
+  [PASS] round15(seed=20260916,corrupt@2537).丢弃字节数 = 文件长度 - 边界 — 10863 = 13379 - 2516
+  [PASS] round15(seed=20260916,corrupt@2537).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round15(seed=20260916,corrupt@2537).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0x16f06f79 vs 实算 0x0e4a5937
+  [PASS] round15(seed=20260916,corrupt@2537).重新编码长度等于 good_bytes — 2516 / 2516
+  [轮 17/24] round16(seed=20260916,truncate@9687) 文件 9687 B → 恢复 144 条 / 边界 9660 B / 丢弃 27 B / 尾部头不完整：剩余 27 B，少于 32 B
+  [PASS] round16(seed=20260916,truncate@9687).条数等于截断前的完整记录数 — 144 / 144
+  [PASS] round16(seed=20260916,truncate@9687).恢复内容是基线前缀（逐字节） — 末条 seq=Some(144)
+  [PASS] round16(seed=20260916,truncate@9687).good_bytes 落在真实记录边界 — 9660 / 9660
+  [PASS] round16(seed=20260916,truncate@9687).丢弃字节数 = 文件长度 - 边界 — 27 = 9687 - 9660
+  [PASS] round16(seed=20260916,truncate@9687).恢复器报告的文件长度正确 — 9687 / 9687
+  [PASS] round16(seed=20260916,truncate@9687).切在记录内部 → 必须报出缺陷 — 尾部头不完整：剩余 27 B，少于 32 B
+  [PASS] round16(seed=20260916,truncate@9687).重新编码长度等于 good_bytes — 9660 / 9660
+  [轮 18/24] round17(seed=20260916,corrupt@4773) 文件 13379 B → 恢复 71 条 / 边界 4744 B / 丢弃 8635 B / CRC 不匹配: 头内 0x9c14764d vs 实算 0x9c14894d
+  [PASS] round17(seed=20260916,corrupt@4773).条数等于截断前的完整记录数 — 71 / 71
+  [PASS] round17(seed=20260916,corrupt@4773).恢复内容是基线前缀（逐字节） — 末条 seq=Some(71)
+  [PASS] round17(seed=20260916,corrupt@4773).good_bytes 落在真实记录边界 — 4744 / 4744
+  [PASS] round17(seed=20260916,corrupt@4773).丢弃字节数 = 文件长度 - 边界 — 8635 = 13379 - 4744
+  [PASS] round17(seed=20260916,corrupt@4773).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round17(seed=20260916,corrupt@4773).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0x9c14764d vs 实算 0x9c14894d
+  [PASS] round17(seed=20260916,corrupt@4773).重新编码长度等于 good_bytes — 4744 / 4744
+  [轮 19/24] round18(seed=20260916,truncate@8275) 文件 8275 B → 恢复 123 条 / 边界 8234 B / 丢弃 41 B / 尾部负载不完整：声明 61 B，实际剩余 41 B
+  [PASS] round18(seed=20260916,truncate@8275).条数等于截断前的完整记录数 — 123 / 123
+  [PASS] round18(seed=20260916,truncate@8275).恢复内容是基线前缀（逐字节） — 末条 seq=Some(123)
+  [PASS] round18(seed=20260916,truncate@8275).good_bytes 落在真实记录边界 — 8234 / 8234
+  [PASS] round18(seed=20260916,truncate@8275).丢弃字节数 = 文件长度 - 边界 — 41 = 8275 - 8234
+  [PASS] round18(seed=20260916,truncate@8275).恢复器报告的文件长度正确 — 8275 / 8275
+  [PASS] round18(seed=20260916,truncate@8275).切在记录内部 → 必须报出缺陷 — 尾部负载不完整：声明 61 B，实际剩余 41 B
+  [PASS] round18(seed=20260916,truncate@8275).重新编码长度等于 good_bytes — 8234 / 8234
+  [轮 20/24] round19(seed=20260916,corrupt@5426) 文件 13379 B → 恢复 81 条 / 边界 5421 B / 丢弃 7958 B / 长度字段损坏: 65365
+  [PASS] round19(seed=20260916,corrupt@5426).条数等于截断前的完整记录数 — 81 / 81
+  [PASS] round19(seed=20260916,corrupt@5426).恢复内容是基线前缀（逐字节） — 末条 seq=Some(81)
+  [PASS] round19(seed=20260916,corrupt@5426).good_bytes 落在真实记录边界 — 5421 / 5421
+  [PASS] round19(seed=20260916,corrupt@5426).丢弃字节数 = 文件长度 - 边界 — 7958 = 13379 - 5421
+  [PASS] round19(seed=20260916,corrupt@5426).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round19(seed=20260916,corrupt@5426).切在记录内部 → 必须报出缺陷 — 长度字段损坏: 65365
+  [PASS] round19(seed=20260916,corrupt@5426).重新编码长度等于 good_bytes — 5421 / 5421
+  [轮 21/24] round20(seed=20260916,truncate@3565) 文件 3565 B → 恢复 53 条 / 边界 3551 B / 丢弃 14 B / 尾部头不完整：剩余 14 B，少于 32 B
+  [PASS] round20(seed=20260916,truncate@3565).条数等于截断前的完整记录数 — 53 / 53
+  [PASS] round20(seed=20260916,truncate@3565).恢复内容是基线前缀（逐字节） — 末条 seq=Some(53)
+  [PASS] round20(seed=20260916,truncate@3565).good_bytes 落在真实记录边界 — 3551 / 3551
+  [PASS] round20(seed=20260916,truncate@3565).丢弃字节数 = 文件长度 - 边界 — 14 = 3565 - 3551
+  [PASS] round20(seed=20260916,truncate@3565).恢复器报告的文件长度正确 — 3565 / 3565
+  [PASS] round20(seed=20260916,truncate@3565).切在记录内部 → 必须报出缺陷 — 尾部头不完整：剩余 14 B，少于 32 B
+  [PASS] round20(seed=20260916,truncate@3565).重新编码长度等于 good_bytes — 3551 / 3551
+  [轮 22/24] round21(seed=20260916,corrupt@7011) 文件 13379 B → 恢复 104 条 / 边界 6974 B / 丢弃 6405 B / CRC 不匹配: 头内 0x57d31297 vs 实算 0xe7db02f6
+  [PASS] round21(seed=20260916,corrupt@7011).条数等于截断前的完整记录数 — 104 / 104
+  [PASS] round21(seed=20260916,corrupt@7011).恢复内容是基线前缀（逐字节） — 末条 seq=Some(104)
+  [PASS] round21(seed=20260916,corrupt@7011).good_bytes 落在真实记录边界 — 6974 / 6974
+  [PASS] round21(seed=20260916,corrupt@7011).丢弃字节数 = 文件长度 - 边界 — 6405 = 13379 - 6974
+  [PASS] round21(seed=20260916,corrupt@7011).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round21(seed=20260916,corrupt@7011).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0x57d31297 vs 实算 0xe7db02f6
+  [PASS] round21(seed=20260916,corrupt@7011).重新编码长度等于 good_bytes — 6974 / 6974
+  [轮 23/24] round22(seed=20260916,truncate@736) 文件 736 B → 恢复 11 条 / 边界 701 B / 丢弃 35 B / 尾部负载不完整：声明 72 B，实际剩余 35 B
+  [PASS] round22(seed=20260916,truncate@736).条数等于截断前的完整记录数 — 11 / 11
+  [PASS] round22(seed=20260916,truncate@736).恢复内容是基线前缀（逐字节） — 末条 seq=Some(11)
+  [PASS] round22(seed=20260916,truncate@736).good_bytes 落在真实记录边界 — 701 / 701
+  [PASS] round22(seed=20260916,truncate@736).丢弃字节数 = 文件长度 - 边界 — 35 = 736 - 701
+  [PASS] round22(seed=20260916,truncate@736).恢复器报告的文件长度正确 — 736 / 736
+  [PASS] round22(seed=20260916,truncate@736).切在记录内部 → 必须报出缺陷 — 尾部负载不完整：声明 72 B，实际剩余 35 B
+  [PASS] round22(seed=20260916,truncate@736).重新编码长度等于 good_bytes — 701 / 701
+  [轮 24/24] round23(seed=20260916,corrupt@7582) 文件 13379 B → 恢复 112 条 / 边界 7495 B / 丢弃 5884 B / CRC 不匹配: 头内 0x75f5908e vs 实算 0xcb6da463
+  [PASS] round23(seed=20260916,corrupt@7582).条数等于截断前的完整记录数 — 112 / 112
+  [PASS] round23(seed=20260916,corrupt@7582).恢复内容是基线前缀（逐字节） — 末条 seq=Some(112)
+  [PASS] round23(seed=20260916,corrupt@7582).good_bytes 落在真实记录边界 — 7495 / 7495
+  [PASS] round23(seed=20260916,corrupt@7582).丢弃字节数 = 文件长度 - 边界 — 5884 = 13379 - 7495
+  [PASS] round23(seed=20260916,corrupt@7582).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round23(seed=20260916,corrupt@7582).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0x75f5908e vs 实算 0xcb6da463
+  [PASS] round23(seed=20260916,corrupt@7582).重新编码长度等于 good_bytes — 7495 / 7495
+  [----] 轮次分布 — 截断 12 轮 / 损坏 12 轮，种子均为 20260916
+
+== 逐用例汇总 ==
+  [PASS] build.isolated-outputs             14/14 断言通过
+  [PASS] build.decoy-isolation              6/6 断言通过
+  [PASS] build.concurrent-paths             6/6 断言通过
+  [PASS] build.source-fidelity              3/3 断言通过
+  [PASS] build.output-lock                  3/3 断言通过
+  [PASS] wal.encoding                       6/6 断言通过
+  [PASS] wal.normal-close                   6/6 断言通过
+  [PASS] wal.tail-truncated                 12/12 断言通过
+  [PASS] wal.tail-corrupted                 7/7 断言通过
+  [PASS] wal.synthetic-rewrite-boundary     3/3 断言通过
+  [PASS] conflict.external-change           8/8 断言通过
+  [PASS] conflict.no-external-change        4/4 断言通过
+  [PASS] conflict.unchanged                 2/2 断言通过
+  [PASS] conflict.removed                   3/3 断言通过
+  [PASS] truncate.random-rounds             169/169 断言通过
+
+本轮总结论: PASS（用例 15 个独立判定）
+Scholium 阶段 0 第 5 项 spike：构建/恢复（第 2 轮）
+工作目录: /tmp/scholium-recovery-workspace-r1
+
+
+## 判据 1：两种引擎隔离构建
+  [----] latex 构建 — 2585 ms / 11601 B / 页数 Some(1) / 产物 /tmp/scholium-recovery-workspace-r1/c1-881909-4/project/latex/.build/main.pdf / Latexmk, John Collins, 15 June 2025. Version 4.87；XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026/Arch Linux)
+  [----] latex.输出目录内容哈希 — main.aux:fbabe80c main.fdb_latexmk:8d5880a4 main.fls:910518f6 main.log:8cc81f03 main.pdf:31f934fe main.tex:ef82726c main.xdv:af00804d worker-stderr.txt:e3b0c442 worker-stdout.txt:e3b0c442
+  [PASS] latex.产物非空 — 11601 B
+  [PASS] latex.产物记录了输入哈希 — source_hash=ef82726ccd23e2d5
+  [PASS] latex.拿到了跨运行稳定的产物签名 — signature=Some("c0537db58e055d50")；产物文件哈希 31f934fe6a428711（PDF 含时间戳，文件哈希跨运行会变，判据用签名）
+  [PASS] latex.源目录无中间文件泄漏 — 目录=/tmp/scholium-recovery-workspace-r1/c1-881909-4/project/latex 内容=[".build", "main.tex"] 多余项=[]
+  [PASS] latex.确实产生了中间文件（否则隔离无从验证） — ["main.aux", "main.fdb_latexmk", "main.fls", "main.log"]
+  [PASS] latex.产物写在沙箱里 — main.pdf
+  [----] typst 构建 — 856 ms / 67 B / 页数 Some(1) / 产物 /tmp/scholium-recovery-workspace-r1/c1-881909-4/project/typst/.build/main.out / typst 0.15.1 沙箱 worker 编译；warnings=0；page-hash=8b482ed39a45ef64
+  [----] typst.输出目录内容哈希 — main.out:e8c7f03f main.typ:ec437cec worker-stderr.txt:e3b0c442 worker-stdout.txt:e3b0c442
+  [PASS] typst.产物非空 — 67 B
+  [PASS] typst.产物记录了输入哈希 — source_hash=ec437cec4648c978
+  [PASS] typst.拿到了跨运行稳定的产物签名 — signature=Some("e8c7f03f09296ad5")；产物文件哈希 e8c7f03f09296ad5（文本产物，文件哈希与签名同值）
+  [PASS] typst.源目录无中间文件泄漏 — 目录=/tmp/scholium-recovery-workspace-r1/c1-881909-4/project/typst 内容=[".build", "main.typ"] 多余项=[]
+  [PASS] typst.不产生中间文件 — 沙箱文件=["LOCK", "main.out", "main.typ", "worker-stderr.txt", "worker-stdout.txt"]
+  [PASS] typst.产物写在沙箱里 — main.out
+  [PASS] 两条路径的沙箱内容不同（目录确实分离） — latex=["LOCK", "main.aux", "main.fdb_latexmk", "main.fls", "main.log", "main.pdf", "main.tex", "main.xdv", "worker-stderr.txt", "worker-stdout.txt"] typst=["LOCK", "main.out", "main.typ", "worker-stderr.txt", "worker-stdout.txt"]
+  [PASS] 两条路径产物不同名同哈希（不是同一份文件） — latex=31f934fe6a428711 typst=e8c7f03f09296ad5
+  [----] 毒饵 — /tmp/scholium-recovery-workspace-r1/c1-881909-4/project/typst/.build/main.aux ← 内容 "\\relax\n\\@setckpt{999}{\\setcounter{page}{999}}"（原 aux 32 B，语义声明 999 页）
+  [PASS] 毒饵内容与 A 自己的 aux 不同（若被读到必然改变产物） — 毒饵 46 B / 原 32 B
+  [PASS] A 重编产物签名与干净基线一致（没读到 B 的毒饵） — 基线 c0537db58e055d50 vs 有饵 c0537db58e055d50；文件哈希 fe1ec7f1e6a87e7e vs 31f934fe6a428711（时间戳不同属正常）
+  [PASS] A 产物字节数一致 — 11601 vs 11601
+  [PASS] B 的毒饵没有被 A 的构建改写 — 毒饵仍为 46 B
+  [PASS] 对照：A 自己的源码变化会改变产物签名（一致性不是恒等） — 对照 6eb1371e5af0aaa7 vs 基线 c0537db58e055d50
+  [PASS] 对照构建本身成功 — 13030 B
+  [----] 并发耗时 — latex=834 ms typst=844 ms
+  [PASS] 并发 latex 产物签名与串行基线一致 — c0537db58e055d50 vs c0537db58e055d50
+  [PASS] 并发 typst 产物签名与串行基线一致 — e8c7f03f09296ad5 vs e8c7f03f09296ad5
+  [PASS] 两条路径的产物签名不同（没有互相写进对方文件） — c0537db58e055d50 vs e8c7f03f09296ad5
+  [PASS] 并发后中间文件仍只落在 latex 沙箱 — latex=["LOCK", "control.aux", "control.fdb_latexmk", "control.fls", "control.log", "control.pdf", "control.tex", "control.xdv", "main.aux", "main.fdb_latexmk", "main.fls", "main.log", "main.pdf", "main.tex", "main.xdv", "worker-stderr.txt", "worker-stdout.txt"] typst=["LOCK", "main.aux", "main.out", "main.typ", "worker-stderr.txt", "worker-stdout.txt"] typst 中非植入的中间文件=[]
+  [PASS] 同目录并发写被锁拒绝 — 锁=/tmp/scholium-recovery-workspace-r1/c1-881909-4/project/latex/.build/LOCK 结果=Some("文档核心拒绝操作: 构建目录已被占用: /tmp/scholium-recovery-workspace-r1/c1-881909-4/project/latex/.build/LOCK")
+  [PASS] 锁释放后可重建且产物签名与基线一致 — c0537db58e055d50
+  [PASS] 探针确实改动了源码字节 — 391 B → 404 B
+  [PASS] 改自己的源码 → 产物变化（输入确实被读取） — f6732eafe139879e → 895a65167beee9b6
+  [PASS] 改动后仍然构建成功 — 11601 B / 页数 Some(1)
+  [----] 锁用例对照构建 — 856 ms / signature e8c7f03f09296ad5
+  [PASS] 被占用的输出目录拒绝构建 — 锁=/tmp/scholium-recovery-workspace-r1/c1-881909-4/project/typst/locked-build/LOCK 错误=Some("文档核心拒绝操作: 构建目录已被占用: /tmp/scholium-recovery-workspace-r1/c1-881909-4/project/typst/locked-build/LOCK")
+  [PASS] 被拒绝的构建没有在输出目录留下任何文件 — ["LOCK"]
+  [PASS] 释放锁后重建成功且产物签名与对照一致 — e8c7f03f09296ad5 vs e8c7f03f09296ad5
+
+## 判据 2：WAL 与未提交草稿恢复
+  [PASS] 编码长度与声明一致 — 41 / 41
+  [PASS] 魔数在头部 — [53, 57, 41, 4c]
+  [PASS] 长度字段覆盖整条记录 — 头内 41 / 实际 41
+  [PASS] 单字节翻转被 CRC 拦住 — defect=Some(ChecksumMismatch { expected: 3824451323, actual: 3472265590 })
+  [PASS] 崩溃探针比写完的分块长（否则夹具会变成正常关闭） — 记录 76 B，写完 40×1 B，残缺 36 B
+  [PASS] 头撕裂探针在头部中间就停下 — 头 32 B，写完 20×1 B 后残缺 56 B
+  [PASS] 子进程正常退出（退出码 0） — code=Some(0) signal=None
+  [----] 恢复正常关闭日志 — 文件 527 B，恢复 8 条，good_bytes=527，defect=None
+  [PASS] 记录条数一致 — 8 / 8
+  [PASS] 逐条字节与写入内容一致 — 首条 seq=Some(1) 末条 seq=Some(8)
+  [PASS] 没有尾部缺陷 — None
+  [PASS] 没有字节被丢弃 — discarded=0
+  [PASS] good_bytes 覆盖整个文件 — 527 / 527
+  [PASS] 子进程被 SIGKILL 杀死（不是返回错误） — code=None signal=Some(9)
+  [----] 崩溃现场 — 日志 274 B：完整 234 B + 尾部残缺 40 B
+  [PASS] 尾部确实留下了残缺字节（不是空文件也不是恰好完整） — 274 B > 234 B
+  [PASS] 恢复到崩溃前的最后一条完整记录 — 4 / 4
+  [PASS] 缺陷分类为负载截断 — Some(TruncatedPayload { declared: 76, remaining: 40 })
+  [PASS] good_bytes 正好落在记录边界 — 234 / 234
+  [PASS] 丢弃字节数等于残缺长度 — 40 / 40
+  [PASS] 恢复点等于已恢复记录的长度之和（只能落在记录边界上） — good_bytes=234 条数=4
+  [PASS] 截断修复后再次恢复：无缺陷且记录不变 — defect=None 条数=4 文件=234 B
+  [PASS] 修复后文件长度等于完整部分 — 234 / 234
+  [PASS] 头撕裂场景中子进程也被 SIGKILL — signal=Some(9)
+  [PASS] 缺陷分类为头截断 — 残缺 20 B，Some(TruncatedHeader { remaining: 20 })
+  [PASS] 头撕裂时仍恢复到同一完整边界 — 4 / 4
+  [PASS] 子进程写完后被 SIGKILL（保留坏负载文件） — signal=Some(9)
+  [----] 损坏现场 — 日志 483 B；恢复 6 条；defect=CRC 不匹配: 头内 0xf54bc89d vs 实算 0xd8492710
+  [PASS] 缺陷分类为 CRC 不匹配 — Some(ChecksumMismatch { expected: 4115384477, actual: 3628672784 })
+  [PASS] 恢复到损坏记录之前的那一条 — 6 / 6
+  [PASS] good_bytes 停在损坏记录起点 — 393 / 393
+  [PASS] 被丢弃的正好是那条损坏记录 — 90 / 90
+  [PASS] 丢弃损坏记录后，之前的记录逐字节完好 — 末条 seq=6
+  [PASS] 截断修复后再次恢复：无缺陷且记录不变 — defect=None 条数=6
+  [----] 协同改写 — 第 2 条负载改为 23 字节的 'Z' 并同步重算 CRC — 恢复 4 条，defect=None
+  [PASS] 协同改写（含 CRC）确实不会被结构性校验拦住 —— 这是已知能力上界 — 恢复 4 条，defect=None
+  [PASS] 恢复出的负载是改写后的内容（数据确实被替换，而不是被丢弃） — 前 8 字节=[90, 90, 90, 90, 90, 90, 90, 90]
+  [PASS] 同一条记录前后的记录不受影响 — 第 1 条 seq=1 第 3 条 seq=3
+
+## 判据 3：外部源码修改冲突
+  [PASS] 保存被拒绝，原因是外部改动 — attempt=Rejected(ExternalChange { loaded: "ef82726ccd23e2d5cd8f18daf7e6f1e27bef4c64121ecd848ddc454dc4bcc0d7", current: "92745178d87962d8c4c1d8bf351673d9a7ce6c4013a1e8dbd0448dd69973b525" })
+  [PASS] 磁盘内容仍是外部版本（未被静默覆盖） — 磁盘 423 B / app 想写 402 B
+  [PASS] 磁盘哈希等于外部版本哈希 — 92745178d87962d8
+  [PASS] 磁盘上找不到 app 的改动 — 磁盘文本不含 'app edit'
+源码冲突报告: /tmp/scholium-recovery-workspace-r1/c3-881909-6/conflict/external/main.tex
+  判定: external-change
+  加载时哈希: ef82726ccd23e2d5cd8f18daf7e6f1e27bef4c64121ecd848ddc454dc4bcc0d7
+  当前哈希:   92745178d87962d8c4c1d8bf351673d9a7ce6c4013a1e8dbd0448dd69973b525
+  动作: 拒绝写入（磁盘内容由外部改动，不静默覆盖）
+  差异行数: 1
+    第 12 行（首个差异在第 0 个字符）
+      - 加载: 
+      + 现在: % external edit by another tool
+
+  [PASS] 报告写明判定为 external-change — 报告含判定标签
+  [PASS] 报告同时给出加载哈希与当前哈希 — ef82726ccd23e2d5 / 92745178d87962d8
+  [PASS] 报告列出差异行 — 差异 1 行
+  [PASS] 差异行内容指出了外部改动的那一行 — L12: % external edit by another tool
+  [PASS] 无人改动时保存成功写盘 — Written { new_hash: "bda9d4cb71711985b28d79996c16463b13c24c752f3c8cd9084742dfcbf4b754", bytes: 412 }
+  [PASS] 磁盘内容等于应用写入的内容 — 磁盘 412 B
+  [PASS] 成功路径不产生冲突报告 — report=None
+  [PASS] 返回值报告的哈希与字节数与实际一致 — 412 B / bda9d4cb71711985
+  [PASS] 内容未变时归类为 unchanged — Rejected(Unchanged)
+  [PASS] 磁盘内容未被动过 — 磁盘 391 B
+  [PASS] 文件被删除时归类为 removed — Rejected(Removed)
+  [PASS] 应用没有偷偷把文件重建出来 — exists=false
+  [PASS] 报告写明判定为 removed — 源码冲突报告: /tmp/scholium-recovery-workspace-r1/c3-881909-6/conflict/removed/main.tex |   判定: removed |   动作: 拒绝写入（文件已被外部删除）
+
+## 判据 4：随机截断点（固定种子）
+种子=20260916，轮数=24，记录=200
+  [PASS] 基准日志长度等于全部记录长度之和 — 13379 B / 200 条
+  [轮 1/24] round00(seed=20260916,truncate@13379) 文件 13379 B → 恢复 200 条 / 边界 13379 B / 丢弃 0 B / 无
+  [PASS] round00(seed=20260916,truncate@13379).条数等于截断前的完整记录数 — 200 / 200
+  [PASS] round00(seed=20260916,truncate@13379).恢复内容是基线前缀（逐字节） — 末条 seq=Some(200)
+  [PASS] round00(seed=20260916,truncate@13379).good_bytes 落在真实记录边界 — 13379 / 13379
+  [PASS] round00(seed=20260916,truncate@13379).丢弃字节数 = 文件长度 - 边界 — 0 = 13379 - 13379
+  [PASS] round00(seed=20260916,truncate@13379).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round00(seed=20260916,truncate@13379).切在记录之间 → 无缺陷 — None
+  [PASS] round00(seed=20260916,truncate@13379).重新编码长度等于 good_bytes — 13379 / 13379
+  [轮 2/24] round01(seed=20260916,corrupt@28) 文件 13379 B → 恢复 0 条 / 边界 0 B / 丢弃 13379 B / CRC 不匹配: 头内 0xc5aa0c78 vs 实算 0xc5aa0c87
+  [PASS] round01(seed=20260916,corrupt@28).条数等于截断前的完整记录数 — 0 / 0
+  [PASS] round01(seed=20260916,corrupt@28).恢复内容是基线前缀（逐字节） — 末条 seq=None
+  [PASS] round01(seed=20260916,corrupt@28).good_bytes 落在真实记录边界 — 0 / 0
+  [PASS] round01(seed=20260916,corrupt@28).丢弃字节数 = 文件长度 - 边界 — 13379 = 13379 - 0
+  [PASS] round01(seed=20260916,corrupt@28).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round01(seed=20260916,corrupt@28).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0xc5aa0c78 vs 实算 0xc5aa0c87
+  [PASS] round01(seed=20260916,corrupt@28).重新编码长度等于 good_bytes — 0 / 0
+  [轮 3/24] round02(seed=20260916,truncate@0) 文件 0 B → 恢复 0 条 / 边界 0 B / 丢弃 0 B / 无
+  [PASS] round02(seed=20260916,truncate@0).条数等于截断前的完整记录数 — 0 / 0
+  [PASS] round02(seed=20260916,truncate@0).恢复内容是基线前缀（逐字节） — 末条 seq=None
+  [PASS] round02(seed=20260916,truncate@0).good_bytes 落在真实记录边界 — 0 / 0
+  [PASS] round02(seed=20260916,truncate@0).丢弃字节数 = 文件长度 - 边界 — 0 = 0 - 0
+  [PASS] round02(seed=20260916,truncate@0).恢复器报告的文件长度正确 — 0 / 0
+  [PASS] round02(seed=20260916,truncate@0).切在记录之间 → 无缺陷 — None
+  [PASS] round02(seed=20260916,truncate@0).重新编码长度等于 good_bytes — 0 / 0
+  [轮 4/24] round03(seed=20260916,corrupt@13315) 文件 13379 B → 恢复 198 条 / 边界 13260 B / 丢弃 119 B / CRC 不匹配: 头内 0xeb7f6e20 vs 实算 0xc67d81ad
+  [PASS] round03(seed=20260916,corrupt@13315).条数等于截断前的完整记录数 — 198 / 198
+  [PASS] round03(seed=20260916,corrupt@13315).恢复内容是基线前缀（逐字节） — 末条 seq=Some(198)
+  [PASS] round03(seed=20260916,corrupt@13315).good_bytes 落在真实记录边界 — 13260 / 13260
+  [PASS] round03(seed=20260916,corrupt@13315).丢弃字节数 = 文件长度 - 边界 — 119 = 13379 - 13260
+  [PASS] round03(seed=20260916,corrupt@13315).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round03(seed=20260916,corrupt@13315).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0xeb7f6e20 vs 实算 0xc67d81ad
+  [PASS] round03(seed=20260916,corrupt@13315).重新编码长度等于 good_bytes — 13260 / 13260
+  [轮 5/24] round04(seed=20260916,truncate@5213) 文件 5213 B → 恢复 78 条 / 边界 5208 B / 丢弃 5 B / 尾部头不完整：剩余 5 B，少于 32 B
+  [PASS] round04(seed=20260916,truncate@5213).条数等于截断前的完整记录数 — 78 / 78
+  [PASS] round04(seed=20260916,truncate@5213).恢复内容是基线前缀（逐字节） — 末条 seq=Some(78)
+  [PASS] round04(seed=20260916,truncate@5213).good_bytes 落在真实记录边界 — 5208 / 5208
+  [PASS] round04(seed=20260916,truncate@5213).丢弃字节数 = 文件长度 - 边界 — 5 = 5213 - 5208
+  [PASS] round04(seed=20260916,truncate@5213).恢复器报告的文件长度正确 — 5213 / 5213
+  [PASS] round04(seed=20260916,truncate@5213).切在记录内部 → 必须报出缺陷 — 尾部头不完整：剩余 5 B，少于 32 B
+  [PASS] round04(seed=20260916,truncate@5213).重新编码长度等于 good_bytes — 5208 / 5208
+  [轮 6/24] round05(seed=20260916,corrupt@3254) 文件 13379 B → 恢复 48 条 / 边界 3204 B / 丢弃 10175 B / CRC 不匹配: 头内 0x9be145aa vs 实算 0x96907c7d
+  [PASS] round05(seed=20260916,corrupt@3254).条数等于截断前的完整记录数 — 48 / 48
+  [PASS] round05(seed=20260916,corrupt@3254).恢复内容是基线前缀（逐字节） — 末条 seq=Some(48)
+  [PASS] round05(seed=20260916,corrupt@3254).good_bytes 落在真实记录边界 — 3204 / 3204
+  [PASS] round05(seed=20260916,corrupt@3254).丢弃字节数 = 文件长度 - 边界 — 10175 = 13379 - 3204
+  [PASS] round05(seed=20260916,corrupt@3254).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round05(seed=20260916,corrupt@3254).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0x9be145aa vs 实算 0x96907c7d
+  [PASS] round05(seed=20260916,corrupt@3254).重新编码长度等于 good_bytes — 3204 / 3204
+  [轮 7/24] round06(seed=20260916,truncate@7804) 文件 7804 B → 恢复 117 条 / 边界 7803 B / 丢弃 1 B / 尾部头不完整：剩余 1 B，少于 32 B
+  [PASS] round06(seed=20260916,truncate@7804).条数等于截断前的完整记录数 — 117 / 117
+  [PASS] round06(seed=20260916,truncate@7804).恢复内容是基线前缀（逐字节） — 末条 seq=Some(117)
+  [PASS] round06(seed=20260916,truncate@7804).good_bytes 落在真实记录边界 — 7803 / 7803
+  [PASS] round06(seed=20260916,truncate@7804).丢弃字节数 = 文件长度 - 边界 — 1 = 7804 - 7803
+  [PASS] round06(seed=20260916,truncate@7804).恢复器报告的文件长度正确 — 7804 / 7804
+  [PASS] round06(seed=20260916,truncate@7804).切在记录内部 → 必须报出缺陷 — 尾部头不完整：剩余 1 B，少于 32 B
+  [PASS] round06(seed=20260916,truncate@7804).重新编码长度等于 good_bytes — 7803 / 7803
+  [轮 8/24] round07(seed=20260916,corrupt@2818) 文件 13379 B → 恢复 42 条 / 边界 2796 B / 丢弃 10583 B / CRC 不匹配: 头内 0x8707348e vs 实算 0xbd026d50
+  [PASS] round07(seed=20260916,corrupt@2818).条数等于截断前的完整记录数 — 42 / 42
+  [PASS] round07(seed=20260916,corrupt@2818).恢复内容是基线前缀（逐字节） — 末条 seq=Some(42)
+  [PASS] round07(seed=20260916,corrupt@2818).good_bytes 落在真实记录边界 — 2796 / 2796
+  [PASS] round07(seed=20260916,corrupt@2818).丢弃字节数 = 文件长度 - 边界 — 10583 = 13379 - 2796
+  [PASS] round07(seed=20260916,corrupt@2818).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round07(seed=20260916,corrupt@2818).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0x8707348e vs 实算 0xbd026d50
+  [PASS] round07(seed=20260916,corrupt@2818).重新编码长度等于 good_bytes — 2796 / 2796
+  [轮 9/24] round08(seed=20260916,truncate@8636) 文件 8636 B → 恢复 128 条 / 边界 8609 B / 丢弃 27 B / 尾部头不完整：剩余 27 B，少于 32 B
+  [PASS] round08(seed=20260916,truncate@8636).条数等于截断前的完整记录数 — 128 / 128
+  [PASS] round08(seed=20260916,truncate@8636).恢复内容是基线前缀（逐字节） — 末条 seq=Some(128)
+  [PASS] round08(seed=20260916,truncate@8636).good_bytes 落在真实记录边界 — 8609 / 8609
+  [PASS] round08(seed=20260916,truncate@8636).丢弃字节数 = 文件长度 - 边界 — 27 = 8636 - 8609
+  [PASS] round08(seed=20260916,truncate@8636).恢复器报告的文件长度正确 — 8636 / 8636
+  [PASS] round08(seed=20260916,truncate@8636).切在记录内部 → 必须报出缺陷 — 尾部头不完整：剩余 27 B，少于 32 B
+  [PASS] round08(seed=20260916,truncate@8636).重新编码长度等于 good_bytes — 8609 / 8609
+  [轮 10/24] round09(seed=20260916,corrupt@7123) 文件 13379 B → 恢复 106 条 / 边界 7102 B / 丢弃 6277 B / CRC 不匹配: 头内 0xdc1af383 vs 实算 0xa7d3898f
+  [PASS] round09(seed=20260916,corrupt@7123).条数等于截断前的完整记录数 — 106 / 106
+  [PASS] round09(seed=20260916,corrupt@7123).恢复内容是基线前缀（逐字节） — 末条 seq=Some(106)
+  [PASS] round09(seed=20260916,corrupt@7123).good_bytes 落在真实记录边界 — 7102 / 7102
+  [PASS] round09(seed=20260916,corrupt@7123).丢弃字节数 = 文件长度 - 边界 — 6277 = 13379 - 7102
+  [PASS] round09(seed=20260916,corrupt@7123).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round09(seed=20260916,corrupt@7123).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0xdc1af383 vs 实算 0xa7d3898f
+  [PASS] round09(seed=20260916,corrupt@7123).重新编码长度等于 good_bytes — 7102 / 7102
+  [轮 11/24] round10(seed=20260916,truncate@979) 文件 979 B → 恢复 14 条 / 边界 938 B / 丢弃 41 B / 尾部负载不完整：声明 93 B，实际剩余 41 B
+  [PASS] round10(seed=20260916,truncate@979).条数等于截断前的完整记录数 — 14 / 14
+  [PASS] round10(seed=20260916,truncate@979).恢复内容是基线前缀（逐字节） — 末条 seq=Some(14)
+  [PASS] round10(seed=20260916,truncate@979).good_bytes 落在真实记录边界 — 938 / 938
+  [PASS] round10(seed=20260916,truncate@979).丢弃字节数 = 文件长度 - 边界 — 41 = 979 - 938
+  [PASS] round10(seed=20260916,truncate@979).恢复器报告的文件长度正确 — 979 / 979
+  [PASS] round10(seed=20260916,truncate@979).切在记录内部 → 必须报出缺陷 — 尾部负载不完整：声明 93 B，实际剩余 41 B
+  [PASS] round10(seed=20260916,truncate@979).重新编码长度等于 good_bytes — 938 / 938
+  [轮 12/24] round11(seed=20260916,corrupt@1519) 文件 13379 B → 恢复 22 条 / 边界 1507 B / 丢弃 11872 B / CRC 不匹配: 头内 0xde023445 vs 实算 0x105da2c8
+  [PASS] round11(seed=20260916,corrupt@1519).条数等于截断前的完整记录数 — 22 / 22
+  [PASS] round11(seed=20260916,corrupt@1519).恢复内容是基线前缀（逐字节） — 末条 seq=Some(22)
+  [PASS] round11(seed=20260916,corrupt@1519).good_bytes 落在真实记录边界 — 1507 / 1507
+  [PASS] round11(seed=20260916,corrupt@1519).丢弃字节数 = 文件长度 - 边界 — 11872 = 13379 - 1507
+  [PASS] round11(seed=20260916,corrupt@1519).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round11(seed=20260916,corrupt@1519).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0xde023445 vs 实算 0x105da2c8
+  [PASS] round11(seed=20260916,corrupt@1519).重新编码长度等于 good_bytes — 1507 / 1507
+  [轮 13/24] round12(seed=20260916,truncate@2603) 文件 2603 B → 恢复 38 条 / 边界 2558 B / 丢弃 45 B / 尾部负载不完整：声明 49 B，实际剩余 45 B
+  [PASS] round12(seed=20260916,truncate@2603).条数等于截断前的完整记录数 — 38 / 38
+  [PASS] round12(seed=20260916,truncate@2603).恢复内容是基线前缀（逐字节） — 末条 seq=Some(38)
+  [PASS] round12(seed=20260916,truncate@2603).good_bytes 落在真实记录边界 — 2558 / 2558
+  [PASS] round12(seed=20260916,truncate@2603).丢弃字节数 = 文件长度 - 边界 — 45 = 2603 - 2558
+  [PASS] round12(seed=20260916,truncate@2603).恢复器报告的文件长度正确 — 2603 / 2603
+  [PASS] round12(seed=20260916,truncate@2603).切在记录内部 → 必须报出缺陷 — 尾部负载不完整：声明 49 B，实际剩余 45 B
+  [PASS] round12(seed=20260916,truncate@2603).重新编码长度等于 good_bytes — 2558 / 2558
+  [轮 14/24] round13(seed=20260916,corrupt@1610) 文件 13379 B → 恢复 24 条 / 边界 1600 B / 丢弃 11779 B / CRC 不匹配: 头内 0x20f5f8b8 vs 实算 0xcbc32b74
+  [PASS] round13(seed=20260916,corrupt@1610).条数等于截断前的完整记录数 — 24 / 24
+  [PASS] round13(seed=20260916,corrupt@1610).恢复内容是基线前缀（逐字节） — 末条 seq=Some(24)
+  [PASS] round13(seed=20260916,corrupt@1610).good_bytes 落在真实记录边界 — 1600 / 1600
+  [PASS] round13(seed=20260916,corrupt@1610).丢弃字节数 = 文件长度 - 边界 — 11779 = 13379 - 1600
+  [PASS] round13(seed=20260916,corrupt@1610).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round13(seed=20260916,corrupt@1610).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0x20f5f8b8 vs 实算 0xcbc32b74
+  [PASS] round13(seed=20260916,corrupt@1610).重新编码长度等于 good_bytes — 1600 / 1600
+  [轮 15/24] round14(seed=20260916,truncate@2161) 文件 2161 B → 恢复 32 条 / 边界 2146 B / 丢弃 15 B / 尾部头不完整：剩余 15 B，少于 32 B
+  [PASS] round14(seed=20260916,truncate@2161).条数等于截断前的完整记录数 — 32 / 32
+  [PASS] round14(seed=20260916,truncate@2161).恢复内容是基线前缀（逐字节） — 末条 seq=Some(32)
+  [PASS] round14(seed=20260916,truncate@2161).good_bytes 落在真实记录边界 — 2146 / 2146
+  [PASS] round14(seed=20260916,truncate@2161).丢弃字节数 = 文件长度 - 边界 — 15 = 2161 - 2146
+  [PASS] round14(seed=20260916,truncate@2161).恢复器报告的文件长度正确 — 2161 / 2161
+  [PASS] round14(seed=20260916,truncate@2161).切在记录内部 → 必须报出缺陷 — 尾部头不完整：剩余 15 B，少于 32 B
+  [PASS] round14(seed=20260916,truncate@2161).重新编码长度等于 good_bytes — 2146 / 2146
+  [轮 16/24] round15(seed=20260916,corrupt@2537) 文件 13379 B → 恢复 37 条 / 边界 2516 B / 丢弃 10863 B / CRC 不匹配: 头内 0x16f06f79 vs 实算 0x0e4a5937
+  [PASS] round15(seed=20260916,corrupt@2537).条数等于截断前的完整记录数 — 37 / 37
+  [PASS] round15(seed=20260916,corrupt@2537).恢复内容是基线前缀（逐字节） — 末条 seq=Some(37)
+  [PASS] round15(seed=20260916,corrupt@2537).good_bytes 落在真实记录边界 — 2516 / 2516
+  [PASS] round15(seed=20260916,corrupt@2537).丢弃字节数 = 文件长度 - 边界 — 10863 = 13379 - 2516
+  [PASS] round15(seed=20260916,corrupt@2537).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round15(seed=20260916,corrupt@2537).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0x16f06f79 vs 实算 0x0e4a5937
+  [PASS] round15(seed=20260916,corrupt@2537).重新编码长度等于 good_bytes — 2516 / 2516
+  [轮 17/24] round16(seed=20260916,truncate@9687) 文件 9687 B → 恢复 144 条 / 边界 9660 B / 丢弃 27 B / 尾部头不完整：剩余 27 B，少于 32 B
+  [PASS] round16(seed=20260916,truncate@9687).条数等于截断前的完整记录数 — 144 / 144
+  [PASS] round16(seed=20260916,truncate@9687).恢复内容是基线前缀（逐字节） — 末条 seq=Some(144)
+  [PASS] round16(seed=20260916,truncate@9687).good_bytes 落在真实记录边界 — 9660 / 9660
+  [PASS] round16(seed=20260916,truncate@9687).丢弃字节数 = 文件长度 - 边界 — 27 = 9687 - 9660
+  [PASS] round16(seed=20260916,truncate@9687).恢复器报告的文件长度正确 — 9687 / 9687
+  [PASS] round16(seed=20260916,truncate@9687).切在记录内部 → 必须报出缺陷 — 尾部头不完整：剩余 27 B，少于 32 B
+  [PASS] round16(seed=20260916,truncate@9687).重新编码长度等于 good_bytes — 9660 / 9660
+  [轮 18/24] round17(seed=20260916,corrupt@4773) 文件 13379 B → 恢复 71 条 / 边界 4744 B / 丢弃 8635 B / CRC 不匹配: 头内 0x9c14764d vs 实算 0x9c14894d
+  [PASS] round17(seed=20260916,corrupt@4773).条数等于截断前的完整记录数 — 71 / 71
+  [PASS] round17(seed=20260916,corrupt@4773).恢复内容是基线前缀（逐字节） — 末条 seq=Some(71)
+  [PASS] round17(seed=20260916,corrupt@4773).good_bytes 落在真实记录边界 — 4744 / 4744
+  [PASS] round17(seed=20260916,corrupt@4773).丢弃字节数 = 文件长度 - 边界 — 8635 = 13379 - 4744
+  [PASS] round17(seed=20260916,corrupt@4773).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round17(seed=20260916,corrupt@4773).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0x9c14764d vs 实算 0x9c14894d
+  [PASS] round17(seed=20260916,corrupt@4773).重新编码长度等于 good_bytes — 4744 / 4744
+  [轮 19/24] round18(seed=20260916,truncate@8275) 文件 8275 B → 恢复 123 条 / 边界 8234 B / 丢弃 41 B / 尾部负载不完整：声明 61 B，实际剩余 41 B
+  [PASS] round18(seed=20260916,truncate@8275).条数等于截断前的完整记录数 — 123 / 123
+  [PASS] round18(seed=20260916,truncate@8275).恢复内容是基线前缀（逐字节） — 末条 seq=Some(123)
+  [PASS] round18(seed=20260916,truncate@8275).good_bytes 落在真实记录边界 — 8234 / 8234
+  [PASS] round18(seed=20260916,truncate@8275).丢弃字节数 = 文件长度 - 边界 — 41 = 8275 - 8234
+  [PASS] round18(seed=20260916,truncate@8275).恢复器报告的文件长度正确 — 8275 / 8275
+  [PASS] round18(seed=20260916,truncate@8275).切在记录内部 → 必须报出缺陷 — 尾部负载不完整：声明 61 B，实际剩余 41 B
+  [PASS] round18(seed=20260916,truncate@8275).重新编码长度等于 good_bytes — 8234 / 8234
+  [轮 20/24] round19(seed=20260916,corrupt@5426) 文件 13379 B → 恢复 81 条 / 边界 5421 B / 丢弃 7958 B / 长度字段损坏: 65365
+  [PASS] round19(seed=20260916,corrupt@5426).条数等于截断前的完整记录数 — 81 / 81
+  [PASS] round19(seed=20260916,corrupt@5426).恢复内容是基线前缀（逐字节） — 末条 seq=Some(81)
+  [PASS] round19(seed=20260916,corrupt@5426).good_bytes 落在真实记录边界 — 5421 / 5421
+  [PASS] round19(seed=20260916,corrupt@5426).丢弃字节数 = 文件长度 - 边界 — 7958 = 13379 - 5421
+  [PASS] round19(seed=20260916,corrupt@5426).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round19(seed=20260916,corrupt@5426).切在记录内部 → 必须报出缺陷 — 长度字段损坏: 65365
+  [PASS] round19(seed=20260916,corrupt@5426).重新编码长度等于 good_bytes — 5421 / 5421
+  [轮 21/24] round20(seed=20260916,truncate@3565) 文件 3565 B → 恢复 53 条 / 边界 3551 B / 丢弃 14 B / 尾部头不完整：剩余 14 B，少于 32 B
+  [PASS] round20(seed=20260916,truncate@3565).条数等于截断前的完整记录数 — 53 / 53
+  [PASS] round20(seed=20260916,truncate@3565).恢复内容是基线前缀（逐字节） — 末条 seq=Some(53)
+  [PASS] round20(seed=20260916,truncate@3565).good_bytes 落在真实记录边界 — 3551 / 3551
+  [PASS] round20(seed=20260916,truncate@3565).丢弃字节数 = 文件长度 - 边界 — 14 = 3565 - 3551
+  [PASS] round20(seed=20260916,truncate@3565).恢复器报告的文件长度正确 — 3565 / 3565
+  [PASS] round20(seed=20260916,truncate@3565).切在记录内部 → 必须报出缺陷 — 尾部头不完整：剩余 14 B，少于 32 B
+  [PASS] round20(seed=20260916,truncate@3565).重新编码长度等于 good_bytes — 3551 / 3551
+  [轮 22/24] round21(seed=20260916,corrupt@7011) 文件 13379 B → 恢复 104 条 / 边界 6974 B / 丢弃 6405 B / CRC 不匹配: 头内 0x57d31297 vs 实算 0xe7db02f6
+  [PASS] round21(seed=20260916,corrupt@7011).条数等于截断前的完整记录数 — 104 / 104
+  [PASS] round21(seed=20260916,corrupt@7011).恢复内容是基线前缀（逐字节） — 末条 seq=Some(104)
+  [PASS] round21(seed=20260916,corrupt@7011).good_bytes 落在真实记录边界 — 6974 / 6974
+  [PASS] round21(seed=20260916,corrupt@7011).丢弃字节数 = 文件长度 - 边界 — 6405 = 13379 - 6974
+  [PASS] round21(seed=20260916,corrupt@7011).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round21(seed=20260916,corrupt@7011).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0x57d31297 vs 实算 0xe7db02f6
+  [PASS] round21(seed=20260916,corrupt@7011).重新编码长度等于 good_bytes — 6974 / 6974
+  [轮 23/24] round22(seed=20260916,truncate@736) 文件 736 B → 恢复 11 条 / 边界 701 B / 丢弃 35 B / 尾部负载不完整：声明 72 B，实际剩余 35 B
+  [PASS] round22(seed=20260916,truncate@736).条数等于截断前的完整记录数 — 11 / 11
+  [PASS] round22(seed=20260916,truncate@736).恢复内容是基线前缀（逐字节） — 末条 seq=Some(11)
+  [PASS] round22(seed=20260916,truncate@736).good_bytes 落在真实记录边界 — 701 / 701
+  [PASS] round22(seed=20260916,truncate@736).丢弃字节数 = 文件长度 - 边界 — 35 = 736 - 701
+  [PASS] round22(seed=20260916,truncate@736).恢复器报告的文件长度正确 — 736 / 736
+  [PASS] round22(seed=20260916,truncate@736).切在记录内部 → 必须报出缺陷 — 尾部负载不完整：声明 72 B，实际剩余 35 B
+  [PASS] round22(seed=20260916,truncate@736).重新编码长度等于 good_bytes — 701 / 701
+  [轮 24/24] round23(seed=20260916,corrupt@7582) 文件 13379 B → 恢复 112 条 / 边界 7495 B / 丢弃 5884 B / CRC 不匹配: 头内 0x75f5908e vs 实算 0xcb6da463
+  [PASS] round23(seed=20260916,corrupt@7582).条数等于截断前的完整记录数 — 112 / 112
+  [PASS] round23(seed=20260916,corrupt@7582).恢复内容是基线前缀（逐字节） — 末条 seq=Some(112)
+  [PASS] round23(seed=20260916,corrupt@7582).good_bytes 落在真实记录边界 — 7495 / 7495
+  [PASS] round23(seed=20260916,corrupt@7582).丢弃字节数 = 文件长度 - 边界 — 5884 = 13379 - 7495
+  [PASS] round23(seed=20260916,corrupt@7582).恢复器报告的文件长度正确 — 13379 / 13379
+  [PASS] round23(seed=20260916,corrupt@7582).切在记录内部 → 必须报出缺陷 — CRC 不匹配: 头内 0x75f5908e vs 实算 0xcb6da463
+  [PASS] round23(seed=20260916,corrupt@7582).重新编码长度等于 good_bytes — 7495 / 7495
+  [----] 轮次分布 — 截断 12 轮 / 损坏 12 轮，种子均为 20260916
+
+== 逐用例汇总 ==
+  [PASS] build.isolated-outputs             14/14 断言通过
+  [PASS] build.decoy-isolation              6/6 断言通过
+  [PASS] build.concurrent-paths             6/6 断言通过
+  [PASS] build.source-fidelity              3/3 断言通过
+  [PASS] build.output-lock                  3/3 断言通过
+  [PASS] wal.encoding                       6/6 断言通过
+  [PASS] wal.normal-close                   6/6 断言通过
+  [PASS] wal.tail-truncated                 12/12 断言通过
+  [PASS] wal.tail-corrupted                 7/7 断言通过
+  [PASS] wal.synthetic-rewrite-boundary     3/3 断言通过
+  [PASS] conflict.external-change           8/8 断言通过
+  [PASS] conflict.no-external-change        4/4 断言通过
+  [PASS] conflict.unchanged                 2/2 断言通过
+  [PASS] conflict.removed                   3/3 断言通过
+  [PASS] truncate.random-rounds             169/169 断言通过
+
+本轮总结论: PASS（用例 15 个独立判定）
+
+== 两轮一致性 ==
+  [PASS] 第 1 轮与第 2 轮逐用例汇总完全一致

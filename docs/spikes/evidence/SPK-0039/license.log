@@ -1,0 +1,13 @@
+warning[license-not-encountered]: license was not encountered
+   ┌─ deny.toml:27:6
+   │
+27 │     "CC0-1.0",
+   │      ━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ deny.toml:25:6
+   │
+25 │     "Unicode-DFS-2016",
+   │      ━━━━━━━━━━━━━━━━ unmatched license allowance
+
+bans ok, licenses ok, sources ok

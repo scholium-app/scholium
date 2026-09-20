@@ -1,0 +1,23 @@
+[event] 启动完成 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=18 elapsed_ms=354.474
+[typst-editor] Typst · revision 18 · 1 页 · 22 boxes
+[typst-editor-tiles] revision=18 uploaded=70
+[ime] 输入法锚点 [[26.0 143.6] - [27.5 160.2]]
+[event] 焦点 → 7 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[event] 焦点 → 6 | revision 18 | 核心动作 17 | 预编辑事件 0 | IME 提交 0
+[event] core：包裹为 Sqrt | revision 20 | 核心动作 18 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=20 elapsed_ms=20.675
+[typst-editor] Typst · revision 20 · 1 页 · 24 boxes
+[typst-editor-tiles] revision=20 uploaded=2
+[event] core：解除结构 | revision 21 | 核心动作 19 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=21 elapsed_ms=19.694
+[typst-editor] Typst · revision 21 · 1 页 · 22 boxes
+[typst-editor-tiles] revision=21 uploaded=2
+[event] core 收到 Typing："Q" | revision 22 | 核心动作 20 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=22 elapsed_ms=12.044
+[typst-editor] Typst · revision 22 · 1 页 · 23 boxes
+[typst-editor-tiles] revision=22 uploaded=2
+[event] core：撤销 ActionId(20)，删除 1 字符 | revision 23 | 核心动作 21 | 预编辑事件 0 | IME 提交 0
+[typst-editor-worker] revision=23 elapsed_ms=9.910
+[typst-editor] Typst · revision 23 · 1 页 · 22 boxes
+[typst-editor-tiles] revision=23 uploaded=2

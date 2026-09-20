@@ -1,0 +1,34 @@
+[
+  {
+    "case": "ime",
+    "result": "Pass"
+  },
+  {
+    "case": "source_dialects",
+    "result": "Pass"
+  },
+  {
+    "case": "accessibility",
+    "result": "Pass"
+  },
+  {
+    "case": "screen_reader",
+    "result": "Pass"
+  },
+  {
+    "case": "unicode_clipboard",
+    "result": "Pass"
+  },
+  {
+    "case": "slot_selection",
+    "result": "Pass"
+  },
+  {
+    "case": "continuous_typing",
+    "result": "Pass"
+  },
+  {
+    "case": "large_source_window",
+    "result": "Pass"
+  }
+]

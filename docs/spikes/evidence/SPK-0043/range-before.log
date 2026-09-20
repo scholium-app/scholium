@@ -1,0 +1,29 @@
+   Compiling scholium-spike-egui v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/native-ui/candidate-egui)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.10s
+     Running unittests src/lib.rs (spikes/native-ui/candidate-egui/target/debug/deps/scholium_spike_egui-0da95f3376abead3)
+
+running 2 tests
+test typst_editor::worker::tests::rejects_non_finite_geometry_after_narrowing ... FAILED
+test typst_editor::worker::tests::rejects_overflowing_or_invalid_text_ranges ... FAILED
+
+failures:
+
+---- typst_editor::worker::tests::rejects_non_finite_geometry_after_narrowing stdout ----
+
+thread 'typst_editor::worker::tests::rejects_non_finite_geometry_after_narrowing' (1439873) panicked at src/typst_editor/worker/tests.rs:34:9:
+accepted x
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- typst_editor::worker::tests::rejects_overflowing_or_invalid_text_ranges stdout ----
+
+thread 'typst_editor::worker::tests::rejects_overflowing_or_invalid_text_ranges' (1439874) panicked at src/typst_editor/worker.rs:234:20:
+attempt to add with overflow
+
+
+failures:
+    typst_editor::worker::tests::rejects_non_finite_geometry_after_narrowing
+    typst_editor::worker::tests::rejects_overflowing_or_invalid_text_ranges
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 49 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--lib`
