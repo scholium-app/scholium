@@ -87,6 +87,10 @@
 
 ## 阶段 1：最小编辑、保存与格式交换闭环
 
+应用壳与工作区按 [P1 排版工作区规划](P1_UI.md)及其评审检查实施；
+默认单一所见即所得编辑面，源码模式约等宽分屏，标准菜单与紧凑工具栏服务科学排版。
+参考图固定交互与空间关系的方向，具体原生控件和尺寸允许迭代，不新增像素一致门槛。
+
 实现 model、document、collab engine adapter、storage WAL 和 app 最小壳。支持段落、heading、粗体/强调、
 行内/独立数学、分数、根式、上下标、定界符；实现 TreeCursor、selection、focus、undo 和 Typst 快速预览。
 
