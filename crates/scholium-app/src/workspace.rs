@@ -38,13 +38,29 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             .max_size(220.0)
             .resizable(true)
             .frame(theme::bar_frame(ui))
-            .show(ui, navigation);
+            .show(ui, |ui| {
+                if state.document.is_some() {
+                    ui.label("未命名 · 内存文档");
+                } else {
+                    navigation(ui);
+                }
+            });
     }
     egui::CentralPanel::default()
         .frame(egui::Frame::new().fill(theme::colors(ui).canvas))
-        .show(ui, |ui| match state.mode {
-            ViewMode::Visual => paper::show(ui, state, "visual-page"),
-            ViewMode::Source => source_workspace(ui, state),
+        .show(ui, |ui| {
+            if state.document.is_some() {
+                if state.mode == ViewMode::Visual {
+                    crate::native_text::show(ui, state);
+                } else {
+                    crate::native_text::source_unavailable(ui, state);
+                }
+                return;
+            }
+            match state.mode {
+                ViewMode::Visual => paper::show(ui, state, "visual-page"),
+                ViewMode::Source => source_workspace(ui, state),
+            }
         });
 }
 

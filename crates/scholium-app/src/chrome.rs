@@ -67,7 +67,14 @@ fn menus(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         ] {
             ui.menu_button(name, |ui| {
                 for entry in entries {
-                    commands::unavailable(ui, entry);
+                    if *entry == "新建    Ctrl+N" {
+                        if ui.button(*entry).clicked() {
+                            commands::dispatch(state, ViewCommand::NewDocument);
+                            ui.close();
+                        }
+                    } else {
+                        commands::unavailable(ui, entry);
+                    }
                 }
             });
         }
@@ -167,7 +174,14 @@ fn toolbar(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 
 fn tabs(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     ui.horizontal_centered(|ui| {
-        ui.label(RichText::new(sample::TITLE).color(theme::colors(ui).text));
+        ui.label(
+            RichText::new(if state.document.is_some() {
+                "未命名 · 未保存"
+            } else {
+                sample::TITLE
+            })
+            .color(theme::colors(ui).text),
+        );
         ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
             for (label, mode, command) in [
                 ("源码", ViewMode::Source, ViewCommand::Source),
@@ -190,12 +204,20 @@ fn context(ui: &mut egui::Ui, state: &WorkspaceState) {
         };
         ui.label(RichText::new(mode).color(theme::colors(ui).accent));
         ui.separator();
-        ui.weak("文档  ›  谱与振动");
+        ui.weak(if state.document.is_some() {
+            "文档  ›  未命名"
+        } else {
+            "文档  ›  谱与振动"
+        });
         ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
             ui.label(
-                RichText::new("只读示例 · 界面预览")
-                    .small()
-                    .color(theme::colors(ui).muted),
+                RichText::new(if state.document.is_some() {
+                    "基础接入 · 仅内存"
+                } else {
+                    "只读示例 · 界面预览"
+                })
+                .small()
+                .color(theme::colors(ui).muted),
             );
         });
     });
@@ -207,12 +229,22 @@ fn status(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             commands::dispatch(state, ViewCommand::Diagnostics);
         }
         ui.separator();
-        ui.label(RichText::new("原生文档 · 示例").small());
+        ui.label(
+            RichText::new(if state.document.is_some() {
+                "原生文档 · 未保存"
+            } else {
+                "原生文档 · 示例"
+            })
+            .small(),
+        );
         if ui.available_width() > 600.0 {
             ui.label(
-                RichText::new("排版未接入 · revision —")
-                    .small()
-                    .color(theme::colors(ui).muted),
+                RichText::new(state.document.as_ref().map_or_else(
+                    || "排版未接入 · revision —".into(),
+                    |s| format!("正文 r{} · 排版未接入", s.revision.0),
+                ))
+                .small()
+                .color(theme::colors(ui).muted),
             );
         }
         ui.with_layout(Layout::right_to_left(Align::Center), |ui| {

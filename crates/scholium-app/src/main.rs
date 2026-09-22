@@ -2,8 +2,10 @@
 
 mod chrome;
 mod commands;
+mod native_text;
 mod paper;
 mod sample;
+mod session;
 mod state;
 mod theme;
 mod workspace;
@@ -14,6 +16,7 @@ use state::WorkspaceState;
 #[derive(Default)]
 struct ScholiumApp {
     state: WorkspaceState,
+    session: session::SessionBridge,
 }
 
 impl eframe::App for ScholiumApp {
@@ -21,6 +24,7 @@ impl eframe::App for ScholiumApp {
         commands::shortcuts(ui.ctx(), &mut self.state);
         chrome::show(ui, &mut self.state);
         workspace::show(ui, &mut self.state);
+        self.session.update(ui.ctx(), &mut self.state);
     }
 }
 

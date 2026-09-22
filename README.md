@@ -8,7 +8,7 @@
 ## 状态
 
 阶段判定以 [阶段出口报告](docs/spikes/SPK-0012-exit-criteria.md) 为准。
-根 workspace 提供独立的 egui 应用壳，当前仅用于界面预览，未接入文档编辑、保存或排版后端。
+根 workspace 提供独立的 egui 应用壳，启动显示界面示例；文件菜单“新建”可进入基础内存文本编辑，尚无保存或排版后端。
 废弃实现已经删除，旧实验结果仍可在归档文档和 Git 历史中查阅。
 
 新方案聚焦 Liii STEM 式结构编辑体验、LaTeX/Typst 源码模式、双后端预览、非线性历史、
@@ -51,6 +51,14 @@ RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps
 python3 scripts/check-rust-size.py
 cargo deny check licenses bans sources
 ```
+
+## 基础接入（开发中）
+
+文件菜单“新建”或 Ctrl+N 创建内存文档，支持中英文段落输入与选区编辑。
+所有已接受修改经过本地会话校验，并记录请求和正文 revision。
+**保存、撤销、恢复、数学结构、源码转换和排版尚未接入；关闭程序会丢失内存内容。**
+再次新建或关闭窗口会要求确认丢弃。源码视图不把示例当作当前文档的输出。
+详见 [ADR 0024](docs/adr/ADR-0024-local-paragraph-integration.md)。
 
 ## 设计目标
 

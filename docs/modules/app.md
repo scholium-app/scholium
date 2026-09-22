@@ -139,3 +139,8 @@ RequestSourceDialectSwitch 展示待冲刷成员、超时隔离和草稿处置�
 选区替换是单个核心动作，退格/撤销/解除结构后修复光标，拖选按实际 press origin 锚定。
 Math 角色以独立只读语义投影暴露，TextRun 保持可编辑文本位置；禁用状态与屏幕阅读器验收仍有缺口。
 完整共同验收尚未通过，未接入的团队、预览定位和文件恢复不得用独立模型测试替代。
+
+## 基础段落接入边界
+
+SessionBridge 持有本地会话；新建、关闭确认和段落写入通过该入口。TextEdit 只是基础文本输入，不是 Typst 所见即所得。
+详见 [ADR 0024](../adr/ADR-0024-local-paragraph-integration.md)。

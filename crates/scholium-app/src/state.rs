@@ -21,9 +21,15 @@ impl Dialect {
     }
 }
 
-/// View preferences only. No document buffers, revision counters or saved-state simulation.
+/// View preferences, owned session projection and outgoing request; never authoritative content.
 #[derive(Debug)]
 pub(crate) struct WorkspaceState {
+    pub(crate) document: Option<scholium_model::DocumentSnapshot>,
+    pub(crate) pending_edit: Option<scholium_model::ReplaceParagraph>,
+    pub(crate) new_requested: bool,
+    pub(crate) edit_error: Option<String>,
+    pub(crate) rejected_draft: Option<String>,
+    pub(crate) composition: Option<String>,
     pub(crate) mode: ViewMode,
     pub(crate) dialect: Dialect,
     pub(crate) navigation: bool,
@@ -39,6 +45,12 @@ pub(crate) struct WorkspaceState {
 impl Default for WorkspaceState {
     fn default() -> Self {
         Self {
+            document: None,
+            pending_edit: None,
+            new_requested: false,
+            edit_error: None,
+            rejected_draft: None,
+            composition: None,
             mode: ViewMode::Visual,
             dialect: Dialect::Latex,
             navigation: false,

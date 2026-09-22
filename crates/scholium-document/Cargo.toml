@@ -1,15 +1,13 @@
 [package]
-name = "scholium-app"
+name = "scholium-document"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 rust-version.workspace = true
-publish = false
 
 [dependencies]
-eframe.workspace = true
 scholium-model = { path = "../scholium-model", version = "0.1.0" }
-scholium-document = { path = "../scholium-document", version = "0.1.0" }
+thiserror = "=2.0.20"
 
 [lints]
 workspace = true

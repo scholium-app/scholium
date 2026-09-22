@@ -60,3 +60,5 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 | HTML/DOCX/EPUB 转换后端 | 6 | 阶段 6 | 缺文件 |
 
 阶段 0 各项验证完成后，对应 ADR 必须在同一提交建立并回链报告；验证失败时 ADR 记录失败数据与替换路径。
+
+[ADR 0024](ADR-0024-local-paragraph-integration.md)：基础本地段落与 UI 接入边界，不替代 shared SDG/存储/parser 门禁。
