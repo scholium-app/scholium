@@ -1,11 +1,21 @@
 [workspace]
 resolver = "2"
-members = []
+members = ["crates/scholium-app"]
 
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
+rust-version = "1.96"
+
+[workspace.dependencies]
+eframe = { version = "=0.36.2", default-features = false, features = ["accesskit", "default_fonts", "glow", "wayland", "x11"] }
+
+[profile.dev]
+debug = 0
+
+[profile.test]
+debug = 0
 
 [workspace.lints.clippy]
 too_many_lines = "warn"

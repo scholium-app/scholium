@@ -236,6 +236,7 @@ missing_docs = "warn"
 ```
 
 `rustfmt.toml`、`deny.toml`、`rust-toolchain.toml`（固定 MSRV）和 600 行文件规模脚本随首个 crate 一并提交；
-当前 workspace 还没有成员，CI 平台与这些配置文件的位置在阶段 0 建立最小核心时确定并更新本节。
+workspace 配置位于仓库根；CI 使用 `.github/workflows/rust.yml`，文件规模检查为 `scripts/check-rust-size.py`。
+独立 spike 的检查仍按各自 workspace 执行，不纳入根应用壳的检查结果。
 
 有了这些门禁，评审时就能只谈设计和正确性，不用再纠缠风格。

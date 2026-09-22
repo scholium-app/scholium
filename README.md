@@ -7,8 +7,8 @@
 
 ## 状态
 
-项目已完成重新立项，当前处于阶段 0 技术验证：设计文档与独立 spike 已落库，正式 workspace 仍为空。
-验证进度、已知缺口和复现命令见 [阶段 0 报告](docs/spikes/README.md)；尚未满足全部阶段出口条件。
+阶段判定以 [阶段出口报告](docs/spikes/SPK-0012-exit-criteria.md) 为准。
+根 workspace 提供独立的 egui 应用壳，当前仅用于界面预览，未接入文档编辑、保存或排版后端。
 废弃实现已经删除，旧实验结果仍可在归档文档和 Git 历史中查阅。
 
 新方案聚焦 Liii STEM 式结构编辑体验、LaTeX/Typst 源码模式、双后端预览、非线性历史、
@@ -19,6 +19,38 @@ local-first 多人协作和可解释格式转换。从 [设计文档索引](docs
 应用 UI、核心与服务端优先 Rust，必要时混用 C/C++/Zig；构建以 Cargo 为主，原生依赖可使用 CMake 等工具。
 UI 验证顺序为 **Iced → GPUI → C++ EUI-NEO → Slint 或 egui**，已选定 egui / eframe 0.36.2（[ADR 0006](docs/adr/ADR-0006-native-ui-framework.md)）；不采用 npm/JavaScript/WebView 编辑器。
 具体验收与 FFI 边界见 [原生 UI 验证计划](docs/plan/NATIVE_UI_VALIDATION.md)。
+
+## 运行基础 UI
+
+```bash
+cargo run -p scholium-app
+```
+
+使用 Rust 1.96.0 和 egui / eframe 0.36.2；Linux 需要可用的 X11 或 Wayland 会话与 OpenGL/EGL 驱动。
+中文字体随应用嵌入，无需额外安装。字体来源与许可见 [字体说明](crates/scholium-app/assets/fonts/README.md)。
+
+- 默认是单一页面的所见即所得布局；`Ctrl+1` / `Ctrl+2` 切换页面和源码工作区。
+- 源码模式默认等宽分屏；拖动分隔条调整，双击恢复等宽；分隔条获得焦点后支持左右方向键和 Home。
+- `Ctrl+B` / `Ctrl+J` 开关文件导航与诊断，二者默认收起。
+- 底部按钮调整页面缩放；`Ctrl+0` 恢复 100%，`Ctrl++` / `Ctrl+-` 放大和缩小。
+- 窄窗口自动收起导航并提供源码 / 页面单窗格切换，保留可读字号。
+- 正文和两种方言源码是只读布局示例。文件、格式和草稿写操作禁用，不产生项目文件或运行编译器。
+
+主题颜色集中在 `crates/scholium-app/src/theme.rs` 的 `Palette`，正文、源码和 egui 控件共享语义颜色。
+目前只提供默认深色主题；主题选择器、主题文件及偏好持久化留待后续接入。
+
+基础 UI 的检查范围和原生窗口截图见 [应用壳验收记录](docs/log/ui-shell-review.md)。
+
+基础检查：
+
+```bash
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets -- -D warnings
+cargo test --workspace
+RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps
+python3 scripts/check-rust-size.py
+cargo deny check licenses bans sources
+```
 
 ## 设计目标
 
