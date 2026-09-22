@@ -19,10 +19,6 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         .exact_size(32.0)
         .frame(theme::bar_frame(ui))
         .show(ui, |ui| tabs(ui, state));
-    egui::Panel::top("context")
-        .exact_size(theme::ROW_HEIGHT)
-        .frame(theme::bar_frame(ui))
-        .show(ui, |ui| context(ui, state));
     egui::Panel::bottom("status")
         .exact_size(30.0)
         .frame(theme::bar_frame(ui))
@@ -172,15 +168,42 @@ fn toolbar(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     });
 }
 
+// Logical pixels reserved for view controls; long tab titles cannot push them off-screen.
+const VIEW_SWITCH_WIDTH: f32 = 168.0;
+const DOCUMENT_TAB_WIDTH: f32 = 300.0;
+
 fn tabs(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     ui.horizontal_centered(|ui| {
-        ui.label(
-            RichText::new(if state.document.is_some() {
-                "未命名 · 未保存"
-            } else {
-                sample::TITLE
-            })
-            .color(theme::colors(ui).text),
+        let title = if state.document.is_some() {
+            "未命名 · 未保存"
+        } else {
+            sample::TITLE
+        };
+        let tab_area = (ui.available_width() - VIEW_SWITCH_WIDTH).max(0.0);
+        ui.allocate_ui_with_layout(
+            egui::vec2(tab_area, 26.0),
+            Layout::left_to_right(Align::Center),
+            |ui| {
+                let palette = theme::colors(ui);
+                let response = ui
+                    .add_sized(
+                        [tab_area.min(DOCUMENT_TAB_WIDTH), 26.0],
+                        egui::Button::new(RichText::new(title).color(palette.text))
+                            .fill(palette.canvas)
+                            .stroke(egui::Stroke::new(1.0, palette.border))
+                            .corner_radius(egui::CornerRadius::ZERO)
+                            .truncate(),
+                    )
+                    .on_hover_text(title);
+                ui.painter().hline(
+                    response.rect.x_range(),
+                    response.rect.top(),
+                    egui::Stroke::new(2.0, palette.accent),
+                );
+                response.widget_info(|| {
+                    egui::WidgetInfo::selected(egui::WidgetType::SelectableLabel, true, true, title)
+                });
+            },
         );
         ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
             for (label, mode, command) in [
@@ -191,34 +214,6 @@ fn tabs(ui: &mut egui::Ui, state: &mut WorkspaceState) {
                     commands::dispatch(state, command);
                 }
             }
-        });
-    });
-}
-
-fn context(ui: &mut egui::Ui, state: &WorkspaceState) {
-    ui.horizontal_centered(|ui| {
-        let mode = if state.mode == ViewMode::Visual {
-            "文本"
-        } else {
-            "源码"
-        };
-        ui.label(RichText::new(mode).color(theme::colors(ui).accent));
-        ui.separator();
-        ui.weak(if state.document.is_some() {
-            "文档  ›  未命名"
-        } else {
-            "文档  ›  谱与振动"
-        });
-        ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
-            ui.label(
-                RichText::new(if state.document.is_some() {
-                    "基础接入 · 仅内存"
-                } else {
-                    "只读示例 · 界面预览"
-                })
-                .small()
-                .color(theme::colors(ui).muted),
-            );
         });
     });
 }
