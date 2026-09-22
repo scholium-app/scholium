@@ -83,3 +83,8 @@ plan_edit/plan_reconcile 返回实际源码写集；修改原文、宏、模板�
 `selection_edit::deletion/replacement` 返回应用于同一 revision 的原子编辑计划与存活光标；完整覆盖子树可摘除，
 部分结构保留，数学槽位保留可编辑子节点。纯文本复制只连接叶子原文，不表示结构化数学剪贴板。
 验证候选通过同步 batch 应用计划；该接口不替代正式 `DocumentPatch` 的 revision 与 CRDT 协议。
+
+## 基础段落接入边界
+
+LocalSession 是单人内存段落接入；直接 apply 仅限此临时适配器，正式共享树仍须经 collab transaction adapter。
+详见 [ADR 0024](../adr/ADR-0024-local-paragraph-integration.md)。

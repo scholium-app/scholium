@@ -57,3 +57,8 @@ ExportRequest 的领域 DTO；具体字段见 [数据模型](../DATA_MODEL.md)�
 能力报告分别描述保真度、执行途径、编辑性、可移植性及 unresolved 原因。新增写集/schema/引用合约测试。
 
 共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
+
+## 基础段落接入边界
+
+最小实现提供 DocumentId/NodeId/RequestId、Revision、DocumentSnapshot 与 ReplaceParagraph，均无持久化 schema。
+详见 [ADR 0024](../adr/ADR-0024-local-paragraph-integration.md)。

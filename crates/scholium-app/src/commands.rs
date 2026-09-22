@@ -3,6 +3,7 @@ use eframe::egui::{self, Key, KeyboardShortcut, Modifiers};
 
 #[derive(Clone, Copy)]
 pub(crate) enum ViewCommand {
+    NewDocument,
     Visual,
     Source,
     Navigation,
@@ -15,12 +16,21 @@ pub(crate) enum ViewCommand {
 }
 
 pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
+    if state.composition.is_some()
+        && matches!(
+            command,
+            ViewCommand::NewDocument | ViewCommand::Source | ViewCommand::Visual
+        )
+    {
+        return;
+    }
     let zoom = if state.fit_width {
         state.rendered_zoom
     } else {
         state.zoom
     };
     match command {
+        ViewCommand::NewDocument => state.new_requested = true,
         ViewCommand::Visual => state.mode = ViewMode::Visual,
         ViewCommand::Source => state.mode = ViewMode::Source,
         ViewCommand::Navigation => state.navigation = !state.navigation,
@@ -40,6 +50,7 @@ fn set_zoom(state: &mut WorkspaceState, zoom: f32) {
 
 pub(crate) fn shortcuts(ctx: &egui::Context, state: &mut WorkspaceState) {
     let bindings = [
+        (Modifiers::COMMAND, Key::N, ViewCommand::NewDocument),
         (Modifiers::COMMAND, Key::Num1, ViewCommand::Visual),
         (Modifiers::COMMAND, Key::Num2, ViewCommand::Source),
         (Modifiers::COMMAND, Key::B, ViewCommand::Navigation),
@@ -49,6 +60,14 @@ pub(crate) fn shortcuts(ctx: &egui::Context, state: &mut WorkspaceState) {
         (Modifiers::COMMAND, Key::Equals, ViewCommand::ZoomIn),
         (Modifiers::COMMAND, Key::Minus, ViewCommand::ZoomOut),
     ];
+    // Do not expose TextEdit's private snapshot undo as the application's actor undo.
+    if state.document.is_some() {
+        for modifiers in [Modifiers::COMMAND, Modifiers::COMMAND | Modifiers::SHIFT] {
+            for key in [Key::Z, Key::Y] {
+                ctx.input_mut(|i| i.consume_shortcut(&KeyboardShortcut::new(modifiers, key)));
+            }
+        }
+    }
     for (modifiers, key, command) in bindings {
         if ctx.input_mut(|i| i.consume_shortcut(&KeyboardShortcut::new(modifiers, key))) {
             dispatch(state, command);
