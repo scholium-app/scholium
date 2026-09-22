@@ -1,0 +1,13 @@
+[package]
+name = "scholium-app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+eframe.workspace = true
+
+[lints]
+workspace = true
