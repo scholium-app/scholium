@@ -89,3 +89,11 @@ worker 调用，不能在 core 中绕过取消、内存和网络策略。新增�
 当前 mixed-build spike 的 Typst 编译、内省和 PDF/SVG 导出已进入独立沙箱 worker，
 见[报告 0018](../spikes/SPK-0018-typst-worker-isolation.md)与[ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。
 每次新进程不保留增量缓存；临时 JSON 不是正式存储或网络协议。
+
+## 当前实现状态（2026-09-23）
+
+`crates/scholium-typst` 已建立并接入 app：块文档 → 转义后的只读 Typst 生成、单线程常驻
+进程内编译（World 复用保增量缓存）、`typst-render` 栅格化、revision 门控与 250 ms 去抖。
+排版字体为系统 Times New Roman + SimSun/SimHei，内嵌字体仅回退。仅编译本应用自产受信源码；
+不可信内容仍须 ADR 0012 沙箱路径。本页其余章节（CST、reconcile、source map、WASM）仍是
+设计目标，未实现；接入边界详见 [ADR 0027](../adr/ADR-0027-typst-preview-integration.md)。

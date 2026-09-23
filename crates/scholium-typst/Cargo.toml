@@ -1,0 +1,17 @@
+[package]
+name = "scholium-typst"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+rust-version = "1.96"
+
+[dependencies]
+scholium-model = { path = "../scholium-model", version = "0.1.0" }
+# 与 spikes/typst-mapping 实测锁定的同一版本组；升级须重跑映射与延迟基准。
+typst = "=0.15.1"
+typst-kit = { version = "=0.15.1", features = ["embedded-fonts", "scan-fonts"] }
+typst-layout = "=0.15.1"
+typst-render = "=0.15.1"
+
+[lints]
+workspace = true

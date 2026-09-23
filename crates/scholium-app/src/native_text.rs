@@ -249,15 +249,3 @@ fn focus_block(ui: &egui::Ui, node: NodeId, caret: usize) {
         )));
     editor.store(ui.ctx(), id);
 }
-
-pub(crate) fn source_unavailable(ui: &mut egui::Ui, state: &WorkspaceState) {
-    ui.add_space(theme::GUTTER);
-    ui.heading("源码与排版尚未接入");
-    ui.label("当前是原生内存文档，不显示静态示例源码或过期排版来代替当前内容。");
-    if let Some(snapshot) = &state.document {
-        ui.weak(format!(
-            "当前正文 revision {}；请切回所见即所得继续编辑。",
-            snapshot.revision.0
-        ));
-    }
-}
