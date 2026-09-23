@@ -182,9 +182,12 @@ pub fn generate_typst(snapshot: &DocumentSnapshot) -> String {
                 // Math source is already Typst math syntax; wrapping `$…$`
                 // switches the generated document into math mode.
                 Inline::Math(source) => {
-                    out.push('$');
-                    out.push_str(source);
-                    out.push('$');
+                    // 刚插入尚未输入的空公式不产出定界符，避免 Typst 空公式错误。
+                    if !source.trim().is_empty() {
+                        out.push('$');
+                        out.push_str(source);
+                        out.push('$');
+                    }
                 }
             }
         }

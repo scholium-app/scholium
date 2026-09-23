@@ -135,6 +135,7 @@ impl SessionBridge {
         state.focus_block = None;
         state.focus_after_split = None;
         state.focus_after_merge = None;
+        state.focus_after_replace = None;
         state.preview.reset();
         state.mode = crate::state::ViewMode::Visual;
         self.session = Some(session);

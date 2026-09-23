@@ -147,8 +147,20 @@ fn toolbar(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             paragraph_style(ui, state);
             preview_button(ui, RichText::new("B").strong(), "粗体");
             preview_button(ui, RichText::new("I").italics(), "强调");
-            preview_button(ui, "$", "行内公式 $…$");
-            preview_button(ui, "$$", "独立公式 $$…$$");
+            // 公式入口对聚焦块可用：插入成对定界符并把光标放进公式里。
+            let live = state.document.is_some() && state.focus_block.is_some();
+            for (label, fragment, shift, tip) in [
+                ("$", "$$", 1, "行内公式 $…$"),
+                ("$$", "$  $", 2, "独立公式（块级）"),
+            ] {
+                if !live {
+                    preview_button(ui, label, tip);
+                    continue;
+                }
+                if ui.button(label).on_hover_text(tip).clicked() {
+                    crate::native_text::insert_markup_at_caret(ui.ctx(), state, fragment, shift);
+                }
+            }
         } else {
             egui::ComboBox::from_id_salt("dialect")
                 .selected_text(state.dialect.label())

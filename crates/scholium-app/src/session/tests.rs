@@ -439,3 +439,52 @@ fn inline_math_markup_round_trips_through_the_session() {
         vec![scholium_model::Inline::Text("单 $ 未闭合".into())]
     );
 }
+
+#[test]
+fn toolbar_math_entry_splices_a_pair_at_the_caret() {
+    let ctx = egui::Context::default();
+    theme::install(&ctx);
+    let mut bridge = SessionBridge::default();
+    let mut state = WorkspaceState::default();
+    bridge.start(&mut state);
+    let block = first_block(&state);
+    focus_block(&ctx, block);
+    frame(
+        &ctx,
+        &mut state,
+        &mut bridge,
+        vec![egui::Event::Text("比值 ".into())],
+    );
+    // Caret sits after the typed text; the inline entry splices `$$` with the
+    // caret moved one char in (between the delimiters).
+    crate::native_text::insert_markup_at_caret(&ctx, &mut state, "$$", 1);
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    frame(
+        &ctx,
+        &mut state,
+        &mut bridge,
+        vec![egui::Event::Text("pi/2".into())],
+    );
+    assert_eq!(
+        block_texts(&state),
+        ["比值 $pi/2$"],
+        "typed inside the pair"
+    );
+    let stored = state.document.as_ref().expect("document").blocks[0].clone();
+    assert_eq!(
+        stored.content[1],
+        scholium_model::Inline::Math("pi/2".into())
+    );
+    // The display entry keeps inner spaces so Typst renders a block formula.
+    let snapshot = state.document.clone().expect("document");
+    state.pending_edit = Some(replace(&snapshot, block, "比值 $pi/2$ 与块级"));
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    set_caret(&ctx, block, 12);
+    crate::native_text::insert_markup_at_caret(&ctx, &mut state, "$  $", 2);
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    assert!(
+        block_texts(&state)[0].contains("$  $"),
+        "display entry inserts spaced delimiters"
+    );
+}

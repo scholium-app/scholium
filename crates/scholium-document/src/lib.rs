@@ -222,7 +222,8 @@ fn parse_markup(line: &str) -> Vec<Inline> {
             }
             '$' => {
                 let close = chars[index + 1..].iter().position(|&c| c == '$');
-                if let Some(offset) = close.filter(|&offset| offset > 0) {
+                if let Some(offset) = close {
+                    // 空公式对（刚插入、尚未输入）保持为空 Math 节点。
                     let source: String = chars[index + 1..index + 1 + offset].iter().collect();
                     if !text.is_empty() {
                         content.push(Inline::Text(std::mem::take(&mut text)));
