@@ -1,7 +1,7 @@
 //! Minimal in-memory document projections. Not a persistence or wire schema.
 
 /// Stable random identity of a native document.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct DocumentId(uuid::Uuid);
 
 impl DocumentId {
@@ -12,7 +12,7 @@ impl DocumentId {
 }
 
 /// Stable identity of one block node.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct NodeId(uuid::Uuid);
 
 impl NodeId {
@@ -23,7 +23,7 @@ impl NodeId {
 }
 
 /// Unique identity of one local edit request.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct RequestId(uuid::Uuid);
 
 impl RequestId {
@@ -31,14 +31,24 @@ impl RequestId {
     pub fn fresh() -> Self {
         Self(uuid::Uuid::new_v4())
     }
+
+    /// Stable 16-byte form for persistence.
+    pub fn as_bytes(&self) -> [u8; 16] {
+        *self.0.as_bytes()
+    }
+
+    /// Rebuild from the persistence byte form.
+    pub fn from_bytes(bytes: [u8; 16]) -> Self {
+        Self(uuid::Uuid::from_bytes(bytes))
+    }
 }
 
 /// Session-local revision. It does not identify persisted or compiled content.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
 pub struct Revision(pub u64);
 
 /// Structural kind of one top-level block in the initial block sequence.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum BlockKind {
     /// Plain body paragraph.
     Paragraph,
@@ -60,7 +70,7 @@ impl BlockKind {
 }
 
 /// One inline piece of block content: literal text or an inline formula.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum Inline {
     /// Literal text; escaped on generation and in the editing markup.
     Text(String),
@@ -75,7 +85,7 @@ pub enum Inline {
 }
 
 /// One addressed block in the document sequence.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Block {
     /// Stable node identity, preserved across text edits and kind changes.
     pub node: NodeId,
@@ -134,7 +144,7 @@ pub fn markup(content: &[Inline]) -> String {
 }
 
 /// Immutable-by-convention copy for the UI; changes require an edit request.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct DocumentSnapshot {
     /// Owning document identity.
     pub document: DocumentId,
@@ -145,7 +155,7 @@ pub struct DocumentSnapshot {
 }
 
 /// One revision-bound structural edit targeting a single block.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum BlockEdit {
     /// Replace the whole block text; `\n` inside splits it into several blocks.
     ReplaceText {
@@ -176,7 +186,7 @@ pub enum BlockEdit {
 }
 
 /// Revision-bound request wrapping one block edit.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct DocumentRequest {
     /// Request identity; successful requests must not be replayed.
     pub request: RequestId,

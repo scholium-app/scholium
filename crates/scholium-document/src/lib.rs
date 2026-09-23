@@ -75,6 +75,22 @@ impl LocalSession {
         &self.actions
     }
 
+    /// 恢复持久化会话：快照为权威，请求日志重建重复检测。
+    /// 动作的 before/after 按接受顺序重建（revision 与动作一一对应递增）。
+    #[must_use]
+    pub fn restore(snapshot: DocumentSnapshot, requests: Vec<RequestId>) -> Self {
+        let actions = requests
+            .into_iter()
+            .enumerate()
+            .map(|(index, request)| Action {
+                request,
+                before: Revision(index as u64),
+                after: Revision(index as u64 + 1),
+            })
+            .collect();
+        Self { snapshot, actions }
+    }
+
     /// Apply a revision-checked local block edit and return whether content changed.
     ///
     /// Line breaks inside replacement text are structural: the target block is

@@ -64,13 +64,30 @@ fn menus(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         ] {
             ui.menu_button(name, |ui| {
                 for entry in entries {
-                    if *entry == "新建    Ctrl+N" {
-                        if ui.button(*entry).clicked() {
-                            commands::dispatch(state, ViewCommand::NewDocument);
-                            ui.close();
+                    match *entry {
+                        "新建    Ctrl+N" => {
+                            if ui.button(*entry).clicked() {
+                                commands::dispatch(state, ViewCommand::NewDocument);
+                                ui.close();
+                            }
                         }
-                    } else {
-                        commands::unavailable(ui, entry);
+                        "保存    Ctrl+S" => {
+                            // 内存文档可保存；示例工作区没有可保存内容。
+                            let enabled = state.document.is_some();
+                            if ui
+                                .add_enabled(enabled, egui::Button::new(*entry))
+                                .on_hover_text(if enabled {
+                                    "保存到本地会话文件（XDG 数据目录）"
+                                } else {
+                                    "示例工作区无可保存内容"
+                                })
+                                .clicked()
+                            {
+                                commands::dispatch(state, ViewCommand::Save);
+                                ui.close();
+                            }
+                        }
+                        _ => commands::unavailable(ui, entry),
                     }
                 }
             });
@@ -361,9 +378,14 @@ fn status(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         );
         ui.label(
             RichText::new(if state.document.is_some() {
-                "原生文档 · 未保存"
+                match state.saved_revision {
+                    Some(saved) if Some(saved) >= state.document.as_ref().map(|s| s.revision.0) => {
+                        format!("原生文档 · 已保存 r{saved}")
+                    }
+                    _ => "原生文档 · 未保存".to_owned(),
+                }
             } else {
-                "示例文档 · 只读"
+                "示例文档 · 只读".to_owned()
             })
             .small(),
         );
