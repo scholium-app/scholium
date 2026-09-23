@@ -1,6 +1,7 @@
 use crate::state::WorkspaceState;
 use eframe::egui;
 use scholium_document::LocalSession;
+use scholium_model::BlockEdit;
 
 /// App-side coordinator: UI projections cannot mutate the session directly.
 #[derive(Debug, Default)]
@@ -16,9 +17,17 @@ impl SessionBridge {
         if let Some(edit) = state.pending_edit.take()
             && let Some(session) = &mut self.session
         {
-            let draft = edit.text.clone();
+            let rejected_draft = match &edit.edit {
+                BlockEdit::ReplaceText { block, text } => Some((*block, text.clone())),
+                // Kind switches have no text draft to keep on rejection.
+                BlockEdit::SetKind { .. } => None,
+            };
             state.edit_error = session.apply(edit).err().map(|e| e.to_string());
-            state.rejected_draft = state.edit_error.as_ref().map(|_| draft);
+            state.rejected_draft = if state.edit_error.is_some() {
+                rejected_draft
+            } else {
+                None
+            };
             state.document = Some(session.snapshot());
         }
         if std::mem::take(&mut state.new_requested) {
@@ -51,6 +60,8 @@ impl SessionBridge {
         state.edit_error = None;
         state.rejected_draft = None;
         state.composition = None;
+        state.focus_block = None;
+        state.focus_after_split = None;
         state.mode = crate::state::ViewMode::Visual;
         self.session = Some(session);
     }

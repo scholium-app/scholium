@@ -5,6 +5,7 @@ use crate::{
     theme,
 };
 use eframe::egui::{self, Align, Layout, RichText};
+use scholium_model::{BlockEdit, BlockKind};
 
 pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     egui::Panel::top("menus")
@@ -143,7 +144,7 @@ fn toolbar(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         }
         ui.separator();
         if state.mode == ViewMode::Visual {
-            paragraph_style(ui);
+            paragraph_style(ui, state);
             preview_button(ui, RichText::new("B").strong(), "粗体");
             preview_button(ui, RichText::new("I").italics(), "强调");
             preview_button(ui, "$", "行内公式 $…$");
@@ -180,14 +181,45 @@ fn toolbar(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     });
 }
 
-// 段落样式是选择器而非动作：下拉形态为标题、引用等条目扩展预留。
-fn paragraph_style(ui: &mut egui::Ui) {
+// 段落样式是选择器而非动作：真实文档作用于聚焦块，示例工作区保持禁用预览。
+fn paragraph_style(ui: &mut egui::Ui, state: &mut WorkspaceState) {
+    let live = state.document.as_ref().and_then(|snapshot| {
+        let block = snapshot
+            .blocks
+            .iter()
+            .find(|block| Some(block.node) == state.focus_block)?;
+        Some((snapshot.clone(), block.kind))
+    });
+    let Some((snapshot, current)) = live else {
+        egui::ComboBox::from_id_salt("paragraph-style")
+            .selected_text("正文")
+            .width(96.0)
+            .show_ui(ui, |ui| {
+                for kind in [
+                    BlockKind::Paragraph,
+                    BlockKind::Heading1,
+                    BlockKind::Heading2,
+                ] {
+                    commands::unavailable(ui, kind.label());
+                }
+            });
+        return;
+    };
+    let block = state.focus_block;
     egui::ComboBox::from_id_salt("paragraph-style")
-        .selected_text("正文")
+        .selected_text(current.label())
         .width(96.0)
         .show_ui(ui, |ui| {
-            for entry in ["正文", "一级标题", "二级标题"] {
-                commands::unavailable(ui, entry);
+            for kind in [
+                BlockKind::Paragraph,
+                BlockKind::Heading1,
+                BlockKind::Heading2,
+            ] {
+                if ui.selectable_label(current == kind, kind.label()).clicked()
+                    && let Some(block) = block
+                {
+                    state.pending_edit = Some(snapshot.request(BlockEdit::SetKind { block, kind }));
+                }
             }
         });
 }
