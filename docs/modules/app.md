@@ -145,5 +145,5 @@ Math 角色以独立只读语义投影暴露，TextRun 保持可编辑文本位�
 
 SessionBridge 持有本地会话；新建、关闭确认和块写入通过该入口。TextEdit 只是基础文本输入，不是 Typst 所见即所得。
 详见 [ADR 0024](../adr/ADR-0024-local-paragraph-integration.md)。
-多块结构（段落与一二级标题、回车分段、跨段光标）扩展了该会话，仍未引入树容器、撤销、保存或解析；
-边界见 [ADR 0026](../adr/ADR-0026-block-document-session.md)。
+多块结构（段落与一二级标题、回车分段、块首退格/块尾 Delete 合并、跨块方向键）扩展了该会话，
+仍未引入树容器、撤销、保存或解析；边界见 [ADR 0026](../adr/ADR-0026-block-document-session.md)。

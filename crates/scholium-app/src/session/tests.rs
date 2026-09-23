@@ -46,6 +46,27 @@ fn focus_block(ctx: &egui::Context, block: scholium_model::NodeId) {
     ctx.memory_mut(|memory| memory.request_focus(egui::Id::new(("native-block", block))));
 }
 
+fn set_caret(ctx: &egui::Context, block: scholium_model::NodeId, caret: usize) {
+    let id = egui::Id::new(("native-block", block));
+    let mut editor = egui::text_edit::TextEditState::load(ctx, id).unwrap_or_default();
+    editor
+        .cursor
+        .set_char_range(Some(egui::text_selection::CCursorRange::one(
+            egui::text::CCursor::new(caret),
+        )));
+    editor.store(ctx, id);
+}
+
+fn key(key: egui::Key) -> egui::Event {
+    egui::Event::Key {
+        key,
+        physical_key: None,
+        pressed: true,
+        repeat: false,
+        modifiers: egui::Modifiers::NONE,
+    }
+}
+
 fn replace(
     snapshot: &scholium_model::DocumentSnapshot,
     block: scholium_model::NodeId,
@@ -165,6 +186,97 @@ fn toolbar_kind_switch_targets_the_focused_block() {
     assert_eq!(document.blocks[0].kind, BlockKind::Heading1);
     assert_eq!(document.revision.0, 1);
     assert_eq!(state.rejected_draft, None);
+}
+
+#[test]
+fn backspace_at_block_start_merges_into_the_previous_block() {
+    let ctx = egui::Context::default();
+    theme::install(&ctx);
+    let mut bridge = SessionBridge::default();
+    let mut state = WorkspaceState::default();
+    bridge.start(&mut state);
+    let head = first_block(&state);
+    focus_block(&ctx, head);
+    frame(
+        &ctx,
+        &mut state,
+        &mut bridge,
+        vec![egui::Event::Text("甲".into()), key(egui::Key::Enter)],
+    );
+    frame(
+        &ctx,
+        &mut state,
+        &mut bridge,
+        vec![egui::Event::Text("乙".into())],
+    );
+    assert_eq!(block_texts(&state), ["甲", "乙"]);
+    let tail = state.document.as_ref().expect("document").blocks[1].node;
+    // Home collapses the caret to the block start, where backspace merges.
+    frame(&ctx, &mut state, &mut bridge, vec![key(egui::Key::Home)]);
+    set_caret(&ctx, tail, 0);
+    frame(
+        &ctx,
+        &mut state,
+        &mut bridge,
+        vec![key(egui::Key::Backspace)],
+    );
+    assert_eq!(block_texts(&state), ["甲乙"]);
+    // The focus move runs at the start of the frame after the merge applied.
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    assert_eq!(state.focus_after_merge, None);
+    assert!(
+        ctx.memory(|memory| memory.has_focus(egui::Id::new(("native-block", head)))),
+        "focus should land on the absorbing block"
+    );
+    let caret = egui::text_edit::TextEditState::load(&ctx, egui::Id::new(("native-block", head)))
+        .and_then(|editor| editor.cursor.char_range())
+        .map(|range| range.primary.index.0);
+    assert_eq!(caret, Some(1), "caret sits at the merge seam");
+}
+
+#[test]
+fn delete_at_block_end_absorbs_the_following_block() {
+    let ctx = egui::Context::default();
+    theme::install(&ctx);
+    let mut bridge = SessionBridge::default();
+    let mut state = WorkspaceState::default();
+    bridge.start(&mut state);
+    let head = first_block(&state);
+    focus_block(&ctx, head);
+    frame(
+        &ctx,
+        &mut state,
+        &mut bridge,
+        vec![egui::Event::Text("甲".into()), key(egui::Key::Enter)],
+    );
+    frame(
+        &ctx,
+        &mut state,
+        &mut bridge,
+        vec![egui::Event::Text("乙".into())],
+    );
+    let tail = state.document.as_ref().expect("document").blocks[1].node;
+    focus_block(&ctx, head);
+    set_caret(&ctx, head, 1);
+    frame(&ctx, &mut state, &mut bridge, vec![key(egui::Key::Delete)]);
+    assert_eq!(block_texts(&state), ["甲乙"]);
+    // The focus move runs at the start of the frame after the merge applied.
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    assert_eq!(state.focus_after_merge, None);
+    assert!(
+        ctx.memory(|memory| memory.has_focus(egui::Id::new(("native-block", head)))),
+        "the target keeps the focus"
+    );
+    // The removed block's editor no longer exists in the document.
+    let nodes: Vec<_> = state
+        .document
+        .as_ref()
+        .expect("document")
+        .blocks
+        .iter()
+        .map(|block| block.node)
+        .collect();
+    assert!(!nodes.contains(&tail));
 }
 
 #[test]

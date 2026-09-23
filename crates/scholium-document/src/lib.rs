@@ -127,6 +127,37 @@ impl LocalSession {
                 });
                 Ok(true)
             }
+            BlockEdit::MergeWithPrevious { block } => {
+                let index = self.block_index(block)?;
+                if index == 0 {
+                    return Err(EditError::WrongTarget);
+                }
+                let merged = self.snapshot.blocks[index - 1].text.len()
+                    + self.snapshot.blocks[index].text.len();
+                if merged > MAX_TEXT_BYTES {
+                    return Err(EditError::Capacity);
+                }
+                self.commit(edit.request, edit.base, |snapshot| {
+                    let removed = snapshot.blocks.remove(index);
+                    snapshot.blocks[index - 1].text.push_str(&removed.text);
+                });
+                Ok(true)
+            }
+            BlockEdit::MergeWithNext { block } => {
+                let index = self.block_index(block)?;
+                let Some(following) = self.snapshot.blocks.get(index + 1) else {
+                    return Err(EditError::WrongTarget);
+                };
+                let merged = self.snapshot.blocks[index].text.len() + following.text.len();
+                if merged > MAX_TEXT_BYTES {
+                    return Err(EditError::Capacity);
+                }
+                self.commit(edit.request, edit.base, |snapshot| {
+                    let removed = snapshot.blocks.remove(index + 1);
+                    snapshot.blocks[index].text.push_str(&removed.text);
+                });
+                Ok(true)
+            }
         }
     }
 

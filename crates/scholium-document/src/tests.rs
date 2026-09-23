@@ -29,6 +29,74 @@ fn newline_replacements_split_into_consecutive_blocks() {
 }
 
 #[test]
+fn merges_keep_the_absorber_identity_kind_and_order() {
+    let mut session = LocalSession::default();
+    let initial = session.snapshot();
+    let first = initial.blocks[0].node;
+    session
+        .apply(replace(&initial, first, "前段\n后段"))
+        .expect("seed two blocks");
+    let split = session.snapshot();
+    let second = split.blocks[1].node;
+    let heading = split.request(BlockEdit::SetKind {
+        block: second,
+        kind: BlockKind::Heading2,
+    });
+    session.apply(heading).expect("type the tail block");
+    // Backspace-at-start: the heading merges into the previous paragraph,
+    // which keeps its own identity and kind.
+    let typed = session.snapshot();
+    let back = typed.request(BlockEdit::MergeWithPrevious { block: second });
+    assert_eq!(session.apply(back), Ok(true));
+    let merged = session.snapshot();
+    assert_eq!(texts(&merged), ["前段后段"]);
+    assert_eq!(merged.blocks[0].node, first);
+    assert_eq!(merged.blocks[0].kind, BlockKind::Paragraph);
+    assert_eq!(merged.revision, Revision(3));
+    assert_eq!(session.actions().len(), 3);
+    // Forward-delete direction: the target is the absorber instead.
+    let again = session.snapshot();
+    session
+        .apply(replace(&again, first, "甲\n乙"))
+        .expect("reseed two blocks");
+    let reseeds = session.snapshot();
+    let (head, tail) = (reseeds.blocks[0].node, reseeds.blocks[1].node);
+    let forward = reseeds.request(BlockEdit::MergeWithNext { block: head });
+    assert_eq!(session.apply(forward), Ok(true));
+    let joined = session.snapshot();
+    assert_eq!(texts(&joined), ["甲乙"]);
+    assert_eq!(joined.blocks[0].node, head);
+    assert_ne!(joined.blocks[0].node, tail);
+}
+
+#[test]
+fn boundary_merges_are_wrong_targets_and_empty_merges_remove_blocks() {
+    let mut session = LocalSession::default();
+    let initial = session.snapshot();
+    let first = initial.blocks[0].node;
+    session
+        .apply(replace(&initial, first, "a\n\nb"))
+        .expect("seed three blocks");
+    let seeded = session.snapshot();
+    let (a, empty, b) = (
+        seeded.blocks[0].node,
+        seeded.blocks[1].node,
+        seeded.blocks[2].node,
+    );
+    let no_previous = seeded.request(BlockEdit::MergeWithPrevious { block: a });
+    assert_eq!(session.apply(no_previous), Err(EditError::WrongTarget));
+    let no_next = seeded.request(BlockEdit::MergeWithNext { block: b });
+    assert_eq!(session.apply(no_next), Err(EditError::WrongTarget));
+    // Merging an empty middle block is a structural change with an action.
+    let drop_empty = seeded.request(BlockEdit::MergeWithPrevious { block: empty });
+    assert_eq!(session.apply(drop_empty), Ok(true));
+    let result = session.snapshot();
+    assert_eq!(texts(&result), ["a", "b"]);
+    assert_eq!(result.revision, Revision(2));
+    assert_eq!(session.actions().len(), 2);
+}
+
+#[test]
 fn kind_changes_keep_identity_text_and_append_actions() {
     let mut session = LocalSession::default();
     let initial = session.snapshot();
