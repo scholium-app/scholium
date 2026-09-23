@@ -488,3 +488,55 @@ fn toolbar_math_entry_splices_a_pair_at_the_caret() {
         "display entry inserts spaced delimiters"
     );
 }
+
+#[test]
+fn save_persists_and_startup_restores_the_session() {
+    // 每个测试独立会话文件，避免污染真实用户数据。
+    let session_file = format!("/tmp/scholium-app-test-{}.redb", std::process::id());
+    let _ = std::fs::remove_file(&session_file);
+
+    let ctx = egui::Context::default();
+    theme::install(&ctx);
+    let mut bridge = SessionBridge::with_store_file(std::path::PathBuf::from(&session_file));
+    let mut state = WorkspaceState::default();
+    // 首帧无保存 → 无恢复。
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    assert!(state.document.is_none(), "empty store restores nothing");
+    // 新建、输入、保存。
+    commands::dispatch(&mut state, commands::ViewCommand::NewDocument);
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    let block = first_block(&state);
+    focus_block(&ctx, block);
+    frame(
+        &ctx,
+        &mut state,
+        &mut bridge,
+        vec![egui::Event::Text("持久化内容 $x/2$".into())],
+    );
+    commands::dispatch(&mut state, commands::ViewCommand::Save);
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    let revision = state.document.as_ref().expect("document").revision.0;
+    assert_eq!(state.saved_revision, Some(revision));
+
+    // 模拟重启：释放文件锁后用全新 bridge/state 从同一文件恢复。
+    drop(bridge);
+    let mut bridge2 = SessionBridge::with_store_file(std::path::PathBuf::from(&session_file));
+    let mut state2 = WorkspaceState::default();
+    frame(&ctx, &mut state2, &mut bridge2, vec![]);
+    assert_eq!(
+        block_texts(&state2),
+        ["持久化内容 $x/2$"],
+        "startup restores the saved session"
+    );
+    assert_eq!(state2.saved_revision, Some(revision));
+    assert_eq!(
+        state2.document.as_ref().expect("document").blocks[0]
+            .content
+            .iter()
+            .filter(|inline| matches!(inline, scholium_model::Inline::Math(_)))
+            .count(),
+        1,
+        "restored content keeps math nodes"
+    );
+    let _ = std::fs::remove_file(&session_file);
+}

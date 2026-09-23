@@ -1,0 +1,115 @@
+use super::*;
+use scholium_model::{Block, BlockKind, DocumentId, Inline, NodeId, RequestId, Revision};
+use std::time::Instant;
+
+fn sample(revision: u64, text: &str) -> DocumentSnapshot {
+    DocumentSnapshot {
+        document: DocumentId::fresh(),
+        revision: Revision(revision),
+        blocks: vec![Block {
+            node: NodeId::fresh(),
+            kind: BlockKind::Paragraph,
+            content: vec![Inline::Text(text.into()), Inline::Math("x/2".into())],
+        }],
+    }
+}
+
+fn temp_path(name: &str) -> std::path::PathBuf {
+    std::env::temp_dir().join(format!(
+        "scholium-storage-{name}-{}-{}}}.redb",
+        std::process::id(),
+        name
+    ))
+}
+
+#[test]
+fn save_load_round_trip_and_reopen_preserve_everything() {
+    let path = temp_path("roundtrip");
+    let _ = std::fs::remove_file(&path);
+    let snapshot = sample(3, "三段内容");
+    let requests: Vec<RequestId> = (0..3).map(|_| RequestId::fresh()).collect();
+    SessionStore::open(&path)
+        .expect("open")
+        .save(&snapshot, &requests)
+        .expect("save");
+    let loaded = SessionStore::open(&path)
+        .expect("reopen")
+        .load()
+        .expect("load")
+        .expect("non-empty");
+    assert_eq!(loaded.snapshot.revision, Revision(3));
+    let to_markups = |blocks: &[Block]| {
+        blocks
+            .iter()
+            .map(|b| (b.kind, b.markup_text()))
+            .collect::<Vec<_>>()
+    };
+    // Block has no PartialEq; compare the derived markup and kinds.
+    assert_eq!(
+        to_markups(&loaded.snapshot.blocks),
+        to_markups(&snapshot.blocks)
+    );
+    assert_eq!(loaded.requests.len(), 3);
+    assert_eq!(loaded.requests, requests);
+    let _ = std::fs::remove_file(&path);
+}
+
+#[test]
+fn resave_shrinks_the_log_and_keeps_latest_snapshot() {
+    let path = temp_path("resave");
+    let _ = std::fs::remove_file(&path);
+    let store = SessionStore::open(&path).expect("open");
+    let first: Vec<RequestId> = (0..5).map(|_| RequestId::fresh()).collect();
+    store.save(&sample(5, "长日志"), &first).expect("save 5");
+    let second: Vec<RequestId> = (0..2).map(|_| RequestId::fresh()).collect();
+    store.save(&sample(2, "短日志"), &second).expect("save 2");
+    let loaded = store.load().expect("load").expect("present");
+    assert_eq!(loaded.requests, second, "stale log entries removed");
+    assert_eq!(loaded.snapshot.revision, Revision(2));
+    let _ = std::fs::remove_file(&path);
+}
+
+#[test]
+fn snapshot_at_reads_history_and_missing_returns_none() {
+    let path = temp_path("history");
+    let _ = std::fs::remove_file(&path);
+    let store = SessionStore::open(&path).expect("open");
+    store
+        .save(&sample(1, "一"), &[RequestId::fresh()])
+        .expect("1");
+    store
+        .save(&sample(2, "二"), &[RequestId::fresh()])
+        .expect("2");
+    let old = store
+        .snapshot_at(Revision(1))
+        .expect("read")
+        .expect("present");
+    assert_eq!(old.revision, Revision(1));
+    assert!(store.snapshot_at(Revision(9)).expect("read").is_none());
+    let _ = std::fs::remove_file(&path);
+}
+
+// ADR 0028 证据项 1/2：10 万动作追加 + 快照读取耗时（宽松上限防抖动，
+// 具体数值记录于 ADR，取本机多次运行的中位）。
+#[test]
+fn bench_append_hundred_thousand_actions_and_read_snapshot() {
+    let path = temp_path("bench");
+    let _ = std::fs::remove_file(&path);
+    let store = SessionStore::open(&path).expect("open");
+    let requests: Vec<RequestId> = (0..100_000).map(|_| RequestId::fresh()).collect();
+    let start = Instant::now();
+    store
+        .save(&sample(100_000, "基准"), &requests)
+        .expect("save");
+    let append_ms = start.elapsed().as_millis();
+    let start = Instant::now();
+    let loaded = store.load().expect("load").expect("present");
+    let read_ms = start.elapsed().as_millis();
+    assert_eq!(loaded.requests.len(), 100_000);
+    assert_eq!(loaded.snapshot.revision, Revision(100_000));
+    // 宽松上限：同数量级即通过；绝对值进 ADR。
+    assert!(append_ms < 60_000, "append took {append_ms}ms");
+    assert!(read_ms < 10_000, "read took {read_ms}ms");
+    println!("redb bench: append 100k = {append_ms}ms, load = {read_ms}ms");
+    let _ = std::fs::remove_file(&path);
+}

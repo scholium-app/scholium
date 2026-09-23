@@ -4,6 +4,7 @@ use eframe::egui::{self, Key, KeyboardShortcut, Modifiers};
 #[derive(Clone, Copy)]
 pub(crate) enum ViewCommand {
     NewDocument,
+    Save,
     Visual,
     Source,
     Navigation,
@@ -19,7 +20,10 @@ pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
     if state.composition.is_some()
         && matches!(
             command,
-            ViewCommand::NewDocument | ViewCommand::Source | ViewCommand::Visual
+            ViewCommand::NewDocument
+                | ViewCommand::Save
+                | ViewCommand::Source
+                | ViewCommand::Visual
         )
     {
         return;
@@ -31,6 +35,7 @@ pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
     };
     match command {
         ViewCommand::NewDocument => state.new_requested = true,
+        ViewCommand::Save => state.save_requested = true,
         ViewCommand::Visual => state.mode = ViewMode::Visual,
         ViewCommand::Source => state.mode = ViewMode::Source,
         ViewCommand::Navigation => state.navigation = !state.navigation,
@@ -51,6 +56,7 @@ fn set_zoom(state: &mut WorkspaceState, zoom: f32) {
 pub(crate) fn shortcuts(ctx: &egui::Context, state: &mut WorkspaceState) {
     let bindings = [
         (Modifiers::COMMAND, Key::N, ViewCommand::NewDocument),
+        (Modifiers::COMMAND, Key::S, ViewCommand::Save),
         (Modifiers::COMMAND, Key::Num1, ViewCommand::Visual),
         (Modifiers::COMMAND, Key::Num2, ViewCommand::Source),
         (Modifiers::COMMAND, Key::B, ViewCommand::Navigation),

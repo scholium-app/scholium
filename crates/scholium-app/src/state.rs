@@ -90,6 +90,9 @@ pub(crate) struct WorkspaceState {
     pub(crate) document: Option<scholium_model::DocumentSnapshot>,
     pub(crate) pending_edit: Option<scholium_model::DocumentRequest>,
     pub(crate) new_requested: bool,
+    pub(crate) save_requested: bool,
+    /// 已落盘的 revision；None 表示从未保存。
+    pub(crate) saved_revision: Option<u64>,
     pub(crate) edit_error: Option<String>,
     /// Draft of the last rejected text edit, shown until the block changes again.
     pub(crate) rejected_draft: Option<(scholium_model::NodeId, String)>,
@@ -124,6 +127,8 @@ impl Default for WorkspaceState {
             document: None,
             pending_edit: None,
             new_requested: false,
+            save_requested: false,
+            saved_revision: None,
             edit_error: None,
             rejected_draft: None,
             composition: None,

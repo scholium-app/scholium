@@ -46,6 +46,14 @@
 - `verify-stage0.sh` 式门禁：redb 依赖许可证、平台构建（Linux 先行）。
 - 失败判据：redb 任一项显著劣于 rusqlite（恢复不完整或 p99 写入 >2×）即重新裁决。
 
+## 进展（2026-09-23，首个实现）
+
+`crates/scholium-storage` 已按拟议 schema 实现并接入 app（Ctrl+S 保存、启动恢复、
+脏状态标题/状态栏）。redb 3.1.3 实测（本机，dev profile，含测试断言）：
+**10 万动作追加 2.6 s、整库读回 246 ms**；未提交事务整体不可见（redb MVCC），
+保存为单事务。修复点：重存低 revision 需以 `head_revision` 元数据指向最新保存，
+不能按最大 key 取快照。rusqlite 对照与 SIGKILL 撕裂注入仍未跑，ADR 维持 Proposed。
+
 ## 后果
 
 建立 `crates/scholium-storage`（首个正式存储）；保存/另存为/强杀恢复随后接入；

@@ -11,6 +11,7 @@ eframe.workspace = true
 scholium-model = { path = "../scholium-model", version = "0.1.0" }
 scholium-document = { path = "../scholium-document", version = "0.1.0" }
 scholium-typst = { path = "../scholium-typst", version = "0.1.0" }
+scholium-storage = { path = "../scholium-storage", version = "0.1.0" }
 
 [lints]
 workspace = true
