@@ -103,7 +103,7 @@ scenario_blocks() {
   sleep 1.5
   type_text "Spectrum and Vibration"
   enter; sleep 0.3
-  type_text "Let the string have length L, tension T and density rho."
+  type_text 'The frequency ratio $alpha/2 + sqrt(T/rho)$ scales the spectrum.'
   enter; sleep 0.3
   type_text "Fixed endpoints give the boundary conditions."
   sleep 0.5
@@ -129,7 +129,7 @@ scenario_source_preview() {
   combo 29 2; sleep 0.6
   press 103           # ↑ 跨块到上一块
   press 108           # ↓ 回尾块
-  type_text " Rayleigh quotient characterizes the modes."
+  type_text ' The growth satisfies $omega_n^2 = (n pi / L)^2 (T/rho)$.'
   sleep 0.4
   combo 29 3
   sleep $(awk "BEGIN{print $COMPILE_WAIT_MS/1000}")

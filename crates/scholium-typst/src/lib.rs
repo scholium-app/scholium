@@ -6,7 +6,7 @@
 use std::sync::{Arc, Mutex, mpsc};
 use std::time::Instant;
 
-use scholium_model::{BlockKind, DocumentSnapshot};
+use scholium_model::{BlockKind, DocumentSnapshot, Inline};
 use typst::syntax::{FileId, RootedPath, Source, VirtualPath, VirtualRoot};
 use typst::text::{Font, FontBook};
 use typst::utils::LazyHash;
@@ -176,7 +176,18 @@ pub fn generate_typst(snapshot: &DocumentSnapshot) -> String {
             BlockKind::Heading2 => out.push_str("== "),
             BlockKind::Paragraph => {}
         }
-        out.push_str(&escape(&block.text));
+        for inline in &block.content {
+            match inline {
+                Inline::Text(text) => out.push_str(&escape(text)),
+                // Math source is already Typst math syntax; wrapping `$…$`
+                // switches the generated document into math mode.
+                Inline::Math(source) => {
+                    out.push('$');
+                    out.push_str(source);
+                    out.push('$');
+                }
+            }
+        }
     }
     out
 }

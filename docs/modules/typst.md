@@ -92,7 +92,7 @@ worker 调用，不能在 core 中绕过取消、内存和网络策略。新增�
 
 ## 当前实现状态（2026-09-23）
 
-`crates/scholium-typst` 已建立并接入 app：块文档 → 转义后的只读 Typst 生成、单线程常驻
+`crates/scholium-typst` 已建立并接入 app：块文档（文本段转义、行内公式段输出数学语法）→ 只读 Typst 生成、单线程常驻
 进程内编译（World 复用保增量缓存）、`typst-render` 栅格化、revision 门控与 250 ms 去抖。
 排版字体为系统 Times New Roman + SimSun/SimHei，内嵌字体仅回退。仅编译本应用自产受信源码；
 不可信内容仍须 ADR 0012 沙箱路径。本页其余章节（CST、reconcile、source map、WASM）仍是

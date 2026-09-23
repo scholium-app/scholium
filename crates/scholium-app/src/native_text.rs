@@ -68,14 +68,14 @@ fn block_editor(
             .map(|(_, draft)| draft.clone())
             .unwrap_or_default()
     } else {
-        block.text.clone()
+        block.markup_text()
     };
     let font = match block.kind {
         BlockKind::Paragraph => FontId::proportional(16.0),
         BlockKind::Heading1 => FontId::proportional(22.0),
         BlockKind::Heading2 => FontId::proportional(18.0),
     };
-    let hint = if index == 0 && snapshot.blocks.len() == 1 && block.text.is_empty() {
+    let hint = if index == 0 && snapshot.blocks.len() == 1 && block.markup_text().is_empty() {
         "在这里输入中英文正文；回车分段…（仅内存保存）"
     } else {
         ""
@@ -104,7 +104,7 @@ fn block_editor(
         return;
     }
     state.composition = None;
-    if response.changed() && text != block.text {
+    if response.changed() && text != block.markup_text() {
         if text.contains('\n') {
             // The session turns line breaks into structural splits; after it
             // applies, the caret belongs at the start of the following block.
@@ -140,7 +140,7 @@ fn boundary_keys(
         return;
     }
     let caret = range.primary.index.0;
-    let char_count = block.text.chars().count();
+    let char_count = block.markup_text().chars().count();
     let at_start = index > 0 && caret == 0;
     let at_end = caret == char_count;
     if at_start
@@ -148,7 +148,11 @@ fn boundary_keys(
         && let Some(previous) = snapshot.blocks.get(index - 1)
     {
         consume_key(ui, Key::Backspace);
-        state.focus_after_merge = Some((block.node, previous.node, previous.text.chars().count()));
+        state.focus_after_merge = Some((
+            block.node,
+            previous.node,
+            previous.markup_text().chars().count(),
+        ));
         state.pending_edit =
             Some(snapshot.request(BlockEdit::MergeWithPrevious { block: block.node }));
         return;
@@ -166,13 +170,13 @@ fn boundary_keys(
         let previous = &snapshot.blocks[index - 1];
         (
             Key::ArrowUp,
-            Some((previous.node, previous.text.chars().count())),
+            Some((previous.node, previous.markup_text().chars().count())),
         )
     } else if at_start && ui.input(|input| input.key_pressed(Key::ArrowLeft)) {
         let previous = &snapshot.blocks[index - 1];
         (
             Key::ArrowLeft,
-            Some((previous.node, previous.text.chars().count())),
+            Some((previous.node, previous.markup_text().chars().count())),
         )
     } else if at_end
         && ui.input(|input| input.key_pressed(Key::ArrowDown))
