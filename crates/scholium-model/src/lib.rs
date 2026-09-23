@@ -59,6 +59,17 @@ impl BlockKind {
     }
 }
 
+/// One inline piece of block content: literal text or an inline formula.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Inline {
+    /// Literal text; escaped on generation and in the editing markup.
+    Text(String),
+    /// Inline formula source in Typst math syntax, without `$` delimiters.
+    /// The minimal integration edits it as source text; structural slots
+    /// (numerator/denominator, scripts) arrive with the spike port.
+    Math(String),
+}
+
 /// One addressed block in the document sequence.
 #[derive(Debug, Clone)]
 pub struct Block {
@@ -66,8 +77,42 @@ pub struct Block {
     pub node: NodeId,
     /// Structural kind of the block.
     pub kind: BlockKind,
-    /// Plain UTF-8 text without line breaks; `\n` in an edit splits the sequence.
-    pub text: String,
+    /// Inline content sequence; Text segments never contain `\n`.
+    pub content: Vec<Inline>,
+}
+
+impl Block {
+    /// Editing markup of the whole block: text `$`/`\` escaped, formulas
+    /// wrapped in `$…$`. This derived view is what the block editor edits.
+    pub fn markup_text(&self) -> String {
+        markup(&self.content)
+    }
+}
+
+/// Render inline content as editing markup (inverse of the session parser).
+pub fn markup(content: &[Inline]) -> String {
+    let mut out = String::new();
+    for inline in content {
+        match inline {
+            Inline::Text(text) => {
+                for ch in text.chars() {
+                    if ch == '$' {
+                        out.push_str("\\$");
+                    } else if ch == '\\' {
+                        out.push_str("\\\\");
+                    } else {
+                        out.push(ch);
+                    }
+                }
+            }
+            Inline::Math(source) => {
+                out.push('$');
+                out.push_str(source);
+                out.push('$');
+            }
+        }
+    }
+    out
 }
 
 /// Immutable-by-convention copy for the UI; changes require an edit request.

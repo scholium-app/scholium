@@ -2,8 +2,8 @@
 //! No shared SDG, actor undo, persistence or compiler is implemented here.
 
 use scholium_model::{
-    Block, BlockEdit, BlockKind, DocumentId, DocumentRequest, DocumentSnapshot, NodeId, RequestId,
-    Revision,
+    Block, BlockEdit, BlockKind, DocumentId, DocumentRequest, DocumentSnapshot, Inline, NodeId,
+    RequestId, Revision,
 };
 
 /// Maximum UTF-8 text bytes accepted per block edit.
@@ -56,7 +56,7 @@ impl Default for LocalSession {
                 blocks: vec![Block {
                     node: NodeId::fresh(),
                     kind: BlockKind::Paragraph,
-                    text: String::new(),
+                    content: Vec::new(),
                 }],
             },
             actions: Vec::new(),
@@ -103,7 +103,7 @@ impl LocalSession {
         match edit.edit {
             BlockEdit::ReplaceText { block, text } => {
                 let index = self.block_index(block)?;
-                if text == self.snapshot.blocks[index].text {
+                if text == self.snapshot.blocks[index].markup_text() {
                     return Ok(false);
                 }
                 let splits = text.matches('\n').count();
@@ -132,14 +132,14 @@ impl LocalSession {
                 if index == 0 {
                     return Err(EditError::WrongTarget);
                 }
-                let merged = self.snapshot.blocks[index - 1].text.len()
-                    + self.snapshot.blocks[index].text.len();
+                let merged = self.snapshot.blocks[index - 1].markup_text().len()
+                    + self.snapshot.blocks[index].markup_text().len();
                 if merged > MAX_TEXT_BYTES {
                     return Err(EditError::Capacity);
                 }
                 self.commit(edit.request, edit.base, |snapshot| {
                     let removed = snapshot.blocks.remove(index);
-                    snapshot.blocks[index - 1].text.push_str(&removed.text);
+                    append_content(&mut snapshot.blocks[index - 1].content, removed.content);
                 });
                 Ok(true)
             }
@@ -148,13 +148,14 @@ impl LocalSession {
                 let Some(following) = self.snapshot.blocks.get(index + 1) else {
                     return Err(EditError::WrongTarget);
                 };
-                let merged = self.snapshot.blocks[index].text.len() + following.text.len();
+                let merged =
+                    self.snapshot.blocks[index].markup_text().len() + following.markup_text().len();
                 if merged > MAX_TEXT_BYTES {
                     return Err(EditError::Capacity);
                 }
                 self.commit(edit.request, edit.base, |snapshot| {
                     let removed = snapshot.blocks.remove(index + 1);
-                    snapshot.blocks[index].text.push_str(&removed.text);
+                    append_content(&mut snapshot.blocks[index].content, removed.content);
                 });
                 Ok(true)
             }
@@ -187,20 +188,73 @@ impl LocalSession {
     }
 }
 
-// `text` holds the whole replacement including its `\n` separators.
+// `text` holds the whole editing markup including its `\n` separators; each
+// line is parsed into inline content, so stored text segments have no breaks.
 fn split_block(snapshot: &mut DocumentSnapshot, index: usize, text: String) {
     let kind = snapshot.blocks[index].kind;
     let mut parts = text.split('\n');
-    snapshot.blocks[index].text = parts.next().unwrap_or_default().to_owned();
+    snapshot.blocks[index].content = parse_markup(parts.next().unwrap_or_default());
     for (insert_at, part) in (index + 1..).zip(parts) {
         snapshot.blocks.insert(
             insert_at,
             Block {
                 node: NodeId::fresh(),
                 kind,
-                text: part.to_owned(),
+                content: parse_markup(part),
             },
         );
+    }
+}
+
+/// Parse editing markup into inline content: `\\$`/`\\\\` are literal text,
+/// `$…$` becomes one Math node with the raw source, an unterminated or empty
+/// `$` stays literal text. This is the inverse of `scholium_model::markup`.
+fn parse_markup(line: &str) -> Vec<Inline> {
+    let chars: Vec<char> = line.chars().collect();
+    let mut content = Vec::new();
+    let mut text = String::new();
+    let mut index = 0;
+    while index < chars.len() {
+        match chars[index] {
+            '\\' if matches!(chars.get(index + 1), Some('$') | Some('\\')) => {
+                text.push(chars[index + 1]);
+                index += 2;
+            }
+            '$' => {
+                let close = chars[index + 1..].iter().position(|&c| c == '$');
+                if let Some(offset) = close.filter(|&offset| offset > 0) {
+                    let source: String = chars[index + 1..index + 1 + offset].iter().collect();
+                    if !text.is_empty() {
+                        content.push(Inline::Text(std::mem::take(&mut text)));
+                    }
+                    content.push(Inline::Math(source));
+                    index += offset + 2;
+                } else {
+                    text.push('$');
+                    index += 1;
+                }
+            }
+            other => {
+                text.push(other);
+                index += 1;
+            }
+        }
+    }
+    if !text.is_empty() {
+        content.push(Inline::Text(text));
+    }
+    content
+}
+
+/// Concatenate content, coalescing adjacent text segments so a merged block
+/// keeps the minimal segment sequence.
+fn append_content(target: &mut Vec<Inline>, added: Vec<Inline>) {
+    for inline in added {
+        if let (Some(Inline::Text(tail)), Inline::Text(head)) = (target.last_mut(), &inline) {
+            tail.push_str(head);
+        } else {
+            target.push(inline);
+        }
     }
 }
 

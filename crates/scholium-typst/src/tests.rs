@@ -1,5 +1,5 @@
 use super::*;
-use scholium_model::{Block, DocumentId, NodeId, Revision};
+use scholium_model::{Block, DocumentId, Inline, NodeId, Revision};
 
 fn snapshot(blocks: &[(BlockKind, &str)]) -> DocumentSnapshot {
     DocumentSnapshot {
@@ -10,7 +10,7 @@ fn snapshot(blocks: &[(BlockKind, &str)]) -> DocumentSnapshot {
             .map(|(kind, text)| Block {
                 node: NodeId::fresh(),
                 kind: *kind,
-                text: (*text).to_owned(),
+                content: vec![Inline::Text((*text).to_owned())],
             })
             .collect(),
     }
@@ -32,6 +32,37 @@ fn generation_maps_kinds_and_escapes_punctuation() {
     );
     assert!(source.contains(r#""Times New Roman", "SimSun""#));
     assert!(source.contains(r#""Times New Roman", "SimHei""#));
+}
+
+#[test]
+fn math_segments_render_as_formulas_not_literal_text() {
+    let snap = DocumentSnapshot {
+        document: DocumentId::fresh(),
+        revision: Revision(1),
+        blocks: vec![Block {
+            node: NodeId::fresh(),
+            kind: scholium_model::BlockKind::Paragraph,
+            content: vec![
+                Inline::Text("频率比 ".into()),
+                Inline::Math("alpha/2 + sqrt(T/rho)".into()),
+                Inline::Text(" 决定模态。".into()),
+            ],
+        }],
+    };
+    let source = generate_typst(&snap);
+    assert!(
+        source.contains("频率比 $alpha/2 + sqrt(T/rho)$ 决定模态。"),
+        "math stays unescaped between $ delimiters: {source}"
+    );
+    let mut compiler = PreviewCompiler::spawn();
+    compiler.submit(1, source);
+    let outcome = wait_for_outcome(&mut compiler, 1);
+    assert!(
+        outcome.error.is_none(),
+        "math must compile: {:?}",
+        outcome.error
+    );
+    assert!(!outcome.pages.is_empty());
 }
 
 #[test]

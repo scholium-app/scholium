@@ -31,14 +31,14 @@ fn first_block(state: &WorkspaceState) -> scholium_model::NodeId {
     state.document.as_ref().expect("document").blocks[0].node
 }
 
-fn block_texts(state: &WorkspaceState) -> Vec<&str> {
+fn block_texts(state: &WorkspaceState) -> Vec<String> {
     state
         .document
         .as_ref()
         .expect("document")
         .blocks
         .iter()
-        .map(|block| block.text.as_str())
+        .map(|block| block.markup_text())
         .collect()
 }
 
@@ -152,7 +152,7 @@ fn enter_splits_the_block_and_moves_the_caret_to_the_tail() {
             .expect("document")
             .blocks
             .iter()
-            .filter(|block| !block.text.contains('\n'))
+            .filter(|block| !block.markup_text().contains('\n'))
             .count(),
         2
     );
@@ -391,4 +391,51 @@ fn preview_follows_revisions_only_in_source_mode_after_debounce() {
     assert_eq!(state.preview.wanted, 0);
     assert!(state.preview.pages.is_empty());
     assert!(!state.preview.pending);
+}
+
+#[test]
+fn inline_math_markup_round_trips_through_the_session() {
+    let ctx = egui::Context::default();
+    theme::install(&ctx);
+    let mut bridge = SessionBridge::default();
+    let mut state = WorkspaceState::default();
+    bridge.start(&mut state);
+    let block = first_block(&state);
+    focus_block(&ctx, block);
+    // The editor buffer carries raw `$…$` markup.
+    frame(
+        &ctx,
+        &mut state,
+        &mut bridge,
+        vec![egui::Event::Text("比式 $x/2$ 保持公式".into())],
+    );
+    assert_eq!(block_texts(&state), ["比式 $x/2$ 保持公式"]);
+    let stored = state.document.as_ref().expect("document").blocks[0].clone();
+    assert_eq!(
+        stored.content,
+        vec![
+            scholium_model::Inline::Text("比式 ".into()),
+            scholium_model::Inline::Math("x/2".into()),
+            scholium_model::Inline::Text(" 保持公式".into()),
+        ],
+        "math becomes a first-class inline node"
+    );
+    // Escaped dollars and backslashes stay literal text.
+    let snapshot = state.document.clone().expect("document");
+    state.pending_edit = Some(replace(&snapshot, block, "成本 \\$5 与 a\\\\b"));
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    let stored = state.document.as_ref().expect("document").blocks[0].clone();
+    assert_eq!(
+        stored.content,
+        vec![scholium_model::Inline::Text("成本 $5 与 a\\b".into())]
+    );
+    // A lone unterminated dollar also stays text.
+    let snapshot = state.document.clone().expect("document");
+    state.pending_edit = Some(replace(&snapshot, block, "单 $ 未闭合"));
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    let stored = state.document.as_ref().expect("document").blocks[0].clone();
+    assert_eq!(
+        stored.content,
+        vec![scholium_model::Inline::Text("单 $ 未闭合".into())]
+    );
 }
