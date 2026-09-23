@@ -2,6 +2,7 @@
 
 mod chrome;
 mod commands;
+mod icons;
 mod native_text;
 mod paper;
 mod sample;
@@ -167,6 +168,24 @@ mod tests {
         assert_eq!(result.1, 0.5);
         let result = frame(vec![key(egui::Key::J, egui::Modifiers::COMMAND)]);
         assert!(result.2);
+        // The tab-bar icon switch stays clickable: in the third bar row the visual
+        // toggle is the second icon from the right (menus 28 + tools 34 + half of 32).
+        frame(vec![
+            egui::Event::PointerMoved(egui::pos2(1226.0, 78.0)),
+            egui::Event::PointerButton {
+                pos: egui::pos2(1226.0, 78.0),
+                button: egui::PointerButton::Primary,
+                pressed: true,
+                modifiers: egui::Modifiers::NONE,
+            },
+        ]);
+        let result = frame(vec![egui::Event::PointerButton {
+            pos: egui::pos2(1226.0, 78.0),
+            button: egui::PointerButton::Primary,
+            pressed: false,
+            modifiers: egui::Modifiers::NONE,
+        }]);
+        assert_eq!(result.0, crate::state::ViewMode::Visual);
     }
 
     fn key(key: egui::Key, modifiers: egui::Modifiers) -> egui::Event {
