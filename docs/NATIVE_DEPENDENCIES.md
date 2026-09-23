@@ -11,6 +11,7 @@
 
 | 依赖 | 版本 | 许可 | 用途 | 引入路径 |
 |---|---|---|---|---|
+| [libsqlite3-sys](https://github.com/rusqlite/rusqlite)（系统 libsqlite3） | 0.35.0 | MIT（捆绑的 sqlite3 为 Public Domain） | 会话持久化：scholium-storage 经 rusqlite 0.37 链接系统 libsqlite3（ADR 0028） | `scholium-storage` → `rusqlite` → `libsqlite3-sys`（非 bundled，pkg-config 链接系统库） |
 | [psm](https://github.com/rust-lang/stacker/) | 0.1.32 | MIT OR Apache-2.0 | 可移植栈操作：为深递归提供独立栈（避免解析深文档时栈溢出） | `typst` → `typst-eval` → `stacker` 0.1.25 → `psm` |
 
 **ABI**：`psm` 对外的 ABI 只有 Rust 侧的 `psm::on_stack` / `Stack`；其内部按平台编译一小段
@@ -67,3 +68,19 @@ TeX 自身的配置**挡不住**读取项目外文件（`\openin` 在默认配�
 - 新增任何需要编译本地代码的依赖时，必须在本页补一行，并填写四项（ABI / 所有权 / 线程 / 销毁）
   与构建记录；CI 的 `cargo deny` 只覆盖许可证，不覆盖这四项。
 - 若将来分发 TeX 或 `bwrap` 二进制，必须在上表补"分发义务"栏的具体履行方式。
+
+## libsqlite3-sys（系统库链接）
+
+**ABI**：经 rusqlite 的 Rust 封装调用 sqlite3 C API（sqlite3_open/prepare/step/finalize 等）；
+本项目没有自写 C 代码，也没有直接包含 sqlite3.h。
+
+**内存所有权**：连接与语句句柄由 rusqlite 管理，RAII（Drop 时 finalize/close）；
+跨边界的缓冲区（BLOB/TEXT）由 rusqlite 拷贝进 Rust 类型，无调用方释放义务。
+
+**线程约束**：系统库以 SQLITE_THREADSAFE=1（serialized）构建；每条连接只在
+`SessionStore` 内单线程使用，未跨线程共享连接。
+
+**销毁顺序**：Connection Drop 即 sqlite3_close_v2；WAL 副文件由 SQLite 自身管理。
+**构建记录**：pkg-config 解析系统 sqlite3 3.53.4（Arch Linux），无本地编译。
+
+WASM 路线不链接本依赖；浏览器存储适配另行验证（ADR 0028 保留 redb 候选）。

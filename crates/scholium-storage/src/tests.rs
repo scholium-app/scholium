@@ -1,26 +1,7 @@
+use super::test_support::{sample, temp_path};
 use super::*;
-use scholium_model::{Block, BlockKind, DocumentId, Inline, NodeId, RequestId, Revision};
+use scholium_model::{Block, RequestId, Revision};
 use std::time::Instant;
-
-fn sample(revision: u64, text: &str) -> DocumentSnapshot {
-    DocumentSnapshot {
-        document: DocumentId::fresh(),
-        revision: Revision(revision),
-        blocks: vec![Block {
-            node: NodeId::fresh(),
-            kind: BlockKind::Paragraph,
-            content: vec![Inline::Text(text.into()), Inline::Math("x/2".into())],
-        }],
-    }
-}
-
-fn temp_path(name: &str) -> std::path::PathBuf {
-    std::env::temp_dir().join(format!(
-        "scholium-storage-{name}-{}-{}}}.redb",
-        std::process::id(),
-        name
-    ))
-}
 
 #[test]
 fn save_load_round_trip_and_reopen_preserve_everything() {
@@ -89,10 +70,10 @@ fn snapshot_at_reads_history_and_missing_returns_none() {
     let _ = std::fs::remove_file(&path);
 }
 
-// ADR 0028 证据项 1/2：10 万动作追加 + 快照读取耗时（宽松上限防抖动，
+// ADR 0028 证据：10 万动作追加 + 快照读取耗时（SQLite 后端）（宽松上限防抖动，
 // 具体数值记录于 ADR，取本机多次运行的中位）。
 #[test]
-fn bench_append_hundred_thousand_actions_and_read_snapshot() {
+fn bench_sqlite_append_hundred_thousand_actions_and_read_snapshot() {
     let path = temp_path("bench");
     let _ = std::fs::remove_file(&path);
     let store = SessionStore::open(&path).expect("open");
@@ -110,6 +91,6 @@ fn bench_append_hundred_thousand_actions_and_read_snapshot() {
     // 宽松上限：同数量级即通过；绝对值进 ADR。
     assert!(append_ms < 60_000, "append took {append_ms}ms");
     assert!(read_ms < 10_000, "read took {read_ms}ms");
-    println!("redb bench: append 100k = {append_ms}ms, load = {read_ms}ms");
+    println!("sqlite bench: append 100k = {append_ms}ms, load = {read_ms}ms");
     let _ = std::fs::remove_file(&path);
 }

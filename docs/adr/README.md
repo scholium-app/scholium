@@ -69,4 +69,4 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 
 [ADR 0027](ADR-0027-typst-preview-integration.md)：Typst 快速预览首步接入——受信内容的进程内编译、论文常规字体与只读生成视图。
 
-[ADR 0028](ADR-0028-storage-engine.md)：存储引擎选型（redb 拟议；首个实现与基准已入，rusqlite 对照待跑）。
+[ADR 0028](ADR-0028-storage-engine.md)：存储引擎选型——基准后裁决 SQLite（rusqlite/系统库），redb 留作 WASM 候选。
