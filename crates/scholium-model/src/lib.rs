@@ -98,6 +98,18 @@ pub enum BlockEdit {
         /// New structural kind.
         kind: BlockKind,
     },
+    /// Merge the target block into its predecessor: the predecessor keeps its
+    /// identity and kind and absorbs the target's text; the target is removed.
+    MergeWithPrevious {
+        /// Target block node; must not be the first block.
+        block: NodeId,
+    },
+    /// Merge the block after the target into the target: the target keeps its
+    /// identity and kind and absorbs the following text; the follower is removed.
+    MergeWithNext {
+        /// Target block node; must not be the last block.
+        block: NodeId,
+    },
 }
 
 /// Revision-bound request wrapping one block edit.

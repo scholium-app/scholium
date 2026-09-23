@@ -36,6 +36,9 @@ pub(crate) struct WorkspaceState {
     /// Anchor block and block count when a splitting edit was sent; once the
     /// session grows past that count, focus moves to the block after the anchor.
     pub(crate) focus_after_split: Option<(scholium_model::NodeId, usize)>,
+    /// Removed block, absorbing block and caret when a merge was sent; once the
+    /// removed block is gone, focus lands on the absorbing block at the seam.
+    pub(crate) focus_after_merge: Option<(scholium_model::NodeId, scholium_model::NodeId, usize)>,
     pub(crate) mode: ViewMode,
     pub(crate) dialect: Dialect,
     pub(crate) navigation: bool,
@@ -59,6 +62,7 @@ impl Default for WorkspaceState {
             composition: None,
             focus_block: None,
             focus_after_split: None,
+            focus_after_merge: None,
             mode: ViewMode::Visual,
             dialect: Dialect::Latex,
             navigation: false,
@@ -89,6 +93,7 @@ mod tests {
         assert_eq!(state.rendered_zoom, 1.0);
         assert_eq!(state.focus_block, None);
         assert_eq!(state.focus_after_split, None);
+        assert_eq!(state.focus_after_merge, None);
         assert_eq!(state.rejected_draft, None);
     }
 }

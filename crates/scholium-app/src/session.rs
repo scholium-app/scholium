@@ -19,8 +19,10 @@ impl SessionBridge {
         {
             let rejected_draft = match &edit.edit {
                 BlockEdit::ReplaceText { block, text } => Some((*block, text.clone())),
-                // Kind switches have no text draft to keep on rejection.
-                BlockEdit::SetKind { .. } => None,
+                // Kind switches and merges have no text draft to keep on rejection.
+                BlockEdit::SetKind { .. }
+                | BlockEdit::MergeWithPrevious { .. }
+                | BlockEdit::MergeWithNext { .. } => None,
             };
             state.edit_error = session.apply(edit).err().map(|e| e.to_string());
             state.rejected_draft = if state.edit_error.is_some() {
@@ -62,6 +64,7 @@ impl SessionBridge {
         state.composition = None;
         state.focus_block = None;
         state.focus_after_split = None;
+        state.focus_after_merge = None;
         state.mode = crate::state::ViewMode::Visual;
         self.session = Some(session);
     }

@@ -17,6 +17,7 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     }
     ui.separator();
     move_focus_after_split(ui, state, &snapshot);
+    move_focus_after_merge(ui, state, &snapshot);
     egui::ScrollArea::vertical()
         .id_salt(("native-doc-scroll", snapshot.document))
         .auto_shrink([false, false])
@@ -51,7 +52,7 @@ fn block_editor(
             }
         });
         if !composing {
-            navigate_across_blocks(ui, snapshot, index);
+            boundary_keys(ui, state, snapshot, index);
         }
     }
     let mut text = if composing && focused_before {
@@ -116,43 +117,89 @@ fn block_editor(
     }
 }
 
-// Up from a block start moves to the previous block end; down from a block end
-// moves to the next block start. The key is consumed so the editor never sees it.
-fn navigate_across_blocks(ui: &mut egui::Ui, snapshot: &DocumentSnapshot, index: usize) {
+// Boundary keys of one block editor, applied before the editor sees them:
+// collapsed caret at a block edge moves across blocks (↑↓←→), backspace at a
+// block start merges into the previous block and delete at a block end absorbs
+// the following one. The key is consumed so the editor never sees it.
+fn boundary_keys(
+    ui: &mut egui::Ui,
+    state: &mut WorkspaceState,
+    snapshot: &DocumentSnapshot,
+    index: usize,
+) {
     let block = &snapshot.blocks[index];
     let id = egui::Id::new(("native-block", block.node));
-    let caret = egui::text_edit::TextEditState::load(ui.ctx(), id)
+    let Some(range) = egui::text_edit::TextEditState::load(ui.ctx(), id)
         .and_then(|editor| editor.cursor.char_range())
-        .map(|range| range.primary.index.0);
+    else {
+        return;
+    };
+    // Only a collapsed caret crosses or edits the block boundary; a selection
+    // keeps its normal in-block meaning.
+    if range.primary.index != range.secondary.index {
+        return;
+    }
+    let caret = range.primary.index.0;
     let char_count = block.text.chars().count();
-    let (key, target) = if ui.input(|input| input.key_pressed(Key::ArrowUp))
-        && caret == Some(0)
-        && let Some(previous) = snapshot
-            .blocks
-            .get(index.wrapping_sub(1))
-            .filter(|_| index > 0)
+    let at_start = index > 0 && caret == 0;
+    let at_end = caret == char_count;
+    if at_start
+        && ui.input(|input| input.key_pressed(Key::Backspace))
+        && let Some(previous) = snapshot.blocks.get(index - 1)
     {
+        consume_key(ui, Key::Backspace);
+        state.focus_after_merge = Some((block.node, previous.node, previous.text.chars().count()));
+        state.pending_edit =
+            Some(snapshot.request(BlockEdit::MergeWithPrevious { block: block.node }));
+        return;
+    }
+    if at_end
+        && ui.input(|input| input.key_pressed(Key::Delete))
+        && let Some(following) = snapshot.blocks.get(index + 1)
+    {
+        consume_key(ui, Key::Delete);
+        state.focus_after_merge = Some((following.node, block.node, char_count));
+        state.pending_edit = Some(snapshot.request(BlockEdit::MergeWithNext { block: block.node }));
+        return;
+    }
+    let (key, target) = if at_start && ui.input(|input| input.key_pressed(Key::ArrowUp)) {
+        let previous = &snapshot.blocks[index - 1];
         (
             Key::ArrowUp,
             Some((previous.node, previous.text.chars().count())),
         )
-    } else if ui.input(|input| input.key_pressed(Key::ArrowDown))
-        && caret == Some(char_count)
+    } else if at_start && ui.input(|input| input.key_pressed(Key::ArrowLeft)) {
+        let previous = &snapshot.blocks[index - 1];
+        (
+            Key::ArrowLeft,
+            Some((previous.node, previous.text.chars().count())),
+        )
+    } else if at_end
+        && ui.input(|input| input.key_pressed(Key::ArrowDown))
         && let Some(following) = snapshot.blocks.get(index + 1)
     {
         (Key::ArrowDown, Some((following.node, 0)))
+    } else if at_end
+        && ui.input(|input| input.key_pressed(Key::ArrowRight))
+        && let Some(following) = snapshot.blocks.get(index + 1)
+    {
+        (Key::ArrowRight, Some((following.node, 0)))
     } else {
         (Key::ArrowUp, None)
     };
     let Some((node, caret)) = target else {
         return;
     };
+    consume_key(ui, key);
+    focus_block(ui, node, caret);
+}
+
+fn consume_key(ui: &mut egui::Ui, key: Key) {
     ui.input_mut(|input| {
         input.events.retain(|event| {
             !matches!(event, egui::Event::Key { key: pressed, pressed: true, .. } if *pressed == key)
         })
     });
-    focus_block(ui, node, caret);
 }
 
 fn move_focus_after_split(
@@ -171,6 +218,22 @@ fn move_focus_after_split(
         }
         if grew || anchor_index.is_none() {
             state.focus_after_split = None;
+        }
+    }
+}
+
+fn move_focus_after_merge(
+    ui: &mut egui::Ui,
+    state: &mut WorkspaceState,
+    snapshot: &DocumentSnapshot,
+) {
+    if let Some((removed, absorber, caret)) = state.focus_after_merge {
+        let still_there = snapshot.blocks.iter().any(|b| b.node == removed);
+        if !still_there && snapshot.blocks.iter().any(|b| b.node == absorber) {
+            focus_block(ui, absorber, caret);
+        }
+        if !still_there {
+            state.focus_after_merge = None;
         }
     }
 }
