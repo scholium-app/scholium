@@ -1,6 +1,6 @@
 use crate::{
     commands::{self, ViewCommand},
-    sample,
+    icons, sample,
     state::{Dialect, ViewMode, WorkspaceState},
     theme,
 };
@@ -128,14 +128,26 @@ fn view_menu(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 fn toolbar(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     let compact = ui.available_width() < theme::NARROW_WIDTH;
     ui.horizontal_centered(|ui| {
-        for title in ["撤销", "重做"] {
-            commands::unavailable(ui, title);
+        for (icon, tip) in [
+            (icons::Icon::Undo, "撤销 · Ctrl+Z"),
+            (icons::Icon::Redo, "重做 · Ctrl+Shift+Z"),
+        ] {
+            ui.add_enabled(
+                false,
+                icons::IconButton {
+                    icon,
+                    selected: false,
+                    tooltip: tip.into(),
+                },
+            );
         }
         ui.separator();
         if state.mode == ViewMode::Visual {
-            for title in ["正文", "B", "I", "行内公式", "独立公式"] {
-                commands::unavailable(ui, title);
-            }
+            paragraph_style(ui);
+            preview_button(ui, RichText::new("B").strong(), "粗体");
+            preview_button(ui, RichText::new("I").italics(), "强调");
+            preview_button(ui, "$", "行内公式 $…$");
+            preview_button(ui, "$$", "独立公式 $$…$$");
         } else {
             egui::ComboBox::from_id_salt("dialect")
                 .selected_text(state.dialect.label())
@@ -168,16 +180,40 @@ fn toolbar(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     });
 }
 
+// 段落样式是选择器而非动作：下拉形态为标题、引用等条目扩展预留。
+fn paragraph_style(ui: &mut egui::Ui) {
+    egui::ComboBox::from_id_salt("paragraph-style")
+        .selected_text("正文")
+        .width(96.0)
+        .show_ui(ui, |ui| {
+            for entry in ["正文", "一级标题", "二级标题"] {
+                commands::unavailable(ui, entry);
+            }
+        });
+}
+
+// 未接入操作的紧凑占位：短标签 + 完整语义放禁用悬停提示。
+fn preview_button(ui: &mut egui::Ui, label: impl Into<egui::WidgetText>, tip: &str) {
+    ui.add_enabled(false, egui::Button::new(label))
+        .on_disabled_hover_text(format!("{tip} · 界面预览：此操作尚未接入"));
+}
+
 // Logical pixels reserved for view controls; long tab titles cannot push them off-screen.
-const VIEW_SWITCH_WIDTH: f32 = 168.0;
-const DOCUMENT_TAB_WIDTH: f32 = 300.0;
+const VIEW_SWITCH_WIDTH: f32 = 104.0;
+const MAX_TAB_WIDTH: f32 = 320.0;
+const MIN_TAB_WIDTH: f32 = 120.0;
 
 fn tabs(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     ui.horizontal_centered(|ui| {
-        let title = if state.document.is_some() {
-            "未命名 · 未保存"
+        let (title, unsaved) = if state.document.is_some() {
+            ("未命名", true)
         } else {
-            sample::TITLE
+            (sample::TITLE, false)
+        };
+        let display = if unsaved {
+            format!("● {title}")
+        } else {
+            title.to_owned()
         };
         let tab_area = (ui.available_width() - VIEW_SWITCH_WIDTH).max(0.0);
         ui.allocate_ui_with_layout(
@@ -185,16 +221,32 @@ fn tabs(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             Layout::left_to_right(Align::Center),
             |ui| {
                 let palette = theme::colors(ui);
+                let text_width = ui
+                    .painter()
+                    .layout_no_wrap(
+                        display.clone(),
+                        egui::FontId::proportional(14.0),
+                        palette.text,
+                    )
+                    .size()
+                    .x;
+                let width = (text_width + 24.0)
+                    .clamp(MIN_TAB_WIDTH, MAX_TAB_WIDTH)
+                    .min(tab_area);
                 let response = ui
                     .add_sized(
-                        [tab_area.min(DOCUMENT_TAB_WIDTH), 26.0],
-                        egui::Button::new(RichText::new(title).color(palette.text))
+                        [width, 26.0],
+                        egui::Button::new(RichText::new(display).color(palette.text))
                             .fill(palette.canvas)
                             .stroke(egui::Stroke::new(1.0, palette.border))
                             .corner_radius(egui::CornerRadius::ZERO)
                             .truncate(),
                     )
-                    .on_hover_text(title);
+                    .on_hover_text(if unsaved {
+                        "未命名 · 未保存"
+                    } else {
+                        title
+                    });
                 ui.painter().hline(
                     response.rect.x_range(),
                     response.rect.top(),
@@ -206,11 +258,28 @@ fn tabs(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             },
         );
         ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
-            for (label, mode, command) in [
-                ("源码", ViewMode::Source, ViewCommand::Source),
-                ("所见即所得", ViewMode::Visual, ViewCommand::Visual),
+            for (icon, tip, mode, command) in [
+                (
+                    icons::Icon::Code,
+                    "源码与预览 · Ctrl+2",
+                    ViewMode::Source,
+                    ViewCommand::Source,
+                ),
+                (
+                    icons::Icon::Page,
+                    "所见即所得 · Ctrl+1",
+                    ViewMode::Visual,
+                    ViewCommand::Visual,
+                ),
             ] {
-                if ui.selectable_label(state.mode == mode, label).clicked() {
+                if ui
+                    .add(icons::IconButton {
+                        icon,
+                        selected: state.mode == mode,
+                        tooltip: tip.into(),
+                    })
+                    .clicked()
+                {
                     commands::dispatch(state, command);
                 }
             }
@@ -220,22 +289,34 @@ fn tabs(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 
 fn status(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     ui.horizontal_centered(|ui| {
-        if ui.selectable_label(state.diagnostics, "诊断 —").clicked() {
+        if ui
+            .selectable_label(state.diagnostics, "诊断")
+            .on_hover_text("诊断面板 · Ctrl+J")
+            .clicked()
+        {
             commands::dispatch(state, ViewCommand::Diagnostics);
         }
         ui.separator();
         ui.label(
+            RichText::new(if state.mode == ViewMode::Visual {
+                "所见即所得"
+            } else {
+                "源码与预览"
+            })
+            .small(),
+        );
+        ui.label(
             RichText::new(if state.document.is_some() {
                 "原生文档 · 未保存"
             } else {
-                "原生文档 · 示例"
+                "示例文档 · 只读"
             })
             .small(),
         );
         if ui.available_width() > 600.0 {
             ui.label(
                 RichText::new(state.document.as_ref().map_or_else(
-                    || "排版未接入 · revision —".into(),
+                    || "界面预览 · 排版未接入".into(),
                     |s| format!("正文 r{} · 排版未接入", s.revision.0),
                 ))
                 .small()
