@@ -216,7 +216,11 @@ fn parse_markup(line: &str) -> Vec<Inline> {
     let mut index = 0;
     while index < chars.len() {
         match chars[index] {
-            '\\' if matches!(chars.get(index + 1), Some('$') | Some('\\')) => {
+            '\\' if matches!(
+                chars.get(index + 1),
+                Some('$') | Some('\\') | Some('*') | Some('_')
+            ) =>
+            {
                 text.push(chars[index + 1]);
                 index += 2;
             }
@@ -232,6 +236,27 @@ fn parse_markup(line: &str) -> Vec<Inline> {
                     index += offset + 2;
                 } else {
                     text.push('$');
+                    index += 1;
+                }
+            }
+            '*' | '_' => {
+                // 行内格式对与公式对同构；空对保持为空格式节点。
+                let marker = chars[index];
+                let close = chars[index + 1..].iter().position(|&c| c == marker);
+                if let Some(offset) = close {
+                    let inner: String = chars[index + 1..index + 1 + offset].iter().collect();
+                    if !text.is_empty() {
+                        content.push(Inline::Text(std::mem::take(&mut text)));
+                    }
+                    let inline = if marker == '*' {
+                        Inline::Strong(inner)
+                    } else {
+                        Inline::Emphasis(inner)
+                    };
+                    content.push(inline);
+                    index += offset + 2;
+                } else {
+                    text.push(marker);
                     index += 1;
                 }
             }

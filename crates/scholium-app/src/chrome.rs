@@ -145,16 +145,26 @@ fn toolbar(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         ui.separator();
         if state.mode == ViewMode::Visual {
             paragraph_style(ui, state);
-            preview_button(ui, RichText::new("B").strong(), "粗体");
-            preview_button(ui, RichText::new("I").italics(), "强调");
-            // 公式入口对聚焦块可用：插入成对定界符并把光标放进公式里。
+            // 行内格式与公式入口对聚焦块可用：插入成对标记并把光标放进其中。
             let live = state.document.is_some() && state.focus_block.is_some();
-            for (label, fragment, shift, tip) in [
-                ("$", "$$", 1, "行内公式 $…$"),
-                ("$$", "$  $", 2, "独立公式（块级）"),
+            for (label, fragment, shift, tip, styled) in [
+                ("B", "**", 1, "粗体 *…*", true),
+                ("I", "__", 1, "强调 _…_", false),
+                ("$", "$$", 1, "行内公式 $…$", false),
+                ("$$", "$  $", 2, "独立公式（块级）", false),
             ] {
                 if !live {
-                    preview_button(ui, label, tip);
+                    let text = if styled {
+                        let base = egui::RichText::new(label);
+                        if tip.starts_with("粗体") {
+                            base.strong()
+                        } else {
+                            base.italics()
+                        }
+                    } else {
+                        egui::RichText::new(label)
+                    };
+                    preview_button(ui, text, tip);
                     continue;
                 }
                 if ui.button(label).on_hover_text(tip).clicked() {
