@@ -64,3 +64,5 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0024](ADR-0024-local-paragraph-integration.md)：基础本地段落与 UI 接入边界，不替代 shared SDG/存储/parser 门禁。
 
 [ADR 0025](ADR-0025-extension-boundaries.md)：会话复用与 Pi/MCP/WIT 扩展边界（Proposed）。
+
+[ADR 0026](ADR-0026-block-document-session.md)：多块文档会话——段落与标题、换行分段与块种类切换的本地边界。

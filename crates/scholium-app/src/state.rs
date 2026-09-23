@@ -25,11 +25,17 @@ impl Dialect {
 #[derive(Debug)]
 pub(crate) struct WorkspaceState {
     pub(crate) document: Option<scholium_model::DocumentSnapshot>,
-    pub(crate) pending_edit: Option<scholium_model::ReplaceParagraph>,
+    pub(crate) pending_edit: Option<scholium_model::DocumentRequest>,
     pub(crate) new_requested: bool,
     pub(crate) edit_error: Option<String>,
-    pub(crate) rejected_draft: Option<String>,
+    /// Draft of the last rejected text edit, shown until the block changes again.
+    pub(crate) rejected_draft: Option<(scholium_model::NodeId, String)>,
     pub(crate) composition: Option<String>,
+    /// Block whose editor held focus last frame; toolbar targets follow it.
+    pub(crate) focus_block: Option<scholium_model::NodeId>,
+    /// Anchor block and block count when a splitting edit was sent; once the
+    /// session grows past that count, focus moves to the block after the anchor.
+    pub(crate) focus_after_split: Option<(scholium_model::NodeId, usize)>,
     pub(crate) mode: ViewMode,
     pub(crate) dialect: Dialect,
     pub(crate) navigation: bool,
@@ -51,6 +57,8 @@ impl Default for WorkspaceState {
             edit_error: None,
             rejected_draft: None,
             composition: None,
+            focus_block: None,
+            focus_after_split: None,
             mode: ViewMode::Visual,
             dialect: Dialect::Latex,
             navigation: false,
@@ -79,5 +87,8 @@ mod tests {
         assert!(!state.navigation);
         assert!(!state.diagnostics);
         assert_eq!(state.rendered_zoom, 1.0);
+        assert_eq!(state.focus_block, None);
+        assert_eq!(state.focus_after_split, None);
+        assert_eq!(state.rejected_draft, None);
     }
 }

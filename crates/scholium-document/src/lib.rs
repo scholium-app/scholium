@@ -1,13 +1,18 @@
-//! Single-user, volatile paragraph session for the first UI integration.
+//! Single-user, volatile block session for the first UI integration.
 //! No shared SDG, actor undo, persistence or compiler is implemented here.
 
-use scholium_model::{DocumentId, DocumentSnapshot, NodeId, ReplaceParagraph, RequestId, Revision};
+use scholium_model::{
+    Block, BlockEdit, BlockKind, DocumentId, DocumentRequest, DocumentSnapshot, NodeId, RequestId,
+    Revision,
+};
 
-/// Maximum UTF-8 text bytes accepted by the initial paragraph adapter.
+/// Maximum UTF-8 text bytes accepted per block edit.
 pub const MAX_TEXT_BYTES: usize = 1024 * 1024;
-const MAX_ACTIONS: usize = 10_000;
+/// Maximum block count of the bounded initial session.
+pub const MAX_BLOCKS: usize = 10_000;
+const MAX_ACTIONS: usize = 100_000;
 
-/// Metadata of an accepted local text action; not CRDT history or an undo snapshot.
+/// Metadata of an accepted local block action; not CRDT history or an undo snapshot.
 #[derive(Debug, Clone)]
 pub struct Action {
     /// Request that produced this action.
@@ -21,7 +26,7 @@ pub struct Action {
 /// Rejection never changes the document or action journal.
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum EditError {
-    /// Document or paragraph identity does not belong to this session.
+    /// Document or block identity does not belong to this session.
     #[error("编辑目标不属于当前文档")]
     WrongTarget,
     /// A request was generated against an older projection.
@@ -30,7 +35,7 @@ pub enum EditError {
     /// An accepted request was submitted again.
     #[error("此编辑请求已经处理")]
     DuplicateRequest,
-    /// Text or action count exceeds the bounded initial integration.
+    /// Text, block or action count exceeds the bounded initial integration.
     #[error("已达到基础会话容量限制；未应用此次修改")]
     Capacity,
 }
@@ -47,9 +52,12 @@ impl Default for LocalSession {
         Self {
             snapshot: DocumentSnapshot {
                 document: DocumentId::fresh(),
-                paragraph: NodeId::fresh(),
                 revision: Revision::default(),
-                text: String::new(),
+                blocks: vec![Block {
+                    node: NodeId::fresh(),
+                    kind: BlockKind::Paragraph,
+                    text: String::new(),
+                }],
             },
             actions: Vec::new(),
         }
@@ -67,12 +75,16 @@ impl LocalSession {
         &self.actions
     }
 
-    /// Apply a revision-checked local replacement and return whether content changed.
+    /// Apply a revision-checked local block edit and return whether content changed.
+    ///
+    /// Line breaks inside replacement text are structural: the target block is
+    /// split into consecutive blocks of the same kind, so stored text never
+    /// contains `\n`.
     ///
     /// # Errors
     /// Rejects wrong targets, repeated accepted requests, stale revisions and capacity overflow.
-    pub fn apply(&mut self, edit: ReplaceParagraph) -> Result<bool, EditError> {
-        if edit.document != self.snapshot.document || edit.paragraph != self.snapshot.paragraph {
+    pub fn apply(&mut self, edit: DocumentRequest) -> Result<bool, EditError> {
+        if edit.document != self.snapshot.document {
             return Err(EditError::WrongTarget);
         }
         if self
@@ -85,21 +97,79 @@ impl LocalSession {
         if edit.base != self.snapshot.revision {
             return Err(EditError::StaleRevision);
         }
-        if edit.text == self.snapshot.text {
-            return Ok(false);
-        }
-        if edit.text.len() > MAX_TEXT_BYTES || self.actions.len() >= MAX_ACTIONS {
+        if self.actions.len() >= MAX_ACTIONS {
             return Err(EditError::Capacity);
         }
-        let next = Revision(edit.base.0 + 1);
+        match edit.edit {
+            BlockEdit::ReplaceText { block, text } => {
+                let index = self.block_index(block)?;
+                if text == self.snapshot.blocks[index].text {
+                    return Ok(false);
+                }
+                let splits = text.matches('\n').count();
+                if text.len() > MAX_TEXT_BYTES
+                    || self.snapshot.blocks.len().saturating_add(splits) > MAX_BLOCKS
+                {
+                    return Err(EditError::Capacity);
+                }
+                self.commit(edit.request, edit.base, |snapshot| {
+                    split_block(snapshot, index, text);
+                });
+                Ok(true)
+            }
+            BlockEdit::SetKind { block, kind } => {
+                let index = self.block_index(block)?;
+                if self.snapshot.blocks[index].kind == kind {
+                    return Ok(false);
+                }
+                self.commit(edit.request, edit.base, |snapshot| {
+                    snapshot.blocks[index].kind = kind;
+                });
+                Ok(true)
+            }
+        }
+    }
+
+    fn block_index(&self, block: NodeId) -> Result<usize, EditError> {
+        self.snapshot
+            .blocks
+            .iter()
+            .position(|candidate| candidate.node == block)
+            .ok_or(EditError::WrongTarget)
+    }
+
+    // All checks passed; a rejection can no longer occur past this point.
+    fn commit(
+        &mut self,
+        request: RequestId,
+        base: Revision,
+        mutate: impl FnOnce(&mut DocumentSnapshot),
+    ) {
+        let next = Revision(base.0 + 1);
+        mutate(&mut self.snapshot);
+        self.snapshot.revision = next;
         self.actions.push(Action {
-            request: edit.request,
-            before: edit.base,
+            request,
+            before: base,
             after: next,
         });
-        self.snapshot.text = edit.text;
-        self.snapshot.revision = next;
-        Ok(true)
+    }
+}
+
+// `text` holds the whole replacement including its `\n` separators.
+fn split_block(snapshot: &mut DocumentSnapshot, index: usize, text: String) {
+    let kind = snapshot.blocks[index].kind;
+    let mut parts = text.split('\n');
+    snapshot.blocks[index].text = parts.next().unwrap_or_default().to_owned();
+    for (insert_at, part) in (index + 1..).zip(parts) {
+        snapshot.blocks.insert(
+            insert_at,
+            Block {
+                node: NodeId::fresh(),
+                kind,
+                text: part.to_owned(),
+            },
+        );
     }
 }
 
