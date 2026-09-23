@@ -102,6 +102,9 @@ pub(crate) struct WorkspaceState {
     /// Removed block, absorbing block and caret when a merge was sent; once the
     /// removed block is gone, focus lands on the absorbing block at the seam.
     pub(crate) focus_after_merge: Option<(scholium_model::NodeId, scholium_model::NodeId, usize)>,
+    /// Block, caret and the revision the splice must reach before installing;
+    /// installing earlier would clamp against the pre-edit buffer.
+    pub(crate) focus_after_replace: Option<(scholium_model::NodeId, usize, u64)>,
     pub(crate) mode: ViewMode,
     pub(crate) preview: PreviewState,
     pub(crate) dialect: Dialect,
@@ -127,6 +130,7 @@ impl Default for WorkspaceState {
             focus_block: None,
             focus_after_split: None,
             focus_after_merge: None,
+            focus_after_replace: None,
             mode: ViewMode::Visual,
             preview: PreviewState::default(),
             dialect: Dialect::Latex,
@@ -159,6 +163,7 @@ mod tests {
         assert_eq!(state.focus_block, None);
         assert_eq!(state.focus_after_split, None);
         assert_eq!(state.focus_after_merge, None);
+        assert_eq!(state.focus_after_replace, None);
         assert_eq!(state.rejected_draft, None);
         assert_eq!(state.preview.wanted, 0);
         assert!(state.preview.pages.is_empty());

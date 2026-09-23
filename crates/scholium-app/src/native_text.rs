@@ -18,6 +18,12 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     ui.separator();
     move_focus_after_split(ui, state, &snapshot);
     move_focus_after_merge(ui, state, &snapshot);
+    if let Some((node, caret, revision)) = state.focus_after_replace
+        && snapshot.revision.0 >= revision
+    {
+        focus_block(ui, node, caret);
+        state.focus_after_replace = None;
+    }
     egui::ScrollArea::vertical()
         .id_salt(("native-doc-scroll", snapshot.document))
         .auto_shrink([false, false])
@@ -252,4 +258,45 @@ fn focus_block(ui: &egui::Ui, node: NodeId, caret: usize) {
             egui::text::CCursor::new(caret),
         )));
     editor.store(ui.ctx(), id);
+}
+
+/// 在聚焦块的当前光标处插入 markup 片段，并把光标移到片段内
+/// `caret_shift` 字符处（例如公式对 `$…$` 的开定界符之后）。
+/// 供工具栏的公式入口调用；片段通过正常的 ReplaceText 请求进入权威。
+pub(crate) fn insert_markup_at_caret(
+    ctx: &egui::Context,
+    state: &mut WorkspaceState,
+    fragment: &str,
+    caret_shift: usize,
+) {
+    let Some(snapshot) = state.document.clone() else {
+        return;
+    };
+    let Some(block) = snapshot
+        .blocks
+        .iter()
+        .find(|b| Some(b.node) == state.focus_block)
+    else {
+        return;
+    };
+    let id = egui::Id::new(("native-block", block.node));
+    let caret = egui::text_edit::TextEditState::load(ctx, id)
+        .and_then(|editor| editor.cursor.char_range())
+        .map_or(0, |range| range.primary.index.0);
+    let mut markup = block.markup_text();
+    let byte = char_to_byte(&markup, caret);
+    markup.insert_str(byte, fragment);
+    state.pending_edit = Some(snapshot.request(BlockEdit::ReplaceText {
+        block: block.node,
+        text: markup,
+    }));
+    // 直接写光标会被本帧稍后的编辑器控件覆盖；登记到下一帧首安装。
+    state.focus_after_replace = Some((block.node, caret + caret_shift, snapshot.revision.0 + 1));
+}
+
+/// 字符下标 → 字节下标（markup 是 UTF-8）。
+fn char_to_byte(text: &str, chars: usize) -> usize {
+    text.char_indices()
+        .nth(chars)
+        .map_or(text.len(), |(byte, _)| byte)
 }
