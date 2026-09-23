@@ -24,6 +24,10 @@ pub(crate) struct PreviewState {
     pub(crate) elapsed_ms: u64,
     /// 已上传的预览页纹理。
     pub(crate) pages: Vec<eframe::egui::TextureHandle>,
+    /// 当前页面对应的块锚点（page/pt）。
+    pub(crate) anchors: Vec<scholium_typst::BlockAnchor>,
+    /// 预览点击定位请求：滚动源码窗格到该块。
+    pub(crate) locate_request: Option<usize>,
 }
 
 impl std::fmt::Debug for PreviewState {
@@ -36,6 +40,7 @@ impl std::fmt::Debug for PreviewState {
             .field("error", &self.error)
             .field("elapsed_ms", &self.elapsed_ms)
             .field("pages", &self.pages.len())
+            .field("anchors", &self.anchors.len())
             .finish_non_exhaustive()
     }
 }

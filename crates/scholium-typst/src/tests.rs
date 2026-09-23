@@ -55,7 +55,7 @@ fn math_segments_render_as_formulas_not_literal_text() {
         "math stays unescaped between $ delimiters: {source}"
     );
     let mut compiler = PreviewCompiler::spawn();
-    compiler.submit(1, source);
+    compiler.submit(1, source, snap.blocks.len());
     let outcome = wait_for_outcome(&mut compiler, 1);
     assert!(
         outcome.error.is_none(),
@@ -73,7 +73,7 @@ fn compiler_produces_pages_for_a_document() {
         (BlockKind::Paragraph, "固定端点给出边界条件。"),
     ]);
     let mut compiler = PreviewCompiler::spawn();
-    compiler.submit(1, generate_typst(&snap));
+    compiler.submit(1, generate_typst_anchored(&snap), snap.blocks.len());
     let outcome = wait_for_outcome(&mut compiler, 1);
     assert_eq!(outcome.revision, 1);
     let error = outcome.error.unwrap_or_default();
@@ -91,8 +91,8 @@ fn compiler_produces_pages_for_a_document() {
 fn latest_revision_wins_when_requests_overtake_each_other() {
     let snap = snapshot(&[(BlockKind::Paragraph, "短文档")]);
     let mut compiler = PreviewCompiler::spawn();
-    compiler.submit(7, generate_typst(&snap));
-    compiler.submit(9, generate_typst(&snap));
+    compiler.submit(7, generate_typst_anchored(&snap), snap.blocks.len());
+    compiler.submit(9, generate_typst_anchored(&snap), snap.blocks.len());
     let outcome = wait_for_outcome(&mut compiler, 9);
     assert_eq!(
         outcome.revision, 9,
@@ -116,4 +116,30 @@ fn wait_for_outcome(compiler: &mut PreviewCompiler, revision: u64) -> Outcome {
         std::thread::sleep(std::time::Duration::from_millis(25));
     }
     panic!("no compile outcome within 15s (font scan + compile)");
+}
+
+#[test]
+fn anchors_locate_every_block_and_map_clicks() {
+    let snap = snapshot(&[
+        (BlockKind::Heading1, "谱与振动"),
+        (BlockKind::Paragraph, "第一段正文。"),
+        (BlockKind::Paragraph, "第二段正文。"),
+    ]);
+    let mut compiler = PreviewCompiler::spawn();
+    compiler.submit(1, generate_typst_anchored(&snap), snap.blocks.len());
+    let outcome = wait_for_outcome(&mut compiler, 1);
+    assert!(outcome.error.is_none(), "{:?}", outcome.error);
+    assert_eq!(outcome.anchors.len(), 3, "one anchor per block");
+    assert!(outcome.anchors.iter().all(|a| a.page == 1));
+    assert!(outcome.anchors[0].y < outcome.anchors[1].y);
+    assert!(outcome.anchors[1].y < outcome.anchors[2].y);
+    // Click mapping: between anchors 1 and 2 selects block 1; above all selects 0.
+    let mid = (outcome.anchors[1].y + outcome.anchors[2].y) / 2.0;
+    assert_eq!(block_at_click(&outcome.anchors, 1, mid), Some(1));
+    assert_eq!(block_at_click(&outcome.anchors, 1, 0.0), Some(0));
+    assert_eq!(
+        block_at_click(&outcome.anchors, 9, 10.0),
+        None,
+        "unknown page"
+    );
 }
