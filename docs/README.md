@@ -67,3 +67,11 @@
 - [阶段 0 验证报告](spikes/README.md)：报告规则、模板与当前状态。
   [最新工作区复核](spikes/SPK-0016-working-tree-status.md)：新增实现、复现命令与未关闭的出口条件。
 - [Mogan LaTeX 实现参考](research/MOGAN_LATEX.md)：固定提交源码依据与独立 Rust 实现方向。
+
+
+扩展设计：
+
+- [AI 与 MCP 扩展设计](plan/AI_MCP.md)：Pi agent、AI proposal、MCP server、权限与审计。
+- [WASM 插件与 WIT 组件计划](plan/WASM_PLUGINS.md)：Component Model、WIT world、能力隔离和跨语言兼容。
+
+- [会话与扩展组织计划](plan/EXTENSION_ORGANIZATION.md)：session、Pi/MCP 适配器、插件契约与运行时边界。

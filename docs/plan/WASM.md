@@ -41,3 +41,5 @@
 4. 最后决定是否承诺完整浏览器发行；LaTeX 本地 WASM/远程构建和 WASI 另立 ADR。核心无法移植或候选依赖限制须在最终选型前披露。
 
 详见[全栈候选](TECH_STACK.md)与[原生 UI 验证计划](NATIVE_UI_VALIDATION.md)。
+
+插件组件属于独立扩展路线，见 [WIT 插件计划](WASM_PLUGINS.md)与 [组织计划](EXTENSION_ORGANIZATION.md)。共享核心编译到 WASM 不等于组件插件已能在浏览器运行。

@@ -146,3 +146,7 @@ Envelope { protocol_version, request_id, project_id, actor_id, payload }
 ## 全栈选型与 WASM 宿主
 
 候选统一维护于[TECH_STACK](plan/TECH_STACK.md)，移植边界见[WASM](plan/WASM.md)。model、格式纯逻辑、history 与协议层不得直接依赖文件、进程、GUI、具体数据库或 Tokio 多线程运行时。原生用 Tokio/CPU workers 和 OS 适配；浏览器用 futures/Worker、异步存储及资源注入适配，同一语义与协议测试跨端运行。可移植核心不泄露平台句柄，C/C++/Zig 依赖必须单独验证 WASM 产物。
+
+## 扩展边界的后续提案
+
+直接接入 Pi agent、MCP server 与 WIT 插件的组织方向见 [组织计划](plan/EXTENSION_ORGANIZATION.md)和 [ADR 0025](adr/ADR-0025-extension-boundaries.md)（Proposed）。计划将可复用 ProjectSession 从 app 编排中提取，UI 与外部适配器共用写入入口；当前 LocalSession 仍受 ADR 0024 限定。

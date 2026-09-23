@@ -25,3 +25,7 @@
 
 团队语言控制、ForeignSource、文件交付和构建桥接横跨上述模块，公共合约统一见
 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md)，技术选择见 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
+
+## 后续扩展模块
+
+候选 session、Pi adapter、MCP server、插件 SDK/host/runtime 的职责和提取顺序见 [组织计划](../plan/EXTENSION_ORGANIZATION.md)。这些尚非实现模块；正式提取时补齐七节模块规范。WIT、MCP、Pi 协议类型留在适配层，不进入 model。

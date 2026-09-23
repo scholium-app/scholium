@@ -156,13 +156,25 @@ Raw/ForeignSource、宏/模板作用域、跨组件引用与有界多轮构建�
 出口：默认策略不存在静默 Dropped；三平台发布候选通过完整门禁；升级/回滚不损坏语义正文、源码、
 历史或凭据。
 
+## 阶段 6a：Pi agent 与 MCP
+
+依赖阶段 3 的源码合约、阶段 4 的历史及阶段 5 的权限与语言门禁；按 [组织计划](EXTENSION_ORGANIZATION.md)提取无 UI 依赖的 session。随后通过可选外部进程适配器直接接入 Pi agent，验证会话映射、流式事件、工具桥接、取消、预算和统一错误；不将 Pi 误作 provider 接口。AI 输出只能先形成带 snapshot revision 的 proposal，经预览确认或用户显式配置的项目授权策略，并通过 session 的 Action 校验后写入。
+
+提供可选 MCP server，让其他 agent 通过只读资源和显式 mutation tools 调用 Scholium；stdio 与 Streamable HTTP 都经过同一认证、能力、超时、幂等、审计和 epoch 门禁。MCP/AI 不能获得原始文件、shell、CRDT 或 WAL 权限。交付物、夹具和出口见 [AI 与 MCP 扩展设计](AI_MCP.md)。
+
+## 阶段 6b：WIT/WASM 组件插件
+
+依赖阶段 3–5 的源码、历史与权限合约。以 WebAssembly Component Model + WIT 建立跨平台、跨语言插件 ABI，先支持格式/诊断/转换等无副作用组件，再支持受限任务和 Action proposal。插件通过稳定 snapshot/proposal/task/resource world 与宿主交互，默认拒绝文件、网络和写入能力；桌面宿主优先验证 WASI 能力、资源隔离、fuel/内存/时间上限、取消、崩溃恢复和版本兼容。浏览器组件运行时及 Worker 路径单独探索，不作为桌面首版插件出口。
+
+插件包须携带签名、WIT world hash、权限声明和迁移信息，返回值经过与 AI/MCP 相同的 revision、写集、语言 epoch 和语义校验。完整市场、远程下载、自动更新和任意网络不属于首个插件出口。设计与验证顺序见 [WASM 插件与 WIT 组件计划](WASM_PLUGINS.md)。
+
 ## 依赖关系
 
 ```text
 否决性验证
   └─ 最小编辑、保存与格式交换闭环
        └─ 高效输入与文档结构
-            ├─ Source Studio 与混合输出 ── 扩展导出与产品化
+            ├─ Source Studio 与混合输出 ── 扩展导出与产品化 ── AI/MCP 与 WIT/WASM 插件
             └─ 非线性历史 ─────────── 团队协作与语言切换
 ```
 
@@ -170,7 +182,7 @@ Raw/ForeignSource、宏/模板作用域、跨组件引用与有界多轮构建�
 
 旧的 28–37 周总估算不再适用。团队语言协调与完整范围混用增加了关键路径；阶段 0 后根据团队配置、
 模板/桥接矩阵和性能数据分别估算各阶段，当前不承诺新日期。阶段 1 交付最小可保存/交换版本，阶段 3
-交付完整混合项目与双目标输出，阶段 5 交付团队协作。AI、CAS、独立绘图工具和插件执行仍在范围外；
+交付完整混合项目与双目标输出，阶段 5 交付团队协作。CAS、独立绘图工具仍在范围外。AI 与插件执行不进入阶段 0 的否决性验证，必须在核心编辑、历史、协作和安全边界稳定后按独立 spike 引入；
 已有 LaTeX/Typst 绘图代码作为混合内容受支持，与新增绘图工具不是同一要求。
 
 ## 每阶段完成定义
