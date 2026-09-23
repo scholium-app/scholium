@@ -68,6 +68,10 @@ pub enum Inline {
     /// The minimal integration edits it as source text; structural slots
     /// (numerator/denominator, scripts) arrive with the spike port.
     Math(String),
+    /// Strong (bold) text; markup `*…*`, generated as Typst `*…*`.
+    Strong(String),
+    /// Emphasized (italic) text; markup `_…_`, generated as Typst `_…_`.
+    Emphasis(String),
 }
 
 /// One addressed block in the document sequence.
@@ -98,6 +102,10 @@ pub fn markup(content: &[Inline]) -> String {
                 for ch in text.chars() {
                     if ch == '$' {
                         out.push_str("\\$");
+                    } else if ch == '*' {
+                        out.push_str("\\*");
+                    } else if ch == '_' {
+                        out.push_str("\\_");
                     } else if ch == '\\' {
                         out.push_str("\\\\");
                     } else {
@@ -109,6 +117,16 @@ pub fn markup(content: &[Inline]) -> String {
                 out.push('$');
                 out.push_str(source);
                 out.push('$');
+            }
+            Inline::Strong(text) => {
+                out.push('*');
+                out.push_str(text);
+                out.push('*');
+            }
+            Inline::Emphasis(text) => {
+                out.push('_');
+                out.push_str(text);
+                out.push('_');
             }
         }
     }

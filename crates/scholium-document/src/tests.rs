@@ -231,3 +231,30 @@ fn markup_parsing_keeps_math_first_class() {
         "adjacent text segments coalesce"
     );
 }
+
+#[test]
+fn inline_format_pairs_parse_like_math() {
+    let mut session = LocalSession::default();
+    let initial = session.snapshot();
+    let first = initial.blocks[0].node;
+    session
+        .apply(replace(
+            &initial,
+            first,
+            "使用 *粗体* 与 _强调_ 以及 $x/2$ 混排",
+        ))
+        .expect("formatting applies");
+    let content = &session.snapshot().blocks[0].content;
+    assert_eq!(content[1], Inline::Strong("粗体".into()));
+    assert_eq!(content[3], Inline::Emphasis("强调".into()));
+    assert_eq!(content[5], Inline::Math("x/2".into()));
+    // Escaped markers stay literal text.
+    let typed = session.snapshot();
+    session
+        .apply(replace(&typed, first, "字面 \\* 与 \\_ 与 \\\\"))
+        .expect("escapes apply");
+    assert_eq!(
+        session.snapshot().blocks[0].content,
+        vec![Inline::Text("字面 * 与 _ 与 \\".into())]
+    );
+}

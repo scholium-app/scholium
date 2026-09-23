@@ -179,6 +179,20 @@ pub fn generate_typst(snapshot: &DocumentSnapshot) -> String {
         for inline in &block.content {
             match inline {
                 Inline::Text(text) => out.push_str(&escape(text)),
+                Inline::Strong(text) => {
+                    if !text.trim().is_empty() {
+                        out.push('*');
+                        out.push_str(text);
+                        out.push('*');
+                    }
+                }
+                Inline::Emphasis(text) => {
+                    if !text.trim().is_empty() {
+                        out.push('_');
+                        out.push_str(text);
+                        out.push('_');
+                    }
+                }
                 // Math source is already Typst math syntax; wrapping `$…$`
                 // switches the generated document into math mode.
                 Inline::Math(source) => {
