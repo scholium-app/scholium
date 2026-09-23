@@ -135,6 +135,7 @@ impl SessionBridge {
                 state.preview.pending = false;
                 state.preview.elapsed_ms = outcome.elapsed_ms;
                 state.preview.error = outcome.error;
+                state.preview.anchors = outcome.anchors;
                 state.preview.pages = outcome
                     .pages
                     .iter()
@@ -162,10 +163,10 @@ impl SessionBridge {
                 .changed_at
                 .is_some_and(|at| at.elapsed() >= PREVIEW_DEBOUNCE);
         if wants_compile && let Some(snapshot) = state.document.clone() {
-            let source = scholium_typst::generate_typst(&snapshot);
+            let source = scholium_typst::generate_typst_anchored(&snapshot);
             self.preview
                 .get_or_insert_with(PreviewCompiler::spawn)
-                .submit(state.preview.wanted, source);
+                .submit(state.preview.wanted, source, snapshot.blocks.len());
             state.preview.submitted = state.preview.wanted;
             state.preview.pending = true;
         }

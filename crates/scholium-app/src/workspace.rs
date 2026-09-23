@@ -176,9 +176,9 @@ fn split(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 
 /// 左窗格：真实文档显示生成的 Typst 投影，示例工作区显示静态夹具。
 fn source_side(ui: &mut egui::Ui, state: &mut WorkspaceState) {
-    match &state.document {
-        Some(snapshot) => generated_source(ui, snapshot),
-        None => source(ui, state.dialect),
+    match state.document.is_some() {
+        true => generated_source(ui, state),
+        false => source(ui, state.dialect),
     }
 }
 
@@ -193,7 +193,10 @@ fn preview_side(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 
 // The generated view is a read-only projection of the authority (ADR 0027):
 // editing it would need the reconcile path, which is not integrated here.
-fn generated_source(ui: &mut egui::Ui, snapshot: &scholium_model::DocumentSnapshot) {
+fn generated_source(ui: &mut egui::Ui, state: &mut WorkspaceState) {
+    let Some(snapshot) = state.document.clone() else {
+        return;
+    };
     theme::bar_frame(ui).show(ui, |ui| {
         ui.set_width(ui.available_width());
         ui.horizontal(|ui| {
@@ -201,7 +204,9 @@ fn generated_source(ui: &mut egui::Ui, snapshot: &scholium_model::DocumentSnapsh
             ui.weak("生成视图 · 只读 · 随正文更新");
         });
     });
-    let text = scholium_typst::generate_typst(snapshot);
+    let text = scholium_typst::generate_typst(&snapshot);
+    let locate = state.preview.locate_request.take();
+    let locate_line = locate.and_then(|block| displayed_line_of_block(&text, block));
     egui::ScrollArea::both()
         .id_salt("generated-typst")
         .auto_shrink([false, false])
@@ -211,12 +216,25 @@ fn generated_source(ui: &mut egui::Ui, snapshot: &scholium_model::DocumentSnapsh
                 .spacing([16.0, 5.0])
                 .show(ui, |ui| {
                     for (index, line) in text.lines().enumerate() {
+                        let highlighted = Some(index) == locate_line;
+                        if highlighted {
+                            let rect = ui.available_rect_before_wrap();
+                            ui.painter().rect_filled(
+                                rect.with_min_y(rect.top()),
+                                2.0,
+                                theme::colors(ui).selection,
+                            );
+                        }
                         ui.label(
                             RichText::new(format!("{:>3}", index + 1))
                                 .monospace()
                                 .color(theme::colors(ui).muted),
                         );
-                        ui.add(egui::Label::new(highlight(line, theme::colors(ui))).extend());
+                        let label =
+                            ui.add(egui::Label::new(highlight(line, theme::colors(ui))).extend());
+                        if highlighted {
+                            ui.scroll_to_rect(label.rect, Some(egui::Align::Center));
+                        }
                         ui.end_row();
                     }
                 });
@@ -253,19 +271,47 @@ fn typst_preview(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         return;
     }
     let pages = state.preview.pages.clone();
+    let anchors = state.preview.anchors.clone();
     egui::ScrollArea::vertical()
         .id_salt("typst-preview-pages")
         .auto_shrink([false, false])
         .show(ui, |ui| {
             let width = (ui.available_width() - 24.0).max(160.0);
-            for page in &pages {
+            for (index, page) in pages.iter().enumerate() {
                 let size = page.size_vec2();
                 let height = width * size.y / size.x;
                 ui.add_space(12.0);
-                ui.add(egui::Image::new(page).fit_to_exact_size(egui::vec2(width, height)));
+                let response =
+                    ui.add(egui::Image::new(page).fit_to_exact_size(egui::vec2(width, height)));
+                if response.clicked()
+                    && let Some(pos) = ui.input(|input| input.pointer.interact_pos())
+                {
+                    // 显示像素 → 页面 pt：先除显示缩放，再除栅格化比例。
+                    let local = pos - response.rect.left_top();
+                    let scale = width / size.x;
+                    let y_pt = local.y / scale / scholium_typst::PIXELS_PER_PT;
+                    if let Some(block) = scholium_typst::block_at_click(&anchors, index + 1, y_pt) {
+                        state.preview.locate_request = Some(block);
+                        if let Some(node) = state
+                            .document
+                            .as_ref()
+                            .and_then(|snapshot| snapshot.blocks.get(block))
+                        {
+                            state.focus_block = Some(node.node);
+                        }
+                    }
+                }
             }
             ui.add_space(12.0);
         });
+}
+
+/// 显示版生成源码里某块首行的行号（0 基）。源码结构固定：前导若干行 +
+/// 每块两行（空行 + 内容行，块内容不含换行）。
+fn displayed_line_of_block(source: &str, block: usize) -> Option<usize> {
+    let first_blank = source.lines().position(|line| line.is_empty())?;
+    let line = first_blank + 1 + 2 * block;
+    (line < source.lines().count()).then_some(line)
 }
 
 fn split_keys(ui: &egui::Ui, split: &mut f32) {
@@ -350,4 +396,19 @@ fn preview(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         ui.label("排版示例 · 后端未接入 · revision —");
     });
     paper::show(ui, state, "source-preview-page");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::displayed_line_of_block;
+
+    #[test]
+    fn displayed_source_line_lookup_follows_block_order() {
+        let source =
+            "#set page(paper: \"a4\")\n#set text(font: \"x\")\n\n= 标题\n\n正文一\n\n正文二";
+        assert_eq!(displayed_line_of_block(source, 0), Some(3));
+        assert_eq!(displayed_line_of_block(source, 1), Some(5));
+        assert_eq!(displayed_line_of_block(source, 2), Some(7));
+        assert_eq!(displayed_line_of_block(source, 9), None);
+    }
 }
