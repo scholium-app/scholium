@@ -66,3 +66,5 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0025](ADR-0025-extension-boundaries.md)：会话复用与 Pi/MCP/WIT 扩展边界（Proposed）。
 
 [ADR 0026](ADR-0026-block-document-session.md)：多块文档会话——段落与标题、换行分段与块种类切换的本地边界。
+
+[ADR 0027](ADR-0027-typst-preview-integration.md)：Typst 快速预览首步接入——受信内容的进程内编译、论文常规字体与只读生成视图。

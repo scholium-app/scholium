@@ -53,7 +53,7 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
                 if state.mode == ViewMode::Visual {
                     crate::native_text::show(ui, state);
                 } else {
-                    crate::native_text::source_unavailable(ui, state);
+                    source_workspace(ui, state);
                 }
                 return;
             }
@@ -91,9 +91,9 @@ fn source_workspace(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             ui.weak("窄窗口 · 单窗格");
         });
         if state.preview_on_narrow {
-            preview(ui, state);
+            preview_side(ui, state);
         } else {
-            source(ui, state.dialect);
+            source_side(ui, state);
         }
         return;
     }
@@ -161,17 +161,111 @@ fn split(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         UiBuilder::new().id_salt("source-pane").max_rect(left),
         |ui| {
             ui.set_clip_rect(left);
-            source(ui, state.dialect);
+            source_side(ui, state);
         },
     );
     ui.scope_builder(
         UiBuilder::new().id_salt("preview-pane").max_rect(right),
         |ui| {
             ui.set_clip_rect(right);
-            preview(ui, state);
+            preview_side(ui, state);
         },
     );
     ui.advance_cursor_after_rect(rect);
+}
+
+/// 左窗格：真实文档显示生成的 Typst 投影，示例工作区显示静态夹具。
+fn source_side(ui: &mut egui::Ui, state: &mut WorkspaceState) {
+    match &state.document {
+        Some(snapshot) => generated_source(ui, snapshot),
+        None => source(ui, state.dialect),
+    }
+}
+
+/// 右窗格：真实文档显示 Typst 编译页，示例工作区显示静态版面。
+fn preview_side(ui: &mut egui::Ui, state: &mut WorkspaceState) {
+    if state.document.is_some() {
+        typst_preview(ui, state);
+    } else {
+        preview(ui, state);
+    }
+}
+
+// The generated view is a read-only projection of the authority (ADR 0027):
+// editing it would need the reconcile path, which is not integrated here.
+fn generated_source(ui: &mut egui::Ui, snapshot: &scholium_model::DocumentSnapshot) {
+    theme::bar_frame(ui).show(ui, |ui| {
+        ui.set_width(ui.available_width());
+        ui.horizontal(|ui| {
+            ui.label(RichText::new("Typst").color(theme::colors(ui).accent));
+            ui.weak("生成视图 · 只读 · 随正文更新");
+        });
+    });
+    let text = scholium_typst::generate_typst(snapshot);
+    egui::ScrollArea::both()
+        .id_salt("generated-typst")
+        .auto_shrink([false, false])
+        .show(ui, |ui| {
+            ui.add_space(12.0);
+            egui::Grid::new("generated-typst-lines")
+                .spacing([16.0, 5.0])
+                .show(ui, |ui| {
+                    for (index, line) in text.lines().enumerate() {
+                        ui.label(
+                            RichText::new(format!("{:>3}", index + 1))
+                                .monospace()
+                                .color(theme::colors(ui).muted),
+                        );
+                        ui.add(egui::Label::new(highlight(line, theme::colors(ui))).extend());
+                        ui.end_row();
+                    }
+                });
+        });
+}
+
+fn typst_preview(ui: &mut egui::Ui, state: &mut WorkspaceState) {
+    theme::bar_frame(ui).show(ui, |ui| {
+        ui.set_width(ui.available_width());
+        ui.horizontal(|ui| {
+            ui.label(RichText::new("Typst 快速预览").color(theme::colors(ui).accent));
+            let status = if state.preview.pending {
+                "编译中…".to_owned()
+            } else if state.preview.shown > 0 {
+                format!("r{} · {} ms", state.preview.shown, state.preview.elapsed_ms)
+            } else {
+                "—".to_owned()
+            };
+            ui.weak(status);
+        });
+    });
+    if let Some(error) = state.preview.error.clone() {
+        ui.add_space(theme::GUTTER);
+        ui.colored_label(theme::colors(ui).accent, format!("编译失败：{error}"));
+        return;
+    }
+    if state.preview.pages.is_empty() {
+        ui.add_space(theme::GUTTER);
+        ui.weak(if state.preview.pending {
+            "编译中…"
+        } else {
+            "尚无排版结果"
+        });
+        return;
+    }
+    let pages = state.preview.pages.clone();
+    egui::ScrollArea::vertical()
+        .id_salt("typst-preview-pages")
+        .auto_shrink([false, false])
+        .show(ui, |ui| {
+            let width = (ui.available_width() - 24.0).max(160.0);
+            for page in &pages {
+                let size = page.size_vec2();
+                let height = width * size.y / size.x;
+                ui.add_space(12.0);
+                ui.add(egui::Image::new(page).fit_to_exact_size(egui::vec2(width, height)));
+            }
+            ui.add_space(12.0);
+        });
 }
 
 fn split_keys(ui: &egui::Ui, split: &mut f32) {

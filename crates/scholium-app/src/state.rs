@@ -5,6 +5,69 @@ pub(crate) enum ViewMode {
     Source,
 }
 
+/// Typst 预览投影与编译记账；页纹理不是权威内容（ADR 0027）。
+#[derive(Default)]
+pub(crate) struct PreviewState {
+    /// 需要显示的会话 revision。
+    pub(crate) wanted: u64,
+    /// 当前页面纹理对应的 revision。
+    pub(crate) shown: u64,
+    /// 最近一次提交给编译线程的 revision。
+    pub(crate) submitted: u64,
+    /// `wanted` 最近变化时刻；编译需等待去抖窗口。
+    pub(crate) changed_at: Option<std::time::Instant>,
+    /// 是否有 revision ≥ wanted 的编译在途。
+    pub(crate) pending: bool,
+    /// 最近一次编译错误。
+    pub(crate) error: Option<String>,
+    /// 最近一次编译耗时（毫秒）。
+    pub(crate) elapsed_ms: u64,
+    /// 已上传的预览页纹理。
+    pub(crate) pages: Vec<eframe::egui::TextureHandle>,
+}
+
+impl std::fmt::Debug for PreviewState {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("PreviewState")
+            .field("wanted", &self.wanted)
+            .field("shown", &self.shown)
+            .field("submitted", &self.submitted)
+            .field("pending", &self.pending)
+            .field("error", &self.error)
+            .field("elapsed_ms", &self.elapsed_ms)
+            .field("pages", &self.pages.len())
+            .finish_non_exhaustive()
+    }
+}
+
+impl PreviewState {
+    /// 正文 revision 变化时登记新目标；同一 revision 的重复通知不重置去抖。
+    pub(crate) fn note_revision(&mut self, revision: u64) {
+        if revision != self.wanted {
+            self.wanted = revision;
+            self.changed_at = Some(std::time::Instant::now());
+        }
+    }
+
+    /// 会话重置时回到空预览。
+    pub(crate) fn reset(&mut self) {
+        *self = Self::default();
+    }
+
+    /// 状态栏摘要。
+    pub(crate) fn summary(&self) -> String {
+        if self.error.is_some() {
+            "排版失败".into()
+        } else if self.pending {
+            "排版编译中".into()
+        } else if self.shown > 0 {
+            format!("排版 r{}", self.shown)
+        } else {
+            "排版等待".into()
+        }
+    }
+}
+
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum Dialect {
     #[default]
@@ -40,6 +103,7 @@ pub(crate) struct WorkspaceState {
     /// removed block is gone, focus lands on the absorbing block at the seam.
     pub(crate) focus_after_merge: Option<(scholium_model::NodeId, scholium_model::NodeId, usize)>,
     pub(crate) mode: ViewMode,
+    pub(crate) preview: PreviewState,
     pub(crate) dialect: Dialect,
     pub(crate) navigation: bool,
     pub(crate) diagnostics: bool,
@@ -64,6 +128,7 @@ impl Default for WorkspaceState {
             focus_after_split: None,
             focus_after_merge: None,
             mode: ViewMode::Visual,
+            preview: PreviewState::default(),
             dialect: Dialect::Latex,
             navigation: false,
             diagnostics: false,
@@ -78,7 +143,7 @@ impl Default for WorkspaceState {
 
 #[cfg(test)]
 mod tests {
-    use super::{Dialect, ViewMode, WorkspaceState};
+    use super::{Dialect, PreviewState, ViewMode, WorkspaceState};
 
     #[test]
     fn default_workspace_starts_in_visual_fit_width_mode() {
@@ -95,5 +160,25 @@ mod tests {
         assert_eq!(state.focus_after_split, None);
         assert_eq!(state.focus_after_merge, None);
         assert_eq!(state.rejected_draft, None);
+        assert_eq!(state.preview.wanted, 0);
+        assert!(state.preview.pages.is_empty());
+    }
+
+    #[test]
+    fn preview_revision_notes_reset_debounce_once_per_change() {
+        let mut preview = PreviewState::default();
+        preview.note_revision(3);
+        assert_eq!(preview.wanted, 3);
+        let first_change = preview.changed_at;
+        preview.note_revision(3);
+        assert_eq!(
+            preview.changed_at, first_change,
+            "same revision is not a change"
+        );
+        preview.note_revision(4);
+        assert_ne!(preview.changed_at, first_change);
+        preview.reset();
+        assert_eq!(preview.wanted, 0);
+        assert_eq!(preview.summary(), "排版等待");
     }
 }

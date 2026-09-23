@@ -349,7 +349,7 @@ fn status(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             ui.label(
                 RichText::new(state.document.as_ref().map_or_else(
                     || "界面预览 · 排版未接入".into(),
-                    |s| format!("正文 r{} · 排版未接入", s.revision.0),
+                    |s| format!("正文 r{} · {}", s.revision.0, state.preview.summary()),
                 ))
                 .small()
                 .color(theme::colors(ui).muted),

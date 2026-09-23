@@ -342,3 +342,53 @@ fn ime_preedit_stays_local_until_commit() {
     assert_eq!(block_texts(&state), ["中"]);
     assert_eq!(bridge.session.as_ref().map(|s| s.actions().len()), Some(1));
 }
+
+#[test]
+fn preview_follows_revisions_only_in_source_mode_after_debounce() {
+    let ctx = egui::Context::default();
+    theme::install(&ctx);
+    let mut bridge = SessionBridge::default();
+    let mut state = WorkspaceState::default();
+    bridge.start(&mut state);
+    // First edit in visual mode registers the wanted revision.
+    let block = first_block(&state);
+    focus_block(&ctx, block);
+    frame(
+        &ctx,
+        &mut state,
+        &mut bridge,
+        vec![egui::Event::Text("预览正文".into())],
+    );
+    assert_eq!(state.preview.wanted, 1);
+    // Visual mode never compiles: no debounce elapses and no compiler spawns.
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    assert_eq!(state.preview.submitted, 0);
+    assert!(bridge.preview.is_none());
+    // Switching to source mode compiles once the debounce window has passed.
+    commands::dispatch(&mut state, commands::ViewCommand::Source);
+    state.preview.changed_at = state
+        .preview
+        .changed_at
+        .map(|at| at - std::time::Duration::from_secs(1));
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    assert_eq!(state.preview.submitted, 1);
+    assert!(bridge.preview.is_some());
+    assert!(state.preview.pending);
+    // A second edit (source mode has no block editor; submit one directly)
+    // raises the wanted revision; resubmission waits out the debounce again.
+    let snapshot = state.document.clone().expect("document");
+    state.pending_edit = Some(replace(&snapshot, block, "预览正文续"));
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    assert_eq!(state.preview.wanted, 2);
+    assert_eq!(
+        state.preview.submitted, 1,
+        "fresh edits debounce before compiling"
+    );
+    assert_eq!(state.preview.summary(), "排版编译中");
+    // A new session resets the preview bookkeeping.
+    bridge.allow_close = true;
+    bridge.start(&mut state);
+    assert_eq!(state.preview.wanted, 0);
+    assert!(state.preview.pages.is_empty());
+    assert!(!state.preview.pending);
+}

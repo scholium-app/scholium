@@ -1,15 +1,33 @@
-use crate::state::WorkspaceState;
+use crate::state::{ViewMode, WorkspaceState};
 use eframe::egui;
 use scholium_document::LocalSession;
 use scholium_model::BlockEdit;
+use scholium_typst::PreviewCompiler;
+use std::time::Duration;
+
+/// 正文停止修改后等待多久再提交编译；阶段 0 基准（报告 0005）显示编译
+/// 是百毫秒级操作，连续击键时不去抖会排队过期任务。
+const PREVIEW_DEBOUNCE: Duration = Duration::from_millis(250);
 
 /// App-side coordinator: UI projections cannot mutate the session directly.
-#[derive(Debug, Default)]
+#[derive(Default)]
 pub(crate) struct SessionBridge {
     session: Option<LocalSession>,
+    preview: Option<PreviewCompiler>,
     confirm_new: bool,
     confirm_close: bool,
     allow_close: bool,
+}
+
+impl std::fmt::Debug for SessionBridge {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("SessionBridge")
+            .field("session", &self.session.is_some())
+            .field("preview", &self.preview.is_some())
+            .field("confirm_new", &self.confirm_new)
+            .field("confirm_close", &self.confirm_close)
+            .finish_non_exhaustive()
+    }
 }
 
 impl SessionBridge {
@@ -30,7 +48,9 @@ impl SessionBridge {
             } else {
                 None
             };
+            let revision = session.snapshot().revision.0;
             state.document = Some(session.snapshot());
+            state.preview.note_revision(revision);
         }
         if std::mem::take(&mut state.new_requested) {
             if self.session.is_some() {
@@ -54,6 +74,56 @@ impl SessionBridge {
                 "未命名 — Scholium · 未保存".into(),
             ));
         }
+        self.drive_preview(ctx, state);
+    }
+
+    /// 收取完成的编译结果、按 revision 门控显示，并在去抖后提交新编译。
+    fn drive_preview(&mut self, ctx: &egui::Context, state: &mut WorkspaceState) {
+        if let Some(outcome) = self.preview.as_mut().and_then(PreviewCompiler::poll) {
+            // 旧 revision 的结果到达时新任务已在编译；丢弃旧页，不闪回。
+            if outcome.revision == state.preview.wanted {
+                state.preview.shown = outcome.revision;
+                state.preview.pending = false;
+                state.preview.elapsed_ms = outcome.elapsed_ms;
+                state.preview.error = outcome.error;
+                state.preview.pages = outcome
+                    .pages
+                    .iter()
+                    .enumerate()
+                    .map(|(index, page)| {
+                        let image = egui::ColorImage::from_rgba_premultiplied(
+                            [page.width as usize, page.height as usize],
+                            &page.rgba,
+                        );
+                        ctx.load_texture(
+                            format!("typst-preview-page-{index}"),
+                            image,
+                            egui::TextureOptions::LINEAR,
+                        )
+                    })
+                    .collect();
+            }
+        }
+        let wants_compile = state.document.is_some()
+            && state.mode == ViewMode::Source
+            && state.preview.wanted != 0
+            && state.preview.wanted != state.preview.submitted
+            && state
+                .preview
+                .changed_at
+                .is_some_and(|at| at.elapsed() >= PREVIEW_DEBOUNCE);
+        if wants_compile && let Some(snapshot) = state.document.clone() {
+            let source = scholium_typst::generate_typst(&snapshot);
+            self.preview
+                .get_or_insert_with(PreviewCompiler::spawn)
+                .submit(state.preview.wanted, source);
+            state.preview.submitted = state.preview.wanted;
+            state.preview.pending = true;
+        }
+        if state.preview.pending {
+            // 编译线程完成时 UI 可能正空闲；请求重绘以便下一帧收取结果。
+            ctx.request_repaint();
+        }
     }
 
     fn start(&mut self, state: &mut WorkspaceState) {
@@ -65,6 +135,7 @@ impl SessionBridge {
         state.focus_block = None;
         state.focus_after_split = None;
         state.focus_after_merge = None;
+        state.preview.reset();
         state.mode = crate::state::ViewMode::Visual;
         self.session = Some(session);
     }
