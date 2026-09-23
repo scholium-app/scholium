@@ -49,3 +49,8 @@ render、build、app 和 sync-server 组成。职责与 API 见 [模块索引](.
 ## 全栈与可移植性
 
 按[全栈候选](TECH_STACK.md)验证 UI 以外的解析、编译、协作、存储、渲染和服务端；候选不等于最终依赖。优先支持[WASM 核心与浏览器适配](WASM.md)，保持原生桌面路线及已指定 GUI 顺序；完整浏览器发行范围待验证。LaTeX 参考[Mogan 转换分层与模板适配](../research/MOGAN_LATEX.md)，独立 Rust 实现。
+
+
+AI、MCP 和插件是核心编辑闭环稳定后的扩展路线：AI 通过 Pi agent 产生可审计 proposal，MCP 以受控工具让其他 agent 调用 Scholium，WASM 插件以 WIT Component Model 提供跨平台、跨语言 ABI。三者都只能提交普通 Action，不能绕过权限、源码语言 epoch、协作写集或恢复机制。详细计划见 [AI 与 MCP 扩展设计](AI_MCP.md) 与 [WASM 插件与 WIT 组件计划](WASM_PLUGINS.md)。
+
+模块提取按 [会话与扩展组织计划](EXTENSION_ORGANIZATION.md)实施：先建立独立于 UI 的 session，再按实际需要接入 Pi/MCP 与插件 SDK、host、runtime；不预建空 crate。

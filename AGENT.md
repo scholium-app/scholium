@@ -25,6 +25,7 @@
 9. **混用是完整产品要求。** 正文、公式、图表、宏、模板、跨片段引用都要有验证路径。Raw 保留不等于支持执行；正式输出不得包含 unresolved 占位。见 `docs/MIXED_SOURCE_EDITING.md`。
 
 10. **原生技术栈。** 应用 UI、核心与服务端优先 Rust；必要时引入 C/C++/Zig。禁止 npm/Node.js、JavaScript/TypeScript 编辑器、WebView/Electron/Tauri 作为应用 UI 或验证依赖。HTML 导出是文件能力，不是 UI 实现。可选浏览器 WASM 允许必要的工具生成加载/绑定胶水，不允许 JS/TS 业务编辑器或 npm/Node.js；见 `docs/plan/WASM.md`。
+    Pi agent 接入允许用户自行安装的可选外部运行时（含其需要的 Node.js）及独立 Pi 集成验证；不得成为原生应用、核心或常规测试依赖，不允许据此引入 JS/TS UI。见 [扩展边界提案](docs/adr/ADR-0025-extension-boundaries.md)。
     C/C++/Zig 依赖（含经由构建脚本编译本地代码的 crate）必须登记在 [docs/NATIVE_DEPENDENCIES.md](docs/NATIVE_DEPENDENCIES.md)，显式声明 ABI、内存所有权、线程约束与销毁顺序。
 11. **UI 验证顺序固定。** 按 Iced → GPUI → C++ EUI-NEO → Slint 或 egui 的顺序，用 `docs/plan/NATIVE_UI_VALIDATION.md` 的同一验收集验证，不以演示能运行替代编辑器可行性。框架选型见 [ADR 0006](docs/adr/ADR-0006-native-ui-framework.md)，阶段边界见 [ADR 0023](docs/adr/ADR-0023-stage0-feasibility-boundary.md)，当前阶段判定只见报告 0012；更换框架必须新立 ADR 并重跑同一验收集。
 
