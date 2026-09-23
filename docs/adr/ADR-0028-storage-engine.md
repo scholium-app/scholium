@@ -1,6 +1,6 @@
 # ADR 0028：存储引擎选型（SQLite/rusqlite vs redb）
 
-- 状态：Proposed（拟议决策；实现轮以真实基准与恢复测试裁决后改 Accepted）
+- 状态：Accepted（2026-09-23 按预设失败判据改裁 SQLite；见"裁决"节）
 - 日期：2026-09-23
 - 影响模块：scholium-storage（未建立）、document、app
 - 关联：[ADR 0023](ADR-0023-stage0-feasibility-boundary.md)（阶段 1 门禁 1）、[报告 0008](../spikes/SPK-0008-build-recovery.md)（恢复机制已验证）
@@ -39,20 +39,28 @@
 `meta`（schema 版本、文档身份）。会话写入路径：动作先落 ActionLog 再投影快照，
 崩溃后重放 > 快照 revision 的动作恢复。
 
-## 裁决前必须补的证据（实现轮）
+## 证据与裁决（2026-09-23，同机 dev profile 最小实现）
 
-- 基准：10 万 Action 追加、按 revision 读快照、崩溃恢复（SIGKILL 撕裂注入）三项，
-  redb 与 rusqlite 各实现最小版并同机对比；不满足则回退本决策。
-- `verify-stage0.sh` 式门禁：redb 依赖许可证、平台构建（Linux 先行）。
-- 失败判据：redb 任一项显著劣于 rusqlite（恢复不完整或 p99 写入 >2×）即重新裁决。
+两引擎各按拟议 schema 实现最小版并同机对比（Arch Linux / sqlite 3.53.4 / redb 3.1.3）：
 
-## 进展（2026-09-23，首个实现）
+| 指标 | SQLite (rusqlite 0.37, WAL+FULL) | redb 3.1.3 |
+|---|---|---|
+| 10 万动作追加（单事务） | **59–72 ms** | 2 595–2 627 ms |
+| 整库读回（快照+日志） | **<1–28 ms** | 244–246 ms |
+| SIGKILL 写入中途击杀 | **恢复到某个完整提交**（探针测试） | 未测（已改裁） |
 
-`crates/scholium-storage` 已按拟议 schema 实现并接入 app（Ctrl+S 保存、启动恢复、
-脏状态标题/状态栏）。redb 3.1.3 实测（本机，dev profile，含测试断言）：
-**10 万动作追加 2.6 s、整库读回 246 ms**；未提交事务整体不可见（redb MVCC），
-保存为单事务。修复点：重存低 revision 需以 `head_revision` 元数据指向最新保存，
-不能按最大 key 取快照。rusqlite 对照与 SIGKILL 撕裂注入仍未跑，ADR 维持 Proposed。
+写入差距约 **40×**，远超预设失败判据（p99 写入 >2× 即重裁）。
+按本 ADR 预先声明的判据，**裁决改为 SQLite（rusqlite 链接系统 libsqlite3）**：
+拟议决策作废，`crates/scholium-storage` 后端已改写为 SQLite（schema 与公共 API 不变：
+snapshots/action_log/meta 三表 + `head_revision` 指针；WAL + synchronous=FULL，
+保存为低频显式动作，换崩溃/断电安全）。
+
+redb 保留为 WASM 路线的候选记录（纯 Rust、无 C 依赖），浏览器存储适配另行验证；
+`head_revision` 指针的教训（低 revision 重存不能按最大 key 取最新）对两引擎同样适用。
+
+证据复现：`cargo test -p scholium-storage`（round-trip/日志收缩/历史读/10 万基准）
+与 `cargo test -p scholium-storage --test recovery`（hammer 子进程 SIGKILL 注入）。
+libsqlite3 依赖登记见 [NATIVE_DEPENDENCIES](../NATIVE_DEPENDENCIES.md)。
 
 ## 后果
 

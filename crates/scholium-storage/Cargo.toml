@@ -8,7 +8,8 @@ rust-version = "1.96"
 [dependencies]
 scholium-model = { path = "../scholium-model", version = "0.1.0" }
 serde_json = "1"
-redb = "3"
+# 系统库链接（非 bundled），登记见 docs/NATIVE_DEPENDENCIES.md
+rusqlite = "0.37"
 
 [lints]
 workspace = true
