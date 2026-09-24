@@ -14,6 +14,7 @@ pub(crate) enum ViewCommand {
     ZoomIn,
     ZoomOut,
     ActualSize,
+    ToggleRibbon,
 }
 
 pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
@@ -36,6 +37,7 @@ pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
     match command {
         ViewCommand::NewDocument => state.new_requested = true,
         ViewCommand::Save => state.save_requested = true,
+        ViewCommand::ToggleRibbon => state.ribbon.collapsed = !state.ribbon.collapsed,
         ViewCommand::Visual => {
             state.mode = ViewMode::Visual;
             state.page_editor.request_focus();
@@ -58,6 +60,7 @@ fn set_zoom(state: &mut WorkspaceState, zoom: f32) {
 
 pub(crate) fn shortcuts(ctx: &egui::Context, state: &mut WorkspaceState) {
     let bindings = [
+        (Modifiers::COMMAND, Key::F1, ViewCommand::ToggleRibbon),
         (Modifiers::COMMAND, Key::N, ViewCommand::NewDocument),
         (Modifiers::COMMAND, Key::S, ViewCommand::Save),
         (Modifiers::COMMAND, Key::Num1, ViewCommand::Visual),

@@ -1,4 +1,4 @@
-//! Scholium 原生工作区外壳；示例内容只用于布局，不连接编辑核心。
+//! Scholium 原生排版工作区；Ribbon、页面编辑与会话命令共用文档投影。
 
 mod chrome;
 mod commands;
@@ -7,6 +7,7 @@ mod native_text;
 mod page_editor;
 mod paper;
 mod preview;
+mod ribbon;
 mod sample;
 mod session;
 mod state;
@@ -172,19 +173,18 @@ mod tests {
         assert_eq!(result.1, 0.5);
         let result = frame(vec![key(egui::Key::J, egui::Modifiers::COMMAND)]);
         assert!(result.2);
-        // The tab-bar icon switch stays clickable: in the third bar row the visual
-        // toggle is the second icon from the right (menus 28 + tools 34 + half of 32).
+        // Document tabs remain above the Ribbon; their view controls stay clickable.
         frame(vec![
-            egui::Event::PointerMoved(egui::pos2(1226.0, 78.0)),
+            egui::Event::PointerMoved(egui::pos2(1226.0, 16.0)),
             egui::Event::PointerButton {
-                pos: egui::pos2(1226.0, 78.0),
+                pos: egui::pos2(1226.0, 16.0),
                 button: egui::PointerButton::Primary,
                 pressed: true,
                 modifiers: egui::Modifiers::NONE,
             },
         ]);
         let result = frame(vec![egui::Event::PointerButton {
-            pos: egui::pos2(1226.0, 78.0),
+            pos: egui::pos2(1226.0, 16.0),
             button: egui::PointerButton::Primary,
             pressed: false,
             modifiers: egui::Modifiers::NONE,

@@ -36,7 +36,6 @@ pub(crate) fn colors(ui: &egui::Ui) -> Palette {
 }
 
 // All geometry constants are egui logical pixels, independent of the monitor's DPI.
-pub(crate) const ROW_HEIGHT: f32 = 28.0;
 pub(crate) const NARROW_WIDTH: f32 = 900.0;
 pub(crate) const PAGE_WIDTH: f32 = 790.0;
 pub(crate) const PAGE_HEIGHT: f32 = 1040.0;

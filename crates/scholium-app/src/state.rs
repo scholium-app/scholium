@@ -148,6 +148,7 @@ pub(crate) struct WorkspaceState {
     /// installing earlier would clamp against the pre-edit buffer.
     pub(crate) focus_after_replace: Option<(scholium_model::NodeId, usize, u64)>,
     pub(crate) mode: ViewMode,
+    pub(crate) ribbon: crate::ribbon::RibbonState,
     /// Visual workspace shows the Typst page with a focused block editor.
     pub(crate) visual_typeset: bool,
     pub(crate) preview: PreviewState,
@@ -181,6 +182,7 @@ impl Default for WorkspaceState {
             focus_after_merge: None,
             focus_after_replace: None,
             mode: ViewMode::Visual,
+            ribbon: Default::default(),
             visual_typeset: true,
             preview: PreviewState::default(),
             page_editor: Default::default(),
