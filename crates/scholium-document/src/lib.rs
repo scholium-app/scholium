@@ -6,6 +6,8 @@ use scholium_model::{
     RequestId, Revision,
 };
 
+mod range_edit;
+
 /// Maximum UTF-8 text bytes accepted per block edit.
 pub const MAX_TEXT_BYTES: usize = 1024 * 1024;
 /// Maximum block count of the bounded initial session.
@@ -26,6 +28,9 @@ pub struct Action {
 /// Rejection never changes the document or action journal.
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
 pub enum EditError {
+    /// Selection endpoints are reversed or are not UTF-8 boundaries.
+    #[error("选区位置无效；未应用此次修改")]
+    InvalidRange,
     /// Document or block identity does not belong to this session.
     #[error("编辑目标不属于当前文档")]
     WrongTarget,
@@ -117,6 +122,16 @@ impl LocalSession {
             return Err(EditError::Capacity);
         }
         match edit.edit {
+            BlockEdit::ReplaceRange { start, end, text } => {
+                let plan = range_edit::plan(&self.snapshot, start, end, &text)?;
+                if plan.is_noop(&self.snapshot) {
+                    return Ok(false);
+                }
+                self.commit(edit.request, edit.base, |snapshot| {
+                    snapshot.blocks.splice(plan.first..=plan.last, plan.blocks);
+                });
+                Ok(true)
+            }
             BlockEdit::ReplaceText { block, text } => {
                 let index = self.block_index(block)?;
                 if text == self.snapshot.blocks[index].markup_text() {

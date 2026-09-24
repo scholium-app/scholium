@@ -74,7 +74,7 @@ fn block_editor(
             .map(|(_, draft)| draft.clone())
             .unwrap_or_default()
     } else {
-        block.markup_text()
+        input_text(state, snapshot, index)
     };
     let font = match block.kind {
         BlockKind::Paragraph => FontId::proportional(16.0),
@@ -82,18 +82,17 @@ fn block_editor(
         BlockKind::Heading2 => FontId::proportional(18.0),
     };
     let hint = if index == 0 && snapshot.blocks.len() == 1 && block.markup_text().is_empty() {
-        "在这里输入中英文正文；回车分段…（仅内存保存）"
+        "在这里输入中英文正文；回车分段…"
     } else {
         ""
     };
-    let response = ui.add(
-        egui::TextEdit::multiline(&mut text)
-            .id(id)
-            .font(font)
-            .desired_width(f32::INFINITY)
-            .desired_rows(1)
-            .hint_text(hint),
-    );
+    let editor = egui::TextEdit::multiline(&mut text)
+        .id(id)
+        .font(font)
+        .desired_width(f32::INFINITY)
+        .desired_rows(1)
+        .hint_text(hint);
+    let response = ui.add(editor);
     if response.has_focus() {
         state.focus_block = Some(block.node);
     }
@@ -146,7 +145,7 @@ fn boundary_keys(
         return;
     }
     let caret = range.primary.index.0;
-    let char_count = block.markup_text().chars().count();
+    let char_count = input_text(state, snapshot, index).chars().count();
     let at_start = index > 0 && caret == 0;
     let at_end = caret == char_count;
     if at_start
@@ -202,6 +201,7 @@ fn boundary_keys(
     };
     consume_key(ui, key);
     focus_block(ui, node, caret);
+    state.focus_block = Some(node);
 }
 
 fn consume_key(ui: &mut egui::Ui, key: Key) {
@@ -225,6 +225,7 @@ fn move_focus_after_split(
             && let Some(following) = snapshot.blocks.get(index + 1)
         {
             focus_block(ui, following.node, 0);
+            state.focus_block = Some(following.node);
         }
         if grew || anchor_index.is_none() {
             state.focus_after_split = None;
@@ -241,6 +242,7 @@ fn move_focus_after_merge(
         let still_there = snapshot.blocks.iter().any(|b| b.node == removed);
         if !still_there && snapshot.blocks.iter().any(|b| b.node == absorber) {
             focus_block(ui, absorber, caret);
+            state.focus_block = Some(absorber);
         }
         if !still_there {
             state.focus_after_merge = None;
@@ -248,7 +250,7 @@ fn move_focus_after_merge(
     }
 }
 
-fn focus_block(ui: &egui::Ui, node: NodeId, caret: usize) {
+pub(crate) fn focus_block(ui: &egui::Ui, node: NodeId, caret: usize) {
     let id = egui::Id::new(("native-block", node));
     ui.ctx().memory_mut(|memory| memory.request_focus(id));
     let mut editor = egui::text_edit::TextEditState::load(ui.ctx(), id).unwrap_or_default();
@@ -269,6 +271,10 @@ pub(crate) fn insert_markup_at_caret(
     fragment: &str,
     caret_shift: usize,
 ) {
+    if state.visual_typeset && state.mode == crate::state::ViewMode::Visual {
+        crate::page_editor::insert_markup(state, fragment, caret_shift);
+        return;
+    }
     let Some(snapshot) = state.document.clone() else {
         return;
     };
@@ -283,7 +289,11 @@ pub(crate) fn insert_markup_at_caret(
     let caret = egui::text_edit::TextEditState::load(ctx, id)
         .and_then(|editor| editor.cursor.char_range())
         .map_or(0, |range| range.primary.index.0);
-    let mut markup = block.markup_text();
+    let mut markup = state
+        .accepted_input
+        .as_ref()
+        .filter(|(node, revision, _)| *node == block.node && *revision == snapshot.revision.0)
+        .map_or_else(|| block.markup_text(), |(_, _, text)| text.clone());
     let byte = char_to_byte(&markup, caret);
     markup.insert_str(byte, fragment);
     state.pending_edit = Some(snapshot.request(BlockEdit::ReplaceText {
@@ -299,4 +309,13 @@ fn char_to_byte(text: &str, chars: usize) -> usize {
     text.char_indices()
         .nth(chars)
         .map_or(text.len(), |(byte, _)| byte)
+}
+
+fn input_text(state: &WorkspaceState, snapshot: &DocumentSnapshot, index: usize) -> String {
+    let block = &snapshot.blocks[index];
+    state
+        .accepted_input
+        .as_ref()
+        .filter(|(node, revision, _)| *node == block.node && *revision == snapshot.revision.0)
+        .map_or_else(|| block.markup_text(), |(_, _, text)| text.clone())
 }

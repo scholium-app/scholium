@@ -1,5 +1,5 @@
 use super::*;
-use scholium_model::{Block, DocumentId, Inline, NodeId, Revision};
+use scholium_model::{Block, BlockKind, DocumentId, Inline, NodeId, Revision};
 
 fn snapshot(blocks: &[(BlockKind, &str)]) -> DocumentSnapshot {
     DocumentSnapshot {
@@ -55,14 +55,14 @@ fn math_segments_render_as_formulas_not_literal_text() {
         "math stays unescaped between $ delimiters: {source}"
     );
     let mut compiler = PreviewCompiler::spawn();
-    compiler.submit(1, source, snap.blocks.len());
-    let outcome = wait_for_outcome(&mut compiler, 1);
+    compiler.submit(snap.document, 1, source, snap.blocks.len());
+    let outcome = wait_for_compile(&mut compiler, snap.document, 1);
     assert!(
         outcome.error.is_none(),
         "math must compile: {:?}",
         outcome.error
     );
-    assert!(!outcome.pages.is_empty());
+    assert!(outcome.page_count > 0);
 }
 
 #[test]
@@ -73,13 +73,19 @@ fn compiler_produces_pages_for_a_document() {
         (BlockKind::Paragraph, "固定端点给出边界条件。"),
     ]);
     let mut compiler = PreviewCompiler::spawn();
-    compiler.submit(1, generate_typst_anchored(&snap), snap.blocks.len());
-    let outcome = wait_for_outcome(&mut compiler, 1);
+    compiler.submit(
+        snap.document,
+        1,
+        generate_typst_anchored(&snap),
+        snap.blocks.len(),
+    );
+    let outcome = wait_for_compile(&mut compiler, snap.document, 1);
     assert_eq!(outcome.revision, 1);
     let error = outcome.error.unwrap_or_default();
     assert!(error.is_empty(), "compile should succeed: {error}");
-    assert!(!outcome.pages.is_empty(), "at least one rasterized page");
-    let page = &outcome.pages[0];
+    assert!(outcome.page_count > 0, "at least one compiled page");
+    compiler.request_page(snap.document, 1, 0);
+    let page = wait_for_page(&mut compiler, snap.document, 1, 0).pixels;
     assert!(page.width > 0 && page.height > page.width, "A4 portrait");
     assert_eq!(
         page.rgba.len(),
@@ -91,9 +97,19 @@ fn compiler_produces_pages_for_a_document() {
 fn latest_revision_wins_when_requests_overtake_each_other() {
     let snap = snapshot(&[(BlockKind::Paragraph, "短文档")]);
     let mut compiler = PreviewCompiler::spawn();
-    compiler.submit(7, generate_typst_anchored(&snap), snap.blocks.len());
-    compiler.submit(9, generate_typst_anchored(&snap), snap.blocks.len());
-    let outcome = wait_for_outcome(&mut compiler, 9);
+    compiler.submit(
+        snap.document,
+        7,
+        generate_typst_anchored(&snap),
+        snap.blocks.len(),
+    );
+    compiler.submit(
+        snap.document,
+        9,
+        generate_typst_anchored(&snap),
+        snap.blocks.len(),
+    );
+    let outcome = wait_for_compile(&mut compiler, snap.document, 9);
     assert_eq!(
         outcome.revision, 9,
         "queued request is replaced, not queued up"
@@ -101,14 +117,17 @@ fn latest_revision_wins_when_requests_overtake_each_other() {
 }
 
 // Compile includes a system font scan on first use; allow seconds, not ms.
-fn wait_for_outcome(compiler: &mut PreviewCompiler, revision: u64) -> Outcome {
+fn wait_for_compile(
+    compiler: &mut PreviewCompiler,
+    document: DocumentId,
+    revision: u64,
+) -> CompileOutcome {
     for _ in 0..600 {
-        if let Some(outcome) = compiler.poll() {
-            assert!(
-                outcome.revision >= revision,
-                "unexpected stale outcome r{}",
-                outcome.revision
-            );
+        if let Some(PreviewEvent::Compiled(outcome)) = compiler.poll() {
+            if outcome.document != document {
+                continue;
+            }
+            // A compile already in flight may finish before the latest request.
             if outcome.revision == revision {
                 return outcome;
             }
@@ -116,6 +135,23 @@ fn wait_for_outcome(compiler: &mut PreviewCompiler, revision: u64) -> Outcome {
         std::thread::sleep(std::time::Duration::from_millis(25));
     }
     panic!("no compile outcome within 15s (font scan + compile)");
+}
+
+fn wait_for_page(
+    compiler: &mut PreviewCompiler,
+    document: DocumentId,
+    revision: u64,
+    page: usize,
+) -> PageOutcome {
+    for _ in 0..600 {
+        if let Some(PreviewEvent::Page(outcome)) = compiler.poll()
+            && (outcome.document, outcome.revision, outcome.page) == (document, revision, page)
+        {
+            return outcome;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(25));
+    }
+    panic!("no page outcome within 15s");
 }
 
 #[test]
@@ -126,20 +162,95 @@ fn anchors_locate_every_block_and_map_clicks() {
         (BlockKind::Paragraph, "第二段正文。"),
     ]);
     let mut compiler = PreviewCompiler::spawn();
-    compiler.submit(1, generate_typst_anchored(&snap), snap.blocks.len());
-    let outcome = wait_for_outcome(&mut compiler, 1);
+    compiler.submit(
+        snap.document,
+        1,
+        generate_typst_anchored(&snap),
+        snap.blocks.len(),
+    );
+    let outcome = wait_for_compile(&mut compiler, snap.document, 1);
     assert!(outcome.error.is_none(), "{:?}", outcome.error);
     assert_eq!(outcome.anchors.len(), 3, "one anchor per block");
     assert!(outcome.anchors.iter().all(|a| a.page == 1));
+    assert!(outcome.anchors.iter().all(|a| a.start_page == 1));
+    assert!(outcome.anchors[0].start_y < outcome.anchors[0].y);
     assert!(outcome.anchors[0].y < outcome.anchors[1].y);
     assert!(outcome.anchors[1].y < outcome.anchors[2].y);
-    // Click mapping: between anchors 1 and 2 selects block 1; above all selects 0.
+    // An anchor follows its block: the next marker below the pointer owns it.
     let mid = (outcome.anchors[1].y + outcome.anchors[2].y) / 2.0;
-    assert_eq!(block_at_click(&outcome.anchors, 1, mid), Some(1));
+    assert_eq!(block_at_click(&outcome.anchors, 1, mid), Some(2));
     assert_eq!(block_at_click(&outcome.anchors, 1, 0.0), Some(0));
+    assert_eq!(block_at_click(&outcome.anchors, 1, f32::MAX), Some(2));
     assert_eq!(
         block_at_click(&outcome.anchors, 9, 10.0),
         None,
         "unknown page"
     );
+}
+
+#[test]
+fn trailing_anchors_map_page_spanning_text_to_its_block() {
+    let anchors = [
+        BlockAnchor {
+            block: 0,
+            start_page: 1,
+            start_x: 0.0,
+            start_y: 50.0,
+            page: 2,
+            x: 0.0,
+            y: 120.0,
+        },
+        BlockAnchor {
+            block: 1,
+            start_page: 2,
+            start_x: 0.0,
+            start_y: 150.0,
+            page: 3,
+            x: 0.0,
+            y: 100.0,
+        },
+    ];
+    assert_eq!(block_at_click(&anchors, 1, 700.0), Some(0));
+    assert_eq!(block_at_click(&anchors, 2, 80.0), Some(0));
+    assert_eq!(block_at_click(&anchors, 2, 200.0), Some(1));
+    assert_eq!(block_at_click(&anchors, 3, 50.0), Some(1));
+}
+
+#[test]
+fn page_after_the_old_eight_page_limit_can_be_rendered_on_demand() {
+    let document = DocumentId::fresh();
+    let source = (0..10)
+        .map(|page| {
+            if page == 9 {
+                format!("Page {page}\n")
+            } else {
+                format!("Page {page}\n#pagebreak()\n")
+            }
+        })
+        .collect::<String>();
+    let mut compiler = PreviewCompiler::spawn();
+    compiler.submit(document, 1, source, 0);
+    let outcome = wait_for_compile(&mut compiler, document, 1);
+    assert!(outcome.error.is_none(), "{:?}", outcome.error);
+    assert_eq!(outcome.page_count, 10);
+    compiler.request_page(document, 1, 9);
+    let last = wait_for_page(&mut compiler, document, 1, 9);
+    assert!(last.pixels.width > 0 && last.pixels.height > 0);
+}
+
+#[test]
+fn exceeding_the_page_limit_reports_failure_instead_of_truncating() {
+    let document = DocumentId::fresh();
+    let source = "Page\n#pagebreak()\n".repeat(MAX_PREVIEW_PAGES) + "Last page";
+    let mut compiler = PreviewCompiler::spawn();
+    compiler.submit(document, 1, source, 0);
+    let outcome = wait_for_compile(&mut compiler, document, 1);
+    assert_eq!(outcome.page_count, MAX_PREVIEW_PAGES + 1);
+    assert!(
+        outcome
+            .error
+            .as_deref()
+            .is_some_and(|error| error.contains("100"))
+    );
+    assert!(outcome.anchors.is_empty());
 }

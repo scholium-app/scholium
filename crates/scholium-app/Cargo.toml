@@ -8,6 +8,7 @@ publish = false
 
 [dependencies]
 eframe.workspace = true
+unicode-segmentation = "=1.13.3"
 scholium-model = { path = "../scholium-model", version = "0.1.0" }
 scholium-document = { path = "../scholium-document", version = "0.1.0" }
 scholium-typst = { path = "../scholium-typst", version = "0.1.0" }
