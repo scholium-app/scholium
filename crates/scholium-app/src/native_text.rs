@@ -9,7 +9,7 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     ui.add_space(theme::GUTTER);
     ui.label(RichText::new("未命名").size(24.0));
     ui.weak(format!(
-        "基础结构编辑 · 内存文档 · revision {} · 尚未接入排版",
+        "基础结构编辑 · 本地会话 · revision {} · Typst 预览见源码模式",
         snapshot.revision.0
     ));
     if let Some(error) = &state.edit_error {

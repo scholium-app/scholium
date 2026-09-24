@@ -18,7 +18,7 @@ pub(crate) struct SessionBridge {
     preview: Option<PreviewCompiler>,
     store: Option<SessionStore>,
     store_file: Option<PathBuf>,
-    store_error: Option<String>,
+    restore_failure: Option<String>,
     restored: bool,
     confirm_new: bool,
     confirm_close: bool,
@@ -90,12 +90,18 @@ impl SessionBridge {
         {
             let snapshot = session.snapshot();
             let requests: Vec<_> = session.actions().iter().map(|a| a.request).collect();
-            match self.store().save(&snapshot, &requests) {
+            let result = if let Some(error) = &self.restore_failure {
+                Err(format!("原有会话恢复失败，保存已阻止：{error}"))
+            } else {
+                self.store()
+                    .and_then(|store| store.save(&snapshot, &requests))
+            };
+            match result {
                 Ok(()) => {
                     state.saved_revision = Some(snapshot.revision.0);
-                    state.edit_error = None;
+                    state.storage_error = None;
                 }
-                Err(error) => state.edit_error = Some(format!("保存失败：{error}")),
+                Err(error) => state.storage_error = Some(format!("保存失败：{error}")),
             }
         }
         if std::mem::take(&mut state.new_requested) {
@@ -176,33 +182,24 @@ impl SessionBridge {
         }
     }
 
-    fn store(&mut self) -> &SessionStore {
+    fn store(&mut self) -> Result<&SessionStore, String> {
         if self.store.is_none() {
-            let opened = self
-                .session_file()
-                .and_then(|path| SessionStore::open(&path));
-            self.store = Some(match opened {
-                Ok(store) => store,
-                Err(error) => {
-                    // 打不开就用临时库并报错；编辑不受影响，下次保存再试。
-                    self.store_error = Some(error);
-                    SessionStore::open_scratch().expect("scratch store opens")
-                }
-            });
+            let path = self.session_file()?;
+            self.store = Some(SessionStore::open(&path)?);
         }
-        self.store.as_ref().expect("store just initialized")
+        self.store
+            .as_ref()
+            .ok_or_else(|| "会话数据库尚未打开".to_owned())
     }
 
     fn restore_at_startup(&mut self, state: &mut WorkspaceState) {
-        let Ok(path) = self.session_file() else {
-            return;
+        let path = match self.session_file() {
+            Ok(path) => path,
+            Err(error) => return self.record_restore_failure(state, error),
         };
         let store = match SessionStore::open(&path) {
             Ok(store) => store,
-            Err(error) => {
-                self.store_error = Some(error);
-                return;
-            }
+            Err(error) => return self.record_restore_failure(state, error),
         };
         match store.load() {
             Ok(Some(persisted)) => {
@@ -213,8 +210,14 @@ impl SessionBridge {
                 self.session = Some(session);
             }
             Ok(None) => {}
-            Err(error) => self.store_error = Some(error),
+            Err(error) => return self.record_restore_failure(state, error),
         }
+        self.store = Some(store);
+    }
+
+    fn record_restore_failure(&mut self, state: &mut WorkspaceState, error: String) {
+        state.storage_error = Some(format!("会话恢复失败，保存已阻止：{error}"));
+        self.restore_failure = Some(error);
     }
 
     fn start(&mut self, state: &mut WorkspaceState) {
@@ -236,9 +239,21 @@ impl SessionBridge {
 
     fn confirm(&mut self, ctx: &egui::Context, state: &mut WorkspaceState) {
         egui::Modal::new(egui::Id::new("discard-unsaved-session")).show(ctx, |ui| {
-            ui.heading("文档尚未保存");
-            ui.label("基础接入仅保存在内存中，保存功能尚未接入。");
-            ui.label("继续将丢弃当前文档内容，且无法恢复。");
+            let dirty = self.session.as_ref().is_some_and(|session| {
+                state
+                    .saved_revision
+                    .is_none_or(|saved| saved < session.snapshot().revision.0)
+            });
+            ui.heading(if dirty {
+                "文档尚未保存"
+            } else {
+                "当前会话已保存"
+            });
+            if dirty {
+                ui.label("继续将丢弃当前未保存的修改。");
+            } else if self.confirm_new {
+                ui.label("新建后再次保存将替换当前会话文件中的文档。");
+            }
             ui.horizontal(|ui| {
                 if ui.button("取消").clicked() {
                     self.confirm_new = false;
