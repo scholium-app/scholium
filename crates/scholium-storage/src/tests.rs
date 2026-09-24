@@ -59,7 +59,7 @@ fn snapshot_at_reads_history_and_missing_returns_none() {
         .save(&sample(1, "一"), &[RequestId::fresh()])
         .expect("1");
     store
-        .save(&sample(2, "二"), &[RequestId::fresh()])
+        .save(&sample(2, "二"), &[RequestId::fresh(), RequestId::fresh()])
         .expect("2");
     let old = store
         .snapshot_at(Revision(1))
@@ -67,6 +67,58 @@ fn snapshot_at_reads_history_and_missing_returns_none() {
         .expect("present");
     assert_eq!(old.revision, Revision(1));
     assert!(store.snapshot_at(Revision(9)).expect("read").is_none());
+    let _ = std::fs::remove_file(&path);
+}
+
+#[test]
+fn missing_head_snapshot_is_a_recovery_error() {
+    let path = temp_path("missing-head");
+    let _ = std::fs::remove_file(&path);
+    let store = SessionStore::open(&path).expect("open");
+    store
+        .save(&sample(1, "正文"), &[RequestId::fresh()])
+        .expect("save");
+    store
+        .db
+        .execute("DELETE FROM snapshots WHERE revision=1", [])
+        .expect("remove head snapshot");
+    assert!(store.load().is_err(), "committed head must not look empty");
+    let _ = std::fs::remove_file(&path);
+}
+
+#[test]
+fn malformed_request_id_is_a_recovery_error() {
+    let path = temp_path("malformed-request");
+    let _ = std::fs::remove_file(&path);
+    let store = SessionStore::open(&path).expect("open");
+    store
+        .save(&sample(1, "正文"), &[RequestId::fresh()])
+        .expect("save");
+    store
+        .db
+        .execute("UPDATE action_log SET request=?1 WHERE idx=0", [&[7u8][..]])
+        .expect("corrupt request ID");
+    assert!(store.load().is_err(), "corrupt ID must not become nil UUID");
+    let _ = std::fs::remove_file(&path);
+}
+
+#[test]
+fn inconsistent_log_cannot_replace_a_committed_session() {
+    let path = temp_path("inconsistent-log");
+    let _ = std::fs::remove_file(&path);
+    let store = SessionStore::open(&path).expect("open");
+    let original = [RequestId::fresh()];
+    store.save(&sample(1, "原文"), &original).expect("save");
+    assert!(store.save(&sample(2, "新文"), &original).is_err());
+    let loaded = store.load().expect("load").expect("present");
+    assert_eq!(loaded.snapshot.revision, Revision(1));
+    assert_eq!(loaded.snapshot.blocks[0].markup_text(), "原文$x/2$");
+    assert_eq!(loaded.requests, original);
+    store
+        .db
+        .execute("DELETE FROM action_log", [])
+        .expect("simulate damaged log");
+    assert!(store.load().is_err(), "truncated log must block recovery");
     let _ = std::fs::remove_file(&path);
 }
 

@@ -30,20 +30,6 @@ impl SessionStore {
         Self::init(db)
     }
 
-    /// 占位库（打开失败时的兜底）：临时文件，进程结束即可丢弃。
-    ///
-    /// # Errors
-    /// 临时文件创建失败时返回错误。
-    ///
-    /// # Panics
-    /// 事务初始化失败时 panic（临时文件上的初始化失败不可恢复）。
-    pub fn open_scratch() -> Result<Self, String> {
-        let path =
-            std::env::temp_dir().join(format!("scholium-scratch-{}.sqlite", std::process::id()));
-        let db = Connection::open(&path).map_err(|e| e.to_string())?;
-        Self::init(db)
-    }
-
     fn init(db: Connection) -> Result<Self, String> {
         // WAL + FULL：显式保存是低频用户动作，换取崩溃/断电安全。
         db.execute_batch(
@@ -64,15 +50,21 @@ impl SessionStore {
     /// 原子保存：最新快照 + 完整请求日志 + head 指针写入单事务。
     ///
     /// # Errors
-    /// 序列化或写入失败时返回错误；数据库保持上一个已提交状态。
+    /// revision 超出 SQLite 整数范围、请求日志长度不匹配、序列化或写入失败时返回错误；
+    /// 数据库保持上一个已提交状态。
     pub fn save(&self, snapshot: &DocumentSnapshot, requests: &[RequestId]) -> Result<(), String> {
+        let revision = i64::try_from(snapshot.revision.0)
+            .map_err(|_| "revision exceeds SQLite integer range".to_owned())?;
+        if requests.len() as u64 != snapshot.revision.0 {
+            return Err("request log length does not match snapshot revision".into());
+        }
         let json = serde_json::to_string(snapshot).map_err(|e| e.to_string())?;
         let tx = self.db.unchecked_transaction().map_err(|e| e.to_string())?;
         {
             let mut statements = Prepared::new(&tx)?;
             statements
                 .snap
-                .execute((snapshot.revision.0 as i64, json.as_str()))
+                .execute((revision, json.as_str()))
                 .map_err(|e| e.to_string())?;
             statements.clear.execute(()).map_err(|e| e.to_string())?;
             for (index, request) in requests.iter().enumerate() {
@@ -83,7 +75,7 @@ impl SessionStore {
             }
             statements
                 .head
-                .execute((snapshot.revision.0 as i64,))
+                .execute((revision,))
                 .map_err(|e| e.to_string())?;
         }
         tx.commit().map_err(|e| e.to_string())
@@ -92,7 +84,7 @@ impl SessionStore {
     /// 读回最新快照与请求日志；空库返回 `None`。
     ///
     /// # Errors
-    /// 反序列化失败（schema 不兼容）时返回错误。
+    /// head 快照缺失、revision 或请求日志不一致、请求身份损坏以及反序列化失败时返回错误。
     pub fn load(&self) -> Result<Option<PersistedSession>, String> {
         let head: Option<i64> = self
             .db
@@ -102,12 +94,19 @@ impl SessionStore {
                 |row| row.get(0),
             )
             .map_err(|e| e.to_string())?;
-        let Some(head) = head.filter(|head| *head >= 0) else {
-            return Ok(None);
+        let Some(head) = head else {
+            return Err("missing head revision".into());
         };
-        let Some(snapshot) = self.snapshot_at(Revision(head.unsigned_abs()))? else {
+        if head == -1 {
             return Ok(None);
-        };
+        }
+        let revision = u64::try_from(head).map_err(|_| "invalid head revision".to_owned())?;
+        let snapshot = self
+            .snapshot_at(Revision(revision))?
+            .ok_or_else(|| "head snapshot is missing".to_owned())?;
+        if snapshot.revision != Revision(revision) {
+            return Err("head snapshot revision does not match metadata".into());
+        }
         let mut statement = self
             .db
             .prepare("SELECT request FROM action_log ORDER BY idx")
@@ -121,8 +120,13 @@ impl SessionStore {
         let mut requests = Vec::new();
         for row in rows {
             let bytes = row.map_err(|e| e.to_string())?;
-            let array: [u8; 16] = bytes.try_into().unwrap_or([0; 16]);
+            let array: [u8; 16] = bytes
+                .try_into()
+                .map_err(|_| "invalid request ID length in action log".to_owned())?;
             requests.push(RequestId::from_bytes(array));
+        }
+        if requests.len() as u64 != revision {
+            return Err("request log length does not match head revision".into());
         }
         Ok(Some(PersistedSession { snapshot, requests }))
     }
@@ -130,11 +134,13 @@ impl SessionStore {
     /// 快照按 revision 直读（恢复旧版本/诊断用）。
     ///
     /// # Errors
-    /// 读取或反序列化失败时返回错误。
+    /// revision 超出 SQLite 整数范围、读取或反序列化失败时返回错误。
     pub fn snapshot_at(&self, revision: Revision) -> Result<Option<DocumentSnapshot>, String> {
+        let revision = i64::try_from(revision.0)
+            .map_err(|_| "revision exceeds SQLite integer range".to_owned())?;
         let row = self.db.query_row(
             "SELECT json FROM snapshots WHERE revision = ?1",
-            [revision.0 as i64],
+            [revision],
             |row| row.get::<_, String>(0),
         );
         match row {

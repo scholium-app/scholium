@@ -99,6 +99,8 @@ pub(crate) struct WorkspaceState {
     /// 已落盘的 revision；None 表示从未保存。
     pub(crate) saved_revision: Option<u64>,
     pub(crate) edit_error: Option<String>,
+    /// 持久化或恢复错误；不得用编辑错误或后续输入覆盖。
+    pub(crate) storage_error: Option<String>,
     /// Draft of the last rejected text edit, shown until the block changes again.
     pub(crate) rejected_draft: Option<(scholium_model::NodeId, String)>,
     pub(crate) composition: Option<String>,
@@ -135,6 +137,7 @@ impl Default for WorkspaceState {
             save_requested: false,
             saved_revision: None,
             edit_error: None,
+            storage_error: None,
             rejected_draft: None,
             composition: None,
             focus_block: None,

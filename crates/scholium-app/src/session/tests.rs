@@ -492,7 +492,7 @@ fn toolbar_math_entry_splices_a_pair_at_the_caret() {
 #[test]
 fn save_persists_and_startup_restores_the_session() {
     // 每个测试独立会话文件，避免污染真实用户数据。
-    let session_file = format!("/tmp/scholium-app-test-{}.redb", std::process::id());
+    let session_file = format!("/tmp/scholium-app-test-{}.sqlite", std::process::id());
     let _ = std::fs::remove_file(&session_file);
 
     let ctx = egui::Context::default();
@@ -537,6 +537,36 @@ fn save_persists_and_startup_restores_the_session() {
             .count(),
         1,
         "restored content keeps math nodes"
+    );
+    let _ = std::fs::remove_file(&session_file);
+}
+
+#[test]
+fn failed_restore_blocks_save_and_never_claims_durability() {
+    let session_file = std::env::temp_dir().join(format!(
+        "scholium-app-corrupt-{}.sqlite",
+        std::process::id()
+    ));
+    let _ = std::fs::remove_file(&session_file);
+    let original = b"not a SQLite database";
+    std::fs::write(&session_file, original).expect("write damaged database");
+
+    let ctx = egui::Context::default();
+    theme::install(&ctx);
+    let mut bridge = SessionBridge::with_store_file(session_file.clone());
+    let mut state = WorkspaceState::default();
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    assert!(state.storage_error.is_some(), "recovery failure is visible");
+
+    commands::dispatch(&mut state, commands::ViewCommand::NewDocument);
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    commands::dispatch(&mut state, commands::ViewCommand::Save);
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    assert_eq!(state.saved_revision, None);
+    assert!(state.storage_error.is_some());
+    assert_eq!(
+        std::fs::read(&session_file).expect("read original"),
+        original
     );
     let _ = std::fs::remove_file(&session_file);
 }

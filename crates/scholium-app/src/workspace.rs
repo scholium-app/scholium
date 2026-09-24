@@ -10,6 +10,13 @@ const MIN_PANE: f32 = 280.0;
 const SPLIT_STEP: f32 = 0.025;
 
 pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
+    if let Some(error) = &state.storage_error {
+        egui::Panel::top("storage-error")
+            .frame(theme::bar_frame(ui))
+            .show(ui, |ui| {
+                ui.colored_label(theme::colors(ui).accent, error);
+            });
+    }
     if state.diagnostics {
         egui::Panel::bottom("diagnostics")
             .default_size(125.0)
@@ -40,7 +47,7 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             .frame(theme::bar_frame(ui))
             .show(ui, |ui| {
                 if state.document.is_some() {
-                    ui.label("未命名 · 内存文档");
+                    ui.label("未命名 · 本地会话");
                 } else {
                     navigation(ui);
                 }
