@@ -1,0 +1,271 @@
+//! Resident Typst compilation with page rasterization on demand.
+
+use std::sync::{Arc, Mutex, mpsc};
+use std::time::{Duration, Instant};
+
+use crate::{PageGeometry, projection::Projection};
+use scholium_model::{DocumentId, DocumentSnapshot};
+use typst_layout::PagedDocument;
+
+use super::{BlockAnchor, MAX_PREVIEW_PAGES, PIXELS_PER_PT, PreviewWorld, extract_anchors};
+
+/// One rasterized preview page; RGBA pixels are alpha-premultiplied.
+#[derive(Debug, Clone)]
+pub struct PagePixels {
+    /// Pixel width.
+    pub width: u32,
+    /// Pixel height.
+    pub height: u32,
+    /// Premultiplied RGBA bytes, row-major.
+    pub rgba: Vec<u8>,
+}
+
+/// Completed compilation metadata. Pages are rasterized only when requested.
+#[derive(Debug)]
+pub struct CompileOutcome {
+    /// Source document identity.
+    pub document: DocumentId,
+    /// Source document revision.
+    pub revision: u64,
+    /// Total page count, including pages beyond the visible page.
+    pub page_count: usize,
+    /// Compilation duration in milliseconds, excluding page rasterization.
+    pub elapsed_ms: u64,
+    /// Compile error or explicit preview limit error.
+    pub error: Option<String>,
+    /// Per-block anchors extracted from the compiled document.
+    pub anchors: Vec<BlockAnchor>,
+    /// Per-page glyph geometry for direct editing; never reuse across revisions.
+    pub geometry: Vec<PageGeometry>,
+}
+
+/// Completed rasterization of one zero-based page.
+#[derive(Debug)]
+pub struct PageOutcome {
+    /// Source document identity.
+    pub document: DocumentId,
+    /// Source document revision.
+    pub revision: u64,
+    /// Zero-based page index.
+    pub page: usize,
+    /// Rasterized page pixels.
+    pub pixels: PagePixels,
+}
+
+/// One event from the resident preview worker.
+#[derive(Debug)]
+pub enum PreviewEvent {
+    /// Compilation finished; the UI may request any page.
+    Compiled(CompileOutcome),
+    /// A requested page is ready for display.
+    Page(PageOutcome),
+}
+
+/// Resident preview compiler with a latest-only compile and page request slot.
+/// Dropping the handle lets its worker exit without joining on the UI thread.
+pub struct PreviewCompiler {
+    pending: Arc<Mutex<Queue>>,
+    recv: mpsc::Receiver<PreviewEvent>,
+}
+
+impl std::fmt::Debug for PreviewCompiler {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("PreviewCompiler").finish_non_exhaustive()
+    }
+}
+
+#[derive(Default)]
+struct Queue {
+    compile: Option<CompileRequest>,
+    page: Option<PageRequest>,
+}
+
+struct CompileRequest {
+    document: DocumentId,
+    revision: u64,
+    projection: Projection,
+    block_count: usize,
+}
+
+#[derive(Clone, Copy)]
+struct PageRequest {
+    document: DocumentId,
+    revision: u64,
+    page: usize,
+}
+
+impl PreviewCompiler {
+    /// Spawn the worker. Its Typst World and compilation caches survive edits.
+    ///
+    /// # Panics
+    /// Panics if the OS refuses to spawn the preview thread.
+    #[must_use]
+    pub fn spawn() -> Self {
+        let (send, recv) = mpsc::channel();
+        let pending = Arc::new(Mutex::new(Queue::default()));
+        let slot = Arc::clone(&pending);
+        std::thread::Builder::new()
+            .name("scholium-typst-preview".into())
+            .spawn(move || worker(slot, send))
+            .expect("preview compiler thread spawns");
+        Self { pending, recv }
+    }
+
+    /// Replace any unconsumed compile request with this document revision.
+    pub fn submit(&self, document: DocumentId, revision: u64, source: String, block_count: usize) {
+        if let Ok(mut slot) = self.pending.lock() {
+            slot.compile = Some(CompileRequest {
+                document,
+                revision,
+                projection: Projection {
+                    source,
+                    ..Default::default()
+                },
+                block_count,
+            });
+            slot.page = None;
+        }
+    }
+
+    /// Compile a semantic snapshot together with its editable glyph source map.
+    pub fn submit_snapshot(&self, snapshot: &DocumentSnapshot) {
+        if let Ok(mut slot) = self.pending.lock() {
+            slot.compile = Some(CompileRequest {
+                document: snapshot.document,
+                revision: snapshot.revision.0,
+                projection: crate::projection::generate(snapshot, true),
+                block_count: snapshot.blocks.len(),
+            });
+            slot.page = None;
+        }
+    }
+
+    /// Request one zero-based page from the currently compiled revision.
+    pub fn request_page(&self, document: DocumentId, revision: u64, page: usize) {
+        if let Ok(mut slot) = self.pending.lock() {
+            slot.page = Some(PageRequest {
+                document,
+                revision,
+                page,
+            });
+        }
+    }
+
+    /// Take the next worker event, if one has arrived.
+    pub fn poll(&mut self) -> Option<PreviewEvent> {
+        self.recv.try_recv().ok()
+    }
+}
+
+// The UI dropping its Arc signals shutdown; never join a compiler on the UI thread.
+fn worker(pending: Arc<Mutex<Queue>>, send: mpsc::Sender<PreviewEvent>) {
+    let mut world = PreviewWorld::new();
+    let mut compiled: Option<(DocumentId, u64, PagedDocument)> = None;
+    while Arc::strong_count(&pending) > 1 {
+        let next = pending.lock().ok().map(|mut slot| {
+            if let Some(request) = slot.compile.take() {
+                Work::Compile(request)
+            } else if let Some(request) = slot.page.take() {
+                Work::Page(request)
+            } else {
+                Work::Idle
+            }
+        });
+        match next.unwrap_or(Work::Idle) {
+            Work::Compile(request) => {
+                let (outcome, document) = compile(&mut world, request);
+                compiled = document;
+                if send.send(PreviewEvent::Compiled(outcome)).is_err() {
+                    break;
+                }
+            }
+            Work::Page(request) => {
+                let Some((document, revision, pages)) = &compiled else {
+                    continue;
+                };
+                if (*document, *revision) != (request.document, request.revision) {
+                    continue;
+                }
+                let Some(page) = pages.pages().get(request.page) else {
+                    continue;
+                };
+                let pixmap = typst_render::render(
+                    page,
+                    &typst_render::RenderOptions {
+                        pixel_per_pt: f64::from(PIXELS_PER_PT).into(),
+                        render_bleed: false,
+                    },
+                );
+                let result = PageOutcome {
+                    document: request.document,
+                    revision: request.revision,
+                    page: request.page,
+                    pixels: PagePixels {
+                        width: pixmap.width(),
+                        height: pixmap.height(),
+                        rgba: pixmap.data().to_vec(),
+                    },
+                };
+                if send.send(PreviewEvent::Page(result)).is_err() {
+                    break;
+                }
+            }
+            Work::Idle => std::thread::sleep(Duration::from_millis(10)),
+        }
+    }
+}
+
+enum Work {
+    Compile(CompileRequest),
+    Page(PageRequest),
+    Idle,
+}
+
+fn compile(
+    world: &mut PreviewWorld,
+    request: CompileRequest,
+) -> (CompileOutcome, Option<(DocumentId, u64, PagedDocument)>) {
+    let start = Instant::now();
+    world.set_source(request.projection.source.clone());
+    let result = typst::compile::<PagedDocument>(world).output;
+    let (page_count, anchors, error, document) = match result {
+        Ok(document) if document.pages().len() <= MAX_PREVIEW_PAGES => {
+            let anchors = extract_anchors(&document, request.block_count);
+            let count = document.pages().len();
+            (count, anchors, None, Some(document))
+        }
+        Ok(document) => (
+            document.pages().len(),
+            Vec::new(),
+            Some(format!("预览最多支持 {MAX_PREVIEW_PAGES} 页")),
+            None,
+        ),
+        Err(diagnostics) => (
+            0,
+            Vec::new(),
+            Some(
+                diagnostics
+                    .iter()
+                    .map(|diagnostic| diagnostic.message.to_string())
+                    .collect::<Vec<_>>()
+                    .join("\n"),
+            ),
+            None,
+        ),
+    };
+    let geometry = document
+        .as_ref()
+        .map(|doc| crate::geometry::extract(doc, world, &request.projection))
+        .unwrap_or_default();
+    let outcome = CompileOutcome {
+        document: request.document,
+        revision: request.revision,
+        page_count,
+        elapsed_ms: start.elapsed().as_millis() as u64,
+        error,
+        anchors,
+        geometry,
+    };
+    let compiled = document.map(|doc| (request.document, request.revision, doc));
+    (outcome, compiled)
+}

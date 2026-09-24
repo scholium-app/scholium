@@ -2,6 +2,13 @@ use super::*;
 use crate::{chrome, commands, theme, workspace};
 use scholium_model::{BlockEdit, BlockKind};
 
+fn editable_state() -> WorkspaceState {
+    WorkspaceState {
+        visual_typeset: false,
+        ..Default::default()
+    }
+}
+
 fn frame(
     ctx: &egui::Context,
     state: &mut WorkspaceState,
@@ -83,7 +90,7 @@ fn new_command_and_unicode_input_reach_session_and_survive_view_switch() {
     let ctx = egui::Context::default();
     theme::install(&ctx);
     let mut bridge = SessionBridge::default();
-    let mut state = WorkspaceState::default();
+    let mut state = editable_state();
     commands::dispatch(&mut state, commands::ViewCommand::NewDocument);
     frame(&ctx, &mut state, &mut bridge, vec![]);
     // NewDocument publishes a projection synchronously at the end of the frame.
@@ -114,7 +121,7 @@ fn enter_splits_the_block_and_moves_the_caret_to_the_tail() {
     let ctx = egui::Context::default();
     theme::install(&ctx);
     let mut bridge = SessionBridge::default();
-    let mut state = WorkspaceState::default();
+    let mut state = editable_state();
     bridge.start(&mut state);
     let block = first_block(&state);
     focus_block(&ctx, block);
@@ -170,7 +177,7 @@ fn toolbar_kind_switch_targets_the_focused_block() {
     let ctx = egui::Context::default();
     theme::install(&ctx);
     let mut bridge = SessionBridge::default();
-    let mut state = WorkspaceState::default();
+    let mut state = editable_state();
     bridge.start(&mut state);
     let block = first_block(&state);
     focus_block(&ctx, block);
@@ -193,7 +200,7 @@ fn backspace_at_block_start_merges_into_the_previous_block() {
     let ctx = egui::Context::default();
     theme::install(&ctx);
     let mut bridge = SessionBridge::default();
-    let mut state = WorkspaceState::default();
+    let mut state = editable_state();
     bridge.start(&mut state);
     let head = first_block(&state);
     focus_block(&ctx, head);
@@ -239,7 +246,7 @@ fn delete_at_block_end_absorbs_the_following_block() {
     let ctx = egui::Context::default();
     theme::install(&ctx);
     let mut bridge = SessionBridge::default();
-    let mut state = WorkspaceState::default();
+    let mut state = editable_state();
     bridge.start(&mut state);
     let head = first_block(&state);
     focus_block(&ctx, head);
@@ -284,7 +291,7 @@ fn rejected_request_preserves_the_draft_without_changing_authority() {
     let ctx = egui::Context::default();
     theme::install(&ctx);
     let mut bridge = SessionBridge::default();
-    let mut state = WorkspaceState::default();
+    let mut state = editable_state();
     bridge.start(&mut state);
     // start always publishes its freshly created session.
     let snapshot = state.document.clone().expect("new document projection");
@@ -313,7 +320,7 @@ fn ime_preedit_stays_local_until_commit() {
     let ctx = egui::Context::default();
     theme::install(&ctx);
     let mut bridge = SessionBridge::default();
-    let mut state = WorkspaceState::default();
+    let mut state = editable_state();
     bridge.start(&mut state);
     frame(&ctx, &mut state, &mut bridge, vec![]);
     // start synchronously publishes the new block projection.
@@ -343,62 +350,14 @@ fn ime_preedit_stays_local_until_commit() {
     assert_eq!(bridge.session.as_ref().map(|s| s.actions().len()), Some(1));
 }
 
-#[test]
-fn preview_follows_revisions_only_in_source_mode_after_debounce() {
-    let ctx = egui::Context::default();
-    theme::install(&ctx);
-    let mut bridge = SessionBridge::default();
-    let mut state = WorkspaceState::default();
-    bridge.start(&mut state);
-    // First edit in visual mode registers the wanted revision.
-    let block = first_block(&state);
-    focus_block(&ctx, block);
-    frame(
-        &ctx,
-        &mut state,
-        &mut bridge,
-        vec![egui::Event::Text("预览正文".into())],
-    );
-    assert_eq!(state.preview.wanted, 1);
-    // Visual mode never compiles: no debounce elapses and no compiler spawns.
-    frame(&ctx, &mut state, &mut bridge, vec![]);
-    assert_eq!(state.preview.submitted, 0);
-    assert!(bridge.preview.is_none());
-    // Switching to source mode compiles once the debounce window has passed.
-    commands::dispatch(&mut state, commands::ViewCommand::Source);
-    state.preview.changed_at = state
-        .preview
-        .changed_at
-        .map(|at| at - std::time::Duration::from_secs(1));
-    frame(&ctx, &mut state, &mut bridge, vec![]);
-    assert_eq!(state.preview.submitted, 1);
-    assert!(bridge.preview.is_some());
-    assert!(state.preview.pending);
-    // A second edit (source mode has no block editor; submit one directly)
-    // raises the wanted revision; resubmission waits out the debounce again.
-    let snapshot = state.document.clone().expect("document");
-    state.pending_edit = Some(replace(&snapshot, block, "预览正文续"));
-    frame(&ctx, &mut state, &mut bridge, vec![]);
-    assert_eq!(state.preview.wanted, 2);
-    assert_eq!(
-        state.preview.submitted, 1,
-        "fresh edits debounce before compiling"
-    );
-    assert_eq!(state.preview.summary(), "排版编译中");
-    // A new session resets the preview bookkeeping.
-    bridge.allow_close = true;
-    bridge.start(&mut state);
-    assert_eq!(state.preview.wanted, 0);
-    assert!(state.preview.pages.is_empty());
-    assert!(!state.preview.pending);
-}
+mod preview;
 
 #[test]
 fn inline_math_markup_round_trips_through_the_session() {
     let ctx = egui::Context::default();
     theme::install(&ctx);
     let mut bridge = SessionBridge::default();
-    let mut state = WorkspaceState::default();
+    let mut state = editable_state();
     bridge.start(&mut state);
     let block = first_block(&state);
     focus_block(&ctx, block);
@@ -445,7 +404,7 @@ fn toolbar_math_entry_splices_a_pair_at_the_caret() {
     let ctx = egui::Context::default();
     theme::install(&ctx);
     let mut bridge = SessionBridge::default();
-    let mut state = WorkspaceState::default();
+    let mut state = editable_state();
     bridge.start(&mut state);
     let block = first_block(&state);
     focus_block(&ctx, block);
@@ -498,7 +457,7 @@ fn save_persists_and_startup_restores_the_session() {
     let ctx = egui::Context::default();
     theme::install(&ctx);
     let mut bridge = SessionBridge::with_store_file(std::path::PathBuf::from(&session_file));
-    let mut state = WorkspaceState::default();
+    let mut state = editable_state();
     // 首帧无保存 → 无恢复。
     frame(&ctx, &mut state, &mut bridge, vec![]);
     assert!(state.document.is_none(), "empty store restores nothing");
@@ -521,7 +480,7 @@ fn save_persists_and_startup_restores_the_session() {
     // 模拟重启：释放文件锁后用全新 bridge/state 从同一文件恢复。
     drop(bridge);
     let mut bridge2 = SessionBridge::with_store_file(std::path::PathBuf::from(&session_file));
-    let mut state2 = WorkspaceState::default();
+    let mut state2 = editable_state();
     frame(&ctx, &mut state2, &mut bridge2, vec![]);
     assert_eq!(
         block_texts(&state2),
@@ -554,7 +513,7 @@ fn failed_restore_blocks_save_and_never_claims_durability() {
     let ctx = egui::Context::default();
     theme::install(&ctx);
     let mut bridge = SessionBridge::with_store_file(session_file.clone());
-    let mut state = WorkspaceState::default();
+    let mut state = editable_state();
     frame(&ctx, &mut state, &mut bridge, vec![]);
     assert!(state.storage_error.is_some(), "recovery failure is visible");
 

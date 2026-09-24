@@ -189,3 +189,9 @@ cargo run --release --manifest-path spikes/typst-mapping/Cargo.toml -- render
 # 文本字符级映射：插值误差与反查统计
 cargo run --release --manifest-path spikes/typst-mapping/Cargo.toml -- charmap
 ```
+
+## 2026-09-24：本地产品页面直接编辑复用
+
+[原始证据](evidence/SPK-0005/direct-edit/README.md)记录本映射机制在产品块会话中的复用：
+真实编译字形拖选、公式子表达式替换、中文复制及页面内光标；跨模块边界见
+[ADR 0029](../adr/ADR-0029-direct-page-editing.md)。这是限定交互的回归记录，不更改阶段出口或完整结构编辑判定。

@@ -3614,6 +3614,7 @@ dependencies = [
  "scholium-model",
  "scholium-storage",
  "scholium-typst",
+ "unicode-segmentation",
 ]
 
 [[package]]

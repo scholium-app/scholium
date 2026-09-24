@@ -163,7 +163,9 @@ fn toolbar(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         if state.mode == ViewMode::Visual {
             paragraph_style(ui, state);
             // 行内格式与公式入口对聚焦块可用：插入成对标记并把光标放进其中。
-            let live = state.document.is_some() && state.focus_block.is_some();
+            let live = state.document.is_some()
+                && state.focus_block.is_some()
+                && state.composition.is_none();
             for (label, fragment, shift, tip, styled) in [
                 ("B", "**", 1, "粗体 *…*", true),
                 ("I", "__", 1, "强调 _…_", false),
@@ -189,23 +191,27 @@ fn toolbar(ui: &mut egui::Ui, state: &mut WorkspaceState) {
                 }
             }
         } else {
-            egui::ComboBox::from_id_salt("dialect")
-                .selected_text(state.dialect.label())
-                .width(80.0)
-                .show_ui(ui, |ui| {
-                    ui.selectable_value(&mut state.dialect, Dialect::Latex, "LaTeX");
-                    ui.selectable_value(&mut state.dialect, Dialect::Typst, "Typst");
-                });
-            commands::unavailable(ui, "开始编辑");
-            if !compact {
-                for title in ["检查并应用", "放弃草稿"] {
-                    commands::unavailable(ui, title);
-                }
+            if state.document.is_some() {
+                ui.label("Typst · 生成只读");
             } else {
-                ui.menu_button("草稿", |ui| {
-                    commands::unavailable(ui, "检查并应用");
-                    commands::unavailable(ui, "放弃草稿");
-                });
+                egui::ComboBox::from_id_salt("dialect")
+                    .selected_text(state.dialect.label())
+                    .width(80.0)
+                    .show_ui(ui, |ui| {
+                        ui.selectable_value(&mut state.dialect, Dialect::Latex, "LaTeX");
+                        ui.selectable_value(&mut state.dialect, Dialect::Typst, "Typst");
+                    });
+                commands::unavailable(ui, "开始编辑");
+                if !compact {
+                    for title in ["检查并应用", "放弃草稿"] {
+                        commands::unavailable(ui, title);
+                    }
+                } else {
+                    ui.menu_button("草稿", |ui| {
+                        commands::unavailable(ui, "检查并应用");
+                        commands::unavailable(ui, "放弃草稿");
+                    });
+                }
             }
         }
         ui.with_layout(Layout::right_to_left(Align::Center), |ui| {

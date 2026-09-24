@@ -8,26 +8,41 @@ pub(crate) enum ViewMode {
 /// Typst 预览投影与编译记账；页纹理不是权威内容（ADR 0027）。
 #[derive(Default)]
 pub(crate) struct PreviewState {
+    /// 正在预览的文档身份；同 revision 的另一文档结果不可采纳。
+    pub(crate) document: Option<scholium_model::DocumentId>,
     /// 需要显示的会话 revision。
     pub(crate) wanted: u64,
     /// 当前页面纹理对应的 revision。
-    pub(crate) shown: u64,
+    pub(crate) shown: Option<u64>,
     /// 最近一次提交给编译线程的 revision。
-    pub(crate) submitted: u64,
+    pub(crate) submitted: Option<u64>,
+    /// 已编译的文档 revision，可请求其中任意页。
+    pub(crate) compiled: Option<u64>,
     /// `wanted` 最近变化时刻；编译需等待去抖窗口。
     pub(crate) changed_at: Option<std::time::Instant>,
-    /// 是否有 revision ≥ wanted 的编译在途。
+    /// 已提交编译尚未返回当前需要的结果。
     pub(crate) pending: bool,
     /// 最近一次编译错误。
     pub(crate) error: Option<String>,
     /// 最近一次编译耗时（毫秒）。
     pub(crate) elapsed_ms: u64,
-    /// 已上传的预览页纹理。
-    pub(crate) pages: Vec<eframe::egui::TextureHandle>,
+    /// 已编译的总页数；页面栅格化按需进行。
+    pub(crate) page_count: usize,
+    /// 当前选择的零基页索引。
+    pub(crate) page: usize,
+    /// 当前页纹理及其页索引。
+    pub(crate) page_texture: Option<eframe::egui::TextureHandle>,
+    pub(crate) page_index: Option<usize>,
+    /// 已请求栅格化的 (revision, 零基页索引)。
+    pub(crate) page_requested: Option<(u64, usize)>,
     /// 当前页面对应的块锚点（page/pt）。
     pub(crate) anchors: Vec<scholium_typst::BlockAnchor>,
+    /// Exact glyph boxes from the compiled revision, in page pt.
+    pub(crate) geometry: Vec<scholium_typst::PageGeometry>,
     /// 预览点击定位请求：滚动源码窗格到该块。
     pub(crate) locate_request: Option<usize>,
+    /// 源码点击定位请求：零基页与当前排版的页面 pt 纵坐标。
+    pub(crate) scroll_request: Option<(usize, f32)>,
 }
 
 impl std::fmt::Debug for PreviewState {
@@ -36,21 +51,29 @@ impl std::fmt::Debug for PreviewState {
             .field("wanted", &self.wanted)
             .field("shown", &self.shown)
             .field("submitted", &self.submitted)
+            .field("compiled", &self.compiled)
             .field("pending", &self.pending)
             .field("error", &self.error)
             .field("elapsed_ms", &self.elapsed_ms)
-            .field("pages", &self.pages.len())
+            .field("page_count", &self.page_count)
+            .field("page", &self.page)
             .field("anchors", &self.anchors.len())
             .finish_non_exhaustive()
     }
 }
 
 impl PreviewState {
-    /// 正文 revision 变化时登记新目标；同一 revision 的重复通知不重置去抖。
-    pub(crate) fn note_revision(&mut self, revision: u64) {
-        if revision != self.wanted {
-            self.wanted = revision;
+    /// 登记当前权威投影；文档身份和 revision 一起门控后台结果。
+    pub(crate) fn note_snapshot(&mut self, snapshot: &scholium_model::DocumentSnapshot) {
+        if self.document != Some(snapshot.document) {
+            *self = Self::default();
+            self.document = Some(snapshot.document);
+        }
+        if self.changed_at.is_none() || snapshot.revision.0 != self.wanted {
+            self.wanted = snapshot.revision.0;
             self.changed_at = Some(std::time::Instant::now());
+            self.error = None;
+            self.scroll_request = None;
         }
     }
 
@@ -62,13 +85,15 @@ impl PreviewState {
     /// 状态栏摘要。
     pub(crate) fn summary(&self) -> String {
         if self.error.is_some() {
-            "排版失败".into()
+            "Typst 排版失败".into()
         } else if self.pending {
-            "排版编译中".into()
-        } else if self.shown > 0 {
-            format!("排版 r{}", self.shown)
+            "Typst 编译中".into()
+        } else if self.shown == Some(self.wanted) {
+            format!("Typst 预览 r{}", self.wanted)
+        } else if self.compiled == Some(self.wanted) {
+            "Typst 页面渲染中".into()
         } else {
-            "排版等待".into()
+            "Typst 预览等待".into()
         }
     }
 }
@@ -93,6 +118,9 @@ impl Dialect {
 #[derive(Debug)]
 pub(crate) struct WorkspaceState {
     pub(crate) document: Option<scholium_model::DocumentSnapshot>,
+    /// Accepted input spelling for one block/revision; prevents canonical markup
+    /// escaping from moving the caret while a delimiter is still being typed.
+    pub(crate) accepted_input: Option<(scholium_model::NodeId, u64, String)>,
     pub(crate) pending_edit: Option<scholium_model::DocumentRequest>,
     pub(crate) new_requested: bool,
     pub(crate) save_requested: bool,
@@ -116,7 +144,10 @@ pub(crate) struct WorkspaceState {
     /// installing earlier would clamp against the pre-edit buffer.
     pub(crate) focus_after_replace: Option<(scholium_model::NodeId, usize, u64)>,
     pub(crate) mode: ViewMode,
+    /// Visual workspace shows the Typst page with a focused block editor.
+    pub(crate) visual_typeset: bool,
     pub(crate) preview: PreviewState,
+    pub(crate) page_editor: crate::page_editor::EditorState,
     pub(crate) dialect: Dialect,
     pub(crate) navigation: bool,
     pub(crate) diagnostics: bool,
@@ -133,6 +164,7 @@ impl Default for WorkspaceState {
         Self {
             document: None,
             pending_edit: None,
+            accepted_input: None,
             new_requested: false,
             save_requested: false,
             saved_revision: None,
@@ -145,7 +177,9 @@ impl Default for WorkspaceState {
             focus_after_merge: None,
             focus_after_replace: None,
             mode: ViewMode::Visual,
+            visual_typeset: true,
             preview: PreviewState::default(),
+            page_editor: Default::default(),
             dialect: Dialect::Latex,
             navigation: false,
             diagnostics: false,
@@ -179,24 +213,30 @@ mod tests {
         assert_eq!(state.focus_after_replace, None);
         assert_eq!(state.rejected_draft, None);
         assert_eq!(state.preview.wanted, 0);
-        assert!(state.preview.pages.is_empty());
+        assert!(state.preview.page_texture.is_none());
     }
 
     #[test]
     fn preview_revision_notes_reset_debounce_once_per_change() {
         let mut preview = PreviewState::default();
-        preview.note_revision(3);
+        let mut snapshot = scholium_model::DocumentSnapshot {
+            document: scholium_model::DocumentId::fresh(),
+            revision: scholium_model::Revision(3),
+            blocks: Vec::new(),
+        };
+        preview.note_snapshot(&snapshot);
         assert_eq!(preview.wanted, 3);
         let first_change = preview.changed_at;
-        preview.note_revision(3);
+        preview.note_snapshot(&snapshot);
         assert_eq!(
             preview.changed_at, first_change,
             "same revision is not a change"
         );
-        preview.note_revision(4);
+        snapshot.revision = scholium_model::Revision(4);
+        preview.note_snapshot(&snapshot);
         assert_ne!(preview.changed_at, first_change);
         preview.reset();
         assert_eq!(preview.wanted, 0);
-        assert_eq!(preview.summary(), "排版等待");
+        assert_eq!(preview.summary(), "Typst 预览等待");
     }
 }

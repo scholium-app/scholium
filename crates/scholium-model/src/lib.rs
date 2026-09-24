@@ -154,9 +154,27 @@ pub struct DocumentSnapshot {
     pub blocks: Vec<Block>,
 }
 
-/// One revision-bound structural edit targeting a single block.
+/// A UTF-8 byte boundary in a block's canonical editing markup.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct BlockPosition {
+    /// Stable block identity.
+    pub block: NodeId,
+    /// UTF-8 byte offset, not a glyph or UTF-16 index.
+    pub byte: usize,
+}
+
+/// One revision-bound edit targeting a block or an ordered block range.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub enum BlockEdit {
+    /// Replace an ordered selection, possibly crossing block boundaries, atomically.
+    ReplaceRange {
+        /// Inclusive start in canonical block markup.
+        start: BlockPosition,
+        /// Exclusive end in canonical block markup.
+        end: BlockPosition,
+        /// Replacement editing markup; line breaks create blocks.
+        text: String,
+    },
     /// Replace the whole block text; `\n` inside splits it into several blocks.
     ReplaceText {
         /// Target block node.

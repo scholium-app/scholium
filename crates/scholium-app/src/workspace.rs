@@ -8,7 +8,6 @@ use eframe::egui::{self, Align, FontId, Layout, RichText, Sense, Stroke, UiBuild
 const SPLITTER_WIDTH: f32 = 8.0;
 const MIN_PANE: f32 = 280.0;
 const SPLIT_STEP: f32 = 0.025;
-
 pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     if let Some(error) = &state.storage_error {
         egui::Panel::top("storage-error")
@@ -58,7 +57,11 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         .show(ui, |ui| {
             if state.document.is_some() {
                 if state.mode == ViewMode::Visual {
-                    crate::native_text::show(ui, state);
+                    if state.visual_typeset {
+                        crate::preview::show(ui, state, "Typst 排版页");
+                    } else {
+                        crate::native_text::show(ui, state);
+                    }
                 } else {
                     source_workspace(ui, state);
                 }
@@ -192,7 +195,7 @@ fn source_side(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 /// 右窗格：真实文档显示 Typst 编译页，示例工作区显示静态版面。
 fn preview_side(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     if state.document.is_some() {
-        typst_preview(ui, state);
+        crate::preview::show(ui, state, "Typst 快速预览");
     } else {
         preview(ui, state);
     }
@@ -212,6 +215,7 @@ fn generated_source(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         });
     });
     let text = scholium_typst::generate_typst(&snapshot);
+    let first_block_line = text.lines().position(str::is_empty).map(|line| line + 1);
     let locate = state.preview.locate_request.take();
     let locate_line = locate.and_then(|block| displayed_line_of_block(&text, block));
     egui::ScrollArea::both()
@@ -237,79 +241,39 @@ fn generated_source(ui: &mut egui::Ui, state: &mut WorkspaceState) {
                                 .monospace()
                                 .color(theme::colors(ui).muted),
                         );
-                        let label =
-                            ui.add(egui::Label::new(highlight(line, theme::colors(ui))).extend());
+                        let block = first_block_line.and_then(|first| {
+                            let delta = index.checked_sub(first)?;
+                            (delta % 2 == 0 && delta / 2 < snapshot.blocks.len())
+                                .then_some(delta / 2)
+                        });
+                        let label = ui.add(
+                            egui::Label::new(highlight(line, theme::colors(ui)))
+                                .sense(Sense::click())
+                                .extend(),
+                        );
                         if highlighted {
                             ui.scroll_to_rect(label.rect, Some(egui::Align::Center));
+                        }
+                        if label.clicked()
+                            && let Some(block) = block
+                        {
+                            state.focus_block = Some(snapshot.blocks[block].node);
+                            state
+                                .page_editor
+                                .locate(&snapshot, snapshot.blocks[block].node);
+                            state.preview.locate_request = Some(block);
+                            if state.preview.compiled == Some(state.preview.wanted)
+                                && let Some(anchor) =
+                                    state.preview.anchors.iter().find(|a| a.block == block)
+                            {
+                                state.preview.page = anchor.start_page - 1;
+                                state.preview.scroll_request =
+                                    Some((anchor.start_page - 1, anchor.start_y));
+                            }
                         }
                         ui.end_row();
                     }
                 });
-        });
-}
-
-fn typst_preview(ui: &mut egui::Ui, state: &mut WorkspaceState) {
-    theme::bar_frame(ui).show(ui, |ui| {
-        ui.set_width(ui.available_width());
-        ui.horizontal(|ui| {
-            ui.label(RichText::new("Typst 快速预览").color(theme::colors(ui).accent));
-            let status = if state.preview.pending {
-                "编译中…".to_owned()
-            } else if state.preview.shown > 0 {
-                format!("r{} · {} ms", state.preview.shown, state.preview.elapsed_ms)
-            } else {
-                "—".to_owned()
-            };
-            ui.weak(status);
-        });
-    });
-    if let Some(error) = state.preview.error.clone() {
-        ui.add_space(theme::GUTTER);
-        ui.colored_label(theme::colors(ui).accent, format!("编译失败：{error}"));
-        return;
-    }
-    if state.preview.pages.is_empty() {
-        ui.add_space(theme::GUTTER);
-        ui.weak(if state.preview.pending {
-            "编译中…"
-        } else {
-            "尚无排版结果"
-        });
-        return;
-    }
-    let pages = state.preview.pages.clone();
-    let anchors = state.preview.anchors.clone();
-    egui::ScrollArea::vertical()
-        .id_salt("typst-preview-pages")
-        .auto_shrink([false, false])
-        .show(ui, |ui| {
-            let width = (ui.available_width() - 24.0).max(160.0);
-            for (index, page) in pages.iter().enumerate() {
-                let size = page.size_vec2();
-                let height = width * size.y / size.x;
-                ui.add_space(12.0);
-                let response =
-                    ui.add(egui::Image::new(page).fit_to_exact_size(egui::vec2(width, height)));
-                if response.clicked()
-                    && let Some(pos) = ui.input(|input| input.pointer.interact_pos())
-                {
-                    // 显示像素 → 页面 pt：先除显示缩放，再除栅格化比例。
-                    let local = pos - response.rect.left_top();
-                    let scale = width / size.x;
-                    let y_pt = local.y / scale / scholium_typst::PIXELS_PER_PT;
-                    if let Some(block) = scholium_typst::block_at_click(&anchors, index + 1, y_pt) {
-                        state.preview.locate_request = Some(block);
-                        if let Some(node) = state
-                            .document
-                            .as_ref()
-                            .and_then(|snapshot| snapshot.blocks.get(block))
-                        {
-                            state.focus_block = Some(node.node);
-                        }
-                    }
-                }
-            }
-            ui.add_space(12.0);
         });
 }
 

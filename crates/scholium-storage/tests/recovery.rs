@@ -41,9 +41,16 @@ fn sigkill_mid_write_leaves_a_consistent_store() {
         .expect("load after SIGKILL")
         .expect("at least one commit was observed before the kill");
     let revision = persisted.snapshot.revision.0;
+    // The child can commit again between our stdout observation and SIGKILL.
+    // A durable acknowledgement is a lower bound, never an upper bound.
     assert!(
-        (1..=committed).contains(&revision),
-        "recovered revision {revision} must be a committed one (<= {committed})"
+        revision >= committed,
+        "recovered revision {revision} must retain acknowledged commit {committed}"
+    );
+    assert_eq!(persisted.snapshot.blocks.len(), 1);
+    assert_eq!(
+        persisted.snapshot.blocks[0].markup_text(),
+        format!("内容 {revision}")
     );
     assert_eq!(persisted.requests.len() as u64, revision);
     let _ = std::fs::remove_file(&path);

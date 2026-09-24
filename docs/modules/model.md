@@ -62,3 +62,10 @@ ExportRequest 的领域 DTO；具体字段见 [数据模型](../DATA_MODEL.md)�
 
 最小实现提供 DocumentId/NodeId/RequestId、Revision、DocumentSnapshot 与 ReplaceParagraph，均无持久化 schema。
 详见 [ADR 0024](../adr/ADR-0024-local-paragraph-integration.md)。
+
+## 本地块编辑位置
+
+`BlockPosition { block: NodeId, byte: usize }` 表示规范 `Block::markup_text()` 中的 UTF-8 字节偏移，
+不表示屏幕像素、字符序号或持久协作锚点。`BlockEdit::ReplaceRange { start, end, text }` 将同一
+revision 下的有序范围原子替换，可跨块。请求仍携带文档身份、base revision 和唯一 request id。
+其阶段边界见 [ADR 0029](../adr/ADR-0029-direct-page-editing.md)。

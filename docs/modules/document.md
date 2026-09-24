@@ -88,3 +88,11 @@ plan_edit/plan_reconcile 返回实际源码写集；修改原文、宏、模板�
 
 LocalSession 是单人内存段落接入；直接 apply 仅限此临时适配器，正式共享树仍须经 collab transaction adapter。
 详见 [ADR 0024](../adr/ADR-0024-local-paragraph-integration.md)。
+
+## 本地范围替换
+
+`LocalSession::apply` 接受 `BlockEdit::ReplaceRange`，先验证目标、范围顺序、UTF-8 边界、
+单块容量与块数，再一次替换跨越的块。非法端点返回 `EditError::InvalidRange`，未知节点返回
+`WrongTarget`，超限返回 `Capacity`；失败不修改快照、revision 或动作记录。
+首块身份和块种类保留，范围之外的节点不变；换行新建后续块 ID，一次替换只产生一个动作。
+该范围基于标记文本，不能冒充完整数学 TreeCursor/槽位语义；见 [ADR 0029](../adr/ADR-0029-direct-page-editing.md)。
