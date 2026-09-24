@@ -4,33 +4,33 @@ use super::*;
 fn preview_follows_revisions_in_both_views_after_debounce() {
     let ctx = egui::Context::default();
     theme::install(&ctx);
-    let mut bridge = SessionBridge::default();
+    let mut bridge = SessionBridge {
+        restored: true,
+        ..Default::default()
+    };
     let mut state = editable_state();
     bridge.start(&mut state);
     let block = first_block(&state);
-    focus_block(&ctx, block);
-    frame(
-        &ctx,
-        &mut state,
-        &mut bridge,
-        vec![egui::Event::Text("预览正文".into())],
-    );
+    let snapshot = state.document.clone().expect("document");
+    state.pending_edit = Some(replace(&snapshot, block, "预览正文"));
+    bridge.apply_pending_edit(&mut state);
     assert_eq!(state.preview.wanted, 1);
-    frame(&ctx, &mut state, &mut bridge, vec![]);
+    // Exercise each side of debounce directly; UI frame time is unbounded under load.
+    state.preview.changed_at = Some(std::time::Instant::now() + Duration::from_secs(60));
+    bridge.drive_preview(&ctx, &mut state);
     assert_eq!(state.preview.submitted, None);
     assert!(bridge.preview.is_none());
-    state.preview.changed_at = state
-        .preview
-        .changed_at
-        .map(|at| at - std::time::Duration::from_secs(1));
-    frame(&ctx, &mut state, &mut bridge, vec![]);
+    state.preview.changed_at = Some(std::time::Instant::now() - Duration::from_secs(1));
+    bridge.drive_preview(&ctx, &mut state);
     assert_eq!(state.preview.submitted, Some(1));
     assert!(bridge.preview.is_some());
     assert!(state.preview.pending);
     commands::dispatch(&mut state, commands::ViewCommand::Source);
     let snapshot = state.document.clone().expect("document");
     state.pending_edit = Some(replace(&snapshot, block, "预览正文续"));
-    frame(&ctx, &mut state, &mut bridge, vec![]);
+    bridge.apply_pending_edit(&mut state);
+    state.preview.changed_at = Some(std::time::Instant::now() + Duration::from_secs(60));
+    bridge.drive_preview(&ctx, &mut state);
     assert_eq!(state.preview.wanted, 2);
     assert_eq!(state.preview.submitted, Some(1));
     assert_eq!(state.preview.summary(), "Typst 编译中");
@@ -45,7 +45,10 @@ fn preview_follows_revisions_in_both_views_after_debounce() {
 fn visual_workspace_renders_a_page_for_the_current_document() {
     let ctx = egui::Context::default();
     theme::install(&ctx);
-    let mut bridge = SessionBridge::default();
+    let mut bridge = SessionBridge {
+        restored: true,
+        ..Default::default()
+    };
     let mut state = WorkspaceState::default();
     bridge.start(&mut state);
     assert!(state.visual_typeset);
@@ -53,8 +56,12 @@ fn visual_workspace_renders_a_page_for_the_current_document() {
         .preview
         .changed_at
         .map(|at| at - std::time::Duration::from_secs(1));
-    for _ in 0..300 {
-        frame(&ctx, &mut state, &mut bridge, vec![]);
+    // Font discovery and rasterization compete with other preview tests in CI.
+    // Poll the actual result without rendering hundreds of unrelated UI frames.
+    let deadline = std::time::Instant::now() + Duration::from_secs(30);
+    while std::time::Instant::now() < deadline {
+        bridge.drive_preview(&ctx, &mut state);
+        assert!(state.preview.error.is_none(), "{:?}", state.preview);
         if state.preview.shown == Some(0) {
             break;
         }
@@ -63,6 +70,7 @@ fn visual_workspace_renders_a_page_for_the_current_document() {
     assert_eq!(state.preview.shown, Some(0), "{:?}", state.preview);
     assert_eq!(state.preview.page_count, 1);
     assert!(state.preview.page_texture.is_some());
+    frame(&ctx, &mut state, &mut bridge, vec![]);
     ctx.memory_mut(|memory| memory.request_focus(crate::page_editor::id()));
     frame(
         &ctx,

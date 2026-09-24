@@ -15,6 +15,9 @@ fn frame(
     bridge: &mut SessionBridge,
     events: Vec<egui::Event>,
 ) {
+    // Input/session tests do not need a font scan per simulated window. The
+    // preview integration tests drive compilation explicitly outside this helper.
+    state.preview.changed_at = Some(std::time::Instant::now() + Duration::from_secs(60));
     let mut output = ctx.run_ui(
         egui::RawInput {
             screen_rect: Some(egui::Rect::from_min_size(
