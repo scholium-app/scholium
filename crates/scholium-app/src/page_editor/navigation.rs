@@ -3,6 +3,10 @@ use scholium_model::{DocumentSnapshot, NodeId};
 use scholium_typst::PageGeometry;
 
 impl EditorState {
+    pub(crate) fn request_focus(&mut self) {
+        self.focus_requested = true;
+    }
+
     pub(crate) fn locate(&mut self, snapshot: &DocumentSnapshot, node: NodeId) {
         if let Some(byte) = buffer::global(snapshot, node, 0) {
             self.document = Some(snapshot.document);

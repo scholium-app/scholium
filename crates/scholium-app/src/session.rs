@@ -41,6 +41,14 @@ impl std::fmt::Debug for SessionBridge {
 }
 
 impl SessionBridge {
+    /// Start the resident font scan while the application opens, before typing.
+    pub(crate) fn prepare_preview(&mut self, ctx: &egui::Context) {
+        self.preview.get_or_insert_with(|| {
+            let ctx = ctx.clone();
+            PreviewCompiler::spawn_with_wake(move || ctx.request_repaint())
+        });
+    }
+
     /// 显式会话文件（测试/多实例）；默认走 `store_path()`。
     #[cfg_attr(not(test), allow(dead_code))]
     pub(crate) fn with_store_file(path: PathBuf) -> Self {
@@ -185,9 +193,10 @@ impl SessionBridge {
                 .changed_at
                 .is_some_and(|at| at.elapsed() >= debounce);
         if wants_compile && let Some(snapshot) = state.document.clone() {
-            self.preview
-                .get_or_insert_with(PreviewCompiler::spawn)
-                .submit_snapshot(&snapshot);
+            self.prepare_preview(ctx);
+            if let Some(preview) = &self.preview {
+                preview.submit_snapshot(&snapshot);
+            }
             state.preview.submitted = Some(state.preview.wanted);
             state.preview.pending = true;
         }
@@ -198,9 +207,10 @@ impl SessionBridge {
                 || state.preview.page_index != Some(state.preview.page))
             && state.preview.page_requested != Some(selected);
         if needs_page && let Some(document) = state.preview.document {
-            self.preview
-                .get_or_insert_with(PreviewCompiler::spawn)
-                .request_page(document, selected.0, selected.1);
+            self.prepare_preview(ctx);
+            if let Some(preview) = &self.preview {
+                preview.request_page(document, selected.0, selected.1);
+            }
             state.preview.page_requested = Some(selected);
         }
         if state.preview.pending || state.preview.page_requested.is_some() {
@@ -217,6 +227,7 @@ impl SessionBridge {
         state.preview.pending = false;
         state.preview.elapsed_ms = outcome.elapsed_ms;
         state.preview.error = outcome.error;
+        state.preview.warning = outcome.warning;
         state.preview.page_requested = None;
         if state.preview.error.is_some() {
             // Keep the last successful page and its metadata visible on failure.
@@ -266,6 +277,9 @@ impl SessionBridge {
         state.preview.shown = Some(outcome.revision);
         state.preview.page_index = Some(outcome.page);
         state.preview.page_requested = None;
+        // Session updates run after drawing. Present the newly adopted pixels
+        // on another frame even if the user has stopped typing.
+        ctx.request_repaint();
     }
 
     fn store(&mut self) -> Result<&SessionStore, String> {

@@ -107,6 +107,8 @@ fn text_cells(
     cells: &mut Vec<GlyphBox>,
 ) {
     let mut cursor = Point::zero();
+    let mut single = text.clone();
+    single.glyphs.clear();
     for glyph in &text.glyphs {
         let local = transform.pre_concat(Transform::translate(cursor.x, cursor.y));
         if let Some(mut range) = world.range(glyph.span.0) {
@@ -119,8 +121,8 @@ fn text_cells(
                 range = start..end;
             }
             if let Some((block, input)) = mapped(projection, range) {
-                let mut single = text.clone();
-                single.glyphs = vec![glyph.clone()];
+                single.glyphs.clear();
+                single.glyphs.push(glyph.clone());
                 let mut rect = rectangle(single.bbox(), local);
                 let baseline = Point::zero().transform(local);
                 let advance = glyph.x_advance.at(text.size).to_pt() as f32;

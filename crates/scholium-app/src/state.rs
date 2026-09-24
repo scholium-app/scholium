@@ -24,6 +24,7 @@ pub(crate) struct PreviewState {
     pub(crate) pending: bool,
     /// 最近一次编译错误。
     pub(crate) error: Option<String>,
+    pub(crate) warning: Option<String>,
     /// 最近一次编译耗时（毫秒）。
     pub(crate) elapsed_ms: u64,
     /// 已编译的总页数；页面栅格化按需进行。
@@ -73,6 +74,7 @@ impl PreviewState {
             self.wanted = snapshot.revision.0;
             self.changed_at = Some(std::time::Instant::now());
             self.error = None;
+            self.warning = None;
             self.scroll_request = None;
         }
     }
@@ -86,6 +88,8 @@ impl PreviewState {
     pub(crate) fn summary(&self) -> String {
         if self.error.is_some() {
             "Typst 排版失败".into()
+        } else if self.warning.is_some() {
+            "Typst 公式待完成".into()
         } else if self.pending {
             "Typst 编译中".into()
         } else if self.shown == Some(self.wanted) {

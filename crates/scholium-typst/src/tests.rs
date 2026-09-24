@@ -254,3 +254,145 @@ fn exceeding_the_page_limit_reports_failure_instead_of_truncating() {
     );
     assert!(outcome.anchors.is_empty());
 }
+
+#[test]
+fn new_document_and_plain_typing_compile_with_editable_geometry() {
+    let mut compiler = PreviewCompiler::spawn();
+    for content in [
+        vec![],
+        vec![Inline::Text("a".into())],
+        vec![Inline::Text("abc".into())],
+        vec![Inline::Text("你好".into())],
+    ] {
+        let mut snap = snapshot(&[(BlockKind::Paragraph, "")]);
+        snap.blocks[0].content = content;
+        compiler.submit_snapshot(&snap);
+        let outcome = wait_for_compile(&mut compiler, snap.document, snap.revision.0);
+        assert!(
+            outcome.error.is_none(),
+            "{:?}: {:?}\n{}",
+            snap.blocks[0].content,
+            outcome.error,
+            generate_typst_anchored(&snap)
+        );
+        assert!(!outcome.geometry[0].cells.is_empty());
+    }
+}
+
+#[test]
+fn incomplete_formula_input_remains_visible_and_editable_until_completed() {
+    let mut compiler = PreviewCompiler::spawn();
+    let mut snap = snapshot(&[(BlockKind::Paragraph, "")]);
+    for (revision, formula) in [
+        "a", "al", "alp", "alph", "alpha", "alpha/", "alpha/2", "sqrt(", "sqrt(x)", "hello",
+    ]
+    .iter()
+    .enumerate()
+    {
+        snap.revision = Revision(revision as u64);
+        snap.blocks[0].content = vec![Inline::Math((*formula).into())];
+        compiler.submit_snapshot(&snap);
+        let start = std::time::Instant::now();
+        let outcome = wait_for_compile(&mut compiler, snap.document, snap.revision.0);
+        eprintln!(
+            "formula={formula:?} compile={}ms result={:?} receive={}ms",
+            outcome.elapsed_ms,
+            outcome.error,
+            start.elapsed().as_millis()
+        );
+        assert!(outcome.error.is_none(), "{formula}: {:?}", outcome.error);
+        assert!(!outcome.geometry[0].cells.is_empty(), "{formula}");
+        let complete = matches!(*formula, "a" | "alpha" | "alpha/2" | "sqrt(x)");
+        assert_eq!(outcome.warning.is_none(), complete, "{formula}");
+        compiler.request_page(snap.document, snap.revision.0, 0);
+        let raster_start = std::time::Instant::now();
+        wait_for_page(&mut compiler, snap.document, snap.revision.0, 0);
+        eprintln!("raster={}ms", raster_start.elapsed().as_millis());
+    }
+}
+
+#[test]
+fn formula_feedback_preserves_source_and_does_not_degrade_healthy_formulas() {
+    let mut compiler = PreviewCompiler::spawn();
+    let mut snap = snapshot(&[(BlockKind::Paragraph, "")]);
+    snap.blocks[0].content = vec![
+        Inline::Text("正文 ".into()),
+        Inline::Math("al".into()),
+        Inline::Text(" 后续 ".into()),
+        Inline::Math("beta/2".into()),
+        Inline::Math("sqrt(".into()),
+    ];
+    let source = generate_typst(&snap);
+    compiler.submit_snapshot(&snap);
+    let feedback = wait_for_compile(&mut compiler, snap.document, snap.revision.0);
+    assert!(feedback.error.is_none(), "{:?}", feedback.error);
+    let warning = feedback.warning.expect("draft diagnostics");
+    assert!(warning.contains("unknown variable: al"), "{warning}");
+    assert!(warning.contains("unclosed delimiter"), "{warning}");
+    let markup = snap.blocks[0].markup_text();
+    let cells = &feedback.geometry[0].cells;
+    assert!(
+        cells
+            .iter()
+            .any(|cell| markup.get(cell.input.clone()) == Some("beta")),
+        "healthy Greek glyph retains its complete token"
+    );
+    assert!(
+        cells
+            .iter()
+            .any(|cell| markup.get(cell.input.clone()) == Some("l")),
+        "unfinished formula exposes each typed character for editing"
+    );
+    assert_eq!(
+        generate_typst(&snap),
+        source,
+        "feedback never rewrites authority"
+    );
+    compiler.submit(snap.document, 2, source, 1);
+    let strict = wait_for_compile(&mut compiler, snap.document, 2);
+    assert!(
+        strict.error.is_some(),
+        "strict source compilation cannot silently repair formulas"
+    );
+    assert!(strict.warning.is_none());
+}
+
+#[test]
+fn preview_worker_wakes_the_host_for_compile_and_page_delivery() {
+    let (wake, events) = std::sync::mpsc::channel();
+    let mut compiler = PreviewCompiler::spawn_with_wake(move || {
+        let _ = wake.send(());
+    });
+    let mut snap = snapshot(&[(BlockKind::Paragraph, "正文")]);
+    compiler.submit_snapshot(&snap);
+    events
+        .recv_timeout(std::time::Duration::from_secs(15))
+        .expect("cold font setup + compile");
+    let cold = compiler.poll().expect("metadata sent before notification");
+    assert!(matches!(
+        cold,
+        PreviewEvent::Compiled(CompileOutcome { error: None, .. })
+    ));
+    for (revision, formula) in ["al", "alpha/", "alpha/2"].iter().enumerate() {
+        snap.revision = Revision(revision as u64 + 2);
+        snap.blocks[0].content = vec![Inline::Math((*formula).into())];
+        let started = std::time::Instant::now();
+        compiler.submit_snapshot(&snap);
+        events
+            .recv_timeout(std::time::Duration::from_secs(15))
+            .expect("compile notification");
+        let Some(PreviewEvent::Compiled(result)) = compiler.poll() else {
+            panic!("compile event");
+        };
+        assert!(result.error.is_none());
+        compiler.request_page(snap.document, snap.revision.0, 0);
+        events
+            .recv_timeout(std::time::Duration::from_secs(15))
+            .expect("page notification");
+        assert!(matches!(compiler.poll(), Some(PreviewEvent::Page(_))));
+        eprintln!(
+            "warm formula {formula:?}: submit through raster delivery = {}ms",
+            started.elapsed().as_millis()
+        );
+    }
+}

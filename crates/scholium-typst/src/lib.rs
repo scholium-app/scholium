@@ -16,6 +16,7 @@ use typst_kit::fonts::FontStore;
 use typst_layout::{PagedDocument, PagedIntrospector};
 
 mod compiler;
+mod edit_compile;
 mod geometry;
 mod projection;
 pub use compiler::{CompileOutcome, PageOutcome, PagePixels, PreviewCompiler, PreviewEvent};
