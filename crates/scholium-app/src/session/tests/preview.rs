@@ -58,7 +58,7 @@ fn visual_workspace_renders_a_page_for_the_current_document() {
         .map(|at| at - std::time::Duration::from_secs(1));
     // Font discovery and rasterization compete with other preview tests in CI.
     // Poll the actual result without rendering hundreds of unrelated UI frames.
-    let deadline = std::time::Instant::now() + Duration::from_secs(30);
+    let deadline = std::time::Instant::now() + Duration::from_secs(60);
     while std::time::Instant::now() < deadline {
         bridge.drive_preview(&ctx, &mut state);
         assert!(state.preview.error.is_none(), "{:?}", state.preview);

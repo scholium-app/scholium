@@ -64,7 +64,9 @@ fn actual_math_glyphs_support_drag_selection_and_direct_replacement() {
         ..Default::default()
     };
     state.preview.note_snapshot(&snapshot);
-    for _ in 0..600 {
+    // Cold system-font discovery varies with the host and concurrent test load.
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(60);
+    while std::time::Instant::now() < deadline {
         if let Some(scholium_typst::PreviewEvent::Compiled(outcome)) = compiler.poll() {
             assert!(outcome.error.is_none(), "{:?}", outcome.error);
             state.preview.geometry = outcome.geometry;
