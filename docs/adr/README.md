@@ -72,3 +72,5 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0028](ADR-0028-storage-engine.md)：存储引擎选型——基准后裁决 SQLite（rusqlite/系统库），redb 留作 WASM 候选。
 
 [ADR 0029](ADR-0029-direct-page-editing.md)：编译字形驱动的页面内光标、选区与输入，以及本地原子范围替换。
+
+[ADR 0030](ADR-0030-incomplete-formula-feedback.md)：未完成公式的原位输入反馈、真实诊断与排版 worker 主动唤醒。

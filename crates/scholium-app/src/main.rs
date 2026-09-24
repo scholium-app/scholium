@@ -44,8 +44,10 @@ fn main() -> eframe::Result {
         "Scholium",
         options,
         Box::new(|cc| {
+            let mut app = ScholiumApp::default();
+            app.session.prepare_preview(&cc.egui_ctx);
             theme::install(&cc.egui_ctx);
-            Ok(Box::<ScholiumApp>::default())
+            Ok(Box::new(app))
         }),
     )
 }

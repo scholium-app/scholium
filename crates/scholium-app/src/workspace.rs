@@ -32,8 +32,7 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
                     });
                 });
                 ui.separator();
-                ui.weak("尚未运行检查");
-                ui.label("编辑与排版后端接入后，这里显示文档诊断和源位置。");
+                crate::preview::diagnostics(ui, state);
             });
     }
     // Narrow windows prioritize the document; remember the user's navigation preference.

@@ -36,7 +36,10 @@ pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
     match command {
         ViewCommand::NewDocument => state.new_requested = true,
         ViewCommand::Save => state.save_requested = true,
-        ViewCommand::Visual => state.mode = ViewMode::Visual,
+        ViewCommand::Visual => {
+            state.mode = ViewMode::Visual;
+            state.page_editor.request_focus();
+        }
         ViewCommand::Source => state.mode = ViewMode::Source,
         ViewCommand::Navigation => state.navigation = !state.navigation,
         ViewCommand::Diagnostics => state.diagnostics = !state.diagnostics,

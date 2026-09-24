@@ -32,6 +32,8 @@ fn preview_header(ui: &mut egui::Ui, state: &mut WorkspaceState, title: &str) {
                     state.preview.wanted,
                     state.preview.shown.unwrap_or_default()
                 )
+            } else if state.preview.warning.is_some() {
+                format!("r{} · 公式待完成", state.preview.wanted)
             } else if state.preview.shown == Some(state.preview.wanted) {
                 format!(
                     "r{} · {} ms",
@@ -41,6 +43,15 @@ fn preview_header(ui: &mut egui::Ui, state: &mut WorkspaceState, title: &str) {
                 "—".to_owned()
             };
             ui.weak(status);
+            if let Some(detail) = state
+                .preview
+                .error
+                .as_ref()
+                .or(state.preview.warning.as_ref())
+                && ui.small_button("查看原因").on_hover_text(detail).clicked()
+            {
+                state.diagnostics = true;
+            }
         });
         if let Some(error) = &state.edit_error {
             ui.colored_label(theme::colors(ui).accent, format!("修改未应用：{error}"));
@@ -55,6 +66,35 @@ fn preview_header(ui: &mut egui::Ui, state: &mut WorkspaceState, title: &str) {
         }
         page_controls(ui, state);
     });
+}
+
+pub(crate) fn diagnostics(ui: &mut egui::Ui, state: &WorkspaceState) {
+    let preview = &state.preview;
+    let detail = preview.error.as_ref().or(preview.warning.as_ref());
+    if let Some(detail) = detail {
+        ui.label(if preview.error.is_some() {
+            "排版失败，页面保留上次成功结果；正文仍可保存。"
+        } else {
+            "公式尚不能排版，已在原位置显示输入文字；补全后自动恢复公式。"
+        });
+        ui.horizontal(|ui| {
+            ui.weak(format!("Typst · 正文 r{}", preview.wanted));
+            if ui.small_button("复制详情").clicked() {
+                ui.ctx().copy_text(detail.clone());
+            }
+        });
+        egui::ScrollArea::vertical().show(ui, |ui| {
+            ui.add(egui::Label::new(detail).selectable(true).wrap());
+        });
+    } else {
+        ui.weak(if state.document.is_none() {
+            "尚未打开文档"
+        } else if preview.shown == Some(preview.wanted) {
+            "当前排版无错误"
+        } else {
+            "等待当前正文排版结果…"
+        });
+    }
 }
 
 fn page_controls(ui: &mut egui::Ui, state: &mut WorkspaceState) {
@@ -250,4 +290,44 @@ fn blank_page(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             ui.painter().rect_filled(rect, 0.0, egui::Color32::WHITE);
             crate::page_editor::show(ui, state, rect, factor);
         });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn painted_text(shape: &egui::Shape) -> String {
+        match shape {
+            egui::Shape::Text(text) => text.galley.job.text.clone(),
+            egui::Shape::Vec(shapes) => shapes
+                .iter()
+                .map(painted_text)
+                .collect::<Vec<_>>()
+                .join("\n"),
+            _ => String::new(),
+        }
+    }
+
+    #[test]
+    fn compile_failure_details_are_visible_in_the_real_diagnostics_panel() {
+        let ctx = egui::Context::default();
+        theme::install(&ctx);
+        let mut state = WorkspaceState {
+            diagnostics: true,
+            ..Default::default()
+        };
+        state.preview.error = Some("unknown variable: broken_symbol".into());
+        let mut output = ctx.run_ui(egui::RawInput::default(), |ui| {
+            crate::workspace::show(ui, &mut state);
+        });
+        let text = output
+            .shapes
+            .iter()
+            .map(|shape| painted_text(&shape.shape))
+            .collect::<Vec<_>>()
+            .join("\n");
+        output.textures_delta.clear();
+        assert!(text.contains("unknown variable: broken_symbol"), "{text}");
+        assert!(!text.contains("尚未运行检查"));
+    }
 }

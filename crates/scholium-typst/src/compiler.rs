@@ -1,7 +1,7 @@
 //! Resident Typst compilation with page rasterization on demand.
 
 use std::sync::{Arc, Mutex, mpsc};
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 use crate::{PageGeometry, projection::Projection};
 use scholium_model::{DocumentId, DocumentSnapshot};
@@ -33,6 +33,8 @@ pub struct CompileOutcome {
     pub elapsed_ms: u64,
     /// Compile error or explicit preview limit error.
     pub error: Option<String>,
+    /// Incomplete formulas shown as editable on-page text, with original diagnostics.
+    pub warning: Option<String>,
     /// Per-block anchors extracted from the compiled document.
     pub anchors: Vec<BlockAnchor>,
     /// Per-page glyph geometry for direct editing; never reuse across revisions.
@@ -66,6 +68,7 @@ pub enum PreviewEvent {
 pub struct PreviewCompiler {
     pending: Arc<Mutex<Queue>>,
     recv: mpsc::Receiver<PreviewEvent>,
+    wake: mpsc::SyncSender<()>,
 }
 
 impl std::fmt::Debug for PreviewCompiler {
@@ -85,6 +88,7 @@ struct CompileRequest {
     revision: u64,
     projection: Projection,
     block_count: usize,
+    snapshot: Option<DocumentSnapshot>,
 }
 
 #[derive(Clone, Copy)]
@@ -101,14 +105,28 @@ impl PreviewCompiler {
     /// Panics if the OS refuses to spawn the preview thread.
     #[must_use]
     pub fn spawn() -> Self {
+        Self::spawn_with_wake(|| {})
+    }
+
+    /// Spawn and notify the host when new metadata or pixels arrive.
+    /// The callback runs on the worker thread and must not block.
+    ///
+    /// # Panics
+    /// Panics if the OS refuses to spawn the preview thread.
+    pub fn spawn_with_wake(on_result: impl Fn() + Send + 'static) -> Self {
+        let (wake, wake_recv) = mpsc::sync_channel(1);
         let (send, recv) = mpsc::channel();
         let pending = Arc::new(Mutex::new(Queue::default()));
         let slot = Arc::clone(&pending);
         std::thread::Builder::new()
             .name("scholium-typst-preview".into())
-            .spawn(move || worker(slot, send))
+            .spawn(move || worker(slot, send, wake_recv, on_result))
             .expect("preview compiler thread spawns");
-        Self { pending, recv }
+        Self {
+            pending,
+            recv,
+            wake,
+        }
     }
 
     /// Replace any unconsumed compile request with this document revision.
@@ -122,9 +140,11 @@ impl PreviewCompiler {
                     ..Default::default()
                 },
                 block_count,
+                snapshot: None,
             });
             slot.page = None;
         }
+        let _ = self.wake.try_send(());
     }
 
     /// Compile a semantic snapshot together with its editable glyph source map.
@@ -135,9 +155,11 @@ impl PreviewCompiler {
                 revision: snapshot.revision.0,
                 projection: crate::projection::generate(snapshot, true),
                 block_count: snapshot.blocks.len(),
+                snapshot: Some(snapshot.clone()),
             });
             slot.page = None;
         }
+        let _ = self.wake.try_send(());
     }
 
     /// Request one zero-based page from the currently compiled revision.
@@ -149,6 +171,7 @@ impl PreviewCompiler {
                 page,
             });
         }
+        let _ = self.wake.try_send(());
     }
 
     /// Take the next worker event, if one has arrived.
@@ -158,7 +181,12 @@ impl PreviewCompiler {
 }
 
 // The UI dropping its Arc signals shutdown; never join a compiler on the UI thread.
-fn worker(pending: Arc<Mutex<Queue>>, send: mpsc::Sender<PreviewEvent>) {
+fn worker(
+    pending: Arc<Mutex<Queue>>,
+    send: mpsc::Sender<PreviewEvent>,
+    wake: mpsc::Receiver<()>,
+    on_result: impl Fn(),
+) {
     let mut world = PreviewWorld::new();
     let mut compiled: Option<(DocumentId, u64, PagedDocument)> = None;
     while Arc::strong_count(&pending) > 1 {
@@ -178,6 +206,7 @@ fn worker(pending: Arc<Mutex<Queue>>, send: mpsc::Sender<PreviewEvent>) {
                 if send.send(PreviewEvent::Compiled(outcome)).is_err() {
                     break;
                 }
+                on_result();
             }
             Work::Page(request) => {
                 let Some((document, revision, pages)) = &compiled else {
@@ -189,29 +218,38 @@ fn worker(pending: Arc<Mutex<Queue>>, send: mpsc::Sender<PreviewEvent>) {
                 let Some(page) = pages.pages().get(request.page) else {
                     continue;
                 };
-                let pixmap = typst_render::render(
-                    page,
-                    &typst_render::RenderOptions {
-                        pixel_per_pt: f64::from(PIXELS_PER_PT).into(),
-                        render_bleed: false,
-                    },
-                );
                 let result = PageOutcome {
                     document: request.document,
                     revision: request.revision,
                     page: request.page,
-                    pixels: PagePixels {
-                        width: pixmap.width(),
-                        height: pixmap.height(),
-                        rgba: pixmap.data().to_vec(),
-                    },
+                    pixels: raster(page),
                 };
                 if send.send(PreviewEvent::Page(result)).is_err() {
                     break;
                 }
+                on_result();
             }
-            Work::Idle => std::thread::sleep(Duration::from_millis(10)),
+            Work::Idle => {
+                if wake.recv().is_err() {
+                    break;
+                }
+            }
         }
+    }
+}
+
+fn raster(page: &typst_layout::Page) -> PagePixels {
+    let pixmap = typst_render::render(
+        page,
+        &typst_render::RenderOptions {
+            pixel_per_pt: f64::from(PIXELS_PER_PT).into(),
+            render_bleed: false,
+        },
+    );
+    PagePixels {
+        width: pixmap.width(),
+        height: pixmap.height(),
+        rgba: pixmap.data().to_vec(),
     }
 }
 
@@ -226,43 +264,44 @@ fn compile(
     request: CompileRequest,
 ) -> (CompileOutcome, Option<(DocumentId, u64, PagedDocument)>) {
     let start = Instant::now();
-    world.set_source(request.projection.source.clone());
-    let result = typst::compile::<PagedDocument>(world).output;
-    let (page_count, anchors, error, document) = match result {
-        Ok(document) if document.pages().len() <= MAX_PREVIEW_PAGES => {
+    let result = crate::edit_compile::compile(world, request.projection, request.snapshot.as_ref());
+    let (page_count, anchors, geometry, warning, error, document) = match result {
+        Ok((document, projection, warning)) if document.pages().len() <= MAX_PREVIEW_PAGES => {
             let anchors = extract_anchors(&document, request.block_count);
+            let geometry = crate::geometry::extract(&document, world, &projection);
             let count = document.pages().len();
-            (count, anchors, None, Some(document))
+            (count, anchors, geometry, warning, None, Some(document))
         }
-        Ok(document) => (
+        Ok((document, _, _)) => (
             document.pages().len(),
             Vec::new(),
+            Vec::new(),
+            None,
             Some(format!("预览最多支持 {MAX_PREVIEW_PAGES} 页")),
             None,
         ),
         Err(diagnostics) => (
             0,
             Vec::new(),
+            Vec::new(),
+            None,
             Some(
                 diagnostics
                     .iter()
-                    .map(|diagnostic| diagnostic.message.to_string())
+                    .map(|d| d.message.to_string())
                     .collect::<Vec<_>>()
                     .join("\n"),
             ),
             None,
         ),
     };
-    let geometry = document
-        .as_ref()
-        .map(|doc| crate::geometry::extract(doc, world, &request.projection))
-        .unwrap_or_default();
     let outcome = CompileOutcome {
         document: request.document,
         revision: request.revision,
         page_count,
         elapsed_ms: start.elapsed().as_millis() as u64,
         error,
+        warning,
         anchors,
         geometry,
     };

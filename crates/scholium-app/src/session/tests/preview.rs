@@ -97,6 +97,7 @@ fn matching_revision_from_another_document_cannot_replace_preview() {
             page_count: 3,
             elapsed_ms: 1,
             error: None,
+            warning: None,
             anchors: Vec::new(),
             geometry: Vec::new(),
         },
@@ -171,6 +172,7 @@ fn failed_recompile_preserves_the_last_successful_page_metadata() {
             page_count: 0,
             elapsed_ms: 1,
             error: Some("Invalid math".into()),
+            warning: None,
             anchors: Vec::new(),
             geometry: Vec::new(),
         },
@@ -272,4 +274,35 @@ fn rejected_page_range_retains_input_for_copy_without_mutating_authority() {
         state.document.as_ref().expect("document").revision,
         snapshot.revision
     );
+}
+
+#[test]
+fn returning_to_visual_mode_restores_the_page_input_focus() {
+    let ctx = egui::Context::default();
+    theme::install(&ctx);
+    let mut bridge = SessionBridge {
+        restored: true,
+        ..Default::default()
+    };
+    let mut state = WorkspaceState::default();
+    bridge.start(&mut state);
+    frame(
+        &ctx,
+        &mut state,
+        &mut bridge,
+        vec![egui::Event::Text("hello".into())],
+    );
+    commands::dispatch(&mut state, commands::ViewCommand::Source);
+    for _ in 0..3 {
+        frame(&ctx, &mut state, &mut bridge, vec![]);
+    }
+    commands::dispatch(&mut state, commands::ViewCommand::Visual);
+    frame(&ctx, &mut state, &mut bridge, vec![]);
+    frame(
+        &ctx,
+        &mut state,
+        &mut bridge,
+        vec![egui::Event::Text(" world".into())],
+    );
+    assert_eq!(block_texts(&state), ["hello world"]);
 }

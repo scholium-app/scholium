@@ -1,0 +1,136 @@
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-typst)
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 1.09s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-aebbd4e76c1adb44)
+
+running 36 tests
+test page_editor::tests::hidden_formula_delimiter_keeps_caret_at_last_visible_glyph ... ok
+test commands::tests::view_commands_update_only_view_preferences ... ok
+test page_editor::tests::reflow_follows_caret_to_new_page_and_source_location_sets_same_cursor ... ok
+test commands::tests::zoom_from_fit_width_starts_at_visible_page_scale ... ok
+test commands::tests::zoom_commands_are_bounded ... ok
+test session::tests::preview::failed_recompile_preserves_the_last_successful_page_metadata ... ok
+test session::tests::preview::matching_revision_from_another_document_cannot_replace_preview ... ok
+test session::tests::preview::rejected_page_range_retains_input_for_copy_without_mutating_authority ... ok
+test session::tests::preview::stale_document_revision_and_page_pixels_cannot_replace_the_current_page ... ok
+test page_editor::tests::replacing_a_selection_across_paragraphs_is_one_session_action ... ok
+test page_editor::tests::ime_preedit_stays_on_page_until_commit_and_enter_splits_without_another_editor ... ok
+test state::tests::default_workspace_starts_in_visual_fit_width_mode ... ok
+test state::tests::preview_revision_notes_reset_debounce_once_per_change ... ok
+test page_editor::tests::outdated_page_and_same_frame_ime_cannot_relocate_selection ... ok
+test session::tests::toolbar_kind_switch_targets_the_focused_block ... ok
+test session::tests::inline_math_markup_round_trips_through_the_session ... ok
+test workspace::tests::displayed_source_line_lookup_follows_block_order ... ok
+test session::tests::enter_splits_the_block_and_moves_the_caret_to_the_tail ... ok
+test session::tests::backspace_at_block_start_merges_into_the_previous_block ... ok
+test session::tests::ime_preedit_stays_local_until_commit ... ok
+test session::tests::delete_at_block_end_absorbs_the_following_block ... ok
+test session::tests::rejected_request_preserves_the_draft_without_changing_authority ... ok
+test session::tests::preview::typeset_editor_keeps_accepting_input_after_split_before_recompile ... ok
+test session::tests::toolbar_math_entry_splices_a_pair_at_the_caret ... ok
+test session::tests::preview::typing_a_formula_one_character_at_a_time_preserves_the_edit_buffer ... ok
+test preview::tests::compile_failure_details_are_visible_in_the_real_diagnostics_panel ... ok
+test session::tests::preview::returning_to_visual_mode_restores_the_page_input_focus ... ok
+test session::tests::preview::preview_follows_revisions_in_both_views_after_debounce ... ok
+test session::tests::failed_restore_blocks_save_and_never_claims_durability ... ok
+test session::tests::save_persists_and_startup_restores_the_session ... ok
+test session::tests::new_command_and_unicode_input_reach_session_and_survive_view_switch ... ok
+test tests::visual_layout_stays_inside_tiled_window ... ok
+test tests::keyboard_events_switch_views_and_resize_splitter ... ok
+test tests::source_layout_stays_inside_tiled_window ... ok
+test page_editor::tests::actual_math_glyphs_support_drag_selection_and_direct_replacement ... ok
+test session::tests::preview::visual_workspace_renders_a_page_for_the_current_document ... ok
+
+test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.25s
+
+     Running unittests src/lib.rs (target/debug/deps/scholium_document-74ff5ae7a15cf9c5)
+
+running 11 tests
+test range_edit::tests::non_boundary_and_reversed_ranges_never_change_the_document ... ok
+test range_edit::tests::cross_block_selection_is_one_atomic_action_and_preserves_outside_nodes ... ok
+test tests::boundary_merges_are_wrong_targets_and_empty_merges_remove_blocks ... ok
+test tests::inline_format_pairs_parse_like_math ... ok
+test tests::merges_keep_the_absorber_identity_kind_and_order ... ok
+test tests::kind_changes_keep_identity_text_and_append_actions ... ok
+test tests::newline_replacements_split_into_consecutive_blocks ... ok
+test tests::markup_parsing_keeps_math_first_class ... ok
+test tests::projections_cannot_mutate_the_authority ... ok
+test tests::stale_duplicate_wrong_target_and_capacity_are_atomic ... ok
+test tests::no_op_and_capacity_rejection_leave_revision_unchanged ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/scholium_model-9c288050d8dff5bd)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/scholium_storage-08e0d29925e8a950)
+
+running 7 tests
+test tests::malformed_request_id_is_a_recovery_error ... ok
+test tests::resave_shrinks_the_log_and_keeps_latest_snapshot ... ok
+test tests::save_load_round_trip_and_reopen_preserve_everything ... ok
+test tests::inconsistent_log_cannot_replace_a_committed_session ... ok
+test tests::missing_head_snapshot_is_a_recovery_error ... ok
+test tests::snapshot_at_reads_history_and_missing_returns_none ... ok
+test tests::bench_sqlite_append_hundred_thousand_actions_and_read_snapshot ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running unittests src/bin/hammer.rs (target/debug/deps/hammer-aa3b2d4e9b05671c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/recovery.rs (target/debug/deps/recovery-6dda8565f67da13d)
+
+running 1 test
+test sigkill_mid_write_leaves_a_consistent_store ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/scholium_typst-0ce87428b87d0d16)
+
+running 12 tests
+test tests::generation_maps_kinds_and_escapes_punctuation ... ok
+test tests::trailing_anchors_map_page_spanning_text_to_its_block ... ok
+test tests::page_after_the_old_eight_page_limit_can_be_rendered_on_demand ... ok
+test tests::math_segments_render_as_formulas_not_literal_text ... ok
+test tests::anchors_locate_every_block_and_map_clicks ... ok
+test tests::latest_revision_wins_when_requests_overtake_each_other ... ok
+test tests::preview_worker_wakes_the_host_for_compile_and_page_delivery ... ok
+test tests::new_document_and_plain_typing_compile_with_editable_geometry ... ok
+test tests::incomplete_formula_input_remains_visible_and_editable_until_completed ... ok
+test tests::compiler_produces_pages_for_a_document ... ok
+test tests::formula_feedback_preserves_source_and_does_not_degrade_healthy_formulas ... ok
+test tests::exceeding_the_page_limit_reports_failure_instead_of_truncating ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.66s
+
+   Doc-tests scholium_document
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests scholium_model
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests scholium_storage
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests scholium_typst
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

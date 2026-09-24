@@ -51,7 +51,7 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 
 本地受信块文档的预览适配器提供 `PreviewCompiler::submit_snapshot(&DocumentSnapshot)`、
 `request_page(document, revision, page)` 与 `poll() -> PreviewEvent`。`CompileOutcome` 包含
-文档 ID/revision、页数、耗时、诊断、块首/末锚点与 `Vec<PageGeometry>`。
+文档 ID/revision、页数、耗时、错误/输入期提示、块首/末锚点与 `Vec<PageGeometry>`。
 `GlyphBox { block, input, rect, decoration }` 的 `input` 是块的规范标记文本 UTF-8 字节范围，
 `rect` 是页面 pt 的左/上/右/下坐标。编译器遍历实际 Frame 变换、glyph span/offset 和形状，
 通过生成源码区间关联稳定 NodeId；字符偏移不等于 Unicode 字符序号或 UTF-16。
@@ -102,3 +102,16 @@ worker 调用，不能在 core 中绕过取消、内存和网络策略。新增�
 当前 mixed-build spike 的 Typst 编译、内省和 PDF/SVG 导出已进入独立沙箱 worker，
 见[报告 0018](../spikes/SPK-0018-typst-worker-isolation.md)与[ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。
 每次新进程不保留增量缓存；临时 JSON 不是正式存储或网络协议。
+
+## 公式输入期反馈
+
+`submit_snapshot` 在严格编译失败且每条诊断均落在已知 Math 源范围内时，
+仅把这些公式在交互投影中渲染为原位置的琥珀色文字，返回当前 revision 的可编辑字形。
+`CompileOutcome.warning` 保留原始诊断，`error` 为空表示页面已生成，不表示公式通过最终检查。
+其它公式照常排版；语义快照与 `generate_typst` 不变。未知来源错误不猜测范围，仍报失败。
+`submit` 的严格源码编译不采用输入期替代；正式输出不能使用该交互页面冒充有效结果。
+
+`spawn_with_wake` 的回调在编译/页面事件入队后通知宿主重绘，不能阻塞工作线程。
+输入队列通过通道唤醒线程，无输入时阻塞等待；丢弃句柄关闭通道，不在 UI 线程 join。
+应用启动时提前创建常驻 worker，使字体扫描尽量不落在首次键入之后。
+决策与测量边界见 [ADR 0030](../adr/ADR-0030-incomplete-formula-feedback.md)。
