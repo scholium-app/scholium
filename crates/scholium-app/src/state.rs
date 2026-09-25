@@ -27,6 +27,8 @@ pub(crate) struct PreviewState {
     pub(crate) warning: Option<String>,
     /// 最近一次编译耗时（毫秒）。
     pub(crate) elapsed_ms: u64,
+    /// 最近一次页栅格化耗时（毫秒）；状态栏与编译耗时合并为端到端口径。
+    pub(crate) raster_ms: u64,
     /// 已编译的总页数；页面栅格化按需进行。
     pub(crate) page_count: usize,
     /// 当前选择的零基页索引。
@@ -34,8 +36,10 @@ pub(crate) struct PreviewState {
     /// 当前页纹理及其页索引。
     pub(crate) page_texture: Option<eframe::egui::TextureHandle>,
     pub(crate) page_index: Option<usize>,
-    /// 已请求栅格化的 (revision, 零基页索引)。
-    pub(crate) page_requested: Option<(u64, usize)>,
+    /// 纹理的栅格化比例（位图像素每 typst pt）。
+    pub(crate) page_px_per_pt: f32,
+    /// 已请求栅格化的 (revision, 零基页索引, 比例桶)。
+    pub(crate) page_requested: Option<(u64, usize, f32)>,
     /// 当前页面对应的块锚点（page/pt）。
     pub(crate) anchors: Vec<scholium_typst::BlockAnchor>,
     /// Exact glyph boxes from the compiled revision, in page pt.
@@ -56,6 +60,7 @@ impl std::fmt::Debug for PreviewState {
             .field("pending", &self.pending)
             .field("error", &self.error)
             .field("elapsed_ms", &self.elapsed_ms)
+            .field("raster_ms", &self.raster_ms)
             .field("page_count", &self.page_count)
             .field("page", &self.page)
             .field("anchors", &self.anchors.len())
@@ -121,11 +126,17 @@ impl Dialect {
 /// View preferences, owned session projection and outgoing request; never authoritative content.
 #[derive(Debug)]
 pub(crate) struct WorkspaceState {
-    pub(crate) document: Option<scholium_model::DocumentSnapshot>,
+    /// Shared immutable projection; cloning the Arc is the frame-to-frame cost,
+    /// deep copies happen once per accepted edit (R6 of the rework plan).
+    pub(crate) document: Option<std::sync::Arc<scholium_model::DocumentSnapshot>>,
     /// Accepted input spelling for one block/revision; prevents canonical markup
     /// escaping from moving the caret while a delimiter is still being typed.
     pub(crate) accepted_input: Option<(scholium_model::NodeId, u64, String)>,
     pub(crate) pending_edit: Option<scholium_model::DocumentRequest>,
+    /// Page edits since the compiled geometry revision, in application order.
+    /// They keep the last-good glyph geometry addressable in live-buffer
+    /// coordinates while a recompile is in flight (E2 of the rework plan).
+    pub(crate) edit_shifts: Vec<crate::page_editor::Shift>,
     pub(crate) new_requested: bool,
     pub(crate) save_requested: bool,
     /// 已落盘的 revision；None 表示从未保存。
@@ -169,6 +180,7 @@ impl Default for WorkspaceState {
         Self {
             document: None,
             pending_edit: None,
+            edit_shifts: Vec::new(),
             accepted_input: None,
             new_requested: false,
             save_requested: false,

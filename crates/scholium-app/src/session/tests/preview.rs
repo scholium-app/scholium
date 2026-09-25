@@ -1,6 +1,65 @@
 use super::*;
 
 #[test]
+fn page_requests_follow_the_display_scale_and_re_request_when_it_changes() {
+    let ctx = egui::Context::default();
+    theme::install(&ctx);
+    let mut bridge = SessionBridge {
+        restored: true,
+        ..Default::default()
+    };
+    let mut state = WorkspaceState::default();
+    bridge.start(&mut state);
+    // A compiled page exists for the current revision.
+    state.preview.compiled = Some(0);
+    state.preview.page_count = 1;
+    state.preview.shown = Some(0);
+    state.preview.page_index = Some(0);
+    state.preview.page_px_per_pt = 1.25;
+    state.preview.changed_at = Some(std::time::Instant::now() + Duration::from_secs(60));
+    state.rendered_zoom = 1.0;
+    // The ppp only takes effect inside a pass, like a real frame on a 2x display.
+    let drive = |bridge: &mut SessionBridge, state: &mut WorkspaceState| {
+        let mut output = ctx.run_ui(
+            egui::RawInput {
+                screen_rect: Some(egui::Rect::from_min_size(
+                    egui::Pos2::ZERO,
+                    egui::vec2(1280.0, 900.0),
+                )),
+                events: Vec::new(),
+                viewports: [(
+                    egui::ViewportId::ROOT,
+                    egui::ViewportInfo {
+                        native_pixels_per_point: Some(2.0),
+                        ..Default::default()
+                    },
+                )]
+                .into_iter()
+                .collect(),
+                ..Default::default()
+            },
+            |ui| bridge.update(ui.ctx(), state),
+        );
+        output.textures_delta.clear();
+    };
+    drive(&mut bridge, &mut state);
+    // 4/3 logical px per pt at 100% zoom × 2 device scale = 8/3 ≈ 2.667,
+    // quantized to the quarter step 2.75.
+    let requested = state.preview.page_requested;
+    assert_eq!(requested.map(|(_, _, scale)| scale), Some(2.75));
+    // The same scale is not requested again while it matches the texture.
+    drive(&mut bridge, &mut state);
+    assert_eq!(state.preview.page_requested, requested);
+    // Zooming the viewport re-requests at the new bucket: 4/3 × 1.5 × 2 = 4.
+    state.rendered_zoom = 1.5;
+    drive(&mut bridge, &mut state);
+    assert_eq!(
+        state.preview.page_requested.map(|(_, _, scale)| scale),
+        Some(4.0)
+    );
+}
+
+#[test]
 fn preview_follows_revisions_in_both_views_after_debounce() {
     let ctx = egui::Context::default();
     theme::install(&ctx);
@@ -212,6 +271,8 @@ fn stale_document_revision_and_page_pixels_cannot_replace_the_current_page() {
                     height: 1,
                     rgba: vec![255; 4],
                 },
+                raster_ms: 0,
+                pixel_per_pt: 2.0,
             },
         );
         assert_eq!(

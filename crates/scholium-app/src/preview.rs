@@ -35,9 +35,10 @@ fn preview_header(ui: &mut egui::Ui, state: &mut WorkspaceState, title: &str) {
             } else if state.preview.warning.is_some() {
                 format!("r{} · 公式待完成", state.preview.wanted)
             } else if state.preview.shown == Some(state.preview.wanted) {
+                // 端到端口径：编译 + 整页栅格（报告 0045；不含去抖与帧调度）。
                 format!(
-                    "r{} · {} ms",
-                    state.preview.wanted, state.preview.elapsed_ms
+                    "r{} · 编排 {} ms + 页面 {} ms",
+                    state.preview.wanted, state.preview.elapsed_ms, state.preview.raster_ms
                 )
             } else {
                 "—".to_owned()
@@ -188,12 +189,15 @@ fn preview_body(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 
 fn render_page(ui: &mut egui::Ui, state: &mut WorkspaceState, page: &egui::TextureHandle) {
     let current = state.preview.shown == Some(state.preview.wanted);
+    // Raster scale of the texture actually being shown; the request side
+    // matches it to the display's physical pixels (R1).
+    let px_per_pt = state.preview.page_px_per_pt.max(0.1);
     egui::ScrollArea::both()
         .id_salt("typst-preview-pages")
         .auto_shrink([false, false])
         .show(ui, |ui| {
             let size = page.size_vec2();
-            let natural_width = size.x / scholium_typst::PIXELS_PER_PT * LOGICAL_PIXELS_PER_PT;
+            let natural_width = size.x / px_per_pt * LOGICAL_PIXELS_PER_PT;
             let width = if state.fit_width {
                 (ui.available_width() - theme::GUTTER * 2.0).max(1.0)
             } else {
@@ -216,7 +220,7 @@ fn render_page(ui: &mut egui::Ui, state: &mut WorkspaceState, page: &egui::Textu
                 && current
             {
                 // Page pt → raster px → displayed logical px.
-                let y = response.rect.top() + y_pt * scholium_typst::PIXELS_PER_PT * scale;
+                let y = response.rect.top() + y_pt * px_per_pt * scale;
                 ui.scroll_to_rect(
                     egui::Rect::from_center_size(
                         egui::pos2(response.rect.center().x, y),
@@ -227,12 +231,7 @@ fn render_page(ui: &mut egui::Ui, state: &mut WorkspaceState, page: &egui::Textu
                 state.preview.scroll_request = None;
             }
             if state.mode == ViewMode::Visual {
-                crate::page_editor::show(
-                    ui,
-                    state,
-                    response.rect,
-                    scale * scholium_typst::PIXELS_PER_PT,
-                );
+                crate::page_editor::show(ui, state, response.rect, scale * px_per_pt);
             }
             if state.mode == ViewMode::Source
                 && current
@@ -256,7 +255,7 @@ fn handle_preview_click(
     };
     // 显示像素 → 页面 pt：先除显示缩放，再除栅格化比例。
     let local = pos - response.rect.left_top();
-    let y_pt = local.y / scale / scholium_typst::PIXELS_PER_PT;
+    let y_pt = local.y / scale / state.preview.page_px_per_pt.max(0.1);
     let Some(block) =
         scholium_typst::block_at_click(&state.preview.anchors, state.preview.page + 1, y_pt)
     else {

@@ -40,6 +40,15 @@ impl std::fmt::Debug for SessionBridge {
     }
 }
 
+/// Bitmap px per typst pt for the current display: logical px per pt at 100%
+/// zoom, times the viewport's rendered zoom, times the device pixel ratio.
+/// Quarter-step quantization keeps monitor scaling jitter from re-rasterizing.
+fn raster_bucket(ctx: &egui::Context, rendered_zoom: f32) -> f32 {
+    const LOGICAL_PX_PER_PT: f32 = 96.0 / 72.0;
+    let scale = LOGICAL_PX_PER_PT * rendered_zoom.max(0.1) * ctx.pixels_per_point();
+    (scale * 4.0).round() / 4.0
+}
+
 impl SessionBridge {
     /// Start the resident font scan while the application opens, before typing.
     pub(crate) fn prepare_preview(&mut self, ctx: &egui::Context) {
@@ -143,6 +152,23 @@ impl SessionBridge {
             if state.edit_error.is_some() && range_input.is_some() {
                 state.page_editor.rejected_input = range_input;
             }
+            // The shift this frame pushed with a placeholder revision is real
+            // only if the session accepted the edit: a rejected edit leaves
+            // the compiled geometry addressing unchanged text, so its shift is
+            // dropped while earlier accepted shifts stay on the chain.
+            let pending = state
+                .edit_shifts
+                .iter()
+                .rposition(|shift| shift.resulting == crate::page_editor::PENDING_REVISION);
+            match (pending, state.edit_error.is_some()) {
+                (Some(index), false) => {
+                    state.edit_shifts[index].resulting = session.snapshot().revision.0;
+                }
+                (Some(index), true) => {
+                    state.edit_shifts.remove(index);
+                }
+                (None, _) => {}
+            }
             let snapshot = session.snapshot();
             state.accepted_input = if state.edit_error.is_none() {
                 rejected_draft.as_ref().and_then(|(node, text)| {
@@ -159,7 +185,7 @@ impl SessionBridge {
                 .then_some(rejected_draft)
                 .flatten();
             state.preview.note_snapshot(&snapshot);
-            state.document = Some(snapshot);
+            state.document = Some(std::sync::Arc::new(snapshot));
         }
     }
 
@@ -200,16 +226,21 @@ impl SessionBridge {
             state.preview.submitted = Some(state.preview.wanted);
             state.preview.pending = true;
         }
-        let selected = (state.preview.wanted, state.preview.page);
+        // Raster scale (R1): match the physical pixels the page actually
+        // occupies — device scale times the zoom the viewport rendered at —
+        // quantized to quarter steps so small drifts don't re-rasterize.
+        let bucket = raster_bucket(ctx, state.rendered_zoom);
+        let selected = (state.preview.wanted, state.preview.page, bucket);
         let needs_page = state.preview.compiled == Some(state.preview.wanted)
             && state.preview.page_count > 0
             && (state.preview.shown != Some(state.preview.wanted)
-                || state.preview.page_index != Some(state.preview.page))
+                || state.preview.page_index != Some(state.preview.page)
+                || state.preview.page_px_per_pt != bucket)
             && state.preview.page_requested != Some(selected);
         if needs_page && let Some(document) = state.preview.document {
             self.prepare_preview(ctx);
             if let Some(preview) = &self.preview {
-                preview.request_page(document, selected.0, selected.1);
+                preview.request_page(document, selected.0, selected.1, bucket);
             }
             state.preview.page_requested = Some(selected);
         }
@@ -237,6 +268,9 @@ impl SessionBridge {
         state.preview.anchors = outcome.anchors;
         state.preview.geometry = outcome.geometry;
         state.preview.page_count = outcome.page_count;
+        // Geometry of this compile already reflects every edit up to
+        // `outcome.revision`; older shifts are baked in and would double-apply.
+        crate::page_editor::retain_after(&mut state.edit_shifts, outcome.revision);
         if state.mode == crate::state::ViewMode::Visual
             && let Some(page) = state.document.as_ref().and_then(|snapshot| {
                 state
@@ -276,6 +310,8 @@ impl SessionBridge {
         }
         state.preview.shown = Some(outcome.revision);
         state.preview.page_index = Some(outcome.page);
+        state.preview.page_px_per_pt = outcome.pixel_per_pt;
+        state.preview.raster_ms = outcome.raster_ms;
         state.preview.page_requested = None;
         // Session updates run after drawing. Present the newly adopted pixels
         // on another frame even if the user has stopped typing.
@@ -307,7 +343,7 @@ impl SessionBridge {
                 let session = LocalSession::restore(persisted.snapshot, persisted.requests);
                 let snapshot = session.snapshot();
                 state.preview.note_snapshot(&snapshot);
-                state.document = Some(snapshot);
+                state.document = Some(std::sync::Arc::new(snapshot));
                 state.saved_revision = Some(revision);
                 self.session = Some(session);
             }
@@ -324,7 +360,7 @@ impl SessionBridge {
 
     fn start(&mut self, state: &mut WorkspaceState) {
         let session = LocalSession::default();
-        state.document = Some(session.snapshot());
+        state.document = Some(std::sync::Arc::new(session.snapshot()));
         state.edit_error = None;
         state.rejected_draft = None;
         state.accepted_input = None;
@@ -337,6 +373,7 @@ impl SessionBridge {
         state.save_requested = false;
         state.preview.reset();
         state.page_editor = Default::default();
+        state.edit_shifts.clear();
         state.preview.note_snapshot(&session.snapshot());
         state.mode = crate::state::ViewMode::Visual;
         self.session = Some(session);

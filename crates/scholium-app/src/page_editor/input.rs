@@ -21,7 +21,27 @@ pub(super) fn events(
     composition: &mut Option<String>,
 ) {
     let original = text.clone();
-    for event in ui.input(|input| input.events.clone()) {
+    // Only copy the events this editor reacts to; cloning the whole table every
+    // frame was O(events) allocation in the idle hot path.
+    let relevant: Vec<egui::Event> = ui.input(|input| {
+        input
+            .events
+            .iter()
+            .filter(|event| {
+                matches!(
+                    event,
+                    egui::Event::Ime(_)
+                        | egui::Event::Text(_)
+                        | egui::Event::Paste(_)
+                        | egui::Event::Copy
+                        | egui::Event::Cut
+                        | egui::Event::Key { pressed: true, .. }
+                )
+            })
+            .cloned()
+            .collect()
+    });
+    for event in relevant {
         match event {
             egui::Event::Ime(egui::ImeEvent::Preedit { text, .. }) => {
                 *composition = (!text.is_empty()).then_some(text)

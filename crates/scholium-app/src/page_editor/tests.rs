@@ -31,7 +31,7 @@ fn run(
         session.apply(request).expect("valid page edit");
         let snapshot = session.snapshot();
         state.preview.note_snapshot(&snapshot);
-        state.document = Some(snapshot);
+        state.document = Some(std::sync::Arc::new(snapshot));
     }
 }
 
@@ -60,7 +60,7 @@ fn actual_math_glyphs_support_drag_selection_and_direct_replacement() {
     let mut compiler = scholium_typst::PreviewCompiler::spawn();
     compiler.submit_snapshot(&snapshot);
     let mut state = WorkspaceState {
-        document: Some(snapshot.clone()),
+        document: Some(std::sync::Arc::new(snapshot.clone())),
         ..Default::default()
     };
     state.preview.note_snapshot(&snapshot);
@@ -121,7 +121,7 @@ fn ime_preedit_stays_on_page_until_commit_and_enter_splits_without_another_edito
     crate::theme::install(&ctx);
     let mut session = LocalSession::default();
     let mut state = WorkspaceState {
-        document: Some(session.snapshot()),
+        document: Some(std::sync::Arc::new(session.snapshot())),
         ..Default::default()
     };
     run(
@@ -181,7 +181,7 @@ fn replacing_a_selection_across_paragraphs_is_one_session_action() {
         }))
         .expect("seed");
     let mut state = WorkspaceState {
-        document: Some(session.snapshot()),
+        document: Some(std::sync::Arc::new(session.snapshot())),
         ..Default::default()
     };
     run(&mut state, &mut session, &ctx, vec![]);
@@ -206,6 +206,27 @@ fn replacing_a_selection_across_paragraphs_is_one_session_action() {
 }
 
 #[test]
+fn buffer_is_rebuilt_only_when_the_revision_moves() {
+    let mut session = LocalSession::default();
+    let snapshot = std::sync::Arc::new(session.snapshot());
+    let mut editor = EditorState::default();
+    assert_eq!(editor.buffer.get(&snapshot), "");
+    let address = editor.buffer.get(&snapshot).as_ptr();
+    // Same revision: the cached String is handed out again, not rebuilt.
+    assert_eq!(editor.buffer.get(&snapshot).as_ptr(), address);
+    session
+        .apply((*snapshot).request(BlockEdit::ReplaceText {
+            block: snapshot.blocks[0].node,
+            text: "changed".into(),
+        }))
+        .expect("edit");
+    let next = std::sync::Arc::new(session.snapshot());
+    let rebuilt = editor.buffer.get(&next);
+    assert_eq!(rebuilt, "changed");
+    assert_ne!(rebuilt.as_ptr(), address);
+}
+
+#[test]
 fn hidden_formula_delimiter_keeps_caret_at_last_visible_glyph() {
     let rect = Rect::from_min_size(egui::pos2(70.0, 80.0), egui::vec2(10.0, 12.0));
     let cells = vec![Cell {
@@ -220,7 +241,139 @@ fn hidden_formula_delimiter_keeps_caret_at_last_visible_glyph() {
 }
 
 #[test]
-fn outdated_page_and_same_frame_ime_cannot_relocate_selection() {
+fn typing_then_home_end_in_the_compile_window_stay_on_the_line() {
+    let ctx = egui::Context::default();
+    crate::theme::install(&ctx);
+    let mut session = LocalSession::default();
+    let initial = session.snapshot();
+    session
+        .apply(initial.request(BlockEdit::ReplaceText {
+            block: initial.blocks[0].node,
+            text: "first line".into(),
+        }))
+        .expect("seed");
+    let snapshot = session.snapshot();
+    let mut state = WorkspaceState {
+        document: Some(std::sync::Arc::new(snapshot.clone())),
+        ..Default::default()
+    };
+    state.preview.note_snapshot(&snapshot);
+    // Geometry arrived for the seed revision but the page pixels are stale:
+    // exactly the window between compile adoption and page adoption.
+    state.preview.geometry = vec![scholium_typst::PageGeometry {
+        cells: vec![scholium_typst::GlyphBox {
+            block: snapshot.blocks[0].node,
+            input: 0..10,
+            rect: [70.0, 70.0, 170.0, 82.0],
+            decoration: false,
+        }],
+    }];
+    state.preview.compiled = Some(snapshot.revision.0);
+    state.preview.shown = Some(snapshot.revision.0 - 1);
+    state.preview.page_index = Some(0);
+    ctx.memory_mut(|memory| memory.request_focus(id()));
+    run(
+        &mut state,
+        &mut session,
+        &ctx,
+        vec![egui::Event::Text("!".into())],
+    );
+    // The typed char is a shift on the chain; Home/End must use the shifted
+    // line cells instead of falling back to the whole-document bounds.
+    let key = |key| egui::Event::Key {
+        key,
+        physical_key: None,
+        pressed: true,
+        repeat: false,
+        modifiers: egui::Modifiers::NONE,
+    };
+    run(&mut state, &mut session, &ctx, vec![key(egui::Key::Home)]);
+    assert_eq!(state.page_editor.caret, 0, "home lands at line start");
+    run(&mut state, &mut session, &ctx, vec![key(egui::Key::End)]);
+    assert_eq!(state.page_editor.caret, 11, "end lands at line end");
+}
+
+#[test]
+fn click_in_the_compile_window_lands_where_the_edit_shifted_it() {
+    let ctx = egui::Context::default();
+    let mut session = LocalSession::default();
+    let initial = session.snapshot();
+    session
+        .apply(initial.request(BlockEdit::ReplaceText {
+            block: initial.blocks[0].node,
+            text: "ab".into(),
+        }))
+        .expect("seed");
+    let snapshot = session.snapshot();
+    let node = snapshot.blocks[0].node;
+    // The edit that outpaces the compiler: accepted by the session, but the
+    // page geometry on record still describes the previous revision.
+    session
+        .apply(snapshot.request(BlockEdit::ReplaceText {
+            block: node,
+            text: "abXY".into(),
+        }))
+        .expect("live edit");
+    let live = session.snapshot();
+    let mut state = WorkspaceState {
+        document: Some(std::sync::Arc::new(live.clone())),
+        ..Default::default()
+    };
+    state.preview.note_snapshot(&live);
+    state.preview.geometry = vec![scholium_typst::PageGeometry {
+        cells: vec![scholium_typst::GlyphBox {
+            block: node,
+            input: 0..2,
+            rect: [70.0, 70.0, 90.0, 82.0],
+            decoration: false,
+        }],
+    }];
+    // The compiled geometry addressed "ab" (bytes 0..2); the live buffer is
+    // "abXY", so the shift moves the compiled end 2 to the live end 4.
+    state.edit_shifts = vec![Shift {
+        start: 2,
+        old_end: 2,
+        new_end: 4,
+        resulting: live.revision.0,
+    }];
+    run(&mut state, &mut session, &ctx, vec![]);
+    // Clicking right of the glyph run maps the compiled end (2) through the
+    // shift to the live buffer end (4) instead of the stale end (2). The
+    // click registers on the release frame.
+    let point = egui::pos2(95.0, 80.0);
+    run(
+        &mut state,
+        &mut session,
+        &ctx,
+        vec![
+            egui::Event::PointerMoved(point),
+            egui::Event::PointerButton {
+                pos: point,
+                button: egui::PointerButton::Primary,
+                pressed: true,
+                modifiers: egui::Modifiers::NONE,
+            },
+        ],
+    );
+    run(
+        &mut state,
+        &mut session,
+        &ctx,
+        vec![egui::Event::PointerButton {
+            pos: point,
+            button: egui::PointerButton::Primary,
+            pressed: false,
+            modifiers: egui::Modifiers::NONE,
+        }],
+    );
+    assert_eq!(state.page_editor.caret, 4);
+}
+
+#[test]
+fn stale_geometry_follows_edits_for_clicks_but_ime_never_relocates() {
+    // E2: during a recompile the last-good geometry stays clickable by
+    // replaying the edits since its revision. Scenarios: a page one revision
+    // old (0), the current page (1), and the current page with active IME (2).
     for scenario in 0..3 {
         let ctx = egui::Context::default();
         let mut session = LocalSession::default();
@@ -233,7 +386,7 @@ fn outdated_page_and_same_frame_ime_cannot_relocate_selection() {
             .expect("seed");
         let snapshot = session.snapshot();
         let mut state = WorkspaceState {
-            document: Some(snapshot.clone()),
+            document: Some(std::sync::Arc::new(snapshot.clone())),
             ..Default::default()
         };
         state.preview.note_snapshot(&snapshot);
@@ -269,8 +422,93 @@ fn outdated_page_and_same_frame_ime_cannot_relocate_selection() {
             }));
         }
         run(&mut state, &mut session, &ctx, events);
-        assert_eq!(state.page_editor.caret, 1, "scenario {scenario}");
+        if scenario == 2 {
+            // Active IME composition suspends pointer relocation for that
+            // frame; the caret stays where composition started.
+            assert_eq!(state.page_editor.caret, 1, "scenario {scenario}");
+        } else {
+            // Clicking past the right edge of the only glyph run places the
+            // caret at its end, whether or not a fresher compile is in flight.
+            assert_eq!(state.page_editor.caret, 3, "scenario {scenario}");
+        }
     }
+}
+
+#[test]
+fn keystroke_is_visible_on_its_own_frame_while_the_page_is_stale() {
+    let ctx = egui::Context::default();
+    crate::theme::install(&ctx);
+    let mut session = LocalSession::default();
+    let initial = session.snapshot();
+    session
+        .apply(initial.request(BlockEdit::ReplaceText {
+            block: initial.blocks[0].node,
+            text: "page line".into(),
+        }))
+        .expect("seed");
+    let snapshot = session.snapshot();
+    let mut state = WorkspaceState {
+        document: Some(std::sync::Arc::new(snapshot.clone())),
+        ..Default::default()
+    };
+    state.preview.note_snapshot(&snapshot);
+    // Geometry and pixels exist for the seed revision; the page goes stale
+    // the moment an edit lands.
+    state.preview.geometry = vec![scholium_typst::PageGeometry {
+        cells: vec![scholium_typst::GlyphBox {
+            block: snapshot.blocks[0].node,
+            input: 0..9,
+            rect: [70.0, 70.0, 170.0, 82.0],
+            decoration: false,
+        }],
+    }];
+    state.preview.shown = Some(snapshot.revision.0);
+    state.preview.page_index = Some(0);
+    ctx.memory_mut(|memory| memory.request_focus(id()));
+    // Bind the editor to this document first; then park the caret at the
+    // line end and land the keystroke.
+    run(&mut state, &mut session, &ctx, vec![]);
+    state.page_editor.caret = 9;
+    state.page_editor.anchor = 9;
+    let mut output = ctx.run_ui(
+        egui::RawInput {
+            screen_rect: Some(Rect::from_min_size(
+                egui::Pos2::ZERO,
+                egui::vec2(900.0, 900.0),
+            )),
+            events: vec![egui::Event::Text("!".into())],
+            ..Default::default()
+        },
+        |ui| {
+            show(
+                ui,
+                &mut state,
+                Rect::from_min_size(egui::pos2(10.0, 10.0), egui::vec2(595.28, 841.89)),
+                1.0,
+            );
+        },
+    );
+    output.textures_delta.clear();
+    let painted = output
+        .shapes
+        .iter()
+        .map(|shape| shape_text(&shape.shape))
+        .collect::<Vec<_>>()
+        .join("\n");
+    // The typed character is on screen in the same frame the key lands,
+    // before any recompile could have returned.
+    assert!(painted.contains("page line!"), "{painted}");
+}
+
+fn shape_text(shape: &egui::Shape) -> String {
+    fn walk(shape: &egui::Shape) -> String {
+        match shape {
+            egui::Shape::Text(text) => text.galley.job.text.clone(),
+            egui::Shape::Vec(list) => list.iter().map(walk).collect::<Vec<_>>().join(""),
+            _ => String::new(),
+        }
+    }
+    walk(shape)
 }
 
 #[test]

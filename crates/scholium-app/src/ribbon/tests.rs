@@ -19,7 +19,7 @@ impl Window {
         let mut window = Self {
             ctx,
             state: WorkspaceState {
-                document: Some(session.snapshot()),
+                document: Some(std::sync::Arc::new(session.snapshot())),
                 ..Default::default()
             },
             session,
@@ -57,7 +57,7 @@ impl Window {
         );
         if let Some(request) = self.state.pending_edit.take() {
             self.session.apply(request).expect("valid Ribbon edit");
-            self.state.document = Some(self.session.snapshot());
+            self.state.document = Some(std::sync::Arc::new(self.session.snapshot()));
         }
         output.textures_delta.clear();
         output
