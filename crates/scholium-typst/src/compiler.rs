@@ -52,6 +52,9 @@ pub struct PageOutcome {
     pub page: usize,
     /// Rasterized page pixels.
     pub pixels: PagePixels,
+    /// Rasterization duration in milliseconds; the preview's own timing shows
+    /// the end-to-end chain, not compile alone (spike 0045).
+    pub raster_ms: u64,
 }
 
 /// One event from the resident preview worker.
@@ -218,11 +221,15 @@ fn worker(
                 let Some(page) = pages.pages().get(request.page) else {
                     continue;
                 };
+                let start = Instant::now();
+                let pixels = raster(page);
+                let raster_ms = start.elapsed().as_millis() as u64;
                 let result = PageOutcome {
                     document: request.document,
                     revision: request.revision,
                     page: request.page,
-                    pixels: raster(page),
+                    pixels,
+                    raster_ms,
                 };
                 if send.send(PreviewEvent::Page(result)).is_err() {
                     break;

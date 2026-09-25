@@ -35,9 +35,10 @@ fn preview_header(ui: &mut egui::Ui, state: &mut WorkspaceState, title: &str) {
             } else if state.preview.warning.is_some() {
                 format!("r{} · 公式待完成", state.preview.wanted)
             } else if state.preview.shown == Some(state.preview.wanted) {
+                // 端到端口径：编译 + 整页栅格（报告 0045；不含去抖与帧调度）。
                 format!(
-                    "r{} · {} ms",
-                    state.preview.wanted, state.preview.elapsed_ms
+                    "r{} · 编排 {} ms + 页面 {} ms",
+                    state.preview.wanted, state.preview.elapsed_ms, state.preview.raster_ms
                 )
             } else {
                 "—".to_owned()

@@ -212,6 +212,7 @@ fn stale_document_revision_and_page_pixels_cannot_replace_the_current_page() {
                     height: 1,
                     rgba: vec![255; 4],
                 },
+                raster_ms: 0,
             },
         );
         assert_eq!(

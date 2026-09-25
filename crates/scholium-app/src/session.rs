@@ -276,6 +276,7 @@ impl SessionBridge {
         }
         state.preview.shown = Some(outcome.revision);
         state.preview.page_index = Some(outcome.page);
+        state.preview.raster_ms = outcome.raster_ms;
         state.preview.page_requested = None;
         // Session updates run after drawing. Present the newly adopted pixels
         // on another frame even if the user has stopped typing.

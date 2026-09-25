@@ -27,6 +27,8 @@ pub(crate) struct PreviewState {
     pub(crate) warning: Option<String>,
     /// 最近一次编译耗时（毫秒）。
     pub(crate) elapsed_ms: u64,
+    /// 最近一次页栅格化耗时（毫秒）；状态栏与编译耗时合并为端到端口径。
+    pub(crate) raster_ms: u64,
     /// 已编译的总页数；页面栅格化按需进行。
     pub(crate) page_count: usize,
     /// 当前选择的零基页索引。
@@ -56,6 +58,7 @@ impl std::fmt::Debug for PreviewState {
             .field("pending", &self.pending)
             .field("error", &self.error)
             .field("elapsed_ms", &self.elapsed_ms)
+            .field("raster_ms", &self.raster_ms)
             .field("page_count", &self.page_count)
             .field("page", &self.page)
             .field("anchors", &self.anchors.len())
