@@ -121,7 +121,9 @@ impl Dialect {
 /// View preferences, owned session projection and outgoing request; never authoritative content.
 #[derive(Debug)]
 pub(crate) struct WorkspaceState {
-    pub(crate) document: Option<scholium_model::DocumentSnapshot>,
+    /// Shared immutable projection; cloning the Arc is the frame-to-frame cost,
+    /// deep copies happen once per accepted edit (R6 of the rework plan).
+    pub(crate) document: Option<std::sync::Arc<scholium_model::DocumentSnapshot>>,
     /// Accepted input spelling for one block/revision; prevents canonical markup
     /// escaping from moving the caret while a delimiter is still being typed.
     pub(crate) accepted_input: Option<(scholium_model::NodeId, u64, String)>,

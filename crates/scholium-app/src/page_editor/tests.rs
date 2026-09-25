@@ -31,7 +31,7 @@ fn run(
         session.apply(request).expect("valid page edit");
         let snapshot = session.snapshot();
         state.preview.note_snapshot(&snapshot);
-        state.document = Some(snapshot);
+        state.document = Some(std::sync::Arc::new(snapshot));
     }
 }
 
@@ -60,7 +60,7 @@ fn actual_math_glyphs_support_drag_selection_and_direct_replacement() {
     let mut compiler = scholium_typst::PreviewCompiler::spawn();
     compiler.submit_snapshot(&snapshot);
     let mut state = WorkspaceState {
-        document: Some(snapshot.clone()),
+        document: Some(std::sync::Arc::new(snapshot.clone())),
         ..Default::default()
     };
     state.preview.note_snapshot(&snapshot);
@@ -121,7 +121,7 @@ fn ime_preedit_stays_on_page_until_commit_and_enter_splits_without_another_edito
     crate::theme::install(&ctx);
     let mut session = LocalSession::default();
     let mut state = WorkspaceState {
-        document: Some(session.snapshot()),
+        document: Some(std::sync::Arc::new(session.snapshot())),
         ..Default::default()
     };
     run(
@@ -181,7 +181,7 @@ fn replacing_a_selection_across_paragraphs_is_one_session_action() {
         }))
         .expect("seed");
     let mut state = WorkspaceState {
-        document: Some(session.snapshot()),
+        document: Some(std::sync::Arc::new(session.snapshot())),
         ..Default::default()
     };
     run(&mut state, &mut session, &ctx, vec![]);
@@ -203,6 +203,27 @@ fn replacing_a_selection_across_paragraphs_is_one_session_action() {
         ["aXd", "ef"]
     );
     assert_eq!(session.actions().len(), 2);
+}
+
+#[test]
+fn buffer_is_rebuilt_only_when_the_revision_moves() {
+    let mut session = LocalSession::default();
+    let snapshot = std::sync::Arc::new(session.snapshot());
+    let mut editor = EditorState::default();
+    assert_eq!(editor.buffer.get(&snapshot), "");
+    let address = editor.buffer.get(&snapshot).as_ptr();
+    // Same revision: the cached String is handed out again, not rebuilt.
+    assert_eq!(editor.buffer.get(&snapshot).as_ptr(), address);
+    session
+        .apply((*snapshot).request(BlockEdit::ReplaceText {
+            block: snapshot.blocks[0].node,
+            text: "changed".into(),
+        }))
+        .expect("edit");
+    let next = std::sync::Arc::new(session.snapshot());
+    let rebuilt = editor.buffer.get(&next);
+    assert_eq!(rebuilt, "changed");
+    assert_ne!(rebuilt.as_ptr(), address);
 }
 
 #[test]
@@ -233,7 +254,7 @@ fn outdated_page_and_same_frame_ime_cannot_relocate_selection() {
             .expect("seed");
         let snapshot = session.snapshot();
         let mut state = WorkspaceState {
-            document: Some(snapshot.clone()),
+            document: Some(std::sync::Arc::new(snapshot.clone())),
             ..Default::default()
         };
         state.preview.note_snapshot(&snapshot);

@@ -159,7 +159,7 @@ impl SessionBridge {
                 .then_some(rejected_draft)
                 .flatten();
             state.preview.note_snapshot(&snapshot);
-            state.document = Some(snapshot);
+            state.document = Some(std::sync::Arc::new(snapshot));
         }
     }
 
@@ -307,7 +307,7 @@ impl SessionBridge {
                 let session = LocalSession::restore(persisted.snapshot, persisted.requests);
                 let snapshot = session.snapshot();
                 state.preview.note_snapshot(&snapshot);
-                state.document = Some(snapshot);
+                state.document = Some(std::sync::Arc::new(snapshot));
                 state.saved_revision = Some(revision);
                 self.session = Some(session);
             }
@@ -324,7 +324,7 @@ impl SessionBridge {
 
     fn start(&mut self, state: &mut WorkspaceState) {
         let session = LocalSession::default();
-        state.document = Some(session.snapshot());
+        state.document = Some(std::sync::Arc::new(session.snapshot()));
         state.edit_error = None;
         state.rejected_draft = None;
         state.accepted_input = None;

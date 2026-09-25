@@ -17,6 +17,26 @@ pub(crate) struct EditorState {
     focus_requested: bool,
     ensure_visible: bool,
     pub(crate) rejected_input: Option<String>,
+    /// Joined markup of one document revision; rebuilt only when the revision
+    /// moves, not per frame (R6 of the rework plan).
+    buffer: BufferCache,
+}
+
+#[derive(Debug, Default)]
+struct BufferCache {
+    revision: Option<(DocumentId, u64)>,
+    text: String,
+}
+
+impl BufferCache {
+    fn get(&mut self, snapshot: &DocumentSnapshot) -> &str {
+        let key = (snapshot.document, snapshot.revision.0);
+        if self.revision != Some(key) {
+            self.text = buffer::text(snapshot);
+            self.revision = Some(key);
+        }
+        &self.text
+    }
 }
 
 impl EditorState {
@@ -41,7 +61,7 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, page: Rect, fa
         return;
     };
     let mut editor = std::mem::take(&mut state.page_editor);
-    let before = buffer::text(&snapshot);
+    let before = editor.buffer.get(&snapshot).to_owned();
     prepare(
         &mut editor,
         &snapshot,
@@ -323,7 +343,7 @@ pub(crate) fn insert_markup(state: &mut WorkspaceState, fragment: &str, caret_sh
     let Some(snapshot) = &state.document else {
         return;
     };
-    let before = buffer::text(snapshot);
+    let before = state.page_editor.buffer.get(snapshot).to_owned();
     let mut after = before.clone();
     let start = state.page_editor.range().start;
     input::replace(&mut state.page_editor, &mut after, fragment);
