@@ -36,8 +36,10 @@ pub(crate) struct PreviewState {
     /// 当前页纹理及其页索引。
     pub(crate) page_texture: Option<eframe::egui::TextureHandle>,
     pub(crate) page_index: Option<usize>,
-    /// 已请求栅格化的 (revision, 零基页索引)。
-    pub(crate) page_requested: Option<(u64, usize)>,
+    /// 纹理的栅格化比例（位图像素每 typst pt）。
+    pub(crate) page_px_per_pt: f32,
+    /// 已请求栅格化的 (revision, 零基页索引, 比例桶)。
+    pub(crate) page_requested: Option<(u64, usize, f32)>,
     /// 当前页面对应的块锚点（page/pt）。
     pub(crate) anchors: Vec<scholium_typst::BlockAnchor>,
     /// Exact glyph boxes from the compiled revision, in page pt.

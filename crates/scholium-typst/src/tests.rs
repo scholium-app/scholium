@@ -84,7 +84,7 @@ fn compiler_produces_pages_for_a_document() {
     let error = outcome.error.unwrap_or_default();
     assert!(error.is_empty(), "compile should succeed: {error}");
     assert!(outcome.page_count > 0, "at least one compiled page");
-    compiler.request_page(snap.document, 1, 0);
+    compiler.request_page(snap.document, 1, 0, 2.0);
     let page = wait_for_page(&mut compiler, snap.document, 1, 0).pixels;
     assert!(page.width > 0 && page.height > page.width, "A4 portrait");
     assert_eq!(
@@ -233,7 +233,7 @@ fn page_after_the_old_eight_page_limit_can_be_rendered_on_demand() {
     let outcome = wait_for_compile(&mut compiler, document, 1);
     assert!(outcome.error.is_none(), "{:?}", outcome.error);
     assert_eq!(outcome.page_count, 10);
-    compiler.request_page(document, 1, 9);
+    compiler.request_page(document, 1, 9, 2.0);
     let last = wait_for_page(&mut compiler, document, 1, 9);
     assert!(last.pixels.width > 0 && last.pixels.height > 0);
 }
@@ -304,7 +304,7 @@ fn incomplete_formula_input_remains_visible_and_editable_until_completed() {
         assert!(!outcome.geometry[0].cells.is_empty(), "{formula}");
         let complete = matches!(*formula, "a" | "alpha" | "alpha/2" | "sqrt(x)");
         assert_eq!(outcome.warning.is_none(), complete, "{formula}");
-        compiler.request_page(snap.document, snap.revision.0, 0);
+        compiler.request_page(snap.document, snap.revision.0, 0, 2.0);
         let raster_start = std::time::Instant::now();
         wait_for_page(&mut compiler, snap.document, snap.revision.0, 0);
         eprintln!("raster={}ms", raster_start.elapsed().as_millis());
@@ -385,7 +385,7 @@ fn preview_worker_wakes_the_host_for_compile_and_page_delivery() {
             panic!("compile event");
         };
         assert!(result.error.is_none());
-        compiler.request_page(snap.document, snap.revision.0, 0);
+        compiler.request_page(snap.document, snap.revision.0, 0, 2.0);
         events
             .recv_timeout(std::time::Duration::from_secs(15))
             .expect("page notification");

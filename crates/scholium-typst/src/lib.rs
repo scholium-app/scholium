@@ -29,8 +29,6 @@ pub const BODY_FONTS: &[&str] = &["Times New Roman", "SimSun"];
 /// Heading pairing: Latin serif with the Chinese heading face.
 pub const HEADING_FONTS: &[&str] = &["Times New Roman", "SimHei"];
 
-/// Rasterization scale for preview pages (px per typst pt).
-pub const PIXELS_PER_PT: f32 = 2.0;
 /// Maximum number of pages accepted by the interactive preview. Exceeding it
 /// reports an error rather than silently hiding the rest of the document.
 pub const MAX_PREVIEW_PAGES: usize = 100;

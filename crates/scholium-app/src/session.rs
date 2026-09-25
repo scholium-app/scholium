@@ -40,6 +40,15 @@ impl std::fmt::Debug for SessionBridge {
     }
 }
 
+/// Bitmap px per typst pt for the current display: logical px per pt at 100%
+/// zoom, times the viewport's rendered zoom, times the device pixel ratio.
+/// Quarter-step quantization keeps monitor scaling jitter from re-rasterizing.
+fn raster_bucket(ctx: &egui::Context, rendered_zoom: f32) -> f32 {
+    const LOGICAL_PX_PER_PT: f32 = 96.0 / 72.0;
+    let scale = LOGICAL_PX_PER_PT * rendered_zoom.max(0.1) * ctx.pixels_per_point();
+    (scale * 4.0).round() / 4.0
+}
+
 impl SessionBridge {
     /// Start the resident font scan while the application opens, before typing.
     pub(crate) fn prepare_preview(&mut self, ctx: &egui::Context) {
@@ -217,16 +226,21 @@ impl SessionBridge {
             state.preview.submitted = Some(state.preview.wanted);
             state.preview.pending = true;
         }
-        let selected = (state.preview.wanted, state.preview.page);
+        // Raster scale (R1): match the physical pixels the page actually
+        // occupies — device scale times the zoom the viewport rendered at —
+        // quantized to quarter steps so small drifts don't re-rasterize.
+        let bucket = raster_bucket(ctx, state.rendered_zoom);
+        let selected = (state.preview.wanted, state.preview.page, bucket);
         let needs_page = state.preview.compiled == Some(state.preview.wanted)
             && state.preview.page_count > 0
             && (state.preview.shown != Some(state.preview.wanted)
-                || state.preview.page_index != Some(state.preview.page))
+                || state.preview.page_index != Some(state.preview.page)
+                || state.preview.page_px_per_pt != bucket)
             && state.preview.page_requested != Some(selected);
         if needs_page && let Some(document) = state.preview.document {
             self.prepare_preview(ctx);
             if let Some(preview) = &self.preview {
-                preview.request_page(document, selected.0, selected.1);
+                preview.request_page(document, selected.0, selected.1, bucket);
             }
             state.preview.page_requested = Some(selected);
         }
@@ -296,6 +310,7 @@ impl SessionBridge {
         }
         state.preview.shown = Some(outcome.revision);
         state.preview.page_index = Some(outcome.page);
+        state.preview.page_px_per_pt = outcome.pixel_per_pt;
         state.preview.raster_ms = outcome.raster_ms;
         state.preview.page_requested = None;
         // Session updates run after drawing. Present the newly adopted pixels

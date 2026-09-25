@@ -7,7 +7,7 @@ use crate::{PageGeometry, projection::Projection};
 use scholium_model::{DocumentId, DocumentSnapshot};
 use typst_layout::PagedDocument;
 
-use super::{BlockAnchor, MAX_PREVIEW_PAGES, PIXELS_PER_PT, PreviewWorld, extract_anchors};
+use super::{BlockAnchor, MAX_PREVIEW_PAGES, PreviewWorld, extract_anchors};
 
 /// One rasterized preview page; RGBA pixels are alpha-premultiplied.
 #[derive(Debug, Clone)]
@@ -55,6 +55,8 @@ pub struct PageOutcome {
     /// Rasterization duration in milliseconds; the preview's own timing shows
     /// the end-to-end chain, not compile alone (spike 0045).
     pub raster_ms: u64,
+    /// Bitmap px per typst pt this page was rasterized at.
+    pub pixel_per_pt: f32,
 }
 
 /// One event from the resident preview worker.
@@ -94,11 +96,15 @@ struct CompileRequest {
     snapshot: Option<DocumentSnapshot>,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 struct PageRequest {
     document: DocumentId,
     revision: u64,
     page: usize,
+    /// Rasterization scale in bitmap px per typst pt. Callers derive it from
+    /// the display's device scale and the page zoom (R1 of the rework plan)
+    /// so text lands crisp at the size actually shown.
+    pixel_per_pt: f32,
 }
 
 impl PreviewCompiler {
@@ -165,13 +171,21 @@ impl PreviewCompiler {
         let _ = self.wake.try_send(());
     }
 
-    /// Request one zero-based page from the currently compiled revision.
-    pub fn request_page(&self, document: DocumentId, revision: u64, page: usize) {
+    /// Request one zero-based page from the currently compiled revision,
+    /// rasterized at `pixel_per_pt` bitmap px per typst pt.
+    pub fn request_page(
+        &self,
+        document: DocumentId,
+        revision: u64,
+        page: usize,
+        pixel_per_pt: f32,
+    ) {
         if let Ok(mut slot) = self.pending.lock() {
             slot.page = Some(PageRequest {
                 document,
                 revision,
                 page,
+                pixel_per_pt,
             });
         }
         let _ = self.wake.try_send(());
@@ -222,7 +236,7 @@ fn worker(
                     continue;
                 };
                 let start = Instant::now();
-                let pixels = raster(page);
+                let pixels = raster(page, request.pixel_per_pt);
                 let raster_ms = start.elapsed().as_millis() as u64;
                 let result = PageOutcome {
                     document: request.document,
@@ -230,6 +244,7 @@ fn worker(
                     page: request.page,
                     pixels,
                     raster_ms,
+                    pixel_per_pt: request.pixel_per_pt,
                 };
                 if send.send(PreviewEvent::Page(result)).is_err() {
                     break;
@@ -245,11 +260,14 @@ fn worker(
     }
 }
 
-fn raster(page: &typst_layout::Page) -> PagePixels {
+fn raster(page: &typst_layout::Page, pixel_per_pt: f32) -> PagePixels {
+    // Clamp to the typst-render working range so a fractional DPR cannot
+    // produce a degenerate bitmap.
+    let scale = pixel_per_pt.clamp(0.25, 8.0);
     let pixmap = typst_render::render(
         page,
         &typst_render::RenderOptions {
-            pixel_per_pt: f64::from(PIXELS_PER_PT).into(),
+            pixel_per_pt: f64::from(scale).into(),
             render_bleed: false,
         },
     );
