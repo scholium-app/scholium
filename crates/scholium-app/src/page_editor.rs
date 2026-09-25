@@ -93,15 +93,23 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, page: Rect, fa
     if let Some(position) = buffer::position(&snapshot, editor.caret.min(before.len())) {
         state.focus_block = Some(position.block);
     }
+    let stale_pixels = live.is_some()
+        || state.pending_edit.is_some()
+        || state
+            .document
+            .as_ref()
+            .is_some_and(|snapshot| state.preview.shown != Some(snapshot.revision.0));
     paint(
         ui,
-        state,
         &mut editor,
         &cells,
-        state.composition.as_deref(),
-        page,
-        factor,
-        live.as_deref().unwrap_or(&before),
+        PaintInputs {
+            preedit: state.composition.as_deref(),
+            page,
+            factor,
+            buffer_text: live.as_deref().unwrap_or(&before),
+            stale_pixels,
+        },
     );
     state.page_editor = editor;
 }
@@ -286,16 +294,18 @@ fn caret_rect(cells: &[Cell], byte: usize) -> Option<Rect> {
     ))
 }
 
-fn paint(
-    ui: &egui::Ui,
-    state: &WorkspaceState,
-    editor: &mut EditorState,
-    cells: &[Cell],
-    preedit: Option<&str>,
+/// Everything the paint stage needs beyond editor and cells: page placement,
+/// the live buffer of the frame, and preedit text.
+struct PaintInputs<'a> {
+    preedit: Option<&'a str>,
     page: Rect,
     factor: f32,
-    buffer_text: &str,
-) {
+    buffer_text: &'a str,
+    /// An edit landed this frame, or the pixels are behind the text revision.
+    stale_pixels: bool,
+}
+
+fn paint(ui: &egui::Ui, editor: &mut EditorState, cells: &[Cell], inputs: PaintInputs<'_>) {
     let range = editor.range();
     for cell in cells {
         if cell.range.start < range.end && cell.range.end > range.start {
@@ -318,22 +328,27 @@ fn paint(
     }
     let cursor = fresh_cursor.or(editor.last_caret).unwrap_or_else(|| {
         Rect::from_min_size(
-            page.min + egui::vec2(70.87, 72.0) * factor,
-            egui::vec2(1.4, 12.0 * factor),
+            inputs.page.min + egui::vec2(70.87, 72.0) * inputs.factor,
+            egui::vec2(1.4, 12.0 * inputs.factor),
         )
     });
     editor.last_caret = Some(cursor);
-    let stale_pixels = state.pending_edit.is_some()
-        || state
-            .document
-            .as_ref()
-            .is_some_and(|snapshot| state.preview.shown != Some(snapshot.revision.0));
-    if stale_pixels {
-        optimistic_line(ui, cells, editor.caret, buffer_text, page, factor);
+    // Optimistic echo (R4): while the page pixels lag the text revision, the
+    // caret's visual line is repainted from the live buffer so keystrokes are
+    // visible on the frame they land, not after the recompile.
+    if inputs.stale_pixels {
+        optimistic_line(
+            ui,
+            cells,
+            editor.caret,
+            inputs.buffer_text,
+            inputs.page,
+            inputs.factor,
+        );
     }
     ui.painter()
         .rect_filled(cursor, 0.0, Color32::from_rgb(25, 55, 75));
-    if let Some(text) = preedit {
+    if let Some(text) = inputs.preedit {
         let font = egui::FontId::proportional(cursor.height());
         let galley = ui
             .painter()
