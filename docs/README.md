@@ -19,6 +19,7 @@
 10. [测试策略](TESTING.md)：属性测试、夹具、收敛、恢复和兼容性。
 11. [路线图](plan/ROADMAP.md)：阶段、交付物、出口条件和依赖关系。
     [P1 排版工作区规划](plan/P1_UI.md)：桌面布局实施基准、两种模式参考图、允许调整的细节与评审检查。
+    [渲染与编辑改进计划](plan/RENDER_EDIT_REWORK.md)：预览渲染质量与页面编辑体验的阶段 1 改进顺序与验收判据。
 12. [模块索引](modules/README.md)：每个 crate、应用和服务的内部设计。
 13. [ADR 索引](adr/README.md)：经过验证的技术选择与替代方案。
     [原生依赖登记](NATIVE_DEPENDENCIES.md)：C/C++/Zig 与需编译本地代码的依赖（ABI / 所有权 / 线程 / 销毁顺序）。

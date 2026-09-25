@@ -1,0 +1,20 @@
+[package]
+name = "render-latency"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+rust-version = "1.96"
+publish = false
+
+# 独立 workspace：验证代码不进入正式依赖图（spikes/README.md）。
+[workspace]
+
+# 诊断型 spike：复用主 workspace 锁定的同一版本组测量预览延迟链，
+# 不进入正式 crate 依赖图（见 spikes/README.md）。
+[dependencies]
+scholium-model = { path = "../../crates/scholium-model" }
+scholium-typst = { path = "../../crates/scholium-typst" }
+typst = "0.15.1"
+typst-kit = { version = "0.15.1", features = ["embedded-fonts", "scan-fonts"] }
+typst-layout = "0.15.1"
+typst-render = "0.15.1"
