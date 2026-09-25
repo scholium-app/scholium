@@ -7,6 +7,10 @@ use eframe::egui::{self, Color32, Rect, Sense};
 use scholium_model::{DocumentId, DocumentSnapshot};
 use std::ops::Range;
 
+pub(crate) use buffer::Shift;
+use buffer::Side;
+pub(crate) use buffer::{PENDING_REVISION, map_forward, retain_after};
+
 #[derive(Debug, Default)]
 pub(crate) struct EditorState {
     document: Option<DocumentId>,
@@ -68,13 +72,7 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, page: Rect, fa
         &before,
         state.pending_edit.is_some(),
     );
-    let current = state.preview.shown == Some(snapshot.revision.0)
-        && state.preview.page_index == Some(state.preview.page);
-    let cells = if current {
-        page_cells(state, &snapshot, page, factor)
-    } else {
-        Vec::new()
-    };
+    let cells = page_cells(state, &snapshot, page, factor);
     let response = ui.interact(page, id(), Sense::click_and_drag());
     response.widget_info(|| egui::WidgetInfo::text_edit(true, &before, &before, "文档正文"));
     if editor.focus_requested {
@@ -132,7 +130,10 @@ fn edit(
             )
         });
         input::events(ui, editor, &mut text, cells, &mut state.composition);
-        state.pending_edit = buffer::request(snapshot, before, &text);
+        if let Some((request, shift)) = buffer::request_and_shift(snapshot, before, &text) {
+            state.pending_edit = Some(request);
+            state.edit_shifts.push(shift);
+        }
     } else {
         state.composition = None;
     }
@@ -167,6 +168,10 @@ fn page_cells(
     page: Rect,
     factor: f32,
 ) -> Vec<Cell> {
+    // Cells survive the compile window: geometry of the last compiled
+    // revision stays addressable by replaying the edits since then. This
+    // removes the dead zone where clicks, Home/End and the caret froze
+    // while a recompile was in flight.
     state
         .preview
         .geometry
@@ -177,7 +182,8 @@ fn page_cells(
             let start = buffer::global(snapshot, cell.block, cell.input.start)?;
             let end = buffer::global(snapshot, cell.block, cell.input.end)?;
             Some(Cell {
-                range: start..end,
+                range: map_forward(&state.edit_shifts, start, Side::Start)
+                    ..map_forward(&state.edit_shifts, end, Side::End),
                 decoration: cell.decoration,
                 rect: Rect::from_min_max(
                     page.min + egui::vec2(cell.rect[0], cell.rect[1]) * factor,
@@ -350,7 +356,10 @@ pub(crate) fn insert_markup(state: &mut WorkspaceState, fragment: &str, caret_sh
     state.page_editor.caret = start + caret_shift;
     state.page_editor.anchor = state.page_editor.caret;
     state.page_editor.focus_requested = true;
-    state.pending_edit = buffer::request(snapshot, &before, &after);
+    if let Some((request, shift)) = buffer::request_and_shift(snapshot, &before, &after) {
+        state.pending_edit = Some(request);
+        state.edit_shifts.push(shift);
+    }
 }
 
 #[cfg(test)]

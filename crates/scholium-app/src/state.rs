@@ -131,6 +131,10 @@ pub(crate) struct WorkspaceState {
     /// escaping from moving the caret while a delimiter is still being typed.
     pub(crate) accepted_input: Option<(scholium_model::NodeId, u64, String)>,
     pub(crate) pending_edit: Option<scholium_model::DocumentRequest>,
+    /// Page edits since the compiled geometry revision, in application order.
+    /// They keep the last-good glyph geometry addressable in live-buffer
+    /// coordinates while a recompile is in flight (E2 of the rework plan).
+    pub(crate) edit_shifts: Vec<crate::page_editor::Shift>,
     pub(crate) new_requested: bool,
     pub(crate) save_requested: bool,
     /// 已落盘的 revision；None 表示从未保存。
@@ -174,6 +178,7 @@ impl Default for WorkspaceState {
         Self {
             document: None,
             pending_edit: None,
+            edit_shifts: Vec::new(),
             accepted_input: None,
             new_requested: false,
             save_requested: false,

@@ -143,6 +143,23 @@ impl SessionBridge {
             if state.edit_error.is_some() && range_input.is_some() {
                 state.page_editor.rejected_input = range_input;
             }
+            // The shift this frame pushed with a placeholder revision is real
+            // only if the session accepted the edit: a rejected edit leaves
+            // the compiled geometry addressing unchanged text, so its shift is
+            // dropped while earlier accepted shifts stay on the chain.
+            let pending = state
+                .edit_shifts
+                .iter()
+                .rposition(|shift| shift.resulting == crate::page_editor::PENDING_REVISION);
+            match (pending, state.edit_error.is_some()) {
+                (Some(index), false) => {
+                    state.edit_shifts[index].resulting = session.snapshot().revision.0;
+                }
+                (Some(index), true) => {
+                    state.edit_shifts.remove(index);
+                }
+                (None, _) => {}
+            }
             let snapshot = session.snapshot();
             state.accepted_input = if state.edit_error.is_none() {
                 rejected_draft.as_ref().and_then(|(node, text)| {
@@ -237,6 +254,9 @@ impl SessionBridge {
         state.preview.anchors = outcome.anchors;
         state.preview.geometry = outcome.geometry;
         state.preview.page_count = outcome.page_count;
+        // Geometry of this compile already reflects every edit up to
+        // `outcome.revision`; older shifts are baked in and would double-apply.
+        crate::page_editor::retain_after(&mut state.edit_shifts, outcome.revision);
         if state.mode == crate::state::ViewMode::Visual
             && let Some(page) = state.document.as_ref().and_then(|snapshot| {
                 state
@@ -338,6 +358,7 @@ impl SessionBridge {
         state.save_requested = false;
         state.preview.reset();
         state.page_editor = Default::default();
+        state.edit_shifts.clear();
         state.preview.note_snapshot(&session.snapshot());
         state.mode = crate::state::ViewMode::Visual;
         self.session = Some(session);
