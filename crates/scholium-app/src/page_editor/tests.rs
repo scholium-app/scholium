@@ -435,6 +435,83 @@ fn stale_geometry_follows_edits_for_clicks_but_ime_never_relocates() {
 }
 
 #[test]
+fn keystroke_is_visible_on_its_own_frame_while_the_page_is_stale() {
+    let ctx = egui::Context::default();
+    crate::theme::install(&ctx);
+    let mut session = LocalSession::default();
+    let initial = session.snapshot();
+    session
+        .apply(initial.request(BlockEdit::ReplaceText {
+            block: initial.blocks[0].node,
+            text: "page line".into(),
+        }))
+        .expect("seed");
+    let snapshot = session.snapshot();
+    let mut state = WorkspaceState {
+        document: Some(std::sync::Arc::new(snapshot.clone())),
+        ..Default::default()
+    };
+    state.preview.note_snapshot(&snapshot);
+    // Geometry and pixels exist for the seed revision; the page goes stale
+    // the moment an edit lands.
+    state.preview.geometry = vec![scholium_typst::PageGeometry {
+        cells: vec![scholium_typst::GlyphBox {
+            block: snapshot.blocks[0].node,
+            input: 0..9,
+            rect: [70.0, 70.0, 170.0, 82.0],
+            decoration: false,
+        }],
+    }];
+    state.preview.shown = Some(snapshot.revision.0);
+    state.preview.page_index = Some(0);
+    ctx.memory_mut(|memory| memory.request_focus(id()));
+    // Bind the editor to this document first; then park the caret at the
+    // line end and land the keystroke.
+    run(&mut state, &mut session, &ctx, vec![]);
+    state.page_editor.caret = 9;
+    state.page_editor.anchor = 9;
+    let mut output = ctx.run_ui(
+        egui::RawInput {
+            screen_rect: Some(Rect::from_min_size(
+                egui::Pos2::ZERO,
+                egui::vec2(900.0, 900.0),
+            )),
+            events: vec![egui::Event::Text("!".into())],
+            ..Default::default()
+        },
+        |ui| {
+            show(
+                ui,
+                &mut state,
+                Rect::from_min_size(egui::pos2(10.0, 10.0), egui::vec2(595.28, 841.89)),
+                1.0,
+            );
+        },
+    );
+    output.textures_delta.clear();
+    let painted = output
+        .shapes
+        .iter()
+        .map(|shape| shape_text(&shape.shape))
+        .collect::<Vec<_>>()
+        .join("\n");
+    // The typed character is on screen in the same frame the key lands,
+    // before any recompile could have returned.
+    assert!(painted.contains("page line!"), "{painted}");
+}
+
+fn shape_text(shape: &egui::Shape) -> String {
+    fn walk(shape: &egui::Shape) -> String {
+        match shape {
+            egui::Shape::Text(text) => text.galley.job.text.clone(),
+            egui::Shape::Vec(list) => list.iter().map(walk).collect::<Vec<_>>().join(""),
+            _ => String::new(),
+        }
+    }
+    walk(shape)
+}
+
+#[test]
 fn reflow_follows_caret_to_new_page_and_source_location_sets_same_cursor() {
     let session = LocalSession::default();
     let snapshot = session.snapshot();

@@ -89,17 +89,19 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, page: Rect, fa
         &cells,
         state.composition.is_none() && !input::has_ime_event(ui),
     );
-    edit(ui, state, &mut editor, &cells, &snapshot, &before);
+    let live = edit(ui, state, &mut editor, &cells, &snapshot, &before);
     if let Some(position) = buffer::position(&snapshot, editor.caret.min(before.len())) {
         state.focus_block = Some(position.block);
     }
     paint(
         ui,
+        state,
         &mut editor,
         &cells,
         state.composition.as_deref(),
         page,
         factor,
+        live.as_deref().unwrap_or(&before),
     );
     state.page_editor = editor;
 }
@@ -111,33 +113,33 @@ fn edit(
     cells: &[Cell],
     snapshot: &DocumentSnapshot,
     before: &str,
-) {
+) -> Option<String> {
     let mut text = before.to_owned();
     let previous_caret = editor.caret;
     if ui.memory(|memory| memory.has_focus(id())) {
-        if state.pending_edit.is_some() {
-            return;
-        }
-        ui.memory_mut(|memory| {
-            memory.set_focus_lock_filter(
-                id(),
-                egui::EventFilter {
-                    horizontal_arrows: true,
-                    vertical_arrows: true,
-                    tab: true,
-                    ..Default::default()
-                },
-            )
-        });
-        input::events(ui, editor, &mut text, cells, &mut state.composition);
-        if let Some((request, shift)) = buffer::request_and_shift(snapshot, before, &text) {
-            state.pending_edit = Some(request);
-            state.edit_shifts.push(shift);
+        if state.pending_edit.is_none() {
+            ui.memory_mut(|memory| {
+                memory.set_focus_lock_filter(
+                    id(),
+                    egui::EventFilter {
+                        horizontal_arrows: true,
+                        vertical_arrows: true,
+                        tab: true,
+                        ..Default::default()
+                    },
+                )
+            });
+            input::events(ui, editor, &mut text, cells, &mut state.composition);
+            if let Some((request, shift)) = buffer::request_and_shift(snapshot, before, &text) {
+                state.pending_edit = Some(request);
+                state.edit_shifts.push(shift);
+            }
         }
     } else {
         state.composition = None;
     }
     editor.ensure_visible |= editor.caret != previous_caret || text != before;
+    (text != before).then_some(text)
 }
 
 fn prepare(editor: &mut EditorState, snapshot: &DocumentSnapshot, text: &str, pending: bool) {
@@ -286,11 +288,13 @@ fn caret_rect(cells: &[Cell], byte: usize) -> Option<Rect> {
 
 fn paint(
     ui: &egui::Ui,
+    state: &WorkspaceState,
     editor: &mut EditorState,
     cells: &[Cell],
     preedit: Option<&str>,
     page: Rect,
     factor: f32,
+    buffer_text: &str,
 ) {
     let range = editor.range();
     for cell in cells {
@@ -319,6 +323,14 @@ fn paint(
         )
     });
     editor.last_caret = Some(cursor);
+    let stale_pixels = state.pending_edit.is_some()
+        || state
+            .document
+            .as_ref()
+            .is_some_and(|snapshot| state.preview.shown != Some(snapshot.revision.0));
+    if stale_pixels {
+        optimistic_line(ui, cells, editor.caret, buffer_text, page, factor);
+    }
     ui.painter()
         .rect_filled(cursor, 0.0, Color32::from_rgb(25, 55, 75));
     if let Some(text) = preedit {
@@ -343,6 +355,77 @@ fn paint(
             should_interrupt_composition: false,
         })
     });
+}
+
+/// Preview body text size in typst pt; the echo layer must match it so the
+/// repainted line keeps the page's rhythm.
+const PAGE_BODY_PT: f32 = 12.0;
+/// Logical pixels per typst pt at 100% zoom (96 logical px per inch).
+const LOGICAL_PX_PER_PT: f32 = 96.0 / 72.0;
+
+/// Repaint the caret's visual line from the live buffer while the page pixels
+/// are one or more revisions behind. The band is clipped so overflowing text
+/// never paints outside the line; the typeset page replaces the echo atomically
+/// once the recompile lands.
+fn optimistic_line(
+    ui: &egui::Ui,
+    cells: &[Cell],
+    caret: usize,
+    buffer_text: &str,
+    page: Rect,
+    factor: f32,
+) {
+    let Some(cursor_cell) = cells
+        .iter()
+        .filter(|cell| !cell.decoration)
+        .min_by_key(|cell| {
+            if caret < cell.range.start {
+                cell.range.start - caret
+            } else {
+                caret.saturating_sub(cell.range.end)
+            }
+        })
+    else {
+        return;
+    };
+    let line_height = cursor_cell.rect.height().max(1.0);
+    let line: Vec<&Cell> = cells
+        .iter()
+        .filter(|cell| {
+            !cell.decoration
+                && (cell.rect.center().y - cursor_cell.rect.center().y).abs() < line_height * 0.4
+        })
+        .collect();
+    let Some(leftmost) = line
+        .iter()
+        .min_by(|a, b| a.rect.left().total_cmp(&b.rect.left()))
+    else {
+        return;
+    };
+    // From the visual line's first glyph to the end of its block: the tail the
+    // bitmap can no longer represent. Anything past the band is clipped.
+    let tail_start = leftmost.range.start.min(buffer_text.len());
+    let block_end = buffer_text[tail_start..]
+        .find('\n')
+        .map_or(buffer_text.len(), |offset| tail_start + offset);
+    let tail = &buffer_text[tail_start..block_end];
+    if tail.is_empty() {
+        return;
+    }
+    let band = Rect::from_min_max(
+        egui::pos2(leftmost.rect.left(), cursor_cell.rect.top()),
+        egui::pos2(page.right(), cursor_cell.rect.bottom()),
+    );
+    let font = egui::FontId::proportional(PAGE_BODY_PT * LOGICAL_PX_PER_PT * factor);
+    let galley = ui
+        .painter()
+        .layout_no_wrap(tail.to_owned(), font, Color32::from_rgb(25, 55, 75));
+    ui.painter()
+        .with_clip_rect(band)
+        .rect_filled(band, 0.0, Color32::WHITE);
+    ui.painter()
+        .with_clip_rect(band)
+        .galley(band.min, galley, Color32::from_rgb(25, 55, 75));
 }
 
 pub(crate) fn insert_markup(state: &mut WorkspaceState, fragment: &str, caret_shift: usize) {
