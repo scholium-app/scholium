@@ -1,0 +1,24 @@
+{
+  "document": "30a4189d-2ae8-4e5d-9404-e8c717c5ad5c",
+  "revision": 5,
+  "blocks": [
+    {
+      "node": "22e2cba4-c201-4d3a-bbc8-1fa2d367b9c8",
+      "kind": "Paragraph",
+      "content": [
+        {
+          "Text": "$alphatail"
+        }
+      ]
+    },
+    {
+      "node": "6c9554e0-cd13-4c2f-be0e-b0685b3377bb",
+      "kind": "Paragraph",
+      "content": [
+        {
+          "Text": "$"
+        }
+      ]
+    }
+  ]
+}

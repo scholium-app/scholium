@@ -1,0 +1,8 @@
+{"name": "inline-enter", "status": "failed", "actual": "[[{'Text': '$alphatail'}], [{'Text': '$'}]]"}
+{"name": "display-enter", "status": "failed", "actual": "[[{'Text': '$ alpha/2tail'}], [{'Text': ' $'}]]"}
+{"name": "formula-backspace", "status": "failed", "actual": "[[{'Text': '$alpha'}]]"}
+{"name": "plain-split", "status": "passed"}
+{"name": "undo", "status": "failed", "actual": "[[{'Text': 'before after'}]]"}
+{"name": "views-save-restore", "status": "passed"}
+{"name": "keyboard-crlf-paste", "status": "passed"}
+{"name": "ribbon-crlf-paste", "status": "passed"}

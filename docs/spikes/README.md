@@ -105,3 +105,4 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 | 团队 IME 屏障 | [0038-team-ime-barrier.md](SPK-0038-team-ime-barrier.md) | 组合输入暂停成员/语言切换与提交，真实 rime 和辅助功能动作验证；非远端 IME drain。 |
 | 源码双副本窗口 | [0039-native-source-replicas.md](SPK-0039-native-source-replicas.md) | 独立 Loro 增量、乱序重复收敛、本地 undo 保留远端、双端 IME/epoch 门禁；非共享 SDG。 |
 | 预览延迟链基线（阶段 1） | [0045-render-latency-baseline.md](SPK-0045-render-latency-baseline.md) | 击键→字形可见由全文档重编译主导（release 256 段 p95 189 ms、debug 1417 ms），光栅仅 2–7 ms；改进计划见 [RENDER_EDIT_REWORK](../plan/RENDER_EDIT_REWORK.md)。 |
+| 页面编辑体验审计（阶段 1） | [0046-editor-usability-audit.md](SPK-0046-editor-usability-audit.md) | **Fail**：既有 81 项回归通过；新增 32 项审计中 19 失败，原生窗口 8 场景中 4 失败。公式结构破坏、旧几何错位/越界和回显缺口均有复现。 |
