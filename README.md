@@ -52,6 +52,19 @@ python3 scripts/check-rust-size.py
 cargo deny check licenses bans sources
 ```
 
+当前编辑体验的独立验收（包含尚未满足的操作契约，失败会返回非零退出码）：
+
+```bash
+python3 scripts/audit-editor.py             # 基础门禁 + 页面输入/真实 Typst 字形验收
+python3 scripts/audit-editor.py --native    # 另跑隔离 Xvfb 原生窗口、剪贴板、保存重开
+python3 scripts/audit-editor.py --quick     # 只重跑体验用例
+```
+
+脚本输出独立目录中的 `summary.md`、`summary.json` 和逐项日志；原生模式需要
+`xvfb-run`、`xdotool`、`xclip`、ImageMagick。所有会话均为测试夹具，不读取个人文档。
+体验测试显式 opt-in，普通 `cargo test` 不运行它们；基础测试全绿不能替代体验验收。
+本轮结论与边界见 [页面编辑体验审计](docs/spikes/SPK-0046-editor-usability-audit.md)。
+
 ## 基础接入（开发中）
 
 文件菜单“新建”或 Ctrl+N 创建本地会话文档，支持中英文段落、标题、行内公式与粗体/强调编辑。

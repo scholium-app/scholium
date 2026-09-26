@@ -1,0 +1,715 @@
+{
+  "environment": {
+    "utc": "2026-09-26T03:48:53.629916+00:00",
+    "commit": "b2b4376c339640fda78b7bc4d47fe8476a94e392",
+    "working_tree": "M crates/scholium-app/src/session.rs\n?? crates/scholium-app/src/session/usability_audit/\n?? scripts/__pycache__/\n?? scripts/audit-editor-native.py\n?? scripts/audit-editor.py",
+    "rust": "rustc 1.96.0 (ac68faa20 2026-05-25)"
+  },
+  "stages": [
+    {
+      "name": "format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.215,
+      "log": "format.log",
+      "tests": [],
+      "error": null
+    },
+    {
+      "name": "size",
+      "command": [
+        "python3",
+        "scripts/check-rust-size.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.065,
+      "log": "size.log",
+      "tests": [],
+      "error": null
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 1.117,
+      "log": "clippy.log",
+      "tests": [],
+      "error": null
+    },
+    {
+      "name": "baseline",
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--",
+        "--test-threads=2"
+      ],
+      "exit_code": 0,
+      "seconds": 29.628,
+      "log": "baseline.log",
+      "tests": [
+        {
+          "name": "commands::tests::view_commands_update_only_view_preferences",
+          "status": "ok"
+        },
+        {
+          "name": "commands::tests::zoom_commands_are_bounded",
+          "status": "ok"
+        },
+        {
+          "name": "commands::tests::zoom_from_fit_width_starts_at_visible_page_scale",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::buffer::tests::deletion_collapses_positions_inside_the_replaced_range",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::buffer::tests::insertion_at_a_line_start_keeps_the_line_start_left_of_it",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::buffer::tests::insertion_at_a_run_end_carries_the_run_end_past_it",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::buffer::tests::successive_edits_replay_in_order",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::buffer::tests::retain_after_drops_shifts_baked_into_a_compile",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::tests::buffer_is_rebuilt_only_when_the_revision_moves",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::tests::click_in_the_compile_window_lands_where_the_edit_shifted_it",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::tests::hidden_formula_delimiter_keeps_caret_at_last_visible_glyph",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::tests::ime_preedit_stays_on_page_until_commit_and_enter_splits_without_another_editor",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::tests::keystroke_is_visible_on_its_own_frame_while_the_page_is_stale",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::tests::reflow_follows_caret_to_new_page_and_source_location_sets_same_cursor",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::tests::replacing_a_selection_across_paragraphs_is_one_session_action",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::tests::stale_geometry_follows_edits_for_clicks_but_ime_never_relocates",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::tests::typing_then_home_end_in_the_compile_window_stay_on_the_line",
+          "status": "ok"
+        },
+        {
+          "name": "preview::tests::compile_failure_details_are_visible_in_the_real_diagnostics_panel",
+          "status": "ok"
+        },
+        {
+          "name": "ribbon::tests::formula_and_style_buttons_return_typing_to_the_page",
+          "status": "ok"
+        },
+        {
+          "name": "ribbon::tests::ribbon_clipboard_requests_keep_the_page_selection",
+          "status": "ok"
+        },
+        {
+          "name": "ribbon::tests::source_mode_does_not_apply_ribbon_document_formatting",
+          "status": "ok"
+        },
+        {
+          "name": "ribbon::tests::tabs_and_collapse_leave_the_document_unchanged",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::backspace_at_block_start_merges_into_the_previous_block",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::delete_at_block_end_absorbs_the_following_block",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::enter_splits_the_block_and_moves_the_caret_to_the_tail",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::failed_restore_blocks_save_and_never_claims_durability",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::ime_preedit_stays_local_until_commit",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::inline_math_markup_round_trips_through_the_session",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::new_command_and_unicode_input_reach_session_and_survive_view_switch",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::preview::failed_recompile_preserves_the_last_successful_page_metadata",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::preview::matching_revision_from_another_document_cannot_replace_preview",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::preview::page_requests_follow_the_display_scale_and_re_request_when_it_changes",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::preview::preview_follows_revisions_in_both_views_after_debounce",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::preview::rejected_page_range_retains_input_for_copy_without_mutating_authority",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::preview::returning_to_visual_mode_restores_the_page_input_focus",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::preview::stale_document_revision_and_page_pixels_cannot_replace_the_current_page",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::preview::typeset_editor_keeps_accepting_input_after_split_before_recompile",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::preview::typing_a_formula_one_character_at_a_time_preserves_the_edit_buffer",
+          "status": "ok"
+        },
+        {
+          "name": "page_editor::tests::actual_math_glyphs_support_drag_selection_and_direct_replacement",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::rejected_request_preserves_the_draft_without_changing_authority",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::save_persists_and_startup_restores_the_session",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::toolbar_kind_switch_targets_the_focused_block",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::toolbar_math_entry_splices_a_pair_at_the_caret",
+          "status": "ok"
+        },
+        {
+          "name": "session::usability_audit::editing::a01_enter_at_inline_formula_end_preserves_math",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a02_enter_at_display_formula_end_preserves_math",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a03_enter_inside_formula_does_not_turn_delimiters_into_text",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a04_enter_inside_bold_preserves_formatting",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a05_backspace_after_formula_keeps_formula_structure",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a06_delete_before_formula_keeps_formula_structure",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a07_paste_plain_punctuation_matches_typing",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a08_crlf_paste_normalizes_paragraph_breaks",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a09_cancelled_ime_allows_following_typing",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a10_backspace_preserves_emoji_graphemes_without_geometry",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a11_plain_paragraph_split_and_merge_round_trip",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a12_cross_paragraph_selection_is_atomic",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a13_keyboard_formula_entry_round_trips",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a14_ime_commit_is_one_edit_and_preedit_is_not_saved",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a15_home_end_without_geometry_stay_in_current_paragraph",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a16_copy_cut_paste_preserves_formula_markup",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a17_undo_restores_typing",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::editing::a18_select_all_replacement_preserves_unicode",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::performance::c01_measure_input_and_warm_compile_at_three_document_sizes",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::rendering::b01_real_formula_glyph_click_then_enter_preserves_formula",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::rendering::b02_pending_echo_does_not_paint_hidden_math_delimiters",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::rendering::b03_pending_echo_does_not_paint_bold_markers",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::rendering::b04_first_input_visible_before_any_compile",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::rendering::b05_typing_after_enter_is_visible_before_compile",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::rendering::b06_stale_geometry_after_deletion_keeps_surviving_line_clickable",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::rendering::b07_stale_second_block_geometry_is_shifted_once",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::rendering::b08_stale_unicode_click_inserts_at_clicked_position",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::rendering::b09_arrow_right_at_formula_end_exits_math",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::rendering::b10_backspace_after_formula_with_geometry_preserves_structure",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::rendering::b11_compiled_unicode_backspace_removes_whole_grapheme",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::rendering::b12_formula_compiles_and_maps_exact_token",
+          "status": "ignored"
+        },
+        {
+          "name": "session::usability_audit::rendering::b13_stale_click_and_typing_in_one_frame_never_panics",
+          "status": "ignored"
+        },
+        {
+          "name": "state::tests::default_workspace_starts_in_visual_fit_width_mode",
+          "status": "ok"
+        },
+        {
+          "name": "state::tests::preview_revision_notes_reset_debounce_once_per_change",
+          "status": "ok"
+        },
+        {
+          "name": "tests::keyboard_events_switch_views_and_resize_splitter",
+          "status": "ok"
+        },
+        {
+          "name": "tests::source_layout_stays_inside_tiled_window",
+          "status": "ok"
+        },
+        {
+          "name": "tests::visual_layout_stays_inside_tiled_window",
+          "status": "ok"
+        },
+        {
+          "name": "workspace::tests::displayed_source_line_lookup_follows_block_order",
+          "status": "ok"
+        },
+        {
+          "name": "session::tests::preview::visual_workspace_renders_a_page_for_the_current_document",
+          "status": "ok"
+        },
+        {
+          "name": "range_edit::tests::cross_block_selection_is_one_atomic_action_and_preserves_outside_nodes",
+          "status": "ok"
+        },
+        {
+          "name": "range_edit::tests::non_boundary_and_reversed_ranges_never_change_the_document",
+          "status": "ok"
+        },
+        {
+          "name": "tests::boundary_merges_are_wrong_targets_and_empty_merges_remove_blocks",
+          "status": "ok"
+        },
+        {
+          "name": "tests::inline_format_pairs_parse_like_math",
+          "status": "ok"
+        },
+        {
+          "name": "tests::kind_changes_keep_identity_text_and_append_actions",
+          "status": "ok"
+        },
+        {
+          "name": "tests::markup_parsing_keeps_math_first_class",
+          "status": "ok"
+        },
+        {
+          "name": "tests::merges_keep_the_absorber_identity_kind_and_order",
+          "status": "ok"
+        },
+        {
+          "name": "tests::newline_replacements_split_into_consecutive_blocks",
+          "status": "ok"
+        },
+        {
+          "name": "tests::projections_cannot_mutate_the_authority",
+          "status": "ok"
+        },
+        {
+          "name": "tests::stale_duplicate_wrong_target_and_capacity_are_atomic",
+          "status": "ok"
+        },
+        {
+          "name": "tests::no_op_and_capacity_rejection_leave_revision_unchanged",
+          "status": "ok"
+        },
+        {
+          "name": "tests::inconsistent_log_cannot_replace_a_committed_session",
+          "status": "ok"
+        },
+        {
+          "name": "tests::malformed_request_id_is_a_recovery_error",
+          "status": "ok"
+        },
+        {
+          "name": "tests::missing_head_snapshot_is_a_recovery_error",
+          "status": "ok"
+        },
+        {
+          "name": "tests::resave_shrinks_the_log_and_keeps_latest_snapshot",
+          "status": "ok"
+        },
+        {
+          "name": "tests::save_load_round_trip_and_reopen_preserve_everything",
+          "status": "ok"
+        },
+        {
+          "name": "tests::snapshot_at_reads_history_and_missing_returns_none",
+          "status": "ok"
+        },
+        {
+          "name": "tests::bench_sqlite_append_hundred_thousand_actions_and_read_snapshot",
+          "status": "ok"
+        },
+        {
+          "name": "sigkill_mid_write_leaves_a_consistent_store",
+          "status": "ok"
+        },
+        {
+          "name": "tests::compiler_produces_pages_for_a_document",
+          "status": "ok"
+        },
+        {
+          "name": "tests::anchors_locate_every_block_and_map_clicks",
+          "status": "ok"
+        },
+        {
+          "name": "tests::exceeding_the_page_limit_reports_failure_instead_of_truncating",
+          "status": "ok"
+        },
+        {
+          "name": "tests::generation_maps_kinds_and_escapes_punctuation",
+          "status": "ok"
+        },
+        {
+          "name": "tests::formula_feedback_preserves_source_and_does_not_degrade_healthy_formulas",
+          "status": "ok"
+        },
+        {
+          "name": "tests::latest_revision_wins_when_requests_overtake_each_other",
+          "status": "ok"
+        },
+        {
+          "name": "tests::incomplete_formula_input_remains_visible_and_editable_until_completed",
+          "status": "ok"
+        },
+        {
+          "name": "tests::math_segments_render_as_formulas_not_literal_text",
+          "status": "ok"
+        },
+        {
+          "name": "tests::new_document_and_plain_typing_compile_with_editable_geometry",
+          "status": "ok"
+        },
+        {
+          "name": "tests::page_after_the_old_eight_page_limit_can_be_rendered_on_demand",
+          "status": "ok"
+        },
+        {
+          "name": "tests::trailing_anchors_map_page_spanning_text_to_its_block",
+          "status": "ok"
+        },
+        {
+          "name": "tests::preview_worker_wakes_the_host_for_compile_and_page_delivery",
+          "status": "ok"
+        }
+      ],
+      "error": null
+    },
+    {
+      "name": "rustdoc",
+      "command": [
+        "cargo",
+        "doc",
+        "--workspace",
+        "--no-deps"
+      ],
+      "exit_code": 0,
+      "seconds": 2.971,
+      "log": "rustdoc.log",
+      "tests": [],
+      "error": null
+    },
+    {
+      "name": "usability",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "scholium-app",
+        "usability_audit",
+        "--",
+        "--include-ignored",
+        "--test-threads=1",
+        "--show-output"
+      ],
+      "exit_code": 101,
+      "seconds": 28.427,
+      "log": "usability.log",
+      "tests": [
+        {
+          "name": "session::usability_audit::editing::a01_enter_at_inline_formula_end_preserves_math",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::editing::a02_enter_at_display_formula_end_preserves_math",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::editing::a03_enter_inside_formula_does_not_turn_delimiters_into_text",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::editing::a04_enter_inside_bold_preserves_formatting",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::editing::a05_backspace_after_formula_keeps_formula_structure",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::editing::a06_delete_before_formula_keeps_formula_structure",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::editing::a07_paste_plain_punctuation_matches_typing",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::editing::a08_multiline_unicode_paste_preserves_empty_last_paragraph",
+          "status": "ok"
+        },
+        {
+          "name": "session::usability_audit::editing::a09_cancelled_ime_allows_following_typing",
+          "status": "ok"
+        },
+        {
+          "name": "session::usability_audit::editing::a10_backspace_preserves_emoji_graphemes_without_geometry",
+          "status": "ok"
+        },
+        {
+          "name": "session::usability_audit::editing::a11_plain_paragraph_split_and_merge_round_trip",
+          "status": "ok"
+        },
+        {
+          "name": "session::usability_audit::editing::a12_cross_paragraph_selection_is_atomic",
+          "status": "ok"
+        },
+        {
+          "name": "session::usability_audit::editing::a13_keyboard_formula_entry_round_trips",
+          "status": "ok"
+        },
+        {
+          "name": "session::usability_audit::editing::a14_ime_commit_is_one_edit_and_preedit_is_not_saved",
+          "status": "ok"
+        },
+        {
+          "name": "session::usability_audit::editing::a15_home_end_without_geometry_stay_in_current_paragraph",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::editing::a16_copy_cut_paste_preserves_formula_markup",
+          "status": "ok"
+        },
+        {
+          "name": "session::usability_audit::editing::a17_undo_restores_typing",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::editing::a18_select_all_replacement_preserves_unicode",
+          "status": "ok"
+        },
+        {
+          "name": "session::usability_audit::performance::c01_measure_input_and_warm_compile_at_three_document_sizes",
+          "status": "ok"
+        },
+        {
+          "name": "session::usability_audit::rendering::b01_real_formula_glyph_click_then_enter_preserves_formula",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::rendering::b02_pending_echo_does_not_paint_hidden_math_delimiters",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::rendering::b03_pending_echo_does_not_paint_bold_markers",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::rendering::b04_first_input_visible_before_any_compile",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::rendering::b05_typing_after_enter_is_visible_before_compile",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::rendering::b06_stale_geometry_after_deletion_keeps_surviving_line_clickable",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::rendering::b07_stale_second_block_geometry_is_shifted_once",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::rendering::b08_stale_unicode_click_inserts_at_clicked_position",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::rendering::b09_arrow_right_at_formula_end_exits_math",
+          "status": "ok"
+        },
+        {
+          "name": "session::usability_audit::rendering::b10_backspace_after_formula_with_geometry_preserves_structure",
+          "status": "FAILED"
+        },
+        {
+          "name": "session::usability_audit::rendering::b11_compiled_unicode_backspace_removes_whole_grapheme",
+          "status": "ok"
+        },
+        {
+          "name": "session::usability_audit::rendering::b12_formula_compiles_and_maps_exact_token",
+          "status": "ok"
+        },
+        {
+          "name": "session::usability_audit::rendering::b13_stale_click_and_typing_in_one_frame_never_panics",
+          "status": "FAILED"
+        }
+      ],
+      "error": null
+    },
+    {
+      "name": "native-build",
+      "command": [
+        "cargo",
+        "build",
+        "-p",
+        "scholium-app"
+      ],
+      "exit_code": 0,
+      "seconds": 0.365,
+      "log": "native-build.log",
+      "tests": [],
+      "error": null
+    },
+    {
+      "name": "native",
+      "command": [
+        "xvfb-run",
+        "-a",
+        "-s",
+        "-screen 0 1280x1024x24",
+        "python3",
+        "scripts/audit-editor-native.py",
+        "/tmp/scholium-editor-audit-verified/native"
+      ],
+      "exit_code": 1,
+      "seconds": 62.199,
+      "log": "native.log",
+      "tests": [],
+      "error": null
+    }
+  ]
+}

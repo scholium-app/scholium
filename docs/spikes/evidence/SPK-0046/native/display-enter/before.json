@@ -1,0 +1,15 @@
+{
+  "document": "d420ef61-a676-40de-840f-0475af1af664",
+  "revision": 1,
+  "blocks": [
+    {
+      "node": "fca597d0-442b-48fa-b2b3-0ca48f2620c2",
+      "kind": "Paragraph",
+      "content": [
+        {
+          "Math": " alpha/2 "
+        }
+      ]
+    }
+  ]
+}

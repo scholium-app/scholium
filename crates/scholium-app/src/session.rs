@@ -419,6 +419,9 @@ impl SessionBridge {
 #[cfg(test)]
 mod tests;
 
+#[cfg(test)]
+mod usability_audit;
+
 fn store_path() -> Result<PathBuf, String> {
     // 测试与多实例经环境变量重定向；默认为 XDG 数据目录。
     match std::env::var_os("SCHOLIUM_SESSION_FILE") {

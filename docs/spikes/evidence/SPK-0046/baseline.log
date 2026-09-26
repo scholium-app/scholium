@@ -1,0 +1,179 @@
+    Finished `test` profile [unoptimized] target(s) in 0.32s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-aebbd4e76c1adb44)
+
+running 82 tests
+test commands::tests::view_commands_update_only_view_preferences ... ok
+test commands::tests::zoom_commands_are_bounded ... ok
+test commands::tests::zoom_from_fit_width_starts_at_visible_page_scale ... ok
+test page_editor::buffer::tests::deletion_collapses_positions_inside_the_replaced_range ... ok
+test page_editor::buffer::tests::insertion_at_a_line_start_keeps_the_line_start_left_of_it ... ok
+test page_editor::buffer::tests::insertion_at_a_run_end_carries_the_run_end_past_it ... ok
+test page_editor::buffer::tests::successive_edits_replay_in_order ... ok
+test page_editor::buffer::tests::retain_after_drops_shifts_baked_into_a_compile ... ok
+test page_editor::tests::buffer_is_rebuilt_only_when_the_revision_moves ... ok
+test page_editor::tests::click_in_the_compile_window_lands_where_the_edit_shifted_it ... ok
+test page_editor::tests::hidden_formula_delimiter_keeps_caret_at_last_visible_glyph ... ok
+test page_editor::tests::ime_preedit_stays_on_page_until_commit_and_enter_splits_without_another_editor ... ok
+test page_editor::tests::keystroke_is_visible_on_its_own_frame_while_the_page_is_stale ... ok
+test page_editor::tests::reflow_follows_caret_to_new_page_and_source_location_sets_same_cursor ... ok
+test page_editor::tests::replacing_a_selection_across_paragraphs_is_one_session_action ... ok
+test page_editor::tests::stale_geometry_follows_edits_for_clicks_but_ime_never_relocates ... ok
+test page_editor::tests::typing_then_home_end_in_the_compile_window_stay_on_the_line ... ok
+test preview::tests::compile_failure_details_are_visible_in_the_real_diagnostics_panel ... ok
+test ribbon::tests::formula_and_style_buttons_return_typing_to_the_page ... ok
+test ribbon::tests::ribbon_clipboard_requests_keep_the_page_selection ... ok
+test ribbon::tests::source_mode_does_not_apply_ribbon_document_formatting ... ok
+test ribbon::tests::tabs_and_collapse_leave_the_document_unchanged ... ok
+test session::tests::backspace_at_block_start_merges_into_the_previous_block ... ok
+test session::tests::delete_at_block_end_absorbs_the_following_block ... ok
+test session::tests::enter_splits_the_block_and_moves_the_caret_to_the_tail ... ok
+test session::tests::failed_restore_blocks_save_and_never_claims_durability ... ok
+test session::tests::ime_preedit_stays_local_until_commit ... ok
+test session::tests::inline_math_markup_round_trips_through_the_session ... ok
+test session::tests::new_command_and_unicode_input_reach_session_and_survive_view_switch ... ok
+test session::tests::preview::failed_recompile_preserves_the_last_successful_page_metadata ... ok
+test session::tests::preview::matching_revision_from_another_document_cannot_replace_preview ... ok
+test session::tests::preview::page_requests_follow_the_display_scale_and_re_request_when_it_changes ... ok
+test session::tests::preview::preview_follows_revisions_in_both_views_after_debounce ... ok
+test session::tests::preview::rejected_page_range_retains_input_for_copy_without_mutating_authority ... ok
+test session::tests::preview::returning_to_visual_mode_restores_the_page_input_focus ... ok
+test session::tests::preview::stale_document_revision_and_page_pixels_cannot_replace_the_current_page ... ok
+test session::tests::preview::typeset_editor_keeps_accepting_input_after_split_before_recompile ... ok
+test session::tests::preview::typing_a_formula_one_character_at_a_time_preserves_the_edit_buffer ... ok
+test page_editor::tests::actual_math_glyphs_support_drag_selection_and_direct_replacement ... ok
+test session::tests::rejected_request_preserves_the_draft_without_changing_authority ... ok
+test session::tests::save_persists_and_startup_restores_the_session ... ok
+test session::tests::toolbar_kind_switch_targets_the_focused_block ... ok
+test session::tests::toolbar_math_entry_splices_a_pair_at_the_caret ... ok
+test session::usability_audit::editing::a01_enter_at_inline_formula_end_preserves_math ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a02_enter_at_display_formula_end_preserves_math ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a03_enter_inside_formula_does_not_turn_delimiters_into_text ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a04_enter_inside_bold_preserves_formatting ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a05_backspace_after_formula_keeps_formula_structure ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a06_delete_before_formula_keeps_formula_structure ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a07_paste_plain_punctuation_matches_typing ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a08_crlf_paste_normalizes_paragraph_breaks ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a09_cancelled_ime_allows_following_typing ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a10_backspace_preserves_emoji_graphemes_without_geometry ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a11_plain_paragraph_split_and_merge_round_trip ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a12_cross_paragraph_selection_is_atomic ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a13_keyboard_formula_entry_round_trips ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a14_ime_commit_is_one_edit_and_preedit_is_not_saved ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a15_home_end_without_geometry_stay_in_current_paragraph ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a16_copy_cut_paste_preserves_formula_markup ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a17_undo_restores_typing ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::editing::a18_select_all_replacement_preserves_unicode ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::performance::c01_measure_input_and_warm_compile_at_three_document_sizes ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::rendering::b01_real_formula_glyph_click_then_enter_preserves_formula ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::rendering::b02_pending_echo_does_not_paint_hidden_math_delimiters ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::rendering::b03_pending_echo_does_not_paint_bold_markers ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::rendering::b04_first_input_visible_before_any_compile ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::rendering::b05_typing_after_enter_is_visible_before_compile ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::rendering::b06_stale_geometry_after_deletion_keeps_surviving_line_clickable ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::rendering::b07_stale_second_block_geometry_is_shifted_once ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::rendering::b08_stale_unicode_click_inserts_at_clicked_position ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::rendering::b09_arrow_right_at_formula_end_exits_math ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::rendering::b10_backspace_after_formula_with_geometry_preserves_structure ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::rendering::b11_compiled_unicode_backspace_removes_whole_grapheme ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::rendering::b12_formula_compiles_and_maps_exact_token ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test session::usability_audit::rendering::b13_stale_click_and_typing_in_one_frame_never_panics ... ignored, Opt-in usability contract; scripts/audit-editor.py runs and reports failures
+test state::tests::default_workspace_starts_in_visual_fit_width_mode ... ok
+test state::tests::preview_revision_notes_reset_debounce_once_per_change ... ok
+test tests::keyboard_events_switch_views_and_resize_splitter ... ok
+test tests::source_layout_stays_inside_tiled_window ... ok
+test tests::visual_layout_stays_inside_tiled_window ... ok
+test workspace::tests::displayed_source_line_lookup_follows_block_order ... ok
+test session::tests::preview::visual_workspace_renders_a_page_for_the_current_document ... ok
+
+test result: ok. 50 passed; 0 failed; 32 ignored; 0 measured; 0 filtered out; finished in 7.72s
+
+     Running unittests src/lib.rs (target/debug/deps/scholium_document-74ff5ae7a15cf9c5)
+
+running 11 tests
+test range_edit::tests::cross_block_selection_is_one_atomic_action_and_preserves_outside_nodes ... ok
+test range_edit::tests::non_boundary_and_reversed_ranges_never_change_the_document ... ok
+test tests::boundary_merges_are_wrong_targets_and_empty_merges_remove_blocks ... ok
+test tests::inline_format_pairs_parse_like_math ... ok
+test tests::kind_changes_keep_identity_text_and_append_actions ... ok
+test tests::markup_parsing_keeps_math_first_class ... ok
+test tests::merges_keep_the_absorber_identity_kind_and_order ... ok
+test tests::newline_replacements_split_into_consecutive_blocks ... ok
+test tests::projections_cannot_mutate_the_authority ... ok
+test tests::stale_duplicate_wrong_target_and_capacity_are_atomic ... ok
+test tests::no_op_and_capacity_rejection_leave_revision_unchanged ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/scholium_model-9c288050d8dff5bd)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/scholium_storage-08e0d29925e8a950)
+
+running 7 tests
+test tests::inconsistent_log_cannot_replace_a_committed_session ... ok
+test tests::malformed_request_id_is_a_recovery_error ... ok
+test tests::missing_head_snapshot_is_a_recovery_error ... ok
+test tests::resave_shrinks_the_log_and_keeps_latest_snapshot ... ok
+test tests::save_load_round_trip_and_reopen_preserve_everything ... ok
+test tests::snapshot_at_reads_history_and_missing_returns_none ... ok
+test tests::bench_sqlite_append_hundred_thousand_actions_and_read_snapshot ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running unittests src/bin/hammer.rs (target/debug/deps/hammer-aa3b2d4e9b05671c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/recovery.rs (target/debug/deps/recovery-6dda8565f67da13d)
+
+running 1 test
+test sigkill_mid_write_leaves_a_consistent_store ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/scholium_typst-0ce87428b87d0d16)
+
+running 12 tests
+test tests::compiler_produces_pages_for_a_document ... ok
+test tests::anchors_locate_every_block_and_map_clicks ... ok
+test tests::exceeding_the_page_limit_reports_failure_instead_of_truncating ... ok
+test tests::generation_maps_kinds_and_escapes_punctuation ... ok
+test tests::formula_feedback_preserves_source_and_does_not_degrade_healthy_formulas ... ok
+test tests::latest_revision_wins_when_requests_overtake_each_other ... ok
+test tests::incomplete_formula_input_remains_visible_and_editable_until_completed ... ok
+test tests::math_segments_render_as_formulas_not_literal_text ... ok
+test tests::new_document_and_plain_typing_compile_with_editable_geometry ... ok
+test tests::page_after_the_old_eight_page_limit_can_be_rendered_on_demand ... ok
+test tests::trailing_anchors_map_page_spanning_text_to_its_block ... ok
+test tests::preview_worker_wakes_the_host_for_compile_and_page_delivery ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.15s
+
+   Doc-tests scholium_document
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests scholium_model
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests scholium_storage
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests scholium_typst
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
