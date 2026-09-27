@@ -16,6 +16,11 @@
 .DS_Store
 Thumbs.db
 
+# 本地审计/Native 验证产物与沙盒临时目录，不入库（正式证据按体裁放 docs/spikes/）。
+/.scratch/
+/.audit-*/
+/.verify-*/
+
 # 阶段 0 验证工程：构建产物与仓库内 cargo 目录不入库。
 # Cargo.lock 必须入库，候选需要锁定版本。
 /spikes/**/target/

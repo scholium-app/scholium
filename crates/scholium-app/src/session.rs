@@ -273,9 +273,10 @@ impl SessionBridge {
         crate::page_editor::retain_after(&mut state.edit_shifts, outcome.revision);
         if state.mode == crate::state::ViewMode::Visual
             && let Some(page) = state.document.as_ref().and_then(|snapshot| {
+                let shifts = &state.edit_shifts;
                 state
                     .page_editor
-                    .target_page(snapshot, &state.preview.geometry)
+                    .target_page(snapshot, &state.preview.geometry, shifts)
             })
         {
             state.preview.page = page;
@@ -366,9 +367,7 @@ impl SessionBridge {
         state.accepted_input = None;
         state.composition = None;
         state.focus_block = None;
-        state.focus_after_split = None;
-        state.focus_after_merge = None;
-        state.focus_after_replace = None;
+        state.focus_request = None;
         state.saved_revision = None;
         state.save_requested = false;
         state.preview.reset();

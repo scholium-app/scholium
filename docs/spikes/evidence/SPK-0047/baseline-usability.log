@@ -1,0 +1,644 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.24
+   Compiling serde_core v1.0.229
+   Compiling cfg-if v1.0.4
+   Compiling serde v1.0.229
+   Compiling smallvec v1.16.1
+   Compiling memchr v2.8.3
+   Compiling libc v0.2.189
+   Compiling once_cell v1.21.4
+   Compiling log v0.4.34
+   Compiling autocfg v1.5.1
+   Compiling equivalent v1.0.2
+   Compiling crossbeam-utils v0.8.23
+   Compiling thiserror v2.0.20
+   Compiling rustix v1.1.4
+   Compiling stable_deref_trait v1.2.1
+   Compiling linux-raw-sys v0.12.1
+   Compiling foldhash v0.2.0
+   Compiling slab v0.4.12
+   Compiling pkg-config v0.3.34
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.12
+   Compiling simd-adler32 v0.3.10
+   Compiling arrayvec v0.7.8
+   Compiling adler2 v2.0.1
+   Compiling cc v1.4.6
+   Compiling pin-project-lite v0.2.17
+   Compiling siphasher v1.0.3
+   Compiling crc32fast v1.5.2
+   Compiling hashbrown v0.17.1
+   Compiling zerocopy v0.8.57
+   Compiling miniz_oxide v0.9.1
+   Compiling libm v0.2.16
+   Compiling zlib-rs v0.6.8
+   Compiling version_check v0.9.5
+   Compiling polycool v0.4.0
+   Compiling either v1.18.0
+   Compiling libloading v0.8.9
+   Compiling num-traits v0.2.19
+   Compiling kurbo v0.13.1
+   Compiling crossbeam-epoch v0.9.21
+   Compiling winnow v1.0.4
+   Compiling writeable v0.6.4
+   Compiling fearless_simd v0.4.1
+   Compiling crossbeam-deque v0.8.8
+   Compiling rayon-core v1.13.0
+   Compiling itoa v1.0.18
+   Compiling wayland-sys v0.31.11
+   Compiling dlib v0.5.3
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling parking_lot_core v0.9.12
+   Compiling syn v3.0.5
+   Compiling syn v2.0.119
+   Compiling phf_shared v0.13.1
+   Compiling miniz_oxide v0.8.9
+   Compiling fdeflate v0.3.7
+   Compiling fastrand v2.5.0
+   Compiling scopeguard v1.2.0
+   Compiling lock_api v0.4.14
+   Compiling parking v2.2.1
+   Compiling memmap2 v0.9.11
+   Compiling phf_generator v0.13.1
+   Compiling indexmap v2.14.2
+   Compiling utf8_iter v1.0.4
+   Compiling getrandom v0.4.3
+   Compiling zune-core v0.5.3
+   Compiling zmij v1.0.23
+   Compiling parking_lot v0.12.5
+   Compiling downcast-rs v1.2.1
+   Compiling serde_json v1.0.151
+   Compiling rayon v1.12.0
+   Compiling pxfm v0.1.30
+   Compiling zune-jpeg v0.5.15
+   Compiling scoped-tls v1.0.1
+   Compiling percent-encoding v2.3.2
+   Compiling futures-core v0.3.34
+   Compiling endi v1.1.1
+   Compiling quick-xml v0.41.0
+   Compiling color_quant v1.1.0
+   Compiling icu_normalizer_data v2.3.0
+   Compiling wayland-backend v0.3.17
+   Compiling icu_properties_data v2.3.0
+   Compiling quick-error v2.0.1
+   Compiling wayland-client v0.31.15
+   Compiling byteorder-lite v0.1.0
+   Compiling weezl v0.1.12
+   Compiling core_maths v0.1.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling euclid v0.22.14
+   Compiling unicode-segmentation v1.13.3
+   Compiling linebender_resource_handle v0.1.1
+   Compiling rustc-hash v2.1.3
+   Compiling icu_locale_fallback_data v2.3.0
+   Compiling image-webp v0.2.4
+   Compiling proc-macro-hack v0.5.20+deprecated
+   Compiling tracing-core v0.1.36
+   Compiling gif v0.14.2
+   Compiling futures-io v0.3.34
+   Compiling utf16_iter v1.0.5
+   Compiling tinyvec v1.13.3
+   Compiling toml_edit v0.25.15+spec-1.1.0
+   Compiling write16 v1.0.0
+   Compiling ttf-parser v0.25.1
+   Compiling event-listener v5.4.2
+   Compiling guillotiere v0.7.0
+   Compiling slotmap v1.1.1
+   Compiling concurrent-queue v2.5.0
+   Compiling bitflags v2.13.2
+   Compiling litemap v0.8.3
+   Compiling uuid v1.26.1
+   Compiling aho-corasick v1.1.5
+   Compiling float-cmp v0.9.0
+   Compiling wayland-scanner v0.31.11
+   Compiling hayro-ccitt v0.3.0
+   Compiling num-conv v0.2.2
+   Compiling heck v0.5.0
+   Compiling regex-syntax v0.8.11
+   Compiling time-core v0.1.9
+   Compiling proc-macro-crate v3.5.0
+   Compiling strict-num v0.1.1
+   Compiling event-listener-strategy v0.5.4
+   Compiling futures-lite v2.6.1
+   Compiling icu_collator_data v2.3.0
+   Compiling time-macros v0.2.32
+   Compiling icu_locale_data v2.3.0
+   Compiling flate2 v1.1.10
+   Compiling powerfmt v0.2.0
+   Compiling paste v1.0.15
+   Compiling bit-vec v0.8.0
+   Compiling portable-atomic v1.15.0
+   Compiling unicode-script v0.5.8
+   Compiling deranged v0.5.8
+   Compiling png v0.18.1
+   Compiling roxmltree v0.20.0
+   Compiling arrayref v0.3.9
+   Compiling bit-set v0.8.0
+   Compiling num-integer v0.1.47
+   Compiling quick-xml v0.42.0
+   Compiling async-io v2.6.0
+   Compiling ciborium-io v0.2.2
+   Compiling moxcms v0.8.1
+   Compiling hayro-jpeg2000 v0.3.5
+   Compiling hayro-jbig2 v0.3.0
+   Compiling unicode-ccc v0.4.0
+   Compiling fontconfig-parser v0.5.8
+   Compiling rand_core v0.6.4
+   Compiling regex-automata v0.4.18
+   Compiling synstructure v0.14.0
+   Compiling unscanny v0.1.0
+   Compiling toml_write v0.1.2
+   Compiling ryu v1.0.23
+   Compiling xmlwriter v0.1.0
+   Compiling time v0.3.55
+   Compiling typst-utils v0.15.1
+   Compiling same-file v1.0.6
+   Compiling unicode-bidi-mirroring v0.4.0
+   Compiling base64 v0.23.1
+   Compiling unicode-properties v0.1.4
+   Compiling base64 v0.22.1
+   Compiling winnow v0.7.15
+   Compiling linked-hash-map v0.5.6
+   Compiling wasmparser v0.239.0
+   Compiling yaml-rust v0.4.5
+   Compiling walkdir v2.5.0
+   Compiling hayro-syntax v0.7.2
+   Compiling fontdb v0.23.0
+   Compiling num-bigint v0.4.8
+   Compiling unicode-normalization v0.1.25
+   Compiling serde_path_to_error v0.1.20
+   Compiling form_urlencoded v1.2.2
+   Compiling svgtypes v0.16.1
+   Compiling wasmi_core v1.1.0
+   Compiling errno v0.3.14
+   Compiling roxmltree v0.21.1
+   Compiling simplecss v0.2.2
+   Compiling unsafe-libyaml v0.2.11
+   Compiling semver v1.0.28
+   Compiling fnv v1.0.7
+   Compiling thin-vec v0.2.20
+   Compiling chinese-variant v1.1.6
+   Compiling zerocopy-derive v0.8.57
+   Compiling enumflags2_derive v0.7.12
+   Compiling phf_macros v0.13.1
+   Compiling tracing-attributes v0.1.31
+   Compiling strum_macros v0.27.2
+   Compiling imagesize v0.14.0
+   Compiling rust_decimal v1.43.0
+   Compiling serde_derive v1.0.229
+   Compiling bytemuck_derive v1.12.1
+   Compiling thiserror-impl v2.0.20
+   Compiling zerofrom-derive v0.1.8
+   Compiling yoke-derive v0.8.3
+   Compiling displaydoc v0.2.7
+   Compiling zerovec-derive v0.11.6
+   Compiling phf v0.13.1
+   Compiling enum-ordinalize-derive v4.4.2
+   Compiling polling v3.11.0
+   Compiling roman-numerals-rs v3.1.0
+   Compiling unicode-vo v0.1.0
+   Compiling cfg_aliases v0.2.2
+   Compiling pico-args v0.5.0
+   Compiling khronos_api v3.1.0
+   Compiling unicode-math-class v0.1.0
+   Compiling fancy-regex v0.16.2
+   Compiling unicode-bidi v0.3.18
+   Compiling enum-ordinalize v4.4.2
+   Compiling data-url v0.3.2
+   Compiling codex v0.3.0
+   Compiling tinystr v0.8.4
+   Compiling tracing v0.1.44
+   Compiling unic-langid-impl v0.9.6
+   Compiling bytemuck v1.25.2
+   Compiling async-task v4.7.1
+   Compiling by_address v1.2.1
+   Compiling chinese-number v0.7.8
+   Compiling color v0.3.3
+   Compiling image v0.25.10
+   Compiling tiny-skia-path v0.12.0
+   Compiling rustybuzz v0.20.1
+   Compiling unic-langid-macros-impl v0.9.6
+   Compiling palette_derive v0.7.7
+   Compiling zerofrom v0.1.8
+   Compiling font-types v0.11.3
+   Compiling cobs v0.3.0
+   Compiling yoke v0.8.3
+   Compiling wasmi_ir v1.1.0
+   Compiling comemo-macros v0.5.1
+   Compiling signal-hook-registry v1.4.8
+   Compiling peniko v0.6.1
+   Compiling rand v0.8.8
+   Compiling async-channel v2.5.0
+   Compiling strum v0.27.2
+   Compiling palette_math v0.7.7
+   Compiling approx v0.5.1
+   Compiling csv-core v0.1.13
+   Compiling wasmi_collections v1.1.0
+   Compiling atomic-waker v1.1.2
+   Compiling spin v0.9.9
+   Compiling getrandom v0.3.4
+   Compiling mutate_once v0.1.2
+   Compiling piper v0.2.5
+   Compiling async-signal v0.2.14
+   Compiling csv v1.4.0
+   Compiling kamadak-exif v0.6.1
+   Compiling read-fonts v0.39.2
+   Compiling regex v1.13.1
+   Compiling comemo v0.5.1
+   Compiling typst-macros v0.15.1
+   Compiling async-lock v3.4.2
+   Compiling typst-assets v0.15.1
+   Compiling ahash v0.8.12
+   Compiling palette v0.7.7
+   Compiling bumpalo v3.20.3
+   Compiling wayland-protocols v0.32.13
+   Compiling typed-arena v2.0.2
+   Compiling az v1.3.0
+   Compiling glidesort v0.1.2
+   Compiling thiserror v1.0.69
+   Compiling object v0.39.1
+   Compiling xml-rs v0.8.29
+   Compiling hayro-postscript v0.1.0
+   Compiling icu_segmenter_data v2.3.0
+   Compiling rustix v0.38.44
+   Compiling async-process v2.5.0
+   Compiling blocking v1.7.0
+   Compiling async-executor v1.14.0
+   Compiling usvg v0.47.0
+   Compiling hayro-cmap v0.1.0
+   Compiling zerovec v0.11.8
+   Compiling postcard v1.1.3
+   Compiling enumflags2 v0.7.12
+   Compiling zcheapstr v1.1.0
+   Compiling zvariant_utils v4.2.0
+   Compiling serde_spanned v0.6.9
+   Compiling toml_datetime v0.6.11
+   Compiling plist v1.10.1
+   Compiling bincode v1.3.3
+   Compiling quick-xml v0.38.4
+   Compiling serde_yaml v0.9.34+deprecated
+   Compiling typst-timing v0.15.1
+   Compiling toml_edit v0.22.27
+   Compiling ecow v0.2.6
+   Compiling gl_generator v0.14.0
+   Compiling async-trait v0.1.92
+   Compiling syntect v5.3.0
+   Compiling serde_repr v0.1.21
+   Compiling async-recursion v1.1.1
+   Compiling half v2.7.1
+   Compiling zvariant_derive v5.15.0
+   Compiling ppv-lite86 v0.2.21
+   Compiling thiserror-impl v1.0.69
+   Compiling async-broadcast v0.7.2
+   Compiling zerotrie v0.2.5
+   Compiling potential_utf v0.1.6
+   Compiling zvariant v5.15.0
+   Compiling ciborium-ll v0.2.2
+   Compiling icu_collections v2.3.0
+   Compiling rand_chacha v0.3.1
+   Compiling citationberg v0.7.0
+   Compiling icu_locale_core v2.3.0
+   Compiling ciborium v0.2.2
+   Compiling lipsum v0.9.1
+   Compiling unic-langid-macros v0.9.6
+   Compiling unic-langid v0.9.6
+   Compiling ordered-stream v0.2.0
+   Compiling biblatex v0.12.0
+   Compiling toml v0.8.23
+   Compiling x11-dl v2.21.0
+   Compiling two-face v0.4.5
+   Compiling cursor-icon v1.2.0
+   Compiling linux-raw-sys v0.4.15
+   Compiling xkeysym v0.2.1
+   Compiling hex v0.4.3
+   Compiling xcursor v0.3.11
+   Compiling icu_provider v2.3.1
+   Compiling typst-syntax v0.15.1
+   Compiling wasmi v1.1.0
+   Compiling wayland-cursor v0.31.14
+   Compiling wayland-csd-frame v0.3.0
+   Compiling vello_common v0.0.8
+   Compiling icu_normalizer v2.3.0
+   Compiling icu_properties v2.3.0
+   Compiling icu_locale_fallback v2.3.0
+   Compiling font-types v0.12.5
+   Compiling zbus_names v4.3.4
+   Compiling icu_locale v2.3.1
+   Compiling accesskit v0.24.1
+   Compiling static_assertions v1.1.0
+   Compiling read-fonts v0.41.0
+   Compiling icu_segmenter v2.3.0
+   Compiling skrifa v0.42.1
+   Compiling zbus_xml v5.2.1
+   Compiling vello_cpu v0.0.8
+   Compiling icu_provider_blob v2.3.0
+   Compiling gethostname v1.1.0
+   Compiling pic-scale v0.7.12
+   Compiling idna_adapter v1.2.2
+   Compiling icu_collator v2.3.1
+   Compiling idna v1.1.0
+   Compiling zbus_macros v5.19.0
+   Compiling zbus-lockstep v0.5.2
+   Compiling url v2.5.8
+   Compiling wayland-protocols-wlr v0.3.12
+   Compiling smithay-client-toolkit v0.19.2
+   Compiling as-raw-xcb-connection v1.0.1
+   Compiling unicode-general-category v1.1.0
+   Compiling hypher v0.1.8
+   Compiling x11rb-protocol v0.13.2
+   Compiling vello_common v0.1.0
+   Compiling hayagriva v0.10.1
+   Compiling zbus-lockstep-macros v0.5.2
+   Compiling emath v0.36.2
+   Compiling winit v0.30.13
+   Compiling calloop v0.13.0
+   Compiling hashbrown v0.16.1
+   Compiling hayro-interpret v0.7.0
+   Compiling raw-window-handle v0.6.2
+   Compiling vello_cpu v0.1.0
+   Compiling ar_archive_writer v0.5.3
+   Compiling calloop-wayland-source v0.3.0
+   Compiling accesskit_consumer v0.36.0
+   Compiling ecolor v0.36.2
+   Compiling wayland-protocols-plasma v0.3.12
+   Compiling xkbcommon-dl v0.4.2
+   Compiling glutin_egl_sys v0.7.1
+   Compiling glutin_glx_sys v0.6.1
+   Compiling zbus v5.19.0
+   Compiling calloop v0.14.4
+   Compiling futures-macro v0.3.34
+   Compiling psm v0.1.32
+   Compiling stacker v0.1.25
+   Compiling vcpkg v0.2.15
+   Compiling nohash-hasher v0.2.0
+   Compiling futures-task v0.3.34
+   Compiling profiling v1.0.18
+   Compiling smol_str v0.2.2
+   Compiling epaint_default_fonts v0.36.2
+   Compiling smithay-client-toolkit v0.20.0
+   Compiling dpi v0.1.2
+   Compiling self_cell v1.3.0
+   Compiling calloop-wayland-source v0.4.1
+   Compiling wayland-protocols-experimental v20250721.0.1
+   Compiling futures-util v0.3.34
+   Compiling wayland-protocols-misc v0.3.12
+   Compiling glutin v0.32.3
+   Compiling itertools v0.15.0
+   Compiling foldhash v0.1.5
+   Compiling option-ext v0.2.0
+   Compiling dirs-sys v0.5.0
+   Compiling hashbrown v0.15.5
+   Compiling libsqlite3-sys v0.35.0
+   Compiling scholium-model v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/.verify/baseline/wt/crates/scholium-model)
+   Compiling typst-library v0.15.1
+   Compiling tiny-skia v0.12.0
+   Compiling rgb v0.8.53
+   Compiling glutin-winit v0.5.0
+   Compiling hayro v0.7.1
+   Compiling hayro-svg v0.7.0
+   Compiling hashlink v0.10.0
+   Compiling dirs v6.0.0
+   Compiling pixglyph v0.6.1
+   Compiling web-time v1.1.0
+   Compiling fallible-iterator v0.3.0
+   Compiling litrs v1.0.0
+   Compiling glow v0.17.0
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/.verify/baseline/wt/crates/scholium-document)
+   Compiling rusqlite v0.37.0
+   Compiling smithay-clipboard v0.7.3
+   Compiling resvg v0.47.0
+   Compiling document-features v0.2.12
+   Compiling skrifa v0.44.0
+   Compiling harfrust v0.12.0
+   Compiling scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/.verify/baseline/wt/crates/scholium-storage)
+   Compiling atspi-common v0.13.0
+   Compiling epaint v0.36.2
+   Compiling egui v0.36.2
+   Compiling x11rb v0.13.2
+   Compiling arboard v3.6.1
+   Compiling atspi-proxies v0.13.0
+   Compiling accesskit_atspi_common v0.18.1
+   Compiling atspi v0.29.0
+   Compiling accesskit_unix v0.21.1
+   Compiling egui_glow v0.36.2
+   Compiling accesskit_winit v0.32.2
+   Compiling egui-winit v0.36.2
+   Compiling eframe v0.36.2
+   Compiling typst-layout v0.15.1
+   Compiling typst-eval v0.15.1
+   Compiling typst-kit v0.15.1
+   Compiling typst-svg v0.15.1
+   Compiling typst-render v0.15.1
+   Compiling typst-html v0.15.1
+   Compiling typst-realize v0.15.1
+   Compiling typst v0.15.1
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/.verify/baseline/wt/crates/scholium-typst)
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/.verify/baseline/wt/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 43.14s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-aebbd4e76c1adb44)
+
+running 32 tests
+test session::usability_audit::editing::a01_enter_at_inline_formula_end_preserves_math ... FAILED
+test session::usability_audit::editing::a02_enter_at_display_formula_end_preserves_math ... FAILED
+test session::usability_audit::editing::a03_enter_inside_formula_does_not_turn_delimiters_into_text ... FAILED
+test session::usability_audit::editing::a04_enter_inside_bold_preserves_formatting ... FAILED
+test session::usability_audit::editing::a05_backspace_after_formula_keeps_formula_structure ... FAILED
+test session::usability_audit::editing::a06_delete_before_formula_keeps_formula_structure ... FAILED
+test session::usability_audit::editing::a07_paste_plain_punctuation_matches_typing ... FAILED
+test session::usability_audit::editing::a08_multiline_unicode_paste_preserves_empty_last_paragraph ... ok
+test session::usability_audit::editing::a09_cancelled_ime_allows_following_typing ... ok
+test session::usability_audit::editing::a10_backspace_preserves_emoji_graphemes_without_geometry ... ok
+test session::usability_audit::editing::a11_plain_paragraph_split_and_merge_round_trip ... ok
+test session::usability_audit::editing::a12_cross_paragraph_selection_is_atomic ... ok
+test session::usability_audit::editing::a13_keyboard_formula_entry_round_trips ... ok
+test session::usability_audit::editing::a14_ime_commit_is_one_edit_and_preedit_is_not_saved ... ok
+test session::usability_audit::editing::a15_home_end_without_geometry_stay_in_current_paragraph ... FAILED
+test session::usability_audit::editing::a16_copy_cut_paste_preserves_formula_markup ... ok
+test session::usability_audit::editing::a17_undo_restores_typing ... FAILED
+test session::usability_audit::editing::a18_select_all_replacement_preserves_unicode ... ok
+test session::usability_audit::performance::c01_measure_input_and_warm_compile_at_three_document_sizes ... ok
+test session::usability_audit::rendering::b01_real_formula_glyph_click_then_enter_preserves_formula ... FAILED
+test session::usability_audit::rendering::b02_pending_echo_does_not_paint_hidden_math_delimiters ... FAILED
+test session::usability_audit::rendering::b03_pending_echo_does_not_paint_bold_markers ... FAILED
+test session::usability_audit::rendering::b04_first_input_visible_before_any_compile ... FAILED
+test session::usability_audit::rendering::b05_typing_after_enter_is_visible_before_compile ... FAILED
+test session::usability_audit::rendering::b06_stale_geometry_after_deletion_keeps_surviving_line_clickable ... FAILED
+test session::usability_audit::rendering::b07_stale_second_block_geometry_is_shifted_once ... FAILED
+test session::usability_audit::rendering::b08_stale_unicode_click_inserts_at_clicked_position ... FAILED
+test session::usability_audit::rendering::b09_arrow_right_at_formula_end_exits_math ... ok
+test session::usability_audit::rendering::b10_backspace_after_formula_with_geometry_preserves_structure ... FAILED
+test session::usability_audit::rendering::b11_compiled_unicode_backspace_removes_whole_grapheme ... ok
+test session::usability_audit::rendering::b12_formula_compiles_and_maps_exact_token ... ok
+test session::usability_audit::rendering::b13_stale_click_and_typing_in_one_frame_never_panics ... FAILED
+
+successes:
+
+---- session::usability_audit::performance::c01_measure_input_and_warm_compile_at_three_document_sizes stdout ----
+METRIC input_frame paragraphs=1 n=40 p50_ms=1.104 p95_ms=4.470 max_ms=12.450
+METRIC compile_wait paragraphs=1 n=10 p50_ms=5.091 p95_ms=5.118 max_ms=5.118
+METRIC input_frame paragraphs=50 n=40 p50_ms=48.903 p95_ms=51.854 max_ms=56.065
+METRIC compile_wait paragraphs=50 n=10 p50_ms=91.270 p95_ms=91.377 max_ms=91.377
+METRIC input_frame paragraphs=200 n=40 p50_ms=44.566 p95_ms=53.873 max_ms=59.967
+METRIC compile_wait paragraphs=200 n=10 p50_ms=924.804 p95_ms=993.744 max_ms=993.744
+
+
+successes:
+    session::usability_audit::editing::a08_multiline_unicode_paste_preserves_empty_last_paragraph
+    session::usability_audit::editing::a09_cancelled_ime_allows_following_typing
+    session::usability_audit::editing::a10_backspace_preserves_emoji_graphemes_without_geometry
+    session::usability_audit::editing::a11_plain_paragraph_split_and_merge_round_trip
+    session::usability_audit::editing::a12_cross_paragraph_selection_is_atomic
+    session::usability_audit::editing::a13_keyboard_formula_entry_round_trips
+    session::usability_audit::editing::a14_ime_commit_is_one_edit_and_preedit_is_not_saved
+    session::usability_audit::editing::a16_copy_cut_paste_preserves_formula_markup
+    session::usability_audit::editing::a18_select_all_replacement_preserves_unicode
+    session::usability_audit::performance::c01_measure_input_and_warm_compile_at_three_document_sizes
+    session::usability_audit::rendering::b09_arrow_right_at_formula_end_exits_math
+    session::usability_audit::rendering::b11_compiled_unicode_backspace_removes_whole_grapheme
+    session::usability_audit::rendering::b12_formula_compiles_and_maps_exact_token
+
+failures:
+
+---- session::usability_audit::editing::a01_enter_at_inline_formula_end_preserves_math stdout ----
+
+thread 'session::usability_audit::editing::a01_enter_at_inline_formula_end_preserves_math' (8810) panicked at crates/scholium-app/src/session/usability_audit/editing.rs:7:5:
+assertion `left == right` failed
+  left: [Text("$alpha")]
+ right: [Math("alpha")]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- session::usability_audit::editing::a02_enter_at_display_formula_end_preserves_math stdout ----
+
+thread 'session::usability_audit::editing::a02_enter_at_display_formula_end_preserves_math' (8811) panicked at crates/scholium-app/src/session/usability_audit/editing.rs:18:5:
+assertion `left == right` failed
+  left: ["\\$ alpha/2", " \\$"]
+ right: ["$ alpha/2 $", ""]
+
+---- session::usability_audit::editing::a03_enter_inside_formula_does_not_turn_delimiters_into_text stdout ----
+
+thread 'session::usability_audit::editing::a03_enter_inside_formula_does_not_turn_delimiters_into_text' (8812) panicked at crates/scholium-app/src/session/usability_audit/editing.rs:28:9:
+formula lost: [Block { node: NodeId(dea622e8-2a7b-43d5-8912-08de2429c05e), kind: Paragraph, content: [Text("$alpha")] }, Block { node: NodeId(8920e555-ccca-408c-ba19-cdef71f84fdf), kind: Paragraph, content: [Text(" + beta$")] }]
+
+---- session::usability_audit::editing::a04_enter_inside_bold_preserves_formatting stdout ----
+
+thread 'session::usability_audit::editing::a04_enter_inside_bold_preserves_formatting' (8813) panicked at crates/scholium-app/src/session/usability_audit/editing.rs:53:5:
+assertion `left == right` failed
+  left: ["\\*ab", "cd\\*"]
+ right: ["*ab*", "*cd*"]
+
+---- session::usability_audit::editing::a05_backspace_after_formula_keeps_formula_structure stdout ----
+
+thread 'session::usability_audit::editing::a05_backspace_after_formula_keeps_formula_structure' (8814) panicked at crates/scholium-app/src/session/usability_audit/editing.rs:60:5:
+["\\$alpha"]
+
+---- session::usability_audit::editing::a06_delete_before_formula_keeps_formula_structure stdout ----
+
+thread 'session::usability_audit::editing::a06_delete_before_formula_keeps_formula_structure' (8815) panicked at crates/scholium-app/src/session/usability_audit/editing.rs:74:5:
+["alpha\\$"]
+
+---- session::usability_audit::editing::a07_paste_plain_punctuation_matches_typing stdout ----
+
+thread 'session::usability_audit::editing::a07_paste_plain_punctuation_matches_typing' (8816) panicked at crates/scholium-app/src/session/usability_audit/editing.rs:89:5:
+assertion `left == right` failed
+  left: [Text("a_b "), Strong("c"), Text(" \\path")]
+ right: [Text("a_b *c* \\path")]
+
+---- session::usability_audit::editing::a15_home_end_without_geometry_stay_in_current_paragraph stdout ----
+
+thread 'session::usability_audit::editing::a15_home_end_without_geometry_stay_in_current_paragraph' (8824) panicked at crates/scholium-app/src/session/usability_audit/editing.rs:177:5:
+assertion `left == right` failed
+  left: 0
+ right: 6
+
+---- session::usability_audit::editing::a17_undo_restores_typing stdout ----
+
+thread 'session::usability_audit::editing::a17_undo_restores_typing' (8826) panicked at crates/scholium-app/src/session/usability_audit/editing.rs:207:5:
+assertion `left == right` failed: Known missing capability: no undo path
+  left: ["before after"]
+ right: ["before"]
+
+---- session::usability_audit::rendering::b01_real_formula_glyph_click_then_enter_preserves_formula stdout ----
+
+thread 'session::usability_audit::rendering::b01_real_formula_glyph_click_then_enter_preserves_formula' (8850) panicked at crates/scholium-app/src/session/usability_audit/rendering.rs:9:5:
+assertion `left == right` failed
+  left: ["\\$alpha", "\\$"]
+ right: ["$alpha$", ""]
+
+---- session::usability_audit::rendering::b02_pending_echo_does_not_paint_hidden_math_delimiters stdout ----
+
+thread 'session::usability_audit::rendering::b02_pending_echo_does_not_paint_hidden_math_delimiters' (8851) panicked at crates/scholium-app/src/session/usability_audit/rendering.rs:20:5:
+raw markup painted on page: "\nbefore $alpha$ tail!\n"
+
+---- session::usability_audit::rendering::b03_pending_echo_does_not_paint_bold_markers stdout ----
+
+thread 'session::usability_audit::rendering::b03_pending_echo_does_not_paint_bold_markers' (8852) panicked at crates/scholium-app/src/session/usability_audit/rendering.rs:31:5:
+raw markup painted on page: "\nbefore *bold* tail!\n"
+
+---- session::usability_audit::rendering::b04_first_input_visible_before_any_compile stdout ----
+
+thread 'session::usability_audit::rendering::b04_first_input_visible_before_any_compile' (8853) panicked at crates/scholium-app/src/session/usability_audit/rendering.rs:37:5:
+no geometry means no immediate input echo
+
+---- session::usability_audit::rendering::b05_typing_after_enter_is_visible_before_compile stdout ----
+
+thread 'session::usability_audit::rendering::b05_typing_after_enter_is_visible_before_compile' (8854) panicked at crates/scholium-app/src/session/usability_audit/rendering.rs:50:5:
+new paragraph has no immediate echo
+
+---- session::usability_audit::rendering::b06_stale_geometry_after_deletion_keeps_surviving_line_clickable stdout ----
+
+thread 'session::usability_audit::rendering::b06_stale_geometry_after_deletion_keeps_surviving_line_clickable' (8855) panicked at crates/scholium-app/src/session/usability_audit/rendering.rs:74:9:
+assertion `left == right` failed: surviving f must map to current end
+  left: 0
+ right: 2
+
+---- session::usability_audit::rendering::b07_stale_second_block_geometry_is_shifted_once stdout ----
+
+thread 'session::usability_audit::rendering::b07_stale_second_block_geometry_is_shifted_once' (8856) panicked at crates/scholium-app/src/session/usability_audit/rendering.rs:87:5:
+assertion `left == right` failed: abc gained 3 bytes, second block e ends at 9
+  left: 12
+ right: 9
+
+---- session::usability_audit::rendering::b08_stale_unicode_click_inserts_at_clicked_position stdout ----
+
+thread 'session::usability_audit::rendering::b08_stale_unicode_click_inserts_at_clicked_position' (8857) panicked at crates/scholium-app/src/session/usability_audit/rendering.rs:102:5:
+assertion `left == right` failed
+  left: ["中abc", "def文"]
+ right: ["中ab文c", "def"]
+
+---- session::usability_audit::rendering::b10_backspace_after_formula_with_geometry_preserves_structure stdout ----
+
+thread 'session::usability_audit::rendering::b10_backspace_after_formula_with_geometry_preserves_structure' (8859) panicked at crates/scholium-app/src/session/usability_audit/rendering.rs:123:9:
+["\\$alpha"]
+
+---- session::usability_audit::rendering::b13_stale_click_and_typing_in_one_frame_never_panics stdout ----
+
+thread 'session::usability_audit::rendering::b13_stale_click_and_typing_in_one_frame_never_panics' (8862) panicked at crates/scholium-app/src/page_editor/input.rs:109:19:
+end byte index 12 is out of bounds for string of length 10
+
+
+failures:
+    session::usability_audit::editing::a01_enter_at_inline_formula_end_preserves_math
+    session::usability_audit::editing::a02_enter_at_display_formula_end_preserves_math
+    session::usability_audit::editing::a03_enter_inside_formula_does_not_turn_delimiters_into_text
+    session::usability_audit::editing::a04_enter_inside_bold_preserves_formatting
+    session::usability_audit::editing::a05_backspace_after_formula_keeps_formula_structure
+    session::usability_audit::editing::a06_delete_before_formula_keeps_formula_structure
+    session::usability_audit::editing::a07_paste_plain_punctuation_matches_typing
+    session::usability_audit::editing::a15_home_end_without_geometry_stay_in_current_paragraph
+    session::usability_audit::editing::a17_undo_restores_typing
+    session::usability_audit::rendering::b01_real_formula_glyph_click_then_enter_preserves_formula
+    session::usability_audit::rendering::b02_pending_echo_does_not_paint_hidden_math_delimiters
+    session::usability_audit::rendering::b03_pending_echo_does_not_paint_bold_markers
+    session::usability_audit::rendering::b04_first_input_visible_before_any_compile
+    session::usability_audit::rendering::b05_typing_after_enter_is_visible_before_compile
+    session::usability_audit::rendering::b06_stale_geometry_after_deletion_keeps_surviving_line_clickable
+    session::usability_audit::rendering::b07_stale_second_block_geometry_is_shifted_once
+    session::usability_audit::rendering::b08_stale_unicode_click_inserts_at_clicked_position
+    session::usability_audit::rendering::b10_backspace_after_formula_with_geometry_preserves_structure
+    session::usability_audit::rendering::b13_stale_click_and_typing_in_one_frame_never_panics
+
+test result: FAILED. 13 passed; 19 failed; 0 ignored; 0 measured; 50 filtered out; finished in 18.78s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`

@@ -1,29 +1,63 @@
 //! Direct editing on the compiler's page, with no second text surface.
 mod buffer;
+mod caret;
+mod caret_move;
+#[cfg(test)]
+mod caret_tests;
+mod command;
 mod input;
 mod navigation;
+mod render;
 use crate::state::WorkspaceState;
-use eframe::egui::{self, Color32, Rect, Sense};
+use caret::{Caret, Selection};
+use eframe::egui::{self, Rect, Sense};
+use render::{PaintInputs, cells as page_cells, paint, pointer};
 use scholium_model::{DocumentId, DocumentSnapshot};
 use std::ops::Range;
 
 pub(crate) use buffer::Shift;
-use buffer::Side;
-pub(crate) use buffer::{PENDING_REVISION, map_forward, retain_after};
+pub(crate) use buffer::{PENDING_REVISION, retain_after};
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub(crate) struct EditorState {
     document: Option<DocumentId>,
-    /// UTF-8 byte endpoints in the newline-joined canonical block markup.
-    pub(crate) anchor: usize,
-    pub(crate) caret: usize,
+    /// Authoritative cursor: a block plus a position inside that block's inline
+    /// structure (ADR 0031). Never a global byte offset — `$`/`*`/`_` are
+    /// projection syntax and must not be addressable as text.
+    pub(crate) selection: Selection,
+    /// Glyph geometry of the frame, kept for the input path.
+    pub(crate) cells: Vec<Cell>,
     last_caret: Option<Rect>,
     focus_requested: bool,
     ensure_visible: bool,
     pub(crate) rejected_input: Option<String>,
+    /// Joined markup as the last edit dispatch will leave it, if the session
+    /// accepts. The echo layer paints from this so a keystroke is visible on the
+    /// frame it lands, while the page pixels still show the compiled revision.
+    pub(crate) pending_buffer: Option<String>,
     /// Joined markup of one document revision; rebuilt only when the revision
     /// moves, not per frame (R6 of the rework plan).
     buffer: BufferCache,
+}
+
+impl Default for EditorState {
+    /// Unbound editor: no document, so the placeholder selection addresses a
+    /// fresh identity that no snapshot contains. Every command resolves its
+    /// block first and refuses, which keeps the placeholder from ever becoming
+    /// a real edit target.
+    fn default() -> Self {
+        Self {
+            document: None,
+            selection: empty_selection(),
+            cells: Vec::new(),
+            last_caret: None,
+            focus_requested: false,
+            ensure_visible: false,
+            rejected_input: None,
+            pending_buffer: None,
+            buffer: BufferCache::default(),
+        }
+    }
 }
 
 #[derive(Debug, Default)]
@@ -44,13 +78,79 @@ impl BufferCache {
 }
 
 impl EditorState {
-    fn range(&self) -> Range<usize> {
-        self.anchor.min(self.caret)..self.anchor.max(self.caret)
+    /// Header byte offset of the caret, derived from the structural selection.
+    ///
+    /// This is a *view*, not the cursor: geometry and the joined markup are
+    /// addressed in these bytes, but no edit may be derived from them (ADR 0031).
+    /// `None` when the selection names no live block (a pending structural edit).
+    pub(crate) fn caret_byte(&self, snapshot: &DocumentSnapshot) -> Option<usize> {
+        command::global_byte_of(snapshot, self.selection.caret)
+    }
+
+    /// Header byte offset of the selection anchor, derived as above.
+    pub(crate) fn anchor_byte(&self, snapshot: &DocumentSnapshot) -> Option<usize> {
+        command::global_byte_of(snapshot, self.selection.anchor)
+    }
+
+    /// Joined-markup byte range of the selection, for painting and copy.
+    pub(crate) fn byte_range(&self, snapshot: &DocumentSnapshot) -> Range<usize> {
+        match (self.anchor_byte(snapshot), self.caret_byte(snapshot)) {
+            (Some(anchor), Some(caret)) => anchor.min(caret)..anchor.max(caret),
+            _ => 0..0,
+        }
+    }
+
+    /// Place a collapsed selection on the block start of `node`.
+    pub(crate) fn select_block_start(
+        &mut self,
+        snapshot: &DocumentSnapshot,
+        node: scholium_model::NodeId,
+    ) {
+        if let Some(caret) = caret::start_of(snapshot, node) {
+            self.selection = Selection::collapsed(caret);
+        }
+    }
+
+    /// Structural caret for a joined-markup byte offset.
+    pub(crate) fn caret_at_byte(&self, snapshot: &DocumentSnapshot, byte: usize) -> Option<Caret> {
+        caret::from_global_byte(snapshot, byte)
+    }
+
+    /// Collapse the selection onto a joined-markup byte offset.
+    #[cfg(test)]
+    ///
+    /// Test and harness support: the byte offset is resolved to a structural
+    /// caret first, so a test that parks the caret at byte N exercises the same
+    /// conversion a real click goes through rather than poking a raw field.
+    pub(crate) fn select_byte(&mut self, snapshot: &DocumentSnapshot, byte: usize) {
+        if let Some(caret) = caret::from_global_byte(snapshot, byte) {
+            self.selection = Selection::collapsed(caret);
+        }
+    }
+
+    /// Set both selection endpoints from joined-markup byte offsets.
+    #[cfg(test)]
+    ///
+    /// Order is preserved as given; a caller that wants a forward range passes
+    /// the smaller byte as `anchor`.
+    pub(crate) fn select_bytes(
+        &mut self,
+        snapshot: &DocumentSnapshot,
+        anchor: usize,
+        caret: usize,
+    ) {
+        let (Some(anchor), Some(caret)) = (
+            caret::from_global_byte(snapshot, anchor),
+            caret::from_global_byte(snapshot, caret),
+        ) else {
+            return;
+        };
+        self.selection = Selection { anchor, caret };
     }
 }
 
 #[derive(Debug, Clone)]
-struct Cell {
+pub(crate) struct Cell {
     range: Range<usize>,
     rect: Rect,
     decoration: bool,
@@ -66,13 +166,9 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, page: Rect, fa
     };
     let mut editor = std::mem::take(&mut state.page_editor);
     let before = editor.buffer.get(&snapshot).to_owned();
-    prepare(
-        &mut editor,
-        &snapshot,
-        &before,
-        state.pending_edit.is_some(),
-    );
+    prepare(&mut editor, state, &snapshot, state.pending_edit.is_some());
     let cells = page_cells(state, &snapshot, page, factor);
+    editor.cells = cells.clone();
     let response = ui.interact(page, id(), Sense::click_and_drag());
     response.widget_info(|| egui::WidgetInfo::text_edit(true, &before, &before, "文档正文"));
     if editor.focus_requested {
@@ -87,378 +183,230 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, page: Rect, fa
         &response,
         &mut editor,
         &cells,
+        &snapshot,
         state.composition.is_none() && !input::has_ime_event(ui),
     );
-    let live = edit(ui, state, &mut editor, &cells, &snapshot, &before);
-    if let Some(position) = buffer::position(&snapshot, editor.caret.min(before.len())) {
+    let had_pending = state.pending_edit.is_some();
+    edit(ui, state, &mut editor, &cells, &snapshot);
+    if let Some(position) = editor
+        .caret_byte(&snapshot)
+        .and_then(|byte| buffer::position(&snapshot, byte))
+    {
         state.focus_block = Some(position.block);
     }
-    let stale_pixels = live.is_some()
-        || state.pending_edit.is_some()
+    // A structural edit this frame makes the page pixels stale before the
+    // session has answered; the echo keeps the keystroke visible either way.
+    let stale_pixels = state.pending_edit.is_some()
+        || (had_pending && editor.document == Some(snapshot.document))
         || state
             .document
             .as_ref()
             .is_some_and(|snapshot| state.preview.shown != Some(snapshot.revision.0));
+    // The echo paints from the buffer the pending edit will produce, so it must
+    // be taken before `paint` borrows the editor mutably.
+    let echo = editor
+        .pending_buffer
+        .clone()
+        .unwrap_or_else(|| before.clone());
     paint(
         ui,
         &mut editor,
         &cells,
+        &snapshot,
         PaintInputs {
             preedit: state.composition.as_deref(),
             page,
             factor,
-            buffer_text: live.as_deref().unwrap_or(&before),
+            buffer_text: &echo,
             stale_pixels,
         },
     );
     state.page_editor = editor;
 }
 
+/// Drive input for one frame and push the resulting edit request.
+///
+/// Editing is refused while an earlier request is unanswered: the pending edit
+/// may be rejected, and stacking a second one would address a revision that no
+/// longer exists (E2 of the rework plan).
 fn edit(
     ui: &egui::Ui,
     state: &mut WorkspaceState,
     editor: &mut EditorState,
     cells: &[Cell],
     snapshot: &DocumentSnapshot,
-    before: &str,
-) -> Option<String> {
-    let mut text = before.to_owned();
-    let previous_caret = editor.caret;
-    if ui.memory(|memory| memory.has_focus(id())) {
-        if state.pending_edit.is_none() {
-            ui.memory_mut(|memory| {
-                memory.set_focus_lock_filter(
-                    id(),
-                    egui::EventFilter {
-                        horizontal_arrows: true,
-                        vertical_arrows: true,
-                        tab: true,
-                        ..Default::default()
-                    },
-                )
-            });
-            input::events(ui, editor, &mut text, cells, &mut state.composition);
-            if let Some((request, shift)) = buffer::request_and_shift(snapshot, before, &text) {
-                state.pending_edit = Some(request);
-                state.edit_shifts.push(shift);
-            }
-        }
-    } else {
-        state.composition = None;
-    }
-    editor.ensure_visible |= editor.caret != previous_caret || text != before;
-    (text != before).then_some(text)
-}
-
-fn prepare(editor: &mut EditorState, snapshot: &DocumentSnapshot, text: &str, pending: bool) {
-    if editor.document != Some(snapshot.document) {
-        *editor = EditorState {
-            document: Some(snapshot.document),
-            focus_requested: true,
-            ..Default::default()
-        };
-    }
-    if !pending {
-        editor.caret = floor_boundary(text, editor.caret);
-        editor.anchor = floor_boundary(text, editor.anchor);
-    }
-}
-
-fn floor_boundary(text: &str, mut byte: usize) -> usize {
-    byte = byte.min(text.len());
-    while !text.is_char_boundary(byte) {
-        byte -= 1;
-    }
-    byte
-}
-
-fn page_cells(
-    state: &WorkspaceState,
-    snapshot: &DocumentSnapshot,
-    page: Rect,
-    factor: f32,
-) -> Vec<Cell> {
-    // Cells survive the compile window: geometry of the last compiled
-    // revision stays addressable by replaying the edits since then. This
-    // removes the dead zone where clicks, Home/End and the caret froze
-    // while a recompile was in flight.
-    state
-        .preview
-        .geometry
-        .get(state.preview.page)
-        .into_iter()
-        .flat_map(|g| &g.cells)
-        .filter_map(|cell| {
-            let start = buffer::global(snapshot, cell.block, cell.input.start)?;
-            let end = buffer::global(snapshot, cell.block, cell.input.end)?;
-            Some(Cell {
-                range: map_forward(&state.edit_shifts, start, Side::Start)
-                    ..map_forward(&state.edit_shifts, end, Side::End),
-                decoration: cell.decoration,
-                rect: Rect::from_min_max(
-                    page.min + egui::vec2(cell.rect[0], cell.rect[1]) * factor,
-                    page.min + egui::vec2(cell.rect[2], cell.rect[3]) * factor,
-                ),
-            })
-        })
-        .collect()
-}
-
-fn pointer(
-    ui: &egui::Ui,
-    response: &egui::Response,
-    editor: &mut EditorState,
-    cells: &[Cell],
-    enabled: bool,
 ) {
-    if !enabled || cells.is_empty() {
+    if !ui.memory(|memory| memory.has_focus(id())) {
+        state.composition = None;
         return;
     }
-    if (response.drag_started() || response.clicked())
-        && let Some(pos) = response.interact_pointer_pos()
-    {
-        let origin = if response.drag_started() {
-            ui.input(|i| i.pointer.press_origin()).unwrap_or(pos)
-        } else {
-            pos
-        };
-        if let Some(byte) = hit(cells, origin) {
-            response.request_focus();
-            if !ui.input(|i| i.modifiers.shift) {
-                editor.anchor = byte;
-            }
-            editor.caret = byte;
-        }
+    if state.pending_edit.is_some() {
+        return;
     }
-    if response.dragged()
-        && let Some(pos) = response.interact_pointer_pos()
-        && let Some(byte) = hit(cells, pos)
-    {
-        editor.caret = byte;
-    }
+    ui.memory_mut(|memory| {
+        memory.set_focus_lock_filter(
+            id(),
+            egui::EventFilter {
+                horizontal_arrows: true,
+                vertical_arrows: true,
+                tab: true,
+                ..Default::default()
+            },
+        )
+    });
+    let previous = editor.selection;
+    let mut composition = state.composition.take();
+    let changed = input::events(ui, state, editor, cells, &mut composition, snapshot);
+    state.composition = composition;
+    // A structural command moves the caret and adds a block; both must survive
+    // into the next frame even when no byte of the joined markup changed.
+    editor.ensure_visible |= changed || editor.selection != previous;
 }
 
-fn hit(cells: &[Cell], point: egui::Pos2) -> Option<usize> {
-    let cell = cells
-        .iter()
-        .filter(|cell| !cell.decoration)
-        .min_by(|a, b| {
-            let score = |cell: &Cell| {
-                cell.rect.distance_sq_to_pos(point) * 100.0
-                    + (cell.rect.center().y - point.y).powi(2)
-            };
-            score(a).total_cmp(&score(b))
-        })?;
-    Some(if point.x > cell.rect.center().x {
-        cell.range.end
-    } else {
-        cell.range.start
+/// Selection for a document with no addressable block.
+///
+/// `Selection` deliberately has no `Default`: an arbitrary default would be a
+/// caret pointing at a block that may not exist. An empty document is the one
+/// case where such a placeholder is harmless, because no edit can be formed
+/// from it — every command resolves its block first and refuses when absent.
+fn empty_selection() -> Selection {
+    Selection::collapsed(Caret {
+        block: scholium_model::NodeId::fresh(),
+        inline: 0,
+        offset: 0,
     })
 }
 
-fn caret_rect(cells: &[Cell], byte: usize) -> Option<Rect> {
-    let exact = cells
-        .iter()
-        .find(|c| !c.decoration && c.range.start == byte)
-        .map(|c| (c, false))
-        .or_else(|| {
-            cells
-                .iter()
-                .rev()
-                .find(|c| !c.decoration && c.range.end == byte)
-                .map(|c| (c, true))
-        });
-    // Delimiters and math syntax do not paint glyphs. Their caret shares the
-    // nearest visible source boundary, rather than falling back to page origin.
-    let (cell, right) = exact.or_else(|| {
-        cells
-            .iter()
-            .filter(|cell| !cell.decoration)
-            .min_by_key(|cell| {
-                if byte < cell.range.start {
-                    cell.range.start - byte
-                } else {
-                    byte.saturating_sub(cell.range.end)
-                }
-            })
-            .map(|cell| (cell, byte >= cell.range.end))
-    })?;
-    let origin = if right {
-        cell.rect.right_top()
-    } else {
-        cell.rect.left_top()
-    };
-    Some(Rect::from_min_size(
-        origin,
-        egui::vec2(1.4, cell.rect.height()),
-    ))
-}
-
-/// Everything the paint stage needs beyond editor and cells: page placement,
-/// the live buffer of the frame, and preedit text.
-struct PaintInputs<'a> {
-    preedit: Option<&'a str>,
-    page: Rect,
-    factor: f32,
-    buffer_text: &'a str,
-    /// An edit landed this frame, or the pixels are behind the text revision.
-    stale_pixels: bool,
-}
-
-fn paint(ui: &egui::Ui, editor: &mut EditorState, cells: &[Cell], inputs: PaintInputs<'_>) {
-    let range = editor.range();
-    for cell in cells {
-        if cell.range.start < range.end && cell.range.end > range.start {
-            ui.painter().rect_filled(
-                cell.rect,
-                0.0,
-                Color32::from_rgba_unmultiplied(60, 170, 205, 65),
-            );
-        }
-    }
-    if !ui.memory(|memory| memory.has_focus(id())) {
-        return;
-    }
-    let fresh_cursor = caret_rect(cells, editor.caret);
-    if editor.ensure_visible
-        && let Some(cursor) = fresh_cursor
-    {
-        ui.scroll_to_rect(cursor.expand(4.0), None);
-        editor.ensure_visible = false;
-    }
-    let cursor = fresh_cursor.or(editor.last_caret).unwrap_or_else(|| {
-        Rect::from_min_size(
-            inputs.page.min + egui::vec2(70.87, 72.0) * inputs.factor,
-            egui::vec2(1.4, 12.0 * inputs.factor),
-        )
-    });
-    editor.last_caret = Some(cursor);
-    // Optimistic echo (R4): while the page pixels lag the text revision, the
-    // caret's visual line is repainted from the live buffer so keystrokes are
-    // visible on the frame they land, not after the recompile.
-    if inputs.stale_pixels {
-        optimistic_line(
-            ui,
-            cells,
-            editor.caret,
-            inputs.buffer_text,
-            inputs.page,
-            inputs.factor,
-        );
-    }
-    ui.painter()
-        .rect_filled(cursor, 0.0, Color32::from_rgb(25, 55, 75));
-    if let Some(text) = inputs.preedit {
-        let font = egui::FontId::proportional(cursor.height());
-        let galley = ui
-            .painter()
-            .layout_no_wrap(text.into(), font, Color32::BLACK);
-        let rect = Rect::from_min_size(cursor.min, galley.size());
-        ui.painter().rect_filled(rect, 0.0, Color32::WHITE);
-        ui.painter().galley(rect.min, galley, Color32::BLACK);
-        ui.painter().hline(
-            rect.x_range(),
-            rect.bottom(),
-            egui::Stroke::new(1.0, Color32::BLACK),
-        );
-    }
-    ui.output_mut(|output| {
-        output.ime = Some(egui::output::IMEOutput {
-            purpose: egui::IMEPurpose::Normal,
-            rect: cursor,
-            cursor_rect: cursor,
-            should_interrupt_composition: false,
-        })
-    });
-}
-
-/// Preview body text size in typst pt; the echo layer must match it so the
-/// repainted line keeps the page's rhythm.
-const PAGE_BODY_PT: f32 = 12.0;
-/// Logical pixels per typst pt at 100% zoom (96 logical px per inch).
-const LOGICAL_PX_PER_PT: f32 = 96.0 / 72.0;
-
-/// Repaint the caret's visual line from the live buffer while the page pixels
-/// are one or more revisions behind. The band is clipped so overflowing text
-/// never paints outside the line; the typeset page replaces the echo atomically
-/// once the recompile lands.
-fn optimistic_line(
-    ui: &egui::Ui,
-    cells: &[Cell],
-    caret: usize,
-    buffer_text: &str,
-    page: Rect,
-    factor: f32,
+/// Bind the editor to a document and keep the structural caret addressable.
+///
+/// A caret that survived a structural change can name an inline index that no
+/// longer exists. `caret::clamp` snaps it back onto its own block; it is never
+/// relocated to a different block, so a rejected or split edit cannot silently
+/// move the caret into someone else's paragraph (ADR 0031).
+fn prepare(
+    editor: &mut EditorState,
+    state: &mut WorkspaceState,
+    snapshot: &DocumentSnapshot,
+    pending: bool,
 ) {
-    let Some(cursor_cell) = cells
-        .iter()
-        .filter(|cell| !cell.decoration)
-        .min_by_key(|cell| {
-            if caret < cell.range.start {
-                cell.range.start - caret
-            } else {
-                caret.saturating_sub(cell.range.end)
-            }
-        })
-    else {
-        return;
-    };
-    let line_height = cursor_cell.rect.height().max(1.0);
-    let line: Vec<&Cell> = cells
-        .iter()
-        .filter(|cell| {
-            !cell.decoration
-                && (cell.rect.center().y - cursor_cell.rect.center().y).abs() < line_height * 0.4
-        })
-        .collect();
-    let Some(leftmost) = line
-        .iter()
-        .min_by(|a, b| a.rect.left().total_cmp(&b.rect.left()))
-    else {
-        return;
-    };
-    // From the visual line's first glyph to the end of its block: the tail the
-    // bitmap can no longer represent. Anything past the band is clipped.
-    let tail_start = leftmost.range.start.min(buffer_text.len());
-    let block_end = buffer_text[tail_start..]
-        .find('\n')
-        .map_or(buffer_text.len(), |offset| tail_start + offset);
-    let tail = &buffer_text[tail_start..block_end];
-    if tail.is_empty() {
+    if editor.document != Some(snapshot.document) {
+        let selection = snapshot
+            .blocks
+            .first()
+            .and_then(|block| caret::start_of(snapshot, block.node))
+            .map(Selection::collapsed);
+        *editor = EditorState {
+            document: Some(snapshot.document),
+            selection: selection.unwrap_or_else(empty_selection),
+            focus_requested: true,
+            ..Default::default()
+        };
         return;
     }
-    let band = Rect::from_min_max(
-        egui::pos2(leftmost.rect.left(), cursor_cell.rect.top()),
-        egui::pos2(page.right(), cursor_cell.rect.bottom()),
-    );
-    let font = egui::FontId::proportional(PAGE_BODY_PT * LOGICAL_PX_PER_PT * factor);
-    let galley = ui
-        .painter()
-        .layout_no_wrap(tail.to_owned(), font, Color32::from_rgb(25, 55, 75));
-    ui.painter()
-        .with_clip_rect(band)
-        .rect_filled(band, 0.0, Color32::WHITE);
-    ui.painter()
-        .with_clip_rect(band)
-        .galley(band.min, galley, Color32::from_rgb(25, 55, 75));
+    if pending {
+        return;
+    }
+    reconcile_focus(editor, state, snapshot);
+    let clamp_endpoint = |endpoint: Caret| -> Caret {
+        caret::block_index(snapshot, endpoint.block)
+            .and_then(|index| snapshot.blocks.get(index))
+            .map_or(endpoint, |block| caret::clamp(block, endpoint))
+    };
+    editor.selection = Selection {
+        anchor: clamp_endpoint(editor.selection.anchor),
+        caret: clamp_endpoint(editor.selection.caret),
+    };
 }
 
-pub(crate) fn insert_markup(state: &mut WorkspaceState, fragment: &str, caret_shift: usize) {
-    let Some(snapshot) = &state.document else {
+/// Install the caret a structural edit asked for, once that edit is answered.
+///
+/// A split's tail block is created by the session and has no identity until the
+/// answered revision exists, so the pending request records the block's
+/// *position* instead. Gating on the request identity means an unrelated edit
+/// that happens to change the block count never moves the caret.
+fn reconcile_focus(
+    editor: &mut EditorState,
+    state: &mut WorkspaceState,
+    snapshot: &DocumentSnapshot,
+) {
+    let Some(pending) = state.focus_request else {
         return;
     };
-    let before = state.page_editor.buffer.get(snapshot).to_owned();
-    let mut after = before.clone();
-    let start = state.page_editor.range().start;
-    input::replace(&mut state.page_editor, &mut after, fragment);
-    state.page_editor.caret = start + caret_shift;
-    state.page_editor.anchor = state.page_editor.caret;
-    state.page_editor.focus_requested = true;
-    if let Some((request, shift)) = buffer::request_and_shift(snapshot, &before, &after) {
-        state.pending_edit = Some(request);
-        state.edit_shifts.push(shift);
+    let Some(caret) = (match pending.target {
+        crate::state::FocusTarget::Created {
+            first,
+            block_offset,
+        } => command::resolve_split_caret(snapshot, first, block_offset),
+        crate::state::FocusTarget::Block { block, caret } => snapshot
+            .blocks
+            .iter()
+            .find(|candidate| candidate.node == block)
+            .map(|candidate| Caret {
+                block: candidate.node,
+                ..caret_at_char(candidate, caret)
+            }),
+    }) else {
+        // The edit was rejected, or it removed the block the caret named; there
+        // is no valid position to install, so the caret stays where it was.
+        state.focus_request = None;
+        return;
+    };
+    state.focus_request = None;
+    editor.selection = Selection::collapsed(caret);
+    editor.ensure_visible = true;
+}
+
+/// Structural caret for a character offset inside a block's projected markup.
+///
+/// The offset is a *character* count because that is what the source-mode
+/// editor deals in; converting through bytes here keeps one place responsible
+/// for the character/byte distinction.
+fn caret_at_char(block: &scholium_model::Block, chars: usize) -> Caret {
+    let markup = block.markup_text();
+    let byte = markup
+        .char_indices()
+        .nth(chars)
+        .map_or(markup.len(), |(byte, _)| byte);
+    caret::from_markup_byte(block, byte)
+}
+
+/// Insert a toolbar fragment at the caret as a structural command.
+///
+/// The fragment is markup, so it is evaluated by the command layer rather than
+/// spliced into a joined string: `$$` opens an empty formula node, and
+/// `caret_shift` selects which structural position inside it the caret takes.
+pub(crate) fn insert_markup(state: &mut WorkspaceState, fragment: &str, caret_shift: usize) {
+    let Some(snapshot) = state.document.clone() else {
+        return;
+    };
+    let editor = &mut state.page_editor;
+    if editor.document != Some(snapshot.document) {
+        editor.select_block_start(&snapshot, snapshot.blocks[0].node);
+        editor.document = Some(snapshot.document);
     }
+    if state.pending_edit.is_some() {
+        return;
+    }
+    let command = command::toolbar_command(&snapshot, editor.selection, fragment, caret_shift);
+    let Some(command) = command else {
+        return;
+    };
+    let Some(evaluated) = command::evaluate(&snapshot, &command) else {
+        return;
+    };
+    let Some(request) = evaluated.request(&snapshot) else {
+        return;
+    };
+    command::install(&mut editor.selection, &evaluated);
+    editor.focus_requested = true;
+    state.pending_edit = Some(request);
 }
 
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod tests_geometry;
+#[cfg(test)]
+mod tests_s3;
+#[cfg(test)]
+mod tests_support;

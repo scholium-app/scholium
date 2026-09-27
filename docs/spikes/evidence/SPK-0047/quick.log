@@ -1,0 +1,6 @@
+[usability] cargo test -p scholium-app usability_audit -- --include-ignored --test-threads=1 --show-output
+  exit=101; 32 test results; /home/ation_ciger/Projects/Mogan/scholium/.verify/audit-out/usability.log
+
+体验：16 passed / 16 failed
+报告：/home/ation_ciger/Projects/Mogan/scholium/.verify/audit-out/summary.md
+EXIT=1

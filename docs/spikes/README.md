@@ -106,3 +106,4 @@ WebView/Electron/Tauri 作为应用 UI 或验证依赖。旧 ProseMirror/浏览�
 | 源码双副本窗口 | [0039-native-source-replicas.md](SPK-0039-native-source-replicas.md) | 独立 Loro 增量、乱序重复收敛、本地 undo 保留远端、双端 IME/epoch 门禁；非共享 SDG。 |
 | 预览延迟链基线（阶段 1） | [0045-render-latency-baseline.md](SPK-0045-render-latency-baseline.md) | 击键→字形可见由全文档重编译主导（release 256 段 p95 189 ms、debug 1417 ms），光栅仅 2–7 ms；改进计划见 [RENDER_EDIT_REWORK](../plan/RENDER_EDIT_REWORK.md)。 |
 | 页面编辑体验审计（阶段 1） | [0046-editor-usability-audit.md](SPK-0046-editor-usability-audit.md) | **Fail**：既有 81 项回归通过；新增 32 项审计中 19 失败，原生窗口 8 场景中 4 失败。公式结构破坏、旧几何错位/越界和回显缺口均有复现。 |
+| 结构坐标改造独立验证（阶段 1） | [0047-structural-cursor-verification.md](SPK-0047-structural-cursor-verification.md) | **Pass（E1/S2 范围）**：基线 `59eca0c` 新建 worktree 重跑得 13/19，与 0046 逐用例一致；S2 后 16/32、原生 5/8，**零回归、零判据篡改**。b13 常规回归测试缺口移交 S4。 |

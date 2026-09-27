@@ -172,7 +172,9 @@ fn enter_splits_the_block_and_moves_the_caret_to_the_tail() {
         ctx.memory(|memory| memory.has_focus(egui::Id::new(("native-block", tail)))),
         "focus should follow the split"
     );
-    assert_eq!(state.focus_after_split, None);
+    // Focus reconciliation is keyed on the request identity: once the session
+    // has answered the split, nothing is left pending.
+    assert_eq!(state.focus_request, None);
 }
 
 #[test]
@@ -233,7 +235,7 @@ fn backspace_at_block_start_merges_into_the_previous_block() {
     assert_eq!(block_texts(&state), ["甲乙"]);
     // The focus move runs at the start of the frame after the merge applied.
     frame(&ctx, &mut state, &mut bridge, vec![]);
-    assert_eq!(state.focus_after_merge, None);
+    assert_eq!(state.focus_request, None);
     assert!(
         ctx.memory(|memory| memory.has_focus(egui::Id::new(("native-block", head)))),
         "focus should land on the absorbing block"
@@ -272,7 +274,7 @@ fn delete_at_block_end_absorbs_the_following_block() {
     assert_eq!(block_texts(&state), ["甲乙"]);
     // The focus move runs at the start of the frame after the merge applied.
     frame(&ctx, &mut state, &mut bridge, vec![]);
-    assert_eq!(state.focus_after_merge, None);
+    assert_eq!(state.focus_request, None);
     assert!(
         ctx.memory(|memory| memory.has_focus(egui::Id::new(("native-block", head)))),
         "the target keeps the focus"
