@@ -356,6 +356,7 @@ fn ime_preedit_stays_local_until_commit() {
 }
 
 mod preview;
+mod undo;
 
 #[test]
 fn inline_math_markup_round_trips_through_the_session() {

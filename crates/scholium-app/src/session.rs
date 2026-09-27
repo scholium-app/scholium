@@ -133,9 +133,23 @@ impl SessionBridge {
     }
 
     fn apply_pending_edit(&mut self, state: &mut WorkspaceState) {
+        // Undo/redo are serviced here rather than in `update`, because this is
+        // the one entry point every driver goes through — including harnesses
+        // that pump the session directly without the full frame loop. They run
+        // after the pending edit of this frame, so the history is never a step
+        // behind the document.
+        if std::mem::take(&mut state.undo_requested) {
+            self.undo(state);
+        }
+        if std::mem::take(&mut state.redo_requested) {
+            self.redo(state);
+        }
         if let Some(edit) = state.pending_edit.take()
             && let Some(session) = &mut self.session
         {
+            // The state to return to on undo: the document *before* this edit.
+            // Captured here because it is the only moment it is still available.
+            let before_edit = session.snapshot();
             let rejected_draft = match &edit.edit {
                 BlockEdit::ReplaceText { block, text } => Some((*block, text.clone())),
                 // Kind switches and merges have no text draft to keep on rejection.
@@ -147,6 +161,14 @@ impl SessionBridge {
             let range_input = match &edit.edit {
                 BlockEdit::ReplaceRange { text, .. } => Some(text.clone()),
                 _ => None,
+            };
+            // Classified before `apply` consumes the request; the pre-edit
+            // snapshot supplies the context needed to tell a keystroke from an
+            // initialization.
+            let step_kind = if is_typing_keystroke(&edit.edit, &before_edit) {
+                crate::undo::StepKind::Typing
+            } else {
+                crate::undo::StepKind::Other
             };
             state.edit_error = session.apply(edit).err().map(|e| e.to_string());
             if state.edit_error.is_some() && range_input.is_some() {
@@ -184,9 +206,82 @@ impl SessionBridge {
                 .is_some()
                 .then_some(rejected_draft)
                 .flatten();
+            // Only an accepted, content-changing edit is undoable: recording a
+            // rejected one would offer to undo something that never happened.
+            if state.edit_error.is_none() && snapshot.revision.0 != before_edit.revision.0 {
+                state.undo.push(before_edit, step_kind);
+            }
             state.preview.note_snapshot(&snapshot);
             state.document = Some(std::sync::Arc::new(snapshot));
         }
+    }
+
+    /// Take back the last accepted edit.
+    ///
+    /// Refuses while an edit is still unanswered: undoing an edit the session
+    /// has not seen would desynchronize the stack from the document.
+    pub(crate) fn undo(&mut self, state: &mut WorkspaceState) {
+        if state.pending_edit.is_some() {
+            return;
+        }
+        let Some(current) = self.session.as_ref().map(LocalSession::snapshot) else {
+            return;
+        };
+        let Some(previous) = state.undo.step_back(current) else {
+            return;
+        };
+        self.install(state, previous);
+    }
+
+    /// Reapply the most recently undone edit.
+    pub(crate) fn redo(&mut self, state: &mut WorkspaceState) {
+        if state.pending_edit.is_some() {
+            return;
+        }
+        let Some(current) = self.session.as_ref().map(LocalSession::snapshot) else {
+            return;
+        };
+        let Some(next) = state.undo.step_forward(current) else {
+            return;
+        };
+        self.install(state, next);
+    }
+
+    /// Make `snapshot` the session's content again and resynchronize the UI.
+    ///
+    /// The session is rebuilt rather than replayed: `LocalSession::apply`
+    /// rejects a request whose revision is not current, so an undo is a jump to
+    /// a state, not an edit. That jump invalidates the geometry shift chain,
+    /// which describes *edits* since the compiled revision; reusing it would
+    /// misplace every glyph (the defect S4 removed). It is cleared so the page
+    /// recompiles, and any input deferred from the undone frame is dropped
+    /// because replaying it would immediately reapply what was just undone.
+    fn install(&mut self, state: &mut WorkspaceState, snapshot: scholium_model::DocumentSnapshot) {
+        // `restore` rebuilds the action journal, and storage requires that
+        // journal to be exactly `revision.0` long. The kept prefix keeps each
+        // already-accepted request id, so the duplicate-request guard still
+        // recognises them while new edits apply against this revision.
+        let requests: Vec<scholium_model::RequestId> = self
+            .session
+            .as_ref()
+            .map(|session| {
+                session
+                    .actions()
+                    .iter()
+                    .take(snapshot.revision.0 as usize)
+                    .map(|action| action.request)
+                    .collect()
+            })
+            .unwrap_or_default();
+        self.session = Some(LocalSession::restore(snapshot.clone(), requests));
+        state.edit_shifts.clear();
+        state.deferred_input.clear();
+        state.edit_error = None;
+        state.rejected_draft = None;
+        state.accepted_input = None;
+        state.composition = None;
+        state.preview.note_snapshot(&snapshot);
+        state.document = Some(std::sync::Arc::new(snapshot));
     }
 
     /// 收取编译与当前页结果，并在去抖后提交新编译。
@@ -372,6 +467,9 @@ impl SessionBridge {
         state.save_requested = false;
         state.preview.reset();
         state.page_editor = Default::default();
+        // A new document has no history: keeping the stack would let Ctrl+Z
+        // restore content from a document that no longer exists.
+        state.undo.clear();
         state.edit_shifts.clear();
         state.preview.note_snapshot(&session.snapshot());
         state.mode = crate::state::ViewMode::Visual;
@@ -420,6 +518,37 @@ mod tests;
 
 #[cfg(test)]
 mod usability_audit;
+
+/// Whether an edit is one keystroke of a continuous typing run.
+///
+/// The page editor types through `ReplaceRange` at a collapsed range; the
+/// per-block source editors type through `ReplaceText`. Both are keystrokes when
+/// they add text without a line break, and both must coalesce, or undo depth is
+/// spent one character at a time.
+///
+/// Two shapes are **not** keystrokes even though they add text:
+///
+/// - a line break, which is a structural split;
+/// - filling a block that was empty, which is document initialization or a
+///   paste over a blank paragraph. `ReplaceText` cannot distinguish that from
+///   typing by shape alone, so `before` supplies the context.
+fn is_typing_keystroke(edit: &BlockEdit, before: &scholium_model::DocumentSnapshot) -> bool {
+    match edit {
+        BlockEdit::ReplaceRange { start, end, text } => start == end && !text.is_empty(),
+        BlockEdit::ReplaceText { block, text } => {
+            if text.is_empty() || text.contains('\n') {
+                return false;
+            }
+            // Appending to existing text is typing; filling a blank block is not.
+            before
+                .blocks
+                .iter()
+                .find(|candidate| candidate.node == *block)
+                .is_some_and(|candidate| !candidate.content.is_empty())
+        }
+        _ => false,
+    }
+}
 
 fn store_path() -> Result<PathBuf, String> {
     // 测试与多实例经环境变量重定向；默认为 XDG 数据目录。

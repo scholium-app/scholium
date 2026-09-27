@@ -184,6 +184,10 @@ pub(crate) struct WorkspaceState {
     /// coordinates while a recompile is in flight (E2 of the rework plan).
     pub(crate) edit_shifts: Vec<crate::page_editor::Shift>,
     pub(crate) new_requested: bool,
+    /// Ctrl+Z was pressed; the session bridge owns the history and acts on it.
+    pub(crate) undo_requested: bool,
+    /// Ctrl+Shift+Z / Ctrl+Y was pressed.
+    pub(crate) redo_requested: bool,
     pub(crate) save_requested: bool,
     /// 已落盘的 revision；None 表示从未保存。
     pub(crate) saved_revision: Option<u64>,
@@ -218,6 +222,11 @@ pub(crate) struct WorkspaceState {
     pub(crate) visual_typeset: bool,
     pub(crate) preview: PreviewState,
     pub(crate) page_editor: crate::page_editor::EditorState,
+    /// Local undo/redo history: whole snapshots of accepted edits.
+    ///
+    /// Product action layer only — not collaborative undo and not a checkpoint
+    /// history (see `crate::undo`).
+    pub(crate) undo: crate::undo::UndoStack,
     pub(crate) dialect: Dialect,
     pub(crate) navigation: bool,
     pub(crate) diagnostics: bool,
@@ -237,6 +246,8 @@ impl Default for WorkspaceState {
             edit_shifts: Vec::new(),
             accepted_input: None,
             new_requested: false,
+            undo_requested: false,
+            redo_requested: false,
             save_requested: false,
             saved_revision: None,
             edit_error: None,
@@ -251,6 +262,7 @@ impl Default for WorkspaceState {
             visual_typeset: true,
             preview: PreviewState::default(),
             page_editor: Default::default(),
+            undo: Default::default(),
             dialect: Dialect::Latex,
             navigation: false,
             diagnostics: false,
