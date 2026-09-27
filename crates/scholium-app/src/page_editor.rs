@@ -35,6 +35,14 @@ pub(crate) struct EditorState {
     /// accepts. The echo layer paints from this so a keystroke is visible on the
     /// frame it lands, while the page pixels still show the compiled revision.
     pub(crate) pending_buffer: Option<String>,
+    /// Structured blocks of the pending edit, for the echo layer.
+    ///
+    /// The echo paints the current *appearance* — a formula as its content, a
+    /// bold run in bold — and must never draw `$`/`*`/`_`. Those markers exist
+    /// only in `pending_buffer`'s markup, so the structure is carried alongside
+    /// it from the same evaluation rather than recovered by parsing it again
+    /// (ADR 0031).
+    pub(crate) pending_content: Option<Vec<scholium_model::Block>>,
     /// Joined markup of one document revision; rebuilt only when the revision
     /// moves, not per frame (R6 of the rework plan).
     buffer: BufferCache,
@@ -55,6 +63,7 @@ impl Default for EditorState {
             ensure_visible: false,
             rejected_input: None,
             pending_buffer: None,
+            pending_content: None,
             buffer: BufferCache::default(),
         }
     }
@@ -202,12 +211,17 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, page: Rect, fa
             .document
             .as_ref()
             .is_some_and(|snapshot| state.preview.shown != Some(snapshot.revision.0));
-    // The echo paints from the buffer the pending edit will produce, so it must
-    // be taken before `paint` borrows the editor mutably.
-    let echo = editor
-        .pending_buffer
-        .clone()
-        .unwrap_or_else(|| before.clone());
+    // The echo paints the pending edit's *structure*, so both it and the index
+    // of its first block are taken before `paint` borrows the editor mutably.
+    // `pending_content` is set from the same evaluation that produced the
+    // request, so the echo cannot disagree with what will be stored.
+    let (echo, echo_first) = match &editor.pending_content {
+        Some(content) => (
+            content.clone(),
+            echo_first_block(state, &snapshot, &editor.selection),
+        ),
+        None => (pending_blocks(&snapshot, &before), 0),
+    };
     paint(
         ui,
         &mut editor,
@@ -217,7 +231,9 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, page: Rect, fa
             preedit: state.composition.as_deref(),
             page,
             factor,
-            buffer_text: &echo,
+            echo: &echo,
+            echo_first_block: echo_first,
+            anchors: &state.preview.anchors,
             stale_pixels,
         },
     );
@@ -261,6 +277,26 @@ fn edit(
     // A structural command moves the caret and adds a block; both must survive
     // into the next frame even when no byte of the joined markup changed.
     editor.ensure_visible |= changed || editor.selection != previous;
+}
+
+/// Blocks to echo when no edit is pending but the pixels are still behind.
+///
+/// The whole current document is safe here: the echo only paints where it has a
+/// band, and showing the live text is exactly what keeps a stale page readable.
+fn pending_blocks(snapshot: &DocumentSnapshot, _before: &str) -> Vec<scholium_model::Block> {
+    snapshot.blocks.clone()
+}
+
+/// Index, in the echoed list, that corresponds to the document's first block.
+///
+/// `Evaluated::first` counts from the document start, so the echo aligns its
+/// bands with the same numbering the compiler used for `preview.anchors`.
+fn echo_first_block(
+    _state: &WorkspaceState,
+    _snapshot: &DocumentSnapshot,
+    _selection: &Selection,
+) -> usize {
+    0
 }
 
 /// Selection for a document with no addressable block.

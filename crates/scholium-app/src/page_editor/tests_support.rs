@@ -57,3 +57,29 @@ pub(super) fn has_no_literal_markup(session: &LocalSession) -> bool {
         .flat_map(|b| &b.content)
         .any(|inline| matches!(inline, Inline::Text(text) if text.contains(['$', '*', '_'])))
 }
+
+/// Compile `snapshot` and install its geometry as the shown revision.
+///
+/// Real glyph boxes are needed for hit testing; synthetic rectangles would not
+/// reproduce the byte spans the crash depends on.
+pub(super) fn compile_into(
+    state: &mut WorkspaceState,
+    snapshot: &scholium_model::DocumentSnapshot,
+) {
+    let mut compiler = scholium_typst::PreviewCompiler::spawn();
+    compiler.submit_snapshot(snapshot);
+    // Cold system-font discovery varies with the host and concurrent test load.
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(60);
+    while std::time::Instant::now() < deadline {
+        if let Some(scholium_typst::PreviewEvent::Compiled(outcome)) = compiler.poll() {
+            assert!(outcome.error.is_none(), "{:?}", outcome.error);
+            state.preview.geometry = outcome.geometry;
+            state.preview.compiled = Some(outcome.revision);
+            state.preview.shown = Some(outcome.revision);
+            state.preview.page_index = Some(0);
+            return;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(25));
+    }
+    panic!("compiler did not return within the deadline");
+}

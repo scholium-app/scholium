@@ -14,7 +14,9 @@
 mod range;
 use super::caret::{Caret, Selection, clamp, position_of};
 use range::{escape, locate, ordered, replace_range};
-use scholium_model::{Block, BlockEdit, DocumentRequest, DocumentSnapshot, Inline};
+use scholium_model::{
+    Block, BlockEdit, BlockKind, DocumentRequest, DocumentSnapshot, Inline, NodeId,
+};
 
 /// One semantic editing operation, already addressed structurally.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -110,7 +112,7 @@ impl RangeEdge {
 /// `first`/`last` are inclusive snapshot block indices; `start`/`end` are byte
 /// offsets **in the projected markup of those two blocks**. `markup` is what
 /// takes the range's place — line breaks in it create blocks.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug)]
 pub(crate) struct Evaluated {
     /// Inclusive index of the first replaced block.
     pub(crate) first: usize,
@@ -120,8 +122,19 @@ pub(crate) struct Evaluated {
     pub(crate) start: RangeEdge,
     /// Structural end of the replaced range, in the last block.
     pub(crate) end: RangeEdge,
-    /// Replacement markup.
+    /// Replacement markup, and the coordinate [`BlockEdit`] speaks.
     pub(crate) markup: String,
+    /// The same replacement as **structure**, for the echo layer to paint.
+    ///
+    /// The echo must draw the current *appearance* (a formula as its content, a
+    /// bold run in bold) and never the `$`/`*`/`_` markers. Recovering that from
+    /// `markup` would mean parsing it again, which would make the echo a second
+    /// authority on what the markup means (ADR 0031). Evaluation already builds
+    /// these nodes before projecting them, so they are carried out instead.
+    ///
+    /// This is an *additional* product: [`Evaluated::request`] still builds the
+    /// edit from `markup`, which stays the wire form.
+    pub(crate) content: Vec<Block>,
     /// Structural caret after the edit, when the command can name one.
     pub(crate) caret: Option<Caret>,
     /// Caret at the start of the block the edit created, relative to `first`.
@@ -177,6 +190,7 @@ pub(crate) fn evaluate(snapshot: &DocumentSnapshot, command: &EditCommand) -> Op
                 start: RangeEdge::At(start),
                 end: RangeEdge::At(end),
                 markup: scholium_model::markup(&[Inline::Math(source.clone())]),
+                content: vec![echo_block(head.node, vec![Inline::Math(source.clone())])],
                 // Entering the formula puts the caret *inside* the node the
                 // request created: the node lands at `start.inline`, so the
                 // caret is one index past it, at the source start.
@@ -260,6 +274,8 @@ fn toggle_math(snapshot: &DocumentSnapshot, at: Caret) -> Option<Evaluated> {
             start: RangeEdge::At(at),
             end: RangeEdge::At(at),
             markup: String::new(),
+            // Nothing changes structurally: the echo shows the block as it is.
+            content: vec![echo_block(block.node, block.content.clone())],
             caret: Some(Caret {
                 block: block.node,
                 inline: at.inline + 1,
@@ -274,6 +290,10 @@ fn toggle_math(snapshot: &DocumentSnapshot, at: Caret) -> Option<Evaluated> {
         start: RangeEdge::At(at),
         end: RangeEdge::At(at),
         markup: scholium_model::markup(&[Inline::Math(String::new())]),
+        content: vec![echo_block(
+            block.node,
+            with_math_inserted(&block.content, at.inline),
+        )],
         caret: Some(Caret {
             block: block.node,
             inline: at.inline,
@@ -281,6 +301,14 @@ fn toggle_math(snapshot: &DocumentSnapshot, at: Caret) -> Option<Evaluated> {
         }),
         caret_block_offset: None,
     })
+}
+
+/// Block content with an empty formula inserted at `inline`.
+fn with_math_inserted(content: &[Inline], inline: usize) -> Vec<Inline> {
+    let mut out = content.to_vec();
+    let at = inline.min(out.len());
+    out.insert(at, Inline::Math(String::new()));
+    out
 }
 
 /// Apply an evaluated command to the editor's selection, when it names a caret.
@@ -334,6 +362,10 @@ fn split_block(snapshot: &DocumentSnapshot, at: Caret, tail_text: &str) -> Optio
             start,
             end,
             markup: format!("{head}\n{}", escape(tail_text)),
+            content: vec![
+                echo_block(block.node, block.content.clone()),
+                echo_block(NodeId::fresh(), text_content(tail_text)),
+            ],
             caret: None,
             // The tail block is created by the session, so its identity is not
             // knowable here; the caret is named by position instead.
@@ -372,6 +404,10 @@ fn split_block(snapshot: &DocumentSnapshot, at: Caret, tail_text: &str) -> Optio
                 scholium_model::markup(&tail),
                 escape(tail_text)
             ),
+            content: vec![
+                echo_block(block.node, head.clone()),
+                echo_split_tail(&tail, tail_text),
+            ],
             caret: None,
             caret_block_offset: Some(1),
         });
@@ -399,6 +435,10 @@ fn split_block(snapshot: &DocumentSnapshot, at: Caret, tail_text: &str) -> Optio
         start,
         end,
         markup,
+        content: vec![
+            echo_block(block.node, head.clone()),
+            echo_split_tail(&tail, tail_text),
+        ],
         // The caret belongs at the start of the block the break created. That
         // identity is allocated by the session, so it cannot appear here; the
         // offset names the created block for reconciliation instead of guessing
@@ -406,6 +446,34 @@ fn split_block(snapshot: &DocumentSnapshot, at: Caret, tail_text: &str) -> Optio
         caret: None,
         caret_block_offset: Some(1),
     })
+}
+
+/// Content of the block a split creates: the tail plus any same-frame text.
+fn echo_split_tail(tail: &[Inline], tail_text: &str) -> Block {
+    let mut content = tail.to_vec();
+    content.extend(text_content(tail_text));
+    echo_block(NodeId::fresh(), content)
+}
+
+/// Literal text as inline content, empty text producing no node.
+fn text_content(text: &str) -> Vec<Inline> {
+    if text.is_empty() {
+        Vec::new()
+    } else {
+        vec![Inline::Text(text.to_owned())]
+    }
+}
+
+/// One structural block for the echo layer.
+///
+/// The echo only needs content and identity; the kind is carried through so a
+/// heading still echoes at its own size.
+pub(crate) fn echo_block(node: NodeId, content: Vec<Inline>) -> Block {
+    Block {
+        node,
+        kind: BlockKind::Paragraph,
+        content,
+    }
 }
 
 /// Rebuild a node of the same variant with new source text.

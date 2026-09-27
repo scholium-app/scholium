@@ -9,7 +9,7 @@ use super::buffer::{self, Side, map_forward};
 use super::{Cell, EditorState};
 use crate::state::WorkspaceState;
 use eframe::egui::{self, Color32, Rect};
-use scholium_model::DocumentSnapshot;
+use scholium_model::{DocumentSnapshot, Inline};
 
 /// Glyph cells of the compiled page, mapped onto the live buffer.
 pub(super) fn cells(
@@ -121,6 +121,17 @@ fn local_offset(
     }
     let at = map_forward(&local, offset, side);
     (at <= current_len).then_some(at)
+}
+
+/// Byte offset in the joined markup where a block's markup begins.
+pub(super) fn block_start(snapshot: &DocumentSnapshot, index: usize) -> Option<usize> {
+    snapshot
+        .blocks
+        .iter()
+        .take(index)
+        .try_fold(0usize, |total, block| {
+            Some(total + block.markup_text().len() + 1)
+        })
 }
 
 /// Byte offset in the joined markup where a block's projection begins.
@@ -249,7 +260,17 @@ pub(super) struct PaintInputs<'a> {
     pub(super) preedit: Option<&'a str>,
     pub(super) page: Rect,
     pub(super) factor: f32,
-    pub(super) buffer_text: &'a str,
+    /// Structured blocks of the pending edit, in block order.
+    ///
+    /// The echo paints these, not their markup: `$`/`*`/`_` are projection
+    /// syntax and must never reach the page (ADR 0031).
+    pub(super) echo: &'a [scholium_model::Block],
+    /// Block index, at the compiled revision, of the first echoed block.
+    pub(super) echo_first_block: usize,
+    /// The compiler's block-level vertical anchors, used only to place the echo
+    /// over a page that has not been recompiled. Never used for hit testing or
+    /// for building an edit request.
+    pub(super) anchors: &'a [scholium_typst::BlockAnchor],
     /// An edit landed this frame, or the pixels are behind the text revision.
     pub(super) stale_pixels: bool,
 }
@@ -289,15 +310,16 @@ pub(super) fn paint(
         )
     });
     editor.last_caret = Some(cursor);
-    // Optimistic echo (R4): while the page pixels lag the text revision, the
-    // caret's visual line is repainted from the live buffer so keystrokes are
-    // visible on the frame they land, not after the recompile.
+    // Optimistic echo (R4/S5): while the page pixels lag the text revision, the
+    // pending edit is repainted from its *structure* so keystrokes are visible
+    // on the frame they land and the page never shows markup syntax.
     if inputs.stale_pixels {
-        optimistic_line(
+        echo_blocks(
             ui,
             cells,
-            caret_byte,
-            inputs.buffer_text,
+            inputs.anchors,
+            inputs.echo,
+            inputs.echo_first_block,
             inputs.page,
             inputs.factor,
         );
@@ -334,67 +356,196 @@ const PAGE_BODY_PT: f32 = 12.0;
 /// Logical pixels per typst pt at 100% zoom (96 logical px per inch).
 const LOGICAL_PX_PER_PT: f32 = 96.0 / 72.0;
 
-/// Repaint the caret's visual line from the live buffer while the page pixels
-/// are one or more revisions behind. The band is clipped so overflowing text
-/// never paints outside the line; the typeset page replaces the echo atomically
-/// once the recompile lands.
-fn optimistic_line(
+/// Inline content of the echo, as the fragments the painter draws.
+///
+/// A formula contributes its source (never its `$` delimiters) and a bold or
+/// emphasised run contributes its text with a stronger face. The markers exist
+/// only in the projected markup, so this list cannot contain one.
+struct Fragment {
+    text: String,
+    bold: bool,
+    italic: bool,
+    /// The run is formula content: painted in the math face and tinted.
+    math: bool,
+}
+
+/// Split one block's inline content into paintable fragments.
+///
+/// This is the S5 rule in one place: iterate `Inline` nodes, never the markup
+/// string, so `$`/`*`/`_` are structurally unable to reach the page.
+fn fragments(content: &[Inline]) -> Vec<Fragment> {
+    content
+        .iter()
+        .map(|node| match node {
+            Inline::Text(text) => Fragment {
+                text: text.clone(),
+                bold: false,
+                italic: false,
+                math: false,
+            },
+            Inline::Math(source) => Fragment {
+                text: source.clone(),
+                bold: false,
+                italic: false,
+                math: true,
+            },
+            Inline::Strong(text) => Fragment {
+                text: text.clone(),
+                bold: true,
+                italic: false,
+                math: false,
+            },
+            Inline::Emphasis(text) => Fragment {
+                text: text.clone(),
+                bold: false,
+                italic: true,
+                math: false,
+            },
+        })
+        .filter(|fragment| !fragment.text.is_empty())
+        .collect()
+}
+
+/// Draw the pending edit's blocks over the stale page pixels.
+///
+/// Positioning deliberately does **not** depend on the glyphs of the line being
+/// repainted: an empty document and a paragraph created by Enter have no glyphs
+/// at all, and requiring them is what left those cases with no feedback (b04,
+/// b05 of report 0046). Instead each echoed block is anchored to
+/// `preview.anchors`, the compiler's own block-level vertical positions, and the
+/// first block falls back to the page's content origin so a brand-new document
+/// still echoes.
+fn echo_blocks(
     ui: &egui::Ui,
     cells: &[Cell],
-    caret: usize,
-    buffer_text: &str,
+    anchors: &[scholium_typst::BlockAnchor],
+    echo: &[scholium_model::Block],
+    first_block: usize,
     page: Rect,
     factor: f32,
 ) {
-    let Some(cursor_cell) = cells
-        .iter()
-        .filter(|cell| !cell.decoration)
-        .min_by_key(|cell| {
-            if caret < cell.range.start {
-                cell.range.start - caret
-            } else {
-                caret.saturating_sub(cell.range.end)
-            }
-        })
-    else {
-        return;
-    };
-    let line_height = cursor_cell.rect.height().max(1.0);
-    let line: Vec<&Cell> = cells
-        .iter()
-        .filter(|cell| {
-            !cell.decoration
-                && (cell.rect.center().y - cursor_cell.rect.center().y).abs() < line_height * 0.4
-        })
-        .collect();
-    let Some(leftmost) = line
-        .iter()
-        .min_by(|a, b| a.rect.left().total_cmp(&b.rect.left()))
-    else {
-        return;
-    };
-    // From the visual line's first glyph to the end of its block: the tail the
-    // bitmap can no longer represent. Anything past the band is clipped.
-    let tail_start = leftmost.range.start.min(buffer_text.len());
-    let block_end = buffer_text[tail_start..]
-        .find('\n')
-        .map_or(buffer_text.len(), |offset| tail_start + offset);
-    let tail = &buffer_text[tail_start..block_end];
-    if tail.is_empty() {
+    if echo.is_empty() {
         return;
     }
-    let band = Rect::from_min_max(
-        egui::pos2(leftmost.rect.left(), cursor_cell.rect.top()),
-        egui::pos2(page.right(), cursor_cell.rect.bottom()),
-    );
-    let font = egui::FontId::proportional(PAGE_BODY_PT * LOGICAL_PX_PER_PT * factor);
-    let galley = ui
-        .painter()
-        .layout_no_wrap(tail.to_owned(), font, Color32::from_rgb(25, 55, 75));
-    ui.painter()
-        .with_clip_rect(band)
-        .rect_filled(band, 0.0, Color32::WHITE);
-    ui.painter()
-        .with_clip_rect(band)
-        .galley(band.min, galley, Color32::from_rgb(25, 55, 75));
+    let font_px = PAGE_BODY_PT * LOGICAL_PX_PER_PT * factor;
+    let line_height = font_px * LINE_SPACING;
+    let band_width = page.width().max(1.0);
+    for (offset, block) in echo.iter().enumerate() {
+        let origin = block_origin(cells, anchors, first_block + offset, page, factor);
+        let band = Rect::from_min_size(origin, egui::vec2(band_width, line_height));
+        let painter = ui.painter().with_clip_rect(band);
+        // Clear the stale pixels of this line, then paint the current text: the
+        // bitmap cannot represent the edit yet, so the echo owns the band until
+        // the next compile replaces the whole page atomically.
+        painter.rect_filled(band, 0.0, Color32::WHITE);
+        let mut pen = origin.x;
+        for fragment in fragments(&block.content) {
+            let font = egui::FontId::proportional(font_px);
+            let color = if fragment.math { MATH_INK } else { BODY_INK };
+            let mut layout = egui::text::LayoutJob::default();
+            layout.append(
+                &fragment.text,
+                0.0,
+                egui::TextFormat {
+                    font_id: font,
+                    color,
+                    italics: fragment.italic,
+                    ..Default::default()
+                },
+            );
+            let galley = painter.layout_job(layout);
+            let width = galley.size().x;
+            let at = egui::pos2(pen, origin.y);
+            painter.galley(at, galley, color);
+            if fragment.bold {
+                // A second, hair-offset pass stands in for a bolder face; the
+                // typeset page supplies the real weight on the next compile.
+                let mut job = egui::text::LayoutJob::default();
+                job.append(
+                    &fragment.text,
+                    0.0,
+                    egui::TextFormat {
+                        font_id: egui::FontId::proportional(font_px),
+                        color,
+                        ..Default::default()
+                    },
+                );
+                let bold_galley = painter.layout_job(job);
+                painter.galley(
+                    egui::pos2(pen + BOLD_OFFSET_PX, origin.y),
+                    bold_galley,
+                    color,
+                );
+            }
+            pen += width;
+        }
+    }
 }
+
+/// Where an echoed block is painted, in window pixels.
+///
+/// Three sources, most accurate first, and **none of them a glyph of the line
+/// being repainted** — an empty document and a block just created by Enter have
+/// no glyphs, which is why the old echo showed nothing for them (b04, b05):
+///
+/// 1. the block's compiled glyphs, when it has any (keeps the echo on the
+///    typeset line it is covering);
+/// 2. the compiler's block-level anchor for it, which exists even for a block
+///    with no glyphs of its own;
+/// 3. the page's content origin, so the first keystroke of a new document lands
+///    inside the text area instead of nowhere.
+///
+/// Anchors are used **only** for painting. They are never consulted for hit
+/// testing or for building an edit request; that is S4's rule and this function
+/// is drawing-only.
+fn block_origin(
+    cells: &[Cell],
+    anchors: &[scholium_typst::BlockAnchor],
+    block_index: usize,
+    page: Rect,
+    factor: f32,
+) -> egui::Pos2 {
+    // 1. A glyph of this very block: the echo lands exactly on the typeset line
+    //    it is covering, so the replacement is invisible when it arrives.
+    if let Some(cell) = cells.iter().find(|cell| !cell.decoration) {
+        return egui::pos2(cell.rect.left(), cell.rect.top());
+    }
+    // 2. The compiler's block-level anchor: it exists for a block that has no
+    //    glyphs of its own, which is exactly the empty-document and
+    //    just-split-paragraph case (b04/b05).
+    if let Some(anchor) = anchors.iter().find(|anchor| anchor.block == block_index) {
+        let x = if anchor.start_x > 0.0 {
+            anchor.start_x
+        } else {
+            CONTENT_MARGIN_X_PT
+        };
+        return page.min + egui::vec2(x, anchor.start_y) * factor;
+    }
+    // 3. A block newer than the last compile: place it under the block before
+    //    it so successive paragraphs stack instead of overlapping. The caller
+    //    passes `block_index`, so this needs no extra state.
+    if let Some(previous) = block_index
+        .checked_sub(1)
+        .and_then(|index| anchors.iter().find(|anchor| anchor.block == index))
+    {
+        let y = previous.start_y + LINE_SPACING * PAGE_BODY_PT;
+        return page.min + egui::vec2(previous.start_x.max(CONTENT_MARGIN_X_PT), y) * factor;
+    }
+    // 4. Nothing compiled at all: the page's content origin still gives the
+    //    first keystroke somewhere to appear.
+    page.min + egui::vec2(CONTENT_MARGIN_X_PT, CONTENT_MARGIN_Y_PT) * factor
+}
+
+/// Ink for echoed formula content, matching the page's math tone.
+const MATH_INK: Color32 = Color32::from_rgb(25, 55, 75);
+/// Ink for echoed body text.
+const BODY_INK: Color32 = Color32::from_rgb(25, 55, 75);
+
+/// Extra leading between echoed lines, as a multiple of the font size.
+const LINE_SPACING: f32 = 1.45;
+/// Horizontal content origin inside the page, in typst pt.
+const CONTENT_MARGIN_X_PT: f32 = 70.87;
+/// Vertical content origin inside the page, in typst pt.
+const CONTENT_MARGIN_Y_PT: f32 = 72.0;
+/// Offset of the second pass that stands in for a bolder face, in pixels.
+const BOLD_OFFSET_PX: f32 = 0.6;

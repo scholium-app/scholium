@@ -372,29 +372,6 @@ fn reflow_follows_caret_to_new_page_and_source_location_sets_same_cursor() {
     assert_eq!(editor.target_page(&snapshot, &pages, &[]), None);
 }
 
-/// Compile `snapshot` and install its geometry as the shown revision.
-///
-/// Real glyph boxes are needed for hit testing; synthetic rectangles would not
-/// reproduce the byte spans the crash depends on.
-fn compile_into(state: &mut WorkspaceState, snapshot: &scholium_model::DocumentSnapshot) {
-    let mut compiler = scholium_typst::PreviewCompiler::spawn();
-    compiler.submit_snapshot(snapshot);
-    // Cold system-font discovery varies with the host and concurrent test load.
-    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(60);
-    while std::time::Instant::now() < deadline {
-        if let Some(scholium_typst::PreviewEvent::Compiled(outcome)) = compiler.poll() {
-            assert!(outcome.error.is_none(), "{:?}", outcome.error);
-            state.preview.geometry = outcome.geometry;
-            state.preview.compiled = Some(outcome.revision);
-            state.preview.shown = Some(outcome.revision);
-            state.preview.page_index = Some(0);
-            return;
-        }
-        std::thread::sleep(std::time::Duration::from_millis(25));
-    }
-    panic!("compiler did not return within the deadline");
-}
-
 #[test]
 fn stale_click_and_typing_in_one_frame_never_panics_and_keep_their_own_effects() {
     // Routine regression for the b13 crash, not an opt-in contract: report 0046

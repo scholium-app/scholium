@@ -8,7 +8,7 @@
 //! [`BlockEdit::ReplaceRange`]: scholium_model::BlockEdit::ReplaceRange
 use super::{Caret, Evaluated, RangeEdge, Selection};
 use crate::page_editor::caret::{self, clamp, position_of};
-use scholium_model::{Block, DocumentSnapshot};
+use scholium_model::{Block, DocumentSnapshot, Inline};
 
 /// Escape literal text so it stays text when the markup is parsed back.
 ///
@@ -80,19 +80,142 @@ pub(super) fn replace_range(
             ..start
         }
     });
+    let markup_text = if markup {
+        replacement.to_owned()
+    } else {
+        escape(replacement)
+    };
     Some(Evaluated {
         first,
         last,
         start: RangeEdge::At(start),
         end: RangeEdge::At(end),
-        markup: if markup {
-            replacement.to_owned()
-        } else {
-            escape(replacement)
-        },
+        content: replaced_content(&head, start, end, first == last, replacement, markup),
+        markup: markup_text,
         caret,
         caret_block_offset: None,
     })
+}
+
+/// The replaced block's content as structure, for the echo layer.
+///
+/// Same-block edits keep every node outside the range and substitute the
+/// replacement in place. A cross-block edit joins the head prefix to the tail
+/// suffix, which is what a spanning selection produces.
+fn replaced_content(
+    head: &Block,
+    start: Caret,
+    end: Caret,
+    same_block: bool,
+    replacement: &str,
+    replacement_is_markup: bool,
+) -> Vec<Block> {
+    let inserted = inserted_nodes(replacement, replacement_is_markup);
+    let content = if same_block {
+        splice_inline(&head.content, start, end, inserted)
+    } else {
+        // Crossing blocks: the echo only claims the head block, and the
+        // following blocks are re-projected by the next compile.
+        head.content.clone()
+    };
+    vec![Block {
+        node: head.node,
+        kind: head.kind,
+        content,
+    }]
+}
+
+/// Substitute `inserted` for the range `start..end` inside one inline sequence.
+fn splice_inline(
+    content: &[Inline],
+    start: Caret,
+    end: Caret,
+    inserted: Vec<Inline>,
+) -> Vec<Inline> {
+    let mut out: Vec<Inline> = Vec::new();
+    for node in content.iter().take(start.inline.min(content.len())) {
+        out.push(node.clone());
+    }
+    // A caret at the block end (or in an empty block) has no node to split; the
+    // insertion simply appends, which is how the session parses it back.
+    if start.inline >= content.len() {
+        out.extend(inserted);
+        return merge_text(out);
+    }
+    if let Some(node) = content.get(start.inline)
+        && let Some(source) = node_text(node)
+    {
+        // Keep the part of the addressed node before the range start, so typing
+        // mid-word echoes the whole word rather than only what was added.
+        let keep = &source[..start.offset.min(source.len())];
+        if !keep.is_empty() {
+            out.push(rewrite(node, keep));
+        }
+    }
+    out.extend(inserted);
+    let tail_from = if start.inline == end.inline {
+        start.inline
+    } else {
+        end.inline
+    };
+    if let Some(node) = content.get(tail_from)
+        && let Some(source) = node_text(node)
+    {
+        let keep = &source[end.offset.min(source.len())..];
+        if !keep.is_empty() {
+            out.push(rewrite(node, keep));
+        }
+    }
+    for node in content.iter().skip(tail_from + 1) {
+        out.push(node.clone());
+    }
+    merge_text(out)
+}
+
+/// Coalesce adjacent plain text so the echo does not paint fragmented runs.
+fn merge_text(nodes: Vec<Inline>) -> Vec<Inline> {
+    let mut out: Vec<Inline> = Vec::new();
+    for node in nodes {
+        if let (Some(Inline::Text(tail)), Inline::Text(head)) = (out.last_mut(), &node) {
+            tail.push_str(head);
+            continue;
+        }
+        if matches!(&node, Inline::Text(text) if text.is_empty()) {
+            continue;
+        }
+        out.push(node);
+    }
+    out
+}
+
+/// Nodes a replacement contributes: parsed when it is markup, literal otherwise.
+///
+/// Markup cannot be interpreted here — that would need a parser, and the echo
+/// must not become a second authority on the markup grammar. Paste therefore
+/// echoes the raw text; the next compile replaces it with the real structure.
+fn inserted_nodes(replacement: &str, is_markup: bool) -> Vec<Inline> {
+    if replacement.is_empty() {
+        return Vec::new();
+    }
+    let _ = is_markup;
+    vec![Inline::Text(replacement.to_owned())]
+}
+
+/// Source of one inline node.
+fn node_text(node: &Inline) -> Option<&str> {
+    match node {
+        Inline::Text(t) | Inline::Math(t) | Inline::Strong(t) | Inline::Emphasis(t) => Some(t),
+    }
+}
+
+/// Same node variant with new source text.
+fn rewrite(node: &Inline, source: &str) -> Inline {
+    match node {
+        Inline::Text(_) => Inline::Text(source.into()),
+        Inline::Math(_) => Inline::Math(source.into()),
+        Inline::Strong(_) => Inline::Strong(source.into()),
+        Inline::Emphasis(_) => Inline::Emphasis(source.into()),
+    }
 }
 
 /// Caret one inserted string to the right of `at`.

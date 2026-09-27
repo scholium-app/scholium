@@ -8,6 +8,7 @@
 //! [`Caret`]: super::caret::Caret
 use super::Cell;
 use super::render::caret_rect;
+use scholium_model::DocumentSnapshot;
 use unicode_segmentation::UnicodeSegmentation;
 
 /// Nearest glyph boundary in `cells` beyond `at`, by byte offset.
@@ -63,6 +64,25 @@ pub(super) fn line_end(at: usize, cells: &[Cell], end: bool) -> Option<usize> {
     } else {
         line.map(|cell| cell.range.start).min()
     }
+}
+
+/// Extend a line-edge position to the whole block it belongs to.
+///
+/// Glyph boxes cover what the compiler *drew*, which excludes projection syntax
+/// and padding: a display formula `$ alpha/2 $` yields glyphs for `alpha/2`
+/// only. Home/End therefore used to stop at the visible glyphs and leave the
+/// caret *inside* the formula, so a following Enter split it in two
+/// (native `display-enter`). The line edge is the block edge: reaching it means
+/// the caret leaves the formula rather than cutting it.
+pub(super) fn block_edge(snapshot: &DocumentSnapshot, at: usize, end: bool) -> Option<usize> {
+    let base = super::buffer::position(snapshot, at)?;
+    let index = snapshot
+        .blocks
+        .iter()
+        .position(|block| block.node == base.block)?;
+    let start = super::render::block_start(snapshot, index)?;
+    let width = snapshot.blocks.get(index)?.markup_text().len();
+    Some(if end { start + width } else { start })
 }
 
 /// Glyph boundary one line above or below `at`, preferring the same column.

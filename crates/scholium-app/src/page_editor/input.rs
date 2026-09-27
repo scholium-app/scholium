@@ -239,6 +239,7 @@ fn dispatch(
         state.edit_shifts.push(shift);
     }
     editor.pending_buffer = command::joined_after(snapshot, &evaluated);
+    editor.pending_content = Some(evaluated.content.clone());
     // A split names its caret by block position, not identity: the tail block
     // does not exist until the session creates it. Record the offset against
     // this request so the caret is installed from the answered revision.
@@ -413,12 +414,17 @@ fn key_event(
             }
         }
         Key::Home | Key::End => {
-            let text = super::buffer::text(snapshot);
-            line_end(at, cells, key == Key::End).unwrap_or(if key == Key::End {
-                text.len()
-            } else {
-                0
-            })
+            let end = key == Key::End;
+            // The block edge, not the last painted glyph: a display formula's
+            // glyphs stop before its padding, and ending the line there would
+            // leave the caret inside the formula (native `display-enter`).
+            super::caret_move::block_edge(snapshot, at, end)
+                .or_else(|| line_end(at, cells, end))
+                .unwrap_or(if end {
+                    super::buffer::text(snapshot).len()
+                } else {
+                    0
+                })
         }
         Key::ArrowUp | Key::ArrowDown => vertical(at, cells, key == Key::ArrowDown).unwrap_or(at),
         _ => return false,
