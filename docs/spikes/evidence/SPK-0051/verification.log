@@ -1,0 +1,21 @@
+PASS bootstrap.log
+PASS kernel.log
+PASS stock-full.log
+PASS stock_pixels_full: (880, 55), changed=0
+PASS stock-nested.log
+PASS stock_pixels_nested: (880, 55), changed=0
+PASS stock-mixed.log
+PASS stock_pixels_mixed: (880, 60), changed=0
+PASS stock-ligature.log
+PASS stock_pixels_ligature: (880, 54), changed=0
+PASS stock-rtl.log
+PASS stock_pixels_rtl: (880, 54), changed=0
+PASS stock-bidi.log
+PASS stock_pixels_bidi: (880, 55), changed=0
+PASS stock-long.log
+PASS stock_pixels_long: (880, 1085), changed=0
+PASS stock-empty.log
+PASS stock_pixels_empty: (880, 54), changed=0
+PASS stock-lines.log
+PASS stock_pixels_lines: (880, 113), changed=0
+PASS scoped_kernel_and_stock_comparison

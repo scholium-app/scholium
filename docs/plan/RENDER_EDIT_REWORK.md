@@ -6,6 +6,10 @@
 2026-09-25 的代码评审；后者记录在[开发日志](../log/render-edit-review.md)。
 本页只定义要做什么与什么算通过，不声称任何条目已实现。
 
+后续深改 Typst 的路线与验收见[Typst 编辑内核计划](TYPST_EDIT_KERNEL.md)和
+[ADR 0032 提案](../adr/ADR-0032-typst-edit-kernel.md)。该方向要求输入期布局与交互几何
+共同由 Typst 产生；本页 R4 的临时文字覆盖不能作为其最终编辑方案。
+
 ## 问题陈述（按证据）
 
 1. **模糊**：页面以固定 2 px/pt 光栅化（`scholium-typst` 的 `PIXELS_PER_PT`），再按任意

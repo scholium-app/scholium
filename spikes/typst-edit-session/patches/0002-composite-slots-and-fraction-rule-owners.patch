@@ -1,0 +1,262 @@
+diff --git a/crates/typst-layout/src/math/fraction.rs b/crates/typst-layout/src/math/fraction.rs
+index 694ee4f..fcc8c0a 100644
+--- a/crates/typst-layout/src/math/fraction.rs
++++ b/crates/typst-layout/src/math/fraction.rs
+@@ -80,6 +80,14 @@ pub fn layout_fraction(
+             None => Geometry::Line(Point::with_x(line_width))
+                 .stroked(FixedStroke::from_pair(text_fill, thickness)),
+         };
++        #[cfg(feature = "editor")]
++        if let Some(origin) = props.edit_origin {
++            frame.attach_edit_decoration(
++                origin,
++                line_pos - Point::with_y(thickness / 2.0),
++                Size::new(line_width, thickness),
++            );
++        }
+         frame.push(line_pos, FrameItem::Shape(line, props.span));
+         frame
+     } else {
+diff --git a/crates/typst-layout/src/math/fragment/glyph.rs b/crates/typst-layout/src/math/fragment/glyph.rs
+index fcaca16..f6b3d59 100644
+--- a/crates/typst-layout/src/math/fragment/glyph.rs
++++ b/crates/typst-layout/src/math/fragment/glyph.rs
+@@ -28,6 +28,8 @@ const MAX_REPEATS: usize = 1024;
+ pub struct GlyphFragment {
+     #[cfg(feature = "editor")]
+     edit_origin: Option<typst_library::editor::EditOrigin>,
++    #[cfg(feature = "editor")]
++    edit_slot: Option<typst_library::editor::EditOrigin>,
+     // Text stuff.
+     pub(super) item: TextItem,
+     // Math stuff.
+@@ -102,6 +104,7 @@ impl GlyphFragment {
+         #[cfg(feature = "editor")]
+         {
+             glyph.edit_origin = props.edit_origin;
++            glyph.edit_slot = props.edit_slot;
+         }
+         Some(glyph)
+     }
+@@ -181,6 +184,8 @@ impl GlyphFragment {
+         let mut fragment = Self {
+             #[cfg(feature = "editor")]
+             edit_origin: None,
++            #[cfg(feature = "editor")]
++            edit_slot: None,
+             item,
+             // Math
+             math_size,
+@@ -268,6 +273,10 @@ impl GlyphFragment {
+         if let Some(origin) = self.edit_origin {
+             frame.attach_edit_origin(origin);
+         }
++        #[cfg(feature = "editor")]
++        if let Some(slot) = self.edit_slot {
++            frame.attach_edit_origin(slot);
++        }
+         frame
+     }
+ 
+diff --git a/crates/typst-layout/src/math/fragment/mod.rs b/crates/typst-layout/src/math/fragment/mod.rs
+index 1163fe4..b7f30de 100644
+--- a/crates/typst-layout/src/math/fragment/mod.rs
++++ b/crates/typst-layout/src/math/fragment/mod.rs
+@@ -236,6 +236,10 @@ impl FrameFragment {
+         if let Some(origin) = props.edit_origin {
+             frame.attach_edit_origin(origin);
+         }
++        #[cfg(feature = "editor")]
++        if let Some(slot) = props.edit_slot {
++            frame.attach_edit_origin(slot);
++        }
+         let base_ascent = frame.ascent();
+         let base_descent = frame.descent();
+         let accent_attach = frame.width() / 2.0;
+diff --git a/crates/typst-layout/src/math/mod.rs b/crates/typst-layout/src/math/mod.rs
+index a6f5cd2..4f9dc72 100644
+--- a/crates/typst-layout/src/math/mod.rs
++++ b/crates/typst-layout/src/math/mod.rs
+@@ -429,6 +429,15 @@ impl<'v, 'e> MathContext<'v, 'e> {
+ 
+         let styles = item.styles().unwrap_or(styles);
+         let props = MathProperties::default(styles, Span::detached());
++        #[cfg(feature = "editor")]
++        let props = {
++            let mut props = props;
++            if let MathItem::Component(comp) = item {
++                props.edit_origin = comp.props.edit_origin;
++                props.edit_slot = comp.props.edit_slot;
++            }
++            props
++        };
+         let frame = fragments.into_frame();
+         Ok(FrameFragment::new(&props, styles, frame)
+             .with_text_like(text_like)
+diff --git a/crates/typst-library/src/editor.rs b/crates/typst-library/src/editor.rs
+index ddce5c1..6825dcc 100644
+--- a/crates/typst-library/src/editor.rs
++++ b/crates/typst-library/src/editor.rs
+@@ -20,6 +20,8 @@ pub struct EditOrigin {
+ pub struct EditBounds {
+     /// Structural owner and slot.
+     pub origin: EditOrigin,
++    /// Whether this extent belongs to a printed decoration instead of content.
++    pub decoration: bool,
+     /// Top-left point in the frame.
+     pub position: Point,
+     /// Layout extent, including an empty slot's reserved area.
+diff --git a/crates/typst-library/src/foundations/content/mod.rs b/crates/typst-library/src/foundations/content/mod.rs
+index 039f9f1..e11625a 100644
+--- a/crates/typst-library/src/foundations/content/mod.rs
++++ b/crates/typst-library/src/foundations/content/mod.rs
+@@ -97,6 +97,19 @@ impl Content {
+         self.0.meta().edit_origin
+     }
+ 
++    /// Attach the containing mathematical slot without replacing the node identity.
++    #[cfg(feature = "editor")]
++    pub fn with_edit_slot(mut self, slot: crate::editor::EditOrigin) -> Self {
++        self.0.meta_mut().edit_slot = Some(slot);
++        self
++    }
++
++    /// The containing mathematical slot, separate from the node's own identity.
++    #[cfg(feature = "editor")]
++    pub fn edit_slot(&self) -> Option<crate::editor::EditOrigin> {
++        self.0.meta().edit_slot
++    }
++
+     /// Creates a new content from an element.
+     pub fn new<T: NativeElement>(elem: T) -> Self {
+         Self(raw::RawContent::new(elem))
+diff --git a/crates/typst-library/src/foundations/content/raw.rs b/crates/typst-library/src/foundations/content/raw.rs
+index f95c96a..ec909ed 100644
+--- a/crates/typst-library/src/foundations/content/raw.rs
++++ b/crates/typst-library/src/foundations/content/raw.rs
+@@ -79,6 +79,8 @@ pub(super) struct Meta {
+     /// Opaque structural identity, included in the metadata hash.
+     #[cfg(feature = "editor")]
+     pub edit_origin: Option<crate::editor::EditOrigin>,
++    #[cfg(feature = "editor")]
++    pub edit_slot: Option<crate::editor::EditOrigin>,
+     /// An optional label attached to the element.
+     pub label: Option<Label>,
+     /// The element's location which identifies it in the laid-out output.
+@@ -101,6 +103,8 @@ impl RawContent {
+                 location: None,
+                 #[cfg(feature = "editor")]
+                 edit_origin: None,
++                #[cfg(feature = "editor")]
++                edit_slot: None,
+                 lifecycle: SmallBitSet::new(),
+             },
+             HashLock::new(),
+@@ -359,7 +363,9 @@ impl Drop for RawContent {
+ impl PartialEq for RawContent {
+     fn eq(&self, other: &Self) -> bool {
+         #[cfg(feature = "editor")]
+-        if self.meta().edit_origin != other.meta().edit_origin {
++        if self.meta().edit_origin != other.meta().edit_origin
++            || self.meta().edit_slot != other.meta().edit_slot
++        {
+             return false;
+         }
+         let Some(handle) = self.handle_pair(other) else { return false };
+diff --git a/crates/typst-library/src/layout/frame.rs b/crates/typst-library/src/layout/frame.rs
+index a052884..e50eb52 100644
+--- a/crates/typst-library/src/layout/frame.rs
++++ b/crates/typst-library/src/layout/frame.rs
+@@ -168,11 +168,29 @@ impl Frame {
+     pub fn attach_edit_origin(&mut self, origin: crate::editor::EditOrigin) {
+         self.edit_bounds.push(crate::editor::EditBounds {
+             origin,
++            decoration: false,
+             position: Point::zero(),
+             size: self.size,
+             baseline: self.baseline(),
+         });
+     }
++
++    /// Record a printed decoration's owner and extent in frame-local points.
++    #[cfg(feature = "editor")]
++    pub fn attach_edit_decoration(
++        &mut self,
++        origin: crate::editor::EditOrigin,
++        position: Point,
++        size: Size,
++    ) {
++        self.edit_bounds.push(crate::editor::EditBounds {
++            origin,
++            decoration: true,
++            position,
++            size,
++            baseline: self.baseline(),
++        });
++    }
+ }
+ 
+ /// Insert items and subframes.
+diff --git a/crates/typst-library/src/math/ir/item.rs b/crates/typst-library/src/math/ir/item.rs
+index 12357e9..df185c7 100644
+--- a/crates/typst-library/src/math/ir/item.rs
++++ b/crates/typst-library/src/math/ir/item.rs
+@@ -425,6 +425,9 @@ pub struct MathProperties {
+     /// Caller-owned identity propagated through mathematical realization.
+     #[cfg(feature = "editor")]
+     pub edit_origin: Option<crate::editor::EditOrigin>,
++    /// The containing slot, retained independently from the component identity.
++    #[cfg(feature = "editor")]
++    pub edit_slot: Option<crate::editor::EditOrigin>,
+     /// How attachments should be positioned.
+     pub(crate) limits: Limits,
+     /// The math class.
+@@ -455,6 +458,8 @@ impl MathProperties {
+             limits: Limits::Never,
+             #[cfg(feature = "editor")]
+             edit_origin: None,
++            #[cfg(feature = "editor")]
++            edit_slot: None,
+             class,
+             size: styles.get(EquationElem::size),
+             cramped: styles.get(EquationElem::cramped),
+diff --git a/crates/typst-library/src/math/ir/resolve.rs b/crates/typst-library/src/math/ir/resolve.rs
+index 6fd5c2c..f668923 100644
+--- a/crates/typst-library/src/math/ir/resolve.rs
++++ b/crates/typst-library/src/math/ir/resolve.rs
+@@ -112,15 +112,26 @@ impl<'a, 'v, 'e> MathResolver<'a, 'v, 'e> {
+         let start = self.resolve_into_items(elem, styles)?;
+         let len = self.items.len() - start;
+ 
+-        // Don't emit standalone linebreaks or alignment points.
+-        if len == 1 && matches!(self.items.last(), Some(RawMathItem::Item(_))) {
+-            return Ok(self.items.pop().unwrap().into_item().unwrap());
+-        }
+-
+-        Ok(match process_group(self.items.drain(start..), styles, false, true, false) {
+-            GroupResult::Multiline(rows) => MultilineItem::create(rows, styles),
+-            GroupResult::Flat(items) => MathItem::wrap(items, styles),
+-        })
++        // Keep the original single-item/group semantics, then bind the slot to
++        // the entire resolved component (not each child's node identity).
++        let item = if len == 1 && matches!(self.items.last(), Some(RawMathItem::Item(_)))
++        {
++            self.items.pop().unwrap().into_item().unwrap()
++        } else {
++            match process_group(self.items.drain(start..), styles, false, true, false) {
++                GroupResult::Multiline(rows) => MultilineItem::create(rows, styles),
++                GroupResult::Flat(items) => MathItem::wrap(items, styles),
++            }
++        };
++        #[cfg(feature = "editor")]
++        let item = {
++            let mut item = item;
++            if let MathItem::Component(comp) = &mut item {
++                comp.props.edit_slot = elem.edit_slot();
++            }
++            item
++        };
++        Ok(item)
+     }
+ 
+     /// Resolve arbitrary content.

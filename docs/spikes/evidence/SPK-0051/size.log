@@ -1,0 +1,16 @@
+spikes/typst-edit-session/src/main.rs: 133 lines
+spikes/typst-edit-session/src/editing.rs: 250 lines
+spikes/typst-edit-session/src/kernel.rs: 142 lines
+spikes/typst-edit-session/src/geometry.rs: 158 lines
+spikes/typst-edit-session/src/cases.rs: 45 lines
+spikes/typst-edit-session/src/text_geometry.rs: 161 lines
+spikes/typst-edit-session/src/window.rs: 21 lines
+spikes/typst-edit-session/src/native.rs: 180 lines
+spikes/typst-edit-session/src/editing/advanced.rs: 46 lines
+spikes/typst-edit-session/src/native/projection.rs: 85 lines
+spikes/typst-edit-session/src/native/fixture.rs: 56 lines
+spikes/typst-edit-session/src/native/worker.rs: 82 lines
+spikes/typst-edit-session/src/native/input.rs: 211 lines
+spikes/typst-edit-session/src/native/tests.rs: 101 lines
+spikes/typst-edit-session/src/native/paint.rs: 103 lines
+PASS new spike files <=600 lines and functions <=60 lines

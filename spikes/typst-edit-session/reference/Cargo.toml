@@ -1,0 +1,25 @@
+[package]
+name = "typst-edit-reference"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[workspace]
+
+# Compile the identical fixture and World against unmodified published Typst.
+[[bin]]
+name = "typst-edit-reference"
+path = "../src/main.rs"
+
+[lints.rust]
+# Shared fixture source contains editor-only code; this reference never enables it.
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(feature, values("editor"))'] }
+
+[dependencies]
+comemo = "=0.5.1"
+typst = "=0.15.1"
+typst-kit = { version = "=0.15.1", features = ["embedded-fonts", "scan-fonts"] }
+typst-layout = "=0.15.1"
+typst-render = "=0.15.1"

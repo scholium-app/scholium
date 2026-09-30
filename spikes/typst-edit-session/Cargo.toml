@@ -1,0 +1,48 @@
+[package]
+name = "typst-edit-session"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+license = "MIT OR Apache-2.0"
+publish = false
+default-run = "typst-edit-session"
+
+[workspace]
+exclude = [".vendor/typst", ".vendor/typst/crates/*"]
+
+[features]
+default = ["editor"]
+editor = ["typst-layout/editor"]
+native = ["editor", "dep:eframe", "dep:scholium-spike-core", "dep:serde_json"]
+
+[[bin]]
+name = "typst-edit-window"
+path = "src/window.rs"
+required-features = ["native"]
+
+[dependencies]
+comemo = "=0.5.1"
+unicode-segmentation = "=1.13.3"
+thiserror = "=2.0.20"
+eframe = { version = "=0.36.2", optional = true, default-features = false, features = ["default_fonts", "glow", "x11", "wayland"] }
+scholium-spike-core = { path = "../native-ui/core", optional = true }
+serde_json = { version = "=1.0.151", optional = true }
+typst = "=0.15.1"
+typst-kit = { version = "=0.15.1", features = ["embedded-fonts", "scan-fonts"] }
+typst-layout = "=0.15.1"
+typst-render = "=0.15.1"
+
+[patch.crates-io]
+typst = { path = ".vendor/typst/crates/typst" }
+typst-eval = { path = ".vendor/typst/crates/typst-eval" }
+typst-html = { path = ".vendor/typst/crates/typst-html" }
+typst-kit = { path = ".vendor/typst/crates/typst-kit" }
+typst-layout = { path = ".vendor/typst/crates/typst-layout" }
+typst-library = { path = ".vendor/typst/crates/typst-library" }
+typst-macros = { path = ".vendor/typst/crates/typst-macros" }
+typst-realize = { path = ".vendor/typst/crates/typst-realize" }
+typst-render = { path = ".vendor/typst/crates/typst-render" }
+typst-svg = { path = ".vendor/typst/crates/typst-svg" }
+typst-syntax = { path = ".vendor/typst/crates/typst-syntax" }
+typst-timing = { path = ".vendor/typst/crates/typst-timing" }
+typst-utils = { path = ".vendor/typst/crates/typst-utils" }

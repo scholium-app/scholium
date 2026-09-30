@@ -1,0 +1,53 @@
+{
+  "bincode": {
+    "previous_commit_versions": [
+      "1.3.3"
+    ],
+    "current_versions": [
+      "1.3.3"
+    ]
+  },
+  "paste": {
+    "previous_commit_versions": [
+      "1.0.15"
+    ],
+    "current_versions": [
+      "1.0.15"
+    ]
+  },
+  "quick-xml": {
+    "previous_commit_versions": [
+      "0.38.4",
+      "0.42.0"
+    ],
+    "current_versions": [
+      "0.38.4",
+      "0.41.0",
+      "0.42.0"
+    ]
+  },
+  "rustybuzz": {
+    "previous_commit_versions": [
+      "0.20.1"
+    ],
+    "current_versions": [
+      "0.20.1"
+    ]
+  },
+  "ttf-parser": {
+    "previous_commit_versions": [
+      "0.25.1"
+    ],
+    "current_versions": [
+      "0.25.1"
+    ]
+  },
+  "yaml-rust": {
+    "previous_commit_versions": [
+      "0.4.5"
+    ],
+    "current_versions": [
+      "0.4.5"
+    ]
+  }
+}
