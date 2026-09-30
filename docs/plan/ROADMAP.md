@@ -27,6 +27,7 @@
    后续已补：文本端点跨节点删除、纯文本复制/剪切、源码事务应用与后台预览，见[报告 0016](../spikes/SPK-0016-working-tree-status.md)。
    仍缺槽位端点支持和新路径的真实窗口共同验收；正式渲染质量、增量布局未完成。
 2. Typst 映射 spike：20 页 SDG 生成 Typst、增量编译、NodeId ↔ glyph/preview 双向定位。
+   深改内核的新增验证按[Typst 编辑内核计划](TYPST_EDIT_KERNEL.md)推进；公开 Content 布局入口的限定证据见[报告 0049](../spikes/SPK-0049-typst-content-layout.md)，不能替代完整编辑与增量分页验收。
    编辑画面替换的限定验证与剩余边界见[报告 0028](../spikes/SPK-0028-typst-editor.md)。
    持久编译、局部纹理更新与连续输入验证见[报告 0029](../spikes/SPK-0029-resident-typst-editor.md)。
    常用编辑与 26 页首尾编辑回归见[报告 0030](../spikes/SPK-0030-editing-regression.md)。

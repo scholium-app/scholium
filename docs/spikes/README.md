@@ -8,6 +8,8 @@
 
 ## 规则
 
+新增限定探针：[报告 0049：Typst Content 直接布局](SPK-0049-typst-content-layout.md)，对应深改内核路线的输入入口；不代表完整编辑或增量分页通过。
+
 - 报告按 `SPK-NNNN-short-title.md` 命名，模板见 [SPK-0000-template.md](SPK-0000-template.md)；
   证据文件按报告编号归入 `evidence/SPK-NNNN/`。
 - 报告编号与 `docs/adr/` 的 ADR 编号是**两个独立且重叠的编号空间**（各有自己的 0001 起）。跨引用一律

@@ -12,6 +12,8 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 
 ## 已建立
 
+新增提案：[ADR 0032：Typst 编辑内核](ADR-0032-typst-edit-kernel.md)，验证方向为结构输入、空槽与同源几何；入口证据见[报告 0049](../spikes/SPK-0049-typst-content-layout.md)。
+
 | ADR | 状态 | 当前结论 |
 |---|---|---|
 | [0001：团队单一源码语言与混合项目](ADR-0001-mixed-source-team-editing.md) | Proposed | 用户要求已确认；协调协议、桥接与存储实现待阶段 0 验证 |

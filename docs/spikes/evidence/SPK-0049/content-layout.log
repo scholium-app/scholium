@@ -1,0 +1,8 @@
+   Compiling typst-edit-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session)
+    Finished `release` profile [optimized] target(s) in 0.59s
+     Running `spikes/render-latency/target/release/typst-edit-session`
+typst=0.15.1 profile=release source_evaluation=disabled
+denominator="" glyphs=21 shapes=1 detached=21 width_pt=420.000 height_pt=7.562 fingerprint=b29ce17f062a31621d76d99de31c9b70
+denominator="2" glyphs=22 shapes=1 detached=22 width_pt=420.000 height_pt=7.562 fingerprint=024adf8e0ef212716b4a5fda46835d2b
+local_layout_and_frame_walk_ms p50=0.903 p95=0.938 samples=40
+source_reads=0 PASS public_content_layout_only
