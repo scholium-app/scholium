@@ -1,0 +1,17 @@
+    Checking syntect v5.3.0
+    Checking hayagriva v0.10.1
+    Checking vello_common v0.0.8
+    Checking vello_cpu v0.0.8
+    Checking two-face v0.4.5
+    Checking hayro v0.7.1
+    Checking typst-library v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst-library)
+    Checking typst-layout v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst-layout)
+    Checking typst-eval v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst-eval)
+    Checking typst-kit v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst-kit)
+    Checking typst-svg v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst-svg)
+    Checking typst-render v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst-render)
+    Checking typst-html v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst-html)
+    Checking typst-realize v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst-realize)
+    Checking typst v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst)
+    Checking typst-edit-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session)
+    Finished `release` profile [optimized] target(s) in 10.50s

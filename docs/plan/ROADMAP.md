@@ -29,6 +29,7 @@
 2. Typst 映射 spike：20 页 SDG 生成 Typst、增量编译、NodeId ↔ glyph/preview 双向定位。
    深改内核的新增验证按[Typst 编辑内核计划](TYPST_EDIT_KERNEL.md)推进；公开 Content 布局入口的限定证据见[报告 0049](../spikes/SPK-0049-typst-content-layout.md)，不能替代完整编辑与增量分页验收。
    身份与数学空槽的限定补丁验证见[报告 0050](../spikes/SPK-0050-typst-edit-origin-and-holes.md)；完整映射与光标几何继续按同一计划验收。
+   组合身份、正文插入点与独立原生窗口的限定证据见[报告 0051](../spikes/SPK-0051-typst-caret-native-editor.md)。
    编辑画面替换的限定验证与剩余边界见[报告 0028](../spikes/SPK-0028-typst-editor.md)。
    持久编译、局部纹理更新与连续输入验证见[报告 0029](../spikes/SPK-0029-resident-typst-editor.md)。
    常用编辑与 26 页首尾编辑回归见[报告 0030](../spikes/SPK-0030-editing-regression.md)。

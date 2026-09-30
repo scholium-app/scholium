@@ -1,0 +1,539 @@
+diff --git a/crates/typst-layout/src/inline/collect.rs b/crates/typst-layout/src/inline/collect.rs
+index 2361a89..8f8da1d 100644
+--- a/crates/typst-layout/src/inline/collect.rs
++++ b/crates/typst-layout/src/inline/collect.rs
+@@ -244,6 +244,15 @@ pub fn collect<'a>(
+         };
+ 
+         let len = collector.full.len() - prev_len;
++        #[cfg(feature = "editor")]
++        if let Some(origin) = child.edit_origin()
++            && let Some(elem) = child.to_packed::<TextElem>()
++            && collector.full[prev_len..] == *elem.text
++        {
++            // Case transforms/directional embeddings require an explicit mapping;
++            // do not guess writable offsets for transformed text.
++            collector.spans.edit_ranges.push((prev_len..prev_len + len, origin));
++        }
+         collector.spans.push(len, child.span());
+     }
+ 
+@@ -309,7 +318,11 @@ impl<'a> Collector<'a> {
+ 
+ /// Maps byte offsets back to spans.
+ #[derive(Default)]
+-pub struct SpanMapper(Vec<(usize, Span)>);
++pub struct SpanMapper {
++    spans: Vec<(usize, Span)>,
++    #[cfg(feature = "editor")]
++    edit_ranges: Vec<(Range, typst_library::editor::EditOrigin)>,
++}
+ 
+ impl SpanMapper {
+     /// Create a new span mapper.
+@@ -319,7 +332,20 @@ impl SpanMapper {
+ 
+     /// Push a span for a segment with the given length.
+     pub fn push(&mut self, len: usize, span: Span) {
+-        self.0.push((len, span));
++        self.spans.push((len, span));
++    }
++
++    /// Map only clusters fully contained in an unchanged text leaf.
++    #[cfg(feature = "editor")]
++    pub fn edit_at(
++        &self,
++        cluster: &Range,
++    ) -> Option<(typst_library::editor::EditOrigin, Range)> {
++        self.edit_ranges.iter().find_map(|(range, origin)| {
++            (range.start <= cluster.start && cluster.end <= range.end).then(|| {
++                (*origin, cluster.start - range.start..cluster.end - range.start)
++            })
++        })
+     }
+ 
+     /// Determine the span at the given byte offset.
+@@ -327,7 +353,7 @@ impl SpanMapper {
+     /// May return a detached span.
+     pub fn span_at(&self, offset: usize) -> (Span, u16) {
+         let mut cursor = 0;
+-        for &(len, span) in &self.0 {
++        for &(len, span) in &self.spans {
+             if (cursor..cursor + len).contains(&offset) {
+                 return (span, u16::try_from(offset - cursor).unwrap_or(0));
+             }
+diff --git a/crates/typst-layout/src/inline/editor.rs b/crates/typst-layout/src/inline/editor.rs
+new file mode 100644
+index 0000000..06b39ea
+--- /dev/null
++++ b/crates/typst-layout/src/inline/editor.rs
+@@ -0,0 +1,77 @@
++//! Editor metadata follows the actual shaped advances, including justification.
++
++use typst_library::editor::{EditCaret, EditCluster};
++use typst_library::layout::{Abs, Frame, Point, Size};
++use typst_library::text::Glyph;
++use unicode_segmentation::UnicodeSegmentation;
++
++use super::{ShapedGlyph, ShapedText, SpanMapper};
++
++impl ShapedText<'_> {
++    pub(super) fn build_edit_clusters(
++        &self,
++        frame: &mut Frame,
++        spans: &SpanMapper,
++        shaped: &[ShapedGlyph],
++        glyphs: &[Glyph],
++        pos: Point,
++    ) {
++        let mut cursor = pos.x;
++        let mut start = 0;
++        while start < shaped.len() {
++            let range = &shaped[start].range;
++            let mut end = start + 1;
++            while end < shaped.len() && shaped[end].range == *range {
++                end += 1;
++            }
++            let width: Abs = glyphs[start..end]
++                .iter()
++                .map(|glyph| glyph.x_advance.at(shaped[start].size))
++                .sum();
++            if let Some((origin, bytes)) = spans.edit_at(range)
++                && let Some(text) = range
++                    .start
++                    .checked_sub(self.base)
++                    .zip(range.end.checked_sub(self.base))
++                    .and_then(|(a, b)| self.text.get(a..b))
++            {
++                let rtl = !self.dir.is_positive();
++                let carets = caret_stops(text, bytes.start, width, rtl);
++                frame.attach_edit_cluster(EditCluster {
++                    origin,
++                    range: bytes,
++                    position: Point::new(cursor, pos.y - frame.baseline()),
++                    size: Size::new(width, frame.height()),
++                    baseline: pos.y,
++                    rtl,
++                    carets,
++                });
++            }
++            cursor += width;
++            start = end;
++        }
++    }
++}
++
++// UTF-8 byte stops follow graphemes. Interior ligature stops use a declared
++// proportional fallback; only the two shaped cluster edges are exact.
++fn caret_stops(text: &str, base: usize, width: Abs, rtl: bool) -> Vec<EditCaret> {
++    let offsets: Vec<_> = text
++        .grapheme_indices(true)
++        .map(|(byte, _)| byte)
++        .chain(std::iter::once(text.len()))
++        .collect();
++    let intervals = offsets.len().saturating_sub(1).max(1);
++    offsets
++        .iter()
++        .enumerate()
++        .map(|(index, byte)| {
++            let fraction = index as f64 / intervals as f64;
++            EditCaret {
++                byte: base + byte,
++                offset: width * if rtl { 1.0 - fraction } else { fraction },
++                exact: index == 0 || index == intervals,
++            }
++        })
++        .collect()
++}
+diff --git a/crates/typst-layout/src/inline/line.rs b/crates/typst-layout/src/inline/line.rs
+index a88b7c1..9d83d63 100644
+--- a/crates/typst-layout/src/inline/line.rs
++++ b/crates/typst-layout/src/inline/line.rs
+@@ -29,6 +29,8 @@ const LINE_SEPARATOR: char = '\u{2028}'; // We use LS to distinguish justified b
+ /// line, respectively. But even those can partially reuse previous results when
+ /// the break index is safe-to-break per rustybuzz.
+ pub struct Line<'a> {
++    #[cfg(feature = "editor")]
++    edit_range: Range,
+     /// The items the line is made of.
+     pub items: Items<'a>,
+     /// The exact natural width of the line.
+@@ -44,6 +46,8 @@ impl Line<'_> {
+     /// Create an empty line.
+     pub fn empty() -> Self {
+         Self {
++            #[cfg(feature = "editor")]
++            edit_range: 0..0,
+             items: Items::new(),
+             width: Abs::zero(),
+             justify: false,
+@@ -131,6 +135,8 @@ pub fn line<'a>(
+     pred: Option<&Line<'a>>,
+ ) -> Line<'a> {
+     // The line's full text.
++    #[cfg(feature = "editor")]
++    let edit_range = range.clone();
+     let full = &p.text[range.clone()];
+ 
+     // Whether the line is justified.
+@@ -190,7 +196,14 @@ pub fn line<'a>(
+     // Compute the line's width.
+     let width = items.iter().map(Item::natural_width).sum();
+ 
+-    Line { items, width, justify, dash }
++    Line {
++        #[cfg(feature = "editor")]
++        edit_range,
++        items,
++        width,
++        justify,
++        dash,
++    }
+ }
+ 
+ /// Collects / reshapes all items for the line with the given `range`.
+@@ -632,6 +645,28 @@ pub fn commit(
+         output.push_frame(Point::new(x, y), frame);
+     }
+ 
++    #[cfg(feature = "editor")]
++    if p.text
++        .get(line.edit_range.clone())
++        .is_some_and(|text| text.trim().is_empty())
++        && let Some((origin, range)) =
++            p.spans.edit_at(&(line.edit_range.start..line.edit_range.start))
++    {
++        use typst_library::editor::{EditCaret, EditCluster};
++        output.attach_edit_cluster(EditCluster {
++            origin,
++            range: range.clone(),
++            position: Point::with_x(p.config.align.position(remaining)),
++            size: Size::new(Abs::zero(), output.height()),
++            baseline: output.baseline(),
++            rtl: p.config.dir == Dir::RTL,
++            carets: vec![EditCaret {
++                byte: range.start,
++                offset: Abs::zero(),
++                exact: true,
++            }],
++        });
++    }
+     Ok(output)
+ }
+ 
+diff --git a/crates/typst-layout/src/inline/mod.rs b/crates/typst-layout/src/inline/mod.rs
+index 259be81..6d21320 100644
+--- a/crates/typst-layout/src/inline/mod.rs
++++ b/crates/typst-layout/src/inline/mod.rs
+@@ -2,6 +2,8 @@
+ mod box_;
+ mod collect;
+ mod deco;
++#[cfg(feature = "editor")]
++mod editor;
+ mod finalize;
+ mod line;
+ mod linebreak;
+diff --git a/crates/typst-layout/src/inline/shaping.rs b/crates/typst-layout/src/inline/shaping.rs
+index 36e6698..d842d51 100644
+--- a/crates/typst-layout/src/inline/shaping.rs
++++ b/crates/typst-layout/src/inline/shaping.rs
+@@ -434,6 +434,9 @@ impl<'a> ShapedText<'a> {
+                 })
+                 .collect();
+ 
++            #[cfg(feature = "editor")]
++            self.build_edit_clusters(&mut frame, spans, group, &glyphs, pos);
++
+             let item = TextItem {
+                 font,
+                 size: glyph_size,
+diff --git a/crates/typst-layout/src/math/fragment/glyph.rs b/crates/typst-layout/src/math/fragment/glyph.rs
+index f6b3d59..d860fd8 100644
+--- a/crates/typst-layout/src/math/fragment/glyph.rs
++++ b/crates/typst-layout/src/math/fragment/glyph.rs
+@@ -30,6 +30,10 @@ pub struct GlyphFragment {
+     edit_origin: Option<typst_library::editor::EditOrigin>,
+     #[cfg(feature = "editor")]
+     edit_slot: Option<typst_library::editor::EditOrigin>,
++    #[cfg(feature = "editor")]
++    edit_text: Option<std::ops::Range<usize>>,
++    #[cfg(feature = "editor")]
++    edit_text_origin: Option<typst_library::editor::EditOrigin>,
+     // Text stuff.
+     pub(super) item: TextItem,
+     // Math stuff.
+@@ -186,6 +190,10 @@ impl GlyphFragment {
+             edit_origin: None,
+             #[cfg(feature = "editor")]
+             edit_slot: None,
++            #[cfg(feature = "editor")]
++            edit_text: None,
++            #[cfg(feature = "editor")]
++            edit_text_origin: None,
+             item,
+             // Math
+             math_size,
+@@ -261,13 +269,50 @@ impl GlyphFragment {
+         self.size.y - self.ascent()
+     }
+ 
++    #[cfg(feature = "editor")]
++    pub(crate) fn with_edit_text(
++        mut self,
++        props: &MathProperties,
++        range: std::ops::Range<usize>,
++    ) -> Self {
++        if props.edit_text.is_some() {
++            self.edit_text_origin = props.edit_origin;
++            self.edit_text = Some(range);
++        }
++        self
++    }
++
+     pub(super) fn into_frame(self) -> Frame {
+         let mut frame = Frame::soft(self.size);
++        #[cfg(feature = "editor")]
++        let edit_baseline = self.ascent();
+         frame.set_baseline(self.baseline());
+         frame.push(
+             Point::with_y(self.ascent() + self.shift + self.align),
+             FrameItem::Text(self.item),
+         );
++        #[cfg(feature = "editor")]
++        if let Some(origin) = self.edit_text_origin
++            && let Some(range) = self.edit_text
++        {
++            use typst_library::editor::{EditCaret, EditCluster};
++            frame.attach_edit_cluster(EditCluster {
++                origin,
++                carets: vec![
++                    EditCaret {
++                        byte: range.start,
++                        offset: Abs::zero(),
++                        exact: true,
++                    },
++                    EditCaret { byte: range.end, offset: self.size.x, exact: true },
++                ],
++                range,
++                position: Point::zero(),
++                size: self.size,
++                baseline: edit_baseline,
++                rtl: false,
++            });
++        }
+         frame.modify(&self.modifiers);
+         #[cfg(feature = "editor")]
+         if let Some(origin) = self.edit_origin {
+diff --git a/crates/typst-layout/src/math/text.rs b/crates/typst-layout/src/math/text.rs
+index 57a1738..b028d6e 100644
+--- a/crates/typst-layout/src/math/text.rs
++++ b/crates/typst-layout/src/math/text.rs
+@@ -23,6 +23,14 @@ pub fn layout_text(
+     let text = &item.text;
+     let span = props.span;
+     let elem = TextElem::packed(text).spanned(span);
++    #[cfg(feature = "editor")]
++    let elem = if let Some(origin) = props.edit_origin
++        && props.edit_text == Some((0, text.len()))
++    {
++        elem.with_edit_origin(origin)
++    } else {
++        elem
++    };
+ 
+     // There isn't a natural width for a paragraph in a math environment;
+     // because it will be placed somewhere probably not at the left margin
+@@ -54,8 +62,10 @@ pub fn layout_number(
+     // Small optimization for numbers. Note that this lays out slightly
+     // differently to normal text and is worth re-evaluating in the future.
+     let mut fragments = vec![];
+-    for c in text.chars() {
++    for (_byte, c) in text.char_indices() {
+         if let Some(glyph) = GlyphFragment::synthetic(ctx.engine, styles, c, span) {
++            #[cfg(feature = "editor")]
++            let glyph = glyph.with_edit_text(props, _byte.._byte + c.len_utf8());
+             fragments.push(glyph.into());
+         }
+     }
+diff --git a/crates/typst-library/src/editor.rs b/crates/typst-library/src/editor.rs
+index 6825dcc..915728b 100644
+--- a/crates/typst-library/src/editor.rs
++++ b/crates/typst-library/src/editor.rs
+@@ -33,3 +33,33 @@ pub struct EditBounds {
+ /// A required, empty mathematical input slot. Not registered in the language.
+ #[elem(Mathy)]
+ pub struct EditHoleElem {}
++
++/// A grapheme insertion stop inside a shaped cluster.
++#[derive(Debug, Clone, Hash)]
++pub struct EditCaret {
++    /// UTF-8 byte offset in the caller's text leaf.
++    pub byte: usize,
++    /// Horizontal distance from the cluster's left edge, in points.
++    pub offset: Abs,
++    /// True for shaped cluster edges; false for proportional ligature fallback.
++    pub exact: bool,
++}
++
++/// A shaped cluster's advance geometry, independent of printable glyph ranges.
++#[derive(Debug, Clone, Hash)]
++pub struct EditCluster {
++    /// Stable text leaf identity.
++    pub origin: EditOrigin,
++    /// UTF-8 byte range in the caller's text leaf (not u16 glyph/source offsets).
++    pub range: std::ops::Range<usize>,
++    /// Top-left advance position in the containing frame's local points.
++    pub position: Point,
++    /// Advance width and line metric height, in points.
++    pub size: Size,
++    /// Baseline from the containing frame's top, in points.
++    pub baseline: Abs,
++    /// Whether logical text advances from right to left.
++    pub rtl: bool,
++    /// Insertion stops on grapheme boundaries.
++    pub carets: Vec<EditCaret>,
++}
+diff --git a/crates/typst-library/src/layout/frame.rs b/crates/typst-library/src/layout/frame.rs
+index e50eb52..576bb14 100644
+--- a/crates/typst-library/src/layout/frame.rs
++++ b/crates/typst-library/src/layout/frame.rs
+@@ -19,6 +19,8 @@ pub struct Frame {
+     /// Nonprinting editor metadata, retained with the cached frame.
+     #[cfg(feature = "editor")]
+     edit_bounds: Vec<crate::editor::EditBounds>,
++    #[cfg(feature = "editor")]
++    edit_clusters: Vec<crate::editor::EditCluster>,
+     /// The size of the frame.
+     size: Size,
+     /// The baseline of the frame measured from the top. If this is `None`, the
+@@ -43,6 +45,8 @@ impl Frame {
+         Self {
+             #[cfg(feature = "editor")]
+             edit_bounds: vec![],
++            #[cfg(feature = "editor")]
++            edit_clusters: vec![],
+             size,
+             baseline: None,
+             items: Arc::new(LazyHash::new(vec![])),
+@@ -85,7 +89,7 @@ impl Frame {
+     /// Whether the frame contains no items.
+     pub fn is_empty(&self) -> bool {
+         #[cfg(feature = "editor")]
+-        if !self.edit_bounds.is_empty() {
++        if !self.edit_bounds.is_empty() || !self.edit_clusters.is_empty() {
+             return false;
+         }
+         self.items.is_empty()
+@@ -163,6 +167,18 @@ impl Frame {
+         &self.edit_bounds
+     }
+ 
++    /// Shaped cluster geometry in this frame's local point coordinates.
++    #[cfg(feature = "editor")]
++    pub fn edit_clusters(&self) -> &[crate::editor::EditCluster] {
++        &self.edit_clusters
++    }
++
++    /// Add nonprinting shaped cluster geometry alongside its printable frame.
++    #[cfg(feature = "editor")]
++    pub fn attach_edit_cluster(&mut self, cluster: crate::editor::EditCluster) {
++        self.edit_clusters.push(cluster);
++    }
++
+     /// Record a structural extent without adding printable items.
+     #[cfg(feature = "editor")]
+     pub fn attach_edit_origin(&mut self, origin: crate::editor::EditOrigin) {
+@@ -284,6 +300,13 @@ impl Frame {
+             bounds.baseline += pos.y;
+             bounds
+         }));
++        #[cfg(feature = "editor")]
++        self.edit_clusters.extend(frame.edit_clusters.iter().map(|cluster| {
++            let mut cluster = cluster.clone();
++            cluster.position += pos;
++            cluster.baseline += pos.y;
++            cluster
++        }));
+         // Skip work if there's nothing to do.
+         if frame.items.is_empty() {
+             return;
+@@ -333,7 +356,10 @@ impl Frame {
+     /// Remove all items from the frame.
+     pub fn clear(&mut self) {
+         #[cfg(feature = "editor")]
+-        self.edit_bounds.clear();
++        {
++            self.edit_bounds.clear();
++            self.edit_clusters.clear();
++        }
+         if Arc::strong_count(&self.items) == 1 {
+             Arc::make_mut(&mut self.items).clear();
+         } else {
+@@ -446,6 +472,10 @@ impl Frame {
+ 
+     #[cfg(feature = "editor")]
+     fn translate_edit_bounds(&mut self, offset: Point) {
++        for cluster in &mut self.edit_clusters {
++            cluster.position += offset;
++            cluster.baseline += offset.y;
++        }
+         for bounds in &mut self.edit_bounds {
+             bounds.position += offset;
+             bounds.baseline += offset.y;
+diff --git a/crates/typst-library/src/math/ir/item.rs b/crates/typst-library/src/math/ir/item.rs
+index df185c7..f5709f7 100644
+--- a/crates/typst-library/src/math/ir/item.rs
++++ b/crates/typst-library/src/math/ir/item.rs
+@@ -428,6 +428,9 @@ pub struct MathProperties {
+     /// The containing slot, retained independently from the component identity.
+     #[cfg(feature = "editor")]
+     pub edit_slot: Option<crate::editor::EditOrigin>,
++    /// Unchanged source text range, if mathematical styling preserves its bytes.
++    #[cfg(feature = "editor")]
++    pub edit_text: Option<(usize, usize)>,
+     /// How attachments should be positioned.
+     pub(crate) limits: Limits,
+     /// The math class.
+@@ -460,6 +463,8 @@ impl MathProperties {
+             edit_origin: None,
+             #[cfg(feature = "editor")]
+             edit_slot: None,
++            #[cfg(feature = "editor")]
++            edit_text: None,
+             class,
+             size: styles.get(EquationElem::size),
+             cramped: styles.get(EquationElem::cramped),
+diff --git a/crates/typst-library/src/math/ir/resolve.rs b/crates/typst-library/src/math/ir/resolve.rs
+index f668923..77e6c33 100644
+--- a/crates/typst-library/src/math/ir/resolve.rs
++++ b/crates/typst-library/src/math/ir/resolve.rs
+@@ -337,7 +337,9 @@ fn resolve_text<'a, 'v, 'e>(
+             .chars()
+             .flat_map(|c| to_style(c, MathStyle::select(c, variant, bold, italic)))
+             .collect();
+-        if num {
++        #[cfg(feature = "editor")]
++        let unchanged = styled_text.as_str() == text && elem.text.as_str() == text;
++        let item = if num {
+             NumberItem::create(styled_text, styles, elem.span())
+         } else {
+             TextItem::create(
+@@ -346,7 +348,16 @@ fn resolve_text<'a, 'v, 'e>(
+                 elem.span(),
+                 ctx.locator.next(&elem.span()),
+             )
+-        }
++        };
++        #[cfg(feature = "editor")]
++        let item = {
++            let mut item = item;
++            if unchanged && let MathItem::Component(comp) = &mut item {
++                comp.props.edit_text = Some((0, text.len()));
++            }
++            item
++        };
++        item
+     };
+ 
+     // Strip a single trailing newline.

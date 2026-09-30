@@ -13,6 +13,7 @@ use super::{Counts, ProbeWorld, count, fraction_paragraph, layout, save_frame, t
 #[derive(Debug, Clone)]
 struct Placed {
     origin: EditOrigin,
+    decoration: bool,
     min: [f64; 2],
     max: [f64; 2],
 }
@@ -71,6 +72,7 @@ fn collect(frame: &Frame, transform: Transform, output: &mut Vec<Placed>) {
         let transformed = corners.map(|point| point.transform(transform));
         output.push(Placed {
             origin: bounds.origin,
+            decoration: bounds.decoration,
             min: [
                 transformed
                     .iter()
@@ -116,14 +118,14 @@ fn bounds(frame: &Frame) -> Vec<Placed> {
 fn find(geometry: &[Placed], node: u128, slot: Option<u128>) -> &Placed {
     geometry
         .iter()
-        .find(|item| item.origin.node == node && item.origin.slot == slot)
+        .find(|item| !item.decoration && item.origin.node == node && item.origin.slot == slot)
         .unwrap_or_else(|| panic!("missing geometry node={node} slot={slot:?}: {geometry:?}"))
 }
 
 fn hit(geometry: &[Placed], point: [f64; 2]) -> Option<EditOrigin> {
     geometry
         .iter()
-        .filter(|item| item.origin.slot.is_some() && item.contains(point))
+        .filter(|item| !item.decoration && item.origin.slot.is_some() && item.contains(point))
         .min_by(|a, b| a.area().total_cmp(&b.area()))
         .map(|item| item.origin)
 }
@@ -197,7 +199,7 @@ fn check_transforms(frame: &Frame) {
     shifted.push_frame(offset, frame.clone());
     shifted.transform(Transform::scale(Ratio::new(2.0), Ratio::new(2.0)));
     let after = bounds(&shifted);
-    for item in before {
+    for item in before.into_iter().filter(|item| !item.decoration) {
         let moved = find(&after, item.origin.node, item.origin.slot);
         for axis in 0..2 {
             let shift = if axis == 0 { 30.0 } else { 70.0 };
@@ -209,12 +211,14 @@ fn check_transforms(frame: &Frame) {
 }
 
 fn nested_fixture() -> Content {
-    let inner = formula(300, Some("2"));
+    let inner = formula(300, Some("2")).with_edit_slot(origin(400, Some(11), false));
     let outer = FracElem::new(inner, slot(400, 12, Some("3")))
         .pack()
         .with_edit_origin(origin(400, None, false));
     fraction_paragraph(outer, "结束。")
 }
+
+mod advanced;
 
 pub(super) fn run(mut world: ProbeWorld, directory: Option<&Path>) -> Result<(), String> {
     // Changing the hashed Library mode also invalidates mode-dependent memoized work.
@@ -228,6 +232,7 @@ pub(super) fn run(mut world: ProbeWorld, directory: Option<&Path>) -> Result<(),
     assert!(find(&nested_geometry, 300, Some(12)).area() > 0.0);
     assert!(find(&nested_geometry, 400, None).contains(find(&nested_geometry, 300, None).center()));
     println!("PASS nested_fraction_ownership");
+    advanced::run(&world, &nested)?;
     world.library.editing = false;
     let strict_error = layout(&world, &fixture(100, None)).expect_err("strict mode rejects holes");
     assert!(strict_error.contains("unfilled structural math slot"));

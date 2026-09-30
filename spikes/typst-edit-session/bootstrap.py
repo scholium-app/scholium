@@ -3,6 +3,7 @@
 
 from pathlib import Path
 import subprocess
+import tempfile
 
 ROOT = Path(__file__).resolve().parent
 CHECKOUT = ROOT / ".vendor" / "typst"
@@ -27,13 +28,40 @@ if not CHECKOUT.exists():
     )
 
 assert git("rev-parse", "HEAD").stdout.strip() == REVISION, "unexpected upstream HEAD"
-for patch in sorted((ROOT / "patches").glob("*.patch")):
-    if git("apply", "--reverse", "--check", str(patch), check=False).returncode == 0:
-        print(f"Already applied: {patch.name}")
-        continue
-    result = git("apply", "--check", str(patch), check=False)
-    if result.returncode:
-        raise RuntimeError(f"Cannot apply {patch.name}; preserving checkout edits:\n{result.stderr}")
+patches = sorted((ROOT / "patches").glob("*.patch"))
+paths = {
+    line[6:]
+    for patch in patches
+    for line in patch.read_text().splitlines()
+    if line.startswith("+++ b/")
+}
+
+
+def contents(directory, relative):
+    path = directory / relative
+    return path.read_bytes() if path.exists() else None
+
+
+# Later patches may change earlier context, so a reverse-check of patch 1 alone
+# cannot detect a fully applied series. Compare exact prefix states instead.
+matched = None
+with tempfile.TemporaryDirectory(prefix="typst-edit-bootstrap-") as temporary:
+    expected = Path(temporary)
+    subprocess.run(
+        ["git", "-c", "advice.detachedHead=false", "clone", "--quiet", "--no-hardlinks", str(CHECKOUT), temporary],
+        check=True,
+    )
+    for index in range(len(patches) + 1):
+        if all(contents(expected, path) == contents(CHECKOUT, path) for path in paths):
+            matched = index
+        if index < len(patches):
+            subprocess.run(["git", "-C", temporary, "apply", str(patches[index])], check=True)
+if matched is None:
+    raise RuntimeError("Checkout differs from every patch prefix; preserving existing edits")
+for patch in patches[matched:]:
+    git("apply", "--check", str(patch))
     git("apply", str(patch))
     print(f"Applied: {patch.name}")
+if matched == len(patches):
+    print("Already applied: complete patch series")
 print(f"Pinned Typst ready: {REVISION}")
