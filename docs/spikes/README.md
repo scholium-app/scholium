@@ -9,6 +9,7 @@
 ## 规则
 
 新增限定探针：[报告 0049：Typst Content 直接布局](SPK-0049-typst-content-layout.md)，对应深改内核路线的输入入口；不代表完整编辑或增量分页通过。
+身份与空槽的限定 fork 证据见[报告 0050](SPK-0050-typst-edit-origin-and-holes.md)；仍不代表完整 K1 或产品输入路径通过。
 
 - 报告按 `SPK-NNNN-short-title.md` 命名，模板见 [SPK-0000-template.md](SPK-0000-template.md)；
   证据文件按报告编号归入 `evidence/SPK-NNNN/`。

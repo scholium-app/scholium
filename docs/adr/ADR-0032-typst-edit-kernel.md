@@ -5,6 +5,7 @@
 - 影响模块：model、document、typst adapter、render、app
 - 实施判据：[Typst 编辑内核计划](../plan/TYPST_EDIT_KERNEL.md)
 - 入口证据：[报告 0049](../spikes/SPK-0049-typst-content-layout.md)
+- 身份/空槽限定证据：[报告 0050](../spikes/SPK-0050-typst-edit-origin-and-holes.md)
 
 ## 背景
 
@@ -53,4 +54,3 @@ model 保持唯一权威，Typst 的借用 IR、Content、Frame 均不进入长�
 上游合入对应接口后，以同夹具替换 fork；保持 adapter 合约不泄漏 Typst 内部类型。
 任一步无法通过门禁时停留在独立 spike，保留当前产品与严格输出路径，并报告具体失败范围。
 切换上游版本、替换内核或降低支持子集均须重新测量并记录兼容边界。
-

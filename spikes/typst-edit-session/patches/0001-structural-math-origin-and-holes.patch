@@ -1,0 +1,439 @@
+diff --git a/crates/typst-layout/Cargo.toml b/crates/typst-layout/Cargo.toml
+index 079b11c..5964d4f 100644
+--- a/crates/typst-layout/Cargo.toml
++++ b/crates/typst-layout/Cargo.toml
+@@ -12,6 +12,9 @@ categories = { workspace = true }
+ keywords = { workspace = true }
+ readme = { workspace = true }
+ 
++[features]
++editor = ["typst-library/editor"]
++
+ [dependencies]
+ typst-assets = { workspace = true }
+ typst-library = { workspace = true }
+diff --git a/crates/typst-layout/src/math/fragment/glyph.rs b/crates/typst-layout/src/math/fragment/glyph.rs
+index 77d0259..fcaca16 100644
+--- a/crates/typst-layout/src/math/fragment/glyph.rs
++++ b/crates/typst-layout/src/math/fragment/glyph.rs
+@@ -26,6 +26,8 @@ const MAX_REPEATS: usize = 1024;
+ 
+ #[derive(Clone)]
+ pub struct GlyphFragment {
++    #[cfg(feature = "editor")]
++    edit_origin: Option<typst_library::editor::EditOrigin>,
+     // Text stuff.
+     pub(super) item: TextItem,
+     // Math stuff.
+@@ -97,6 +99,10 @@ impl GlyphFragment {
+             Action::Keep | Action::Fallback => {}
+         }
+ 
++        #[cfg(feature = "editor")]
++        {
++            glyph.edit_origin = props.edit_origin;
++        }
+         Some(glyph)
+     }
+ 
+@@ -173,6 +179,8 @@ impl GlyphFragment {
+         };
+ 
+         let mut fragment = Self {
++            #[cfg(feature = "editor")]
++            edit_origin: None,
+             item,
+             // Math
+             math_size,
+@@ -256,6 +264,10 @@ impl GlyphFragment {
+             FrameItem::Text(self.item),
+         );
+         frame.modify(&self.modifiers);
++        #[cfg(feature = "editor")]
++        if let Some(origin) = self.edit_origin {
++            frame.attach_edit_origin(origin);
++        }
+         frame
+     }
+ 
+diff --git a/crates/typst-layout/src/math/fragment/mod.rs b/crates/typst-layout/src/math/fragment/mod.rs
+index e0a13d0..1163fe4 100644
+--- a/crates/typst-layout/src/math/fragment/mod.rs
++++ b/crates/typst-layout/src/math/fragment/mod.rs
+@@ -230,6 +230,12 @@ pub struct FrameFragment {
+ 
+ impl FrameFragment {
+     pub fn new(props: &MathProperties, styles: StyleChain, frame: Frame) -> Self {
++        #[cfg(feature = "editor")]
++        let mut frame = frame;
++        #[cfg(feature = "editor")]
++        if let Some(origin) = props.edit_origin {
++            frame.attach_edit_origin(origin);
++        }
+         let base_ascent = frame.ascent();
+         let base_descent = frame.descent();
+         let accent_attach = frame.width() / 2.0;
+diff --git a/crates/typst-layout/src/math/mod.rs b/crates/typst-layout/src/math/mod.rs
+index 28a38a5..a6f5cd2 100644
+--- a/crates/typst-layout/src/math/mod.rs
++++ b/crates/typst-layout/src/math/mod.rs
+@@ -571,6 +571,25 @@ fn layout_box(
+     styles: StyleChain,
+     props: &MathProperties,
+ ) -> SourceResult<()> {
++    #[cfg(feature = "editor")]
++    if props.edit_origin.is_some_and(|origin| origin.hole) {
++        let size = styles.resolve(TextElem::size);
++        let (ascent, descent) = ctx.font().edges(
++            typst_library::text::TopEdge::Metric(
++                typst_library::text::TopEdgeMetric::Ascender,
++            ),
++            typst_library::text::BottomEdge::Metric(
++                typst_library::text::BottomEdgeMetric::Descender,
++            ),
++            size,
++            TextEdgeBounds::Zero,
++        );
++        let width = ctx.font().math().space_width.at(size);
++        let mut frame = Frame::soft(Size::new(width, ascent + descent));
++        frame.set_baseline(ascent);
++        ctx.push(FrameFragment::new(props, styles, frame));
++        return Ok(());
++    }
+     let frame = crate::inline::layout_box(
+         item.elem,
+         ctx.engine,
+diff --git a/crates/typst-library/Cargo.toml b/crates/typst-library/Cargo.toml
+index 1bee141..4d22fd8 100644
+--- a/crates/typst-library/Cargo.toml
++++ b/crates/typst-library/Cargo.toml
+@@ -12,6 +12,10 @@ categories = { workspace = true }
+ keywords = { workspace = true }
+ readme = { workspace = true }
+ 
++[features]
++# Experimental structural editing, disabled for normal compilation.
++editor = []
++
+ [dependencies]
+ typst-assets = { workspace = true }
+ typst-macros = { workspace = true }
+diff --git a/crates/typst-library/src/editor.rs b/crates/typst-library/src/editor.rs
+new file mode 100644
+index 0000000..ddce5c1
+--- /dev/null
++++ b/crates/typst-library/src/editor.rs
+@@ -0,0 +1,33 @@
++//! Experimental, opaque structural identity and nonprinting math holes.
++
++use crate::foundations::elem;
++use crate::layout::{Abs, Point, Size};
++use crate::math::Mathy;
++
++/// A caller-owned identity. Neither a source span nor an introspection location.
++#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
++pub struct EditOrigin {
++    /// Stable owning node identity.
++    pub node: u128,
++    /// Stable slot identity, if this is a slot rather than its parent node.
++    pub slot: Option<u128>,
++    /// Whether this slot is incomplete instead of containing regular content.
++    pub hole: bool,
++}
++
++/// Geometry in the containing frame's local point coordinates.
++#[derive(Debug, Copy, Clone, Hash)]
++pub struct EditBounds {
++    /// Structural owner and slot.
++    pub origin: EditOrigin,
++    /// Top-left point in the frame.
++    pub position: Point,
++    /// Layout extent, including an empty slot's reserved area.
++    pub size: Size,
++    /// Baseline measured from the frame top.
++    pub baseline: Abs,
++}
++
++/// A required, empty mathematical input slot. Not registered in the language.
++#[elem(Mathy)]
++pub struct EditHoleElem {}
+diff --git a/crates/typst-library/src/foundations/content/mod.rs b/crates/typst-library/src/foundations/content/mod.rs
+index c40b933..039f9f1 100644
+--- a/crates/typst-library/src/foundations/content/mod.rs
++++ b/crates/typst-library/src/foundations/content/mod.rs
+@@ -84,6 +84,19 @@ use crate::text::UnderlineElem;
+ pub struct Content(raw::RawContent);
+ 
+ impl Content {
++    /// Attach a caller-owned structural identity to this immutable content.
++    #[cfg(feature = "editor")]
++    pub fn with_edit_origin(mut self, origin: crate::editor::EditOrigin) -> Self {
++        self.0.meta_mut().edit_origin = Some(origin);
++        self
++    }
++
++    /// The caller-owned structural identity, if present.
++    #[cfg(feature = "editor")]
++    pub fn edit_origin(&self) -> Option<crate::editor::EditOrigin> {
++        self.0.meta().edit_origin
++    }
++
+     /// Creates a new content from an element.
+     pub fn new<T: NativeElement>(elem: T) -> Self {
+         Self(raw::RawContent::new(elem))
+diff --git a/crates/typst-library/src/foundations/content/raw.rs b/crates/typst-library/src/foundations/content/raw.rs
+index 7eaf9e5..f95c96a 100644
+--- a/crates/typst-library/src/foundations/content/raw.rs
++++ b/crates/typst-library/src/foundations/content/raw.rs
+@@ -76,6 +76,9 @@ struct Header {
+ /// Metadata that elements can hold.
+ #[derive(Clone, Hash)]
+ pub(super) struct Meta {
++    /// Opaque structural identity, included in the metadata hash.
++    #[cfg(feature = "editor")]
++    pub edit_origin: Option<crate::editor::EditOrigin>,
+     /// An optional label attached to the element.
+     pub label: Option<Label>,
+     /// The element's location which identifies it in the laid-out output.
+@@ -96,6 +99,8 @@ impl RawContent {
+             Meta {
+                 label: None,
+                 location: None,
++                #[cfg(feature = "editor")]
++                edit_origin: None,
+                 lifecycle: SmallBitSet::new(),
+             },
+             HashLock::new(),
+@@ -353,6 +358,10 @@ impl Drop for RawContent {
+ 
+ impl PartialEq for RawContent {
+     fn eq(&self, other: &Self) -> bool {
++        #[cfg(feature = "editor")]
++        if self.meta().edit_origin != other.meta().edit_origin {
++            return false;
++        }
+         let Some(handle) = self.handle_pair(other) else { return false };
+         handle
+             .eq()
+diff --git a/crates/typst-library/src/layout/frame.rs b/crates/typst-library/src/layout/frame.rs
+index 29f748f..a052884 100644
+--- a/crates/typst-library/src/layout/frame.rs
++++ b/crates/typst-library/src/layout/frame.rs
+@@ -16,6 +16,9 @@ use crate::visualize::{Color, Curve, FixedStroke, Geometry, Image, Paint, Shape}
+ /// A finished layout with items at fixed positions.
+ #[derive(Default, Clone, Hash)]
+ pub struct Frame {
++    /// Nonprinting editor metadata, retained with the cached frame.
++    #[cfg(feature = "editor")]
++    edit_bounds: Vec<crate::editor::EditBounds>,
+     /// The size of the frame.
+     size: Size,
+     /// The baseline of the frame measured from the top. If this is `None`, the
+@@ -38,6 +41,8 @@ impl Frame {
+     pub fn new(size: Size, kind: FrameKind) -> Self {
+         assert!(size.is_finite());
+         Self {
++            #[cfg(feature = "editor")]
++            edit_bounds: vec![],
+             size,
+             baseline: None,
+             items: Arc::new(LazyHash::new(vec![])),
+@@ -79,6 +84,10 @@ impl Frame {
+ 
+     /// Whether the frame contains no items.
+     pub fn is_empty(&self) -> bool {
++        #[cfg(feature = "editor")]
++        if !self.edit_bounds.is_empty() {
++            return false;
++        }
+         self.items.is_empty()
+     }
+ 
+@@ -147,6 +156,23 @@ impl Frame {
+     pub fn items(&self) -> std::slice::Iter<'_, (Point, FrameItem)> {
+         self.items.iter()
+     }
++
++    /// Structural geometry in this frame's local coordinates.
++    #[cfg(feature = "editor")]
++    pub fn edit_bounds(&self) -> &[crate::editor::EditBounds] {
++        &self.edit_bounds
++    }
++
++    /// Record a structural extent without adding printable items.
++    #[cfg(feature = "editor")]
++    pub fn attach_edit_origin(&mut self, origin: crate::editor::EditOrigin) {
++        self.edit_bounds.push(crate::editor::EditBounds {
++            origin,
++            position: Point::zero(),
++            size: self.size,
++            baseline: self.baseline(),
++        });
++    }
+ }
+ 
+ /// Insert items and subframes.
+@@ -231,6 +257,15 @@ impl Frame {
+ 
+     /// Inline a frame at the given layer.
+     fn inline(&mut self, layer: usize, pos: Point, frame: Frame) {
++        // Preserve metadata even when there are no printable items, without
++        // changing the original grouping and rasterization of ordinary content.
++        #[cfg(feature = "editor")]
++        self.edit_bounds.extend(frame.edit_bounds.iter().map(|bounds| {
++            let mut bounds = *bounds;
++            bounds.position += pos;
++            bounds.baseline += pos.y;
++            bounds
++        }));
+         // Skip work if there's nothing to do.
+         if frame.items.is_empty() {
+             return;
+@@ -279,6 +314,8 @@ impl Frame {
+ impl Frame {
+     /// Remove all items from the frame.
+     pub fn clear(&mut self) {
++        #[cfg(feature = "editor")]
++        self.edit_bounds.clear();
+         if Arc::strong_count(&self.items) == 1 {
+             Arc::make_mut(&mut self.items).clear();
+         } else {
+@@ -302,6 +339,8 @@ impl Frame {
+ 
+     /// Move the baseline and contents of the frame by an offset.
+     pub fn translate(&mut self, offset: Point) {
++        #[cfg(feature = "editor")]
++        self.translate_edit_bounds(offset);
+         if !offset.is_zero() {
+             if let Some(baseline) = &mut self.baseline {
+                 *baseline += offset.y;
+@@ -314,6 +353,8 @@ impl Frame {
+ 
+     /// Move the contents of the frame without changing the baseline.
+     pub fn translate_visual(&mut self, offset: Point) {
++        #[cfg(feature = "editor")]
++        self.translate_edit_bounds(offset);
+         if !offset.is_zero() {
+             for (point, _) in Arc::make_mut(&mut self.items).iter_mut() {
+                 *point += offset;
+@@ -384,6 +425,14 @@ impl Frame {
+         wrapper.push(Point::zero(), FrameItem::Group(group));
+         *self = wrapper;
+     }
++
++    #[cfg(feature = "editor")]
++    fn translate_edit_bounds(&mut self, offset: Point) {
++        for bounds in &mut self.edit_bounds {
++            bounds.position += offset;
++            bounds.baseline += offset.y;
++        }
++    }
+ }
+ 
+ /// Tools for debugging.
+diff --git a/crates/typst-library/src/lib.rs b/crates/typst-library/src/lib.rs
+index 21d733e..e972bf8 100644
+--- a/crates/typst-library/src/lib.rs
++++ b/crates/typst-library/src/lib.rs
+@@ -13,6 +13,8 @@
+ extern crate self as typst_library;
+ 
+ pub mod diag;
++#[cfg(feature = "editor")]
++pub mod editor;
+ pub mod engine;
+ pub mod foundations;
+ pub mod introspection;
+@@ -180,6 +182,9 @@ pub struct Library {
+     pub std: Binding,
+     /// In-development features that were enabled.
+     pub features: Features,
++    /// Allow incomplete structural math input. Strict libraries leave this false.
++    #[cfg(feature = "editor")]
++    pub editing: bool,
+ }
+ 
+ /// Configurable builder for the standard library.
+@@ -230,6 +235,8 @@ impl LibraryBuilder {
+             rules: (self.routines.rules)(),
+             std: Binding::detached(global),
+             features: self.features,
++            #[cfg(feature = "editor")]
++            editing: false,
+         }
+     }
+ }
+diff --git a/crates/typst-library/src/math/ir/item.rs b/crates/typst-library/src/math/ir/item.rs
+index 9848055..12357e9 100644
+--- a/crates/typst-library/src/math/ir/item.rs
++++ b/crates/typst-library/src/math/ir/item.rs
+@@ -422,6 +422,9 @@ pub enum MathKind<'a> {
+ /// Shared properties for all layoutable math components.
+ #[derive(Debug, Copy, Clone)]
+ pub struct MathProperties {
++    /// Caller-owned identity propagated through mathematical realization.
++    #[cfg(feature = "editor")]
++    pub edit_origin: Option<crate::editor::EditOrigin>,
+     /// How attachments should be positioned.
+     pub(crate) limits: Limits,
+     /// The math class.
+@@ -450,6 +453,8 @@ impl MathProperties {
+     fn new(styles: StyleChain, class: Option<MathClass>, span: Span) -> MathProperties {
+         Self {
+             limits: Limits::Never,
++            #[cfg(feature = "editor")]
++            edit_origin: None,
+             class,
+             size: styles.get(EquationElem::size),
+             cramped: styles.get(EquationElem::cramped),
+diff --git a/crates/typst-library/src/math/ir/resolve.rs b/crates/typst-library/src/math/ir/resolve.rs
+index ff3692a..6fd5c2c 100644
+--- a/crates/typst-library/src/math/ir/resolve.rs
++++ b/crates/typst-library/src/math/ir/resolve.rs
+@@ -139,7 +139,17 @@ impl<'a, 'v, 'e> MathResolver<'a, 'v, 'e> {
+         )?;
+ 
+         for (elem, styles) in pairs {
++            #[cfg(feature = "editor")]
++            let start = self.items.len();
+             resolve_realized(elem, self, styles)?;
++            #[cfg(feature = "editor")]
++            if let Some(origin) = elem.edit_origin() {
++                for raw in &mut self.items[start..] {
++                    if let RawMathItem::Item(MathItem::Component(comp)) = raw {
++                        comp.props.edit_origin = Some(origin);
++                    }
++                }
++            }
+         }
+ 
+         Ok(())
+@@ -152,6 +162,28 @@ fn resolve_realized<'a, 'v, 'e>(
+     ctx: &mut MathResolver<'a, 'v, 'e>,
+     styles: StyleChain<'a>,
+ ) -> SourceResult<()> {
++    #[cfg(feature = "editor")]
++    if elem.is::<crate::editor::EditHoleElem>() {
++        if !ctx.engine.library.editing {
++            crate::diag::bail!(elem.span(), "unfilled structural math slot");
++        }
++        if !elem
++            .edit_origin()
++            .is_some_and(|origin| origin.hole && origin.slot.is_some())
++        {
++            crate::diag::bail!(
++                elem.span(),
++                "math hole requires a structural slot identity"
++            );
++        }
++        // Reuse the boxed math branch; the editor-aware layout supplies its metrics.
++        let boxed = ctx.store(BoxElem::new().pack());
++        // The stored content was packed from BoxElem immediately above.
++        let boxed = boxed.to_packed::<BoxElem>().unwrap();
++        let locator = ctx.locator.next(&elem.span());
++        ctx.push(BoxItem::create(boxed, styles, locator));
++        return Ok(());
++    }
+     if let Some(elem) = elem.to_packed::<SymbolElem>() {
+         resolve_symbol(elem, ctx, styles)?;
+     } else if elem.is::<SpaceElem>() {

@@ -7,10 +7,30 @@ license = "MIT OR Apache-2.0"
 publish = false
 
 [workspace]
+exclude = [".vendor/typst", ".vendor/typst/crates/*"]
+
+[features]
+default = ["editor"]
+editor = ["typst-layout/editor"]
 
 [dependencies]
 comemo = "=0.5.1"
 typst = "=0.15.1"
 typst-kit = { version = "=0.15.1", features = ["embedded-fonts", "scan-fonts"] }
 typst-layout = "=0.15.1"
+typst-render = "=0.15.1"
 
+[patch.crates-io]
+typst = { path = ".vendor/typst/crates/typst" }
+typst-eval = { path = ".vendor/typst/crates/typst-eval" }
+typst-html = { path = ".vendor/typst/crates/typst-html" }
+typst-kit = { path = ".vendor/typst/crates/typst-kit" }
+typst-layout = { path = ".vendor/typst/crates/typst-layout" }
+typst-library = { path = ".vendor/typst/crates/typst-library" }
+typst-macros = { path = ".vendor/typst/crates/typst-macros" }
+typst-realize = { path = ".vendor/typst/crates/typst-realize" }
+typst-render = { path = ".vendor/typst/crates/typst-render" }
+typst-svg = { path = ".vendor/typst/crates/typst-svg" }
+typst-syntax = { path = ".vendor/typst/crates/typst-syntax" }
+typst-timing = { path = ".vendor/typst/crates/typst-timing" }
+typst-utils = { path = ".vendor/typst/crates/typst-utils" }

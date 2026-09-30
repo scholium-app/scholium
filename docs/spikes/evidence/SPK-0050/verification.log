@@ -1,0 +1,7 @@
+PASS bootstrap.log
+PASS kernel.log
+PASS stock-full.log
+PASS stock_pixels_full: (880, 55), changed=0
+PASS stock-nested.log
+PASS stock_pixels_nested: (880, 55), changed=0
+PASS scoped_kernel_and_stock_comparison

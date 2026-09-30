@@ -86,16 +86,19 @@ ADR 0032 保持 Proposed，现有产品与阶段出口判定不变；没有默�
 
 ## 复现步骤
 
+原始无 fork 版本保留在 `fb62d37`。后续报告 0050 为主探针加入隔离 fork，当前使用
+独立 stock reference workspace 重跑相同公开入口夹具；历史耗时仍仅对应本报告原始运行。
+
 ```sh
-cargo run --release --locked --manifest-path spikes/typst-edit-session/Cargo.toml
-cargo fmt --manifest-path spikes/typst-edit-session/Cargo.toml -- --check
-cargo clippy --release --locked --manifest-path spikes/typst-edit-session/Cargo.toml --all-targets -- -D warnings
+cargo run --release --locked --manifest-path spikes/typst-edit-session/reference/Cargo.toml
+cargo fmt --manifest-path spikes/typst-edit-session/reference/Cargo.toml -- --check
+cargo clippy --release --locked --manifest-path spikes/typst-edit-session/reference/Cargo.toml --all-targets -- -D warnings
 ```
 
 本次复用已有编译目录以减少构建时间：
 
 ```sh
-CARGO_TARGET_DIR="$PWD/spikes/render-latency/target" cargo run --release --offline --locked --manifest-path spikes/typst-edit-session/Cargo.toml
+CARGO_TARGET_DIR="$PWD/spikes/render-latency/target" cargo run --release --offline --locked --manifest-path spikes/typst-edit-session/reference/Cargo.toml
 ```
 
 离线命令需要锁定依赖已经缓存；干净机器用第一条联网命令。

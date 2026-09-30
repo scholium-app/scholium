@@ -1,0 +1,4 @@
+   Compiling typst-edit-reference v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/reference)
+    Finished `release` profile [optimized] target(s) in 0.82s
+     Running `spikes/render-latency/target/release/typst-edit-reference --reference /home/ation_ciger/Projects/Mogan/scholium/docs/spikes/evidence/SPK-0050/stock-full.png`
+PASS unannotated_reference nested=false

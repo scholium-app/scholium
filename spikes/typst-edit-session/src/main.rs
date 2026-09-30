@@ -16,6 +16,9 @@ use typst::utils::{LazyHash, Protected};
 use typst::{Library, LibraryExt, World};
 use typst_kit::fonts::FontStore;
 
+#[cfg(feature = "editor")]
+mod editing;
+
 const SAMPLES: usize = 40;
 const WIDTH_PT: f64 = 420.0;
 const HEIGHT_PT: f64 = 2000.0;
@@ -87,8 +90,41 @@ fn text(value: &str) -> Content {
 
 fn paragraph(denominator: &str, suffix: &str) -> Content {
     let fraction = FracElem::new(text("x"), text(denominator)).pack();
+    fraction_paragraph(fraction, suffix)
+}
+
+fn fraction_paragraph(fraction: Content, suffix: &str) -> Content {
     let equation = EquationElem::new(fraction).pack();
     ParElem::new(text("中文与 English，行内分数：") + equation + text(suffix)).pack()
+}
+
+fn complete_fraction(nested: bool) -> Content {
+    let fraction = FracElem::new(text("x"), text("2")).pack();
+    let fraction = if nested {
+        FracElem::new(fraction, text("3")).pack()
+    } else {
+        fraction
+    };
+    fraction_paragraph(fraction, "结束。")
+}
+
+fn save_frame(frame: &Frame, path: &std::path::Path) -> Result<(), String> {
+    use typst::foundations::Smart;
+    use typst::layout::{Point, Sides};
+    let margin = Abs::pt(10.0);
+    let mut padded = Frame::soft(frame.size() + Size::splat(margin * 2.0));
+    padded.push_frame(Point::splat(margin), frame.clone());
+    let page = typst_layout::Page {
+        frame: padded,
+        bleed: Sides::default(),
+        fill: Smart::Auto,
+        numbering: None,
+        supplement: Content::empty(),
+        number: 1,
+    };
+    typst_render::render(&page, &typst_render::RenderOptions::default())
+        .save_png(path)
+        .map_err(|error| error.to_string())
 }
 
 fn layout(world: &ProbeWorld, content: &Content) -> Result<Frame, String> {
@@ -164,6 +200,18 @@ fn inspect(world: &ProbeWorld, denominator: &str) -> Result<u128, String> {
 
 fn main() -> Result<(), String> {
     let world = ProbeWorld::new();
+    let args: Vec<_> = std::env::args().skip(1).collect();
+    if args.first().is_some_and(|arg| arg == "--reference") {
+        let path = args.get(1).ok_or("missing reference PNG path")?;
+        let nested = args.get(2).is_some_and(|arg| arg == "nested");
+        save_frame(&layout(&world, &complete_fraction(nested))?, path.as_ref())?;
+        println!("PASS unannotated_reference nested={nested}");
+        return Ok(());
+    }
+    #[cfg(feature = "editor")]
+    if args.first().is_some_and(|arg| arg == "--editor") {
+        return editing::run(world, args.get(1).map(std::path::Path::new));
+    }
     println!(
         "typst=0.15.1 profile={} source_evaluation=disabled",
         if cfg!(debug_assertions) {
