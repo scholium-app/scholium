@@ -56,8 +56,31 @@ pub(super) fn home(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         formula(ui, state, "独立公式", "$  $", 2);
     });
     group(ui, "历史", 146.0, |ui| {
-        unavailable(ui, Icon::Undo, "撤销");
-        unavailable(ui, Icon::Redo, "重做");
+        history(ui, state);
+    });
+}
+
+/// Undo and redo buttons, enabled only when there is something to take back.
+///
+/// The buttons raise the same request flags the keyboard sets, so both entry
+/// points go through the one action-layer history the session owns.
+fn history(ui: &mut egui::Ui, state: &mut WorkspaceState) {
+    let (can_undo, can_redo) = (state.undo.can_undo(), state.undo.can_redo());
+    ui.horizontal(|ui| {
+        if large(ui, Icon::Undo, "撤销", can_undo, false)
+            .on_hover_text("撤销 · Ctrl+Z")
+            .clicked()
+        {
+            state.undo_requested = true;
+            focus_page(ui, state);
+        }
+        if large(ui, Icon::Redo, "重做", can_redo, false)
+            .on_hover_text("重做 · Ctrl+Shift+Z")
+            .clicked()
+        {
+            state.redo_requested = true;
+            focus_page(ui, state);
+        }
     });
 }
 

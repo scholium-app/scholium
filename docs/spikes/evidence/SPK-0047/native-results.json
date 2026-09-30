@@ -1,0 +1,37 @@
+[
+  {
+    "name": "inline-enter",
+    "status": "failed",
+    "actual": "[[{'Math': ''}, {'Text': 'alpha$'}], [{'Text': 'tail'}]]"
+  },
+  {
+    "name": "display-enter",
+    "status": "failed",
+    "actual": "[[{'Math': ''}, {'Text': ' alpha/2$'}], [{'Math': 'tail '}]]"
+  },
+  {
+    "name": "formula-backspace",
+    "status": "passed"
+  },
+  {
+    "name": "plain-split",
+    "status": "passed"
+  },
+  {
+    "name": "undo",
+    "status": "failed",
+    "actual": "[[{'Text': 'before after'}]]"
+  },
+  {
+    "name": "views-save-restore",
+    "status": "passed"
+  },
+  {
+    "name": "keyboard-crlf-paste",
+    "status": "passed"
+  },
+  {
+    "name": "ribbon-crlf-paste",
+    "status": "passed"
+  }
+]

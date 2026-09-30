@@ -63,10 +63,26 @@ impl Harness {
             .collect()
     }
 
+    /// Park the caret on the joined-markup byte offsets a contract names.
+    ///
+    /// The editor's cursor is a structural caret now (ADR 0031), so the bytes
+    /// are resolved through the same conversion a real click uses. The contract
+    /// still asserts the same byte positions it always did; only the route to
+    /// them changed.
     fn select(&mut self, anchor: usize, caret: usize) {
-        self.state.page_editor.anchor = anchor;
-        self.state.page_editor.caret = caret;
+        let snapshot = self.snapshot();
+        self.state
+            .page_editor
+            .select_bytes(&snapshot, anchor, caret);
         self.ctx.memory_mut(|m| m.request_focus(page_editor::id()));
+    }
+
+    /// Caret position as a joined-markup byte offset, for contract assertions.
+    fn caret_byte(&self) -> usize {
+        self.state
+            .page_editor
+            .caret_byte(&self.snapshot())
+            .unwrap_or(0)
     }
 
     fn frame(&mut self, events: Vec<Event>) -> egui::FullOutput {

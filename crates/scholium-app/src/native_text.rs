@@ -1,4 +1,5 @@
-use crate::{state::WorkspaceState, theme};
+use crate::state::{FocusRequest, FocusTarget, WorkspaceState};
+use crate::theme;
 use eframe::egui::{self, FontId, Key, RichText};
 use scholium_model::{BlockEdit, BlockKind, DocumentSnapshot, NodeId};
 
@@ -16,14 +17,7 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         ui.colored_label(theme::colors(ui).accent, error);
     }
     ui.separator();
-    move_focus_after_split(ui, state, &snapshot);
-    move_focus_after_merge(ui, state, &snapshot);
-    if let Some((node, caret, revision)) = state.focus_after_replace
-        && snapshot.revision.0 >= revision
-    {
-        focus_block(ui, node, caret);
-        state.focus_after_replace = None;
-    }
+    reconcile_focus(ui, state, &snapshot);
     egui::ScrollArea::vertical()
         .id_salt(("native-doc-scroll", snapshot.document))
         .auto_shrink([false, false])
@@ -110,15 +104,24 @@ fn block_editor(
     }
     state.composition = None;
     if response.changed() && text != block.markup_text() {
-        if text.contains('\n') {
-            // The session turns line breaks into structural splits; after it
-            // applies, the caret belongs at the start of the following block.
-            state.focus_after_split = Some((block.node, snapshot.blocks.len()));
-        }
-        state.pending_edit = Some(snapshot.request(BlockEdit::ReplaceText {
+        let request = snapshot.request(BlockEdit::ReplaceText {
             block: block.node,
             text,
-        }));
+        });
+        // A line break becomes a structural split, and the caret belongs at the
+        // start of the block after the split. The focus is registered against
+        // *this request's identity* so it installs only when that exact edit is
+        // answered, instead of firing whenever the block count happens to grow.
+        if is_split(&request) {
+            state.focus_request = Some(FocusRequest {
+                request: request.request,
+                target: FocusTarget::Created {
+                    first: index,
+                    block_offset: 1,
+                },
+            });
+        }
+        state.pending_edit = Some(request);
     }
 }
 
@@ -153,22 +156,36 @@ fn boundary_keys(
         && let Some(previous) = snapshot.blocks.get(index - 1)
     {
         consume_key(ui, Key::Backspace);
-        state.focus_after_merge = Some((
-            block.node,
-            previous.node,
-            previous.markup_text().chars().count(),
-        ));
-        state.pending_edit =
-            Some(snapshot.request(BlockEdit::MergeWithPrevious { block: block.node }));
+        let request = snapshot.request(BlockEdit::MergeWithPrevious { block: block.node });
+        // The caret lands at the merge seam: the end of whatever the absorbing
+        // block held before this edit, named structurally rather than inferred
+        // from the node count afterwards.
+        state.focus_request = Some(FocusRequest {
+            request: request.request,
+            target: FocusTarget::Block {
+                block: previous.node,
+                caret: previous.markup_text().chars().count(),
+            },
+        });
+        state.pending_edit = Some(request);
         return;
     }
     if at_end
         && ui.input(|input| input.key_pressed(Key::Delete))
-        && let Some(following) = snapshot.blocks.get(index + 1)
+        && snapshot.blocks.get(index + 1).is_some()
     {
         consume_key(ui, Key::Delete);
-        state.focus_after_merge = Some((following.node, block.node, char_count));
-        state.pending_edit = Some(snapshot.request(BlockEdit::MergeWithNext { block: block.node }));
+        let request = snapshot.request(BlockEdit::MergeWithNext { block: block.node });
+        // Same seam convention as Backspace, from the other direction: the
+        // absorbing block keeps its identity and the caret stays where it was.
+        state.focus_request = Some(FocusRequest {
+            request: request.request,
+            target: FocusTarget::Block {
+                block: block.node,
+                caret,
+            },
+        });
+        state.pending_edit = Some(request);
         return;
     }
     let (key, target) = if at_start && ui.input(|input| input.key_pressed(Key::ArrowUp)) {
@@ -204,6 +221,11 @@ fn boundary_keys(
     state.focus_block = Some(node);
 }
 
+/// Whether a replace-text request inserts a line break, i.e. splits the block.
+fn is_split(request: &scholium_model::DocumentRequest) -> bool {
+    matches!(&request.edit, BlockEdit::ReplaceText { text, .. } if text.contains('\n'))
+}
+
 fn consume_key(ui: &mut egui::Ui, key: Key) {
     ui.input_mut(|input| {
         input.events.retain(|event| {
@@ -212,42 +234,50 @@ fn consume_key(ui: &mut egui::Ui, key: Key) {
     });
 }
 
-fn move_focus_after_split(
-    ui: &mut egui::Ui,
-    state: &mut WorkspaceState,
-    snapshot: &DocumentSnapshot,
-) {
-    if let Some((anchor, blocks_len)) = state.focus_after_split {
-        let anchor_index = snapshot.blocks.iter().position(|b| b.node == anchor);
-        let grew = snapshot.blocks.len() > blocks_len;
-        if grew
-            && let Some(index) = anchor_index
-            && let Some(following) = snapshot.blocks.get(index + 1)
-        {
-            focus_block(ui, following.node, 0);
-            state.focus_block = Some(following.node);
-        }
-        if grew || anchor_index.is_none() {
-            state.focus_after_split = None;
-        }
+/// Install the focus a structural edit asked for, once that edit is answered.
+///
+/// The pending request is keyed by the request identity, so focus moves when
+/// *that* edit was accepted and not when an unrelated edit happens to produce a
+/// similar document shape. A rejected or superseded request drops the focus
+/// rather than leaving it pending forever.
+fn reconcile_focus(ui: &egui::Ui, state: &mut WorkspaceState, snapshot: &DocumentSnapshot) {
+    let Some(pending) = state.focus_request else {
+        return;
+    };
+    // The edit is still outstanding: nothing to reconcile yet.
+    if state.pending_edit.is_some() {
+        return;
     }
-}
-
-fn move_focus_after_merge(
-    ui: &mut egui::Ui,
-    state: &mut WorkspaceState,
-    snapshot: &DocumentSnapshot,
-) {
-    if let Some((removed, absorber, caret)) = state.focus_after_merge {
-        let still_there = snapshot.blocks.iter().any(|b| b.node == removed);
-        if !still_there && snapshot.blocks.iter().any(|b| b.node == absorber) {
-            focus_block(ui, absorber, caret);
-            state.focus_block = Some(absorber);
-        }
-        if !still_there {
-            state.focus_after_merge = None;
-        }
-    }
+    state.focus_request = None;
+    let resolved = match pending.target {
+        FocusTarget::Created {
+            first,
+            block_offset,
+        } => snapshot
+            .blocks
+            .get(first + block_offset)
+            .map(|block| (block.node, 0)),
+        FocusTarget::Block { block, caret } => snapshot
+            .blocks
+            .iter()
+            .find(|candidate| candidate.node == block)
+            .map(|candidate| (candidate.node, caret)),
+    };
+    // A merge can consume the block the focus named, and a rejected edit
+    // produces no new shape at all; in both cases there is no valid seam, so
+    // the focus stays where the session already put it.
+    let Some((node, caret)) = resolved else {
+        return;
+    };
+    let caret = snapshot
+        .blocks
+        .iter()
+        .find(|block| block.node == node)
+        .map_or(caret, |block| {
+            caret.min(block.markup_text().chars().count())
+        });
+    focus_block(ui, node, caret);
+    state.focus_block = Some(node);
 }
 
 pub(crate) fn focus_block(ui: &egui::Ui, node: NodeId, caret: usize) {
@@ -271,6 +301,7 @@ pub(crate) fn insert_markup_at_caret(
     fragment: &str,
     caret_shift: usize,
 ) {
+    let _ = ctx;
     if state.visual_typeset && state.mode == crate::state::ViewMode::Visual {
         crate::page_editor::insert_markup(state, fragment, caret_shift);
         return;
@@ -296,12 +327,20 @@ pub(crate) fn insert_markup_at_caret(
         .map_or_else(|| block.markup_text(), |(_, _, text)| text.clone());
     let byte = char_to_byte(&markup, caret);
     markup.insert_str(byte, fragment);
-    state.pending_edit = Some(snapshot.request(BlockEdit::ReplaceText {
+    let request = snapshot.request(BlockEdit::ReplaceText {
         block: block.node,
         text: markup,
-    }));
-    // 直接写光标会被本帧稍后的编辑器控件覆盖；登记到下一帧首安装。
-    state.focus_after_replace = Some((block.node, caret + caret_shift, snapshot.revision.0 + 1));
+    });
+    // 直接写光标会被本帧稍后的编辑器控件覆盖；登记到下一帧首安装，并用请求标识
+    // 门控，使焦点只随这一条编辑落地，而不是随任意后续 revision 变化落地。
+    state.focus_request = Some(FocusRequest {
+        request: request.request,
+        target: FocusTarget::Block {
+            block: block.node,
+            caret: caret + caret_shift,
+        },
+    });
+    state.pending_edit = Some(request);
 }
 
 /// 字符下标 → 字节下标（markup 是 UTF-8）。

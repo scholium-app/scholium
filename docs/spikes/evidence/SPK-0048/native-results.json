@@ -1,0 +1,34 @@
+[
+  {
+    "name": "inline-enter",
+    "status": "passed"
+  },
+  {
+    "name": "display-enter",
+    "status": "passed"
+  },
+  {
+    "name": "formula-backspace",
+    "status": "passed"
+  },
+  {
+    "name": "plain-split",
+    "status": "passed"
+  },
+  {
+    "name": "undo",
+    "status": "passed"
+  },
+  {
+    "name": "views-save-restore",
+    "status": "passed"
+  },
+  {
+    "name": "keyboard-crlf-paste",
+    "status": "passed"
+  },
+  {
+    "name": "ribbon-crlf-paste",
+    "status": "passed"
+  }
+]

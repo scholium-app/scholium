@@ -1,5 +1,5 @@
 //! One-frame editing projection. Its minimal diff is the only outgoing write.
-use scholium_model::{BlockEdit, BlockPosition, DocumentRequest, DocumentSnapshot, NodeId};
+use scholium_model::{BlockPosition, DocumentSnapshot};
 
 /// One edit between the compiled revision's text and the live buffer: the byte
 /// range `[start, old_end)` of the older text became `[start, new_end)` of the
@@ -33,6 +33,9 @@ pub(crate) enum Side {
 /// Map a byte position of the compiled text onto the live buffer by replaying
 /// every edit since the compiled revision. Positions inside a replaced range
 /// collapse to the replacement start.
+///
+/// Offsets are in **joined-document** coordinates; a caller holding a
+/// block-local offset must convert it with the block's base first.
 pub(crate) fn map_forward(shifts: &[Shift], byte: usize, side: Side) -> usize {
     let mut at = byte;
     for shift in shifts {
@@ -59,29 +62,6 @@ pub(crate) fn retain_after(shifts: &mut Vec<Shift>, revision: u64) {
     shifts.retain(|shift| shift.resulting > revision);
 }
 
-/// Byte diff of one frame's editing, as a pending shift on the shift chain.
-pub(crate) fn shift_of(before: &str, after: &str) -> Option<Shift> {
-    let prefix = before
-        .chars()
-        .zip(after.chars())
-        .take_while(|(a, b)| a == b)
-        .map(|(ch, _)| ch.len_utf8())
-        .sum::<usize>();
-    let suffix = before[prefix..]
-        .chars()
-        .rev()
-        .zip(after[prefix..].chars().rev())
-        .take_while(|(a, b)| a == b)
-        .map(|(ch, _)| ch.len_utf8())
-        .sum::<usize>();
-    (before != after).then(|| Shift {
-        start: prefix,
-        old_end: before.len() - suffix,
-        new_end: after.len() - suffix,
-        resulting: PENDING_REVISION,
-    })
-}
-
 pub(super) fn text(snapshot: &DocumentSnapshot) -> String {
     snapshot
         .blocks
@@ -89,18 +69,6 @@ pub(super) fn text(snapshot: &DocumentSnapshot) -> String {
         .map(|block| block.markup_text())
         .collect::<Vec<_>>()
         .join("\n")
-}
-
-pub(super) fn global(snapshot: &DocumentSnapshot, node: NodeId, byte: usize) -> Option<usize> {
-    let mut offset = 0;
-    for block in &snapshot.blocks {
-        let text = block.markup_text();
-        if block.node == node {
-            return text.is_char_boundary(byte).then_some(offset + byte);
-        }
-        offset += text.len() + 1;
-    }
-    None
 }
 
 pub(super) fn position(snapshot: &DocumentSnapshot, offset: usize) -> Option<BlockPosition> {
@@ -118,25 +86,6 @@ pub(super) fn position(snapshot: &DocumentSnapshot, offset: usize) -> Option<Blo
         base += text.len() + 1;
     }
     None
-}
-
-/// The outgoing write plus the shift that keeps stale geometry usable until
-/// the recompile lands (dead-zone elimination).
-pub(super) fn request_and_shift(
-    snapshot: &DocumentSnapshot,
-    before: &str,
-    after: &str,
-) -> Option<(DocumentRequest, Shift)> {
-    let shift = shift_of(before, after)?;
-    let text = &after[shift.start..shift.new_end];
-    Some((
-        snapshot.request(BlockEdit::ReplaceRange {
-            start: position(snapshot, shift.start)?,
-            end: position(snapshot, shift.old_end)?,
-            text: text.into(),
-        }),
-        shift,
-    ))
 }
 
 #[cfg(test)]

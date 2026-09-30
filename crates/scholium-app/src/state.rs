@@ -123,6 +123,52 @@ impl Dialect {
     }
 }
 
+/// A focus move the session owes after a structural edit is answered.
+///
+/// The target is named structurally, so the focus can be reconciled by
+/// comparing the echoed request identity rather than by inferring intent from
+/// the shape of the resulting document.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct FocusRequest {
+    /// Request this focus belongs to; reconciliation is gated on it.
+    pub(crate) request: scholium_model::RequestId,
+    /// Where the caret goes once the request is applied.
+    pub(crate) target: FocusTarget,
+}
+
+/// One input event held over to the next frame.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) enum DeferredInput {
+    /// Literal text to insert at the caret.
+    Text(String),
+    /// A key press to deliver.
+    Key(eframe::egui::Key, eframe::egui::Modifiers),
+}
+
+/// Destination of a reconciled focus move.
+///
+/// Two forms exist because a split creates a block whose identity the editor
+/// cannot name in advance, while a merge or toolbar splice names an existing
+/// one. Both are structural; neither infers intent from the document's shape.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum FocusTarget {
+    /// An existing block, by identity, at a character offset in its markup.
+    Block {
+        /// Block that should hold the caret.
+        block: scholium_model::NodeId,
+        /// Caret offset in characters inside that block's markup.
+        caret: usize,
+    },
+    /// A block created by the edit, named by position relative to the edit's
+    /// first block: offset 1 is the block a split inserted after it.
+    Created {
+        /// Index, in the answered snapshot, of the edit's first replaced block.
+        first: usize,
+        /// How many blocks after `first` the caret lands.
+        block_offset: usize,
+    },
+}
+
 /// View preferences, owned session projection and outgoing request; never authoritative content.
 #[derive(Debug)]
 pub(crate) struct WorkspaceState {
@@ -138,6 +184,10 @@ pub(crate) struct WorkspaceState {
     /// coordinates while a recompile is in flight (E2 of the rework plan).
     pub(crate) edit_shifts: Vec<crate::page_editor::Shift>,
     pub(crate) new_requested: bool,
+    /// Ctrl+Z was pressed; the session bridge owns the history and acts on it.
+    pub(crate) undo_requested: bool,
+    /// Ctrl+Shift+Z / Ctrl+Y was pressed.
+    pub(crate) redo_requested: bool,
     pub(crate) save_requested: bool,
     /// 已落盘的 revision；None 表示从未保存。
     pub(crate) saved_revision: Option<u64>,
@@ -149,21 +199,34 @@ pub(crate) struct WorkspaceState {
     pub(crate) composition: Option<String>,
     /// Block whose editor held focus last frame; toolbar targets follow it.
     pub(crate) focus_block: Option<scholium_model::NodeId>,
-    /// Anchor block and block count when a splitting edit was sent; once the
-    /// session grows past that count, focus moves to the block after the anchor.
-    pub(crate) focus_after_split: Option<(scholium_model::NodeId, usize)>,
-    /// Removed block, absorbing block and caret when a merge was sent; once the
-    /// removed block is gone, focus lands on the absorbing block at the seam.
-    pub(crate) focus_after_merge: Option<(scholium_model::NodeId, scholium_model::NodeId, usize)>,
-    /// Block, caret and the revision the splice must reach before installing;
-    /// installing earlier would clamp against the pre-edit buffer.
-    pub(crate) focus_after_replace: Option<(scholium_model::NodeId, usize, u64)>,
+    /// Structural focus the session owes once the edit behind it is answered.
+    ///
+    /// This replaces the former `focus_after_split` / `focus_after_merge` /
+    /// `focus_after_replace` heuristics. Each of those guessed the target from a
+    /// *side effect* — a block count growing, a node disappearing, a revision
+    /// being reached — so an unrelated edit that changed the same side effect
+    /// moved the focus to the wrong block. Reconciling against the echoed
+    /// request instead ties the focus to the exact edit that requested it.
+    pub(crate) focus_request: Option<FocusRequest>,
+    /// Input events a frame could not deliver because its one request slot was
+    /// already taken by an earlier event of the same frame.
+    ///
+    /// A frame carries at most one edit request, but egui can deliver several
+    /// events at once (Enter and the first character typed after it). Replaying
+    /// the remainder at the start of the next frame keeps those keystrokes
+    /// instead of dropping them, which is what a plain `return` would do.
+    pub(crate) deferred_input: Vec<DeferredInput>,
     pub(crate) mode: ViewMode,
     pub(crate) ribbon: crate::ribbon::RibbonState,
     /// Visual workspace shows the Typst page with a focused block editor.
     pub(crate) visual_typeset: bool,
     pub(crate) preview: PreviewState,
     pub(crate) page_editor: crate::page_editor::EditorState,
+    /// Local undo/redo history: whole snapshots of accepted edits.
+    ///
+    /// Product action layer only — not collaborative undo and not a checkpoint
+    /// history (see `crate::undo`).
+    pub(crate) undo: crate::undo::UndoStack,
     pub(crate) dialect: Dialect,
     pub(crate) navigation: bool,
     pub(crate) diagnostics: bool,
@@ -183,6 +246,8 @@ impl Default for WorkspaceState {
             edit_shifts: Vec::new(),
             accepted_input: None,
             new_requested: false,
+            undo_requested: false,
+            redo_requested: false,
             save_requested: false,
             saved_revision: None,
             edit_error: None,
@@ -190,14 +255,14 @@ impl Default for WorkspaceState {
             rejected_draft: None,
             composition: None,
             focus_block: None,
-            focus_after_split: None,
-            focus_after_merge: None,
-            focus_after_replace: None,
+            focus_request: None,
+            deferred_input: Vec::new(),
             mode: ViewMode::Visual,
             ribbon: Default::default(),
             visual_typeset: true,
             preview: PreviewState::default(),
             page_editor: Default::default(),
+            undo: Default::default(),
             dialect: Dialect::Latex,
             navigation: false,
             diagnostics: false,
@@ -226,9 +291,6 @@ mod tests {
         assert!(!state.diagnostics);
         assert_eq!(state.rendered_zoom, 1.0);
         assert_eq!(state.focus_block, None);
-        assert_eq!(state.focus_after_split, None);
-        assert_eq!(state.focus_after_merge, None);
-        assert_eq!(state.focus_after_replace, None);
         assert_eq!(state.rejected_draft, None);
         assert_eq!(state.preview.wanted, 0);
         assert!(state.preview.page_texture.is_none());

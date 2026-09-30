@@ -1,0 +1,98 @@
+    Finished `test` profile [unoptimized] target(s) in 0.16s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-aebbd4e76c1adb44)
+
+running 32 tests
+test session::usability_audit::editing::a01_enter_at_inline_formula_end_preserves_math ... ok
+test session::usability_audit::editing::a02_enter_at_display_formula_end_preserves_math ... ok
+test session::usability_audit::editing::a03_enter_inside_formula_does_not_turn_delimiters_into_text ... ok
+test session::usability_audit::editing::a04_enter_inside_bold_preserves_formatting ... ok
+test session::usability_audit::editing::a05_backspace_after_formula_keeps_formula_structure ... ok
+test session::usability_audit::editing::a06_delete_before_formula_keeps_formula_structure ... ok
+test session::usability_audit::editing::a07_paste_plain_punctuation_matches_typing ... FAILED
+test session::usability_audit::editing::a08_multiline_unicode_paste_preserves_empty_last_paragraph ... ok
+test session::usability_audit::editing::a09_cancelled_ime_allows_following_typing ... ok
+test session::usability_audit::editing::a10_backspace_preserves_emoji_graphemes_without_geometry ... ok
+test session::usability_audit::editing::a11_plain_paragraph_split_and_merge_round_trip ... ok
+test session::usability_audit::editing::a12_cross_paragraph_selection_is_atomic ... ok
+test session::usability_audit::editing::a13_keyboard_formula_entry_round_trips ... ok
+test session::usability_audit::editing::a14_ime_commit_is_one_edit_and_preedit_is_not_saved ... ok
+test session::usability_audit::editing::a15_home_end_without_geometry_stay_in_current_paragraph ... ok
+test session::usability_audit::editing::a16_copy_cut_paste_preserves_formula_markup ... ok
+test session::usability_audit::editing::a17_undo_restores_typing ... ok
+test session::usability_audit::editing::a18_select_all_replacement_preserves_unicode ... ok
+test session::usability_audit::performance::c01_measure_input_and_warm_compile_at_three_document_sizes ... ok
+test session::usability_audit::rendering::b01_real_formula_glyph_click_then_enter_preserves_formula ... ok
+test session::usability_audit::rendering::b02_pending_echo_does_not_paint_hidden_math_delimiters ... ok
+test session::usability_audit::rendering::b03_pending_echo_does_not_paint_bold_markers ... ok
+test session::usability_audit::rendering::b04_first_input_visible_before_any_compile ... ok
+test session::usability_audit::rendering::b05_typing_after_enter_is_visible_before_compile ... ok
+test session::usability_audit::rendering::b06_stale_geometry_after_deletion_keeps_surviving_line_clickable ... ok
+test session::usability_audit::rendering::b07_stale_second_block_geometry_is_shifted_once ... ok
+test session::usability_audit::rendering::b08_stale_unicode_click_inserts_at_clicked_position ... ok
+test session::usability_audit::rendering::b09_arrow_right_at_formula_end_exits_math ... ok
+test session::usability_audit::rendering::b10_backspace_after_formula_with_geometry_preserves_structure ... ok
+test session::usability_audit::rendering::b11_compiled_unicode_backspace_removes_whole_grapheme ... ok
+test session::usability_audit::rendering::b12_formula_compiles_and_maps_exact_token ... ok
+test session::usability_audit::rendering::b13_stale_click_and_typing_in_one_frame_never_panics ... ok
+
+successes:
+
+---- session::usability_audit::performance::c01_measure_input_and_warm_compile_at_three_document_sizes stdout ----
+METRIC input_frame paragraphs=1 n=40 p50_ms=0.681 p95_ms=1.764 max_ms=2.759
+METRIC compile_wait paragraphs=1 n=10 p50_ms=5.121 p95_ms=5.152 max_ms=5.152
+METRIC input_frame paragraphs=50 n=40 p50_ms=21.153 p95_ms=23.954 max_ms=27.799
+METRIC compile_wait paragraphs=50 n=10 p50_ms=76.261 p95_ms=86.164 max_ms=86.164
+METRIC input_frame paragraphs=200 n=40 p50_ms=22.026 p95_ms=25.713 max_ms=26.130
+METRIC compile_wait paragraphs=200 n=10 p50_ms=896.654 p95_ms=938.325 max_ms=938.325
+
+
+successes:
+    session::usability_audit::editing::a01_enter_at_inline_formula_end_preserves_math
+    session::usability_audit::editing::a02_enter_at_display_formula_end_preserves_math
+    session::usability_audit::editing::a03_enter_inside_formula_does_not_turn_delimiters_into_text
+    session::usability_audit::editing::a04_enter_inside_bold_preserves_formatting
+    session::usability_audit::editing::a05_backspace_after_formula_keeps_formula_structure
+    session::usability_audit::editing::a06_delete_before_formula_keeps_formula_structure
+    session::usability_audit::editing::a08_multiline_unicode_paste_preserves_empty_last_paragraph
+    session::usability_audit::editing::a09_cancelled_ime_allows_following_typing
+    session::usability_audit::editing::a10_backspace_preserves_emoji_graphemes_without_geometry
+    session::usability_audit::editing::a11_plain_paragraph_split_and_merge_round_trip
+    session::usability_audit::editing::a12_cross_paragraph_selection_is_atomic
+    session::usability_audit::editing::a13_keyboard_formula_entry_round_trips
+    session::usability_audit::editing::a14_ime_commit_is_one_edit_and_preedit_is_not_saved
+    session::usability_audit::editing::a15_home_end_without_geometry_stay_in_current_paragraph
+    session::usability_audit::editing::a16_copy_cut_paste_preserves_formula_markup
+    session::usability_audit::editing::a17_undo_restores_typing
+    session::usability_audit::editing::a18_select_all_replacement_preserves_unicode
+    session::usability_audit::performance::c01_measure_input_and_warm_compile_at_three_document_sizes
+    session::usability_audit::rendering::b01_real_formula_glyph_click_then_enter_preserves_formula
+    session::usability_audit::rendering::b02_pending_echo_does_not_paint_hidden_math_delimiters
+    session::usability_audit::rendering::b03_pending_echo_does_not_paint_bold_markers
+    session::usability_audit::rendering::b04_first_input_visible_before_any_compile
+    session::usability_audit::rendering::b05_typing_after_enter_is_visible_before_compile
+    session::usability_audit::rendering::b06_stale_geometry_after_deletion_keeps_surviving_line_clickable
+    session::usability_audit::rendering::b07_stale_second_block_geometry_is_shifted_once
+    session::usability_audit::rendering::b08_stale_unicode_click_inserts_at_clicked_position
+    session::usability_audit::rendering::b09_arrow_right_at_formula_end_exits_math
+    session::usability_audit::rendering::b10_backspace_after_formula_with_geometry_preserves_structure
+    session::usability_audit::rendering::b11_compiled_unicode_backspace_removes_whole_grapheme
+    session::usability_audit::rendering::b12_formula_compiles_and_maps_exact_token
+    session::usability_audit::rendering::b13_stale_click_and_typing_in_one_frame_never_panics
+
+failures:
+
+---- session::usability_audit::editing::a07_paste_plain_punctuation_matches_typing stdout ----
+
+thread 'session::usability_audit::editing::a07_paste_plain_punctuation_matches_typing' (303) panicked at crates/scholium-app/src/session/usability_audit/editing.rs:89:5:
+assertion `left == right` failed
+  left: [Text("a_b "), Strong("c"), Text(" \\path")]
+ right: [Text("a_b *c* \\path")]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    session::usability_audit::editing::a07_paste_plain_punctuation_matches_typing
+
+test result: FAILED. 31 passed; 1 failed; 0 ignored; 0 measured; 80 filtered out; finished in 16.05s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`

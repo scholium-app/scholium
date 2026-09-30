@@ -87,6 +87,21 @@ def report(out, info, stages):
     return 2 if any(s["error"] for s in stages) else int(any(s["exit_code"] for s in stages))
 
 
+def software_gl(env):
+    """Force Mesa's software GL for the nested X server.
+
+    Xvfb has no GPU, but glvnd still prefers a vendor GLX/EGL library when one
+    is installed. On hosts with the NVIDIA driver that vendor library aborts the
+    X server or fails context creation with GLXBadFBConfig, which the app
+    reports as "application exited during startup" -- an environment error, not
+    a product failure. Pinning the Mesa vendor makes the native stage run on
+    llvmpipe instead of being silently skipped.
+    """
+    return dict(env, LIBGL_ALWAYS_SOFTWARE="1", GALLIUM_DRIVER="llvmpipe",
+                __GLX_VENDOR_LIBRARY_NAME="mesa",
+                __EGL_VENDOR_LIBRARY_FILENAMES="/usr/share/glvnd/egl_vendor.d/50_mesa.json")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path)
@@ -118,7 +133,8 @@ def main():
         stages.append(build)
         if build["exit_code"] == 0:
             stages.append(execute("native", ["xvfb-run", "-a", "-s", "-screen 0 1280x1024x24",
-                                              "python3", "scripts/audit-editor-native.py", str(out / "native")], out, env))
+                                              "python3", "scripts/audit-editor-native.py", str(out / "native")],
+                                  out, software_gl(env)))
     return report(out, info, stages)
 
 

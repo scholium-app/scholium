@@ -1,0 +1,2 @@
+cargo fmt --all -- --check
+exit=0 (no output: formatting is clean)

@@ -72,13 +72,28 @@ pub(crate) fn shortcuts(ctx: &egui::Context, state: &mut WorkspaceState) {
         (Modifiers::COMMAND, Key::Equals, ViewCommand::ZoomIn),
         (Modifiers::COMMAND, Key::Minus, ViewCommand::ZoomOut),
     ];
-    // Do not expose TextEdit's private snapshot undo as the application's actor undo.
+    // Consume these so TextEdit's private snapshot undo never fires: the
+    // application's undo is its own action-layer history (`crate::undo`), and
+    // letting both run would apply two different notions of "back".
     if state.document.is_some() {
-        for modifiers in [Modifiers::COMMAND, Modifiers::COMMAND | Modifiers::SHIFT] {
-            for key in [Key::Z, Key::Y] {
-                ctx.input_mut(|i| i.consume_shortcut(&KeyboardShortcut::new(modifiers, key)));
-            }
-        }
+        // Ctrl+Z is undo; Ctrl+Shift+Z and Ctrl+Y are redo.
+        //
+        // egui matches a shortcut by "pattern modifiers present", not by exact
+        // equality, so a Ctrl+Shift+Z press also matches the plain Ctrl+Z
+        // pattern. The shifted form is therefore consumed *first*, and the plain
+        // undo additionally requires that shift is not held — otherwise one
+        // redo keystroke would also register as an undo.
+        let redo_shift = KeyboardShortcut::new(Modifiers::COMMAND | Modifiers::SHIFT, Key::Z);
+        let redo = KeyboardShortcut::new(Modifiers::COMMAND, Key::Y);
+        let undo = KeyboardShortcut::new(Modifiers::COMMAND, Key::Z);
+        let pressed_redo = ctx.input_mut(|i| i.consume_shortcut(&redo_shift));
+        let pressed_redo = ctx.input_mut(|i| i.consume_shortcut(&redo)) || pressed_redo;
+        let shift_held = ctx.input(|i| i.modifiers.shift);
+        let pressed_undo = !shift_held && ctx.input_mut(|i| i.consume_shortcut(&undo));
+        // Assign rather than accumulate: a flag left set by a frame whose bridge
+        // did not run would otherwise fire later, out of step with the keystroke.
+        state.undo_requested = pressed_undo;
+        state.redo_requested = pressed_redo;
     }
     for (modifiers, key, command) in bindings {
         if ctx.input_mut(|i| i.consume_shortcut(&KeyboardShortcut::new(modifiers, key))) {

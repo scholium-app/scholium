@@ -12,6 +12,7 @@ mod sample;
 mod session;
 mod state;
 mod theme;
+mod undo;
 mod workspace;
 
 use eframe::egui;
