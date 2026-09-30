@@ -1,0 +1,20 @@
+[format] cargo fmt --all -- --check
+  exit=0; 0 test results; /home/ation_ciger/Projects/Mogan/scholium/.verify/native-out/format.log
+[size] python3 scripts/check-rust-size.py
+  exit=0; 0 test results; /home/ation_ciger/Projects/Mogan/scholium/.verify/native-out/size.log
+[clippy] cargo clippy --workspace --all-targets -- -D warnings
+  exit=0; 0 test results; /home/ation_ciger/Projects/Mogan/scholium/.verify/native-out/clippy.log
+[baseline] cargo test --workspace -- --test-threads=2
+  exit=0; 127 test results; /home/ation_ciger/Projects/Mogan/scholium/.verify/native-out/baseline.log
+[rustdoc] cargo doc --workspace --no-deps
+  exit=0; 0 test results; /home/ation_ciger/Projects/Mogan/scholium/.verify/native-out/rustdoc.log
+[usability] cargo test -p scholium-app usability_audit -- --include-ignored --test-threads=1 --show-output
+  exit=101; 32 test results; /home/ation_ciger/Projects/Mogan/scholium/.verify/native-out/usability.log
+[native-build] cargo build -p scholium-app
+  exit=0; 0 test results; /home/ation_ciger/Projects/Mogan/scholium/.verify/native-out/native-build.log
+[native] xvfb-run -a -s -screen 0 1280x1024x24 python3 scripts/audit-editor-native.py /home/ation_ciger/Projects/Mogan/scholium/.verify/native-out/native
+  exit=1; 0 test results; /home/ation_ciger/Projects/Mogan/scholium/.verify/native-out/native.log
+
+体验：16 passed / 16 failed
+报告：/home/ation_ciger/Projects/Mogan/scholium/.verify/native-out/summary.md
+EXIT=1

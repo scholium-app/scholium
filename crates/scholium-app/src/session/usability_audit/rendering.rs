@@ -4,7 +4,7 @@ audit!(b01_real_formula_glyph_click_then_enter_preserves_formula, {
     let mut h = Harness::new("$alpha$");
     h.compile();
     h.click_token_end(0, "alpha");
-    assert_eq!(h.state.page_editor.caret, 6, "verify real glyph hit");
+    assert_eq!(h.caret_byte(), 6, "verify real glyph hit");
     h.press(Key::Enter);
     assert_eq!(h.texts(), ["$alpha$", ""]);
 });
@@ -71,10 +71,7 @@ audit!(
             10.0 + glyph.rect[2] - 0.1,
             10.0 + (glyph.rect[1] + glyph.rect[3]) / 2.0,
         ));
-        assert_eq!(
-            h.state.page_editor.caret, 2,
-            "surviving f must map to current end"
-        );
+        assert_eq!(h.caret_byte(), 2, "surviving f must map to current end");
     }
 );
 
@@ -85,7 +82,8 @@ audit!(b07_stale_second_block_geometry_is_shifted_once, {
     h.frame(vec![Event::Text("XYZ".into())]);
     h.click_token_end(1, "e");
     assert_eq!(
-        h.state.page_editor.caret, 9,
+        h.caret_byte(),
+        9,
         "abc gained 3 bytes, second block e ends at 9"
     );
 });
@@ -108,7 +106,8 @@ audit!(b09_arrow_right_at_formula_end_exits_math, {
     h.click_token_end(0, "alpha");
     h.press(Key::ArrowRight);
     assert_eq!(
-        h.state.page_editor.caret, 7,
+        h.caret_byte(),
+        7,
         "leave math before consuming following space"
     );
 });
@@ -144,7 +143,7 @@ audit!(b12_formula_compiles_and_maps_exact_token, {
     let mut h = Harness::new("中文 $alpha + x/2$ tail");
     h.compile();
     h.click_token_end(0, "alpha");
-    assert_eq!(h.state.page_editor.caret, "中文 $alpha".len());
+    assert_eq!(h.caret_byte(), "中文 $alpha".len());
     assert!(h.state.preview.warning.is_none());
 });
 

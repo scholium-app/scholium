@@ -77,6 +77,17 @@ impl Window {
     }
 }
 
+/// Derived byte view of the page editor's selection endpoints.
+fn state_bytes(
+    state: &WorkspaceState,
+    snapshot: &scholium_model::DocumentSnapshot,
+) -> (usize, usize) {
+    (
+        state.page_editor.anchor_byte(snapshot).unwrap_or(0),
+        state.page_editor.caret_byte(snapshot).unwrap_or(0),
+    )
+}
+
 fn key(key: Key, modifiers: Modifiers) -> Event {
     Event::Key {
         key,
@@ -152,8 +163,12 @@ fn formula_and_style_buttons_return_typing_to_the_page() {
 fn ribbon_clipboard_requests_keep_the_page_selection() {
     let mut window = Window::new();
     window.frame(vec![Event::Text("abc".into())]);
-    window.state.page_editor.anchor = 1;
-    window.state.page_editor.caret = 2;
+    let snapshot = window
+        .state
+        .document
+        .clone()
+        .expect("document before selection");
+    window.state.page_editor.select_bytes(&snapshot, 1, 2);
     let output = window.click(203.0, 98.0);
     let commands = &output.viewport_output[&egui::ViewportId::ROOT].commands;
     assert!(
@@ -161,12 +176,15 @@ fn ribbon_clipboard_requests_keep_the_page_selection() {
             .iter()
             .any(|cmd| matches!(cmd, egui::ViewportCommand::RequestPaste))
     );
+    let snapshot = window
+        .state
+        .document
+        .clone()
+        .expect("document after clipboard request");
     assert_eq!(
-        (
-            window.state.page_editor.anchor,
-            window.state.page_editor.caret
-        ),
-        (1, 2)
+        state_bytes(&window.state, &snapshot),
+        (1, 2),
+        "the clipboard request must not move the selection"
     );
     window.frame(vec![Event::Paste("中文".into())]);
     assert_eq!(window.session.snapshot().blocks[0].markup_text(), "a中文c");

@@ -174,9 +174,9 @@ audit!(a15_home_end_without_geometry_stay_in_current_paragraph, {
     let mut h = Harness::new("first\nsecond\nthird");
     h.select(8, 8);
     h.press(Key::Home);
-    assert_eq!(h.state.page_editor.caret, 6);
+    assert_eq!(h.caret_byte(), 6);
     h.press(Key::End);
-    assert_eq!(h.state.page_editor.caret, 12);
+    assert_eq!(h.caret_byte(), 12);
 });
 
 audit!(a16_copy_cut_paste_preserves_formula_markup, {
