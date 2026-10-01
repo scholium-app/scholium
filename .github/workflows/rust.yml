@@ -10,7 +10,9 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.96.0
         with:
           components: rustfmt, clippy
-      - run: sudo apt-get update && sudo apt-get install -y libxkbcommon-dev libwayland-dev libegl1-mesa-dev
+      - name: Install native build dependencies
+        timeout-minutes: 6
+        run: bash scripts/install-ci-native-deps.sh libxkbcommon-dev libwayland-dev libegl1-mesa-dev
       - run: cargo fmt --all -- --check
       - run: cargo clippy --locked --workspace --all-targets -- -D warnings
       - run: cargo test --locked --workspace
@@ -28,7 +30,9 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.96.0
         with:
           components: rustfmt, clippy
-      - run: sudo apt-get update && sudo apt-get install -y libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libegl1-mesa-dev xvfb xdotool xclip imagemagick fonts-noto-cjk
+      - name: Install native build and window dependencies
+        timeout-minutes: 6
+        run: bash scripts/install-ci-native-deps.sh libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libegl1-mesa-dev xvfb xdotool xclip imagemagick fonts-noto-cjk
       - name: Check native X11 runtime libraries
         run: python3 -c 'import ctypes; ctypes.CDLL("libxkbcommon-x11.so.0"); ctypes.CDLL("libX11.so.6")'
       - name: Rebuild the pinned fork from upstream objects

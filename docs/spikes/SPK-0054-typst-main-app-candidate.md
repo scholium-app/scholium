@@ -126,6 +126,13 @@ python3 spikes/typst-main-editor/compare.py /tmp/fork-pixels /tmp/stock-pixels
 `libxkbcommon-x11-0` 并预检 X11 动态库；不能以编译通过代替运行库和窗口验证。
 第一次尝试的 Ubuntu Azure 镜像持续下载重试，主动取消后重跑，未改变任何测试门禁。
 
+补运行库后的 `d02e6f9` 运行 36892696270：候选 job 的来源/fmt/clippy/tests/build、stock
+像素对照和十步原生窗口全部通过；40 条审计状态含 22 条 pending，正文 egui Text 仍为 0，
+见[远端窗口汇总](evidence/SPK-0054/ci-native-summary.json)。Ubuntu 使用其系统字体 fallback，
+同环境 fork/stock 逐像素对照通过；不要求不同宿主的字体/像素相同。
+根 job 在 Azure 软件包镜像再次停滞，取日志后取消；CI 统一使用 Ubuntu 官方 HTTPS archive，
+保留签名检查，设置网络与步骤超时，update 有错误即失败，不以旧索引或跳过安装继续。
+
 窗口例图：[空分母](evidence/SPK-0054/native/04-empty-denominator.png)、
 [嵌套分数](evidence/SPK-0054/native/05-nested-fraction.png)、
 [重开继续编辑](evidence/SPK-0054/native/10-continued.png)。

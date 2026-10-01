@@ -1,0 +1,9 @@
+{
+  "binary": "/home/runner/work/scholium/scholium/dev/typst-editor/target/debug/scholium-app",
+  "sha256": "6d5ce9411d182583c7000c16f5cf8da9ebacb5743cf529bd11995788a0e54e8d",
+  "native_backend": "X11/Xvfb",
+  "audit_frames": 40,
+  "pending_frames": 22,
+  "committed_egui_text_draws": 0,
+  "saved_and_reopened": true
+}
