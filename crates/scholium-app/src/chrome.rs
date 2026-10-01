@@ -25,11 +25,8 @@ const MIN_TAB_WIDTH: f32 = 120.0;
 
 fn tabs(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     ui.horizontal_centered(|ui| {
-        let (title, unsaved) = if state.document.is_some() {
-            (
-                "未命名",
-                state.saved_revision != state.document.as_ref().map(|doc| doc.revision.0),
-            )
+        let (title, unsaved) = if state.has_document() {
+            ("未命名", state.unsaved())
         } else {
             (sample::TITLE, false)
         };
@@ -111,6 +108,22 @@ fn tabs(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 }
 
 fn status(ui: &mut egui::Ui, state: &mut WorkspaceState) {
+    #[cfg(feature = "typst-editor")]
+    if let Some(candidate) = &state.candidate {
+        ui.horizontal_centered(|ui| {
+            ui.label(format!(
+                "Typst Content · 候选 r{} · {}",
+                candidate.revision,
+                if candidate.dirty {
+                    "未保存"
+                } else {
+                    "已保存"
+                }
+            ));
+            ui.weak("受控不分页流");
+        });
+        return;
+    }
     ui.horizontal_centered(|ui| {
         if ui
             .selectable_label(state.diagnostics, "诊断")
@@ -129,22 +142,18 @@ fn status(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             .small(),
         );
         ui.label(
-            RichText::new(
-                if state.storage_error.is_some() && state.document.is_some() {
-                    "原生文档 · 保存不可用".to_owned()
-                } else if state.document.is_some() {
-                    match state.saved_revision {
-                        Some(saved)
-                            if Some(saved) >= state.document.as_ref().map(|s| s.revision.0) =>
-                        {
-                            format!("原生文档 · 已保存 r{saved}")
-                        }
-                        _ => "原生文档 · 未保存".to_owned(),
+            RichText::new(if state.storage_error.is_some() && state.has_document() {
+                "原生文档 · 保存不可用".to_owned()
+            } else if state.has_document() {
+                match state.saved_revision {
+                    Some(saved) if Some(saved) >= state.document.as_ref().map(|s| s.revision.0) => {
+                        format!("原生文档 · 已保存 r{saved}")
                     }
-                } else {
-                    "示例文档 · 只读".to_owned()
-                },
-            )
+                    _ => "原生文档 · 未保存".to_owned(),
+                }
+            } else {
+                "示例文档 · 只读".to_owned()
+            })
             .small(),
         );
         if ui.available_width() > 600.0 {

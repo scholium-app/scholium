@@ -9,7 +9,7 @@ use eframe::egui::{self, RichText};
 use scholium_model::{BlockEdit, BlockKind};
 
 fn editable(state: &WorkspaceState) -> bool {
-    state.document.is_some()
+    state.has_document()
         && state.mode == ViewMode::Visual
         && state.composition.is_none()
         && state.pending_edit.is_none()
@@ -23,6 +23,11 @@ fn focus_page(ui: &egui::Ui, state: &mut WorkspaceState) {
 }
 
 pub(super) fn home(ui: &mut egui::Ui, state: &mut WorkspaceState) {
+    #[cfg(feature = "typst-editor")]
+    if state.candidate.is_some() {
+        crate::typst_editor::ribbon::home(ui, state);
+        return;
+    }
     group(ui, "文档", 146.0, |ui| {
         if large(ui, Icon::New, "新建", state.composition.is_none(), false).clicked() {
             commands::dispatch(state, ViewCommand::NewDocument);
@@ -31,7 +36,7 @@ pub(super) fn home(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             ui,
             Icon::Save,
             "保存",
-            state.document.is_some() && state.composition.is_none(),
+            state.has_document() && state.composition.is_none(),
             false,
         )
         .on_hover_text("保存到本地会话文件 · Ctrl+S")
@@ -174,6 +179,11 @@ fn styles(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 }
 
 pub(super) fn insert(ui: &mut egui::Ui, state: &mut WorkspaceState) {
+    #[cfg(feature = "typst-editor")]
+    if state.candidate.is_some() {
+        crate::typst_editor::ribbon::insert(ui, state);
+        return;
+    }
     group(ui, "公式", 146.0, |ui| {
         formula(ui, state, "行内公式", "$$", 1);
         formula(ui, state, "独立公式", "$  $", 2);
@@ -246,7 +256,15 @@ pub(super) fn layout(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     });
     group(ui, "排版", 160.0, |ui| {
         ui.vertical(|ui| {
-            ui.label("Typst · A4");
+            #[cfg(feature = "typst-editor")]
+            let label = if state.candidate.is_some() {
+                "Typst · 受控流"
+            } else {
+                "Typst · A4"
+            };
+            #[cfg(not(feature = "typst-editor"))]
+            let label = "Typst · A4";
+            ui.label(label);
             small(ui, "最终排版检查", false).on_disabled_hover_text("最终构建尚未接入");
         });
     });
@@ -286,7 +304,7 @@ pub(super) fn view(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             commands::dispatch(state, ViewCommand::ToggleRibbon);
         }
     });
-    if state.document.is_none() {
+    if !state.has_document() {
         group(ui, "示例源码", 125.0, |ui| {
             ui.vertical(|ui| {
                 egui::ComboBox::from_id_salt("dialect")

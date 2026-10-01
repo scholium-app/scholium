@@ -1,0 +1,242 @@
+{
+  "root": [
+    {
+      "name": "typst",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-eval",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-eval-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-html",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-html-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-kit",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-kit-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-layout",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-layout-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-library",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-library-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-macros",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-macros-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-realize",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-realize-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-render",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-render-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-svg",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-svg-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-syntax",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-syntax-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-timing",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-timing-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-utils",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-utils-0.15.1/Cargo.toml"
+    }
+  ],
+  "dev": [
+    {
+      "name": "typst",
+      "version": "0.15.1",
+      "source": null,
+      "manifest_path": "/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst/Cargo.toml"
+    },
+    {
+      "name": "typst-eval",
+      "version": "0.15.1",
+      "source": null,
+      "manifest_path": "/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-eval/Cargo.toml"
+    },
+    {
+      "name": "typst-html",
+      "version": "0.15.1",
+      "source": null,
+      "manifest_path": "/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-html/Cargo.toml"
+    },
+    {
+      "name": "typst-kit",
+      "version": "0.15.1",
+      "source": null,
+      "manifest_path": "/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-kit/Cargo.toml"
+    },
+    {
+      "name": "typst-layout",
+      "version": "0.15.1",
+      "source": null,
+      "manifest_path": "/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-layout/Cargo.toml"
+    },
+    {
+      "name": "typst-library",
+      "version": "0.15.1",
+      "source": null,
+      "manifest_path": "/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-library/Cargo.toml"
+    },
+    {
+      "name": "typst-macros",
+      "version": "0.15.1",
+      "source": null,
+      "manifest_path": "/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-macros/Cargo.toml"
+    },
+    {
+      "name": "typst-realize",
+      "version": "0.15.1",
+      "source": null,
+      "manifest_path": "/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-realize/Cargo.toml"
+    },
+    {
+      "name": "typst-render",
+      "version": "0.15.1",
+      "source": null,
+      "manifest_path": "/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-render/Cargo.toml"
+    },
+    {
+      "name": "typst-svg",
+      "version": "0.15.1",
+      "source": null,
+      "manifest_path": "/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-svg/Cargo.toml"
+    },
+    {
+      "name": "typst-syntax",
+      "version": "0.15.1",
+      "source": null,
+      "manifest_path": "/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-syntax/Cargo.toml"
+    },
+    {
+      "name": "typst-timing",
+      "version": "0.15.1",
+      "source": null,
+      "manifest_path": "/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-timing/Cargo.toml"
+    },
+    {
+      "name": "typst-utils",
+      "version": "0.15.1",
+      "source": null,
+      "manifest_path": "/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-utils/Cargo.toml"
+    }
+  ],
+  "stock": [
+    {
+      "name": "typst",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-eval",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-eval-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-html",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-html-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-kit",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-kit-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-layout",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-layout-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-library",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-library-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-macros",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-macros-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-realize",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-realize-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-render",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-render-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-svg",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-svg-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-syntax",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-syntax-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-timing",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-timing-0.15.1/Cargo.toml"
+    },
+    {
+      "name": "typst-utils",
+      "version": "0.15.1",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "manifest_path": "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/typst-utils-0.15.1/Cargo.toml"
+    }
+  ]
+}

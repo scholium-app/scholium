@@ -2,6 +2,24 @@ use super::*;
 use scholium_model::{BlockKind, DocumentId, NodeId, Revision, structured::*};
 use std::path::PathBuf;
 
+#[test]
+fn candidate_open_rejects_legacy_before_writing_or_changing_journal_mode() {
+    let path = Fixture::fresh();
+    drop(SessionStore::open(&path.0).expect("legacy fixture"));
+    let original = std::fs::read(&path.0).expect("original bytes");
+    assert!(matches!(
+        SessionStore::open_structured(&path.0),
+        Err(StructuredStoreError::Schema)
+    ));
+    assert_eq!(
+        std::fs::read(&path.0).expect("unchanged original"),
+        original
+    );
+    let missing = Fixture::fresh();
+    assert!(SessionStore::open_structured(&missing.0).is_err());
+    assert!(!missing.0.exists());
+}
+
 pub(crate) struct Fixture(pub PathBuf);
 impl Fixture {
     pub(crate) fn fresh() -> Self {

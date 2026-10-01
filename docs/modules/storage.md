@@ -95,7 +95,7 @@ export 临时目录完整验证后发布；原项目和前次成功输出在失�
 
 [ADR 0033](../adr/ADR-0033-structured-local-session-migration.md) 约束现有 SessionStore：
 legacy `user_version=0` 保持默认 save/load/snapshot_at；结构候选 v1 使用独立
-create_structured/save_structured/load_structured API 与 typed StructuredStoreError。
+create_structured/open_structured/save_structured/load_structured API 与 typed StructuredStoreError。
 未知数据库版本在 DDL/日志模式调整前拒绝；v1 snapshot 需要明确 format/version envelope
 及 identified 校验。SQL CHECK 拒绝旧裸 JSON，legacy API 不能读写 v1。请求日志必须连续、
 唯一且与语义 revision 一致。没有读写失败后的临时库回退。
@@ -110,3 +110,7 @@ hard_link 不覆盖发布，再 fsync 目录；正常后清理自有临时文件
 symlink）或不可发布时不覆盖；发布后目录同步失败可能留完整目标，错误不宣称 durable。
 原库始终保留，普通 app 不自动选择目标。重开候选恢复 WAL/FULL，不改变结构身份。
 此格式是本地会话候选，不替代共享 WAL/历史、协作恢复或跨平台断电验证。
+
+`open_structured` 只以 READ_WRITE 打开已有文件，不含 CREATE；校验 v1 schema 后才调整
+WAL/FULL。legacy、缺失或坏库拒绝，不自动生成/迁移表或改变旧库日志模式。
+开发主程序据此选择已知 v1；创建新库使用独立原子 create API。

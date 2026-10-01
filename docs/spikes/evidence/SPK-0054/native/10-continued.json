@@ -1,0 +1,334 @@
+{
+  "backend": "Typst Content main app",
+  "carets": [
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 20.0,
+      "y": 264.3203125
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 34.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 34.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 46.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 46.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 3,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 58.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 3,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 58.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 4,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 65.328125,
+      "y": 264.3203125
+    },
+    {
+      "byte": 4,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 65.328125,
+      "y": 264.3203125
+    },
+    {
+      "byte": 5,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 71.99609375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 5,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 71.99609375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 6,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 81.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 6,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 81.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 7,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 93.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 7,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 93.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 8,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 99.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 8,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 99.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 11,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 123.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 11,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 123.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 14,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 147.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 14,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 147.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 15,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 153.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 15,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 153.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 18,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 177.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 18,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 177.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 21,
+      "exact": true,
+      "leaf": "NodeId(8fb87c9e-0037-4063-a7d9-3c892087a42a)",
+      "x": 201.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(ce83a135-b6d3-4a41-b62a-0f6c7d994350)",
+      "x": 204.0287322998047,
+      "y": 257.6070251464844
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(ce83a135-b6d3-4a41-b62a-0f6c7d994350)",
+      "x": 213.5879364013672,
+      "y": 257.6070251464844
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(ce83a135-b6d3-4a41-b62a-0f6c7d994350)",
+      "x": 213.5879364013672,
+      "y": 257.6070251464844
+    },
+    {
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(ce83a135-b6d3-4a41-b62a-0f6c7d994350)",
+      "x": 223.1471405029297,
+      "y": 257.6070251464844
+    },
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(9af90b3f-527f-4ca2-a0c8-d98b9b94e450)",
+      "x": 209.50193786621094,
+      "y": 272.4966125488281
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(9af90b3f-527f-4ca2-a0c8-d98b9b94e450)",
+      "x": 217.67393493652344,
+      "y": 272.4966125488281
+    },
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(5b7d902f-88e5-41a7-b16a-8830bcf0bb36)",
+      "x": 205.4159393310547,
+      "y": 284.7138366699219
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(5b7d902f-88e5-41a7-b16a-8830bcf0bb36)",
+      "x": 213.5879364013672,
+      "y": 284.7138366699219
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(5b7d902f-88e5-41a7-b16a-8830bcf0bb36)",
+      "x": 213.5879364013672,
+      "y": 284.9118347167969
+    },
+    {
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(5b7d902f-88e5-41a7-b16a-8830bcf0bb36)",
+      "x": 221.7599334716797,
+      "y": 284.9118347167969
+    }
+  ],
+  "current": true,
+  "cursor_byte": 2,
+  "cursor_leaf": "NodeId(5b7d902f-88e5-41a7-b16a-8830bcf0bb36)",
+  "layout_error": null,
+  "page_text_draws": 0,
+  "revision": 17,
+  "saved": false,
+  "shown": "SceneStamp { document: DocumentId(b8fe2522-53e6-4b8f-aa18-684fa7c489f7), epoch: LayoutEpoch(38aad221-c292-442a-9cf3-6b9e9ac6fe2a), request: LayoutRequestId(8c71d240-a7bd-41ab-aa0a-03dbaa1e8a26), revision: Revision(17), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }",
+  "snapshot": {
+    "blocks": [
+      {
+        "content": [
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": "English 中文 空格"
+            },
+            "node": "8fb87c9e-0037-4063-a7d9-3c892087a42a"
+          },
+          {
+            "body": {
+              "kind": "math",
+              "root": {
+                "body": {
+                  "denominator": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "45"
+                        },
+                        "node": "5b7d902f-88e5-41a7-b16a-8830bcf0bb36"
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "3"
+                        },
+                        "node": "9af90b3f-527f-4ca2-a0c8-d98b9b94e450"
+                      }
+                    },
+                    "node": "c468b6fc-94dd-4a61-8a91-87797f8ef518"
+                  },
+                  "kind": "fraction",
+                  "numerator": {
+                    "body": {
+                      "kind": "text",
+                      "text": "12"
+                    },
+                    "node": "ce83a135-b6d3-4a41-b62a-0f6c7d994350"
+                  }
+                },
+                "node": "956aba91-9c43-4593-b756-3b90ee699968"
+              }
+            },
+            "node": "1047c9b2-69be-4cdf-a55d-8606284c27f8"
+          },
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": ""
+            },
+            "node": "6771dac5-5547-4bac-9510-c5ec6adc8265"
+          }
+        ],
+        "kind": "Paragraph",
+        "node": "5fb01ec8-6f9b-4e6c-b760-b8c48d970793"
+      }
+    ],
+    "document": "b8fe2522-53e6-4b8f-aa18-684fa7c489f7",
+    "revision": 17
+  },
+  "source_reads": 0,
+  "wanted": "SceneStamp { document: DocumentId(b8fe2522-53e6-4b8f-aa18-684fa7c489f7), epoch: LayoutEpoch(38aad221-c292-442a-9cf3-6b9e9ac6fe2a), request: LayoutRequestId(8c71d240-a7bd-41ab-aa0a-03dbaa1e8a26), revision: Revision(17), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }"
+}

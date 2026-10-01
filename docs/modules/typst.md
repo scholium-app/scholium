@@ -62,6 +62,25 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 这一窄接口不是上面的正式 `compile(revision, inputs)` 沙箱构建接口。
 直接编辑边界见 [ADR 0029](../adr/ADR-0029-direct-page-editing.md)。
 
+## 直接 Content 开发接口
+
+`editor` feature 仅供 [隔离开发 manifest](../../dev/typst-editor/Cargo.toml)，须统一加载
+锁定 fork 的 13 个库；根 workspace 默认不加载 fork。见 [ADR 0034](../adr/ADR-0034-typst-main-app-candidate.md)。
+`EditorWorker::spawn(wake)` 在 CPU 线程驻留 World/字体和 Content cache；
+`submit(Arc<StructuredDocument>, SceneStamp)` 传递完整已接受快照，`poll()` 非阻塞返回
+带 stamp 的结果。队列和结果分别只保留最新一份派生工作；关闭不在 UI join。
+节点/子树未变则保留 Content，变动的祖先重建；传输与快照复制仍有全文成本。
+
+结构直接构造正文/样式、Par、Equation、Frac 与 EditHole；字串不作为 source 执行。
+World 的 source/file 均拒绝，today 无环境求值。RawMath 返回明确节点错误，既不改变模型
+也不走旧输入期文字替代。受控 flow 宽 420 pt、高度预算 2000 pt，超过预算拒绝而非截断。
+
+`EditorScene` 的 raster 和 `EditGeometry` 都取同一个 padded Frame；caret 位置是 typed
+NodeId、叶内 UTF-8 byte 与 affinity，top/bottom 为该 Frame 的 pt。opaque ID 只在 adapter
+注册/反查，不进入模型或存储。剪裁/未知 origin 拒绝；跨叶 derived cluster 不猜端点；合字
+内部按比例的 caret 保留 `exact=false`。调用方只用当前全 stamp 场景做命中/IME 锚点。
+SceneStats 记录 built/reused/source_reads/elapsed，不能作为物理刷新或分页性能证明。
+
 ## 不变量
 
 - 生成相同 SDG 和 profile 得到相同源码。

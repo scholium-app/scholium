@@ -21,3 +21,34 @@ jobs:
       - uses: EmbarkStudios/cargo-deny-action@v2
         with:
           command: check licenses bans sources
+  typst-editor-candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.96.0
+        with:
+          components: rustfmt, clippy
+      - run: sudo apt-get update && sudo apt-get install -y libxkbcommon-dev libwayland-dev libegl1-mesa-dev xvfb xdotool xclip imagemagick fonts-noto-cjk
+      - name: Rebuild the pinned fork from upstream objects
+        run: |
+          git init /tmp/typst-origin
+          git -C /tmp/typst-origin fetch --depth 1 https://github.com/typst/typst.git 9dfd3a08500b7896045f907433cf7b4b02434fad
+          python3 dev/typst-editor/verify-fork.py /tmp/typst-origin > /tmp/typst-fork-source.json
+      - run: cargo fmt --manifest-path dev/typst-editor/Cargo.toml --all -- --check
+      - run: cargo clippy --locked --manifest-path dev/typst-editor/Cargo.toml --all-targets -- -D warnings
+      - run: cargo test --locked --manifest-path dev/typst-editor/Cargo.toml -- --test-threads=1
+      - run: cargo build --locked --manifest-path dev/typst-editor/Cargo.toml --bin scholium-app
+      - name: Compare formal Content adapter with independent stock Typst
+        run: |
+          cargo run --locked --manifest-path dev/typst-editor/Cargo.toml --bin typst-main-fork-check -- /tmp/typst-fork-pixels
+          cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir dev/typst-editor/target -- /tmp/typst-stock-pixels
+          python3 spikes/typst-main-editor/compare.py /tmp/typst-fork-pixels /tmp/typst-stock-pixels > /tmp/typst-stock-comparison.json
+      - run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/native-check.py dev/typst-editor/target/debug/scholium-app /tmp/scholium-native-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: typst-main-native-evidence
+          path: |
+            /tmp/scholium-native-evidence
+            /tmp/typst-fork-source.json
+            /tmp/typst-stock-comparison.json

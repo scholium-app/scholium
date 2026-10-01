@@ -75,7 +75,7 @@ pub(crate) fn shortcuts(ctx: &egui::Context, state: &mut WorkspaceState) {
     // Consume these so TextEdit's private snapshot undo never fires: the
     // application's undo is its own action-layer history (`crate::undo`), and
     // letting both run would apply two different notions of "back".
-    if state.document.is_some() {
+    if state.has_document() {
         // Ctrl+Z is undo; Ctrl+Shift+Z and Ctrl+Y are redo.
         //
         // egui matches a shortcut by "pattern modifiers present", not by exact

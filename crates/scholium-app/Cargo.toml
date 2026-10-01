@@ -6,6 +6,10 @@ license.workspace = true
 rust-version.workspace = true
 publish = false
 
+[features]
+# Source feature for the isolated development manifest; stock workspace stays default.
+typst-editor = []
+
 [dependencies]
 eframe.workspace = true
 unicode-segmentation = "=1.13.3"

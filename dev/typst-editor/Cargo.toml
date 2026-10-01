@@ -1,0 +1,68 @@
+[package]
+name = "scholium-app"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+rust-version = "1.96"
+publish = false
+
+[workspace]
+
+[features]
+default = ["typst-editor"]
+typst-editor = []
+
+[[bin]]
+name = "scholium-app"
+path = "../../crates/scholium-app/src/main.rs"
+
+[[bin]]
+name = "typst-main-fork-check"
+path = "../../spikes/typst-main-editor/fork-check.rs"
+
+[dependencies]
+eframe = { version = "=0.36.2", default-features = false, features = ["accesskit", "default_fonts", "glow", "wayland", "x11"] }
+unicode-segmentation = "=1.13.3"
+thiserror = "=2.0.20"
+serde_json = "=1.0.151"
+scholium-model = { path = "../../crates/scholium-model" }
+scholium-document = { path = "../../crates/scholium-document" }
+scholium-storage = { path = "../../crates/scholium-storage" }
+scholium-typst = { path = "../../crates/scholium-typst", features = ["editor"] }
+typst-layout = { version = "=0.15.1", features = ["editor"] }
+
+[profile.dev]
+debug = 0
+
+[profile.test]
+debug = 0
+
+[patch.crates-io]
+typst = { path = "../../vendor/typst-edit/crates/typst" }
+typst-eval = { path = "../../vendor/typst-edit/crates/typst-eval" }
+typst-html = { path = "../../vendor/typst-edit/crates/typst-html" }
+typst-kit = { path = "../../vendor/typst-edit/crates/typst-kit" }
+typst-layout = { path = "../../vendor/typst-edit/crates/typst-layout" }
+typst-library = { path = "../../vendor/typst-edit/crates/typst-library" }
+typst-macros = { path = "../../vendor/typst-edit/crates/typst-macros" }
+typst-realize = { path = "../../vendor/typst-edit/crates/typst-realize" }
+typst-render = { path = "../../vendor/typst-edit/crates/typst-render" }
+typst-svg = { path = "../../vendor/typst-edit/crates/typst-svg" }
+typst-syntax = { path = "../../vendor/typst-edit/crates/typst-syntax" }
+typst-timing = { path = "../../vendor/typst-edit/crates/typst-timing" }
+typst-utils = { path = "../../vendor/typst-edit/crates/typst-utils" }
+
+[lints]
+workspace = true
+
+[workspace.lints.clippy]
+too_many_lines = "warn"
+cognitive_complexity = "warn"
+too_many_arguments = "warn"
+unwrap_used = "warn"
+missing_panics_doc = "warn"
+missing_errors_doc = "warn"
+undocumented_unsafe_blocks = "deny"
+
+[workspace.lints.rust]
+missing_docs = "warn"

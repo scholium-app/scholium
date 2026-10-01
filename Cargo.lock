@@ -3651,7 +3651,9 @@ dependencies = [
 name = "scholium-typst"
 version = "0.1.0"
 dependencies = [
+ "comemo",
  "scholium-model",
+ "thiserror 2.0.20",
  "typst",
  "typst-kit",
  "typst-layout",

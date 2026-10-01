@@ -1,0 +1,20 @@
+[package]
+name = "typst-main-stock-reference"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[workspace]
+
+[[bin]]
+name = "typst-main-stock-reference"
+path = "../stock-reference.rs"
+
+[dependencies]
+comemo = "=0.5.1"
+serde_json = "=1.0.151"
+typst = "=0.15.1"
+typst-kit = { version = "=0.15.1", features = ["embedded-fonts", "scan-fonts"] }
+typst-layout = "=0.15.1"
+typst-render = "=0.15.1"

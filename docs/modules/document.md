@@ -105,13 +105,18 @@ LocalSession 是单人内存段落接入；直接 apply 仅限此临时适配器
 公共调用只提供 owned snapshot，不提供可变权威引用；储存和 Typst 属于外部适配器。
 
 `StructuralRequest` 带文档、base revision、唯一请求身份；ReplaceText 使用 leaf NodeId
-和叶内 UTF-8 字素边界，RawMath 不可穿透。InsertMath/WrapFraction、SplitBlock/
+和叶内 UTF-8 字素边界，RawMath 不可穿透。InsertMath/InsertMathAt/WrapFraction、SplitBlock/
 MergeWithNext、整叶 SetTextStyle 和 SetKind 先在临时规划副本验证，再一次接受。存活节点
 身份不变；新分数 wrapper、新分母 Hole、新拆块/右叶才分配新 ID。删除数学叶最后文字
 恢复同 ID Hole。无效/重复/过期请求和 no-op 不追加动作。临时规划仍复制快照，不能据此
 承诺逐键时延与全文大小无关。跨叶选区与局部样式规划留给后续适配。
 
+`InsertMathAt { leaf, at }` 在正文叶的字素边界一次创建 inline 公式与右文字叶；左叶 ID 和
+两侧文字样式保留，原有后续 inline 不变。公式初始为必填 Hole；内部 Unicode 边界或数学/
+Raw 目标拒绝，不部分拆文字。这是一个动作，不能在 UI 拆成多次写操作。
+
 迁移、恢复和 `reset_layout_epoch` 更新非持久化随机 epoch；普通结构动作不重建 epoch。
 `scene_stamp` 每次生成新的布局请求身份，不改变正文/动作日志。单机撤销/重做可用既有
-snapshot restore 语义，但必须新 epoch；不实现协作 undo。主程序 worker 采纳门属于后续
-接入，类型本身不构成窗口竞态验收。裁决见 [ADR 0033](../adr/ADR-0033-structured-local-session-migration.md)。
+snapshot restore 语义，但必须新 epoch；不实现协作 undo。主程序 worker 必须按完整
+SceneStamp 采纳，类型本身不构成窗口竞态验收。裁决见
+[ADR 0033](../adr/ADR-0033-structured-local-session-migration.md)、[ADR 0034](../adr/ADR-0034-typst-main-app-candidate.md)。

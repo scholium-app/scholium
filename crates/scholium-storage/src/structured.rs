@@ -61,6 +61,16 @@ pub struct PersistedStructuredSession {
 }
 
 impl SessionStore {
+    /// Open an existing v1 file without creating or upgrading a legacy database.
+    ///
+    /// # Errors
+    /// Rejects missing files, invalid schemas and non-v1 databases before journal changes.
+    pub fn open_structured(path: &std::path::Path) -> Result<Self, StructuredStoreError> {
+        let db = Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_WRITE)?;
+        validate_schema(&db)?;
+        db.execute_batch("PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;")?;
+        Ok(Self { db })
+    }
     /// Atomically create an independent empty candidate file, refusing an existing target.
     ///
     /// # Errors
