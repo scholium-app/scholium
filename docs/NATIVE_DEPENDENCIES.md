@@ -84,3 +84,7 @@ TeX 自身的配置**挡不住**读取项目外文件（`\openin` 在默认配�
 **构建记录**：pkg-config 解析系统 sqlite3 3.53.4（Arch Linux），无本地编译。
 
 WASM 路线不链接本依赖；浏览器存储适配另行验证（ADR 0028 保留 redb 候选）。
+
+候选本地格式 v1 的 snapshot CHECK 使用系统 SQLite `json_valid/json_extract`；宿主必须
+具备 JSON 函数，否则创建/迁移返回错误，不以去掉约束退化。硬链接发布限定同一目录/文件
+系统，关闭连接和语句后同步主文件及目录；不新增 C ABI 或跨线程所有权。

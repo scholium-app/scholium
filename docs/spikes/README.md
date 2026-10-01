@@ -12,6 +12,7 @@
 身份与空槽的限定 fork 证据见[报告 0050](SPK-0050-typst-edit-origin-and-holes.md)；仍不代表完整 K1 或产品输入路径通过。
 组合身份、正文 caret 与独立原生编辑窗口见[报告 0051](SPK-0051-typst-caret-native-editor.md)；完整 K2、增量分页与正式应用集成仍需验收。
 持久 Content 与增量段落见[报告 0052](SPK-0052-typst-incremental-content.md)；32 ms 可见帧门禁仍 Fail，完整 K3/K4 未验收。
+主程序接入的身份/epoch/文件迁移基础见[报告 0053](SPK-0053-structured-session-migration.md)；默认页面仍走 legacy 回显。
 
 - 报告按 `SPK-NNNN-short-title.md` 命名，模板见 [SPK-0000-template.md](SPK-0000-template.md)；
   证据文件按报告编号归入 `evidence/SPK-NNNN/`。

@@ -47,7 +47,7 @@ model 保持唯一权威，Typst 的借用 IR、Content、Frame 均不进入长�
 
 主程序内的开发候选在显式验证入口、隔离测试会话中复用真实 session/storage；不嵌入另一份
 spike Editor 充当正文权威。结构身份/迁移与必要同源几何先验证，再交替推进应用适配和
-flow 分页；候选可运行不表示普通启动已经替换。稳定身份及持久格式的具体迁移需另立 ADR，
+flow 分页；候选可运行不表示普通启动已经替换。稳定身份及本地候选持久格式的迁移边界见 [ADR 0033](ADR-0033-structured-local-session-migration.md)，
 默认启用和旧路径移除仍受完整 K1–K4、兼容与安全门禁约束。
 
 ## 后果

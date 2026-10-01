@@ -10,6 +10,8 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 每个 ADR 必须包含背景、验证方法、候选方案、决策、后果和替换方案；决策要有实验证据，原始数据放
 `docs/spikes/`。
 
+本地候选裁决：[ADR 0033：结构身份、代际与迁移](ADR-0033-structured-local-session-migration.md)，限定 v1 与独立迁移，证据见报告 0053。
+
 ## 已建立
 
 新增提案：[ADR 0032：Typst 编辑内核](ADR-0032-typst-edit-kernel.md)，验证方向为结构输入、空槽与同源几何；入口证据见[报告 0049](../spikes/SPK-0049-typst-content-layout.md)。

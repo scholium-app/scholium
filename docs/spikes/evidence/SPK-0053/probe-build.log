@@ -1,0 +1,17 @@
+   Compiling libc v0.2.189
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling bitflags v2.13.2
+   Compiling smallvec v1.16.2
+   Compiling serde v1.0.229
+   Compiling thiserror v2.0.20
+   Compiling rusqlite v0.37.0
+   Compiling serde_json v1.0.151
+   Compiling getrandom v0.4.3
+   Compiling uuid v1.26.1
+   Compiling scholium-model v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-model)
+   Compiling scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-storage)
+   Compiling scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-document)
+   Compiling structured-session-migration-probe v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/structured-session-migration)
+    Finished `dev` profile [unoptimized] target(s) in 1.62s
+     Running `target/debug/structured-session-migration-probe /tmp/scholium-structure-spk0053-final`

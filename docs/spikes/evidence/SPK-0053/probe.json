@@ -1,0 +1,13 @@
+{
+  "accepted_structural_actions": 5,
+  "archived_snapshots": 3,
+  "assigned_inline_ids": 6,
+  "default_app_changed": false,
+  "final_revision": 7,
+  "ids_and_required_holes_survive_reopen": true,
+  "local_undo_redo_snapshot_restore": true,
+  "raw_formulas_retained": 2,
+  "restore_epochs_differ": true,
+  "result": "Pass",
+  "source_unchanged": true
+}

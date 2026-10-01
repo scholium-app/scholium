@@ -1,0 +1,117 @@
+info: cargo-llvm-cov currently setting cfg(coverage); you can opt-out it by passing --no-cfg-coverage
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.24
+   Compiling serde_core v1.0.229
+   Compiling libc v0.2.189
+   Compiling getrandom v0.4.3
+   Compiling zmij v1.0.23
+   Compiling thiserror v2.0.20
+   Compiling cfg-if v1.0.4
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling vcpkg v0.2.15
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling pkg-config v0.3.34
+   Compiling foldhash v0.1.5
+   Compiling fallible-iterator v0.3.0
+   Compiling smallvec v1.16.1
+   Compiling bitflags v2.13.2
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling unicode-segmentation v1.13.3
+   Compiling hashbrown v0.15.5
+   Compiling libsqlite3-sys v0.35.0
+   Compiling hashlink v0.10.0
+   Compiling rusqlite v0.37.0
+   Compiling syn v3.0.5
+   Compiling uuid v1.26.1
+   Compiling thiserror-impl v2.0.20
+   Compiling serde_derive v1.0.229
+   Compiling scholium-model v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-model)
+   Compiling scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-storage)
+   Compiling scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-document)
+    Finished `test` profile [unoptimized] target(s) in 4.12s
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/scholium_document-247a14cf32399cd8)
+
+running 20 tests
+test range_edit::tests::non_boundary_and_reversed_ranges_never_change_the_document ... ok
+test range_edit::tests::cross_block_selection_is_one_atomic_action_and_preserves_outside_nodes ... ok
+test structured_session::tests::failed_migration_returns_the_original_session_and_journal ... ok
+test structured_session::tests::invalid_grapheme_ranges_and_raw_editing_leave_authority_unchanged ... ok
+test structured_session::tests::local_fraction_undo_redo_restoration_retains_ids_and_refreshes_epoch ... ok
+test structured_session::tests::splits_and_merges_retain_surviving_inline_ids_and_styles ... ok
+test structured_session::tests::filling_deleting_and_wrapping_math_preserves_slot_identity ... ok
+test structured_session::tests::render_stamps_separate_revision_reuse_requests_and_generations ... ok
+test structured_session::tests::whole_leaf_styles_and_headings_preserve_text_and_ids ... ok
+test structured_session::tests::structured_restore_rejects_duplicate_and_mismatched_logs ... ok
+test structured_session::tests::wrong_stale_duplicate_and_noop_requests_do_not_append_actions ... ok
+test tests::boundary_merges_are_wrong_targets_and_empty_merges_remove_blocks ... ok
+test tests::kind_changes_keep_identity_text_and_append_actions ... ok
+test tests::merges_keep_the_absorber_identity_kind_and_order ... ok
+test tests::inline_format_pairs_parse_like_math ... ok
+test tests::markup_parsing_keeps_math_first_class ... ok
+test tests::newline_replacements_split_into_consecutive_blocks ... ok
+test tests::projections_cannot_mutate_the_authority ... ok
+test tests::stale_duplicate_wrong_target_and_capacity_are_atomic ... ok
+test tests::no_op_and_capacity_rejection_leave_revision_unchanged ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/scholium_model-dc23647016c43282)
+
+running 8 tests
+test structured::tests::all_addressed_nodes_share_one_uniqueness_namespace ... ok
+test structured::tests::required_holes_do_not_become_persisted_placeholder_text ... ok
+test structured::tests::invalid_containers_leaves_and_unknown_tags_are_rejected ... ok
+test structured::tests::complete_rows_symbols_and_fixed_slots_round_trip_without_holes ... ok
+test structured::tests::migration_retains_values_and_block_ids_and_reports_raw_formulas ... ok
+test structured::tests::maximum_depth_round_trips_and_one_more_level_is_rejected ... ok
+test structured::tests::over_capacity_input_is_rejected_without_truncation ... ok
+test structured::tests::aggregate_text_and_node_caps_reject_many_individually_valid_leaves ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/deps/scholium_storage-84b8068783c814ac)
+
+running 22 tests
+test tests::missing_head_snapshot_is_a_recovery_error ... ok
+test tests::resave_shrinks_the_log_and_keeps_latest_snapshot ... ok
+test tests::malformed_request_id_is_a_recovery_error ... ok
+test tests::inconsistent_log_cannot_replace_a_committed_session ... ok
+test structured::tests::future_database_versions_are_rejected_before_ddl_or_journal_changes ... ok
+test structured::tests::old_writer_is_rejected_by_sql_constraint_and_its_transaction_rolls_back ... ok
+test structured::tests::maximum_depth_is_readable_inside_the_versioned_envelope ... ok
+test migration::tests::malformed_legacy_journal_is_not_silently_rebuilt ... ok
+test structured::tests::rejected_structure_and_journal_do_not_change_previous_head ... ok
+test tests::snapshot_at_reads_history_and_missing_returns_none ... ok
+test migration::tests::malformed_source_does_not_create_target_or_repair_original ... ok
+test structured::tests::journal_gaps_duplicates_and_malformed_request_bytes_are_rejected ... ok
+test structured::tests::identified_ids_fixed_holes_and_requests_survive_save_reopen ... ok
+test tests::save_load_round_trip_and_reopen_preserve_everything ... ok
+test migration::tests::unavailable_destination_and_failed_build_leave_no_output ... ok
+test migration::tests::later_candidate_save_retains_immutable_legacy_archive ... ok
+test migration::tests::dangling_target_symlink_is_not_followed_or_replaced ... ok
+test structured::tests::mislabeled_legacy_and_future_envelopes_are_rejected ... ok
+test migration::tests::migration_preserves_original_bytes_history_and_head_request_ids ... ok
+test migration::tests::existing_target_and_same_source_are_never_overwritten ... ok
+test migration::tests::unknown_legacy_fields_and_storage_extensions_are_not_dropped ... ok
+test tests::bench_sqlite_append_hundred_thousand_actions_and_read_snapshot ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running unittests src/bin/hammer.rs (target/llvm-cov-target/debug/deps/hammer-a8d4fbe474b29a70)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/recovery.rs (target/llvm-cov-target/debug/deps/recovery-e5202bf2b3d2d827)
+
+running 1 test
+test sigkill_mid_write_leaves_a_consistent_store ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+    Finished report saved to /tmp/scholium-spk0053-coverage.json

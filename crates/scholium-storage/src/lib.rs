@@ -2,12 +2,18 @@
 //! 单事务保存快照与动作日志；WAL 模式下未提交事务崩溃后不可见，恢复即丢弃。
 //! libsqlite3 以系统库经 rusqlite 链接，登记见 docs/NATIVE_DEPENDENCIES.md。
 
+mod migration;
+mod structured;
+pub use migration::{FileMigrationReport, migrate_legacy_file};
+pub use structured::{PersistedStructuredSession, StructuredStoreError};
+
 use std::path::{Path, PathBuf};
 
 use rusqlite::Connection;
 use scholium_model::{DocumentSnapshot, RequestId, Revision};
 
 /// 持久化会话的还原视图：最新快照与请求身份日志。
+#[derive(Debug)]
 pub struct PersistedSession {
     /// 最新内容投影。
     pub snapshot: DocumentSnapshot,
@@ -16,6 +22,7 @@ pub struct PersistedSession {
 }
 
 /// 打开（或创建）会话数据库。文件本身即唯一事实，无外部状态。
+#[derive(Debug)]
 pub struct SessionStore {
     db: Connection,
 }
@@ -31,6 +38,20 @@ impl SessionStore {
     }
 
     fn init(db: Connection) -> Result<Self, String> {
+        let version: i64 = db
+            .query_row("PRAGMA user_version", [], |r| r.get(0))
+            .map_err(|e| e.to_string())?;
+        match version {
+            0 => {}
+            1 => {
+                // Validate before changing journal settings or constructing a writer.
+                structured::validate_schema(&db).map_err(|e| e.to_string())?;
+                db.execute_batch("PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;")
+                    .map_err(|e| e.to_string())?;
+                return Ok(Self { db });
+            }
+            _ => return Err(format!("unsupported session schema version: {version}")),
+        }
         // WAL + FULL：显式保存是低频用户动作，换取崩溃/断电安全。
         db.execute_batch(
             "PRAGMA journal_mode=WAL;
@@ -47,12 +68,17 @@ impl SessionStore {
         Ok(Self { db })
     }
 
+    fn require_legacy(&self) -> Result<(), String> {
+        structured::require_version(&self.db, 0).map_err(|e| e.to_string())
+    }
+
     /// 原子保存：最新快照 + 完整请求日志 + head 指针写入单事务。
     ///
     /// # Errors
     /// revision 超出 SQLite 整数范围、请求日志长度不匹配、序列化或写入失败时返回错误；
     /// 数据库保持上一个已提交状态。
     pub fn save(&self, snapshot: &DocumentSnapshot, requests: &[RequestId]) -> Result<(), String> {
+        self.require_legacy()?;
         let revision = i64::try_from(snapshot.revision.0)
             .map_err(|_| "revision exceeds SQLite integer range".to_owned())?;
         if requests.len() as u64 != snapshot.revision.0 {
@@ -86,6 +112,7 @@ impl SessionStore {
     /// # Errors
     /// head 快照缺失、revision 或请求日志不一致、请求身份损坏以及反序列化失败时返回错误。
     pub fn load(&self) -> Result<Option<PersistedSession>, String> {
+        self.require_legacy()?;
         let head: Option<i64> = self
             .db
             .query_row(
@@ -136,6 +163,7 @@ impl SessionStore {
     /// # Errors
     /// revision 超出 SQLite 整数范围、读取或反序列化失败时返回错误。
     pub fn snapshot_at(&self, revision: Revision) -> Result<Option<DocumentSnapshot>, String> {
+        self.require_legacy()?;
         let revision = i64::try_from(revision.0)
             .map_err(|_| "revision exceeds SQLite integer range".to_owned())?;
         let row = self.db.query_row(

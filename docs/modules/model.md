@@ -69,3 +69,19 @@ ExportRequest 的领域 DTO；具体字段见 [数据模型](../DATA_MODEL.md)�
 不表示屏幕像素、字符序号或持久协作锚点。`BlockEdit::ReplaceRange { start, end, text }` 将同一
 revision 下的有序范围原子替换，可跨块。请求仍携带文档身份、base revision 和唯一 request id。
 其阶段边界见 [ADR 0029](../adr/ADR-0029-direct-page-editing.md)。
+
+## 本地 identified 候选合约
+
+[ADR 0033](../adr/ADR-0033-structured-local-session-migration.md) 定义 `structured`：
+`StructuredDocument` 的块、inline、MathNode 共享全文唯一 NodeId；数学 Text/Symbol/Row/
+Fraction/Hole 有显式序列化 tag，固定分子/分母由拥有者及槽名识别。必填空槽使用 Hole，
+不持久化提示文字。`validate` 检查身份/容量/叶/容器，`ensure_filled` 拒绝 Hole，但不能
+证明 RawMath 可以严格编译。树深上限 24，单叶 1 MiB、合计内容 16 MiB、节点 100000。
+
+`StructuredDocument::migrate` 保留文档/块身份、样式和原值，首次为 inline 分配身份；
+所有旧 Typst 数学原串作为 RawMath 保留，报告包含其节点 ID，无解析/执行/槽位编辑承诺。
+空块添加空文字叶供编辑。未知字段/tag 和非法结构拒绝，不按新语义解释未来格式。
+这只定义本地候选，不是共享 SDG、SourceAuthority 或长期历史协议。
+
+`layout_identity` 定义不序列化的 LayoutEpoch/LayoutRequestId/ProfileGeneration/
+ResourceGeneration/SceneStamp；场景采纳比较全部字段，不能仅比较语义 revision。

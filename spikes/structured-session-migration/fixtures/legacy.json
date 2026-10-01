@@ -1,0 +1,22 @@
+{
+  "document": "00000000-0000-4000-8000-000000000001",
+  "revision": 0,
+  "blocks": [
+    {
+      "node": "00000000-0000-4000-8000-000000000002",
+      "kind": "Heading1",
+      "content": [
+        {"Text": "中文 $ \\ é 👩‍🔬"},
+        {"Strong": "bold"},
+        {"Emphasis": "emphasis"},
+        {"Math": "frac(x, 2)"},
+        {"Math": "#unknown(\"x\")\nunsupported"}
+      ]
+    },
+    {
+      "node": "00000000-0000-4000-8000-000000000003",
+      "kind": "Paragraph",
+      "content": []
+    }
+  ]
+}
