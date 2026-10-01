@@ -32,6 +32,21 @@
 **其它平台绑定**：`windows-sys`、`js-sys` 会出现在 `Cargo.lock` 里，但它们只用于非 Linux 目标，
 在本项目当前平台上不编译、不链接。
 
+### Linux X11 窗口的系统动态库
+
+`eframe → winit → xkbcommon-dl` 在 X11 入口动态加载系统 `libxkbcommon.so.0` 与
+`libxkbcommon-x11.so.0`；后者必须单独安装，Ubuntu 的 `libxkbcommon-dev` 不包含它。
+这两库使用 MIT/X11 衍生宽松许可，由发行版提供，应用不静态打包。
+本项目没有自写 C 源码；C ABI 的键盘 context/keymap/state 及 XCB 连接由 winit 的绑定
+管理，不传递文档/Typst 类型。句柄遵循库的 ref/unref 所有权，由窗口事件线程创建和使用，
+先释放键盘状态，再释放其依赖的 map/context 和连接；动态库句柄保持至调用结束。
+
+窗口验证脚本经 Python ctypes 调用系统 `libX11.so.6`（MIT/X11）发送
+WM_DELETE_WINDOW。ABI 使用 Xlib ClientMessage/Event 的 C 布局及窗口整数身份；
+测试自行打开的 Display 独占使用，不共享应用连接。事件由脚本持有，XSendEvent 后
+XFlush，再 XCloseDisplay；最后等待应用正常退出，不直接销毁应用 Drawable。
+这些系统库不随测试脚本分发；开发入口的构建与加载证据见[报告 0054](spikes/SPK-0054-typst-main-app-candidate.md)。
+
 ## 2. 以独立子进程调用的外部工具链（不构成链接）
 
 ### Linux 编译会话的系统 ABI

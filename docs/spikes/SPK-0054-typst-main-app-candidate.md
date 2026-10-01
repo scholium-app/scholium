@@ -119,6 +119,13 @@ python3 spikes/typst-main-editor/compare.py /tmp/fork-pixels /tmp/stock-pixels
 [修复前观察](evidence/SPK-0054/empty-hole-before-fix.json)，补失败回归后将根 Hole slot
 标为自身必填槽；再次逐步停留在空公式、空分母及完整窗口流程通过。
 
+远端 `ccb6acf` 的运行 36889207978 第 2 次尝试通过候选 tests/build 和三组 stock
+像素对照，但窗口启动因缺失 `libxkbcommon-x11.so.0` 失败，见
+[运行库失败日志](evidence/SPK-0054/ci-runtime-before-fix.log)、
+[远端像素结果](evidence/SPK-0054/ci-stock-comparison.json)。候选 CI 显式安装 Ubuntu
+`libxkbcommon-x11-0` 并预检 X11 动态库；不能以编译通过代替运行库和窗口验证。
+第一次尝试的 Ubuntu Azure 镜像持续下载重试，主动取消后重跑，未改变任何测试门禁。
+
 窗口例图：[空分母](evidence/SPK-0054/native/04-empty-denominator.png)、
 [嵌套分数](evidence/SPK-0054/native/05-nested-fraction.png)、
 [重开继续编辑](evidence/SPK-0054/native/10-continued.png)。

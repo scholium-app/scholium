@@ -1,9 +1,9 @@
 {
   "base_commit": "c28fd33b95d829399dc3664f3a0ee19da3d81386",
   "branch": "codex/feat/typst-main-editor-candidate",
-  "code_sha256": "34fad26de1fc327e1af9d022189041dd8e4d8bd300b212405301dd14d261240d",
+  "code_sha256": "4a622b1c9b95094e6f2434af8b4dff651eaa117db843693f13525aede89aa3d6",
   "files": {
-    ".github/workflows/rust.yml": "de0a827c373499c5f422c3060a22ae8e351088aa25990c061390662fda838264",
+    ".github/workflows/rust.yml": "b42388ffadb6a7bf9aa3720bb853cb7582dd7b4555ac329aeae3e0a974a8c43c",
     "Cargo.lock": "0c9e925ffd726d3dc59e596006f1f4c7f16efb8ce1544f54f698480e53510169",
     "Cargo.toml": "76c5fc8a260f67c9012fb5ac25d1616d7e32c276fbfc675bcb1b2a7f45550429",
     "crates/scholium-app/Cargo.toml": "c9ddb7a553aa9b7c36df2a8b3b87646e8159f62bd94055ea7a94b92833f062f5",

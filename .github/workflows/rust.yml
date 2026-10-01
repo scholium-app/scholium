@@ -28,7 +28,9 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.96.0
         with:
           components: rustfmt, clippy
-      - run: sudo apt-get update && sudo apt-get install -y libxkbcommon-dev libwayland-dev libegl1-mesa-dev xvfb xdotool xclip imagemagick fonts-noto-cjk
+      - run: sudo apt-get update && sudo apt-get install -y libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libegl1-mesa-dev xvfb xdotool xclip imagemagick fonts-noto-cjk
+      - name: Check native X11 runtime libraries
+        run: python3 -c 'import ctypes; ctypes.CDLL("libxkbcommon-x11.so.0"); ctypes.CDLL("libX11.so.6")'
       - name: Rebuild the pinned fork from upstream objects
         run: |
           git init /tmp/typst-origin
