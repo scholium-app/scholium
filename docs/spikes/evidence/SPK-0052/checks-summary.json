@@ -1,0 +1,15 @@
+{
+  "incremental_content": "Pass",
+  "layout_geometry_8ms": "Pass",
+  "visible_frame_32ms": "Fail",
+  "advisories": "Fail",
+  "native_operations": {
+    "passed": 6,
+    "failed": 0,
+    "artificial_layout_delay_ms": 200,
+    "audit_states": 23
+  },
+  "window_session_unique_tests": 13,
+  "stock_raster_cases": 9,
+  "size_and_local_links": "Pass"
+}

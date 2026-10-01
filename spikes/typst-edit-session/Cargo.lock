@@ -3810,6 +3810,7 @@ dependencies = [
  "comemo",
  "eframe",
  "scholium-spike-core",
+ "serde",
  "serde_json",
  "thiserror 2.0.20",
  "typst",

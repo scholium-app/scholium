@@ -7,6 +7,7 @@
 - 入口证据：[报告 0049](../spikes/SPK-0049-typst-content-layout.md)
 - 身份/空槽限定证据：[报告 0050](../spikes/SPK-0050-typst-edit-origin-and-holes.md)
 - 组合身份/caret/原生窗口限定证据：[报告 0051](../spikes/SPK-0051-typst-caret-native-editor.md)
+- 持久 Content 与增量段落限定证据：[报告 0052](../spikes/SPK-0052-typst-incremental-content.md)
 
 ## 背景
 

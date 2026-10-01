@@ -27,7 +27,14 @@ fn committed_body_is_only_typst_pixels_and_geometry() {
     let mut world = ProbeWorld::new();
     world.library.editing = true;
     let ctx = egui::Context::default();
-    app.scene = Some(worker::build(&world, app.core.document()).unwrap());
+    app.scene = Some(
+        worker::build(
+            &world,
+            &mut crate::session::ContentSession::default(),
+            Update::initial(app.core.document()).unwrap(),
+        )
+        .unwrap(),
+    );
     app.texture = Some(ctx.load_texture(
         "body",
         app.scene.as_ref().unwrap().image.clone(),
@@ -79,8 +86,14 @@ fn stale_pixels_and_geometry_are_discarded_as_one_result() {
     sender
         .send(Ok(Scene {
             revision: old_revision,
+            accepted_ns: 0,
+            ready_ns: 0,
+            adopted_ns: 0,
+            paragraph_computations: 0,
             image: egui::ColorImage::filled([1, 1], Color32::WHITE),
             geometry: Default::default(),
+            projection: Default::default(),
+            projection_ms: 0.0,
             layout_ms: 0.0,
             raster_ms: 0.0,
         }))
@@ -98,4 +111,68 @@ fn fraction_command_outside_math_preserves_revision_and_tree() {
     app.fraction();
     assert_eq!(app.core.revision(), revision);
     assert!(app.error.is_some());
+}
+
+#[test]
+fn text_undo_updates_its_original_leaf_after_the_cursor_moves() {
+    let mut app = window();
+    let mut session = crate::session::ContentSession::default();
+    session
+        .apply(Update::initial(app.core.document()).unwrap())
+        .unwrap();
+    session.content().unwrap();
+    app.events(vec![egui::Event::Text("x".into())], false);
+    app.leaf = input::leaves(app.core.document())[0];
+    app.undo();
+    session.apply(app.pending.take().unwrap()).unwrap();
+    assert_eq!(session.stats.accepted, 2);
+    assert_eq!(
+        session.content().unwrap(),
+        crate::session::reference::project(app.core.document()).unwrap()
+    );
+}
+
+#[test]
+fn a_base_mismatch_resends_the_current_authoritative_tree() {
+    let mut app = window();
+    let (requests, input) = std::sync::mpsc::sync_channel(1);
+    let (output, results) = std::sync::mpsc::channel();
+    app.worker = Worker { requests, results };
+    output
+        .send(Err((
+            app.core.revision(),
+            worker::LayoutError::Session(crate::session::SessionError::Base {
+                expected: None,
+                actual: Some(1),
+            }),
+        )))
+        .unwrap();
+    app.poll(&egui::Context::default());
+    let reset = input.try_recv().unwrap();
+    assert_eq!(reset.root, Some(app.core.document().root()));
+    assert_eq!(reset.revision, app.core.revision());
+    let mut session = crate::session::ContentSession::default();
+    session.apply(reset).unwrap();
+    assert_eq!(
+        session.content().unwrap(),
+        crate::session::reference::project(app.core.document()).unwrap()
+    );
+}
+
+#[test]
+fn input_hook_accepts_and_dispatches_text_before_the_body_frame() {
+    let mut app = window();
+    let (requests, input) = std::sync::mpsc::sync_channel(1);
+    app.worker.requests = requests;
+    let ctx = egui::Context::default();
+    let base = app.core.revision();
+    let mut raw = egui::RawInput {
+        events: vec![egui::Event::Text("中".into())],
+        ..Default::default()
+    };
+    eframe::App::raw_input_hook(&mut app, &ctx, &mut raw);
+    assert_eq!(input.try_recv().unwrap().base, Some(base));
+    let _ = ctx.run_ui(raw, |ui| app.paper(ui, false));
+    assert_eq!(app.core.revision(), base + 1);
+    assert_eq!(app.core.document().text_of(app.leaf).unwrap(), "中");
 }

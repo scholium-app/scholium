@@ -1,0 +1,3 @@
+    Finished `release` profile [optimized] target(s) in 0.09s
+     Running `spikes/render-latency/target/release/typst-edit-reference --reference /home/ation_ciger/Projects/Mogan/scholium/docs/spikes/evidence/SPK-0052/stock-rtl.png rtl`
+PASS unannotated_reference name=rtl

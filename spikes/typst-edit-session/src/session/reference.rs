@@ -4,7 +4,7 @@ use scholium_spike_core::doc::{Document, NodeKind};
 use scholium_spike_core::ids::NodeId;
 
 #[derive(Debug, thiserror::Error)]
-pub(super) enum ProjectionError {
+pub(crate) enum ProjectionError {
     #[error(transparent)]
     Model(#[from] scholium_spike_core::EditError),
     #[error("unsupported structural kind {kind:?} at {node:?}")]
@@ -15,11 +15,9 @@ use typst::foundations::{Content, NativeElement};
 use typst::math::{EquationElem, FracElem};
 use typst::model::ParElem;
 
-pub(super) fn opaque(node: NodeId) -> u128 {
-    node.index() as u128 + 1
-}
+use super::opaque;
 
-pub(super) fn project(doc: &Document) -> Result<Content, ProjectionError> {
+pub(crate) fn project(doc: &Document) -> Result<Content, ProjectionError> {
     node(doc, doc.root(), false)
 }
 

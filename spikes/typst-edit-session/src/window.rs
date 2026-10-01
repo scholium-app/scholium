@@ -5,6 +5,7 @@ mod geometry;
 #[allow(dead_code)]
 mod kernel;
 mod native;
+mod session;
 
 fn main() -> eframe::Result {
     eframe::run_native(

@@ -1,0 +1,53 @@
+diff --git a/crates/typst-layout/src/editor_metrics.rs b/crates/typst-layout/src/editor_metrics.rs
+new file mode 100644
+index 0000000..e8232c6
+--- /dev/null
++++ b/crates/typst-layout/src/editor_metrics.rs
+@@ -0,0 +1,19 @@
++//! Thread-local instrumentation for the isolated editor experiment.
++
++use std::cell::Cell;
++
++thread_local! {
++    static PARAGRAPHS: Cell<u64> = const { Cell::new(0) };
++}
++
++/// Number of paragraph bodies actually computed on this thread since startup.
++///
++/// Counts memoized function executions, not requests. Intended for diagnostics;
++/// never use it to collect geometry or decide whether a scene is current.
++pub fn editor_paragraph_layouts() -> u64 {
++    PARAGRAPHS.with(Cell::get)
++}
++
++pub(crate) fn paragraph_computed() {
++    PARAGRAPHS.with(|count| count.set(count.get() + 1));
++}
+diff --git a/crates/typst-layout/src/inline/mod.rs b/crates/typst-layout/src/inline/mod.rs
+index 6d21320..7b978da 100644
+--- a/crates/typst-layout/src/inline/mod.rs
++++ b/crates/typst-layout/src/inline/mod.rs
+@@ -85,6 +85,8 @@ fn layout_par_impl(
+     expand: bool,
+     situation: ParSituation,
+ ) -> SourceResult<Fragment> {
++    #[cfg(feature = "editor")]
++    crate::editor_metrics::paragraph_computed();
+     let introspector = Protected::from_raw(introspector);
+     let link = LocatorLink::new(locator);
+     let mut locator = Locator::link(&link).split();
+diff --git a/crates/typst-layout/src/lib.rs b/crates/typst-layout/src/lib.rs
+index dec80f5..f92b3f9 100644
+--- a/crates/typst-layout/src/lib.rs
++++ b/crates/typst-layout/src/lib.rs
+@@ -1,6 +1,10 @@
+ //! Typst's layout engine.
+ 
+ mod document;
++#[cfg(feature = "editor")]
++mod editor_metrics;
++#[cfg(feature = "editor")]
++pub use editor_metrics::editor_paragraph_layouts;
+ mod flow;
+ mod grid;
+ mod image;

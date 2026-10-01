@@ -2,6 +2,7 @@
 
 use super::EditorWindow;
 use crate::geometry::Affinity;
+use crate::session::Update;
 use eframe::egui;
 use scholium_spike_core::{ActorId, Document, Intent, NodeId, NodeKind, SemanticEdit};
 
@@ -63,11 +64,23 @@ impl EditorWindow {
     }
 
     fn apply(&mut self, intent: Intent, edit: SemanticEdit) -> bool {
+        let base = self.core.revision();
+        let changed = self.changed_ids(&edit);
+        let wrapped = if let SemanticEdit::Wrap { node, .. } = &edit {
+            Some(*node)
+        } else {
+            None
+        };
         match self
             .core
             .apply_at(ActorId(1), intent, self.core.revision(), edit)
         {
-            Ok(_) => true,
+            Ok(_) => {
+                if self.core.revision() != base {
+                    self.record_edit(base, changed, wrapped);
+                }
+                true
+            }
             Err(error) => {
                 self.error = Some(error.to_string());
                 false
@@ -193,8 +206,15 @@ impl EditorWindow {
         if !self.core.preedit().is_empty() {
             return;
         }
+        let target = self.undo_target();
+        let base = self.core.revision();
         if let Err(error) = self.core.undo(ActorId(1)) {
             self.error = Some(error.to_string());
+        }
+        if self.core.revision() != base
+            && let Some(target) = target
+        {
+            self.record_update(Update::changed(self.core.document(), base, &[target]));
         }
         // Cursor is kept on a reachable Text leaf after each accepted action.
         let text = &self

@@ -1,0 +1,39 @@
+    Blocking waiting for file lock on build directory
+   Compiling typst-edit-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session)
+    Finished `release` profile [optimized] target(s) in 1.81s
+     Running unittests src/main.rs (spikes/render-latency/target/release/deps/typst_edit_session-20ff104de46deee2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/window.rs (spikes/render-latency/target/release/deps/typst_edit_window-739960fe001febea)
+
+running 13 tests
+test native::tests::fraction_command_outside_math_preserves_revision_and_tree ... ok
+test native::tests::preedit_does_not_edit_the_document_and_commit_is_not_duplicated ... ok
+test native::tests::a_base_mismatch_resends_the_current_authoritative_tree ... ok
+test native::tests::stale_pixels_and_geometry_are_discarded_as_one_result ... ok
+test session::tests::a_stale_base_cannot_mutate_content_or_revision ... ok
+test native::tests::text_undo_updates_its_original_leaf_after_the_cursor_moves ... ok
+test session::tests::a_text_edit_rebuilds_only_leaf_paragraph_and_root ... ok
+test session::tests::coalesced_updates_preserve_all_accepted_edits_and_latest_node_state ... ok
+test session::tests::inconsistent_child_ownership_cannot_enter_the_cache ... ok
+test session::tests::unsupported_nodes_are_rejected_before_mutating_the_session ... ok
+test session::tests::structural_wrap_preserves_math_holes_and_existing_leaf_identity ... ok
+test native::tests::input_hook_accepts_and_dispatches_text_before_the_body_frame ... ok
+test native::tests::committed_body_is_only_typst_pixels_and_geometry ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s
+
+     Running unittests src/bench.rs (spikes/render-latency/target/release/deps/typst_session_bench-e69682b68aa664aa)
+
+running 6 tests
+test session::tests::a_stale_base_cannot_mutate_content_or_revision ... ok
+test session::tests::a_text_edit_rebuilds_only_leaf_paragraph_and_root ... ok
+test session::tests::coalesced_updates_preserve_all_accepted_edits_and_latest_node_state ... ok
+test session::tests::unsupported_nodes_are_rejected_before_mutating_the_session ... ok
+test session::tests::inconsistent_child_ownership_cannot_enter_the_cache ... ok
+test session::tests::structural_wrap_preserves_math_holes_and_existing_leaf_identity ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

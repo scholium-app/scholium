@@ -1,0 +1,24 @@
+   Compiling typst-layout v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst-layout)
+   Compiling typst-svg v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst-svg)
+   Compiling typst-render v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst-render)
+   Compiling typst-html v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst-html)
+   Compiling typst-realize v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst-realize)
+   Compiling typst v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session/.vendor/typst/crates/typst)
+   Compiling typst-edit-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/typst-edit-session)
+    Finished `release` profile [optimized] target(s) in 8.64s
+     Running `spikes/render-latency/target/release/typst-edit-session --editor /home/ation_ciger/Projects/Mogan/scholium/docs/spikes/evidence/SPK-0052`
+PASS empty_slot_hit geometry=[Placed { origin: EditOrigin { node: 100, slot: Some(11), hole: false }, decoration: false, min: [136.532, -0.09020000000000043], max: [140.59760000000003, 3.2284999999999995] }, Placed { origin: EditOrigin { node: 100, slot: Some(12), hole: true }, decoration: false, min: [137.2866, 5.604500000000001], max: [139.843, 13.3045] }, Placed { origin: EditOrigin { node: 100, slot: None, hole: false }, decoration: true, min: [136.532, 4.5485], max: [140.59760000000003, 5.0765] }, Placed { origin: EditOrigin { node: 100, slot: None, hole: false }, decoration: false, min: [135.43200000000002, -0.09020000000000043], max: [141.6976, 13.3045] }] glyphs=21 shapes=1
+PASS fill_slot_repeat_cache_different_ids_and_changed_denominator
+PASS nested_group_translation_and_scale
+PASS nested_fraction_ownership
+PASS composite_nested_slot_and_explicit_rule_owners
+PASS strict_mode_rejects_holes_and_accepts_complete_content
+PASS K1_kernel_subset source_reads=0
+PASS text_mixed carets=42 fallback=0
+PASS text_ligature carets=38 fallback=8
+PASS text_rtl carets=22 fallback=0
+PASS text_bidi carets=40 fallback=0
+PASS text_long carets=4320 fallback=160
+PASS text_empty carets=1 fallback=0
+PASS text_lines carets=29 fallback=0
+PASS derived_case_and_cross_leaf_cluster_mapping_refused
