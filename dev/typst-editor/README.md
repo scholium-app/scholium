@@ -16,6 +16,7 @@ SCHOLIUM_SESSION_FILE=/tmp/scholium-typst-candidate.sqlite \
 
 `$` / Ctrl+M 进入或离开公式；Ctrl+/ 把当前数学叶包成分数，光标进入空分母；Tab /
 Shift+Tab 切换叶/槽位；Ctrl+Z / Ctrl+Shift+Z 撤销/重做；Ctrl+S 保存。
+左右方向键可在正文和数学 Text/Hole 叶之间按逻辑顺序移动，文档首尾停止。
 候选采用受控不分页 flow，Source 按钮显示只读结构 JSON。整叶格式、正文 Enter 拆段可用；
 跨叶选区、复制剪切、多行粘贴、旧 RawMath 转换、分页和实机输入法/无障碍仍待后续验收。
 RawMath 不执行，布局明确报错；失败不切回 egui 正文回显。

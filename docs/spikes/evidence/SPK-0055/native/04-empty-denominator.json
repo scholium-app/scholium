@@ -1,0 +1,285 @@
+{
+  "backend": "Typst Content main app",
+  "carets": [
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(492bfef0-0815-4419-b44e-e19ba3c30c03)",
+      "x": 213.29513549804688,
+      "y": 276.76861572265625
+    },
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 20.0,
+      "y": 264.3203125
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 34.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 34.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 46.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 46.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 3,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 58.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 3,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 58.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 4,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 65.328125,
+      "y": 264.3203125
+    },
+    {
+      "byte": 4,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 65.328125,
+      "y": 264.3203125
+    },
+    {
+      "byte": 5,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 71.99609375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 5,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 71.99609375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 6,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 81.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 6,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 81.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 7,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 93.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 7,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 93.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 8,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 99.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 8,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 99.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 11,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 123.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 11,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 123.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 14,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 147.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 14,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 147.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 15,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 153.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 15,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 153.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 18,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 177.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 18,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 177.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 21,
+      "exact": true,
+      "leaf": "NodeId(5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d)",
+      "x": 201.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(f3bc54cd-95f1-425a-b77c-a9a5d188fd70)",
+      "x": 203.73593139648438,
+      "y": 257.6070251464844
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(f3bc54cd-95f1-425a-b77c-a9a5d188fd70)",
+      "x": 213.29513549804688,
+      "y": 257.6070251464844
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(f3bc54cd-95f1-425a-b77c-a9a5d188fd70)",
+      "x": 213.29513549804688,
+      "y": 257.6070251464844
+    },
+    {
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(f3bc54cd-95f1-425a-b77c-a9a5d188fd70)",
+      "x": 222.85433959960938,
+      "y": 257.6070251464844
+    }
+  ],
+  "current": true,
+  "cursor_byte": 0,
+  "cursor_leaf": "NodeId(492bfef0-0815-4419-b44e-e19ba3c30c03)",
+  "layout_error": null,
+  "page_text_draws": 0,
+  "revision": 13,
+  "saved": false,
+  "shown": "SceneStamp { document: DocumentId(97343d8a-2d5b-4d00-9c49-2bcd8e15a23e), epoch: LayoutEpoch(834bc2d1-72ba-4c72-9a1f-71eabca85941), request: LayoutRequestId(6a16f3ec-cfff-4267-8221-2a2d32f5b824), revision: Revision(13), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }",
+  "snapshot": {
+    "blocks": [
+      {
+        "content": [
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": "English 中文 空格"
+            },
+            "node": "5d1bf835-9cc5-4f0b-9bef-d7b50da0e85d"
+          },
+          {
+            "body": {
+              "kind": "math",
+              "root": {
+                "body": {
+                  "denominator": {
+                    "body": {
+                      "kind": "hole"
+                    },
+                    "node": "492bfef0-0815-4419-b44e-e19ba3c30c03"
+                  },
+                  "kind": "fraction",
+                  "numerator": {
+                    "body": {
+                      "kind": "text",
+                      "text": "12"
+                    },
+                    "node": "f3bc54cd-95f1-425a-b77c-a9a5d188fd70"
+                  }
+                },
+                "node": "8da3e12c-258b-42f8-b410-932a58b9093a"
+              }
+            },
+            "node": "a7cc3b3e-a1d6-4b90-a30e-728fc081bbf5"
+          },
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": ""
+            },
+            "node": "af3ca3b4-6c15-49f0-afd1-35d132cd1939"
+          }
+        ],
+        "kind": "Paragraph",
+        "node": "4a129d53-12b9-4709-a736-074ce772e55f"
+      }
+    ],
+    "document": "97343d8a-2d5b-4d00-9c49-2bcd8e15a23e",
+    "revision": 13
+  },
+  "source_reads": 0,
+  "wanted": "SceneStamp { document: DocumentId(97343d8a-2d5b-4d00-9c49-2bcd8e15a23e), epoch: LayoutEpoch(834bc2d1-72ba-4c72-9a1f-71eabca85941), request: LayoutRequestId(6a16f3ec-cfff-4267-8221-2a2d32f5b824), revision: Revision(13), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }"
+}

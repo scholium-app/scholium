@@ -36,6 +36,7 @@
 - 条件 3：[Typst 映射与同步基准](SPK-0005-typst-mapping.md)、[真实后台预览](SPK-0016-working-tree-status.md#后台预览)。
   后续主程序显式 Content 候选见[0054](SPK-0054-typst-main-app-candidate.md)：限定窗口闭环
   与去回显证据，不升级默认后端、全兼容、分页或 K3/K4 判定。
+  输入字素边界与逻辑叶导航补充见[0055](SPK-0055-typst-grapheme-navigation.md)，不代表完整 C 验收。
   本轮 20 页同步单字符路径 p95 20.9 ms、改首段最大 210.6 ms；
   小夹具后台编译/栅格化 580 ms，不与 headless 帧 p95 1.76 ms 混用。
 - 条件 4：[reconcile](SPK-0006-source-reconcile.md)、[新增事务验证](SPK-0016-working-tree-status.md#原生编辑与源码应用)。

@@ -1,0 +1,42 @@
+{
+  "backend": "Typst Content main app",
+  "carets": [
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(1ceb897d-1309-48b0-8380-cd3ac1b3b6e9)",
+      "x": 20.0,
+      "y": 264.3203125
+    }
+  ],
+  "current": true,
+  "cursor_byte": 0,
+  "cursor_leaf": "NodeId(1ceb897d-1309-48b0-8380-cd3ac1b3b6e9)",
+  "layout_error": null,
+  "page_text_draws": 0,
+  "revision": 0,
+  "saved": false,
+  "shown": "SceneStamp { document: DocumentId(d85f418e-3200-43c1-9362-ed2ef1fc7ff9), epoch: LayoutEpoch(6d65400c-3694-4509-b17b-3e74a3972546), request: LayoutRequestId(1d54b2d1-c38b-4dba-9255-c68522038ce2), revision: Revision(0), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }",
+  "snapshot": {
+    "blocks": [
+      {
+        "content": [
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": ""
+            },
+            "node": "1ceb897d-1309-48b0-8380-cd3ac1b3b6e9"
+          }
+        ],
+        "kind": "Paragraph",
+        "node": "929319af-4940-4a1a-a486-b57290aaedb0"
+      }
+    ],
+    "document": "d85f418e-3200-43c1-9362-ed2ef1fc7ff9",
+    "revision": 0
+  },
+  "source_reads": 0,
+  "wanted": "SceneStamp { document: DocumentId(d85f418e-3200-43c1-9362-ed2ef1fc7ff9), epoch: LayoutEpoch(6d65400c-3694-4509-b17b-3e74a3972546), request: LayoutRequestId(1d54b2d1-c38b-4dba-9255-c68522038ce2), revision: Revision(0), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }"
+}

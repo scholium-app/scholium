@@ -47,6 +47,11 @@ def type_text(value):
     command("type", "--clearmodifiers", "--delay", "15", value)
 
 
+def paste(value):
+    subprocess.run(["xclip", "-selection", "clipboard"], input=value.encode(), env=env, check=True)
+    command("key", "--clearmodifiers", "ctrl+v")
+
+
 def leaves(state):
     result = []
 
@@ -82,6 +87,9 @@ def click(state, leaf_debug, byte):
 
 def record(name, state):
     assert state["backend"] == "Typst Content main app"
+    assert state["current"]
+    assert any(c["leaf"] == state["cursor_leaf"] and c["byte"] == state["cursor_byte"]
+               for c in state["carets"]), "current cursor has same-scene geometry"
     assert state["page_text_draws"] == 0
     assert state["source_reads"] == 0
     (output / f"{name}.json").write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n")
@@ -156,8 +164,7 @@ try:
     record("02-new", state)
     click(state, state["cursor_leaf"], 0)
     type_text("English ")
-    subprocess.run(["xclip", "-selection", "clipboard"], input="中文 空格".encode(), env=env, check=True)
-    command("key", "--clearmodifiers", "ctrl+v")
+    paste("中文 空格")
     state = wait(lambda s: s["current"] and values(s) == ["English 中文 空格"])
     record("03-chinese-english-space", state)
     type_text("$")
@@ -195,11 +202,34 @@ try:
     type_text("5")
     state = wait(lambda s: s["current"] and values(s) == ["English 中文 空格", "12", "3", "45", ""])
     record("10-continued", state)
+    command("key", "--clearmodifiers", "Right")
+    body = wait(lambda s: s["current"] and s["cursor_leaf"] != denominator)["cursor_leaf"]
+    paste("👩🔬")
+    wait(lambda s: s["current"] and values(s)[-1] == "👩🔬")
+    command("key", "--clearmodifiers", "Home", "Right")
+    wait(lambda s: s["cursor_leaf"] == body and s["cursor_byte"] == len("👩".encode()))
+    paste("\u200d")
+    wait(lambda s: s["current"] and values(s)[-1] == "👩‍🔬")
+    type_text("x")
+    state = wait(lambda s: s["current"] and values(s)[-1] == "👩‍🔬x")
+    record("11-joined-emoji", state)
+    paste(" 🇦x🇧")
+    wait(lambda s: s["current"] and values(s)[-1] == "👩‍🔬x 🇦x🇧")
+    command("key", "--clearmodifiers", "Left", "BackSpace")
+    wait(lambda s: s["current"] and values(s)[-1] == "👩‍🔬x 🇦🇧")
+    type_text("y")
+    state = wait(lambda s: s["current"] and values(s)[-1] == "👩‍🔬x 🇦🇧y")
+    record("12-joined-regional-indicators", state)
+    unicode_snapshot = state["snapshot"]
     command("key", "--clearmodifiers", "ctrl+s")
     wait(lambda s: s["saved"])
     close()
+    state = start("unicode-reopened")
+    assert state["snapshot"] == unicode_snapshot
+    record("13-unicode-reopened", state)
+    close()
     all_events = []
-    for name in ("first", "reopened"):
+    for name in ("first", "reopened", "unicode-reopened"):
         log_path = output / f"{name}.log"
         all_events.extend(entries())
     assert any(not event["current"] for event in all_events), "pending frames were observed"

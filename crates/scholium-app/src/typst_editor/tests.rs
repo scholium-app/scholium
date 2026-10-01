@@ -256,3 +256,69 @@ fn every_scene_identity_field_gates_adoption_of_failed_results() {
         assert!(f.candidate.current());
     }
 }
+
+#[test]
+fn joining_emoji_graphemes_does_not_strand_following_input_inside_a_cluster() {
+    let mut f = Fixture::new();
+    f.events(vec![text("👩🔬")]);
+    f.candidate.cursor.byte = "👩".len();
+    f.events(vec![text("\u{200d}"), text("x")]);
+    assert_eq!(input::leaves(&f.candidate.snapshot)[0].text, "👩‍🔬x");
+    assert_eq!(f.candidate.cursor.byte, "👩‍🔬x".len());
+    assert_eq!(f.candidate.snapshot.revision.0, 3);
+    assert!(f.candidate.rejected_input.is_none());
+}
+
+#[test]
+fn deletion_that_joins_regional_indicators_keeps_a_valid_insertion_point() {
+    let mut f = Fixture::new();
+    f.events(vec![text("🇦x🇧")]);
+    f.candidate.cursor.byte = "🇦x".len();
+    f.events(vec![key(egui::Key::Backspace, false), text("y")]);
+    assert_eq!(input::leaves(&f.candidate.snapshot)[0].text, "🇦🇧y");
+    assert_eq!(f.candidate.cursor.byte, "🇦🇧y".len());
+    assert_eq!(f.candidate.snapshot.revision.0, 3);
+    assert!(f.candidate.rejected_input.is_none());
+}
+
+#[test]
+fn horizontal_arrows_cross_identified_body_and_math_leaves_without_wrapping() {
+    let mut f = Fixture::new();
+    f.events(vec![text("A"), text("$"), text("12"), text("$"), text("Z")]);
+    let ids: Vec<_> = input::leaves(&f.candidate.snapshot)
+        .iter()
+        .map(|l| l.id)
+        .collect();
+    let revision = f.candidate.snapshot.revision;
+    f.events(vec![
+        key(egui::Key::ArrowLeft, false),
+        key(egui::Key::ArrowLeft, false),
+    ]);
+    assert_eq!(
+        (f.candidate.cursor.leaf, f.candidate.cursor.byte),
+        (ids[1], 2)
+    );
+    f.events(vec![key(egui::Key::ArrowLeft, false); 3]);
+    assert_eq!(
+        (f.candidate.cursor.leaf, f.candidate.cursor.byte),
+        (ids[0], 1)
+    );
+    f.events(vec![key(egui::Key::ArrowRight, false); 4]);
+    assert_eq!(
+        (f.candidate.cursor.leaf, f.candidate.cursor.byte),
+        (ids[2], 0)
+    );
+    f.events(vec![key(egui::Key::ArrowRight, false); 2]);
+    assert_eq!(
+        (f.candidate.cursor.leaf, f.candidate.cursor.byte),
+        (ids[2], 1)
+    );
+    f.candidate.cursor.leaf = ids[0];
+    f.candidate.cursor.byte = 0;
+    f.events(vec![key(egui::Key::ArrowLeft, false)]);
+    assert_eq!(
+        (f.candidate.cursor.leaf, f.candidate.cursor.byte),
+        (ids[0], 0)
+    );
+    assert_eq!(f.candidate.snapshot.revision, revision);
+}

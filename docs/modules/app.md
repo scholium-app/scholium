@@ -68,6 +68,12 @@ Ribbon 的开发命令发结构 intent；文字样式作用于整叶，标题作
 被拒绝文字保留可复制草稿；不能在同一编辑面自动回到旧回显。Source 按钮在此入口显示
 只读结构 JSON，不声称已有 reconcile/生成 Typst 工作区。
 
+文字插入/删除接受后，候选必须在新叶内容中重新校验光标的 UTF-8 字素边界。ZWJ、区域
+指示符或组合字符可能把原先独立的邻接字素合并；此时光标移动到原目标 byte 之后的首个
+合法边界，不能把下一次输入提交到字素内部。正文与数学 Text/Hole 的左右方向键在文档
+逻辑叶顺序中跨边界移动，文档首尾停止，不循环；导航不产生语义动作。Tab 仍用于显式
+槽位切换。视觉 bidi/行间导航、结构对象选区和跨叶替换须另验收，不从逻辑顺序猜其几何。
+
 一个打开项目对应一个串行 session actor，持有 authority mode、语义/源码共享文档 handles、history facade、
 format/index service、render/build scheduler 和 sync client。所有写命令串行化，长任务只持有不可变 snapshot，完成后按
 revision 交付。
