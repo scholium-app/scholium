@@ -90,3 +90,23 @@ export 临时目录完整验证后发布；原项目和前次成功输出在失�
 按 SQLite/rusqlite → redb 验证；上文日志目录与内部文件列表是逻辑草案，物理编码待恢复试验和持久化 ADR 决定。若采用数据库事务日志，不再另设独立权威 WAL；应用 Action 记录纳入同一提交边界。标准源文件依旧保持源码权威，通过带 revision 的恢复 manifest 协调数据库与多文件物化。
 
 浏览器 IndexedDB/OPFS 适配单独验证，不假定本机数据库可直接运行；导入/下载导出为文件能力基线，配额、驱逐及异常关闭见[WASM 计划](../plan/WASM.md)。宿主持久性确认不能冒充本机 fsync 语义。
+
+## 本地候选 v1 与 legacy 独立迁移
+
+[ADR 0033](../adr/ADR-0033-structured-local-session-migration.md) 约束现有 SessionStore：
+legacy `user_version=0` 保持默认 save/load/snapshot_at；结构候选 v1 使用独立
+create_structured/save_structured/load_structured API 与 typed StructuredStoreError。
+未知数据库版本在 DDL/日志模式调整前拒绝；v1 snapshot 需要明确 format/version envelope
+及 identified 校验。SQL CHECK 拒绝旧裸 JSON，legacy API 不能读写 v1。请求日志必须连续、
+唯一且与语义 revision 一致。没有读写失败后的临时库回退。
+
+`migrate_legacy_file(source, target)` 以只读一致事务读取源 head、请求身份与旧快照；
+只将 head 转为 identified 当前内容，未知 legacy 字段/表/列/元数据拒绝迁移，避免宽松旧 DTO 静默遗漏。原历史 JSON 进入没有写 API 的 legacy_snapshots
+档案，不猜过去的叶身份或请求日志。所有旧公式 Raw 保留，能力限制随报告返回。
+JSON 单条上限 128 MiB，旧档案合计 256 MiB/10000 行，请求 100000；超限拒绝、不截断。
+
+候选在目标同目录独占临时文件构建，DELETE 日志、FULL 同步，关闭并 fsync 主文件后以
+hard_link 不覆盖发布，再 fsync 目录；正常后清理自有临时文件。目标存在（含 dangling
+symlink）或不可发布时不覆盖；发布后目录同步失败可能留完整目标，错误不宣称 durable。
+原库始终保留，普通 app 不自动选择目标。重开候选恢复 WAL/FULL，不改变结构身份。
+此格式是本地会话候选，不替代共享 WAL/历史、协作恢复或跨平台断电验证。

@@ -1,5 +1,5 @@
-//! Single-user, volatile block session for the first UI integration.
-//! No shared SDG, actor undo, persistence or compiler is implemented here.
+//! Single-user authority for legacy blocks or an identified local candidate.
+//! No shared SDG, actor undo, storage I/O or compiler is implemented here.
 
 use scholium_model::{
     Block, BlockEdit, BlockKind, DocumentId, DocumentRequest, DocumentSnapshot, Inline, NodeId,
@@ -7,6 +7,11 @@ use scholium_model::{
 };
 
 mod range_edit;
+mod structured_session;
+use scholium_model::layout_identity::{
+    LayoutEpoch, LayoutRequestId, ProfileGeneration, ResourceGeneration, SceneStamp,
+};
+pub use structured_session::{MigrationFailure, StructuralEdit, StructuralRequest};
 
 /// Maximum UTF-8 text bytes accepted per block edit.
 pub const MAX_TEXT_BYTES: usize = 1024 * 1024;
@@ -40,16 +45,20 @@ pub enum EditError {
     /// An accepted request was submitted again.
     #[error("此编辑请求已经处理")]
     DuplicateRequest,
+    /// Identified structure failed validation.
+    #[error(transparent)]
+    Structure(#[from] scholium_model::structured::StructureError),
     /// Text, block or action count exceeds the bounded initial integration.
     #[error("已达到基础会话容量限制；未应用此次修改")]
     Capacity,
 }
 
-/// Owns the sole document state for one local, unsaved native session.
+/// Owns the sole document state for one local native session.
 #[derive(Debug)]
-pub struct LocalSession {
-    snapshot: DocumentSnapshot,
+pub struct LocalSession<S = DocumentSnapshot> {
+    snapshot: S,
     actions: Vec<Action>,
+    epoch: LayoutEpoch,
 }
 
 impl Default for LocalSession {
@@ -65,13 +74,14 @@ impl Default for LocalSession {
                 }],
             },
             actions: Vec::new(),
+            epoch: LayoutEpoch::fresh(),
         }
     }
 }
 
-impl LocalSession {
+impl<S: Clone> LocalSession<S> {
     /// Return an owned UI projection, not a mutable handle to the authority.
-    pub fn snapshot(&self) -> DocumentSnapshot {
+    pub fn snapshot(&self) -> S {
         self.snapshot.clone()
     }
 
@@ -80,6 +90,19 @@ impl LocalSession {
         &self.actions
     }
 
+    /// Current ephemeral rendering lifetime, never part of saved actions.
+    #[must_use]
+    pub fn layout_epoch(&self) -> LayoutEpoch {
+        self.epoch
+    }
+
+    /// Begin a fresh rendering lifetime after a revision jump or worker replacement.
+    pub fn reset_layout_epoch(&mut self) {
+        self.epoch = LayoutEpoch::fresh();
+    }
+}
+
+impl LocalSession {
     /// 恢复持久化会话：快照为权威，请求日志重建重复检测。
     /// 动作的 before/after 按接受顺序重建（revision 与动作一一对应递增）。
     #[must_use]
@@ -93,7 +116,11 @@ impl LocalSession {
                 after: Revision(index as u64 + 1),
             })
             .collect();
-        Self { snapshot, actions }
+        Self {
+            snapshot,
+            actions,
+            epoch: LayoutEpoch::fresh(),
+        }
     }
 
     /// Apply a revision-checked local block edit and return whether content changed.

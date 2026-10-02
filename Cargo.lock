@@ -3623,6 +3623,7 @@ version = "0.1.0"
 dependencies = [
  "scholium-model",
  "thiserror 2.0.20",
+ "unicode-segmentation",
 ]
 
 [[package]]
@@ -3631,6 +3632,7 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
+ "thiserror 2.0.20",
  "uuid",
 ]
 
@@ -3640,7 +3642,9 @@ version = "0.1.0"
 dependencies = [
  "rusqlite",
  "scholium-model",
+ "serde",
  "serde_json",
+ "thiserror 2.0.20",
 ]
 
 [[package]]

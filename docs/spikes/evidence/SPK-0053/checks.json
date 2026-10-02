@@ -1,0 +1,32 @@
+{
+  "toolchain": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "fmt_exit": 0,
+  "clippy_exit": 0,
+  "test_exit": 0,
+  "doc_exit": 0,
+  "size_exit": 0,
+  "license_bans_sources_exit": 0,
+  "probe_clippy_exit": 0,
+  "probe_exit": 0,
+  "advisories_exit": 1,
+  "passed": 143,
+  "failed": 0,
+  "ignored": 32,
+  "new_tests": 32,
+  "advisory_ids": [
+    "RUSTSEC-2025-0141",
+    "RUSTSEC-2024-0436",
+    "RUSTSEC-2026-0194",
+    "RUSTSEC-2026-0195",
+    "RUSTSEC-2026-0206",
+    "RUSTSEC-2026-0192",
+    "RUSTSEC-2024-0320"
+  ],
+  "coverage_exit": 0,
+  "coverage_toolchain": "1.98.1",
+  "model_line_coverage": {
+    "covered": 208,
+    "count": 219,
+    "percent": 94.98
+  }
+}

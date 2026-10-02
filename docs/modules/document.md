@@ -96,3 +96,22 @@ LocalSession 是单人内存段落接入；直接 apply 仅限此临时适配器
 `WrongTarget`，超限返回 `Capacity`；失败不修改快照、revision 或动作记录。
 首块身份和块种类保留，范围之外的节点不变；换行新建后续块 ID，一次替换只产生一个动作。
 该范围基于标记文本，不能冒充完整数学 TreeCursor/槽位语义；见 [ADR 0029](../adr/ADR-0029-direct-page-editing.md)。
+
+## 同一 LocalSession 的结构候选
+
+`LocalSession<S = DocumentSnapshot>` 保留 legacy 默认调用；候选使用
+`LocalSession<StructuredDocument>`。`into_structured` 验证后消费旧会话并保留请求身份，
+失败返回原 session 和 typed error，不存在两份持续可写正文。恢复检查结构与请求日志。
+公共调用只提供 owned snapshot，不提供可变权威引用；储存和 Typst 属于外部适配器。
+
+`StructuralRequest` 带文档、base revision、唯一请求身份；ReplaceText 使用 leaf NodeId
+和叶内 UTF-8 字素边界，RawMath 不可穿透。InsertMath/WrapFraction、SplitBlock/
+MergeWithNext、整叶 SetTextStyle 和 SetKind 先在临时规划副本验证，再一次接受。存活节点
+身份不变；新分数 wrapper、新分母 Hole、新拆块/右叶才分配新 ID。删除数学叶最后文字
+恢复同 ID Hole。无效/重复/过期请求和 no-op 不追加动作。临时规划仍复制快照，不能据此
+承诺逐键时延与全文大小无关。跨叶选区与局部样式规划留给后续适配。
+
+迁移、恢复和 `reset_layout_epoch` 更新非持久化随机 epoch；普通结构动作不重建 epoch。
+`scene_stamp` 每次生成新的布局请求身份，不改变正文/动作日志。单机撤销/重做可用既有
+snapshot restore 语义，但必须新 epoch；不实现协作 undo。主程序 worker 采纳门属于后续
+接入，类型本身不构成窗口竞态验收。裁决见 [ADR 0033](../adr/ADR-0033-structured-local-session-migration.md)。

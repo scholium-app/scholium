@@ -8,6 +8,7 @@ rust-version.workspace = true
 [dependencies]
 scholium-model = { path = "../scholium-model", version = "0.1.0" }
 thiserror = "=2.0.20"
+unicode-segmentation = "=1.13.3"
 
 [lints]
 workspace = true

@@ -1,4 +1,8 @@
-//! Minimal in-memory document projections. Not a persistence or wire schema.
+//! Legacy projections and an explicitly versioned local structured candidate.
+//! No shared SDG or collaboration wire schema is defined here.
+
+pub mod layout_identity;
+pub mod structured;
 
 /// Stable random identity of a native document.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
@@ -11,7 +15,7 @@ impl DocumentId {
     }
 }
 
-/// Stable identity of one block node.
+/// Stable identity of one addressed semantic node.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct NodeId(uuid::Uuid);
 
