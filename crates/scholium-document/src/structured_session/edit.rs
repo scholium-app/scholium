@@ -6,6 +6,9 @@ use unicode_segmentation::UnicodeSegmentation;
 
 pub(super) fn apply(doc: &mut StructuredDocument, edit: StructuralEdit) -> Result<(), EditError> {
     match edit {
+        StructuralEdit::ReplaceBodyRange { start, end, text } => {
+            super::range::replace(doc, start, end, &text)
+        }
         StructuralEdit::ReplaceText {
             leaf,
             start,
