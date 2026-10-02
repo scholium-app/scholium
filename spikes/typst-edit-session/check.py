@@ -12,7 +12,7 @@ from PIL import Image, ImageChops
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parents[1]
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("--out", type=Path, default=REPO / "docs/spikes/evidence/SPK-0051")
+parser.add_argument("--out", type=Path, default=REPO / "docs/spikes/evidence/SPK-0052")
 OUTPUT = parser.parse_args().out.resolve()
 OUTPUT.mkdir(parents=True, exist_ok=True)
 ENVIRONMENT = os.environ.copy()

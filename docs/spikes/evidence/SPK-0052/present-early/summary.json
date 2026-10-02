@@ -1,0 +1,16 @@
+{
+  "samples": 300,
+  "elapsed_seconds": 30.000082458998804,
+  "event_hz": 9.999972513742614,
+  "accepted_to_observed_p95_ms": 40.249429,
+  "accepted_to_ready_p95_ms": 0.232608,
+  "ready_to_adopted_p95_ms": 17.570377,
+  "adopted_to_observed_p95_ms": 27.831677,
+  "injection_to_observed_p95_ms": 43.130078,
+  "projection_p95_ms": 0.02909,
+  "layout_p95_ms": 0.03882,
+  "raster_p95_ms": 0.127104,
+  "within_32ms": false,
+  "platform": "Xvfb X11 scale 1, default vsync",
+  "measurement": "semantic acceptance to first captured same-frame revision barcode; capture latency included"
+}

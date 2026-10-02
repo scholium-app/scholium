@@ -13,11 +13,16 @@ exclude = [".vendor/typst", ".vendor/typst/crates/*"]
 [features]
 default = ["editor"]
 editor = ["typst-layout/editor"]
-native = ["editor", "dep:eframe", "dep:scholium-spike-core", "dep:serde_json"]
+native = ["editor", "dep:eframe", "dep:scholium-spike-core", "dep:serde_json", "dep:serde"]
 
 [[bin]]
 name = "typst-edit-window"
 path = "src/window.rs"
+required-features = ["native"]
+
+[[bin]]
+name = "typst-session-bench"
+path = "src/bench.rs"
 required-features = ["native"]
 
 [dependencies]
@@ -26,6 +31,7 @@ unicode-segmentation = "=1.13.3"
 thiserror = "=2.0.20"
 eframe = { version = "=0.36.2", optional = true, default-features = false, features = ["default_fonts", "glow", "x11", "wayland"] }
 scholium-spike-core = { path = "../native-ui/core", optional = true }
+serde = { version = "=1.0.229", features = ["derive"], optional = true }
 serde_json = { version = "=1.0.151", optional = true }
 typst = "=0.15.1"
 typst-kit = { version = "=0.15.1", features = ["embedded-fonts", "scan-fonts"] }

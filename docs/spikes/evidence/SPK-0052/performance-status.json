@@ -1,0 +1,8 @@
+{
+  "exit_codes": {
+    "benchmark": 0,
+    "present": 1
+  },
+  "order": "benchmark then present; no parallel validation jobs",
+  "timestamp_utc": "2026-10-01T09:43:14Z"
+}

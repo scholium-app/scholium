@@ -17,8 +17,30 @@ impl EditorWindow {
         if self.current() {
             self.paint_bounds(ui, response.rect, factor);
             self.paint_caret(ui, response.rect, factor);
+            self.paint_probe(ui, response.rect);
         }
         self.audit(response.rect);
+    }
+
+    fn paint_probe(&self, ui: &egui::Ui, rect: egui::Rect) {
+        if std::env::var_os("TYPST_EDIT_PRESENT_PROBE").is_none() {
+            return;
+        }
+        // Test-only 32-bit revision barcode; painted in the same frame as pixels/caret.
+        let revision = self.scene.as_ref().map_or(0, |s| s.revision);
+        for bit in 0..32 {
+            let color = if revision & (1 << bit) == 0 {
+                Color32::BLACK
+            } else {
+                Color32::WHITE
+            };
+            let start = rect.min + egui::vec2(bit as f32 * 2.0, 0.0);
+            ui.painter().rect_filled(
+                egui::Rect::from_min_size(start, egui::vec2(2.0, 4.0)),
+                0.0,
+                color,
+            );
+        }
     }
 
     fn pointer(&mut self, response: &egui::Response, factor: f32, ime_frame: bool) {
@@ -36,7 +58,7 @@ impl EditorWindow {
             .and_then(|s| s.geometry.hit([local.x as f64, local.y as f64]))
             && let Some(node) = input::leaves(self.core.document())
                 .into_iter()
-                .find(|node| projection::opaque(*node) == caret.position.leaf)
+                .find(|node| opaque(*node) == caret.position.leaf)
         {
             self.leaf = node;
             self.byte = caret.position.byte;

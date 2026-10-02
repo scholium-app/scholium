@@ -106,6 +106,18 @@ pub(crate) fn save_frame(frame: &Frame, path: &std::path::Path) -> Result<(), St
 }
 
 pub(crate) fn layout(world: &ProbeWorld, content: &Content) -> Result<Frame, String> {
+    layout_in(
+        world,
+        content,
+        Size::new(Abs::pt(WIDTH_PT), Abs::pt(HEIGHT_PT)),
+    )
+}
+
+pub(crate) fn layout_in(
+    world: &ProbeWorld,
+    content: &Content,
+    size: Size,
+) -> Result<Frame, String> {
     let introspector = EmptyIntrospector;
     let traced = Traced::default();
     let mut sink = Sink::new();
@@ -122,10 +134,7 @@ pub(crate) fn layout(world: &ProbeWorld, content: &Content) -> Result<Frame, Str
         content,
         Locator::root(),
         StyleChain::new(&world.library.styles),
-        Region::new(
-            Size::new(Abs::pt(WIDTH_PT), Abs::pt(HEIGHT_PT)),
-            Axes::new(true, false),
-        ),
+        Region::new(size, Axes::new(true, false)),
     )
     .map_err(|errors| format!("{errors:?}"))?;
     if !sink.delayed().is_empty() || !sink.warnings().is_empty() {
