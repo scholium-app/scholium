@@ -3,12 +3,13 @@ mod audit;
 mod input;
 mod paint;
 pub(crate) mod ribbon;
+mod selection;
 #[cfg(test)]
 mod tests;
 
 use crate::state::WorkspaceState;
 use eframe::egui;
-use scholium_document::{LocalSession, StructuralEdit, StructuralRequest};
+use scholium_document::{BodyTextPosition, LocalSession, StructuralEdit, StructuralRequest};
 use scholium_model::{RequestId, layout_identity::*, structured::*};
 use scholium_storage::SessionStore;
 use scholium_typst::editor::{Affinity, EditorScene, EditorWorker, Position};
@@ -55,6 +56,7 @@ struct HistoryEntry {
     snapshot: StructuredDocument,
     requests: Vec<RequestId>,
     cursor: Position,
+    anchor: Option<Position>,
 }
 
 /// Mutually exclusive with SessionBridge's legacy LocalSession.
@@ -68,6 +70,9 @@ pub(crate) struct CandidateSession {
     scene: Option<EditorScene>,
     texture: Option<egui::TextureHandle>,
     cursor: Position,
+    anchor: Option<Position>,
+    drag: Option<selection::Drag>,
+    placement: Option<(egui::Rect, f32)>,
     undo: Vec<HistoryEntry>,
     redo: Vec<HistoryEntry>,
     focus: bool,
@@ -140,6 +145,9 @@ impl CandidateSession {
             worker,
             wanted,
             cursor,
+            anchor: None,
+            drag: None,
+            placement: None,
             scene: None,
             texture: None,
             undo: Vec::new(),
@@ -175,6 +183,7 @@ impl CandidateSession {
             snapshot: self.session.snapshot(),
             requests: self.session.actions().iter().map(|a| a.request).collect(),
             cursor: self.cursor,
+            anchor: self.anchor,
         }
     }
 
@@ -186,9 +195,21 @@ impl CandidateSession {
             base: self.snapshot.revision,
             edit,
         };
-        match self.session.apply_structural(request) {
-            Ok(false) => true,
-            Ok(true) => {
+        match self.session.apply_structural_outcome(request) {
+            Ok(outcome) => {
+                state.edit_error = None;
+                if let Some(cursor) = outcome.cursor {
+                    self.cursor = Position {
+                        leaf: cursor.leaf,
+                        byte: cursor.byte,
+                        affinity: Affinity::Upstream,
+                    };
+                }
+                self.anchor = None;
+                self.drag = None;
+                if !outcome.changed {
+                    return true;
+                }
                 if self.undo.len() == HISTORY_LIMIT {
                     self.undo.remove(0);
                 }
@@ -279,6 +300,8 @@ impl CandidateSession {
                 // Restore allocates a fresh epoch even when revision and IDs repeat.
                 self.session = session;
                 self.cursor = target.cursor;
+                self.anchor = target.anchor;
+                self.drag = None;
                 if redo {
                     self.undo.push(current);
                 } else {
@@ -369,6 +392,8 @@ impl CandidateSession {
             match blank() {
                 Ok(session) => {
                     self.session = session;
+                    self.anchor = None;
+                    self.drag = None;
                     self.undo.clear();
                     self.redo.clear();
                     self.saved = None;

@@ -72,7 +72,20 @@ Ribbon 的开发命令发结构 intent；文字样式作用于整叶，标题作
 指示符或组合字符可能把原先独立的邻接字素合并；此时光标移动到原目标 byte 之后的首个
 合法边界，不能把下一次输入提交到字素内部。正文与数学 Text/Hole 的左右方向键在文档
 逻辑叶顺序中跨边界移动，文档首尾停止，不循环；导航不产生语义动作。Tab 仍用于显式
-槽位切换。视觉 bidi/行间导航、结构对象选区和跨叶替换须另验收，不从逻辑顺序猜其几何。
+槽位切换。视觉 bidi/行间导航不从逻辑顺序猜其几何。
+
+候选选区用正文 Text 叶的稳定身份、UTF-8 字素边界保存 anchor/focus。Shift 左右键按正文
+逻辑顺序跨叶/块，完整覆盖的结构公式作为对象选中；Shift Home/End 定位当前叶首/末。
+普通左右键折叠已有选区。鼠标按输入事件顺序命中同一当前 Scene 的精确 caret；拖选绑定
+完整 SceneStamp 和 placement，epoch、布局请求或页面位置/缩放改变即停止旧拖选。
+比例合字内部 caret 不作鼠标端点；未知身份和 pending Scene 不能恢复命中能力。
+
+选框来自同一 Frame 的 cluster stops 和数学根 bounds，绘制非打印多边形，不画已提交
+文字。缺几何的当前选区拒绝替换；pending 时可按有效语义端点继续键盘编辑，禁止使用旧
+几何判断位置。范围内 RawMath 明确拒绝，失败保留正文、端点和可复制输入草稿。
+输入、Backspace/Delete、Enter 和多行 Paste 通过一个 ReplaceBodyRange 提交；核心返回
+存活叶和合法字素位置，UI 不猜拆段后的新 ID。撤销恢复两端并换 epoch。数学内部槽位
+选区、选区格式和结构命令、复制剪切另行接入。见 [ADR 0035](../adr/ADR-0035-typst-page-selection.md)。
 
 一个打开项目对应一个串行 session actor，持有 authority mode、语义/源码共享文档 handles、history facade、
 format/index service、render/build scheduler 和 sync client。所有写命令串行化，长任务只持有不可变 snapshot，完成后按

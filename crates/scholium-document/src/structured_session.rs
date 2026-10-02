@@ -26,6 +26,16 @@ pub struct BodyTextPosition {
     pub byte: usize,
 }
 
+/// Accepted local outcome; derived geometry is not part of the authority result.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct StructuralOutcome {
+    /// Whether one revision and action were added.
+    pub changed: bool,
+    /// Surviving body cursor for a range replacement, including newly split leaves.
+    /// Other edits return None; no-op body ranges still return a legal cursor.
+    pub cursor: Option<BodyTextPosition>,
+}
+
 /// One local identified edit, accepted as a single revision and journal entry.
 #[derive(Debug, Clone)]
 pub enum StructuralEdit {
@@ -183,12 +193,28 @@ impl LocalSession<StructuredDocument> {
     /// Rejects wrong/stale/duplicate requests, invalid targets/boundaries or capacity;
     /// rejection never changes content, revision, epoch or the action journal.
     pub fn apply_structural(&mut self, request: StructuralRequest) -> Result<bool, EditError> {
+        self.apply_structural_outcome(request)
+            .map(|outcome| outcome.changed)
+    }
+
+    /// Accept one atomic edit and return the planner's surviving body cursor.
+    ///
+    /// # Errors
+    /// Uses the same identity, revision, boundary and capacity checks as apply_structural.
+    /// Failure never changes authority, epoch or journal, and returns no cursor.
+    pub fn apply_structural_outcome(
+        &mut self,
+        request: StructuralRequest,
+    ) -> Result<StructuralOutcome, EditError> {
         self.check_request(&request)?;
         let mut planned = self.snapshot.clone();
-        edit::apply(&mut planned, request.edit)?;
+        let cursor = edit::apply(&mut planned, request.edit)?;
         planned.validate()?;
         if planned == self.snapshot {
-            return Ok(false);
+            return Ok(StructuralOutcome {
+                changed: false,
+                cursor,
+            });
         }
         let next = self
             .snapshot
@@ -203,7 +229,10 @@ impl LocalSession<StructuredDocument> {
             before: request.base,
             after: Revision(next),
         });
-        Ok(true)
+        Ok(StructuralOutcome {
+            changed: true,
+            cursor,
+        })
     }
 
     /// Issue a rendering stamp without changing actions or semantic revision.

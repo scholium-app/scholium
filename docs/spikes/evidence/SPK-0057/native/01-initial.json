@@ -1,0 +1,51 @@
+{
+  "backend": "Typst Content main app",
+  "body_leaves": [
+    {
+      "bytes": 0,
+      "leaf": "NodeId(0871ed3e-5665-4ac6-bed3-92bcf9d436bd)"
+    }
+  ],
+  "carets": [
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(0871ed3e-5665-4ac6-bed3-92bcf9d436bd)",
+      "x": 20.0,
+      "y": 264.3203125
+    }
+  ],
+  "current": true,
+  "cursor_byte": 0,
+  "cursor_leaf": "NodeId(0871ed3e-5665-4ac6-bed3-92bcf9d436bd)",
+  "layout_error": null,
+  "page_text_draws": 0,
+  "revision": 0,
+  "saved": false,
+  "selection": null,
+  "selection_geometry_error": null,
+  "selection_quads": 0,
+  "shown": "SceneStamp { document: DocumentId(e749b0e0-26ca-42f4-a50e-7eb81501be67), epoch: LayoutEpoch(5b9f091a-1377-42e5-a89f-17359bab2189), request: LayoutRequestId(3efc9099-ec83-41f3-b995-456ab313c448), revision: Revision(0), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }",
+  "snapshot": {
+    "blocks": [
+      {
+        "content": [
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": ""
+            },
+            "node": "0871ed3e-5665-4ac6-bed3-92bcf9d436bd"
+          }
+        ],
+        "kind": "Paragraph",
+        "node": "b77e7b0b-b5c4-4534-bc55-37f96f7d18e6"
+      }
+    ],
+    "document": "e749b0e0-26ca-42f4-a50e-7eb81501be67",
+    "revision": 0
+  },
+  "source_reads": 0,
+  "wanted": "SceneStamp { document: DocumentId(e749b0e0-26ca-42f4-a50e-7eb81501be67), epoch: LayoutEpoch(5b9f091a-1377-42e5-a89f-17359bab2189), request: LayoutRequestId(3efc9099-ec83-41f3-b995-456ab313c448), revision: Revision(0), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }"
+}

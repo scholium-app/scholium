@@ -1,0 +1,51 @@
+{
+  "backend": "Typst Content main app",
+  "body_leaves": [
+    {
+      "bytes": 0,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)"
+    }
+  ],
+  "carets": [
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 20.0,
+      "y": 264.3203125
+    }
+  ],
+  "current": true,
+  "cursor_byte": 0,
+  "cursor_leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+  "layout_error": null,
+  "page_text_draws": 0,
+  "revision": 0,
+  "saved": false,
+  "selection": null,
+  "selection_geometry_error": null,
+  "selection_quads": 0,
+  "shown": "SceneStamp { document: DocumentId(5a7efaa0-4402-410f-b073-0598495ba87c), epoch: LayoutEpoch(fc547d30-9319-4134-ac4a-eb955281c555), request: LayoutRequestId(218b325b-1933-4d50-b2d7-477be2361099), revision: Revision(0), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }",
+  "snapshot": {
+    "blocks": [
+      {
+        "content": [
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": ""
+            },
+            "node": "a024ddc0-7c25-4367-b656-c825f28fcd17"
+          }
+        ],
+        "kind": "Paragraph",
+        "node": "57416c93-2578-4aba-bec6-d48b949fc906"
+      }
+    ],
+    "document": "5a7efaa0-4402-410f-b073-0598495ba87c",
+    "revision": 0
+  },
+  "source_reads": 0,
+  "wanted": "SceneStamp { document: DocumentId(5a7efaa0-4402-410f-b073-0598495ba87c), epoch: LayoutEpoch(fc547d30-9319-4134-ac4a-eb955281c555), request: LayoutRequestId(218b325b-1933-4d50-b2d7-477be2361099), revision: Revision(0), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }"
+}

@@ -4,8 +4,10 @@
 mod content;
 mod geometry;
 mod kernel;
+mod selection;
 mod worker;
 pub use geometry::{Affinity, Caret, EditGeometry, Position};
+pub use selection::SelectionQuad;
 pub use worker::EditorWorker;
 
 use crate::PagePixels;

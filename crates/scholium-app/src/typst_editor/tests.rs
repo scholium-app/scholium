@@ -1,14 +1,14 @@
 use super::*;
 
-struct Fixture {
-    path: PathBuf,
-    ctx: egui::Context,
-    state: WorkspaceState,
-    candidate: CandidateSession,
+pub(super) struct Fixture {
+    pub(super) path: PathBuf,
+    pub(super) ctx: egui::Context,
+    pub(super) state: WorkspaceState,
+    pub(super) candidate: CandidateSession,
 }
 
 impl Fixture {
-    fn new() -> Self {
+    pub(super) fn new() -> Self {
         let path =
             std::env::temp_dir().join(format!("scholium-candidate-{:?}.db", RequestId::fresh()));
         let ctx = egui::Context::default();
@@ -22,7 +22,7 @@ impl Fixture {
             candidate,
         }
     }
-    fn settle(&mut self) {
+    pub(super) fn settle(&mut self) {
         let end = std::time::Instant::now() + std::time::Duration::from_secs(30);
         while !self.candidate.current() {
             self.candidate.poll(&self.ctx);
@@ -35,7 +35,7 @@ impl Fixture {
             std::thread::sleep(std::time::Duration::from_millis(10));
         }
     }
-    fn events(&mut self, events: Vec<egui::Event>) {
+    pub(super) fn events(&mut self, events: Vec<egui::Event>) {
         self.candidate.events(events, &mut self.state);
     }
 }
@@ -48,10 +48,10 @@ impl Drop for Fixture {
     }
 }
 
-fn text(value: &str) -> egui::Event {
+pub(super) fn text(value: &str) -> egui::Event {
     egui::Event::Text(value.into())
 }
-fn key(key: egui::Key, command: bool) -> egui::Event {
+pub(super) fn key(key: egui::Key, command: bool) -> egui::Event {
     egui::Event::Key {
         key,
         physical_key: None,
@@ -225,8 +225,9 @@ fn ime_commit_and_duplicate_text_event_create_one_action_and_one_value() {
 }
 
 #[test]
-fn rejected_multiline_paste_keeps_authority_and_copyable_draft() {
+fn rejected_math_multiline_paste_keeps_authority_and_copyable_draft() {
     let mut f = Fixture::new();
+    f.events(vec![text("$")]);
     let before = f.candidate.record();
     f.events(vec![egui::Event::Paste("first\nsecond".into())]);
     assert_eq!(*f.candidate.snapshot, before.snapshot);

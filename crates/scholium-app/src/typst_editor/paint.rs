@@ -24,6 +24,8 @@ pub(super) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut 
         .show(ui, |ui| {
             header(ui, state, session);
             if state.mode == ViewMode::Source {
+                session.drag = None;
+                session.placement = None;
                 source(ui, &session.snapshot);
                 return;
             }
@@ -57,6 +59,17 @@ fn header(ui: &mut egui::Ui, state: &WorkspaceState, session: &CandidateSession)
             .is_none()
     {
         ui.weak("当前叶没有可证的光标几何；此位置不显示光标或输入法锚点。");
+    }
+    if session.selected() && session.current() {
+        match session.selection_quads() {
+            Err(_) => {
+                ui.weak("选区几何不支持此范围；页面写操作暂停。");
+            }
+            Ok(quads) if quads.iter().any(|q| !q.exact) => {
+                ui.weak("合字内部选区边界为估计；鼠标仅定位精确边界。");
+            }
+            _ => {}
+        }
     }
     for error in [
         &state.edit_error,
@@ -109,14 +122,14 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut Candidate
         (size[1] as f32).max(MIN_SHEET_HEIGHT_PT) * scale,
     );
     let (_, rect) = ui.allocate_space(dimensions);
-    let response = ui.interact(rect, id(), Sense::click());
+    let response = ui.interact(rect, id(), Sense::click_and_drag());
+    session.placement = Some((rect, scale));
     if session.focus {
         response.request_focus();
         session.focus = false;
     }
-    if response.clicked() {
+    if response.is_pointer_button_down_on() || response.clicked() {
         response.request_focus();
-        pointer(&response, rect, scale, session, state);
     }
     if response.has_focus() {
         ui.memory_mut(|m| {
@@ -138,31 +151,6 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut Candidate
     // All accepted intents have reached LocalSession and the worker before this pass.
     let text_shapes = body(ui, rect, scale, session, state);
     session.audit(rect, scale, text_shapes);
-}
-
-fn pointer(
-    response: &egui::Response,
-    rect: Rect,
-    scale: f32,
-    session: &mut CandidateSession,
-    state: &WorkspaceState,
-) {
-    if !session.current() || state.composition.is_some() {
-        return;
-    }
-    if let Some(point) = response.interact_pointer_pos() {
-        let point = (point - rect.min) / scale;
-        if let Some(caret) = session
-            .scene
-            .as_ref()
-            .and_then(|s| s.geometry.hit([point.x as f64, point.y as f64]))
-            && super::input::leaves(&session.snapshot)
-                .iter()
-                .any(|l| l.id == caret.position.leaf)
-        {
-            session.cursor = caret.position;
-        }
-    }
 }
 
 pub(super) fn body(
@@ -189,6 +177,7 @@ pub(super) fn body(
     if !session.current() {
         return 0;
     }
+    selection_overlay(&painter, rect, scale, session);
     let Some(caret) = session
         .scene
         .as_ref()
@@ -219,4 +208,22 @@ pub(super) fn body(
         return 1;
     }
     0
+}
+
+fn selection_overlay(painter: &egui::Painter, rect: Rect, scale: f32, session: &CandidateSession) {
+    let Ok(quads) = session.selection_quads() else {
+        return;
+    };
+    for quad in quads {
+        let points = quad
+            .points
+            .into_iter()
+            .map(|point| rect.min + egui::vec2(point[0] as f32, point[1] as f32) * scale)
+            .collect();
+        painter.add(egui::Shape::convex_polygon(
+            points,
+            egui::Color32::from_rgba_unmultiplied(40, 105, 210, 55),
+            egui::Stroke::NONE,
+        ));
+    }
 }

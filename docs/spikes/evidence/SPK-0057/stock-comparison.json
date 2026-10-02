@@ -1,0 +1,59 @@
+[
+  {
+    "case": "full",
+    "equal_pixels": true,
+    "fork": {
+      "built": 9,
+      "carets": 34,
+      "height": 62,
+      "repeat_built": 0,
+      "repeat_reused": 1,
+      "reused": 0,
+      "source_reads": 0,
+      "width": 880
+    },
+    "stock": {
+      "height": 62,
+      "width": 880
+    },
+    "sha256": "05e9f25675b2b3484af480804ccfab668955d103439eba4ee78d3b9cba1470b9"
+  },
+  {
+    "case": "styles",
+    "equal_pixels": true,
+    "fork": {
+      "built": 4,
+      "carets": 22,
+      "height": 57,
+      "repeat_built": 0,
+      "repeat_reused": 1,
+      "reused": 0,
+      "source_reads": 0,
+      "width": 880
+    },
+    "stock": {
+      "height": 57,
+      "width": 880
+    },
+    "sha256": "6240529bed4186a6f24f83459fb7c022d219d816a7e5f0a0d3a8c5da730af4bc"
+  },
+  {
+    "case": "heading",
+    "equal_pixels": true,
+    "fork": {
+      "built": 2,
+      "carets": 20,
+      "height": 67,
+      "repeat_built": 0,
+      "repeat_reused": 1,
+      "reused": 0,
+      "source_reads": 0,
+      "width": 880
+    },
+    "stock": {
+      "height": 67,
+      "width": 880
+    },
+    "sha256": "64dc6015894428156d30fcc52ccc10e3d1754c1ca07a8dc561f4eaa831d41dec"
+  }
+]

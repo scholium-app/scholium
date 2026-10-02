@@ -1,6 +1,7 @@
 //! Scene geometry uses the same Frame tree and point transforms as rendering.
 
 use super::EditorError;
+use super::selection::SelectionQuad;
 use scholium_model::NodeId;
 use std::collections::HashMap;
 use typst::layout::{Frame, FrameItem, Point, Transform};
@@ -44,6 +45,15 @@ pub struct Caret {
 pub struct EditGeometry {
     /// Insertion stops, retaining both line affinities.
     pub carets: Vec<Caret>,
+    pub(super) clusters: Vec<Cluster>,
+    pub(super) bounds: Vec<(NodeId, SelectionQuad)>,
+}
+
+#[derive(Debug, Clone)]
+pub(super) struct Cluster {
+    pub leaf: NodeId,
+    pub range: std::ops::Range<usize>,
+    pub stops: Vec<Caret>,
 }
 
 fn point(point: Point, transform: Transform) -> [f64; 2] {
@@ -91,6 +101,19 @@ impl EditGeometry {
     ) -> Result<(), EditorError> {
         for bounds in frame.edit_bounds() {
             let end = bounds.position + bounds.size.to_point();
+            let node = *ids.get(&bounds.origin.node).ok_or(EditorError::Geometry)?;
+            self.bounds.push((
+                node,
+                SelectionQuad {
+                    points: [
+                        point(bounds.position, transform),
+                        point(Point::new(end.x, bounds.position.y), transform),
+                        point(end, transform),
+                        point(Point::new(bounds.position.x, end.y), transform),
+                    ],
+                    exact: true,
+                },
+            ));
             if bounds.origin.hole && !bounds.decoration {
                 let x = bounds.position.x + bounds.size.x / 2.0;
                 self.carets.push(Caret {
@@ -115,9 +138,10 @@ impl EditGeometry {
         ids: &HashMap<u128, NodeId>,
     ) -> Result<(), EditorError> {
         for cluster in frame.edit_clusters() {
+            let mut stops = Vec::new();
             for stop in &cluster.carets {
                 let top = cluster.position + Point::with_x(stop.offset);
-                self.carets.push(Caret {
+                stops.push(Caret {
                     position: Position {
                         leaf: *ids.get(&cluster.origin.node).ok_or(EditorError::Geometry)?,
                         byte: stop.byte,
@@ -132,6 +156,12 @@ impl EditGeometry {
                     exact: stop.exact,
                 });
             }
+            self.carets.extend(stops.iter().cloned());
+            self.clusters.push(Cluster {
+                leaf: *ids.get(&cluster.origin.node).ok_or(EditorError::Geometry)?,
+                range: cluster.range.clone(),
+                stops,
+            });
         }
         Ok(())
     }

@@ -1,0 +1,3 @@
+    Blocking waiting for file lock on build directory
+    Checking scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-typst)
+    Finished `dev` profile [unoptimized] target(s) in 2.94s

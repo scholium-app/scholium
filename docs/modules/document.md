@@ -109,7 +109,7 @@ LocalSession 是单人内存段落接入；直接 apply 仅限此临时适配器
 MergeWithNext、整叶 SetTextStyle 和 SetKind 先在临时规划副本验证，再一次接受。存活节点
 身份不变；新分数 wrapper、新分母 Hole、新拆块/右叶才分配新 ID。删除数学叶最后文字
 恢复同 ID Hole。无效/重复/过期请求和 no-op 不追加动作。临时规划仍复制快照，不能据此
-承诺逐键时延与全文大小无关。页面选区接入与局部样式规划留给后续适配。
+承诺逐键时延与全文大小无关。局部样式规划由后续适配提供。
 
 `ReplaceBodyRange` 使用两个 `BodyTextPosition`（正文叶 ID、叶内 UTF-8 字素边界），要求
 端点按文档顺序排列。范围内完整 inline/math/Raw 子树可删除；数学槽位、数学叶和 Raw
@@ -122,6 +122,13 @@ MergeWithNext、整叶 SetTextStyle 和 SetKind 先在临时规划副本验证�
 失败不改变正文、revision、epoch 或请求日志，被拒绝请求身份可修正后重试。同叶等值
 替换/空插入是 no-op，不消耗请求身份。此 API 不代表主程序已有拖选或结构化剪贴板，
 也不提供数学内部跨槽位选区、协作 patch 或逐键复杂度保证。
+
+`apply_structural_outcome` 使用与 `apply_structural` 相同的接受流程，返回
+`StructuralOutcome { changed, cursor }`；原 bool API 委托此流程，保持兼容。范围规划器
+返回实际存活的 BodyTextPosition，包括多行插入新建的末叶 ID；byte 在新内容中向后
+重锚到合法字素边界。no-op 范围仍返回合法 cursor；其他动作返回 None。失败没有结果，
+不能据此移动 UI 端点。结果不含 Scene/排版坐标，不写入存储格式或请求日志。
+见 [ADR 0035](../adr/ADR-0035-typst-page-selection.md)。
 
 `InsertMathAt { leaf, at }` 在正文叶的字素边界一次创建 inline 公式与右文字叶；左叶 ID 和
 两侧文字样式保留，原有后续 inline 不变。公式初始为必填 Hole；内部 Unicode 边界或数学/

@@ -1,0 +1,248 @@
+{
+  "backend": "Typst Content main app",
+  "body_leaves": [
+    {
+      "bytes": 12,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)"
+    },
+    {
+      "bytes": 0,
+      "leaf": "NodeId(ab2aac72-6789-422e-b334-b018f9425708)"
+    },
+    {
+      "bytes": 6,
+      "leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)"
+    },
+    {
+      "bytes": 1,
+      "leaf": "NodeId(609ef0eb-9786-4943-a0da-3a4cb68aa14a)"
+    },
+    {
+      "bytes": 0,
+      "leaf": "NodeId(c895aab9-cc58-48f9-9f75-df33486f8d66)"
+    }
+  ],
+  "carets": [
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 20.0,
+      "y": 267.1328125
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 37.33203125,
+      "y": 267.1328125
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 37.33203125,
+      "y": 267.1328125
+    },
+    {
+      "byte": 12,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 67.21484375,
+      "y": 267.1328125
+    },
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(ab2aac72-6789-422e-b334-b018f9425708)",
+      "x": 20.0,
+      "y": 315.38592529296875
+    },
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)",
+      "x": 20.0,
+      "y": 360.8265686035156
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)",
+      "x": 41.33984375,
+      "y": 360.8265686035156
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)",
+      "x": 41.33984375,
+      "y": 360.8265686035156
+    },
+    {
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)",
+      "x": 48.0078125,
+      "y": 360.8265686035156
+    },
+    {
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)",
+      "x": 48.0078125,
+      "y": 360.8265686035156
+    },
+    {
+      "byte": 3,
+      "exact": true,
+      "leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)",
+      "x": 60.0078125,
+      "y": 360.8265686035156
+    },
+    {
+      "byte": 3,
+      "exact": true,
+      "leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)",
+      "x": 60.0078125,
+      "y": 360.8265686035156
+    },
+    {
+      "byte": 4,
+      "exact": true,
+      "leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)",
+      "x": 72.0078125,
+      "y": 360.8265686035156
+    },
+    {
+      "byte": 4,
+      "exact": true,
+      "leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)",
+      "x": 72.0078125,
+      "y": 360.8265686035156
+    },
+    {
+      "byte": 5,
+      "exact": true,
+      "leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)",
+      "x": 78.67578125,
+      "y": 360.8265686035156
+    },
+    {
+      "byte": 5,
+      "exact": true,
+      "leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)",
+      "x": 78.67578125,
+      "y": 360.8265686035156
+    },
+    {
+      "byte": 6,
+      "exact": true,
+      "leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)",
+      "x": 89.328125,
+      "y": 360.8265686035156
+    },
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(609ef0eb-9786-4943-a0da-3a4cb68aa14a)",
+      "x": 20.0,
+      "y": 406.2671813964844
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(609ef0eb-9786-4943-a0da-3a4cb68aa14a)",
+      "x": 34.66015625,
+      "y": 406.2671813964844
+    }
+  ],
+  "current": true,
+  "cursor_byte": 0,
+  "cursor_leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)",
+  "layout_error": null,
+  "page_text_draws": 0,
+  "revision": 24,
+  "saved": false,
+  "selection": {
+    "end_byte": 1,
+    "end_leaf": "NodeId(609ef0eb-9786-4943-a0da-3a4cb68aa14a)",
+    "start_byte": 0,
+    "start_leaf": "NodeId(450518cc-183f-4bb8-94b0-2fd338e8a8ca)"
+  },
+  "selection_geometry_error": null,
+  "selection_quads": 7,
+  "shown": "SceneStamp { document: DocumentId(5a7efaa0-4402-410f-b073-0598495ba87c), epoch: LayoutEpoch(ff321461-f22b-4ae2-9a95-1825a7dd5f59), request: LayoutRequestId(be740542-f07e-4f23-8759-c2efada0892c), revision: Revision(24), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }",
+  "snapshot": {
+    "blocks": [
+      {
+        "content": [
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": "A👩‍🔬"
+            },
+            "node": "a024ddc0-7c25-4367-b656-c825f28fcd17"
+          }
+        ],
+        "kind": "Paragraph",
+        "node": "57416c93-2578-4aba-bec6-d48b949fc906"
+      },
+      {
+        "content": [
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": ""
+            },
+            "node": "ab2aac72-6789-422e-b334-b018f9425708"
+          }
+        ],
+        "kind": "Paragraph",
+        "node": "5302ecaa-138e-4e44-b51c-5acb673d202a"
+      },
+      {
+        "content": [
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": "Middle"
+            },
+            "node": "450518cc-183f-4bb8-94b0-2fd338e8a8ca"
+          }
+        ],
+        "kind": "Paragraph",
+        "node": "8e6a6b86-7a8a-4738-bbc7-019eb16e9e12"
+      },
+      {
+        "content": [
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": "Z"
+            },
+            "node": "609ef0eb-9786-4943-a0da-3a4cb68aa14a"
+          },
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": ""
+            },
+            "node": "c895aab9-cc58-48f9-9f75-df33486f8d66"
+          }
+        ],
+        "kind": "Paragraph",
+        "node": "14cee581-ab46-47dc-9418-8b8d0694cdf5"
+      }
+    ],
+    "document": "5a7efaa0-4402-410f-b073-0598495ba87c",
+    "revision": 24
+  },
+  "source_reads": 0,
+  "wanted": "SceneStamp { document: DocumentId(5a7efaa0-4402-410f-b073-0598495ba87c), epoch: LayoutEpoch(ff321461-f22b-4ae2-9a95-1825a7dd5f59), request: LayoutRequestId(be740542-f07e-4f23-8759-c2efada0892c), revision: Revision(24), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }"
+}

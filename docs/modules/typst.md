@@ -79,6 +79,12 @@ World 的 source/file 均拒绝，today 无环境求值。RawMath 返回明确�
 NodeId、叶内 UTF-8 byte 与 affinity，top/bottom 为该 Frame 的 pt。opaque ID 只在 adapter
 注册/反查，不进入模型或存储。剪裁/未知 origin 拒绝；跨叶 derived cluster 不猜端点；合字
 内部按比例的 caret 保留 `exact=false`。调用方只用当前全 stamp 场景做命中/IME 锚点。
+`selection_text(leaf, range)` 从 shaped cluster 的变换后 stops 切分非打印 SelectionQuad，
+保留逐行/双向 cluster 的独立四角，验证范围完整覆盖；缺边界或映射即报 Geometry。
+空范围返回 1 pt 的边界标识，不冒充字形宽度。比例合字边界保留 exact=false。
+`selection_node(math_root)` 使用真正数学根的结构 bounds，包含分数横线和各槽位；
+inline 包装身份没有对应 bounds 时不得猜矩形。所有四角与 raster 共用 padded Frame pt。
+端点选择与编辑请求仍由 app/core 负责，adapter 不修改权威或从 markup 偏移猜选框。
 SceneStats 记录 built/reused/source_reads/elapsed，不能作为物理刷新或分页性能证明。
 
 ## 不变量
