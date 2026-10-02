@@ -1,0 +1,12 @@
+{
+  "base": "510551d44947677e73df86e36fa70d73b26aeaaa",
+  "candidate_compat_tree": "326da2bad8d4783e13f22e21f8fe387f24ddb990",
+  "files": {
+    "crates/scholium-document/src/lib.rs": "c80233ef33845884430d55f996f9941090cfeded0b4c9fc99e69ec961a34dcba",
+    "crates/scholium-document/src/structured_session.rs": "029d954db7a3357f27640dc91434ddfcedee2a6a64c0f2d2c6337320e27e3360",
+    "crates/scholium-document/src/structured_session/edit.rs": "54651c4bcf52bc8067619785192bae6fbe839090082d7f070599750f5c99d030",
+    "crates/scholium-document/src/structured_session/range.rs": "00af31cdd74b8be6894897b9f51dea89fe336a6b5fe43a5546e28e9fe6a8f126",
+    "crates/scholium-document/src/structured_session/range/tests.rs": "d3a0b2782c80b7fdc2bccf0490e0ecdff6efaaecbd1a42861c5b93af652f6599",
+    "docs/modules/document.md": "6656e9ca23151cfc0c83ee7a363df9e9a5c1248baf9c4873d4abaedc343f28e7"
+  }
+}

@@ -1,6 +1,7 @@
 //! Candidate authority uses the existing LocalSession, not a second writable editor.
 
 mod edit;
+mod range;
 #[cfg(test)]
 mod tests;
 
@@ -16,9 +17,29 @@ pub struct MigrationFailure {
     pub error: StructureError,
 }
 
-/// One local identified edit. Selection/clipboard batch planning is a later adapter.
+/// Stable body-text endpoint, independent of layout and source projection.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct BodyTextPosition {
+    /// Addressed body Text inline; mathematical and Raw endpoints are rejected.
+    pub leaf: NodeId,
+    /// Leaf-local UTF-8 extended-grapheme boundary.
+    pub byte: usize,
+}
+
+/// One local identified edit, accepted as a single revision and journal entry.
 #[derive(Debug, Clone)]
 pub enum StructuralEdit {
+    /// Replace a forward body range across inline nodes and blocks atomically.
+    /// Fully covered math/Raw inlines are removed; their interiors cannot be endpoints.
+    /// LF, CRLF and CR create blocks, inheriting the first block's kind.
+    ReplaceBodyRange {
+        /// Inclusive body-text endpoint in document order.
+        start: BodyTextPosition,
+        /// Exclusive body-text endpoint in document order.
+        end: BodyTextPosition,
+        /// Literal text; markup characters are never parsed.
+        text: String,
+    },
     /// Replace a leaf range at UTF-8 grapheme boundaries (empty range inserts text).
     ReplaceText {
         /// Addressed body text or math Text/Hole leaf.
