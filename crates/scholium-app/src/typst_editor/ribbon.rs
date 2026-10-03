@@ -22,7 +22,19 @@ pub(crate) fn home(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             commands::dispatch(state, ViewCommand::Save);
         }
     });
-    group(ui, "剪贴板", 80.0, |ui| {
+    group(ui, "剪贴板", 100.0, |ui| {
+        let selected = state.candidate.as_ref().is_some_and(|v| v.selected);
+        ui.vertical(|ui| {
+            for (label, command) in [
+                ("复制", egui::ViewportCommand::RequestCopy),
+                ("剪切", egui::ViewportCommand::RequestCut),
+            ] {
+                if small(ui, label, editable(state) && selected).clicked() {
+                    ui.memory_mut(|m| m.request_focus(super::paint::id()));
+                    ui.ctx().send_viewport_cmd(command);
+                }
+            }
+        });
         if large(ui, Icon::Paste, "粘贴", editable(state), false).clicked() {
             ui.memory_mut(|m| m.request_focus(super::paint::id()));
             ui.ctx()
