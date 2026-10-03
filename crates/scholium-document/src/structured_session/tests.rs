@@ -1,6 +1,43 @@
 use super::*;
 use scholium_model::structured::*;
 
+#[test]
+fn inline_math_insertion_splits_a_body_grapheme_atomically_and_retains_style() {
+    let mut s = session();
+    let old = s.snapshot();
+    let leaf = old.blocks[0].content[0].node;
+    let invalid = request(&s, StructuralEdit::InsertMathAt { leaf, at: 2 });
+    assert_eq!(s.apply_structural(invalid), Err(EditError::InvalidRange));
+    assert_eq!(s.snapshot(), old);
+    apply(&mut s, StructuralEdit::InsertMathAt { leaf, at: 4 });
+    let result = s.snapshot();
+    assert_eq!(result.revision.0, 1);
+    assert_eq!(s.actions().len(), 1);
+    assert_eq!(result.blocks[0].content[0].node, leaf);
+    assert_eq!(
+        result.blocks[0].content[0].body,
+        InlineBody::Text {
+            text: "Ae\u{301}".into(),
+            style: TextStyle::Strong
+        }
+    );
+    assert!(matches!(
+        result.blocks[0].content[1].body,
+        InlineBody::Math { .. }
+    ));
+    assert_eq!(
+        result.blocks[0].content[2].body,
+        InlineBody::Text {
+            text: "👩‍🔬中Z".into(),
+            style: TextStyle::Strong
+        }
+    );
+    assert_eq!(result.blocks[0].content[3], old.blocks[0].content[1]);
+    result
+        .validate()
+        .expect("all inserted identities are unique");
+}
+
 fn session() -> LocalSession<StructuredDocument> {
     let mut old = LocalSession::default().snapshot();
     old.blocks[0].content = vec![

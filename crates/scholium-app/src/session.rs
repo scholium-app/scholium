@@ -1,3 +1,6 @@
+#[cfg(feature = "typst-editor")]
+mod candidate;
+
 use crate::state::WorkspaceState;
 use eframe::egui;
 use scholium_document::LocalSession;
@@ -16,6 +19,8 @@ const PAGE_EDIT_DEBOUNCE: Duration = Duration::from_millis(20);
 /// App-side coordinator: UI projections cannot mutate the session directly.
 #[derive(Default)]
 pub(crate) struct SessionBridge {
+    #[cfg(feature = "typst-editor")]
+    candidate: Option<crate::typst_editor::CandidateSession>,
     session: Option<LocalSession>,
     preview: Option<PreviewCompiler>,
     store: Option<SessionStore>,
@@ -52,6 +57,10 @@ fn raster_bucket(ctx: &egui::Context, rendered_zoom: f32) -> f32 {
 impl SessionBridge {
     /// Start the resident font scan while the application opens, before typing.
     pub(crate) fn prepare_preview(&mut self, ctx: &egui::Context) {
+        #[cfg(feature = "typst-editor")]
+        if self.candidate.is_some() {
+            return;
+        }
         self.preview.get_or_insert_with(|| {
             let ctx = ctx.clone();
             PreviewCompiler::spawn_with_wake(move || ctx.request_repaint())
@@ -80,6 +89,10 @@ impl SessionBridge {
     }
 
     pub(crate) fn update(&mut self, ctx: &egui::Context, state: &mut WorkspaceState) {
+        #[cfg(feature = "typst-editor")]
+        if self.candidate.is_some() {
+            return;
+        }
         self.apply_pending_edit(state);
         if !self.restored {
             self.restored = true;

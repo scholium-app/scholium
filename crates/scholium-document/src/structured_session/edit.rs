@@ -25,6 +25,7 @@ pub(super) fn apply(doc: &mut StructuredDocument, edit: StructuralEdit) -> Resul
             Ok(())
         }
         StructuralEdit::InsertMath { block, at } => insert_math(doc, block, at),
+        StructuralEdit::InsertMathAt { leaf, at } => insert_math_at(doc, leaf, at),
         StructuralEdit::SplitBlock { block, leaf, at } => split(doc, block, leaf, at),
         StructuralEdit::SetKind { block, kind } => {
             let owner = doc
@@ -38,6 +39,41 @@ pub(super) fn apply(doc: &mut StructuredDocument, edit: StructuralEdit) -> Resul
         StructuralEdit::SetTextStyle { leaf, style } => set_style(doc, leaf, style),
         StructuralEdit::MergeWithNext { block } => merge(doc, block),
     }
+}
+
+fn insert_math_at(doc: &mut StructuredDocument, leaf: NodeId, at: usize) -> Result<(), EditError> {
+    let owner = doc
+        .blocks
+        .iter_mut()
+        .find(|b| b.content.iter().any(|i| i.node == leaf))
+        .ok_or(EditError::WrongTarget)?;
+    // Owner was selected by this exact inline identity.
+    let slot = owner
+        .content
+        .iter()
+        .position(|i| i.node == leaf)
+        .expect("selected inline");
+    let InlineBody::Text { text, style } = &mut owner.content[slot].body else {
+        return Err(EditError::WrongTarget);
+    };
+    if !boundary(text, at) {
+        return Err(EditError::InvalidRange);
+    }
+    let right = StructuredInline {
+        node: NodeId::fresh(),
+        body: InlineBody::Text {
+            text: text.split_off(at),
+            style: *style,
+        },
+    };
+    let math = StructuredInline {
+        node: NodeId::fresh(),
+        body: InlineBody::Math {
+            root: MathNode::hole(),
+        },
+    };
+    owner.content.splice(slot + 1..slot + 1, [math, right]);
+    Ok(())
 }
 
 fn replace(

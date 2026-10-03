@@ -1,0 +1,7 @@
+warning[license-not-encountered]: license was not encountered
+   ┌─ deny.toml:25:6
+   │
+25 │     "Unicode-DFS-2016",
+   │      ━━━━━━━━━━━━━━━━ unmatched license allowance
+
+bans ok, licenses ok, sources ok

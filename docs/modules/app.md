@@ -51,6 +51,23 @@ egui 控件与自绘区域从同一主题取色；配色变更不修改布局、
 
 ## ProjectSession
 
+### 显式本地结构开发入口
+
+`dev/typst-editor` 直接编译本模块同一 main.rs，`--typst-editor` 在 legacy 恢复前选择
+SessionBridge 的互斥候选，必须提供隔离 `SCHOLIUM_SESSION_FILE`。没有可写副本对拷或旧库
+失败后的新库回退。普通 root 构建仍用其默认入口；隔离裁决见 [ADR 0034](../adr/ADR-0034-typst-main-app-candidate.md)。
+
+候选按事件顺序向 `LocalSession<StructuredDocument>` 提交字素文字/结构请求，布局仅持有
+完整不可变投影。输入接受和提交先于页面绘制，后台完成唤醒 UI，不去抖源码求值。界面
+持续显示 backend、正文/画面 revision 与 pending；旧图停用命中/光标/IME，不回显已提交文字。
+纹理、caret、命中与 IME 共用一套 Frame-pt 到窗口逻辑像素 placement。
+
+Ribbon 的开发命令发结构 intent；文字样式作用于整叶，标题作用于段落，源视图禁用正文
+写按钮。单机 undo/redo 每步保留快照及其完整请求日志，最多 512 步，restore 换 epoch。
+保存读取唯一 LocalSession 投影，dirty 比较完整保存内容。RawMath/容量/布局错误显示诊断，
+被拒绝文字保留可复制草稿；不能在同一编辑面自动回到旧回显。Source 按钮在此入口显示
+只读结构 JSON，不声称已有 reconcile/生成 Typst 工作区。
+
 一个打开项目对应一个串行 session actor，持有 authority mode、语义/源码共享文档 handles、history facade、
 format/index service、render/build scheduler 和 sync client。所有写命令串行化，长任务只持有不可变 snapshot，完成后按
 revision 交付。

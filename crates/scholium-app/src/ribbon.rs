@@ -1,5 +1,5 @@
 //! Native Ribbon tabs and groups; view state never owns document content.
-mod controls;
+pub(crate) mod controls;
 mod groups;
 #[cfg(test)]
 mod tests;
@@ -163,7 +163,7 @@ fn file_menu(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     ui.separator();
     if ui
         .add_enabled(
-            state.document.is_some() && state.composition.is_none(),
+            state.has_document() && state.composition.is_none(),
             egui::Button::new("保存    Ctrl+S"),
         )
         .clicked()

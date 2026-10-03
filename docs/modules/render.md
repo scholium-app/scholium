@@ -35,6 +35,10 @@ src/
 
 ## 交互映射
 
+显式 Content 候选的映射直接来自同一 Frame 的 opaque-origin 注册表，使用 typed 叶位置与
+完整 SceneStamp，不经过 generated markup shift。其受控单 flow、全 Scene 交付边界见
+[Typst 模块](typst.md#直接-content-开发接口)、[ADR 0034](../adr/ADR-0034-typst-main-app-candidate.md)。
+
 点击预览通过 layout span → generated SourceMap → NodeId → document focus。视觉 caret 的权威位置仍是
 TreeCursor；geometry 只是当前 revision 派生物。derived 内容如自动编号可以选择其拥有者节点，但不可进入
 不存在的文本槽。

@@ -9,7 +9,7 @@ const CONTENT_HEIGHT: f32 = 64.0;
 const LARGE_WIDTH: f32 = 70.0;
 const ICON_SIZE: f32 = 25.0;
 
-pub(super) fn group(
+pub(crate) fn group(
     ui: &mut egui::Ui,
     title: &str,
     width: f32,
@@ -51,7 +51,7 @@ pub(super) fn group(
     ui.add_space(5.0);
 }
 
-pub(super) fn large(
+pub(crate) fn large(
     ui: &mut egui::Ui,
     icon: Icon,
     title: &str,
@@ -105,7 +105,7 @@ pub(super) fn large(
     .inner
 }
 
-pub(super) fn small(ui: &mut egui::Ui, title: &str, enabled: bool) -> egui::Response {
+pub(crate) fn small(ui: &mut egui::Ui, title: &str, enabled: bool) -> egui::Response {
     ui.add_enabled(
         enabled,
         egui::Button::new(RichText::new(title).size(12.0))
@@ -114,6 +114,6 @@ pub(super) fn small(ui: &mut egui::Ui, title: &str, enabled: bool) -> egui::Resp
     )
 }
 
-pub(super) fn unavailable(ui: &mut egui::Ui, icon: Icon, title: &str) {
+pub(crate) fn unavailable(ui: &mut egui::Ui, icon: Icon, title: &str) {
     large(ui, icon, title, false, false).on_disabled_hover_text("此功能尚未接入");
 }

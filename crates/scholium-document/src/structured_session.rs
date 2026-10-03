@@ -58,6 +58,14 @@ pub enum StructuralEdit {
         /// Inline insertion boundary.
         at: usize,
     },
+    /// Insert inline math at a body grapheme boundary in one action.
+    /// The left leaf survives; the right leaf and formula receive fresh IDs.
+    InsertMathAt {
+        /// Body text leaf, never a math/source leaf.
+        leaf: NodeId,
+        /// UTF-8 grapheme boundary in that leaf.
+        at: usize,
+    },
     /// Wrap a math subtree as numerator and create an addressed empty denominator.
     WrapFraction {
         /// Surviving numerator subtree identity.

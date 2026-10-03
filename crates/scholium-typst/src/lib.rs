@@ -17,6 +17,8 @@ use typst_layout::{PagedDocument, PagedIntrospector};
 
 mod compiler;
 mod edit_compile;
+#[cfg(feature = "editor")]
+pub mod editor;
 mod geometry;
 mod projection;
 pub use compiler::{CompileOutcome, PageOutcome, PagePixels, PreviewCompiler, PreviewEvent};

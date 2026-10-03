@@ -1,0 +1,46 @@
+{
+  "revision": 10,
+  "current": false,
+  "layout_error": "Typst layout failed: [SourceDiagnostic { severity: Error, span: DiagSpan { span: Span(1), extra: 0 }, message: \"math hole requires a structural slot identity\", trace: [], hints: [] }]",
+  "page_text_draws": 0,
+  "snapshot": {
+    "blocks": [
+      {
+        "content": [
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": "English 中文 空格"
+            },
+            "node": "143389e9-34af-4c17-8572-0b5a5f0d3b88"
+          },
+          {
+            "body": {
+              "kind": "math",
+              "root": {
+                "body": {
+                  "kind": "hole"
+                },
+                "node": "dbad6204-4126-4e60-aad9-a48c7ff0b95e"
+              }
+            },
+            "node": "10155e5b-b800-413c-8639-1d12d0ef508a"
+          },
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": ""
+            },
+            "node": "188023f3-bd1b-45a4-ac8d-2230f77b88cd"
+          }
+        ],
+        "kind": "Paragraph",
+        "node": "ea7cac96-b3a4-497b-8743-3bd86ab05c78"
+      }
+    ],
+    "document": "a8044fb5-08bb-43c1-9a32-fa6d1a09ea82",
+    "revision": 10
+  }
+}

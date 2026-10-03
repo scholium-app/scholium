@@ -1,0 +1,2 @@
+# Preserve canonical upstream bytes; verify-fork.py checks the complete source inventory.
+typst-edit/README.md -whitespace

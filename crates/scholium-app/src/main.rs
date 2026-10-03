@@ -12,6 +12,8 @@ mod sample;
 mod session;
 mod state;
 mod theme;
+#[cfg(feature = "typst-editor")]
+mod typst_editor;
 mod undo;
 mod workspace;
 
@@ -28,12 +30,22 @@ impl eframe::App for ScholiumApp {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         commands::shortcuts(ui.ctx(), &mut self.state);
         chrome::show(ui, &mut self.state);
+        #[cfg(feature = "typst-editor")]
+        if self.session.show_candidate(ui, &mut self.state) {
+            return;
+        }
         workspace::show(ui, &mut self.state);
         self.session.update(ui.ctx(), &mut self.state);
     }
 }
 
 fn main() -> eframe::Result {
+    let candidate = std::env::args().any(|arg| arg == "--typst-editor");
+    #[cfg(not(feature = "typst-editor"))]
+    if candidate {
+        eprintln!("Use the isolated dev/typst-editor/Cargo.toml build for --typst-editor.");
+        std::process::exit(2);
+    }
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_title("谱与振动 — Scholium · 界面预览")
@@ -45,8 +57,15 @@ fn main() -> eframe::Result {
     eframe::run_native(
         "Scholium",
         options,
-        Box::new(|cc| {
+        Box::new(move |cc| {
             let mut app = ScholiumApp::default();
+            #[cfg(feature = "typst-editor")]
+            if candidate {
+                app.session.enable_candidate(&cc.egui_ctx, &mut app.state)?;
+            } else {
+                app.session.prepare_preview(&cc.egui_ctx);
+            }
+            #[cfg(not(feature = "typst-editor"))]
             app.session.prepare_preview(&cc.egui_ctx);
             theme::install(&cc.egui_ctx);
             Ok(Box::new(app))

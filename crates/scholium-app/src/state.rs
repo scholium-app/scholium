@@ -172,6 +172,8 @@ pub(crate) enum FocusTarget {
 /// View preferences, owned session projection and outgoing request; never authoritative content.
 #[derive(Debug)]
 pub(crate) struct WorkspaceState {
+    #[cfg(feature = "typst-editor")]
+    pub(crate) candidate: Option<crate::typst_editor::CandidateView>,
     /// Shared immutable projection; cloning the Arc is the frame-to-frame cost,
     /// deep copies happen once per accepted edit (R6 of the rework plan).
     pub(crate) document: Option<std::sync::Arc<scholium_model::DocumentSnapshot>>,
@@ -241,6 +243,8 @@ pub(crate) struct WorkspaceState {
 impl Default for WorkspaceState {
     fn default() -> Self {
         Self {
+            #[cfg(feature = "typst-editor")]
+            candidate: None,
             document: None,
             pending_edit: None,
             edit_shifts: Vec::new(),
@@ -272,6 +276,24 @@ impl Default for WorkspaceState {
             fit_width: true,
             rendered_zoom: 1.0,
         }
+    }
+}
+
+impl WorkspaceState {
+    pub(crate) fn has_document(&self) -> bool {
+        #[cfg(feature = "typst-editor")]
+        if self.candidate.is_some() {
+            return true;
+        }
+        self.document.is_some()
+    }
+
+    pub(crate) fn unsaved(&self) -> bool {
+        #[cfg(feature = "typst-editor")]
+        if let Some(candidate) = &self.candidate {
+            return candidate.dirty;
+        }
+        self.saved_revision != self.document.as_ref().map(|doc| doc.revision.0)
     }
 }
 

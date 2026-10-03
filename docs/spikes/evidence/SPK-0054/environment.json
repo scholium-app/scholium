@@ -1,0 +1,26 @@
+{
+  "rustc": "rustc 1.96.0 (ac68faa20 2026-05-25)",
+  "cargo": "cargo 1.96.0 (30a34c682 2026-05-25)",
+  "platform": "Linux x86_64",
+  "system_fonts": [
+    {
+      "requested": "Times New Roman",
+      "matched": "Times New Roman",
+      "file": "/usr/share/fonts/windows11-fonts/times.ttf",
+      "sha256": "f2cb777422a10368904d3f691e650e39da862fe723389056324927df540a35ec"
+    },
+    {
+      "requested": "SimSun",
+      "matched": "SimSun,\u5b8b\u4f53",
+      "file": "/usr/share/fonts/windows11-fonts/simsun.ttc",
+      "sha256": "120a51d2b14eb588700a21e15fc301f0ea55d7c1a4e1f3ae61db83b7c8d42cd6"
+    },
+    {
+      "requested": "SimHei",
+      "matched": "SimHei,\u9ed1\u4f53",
+      "file": "/usr/share/fonts/windows11-fonts/simhei.ttf",
+      "sha256": "356495b9b8fbe3b8818d8ea8602e9e28bf94ac4134d7c6c2cc3c33639ed36718"
+    }
+  ],
+  "embedded_fonts": "typst-assets 0.15.1; registry checksum in lockfiles"
+}
