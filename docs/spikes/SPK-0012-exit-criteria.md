@@ -28,6 +28,9 @@
 
 ## 证据入口
 
+结构正文跨叶/块的原子替换内核见[报告 0056](SPK-0056-structured-body-range.md)；
+页面选区尚未接入，此限定报告不改变上表阶段判定。
+
 - 条件 1：[egui 原始验收](SPK-0004-native-ui-egui.md)、[ADR 0006](../adr/ADR-0006-native-ui-framework.md)、
   [新增选区和源码路径](SPK-0016-working-tree-status.md#原生编辑与源码应用)。
   已锁定 egui/eframe 0.36.2、winit 0.30.13、accesskit 0.24.1；原桌面环境为 Arch Linux / niri 26.04 / fcitx5 5.1.22。
