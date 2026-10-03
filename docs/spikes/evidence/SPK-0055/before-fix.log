@@ -1,0 +1,50 @@
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/dev/typst-editor)
+    Finished `test` profile [unoptimized] target(s) in 4.80s
+     Running unittests ../../crates/scholium-app/src/main.rs (target/typst-editor/debug/deps/scholium_app-74092acb385b791c)
+
+running 11 tests
+test typst_editor::tests::committed_canvas_contains_no_egui_text_shapes_even_while_pending ... ok
+test typst_editor::tests::deletion_that_joins_regional_indicators_keeps_a_valid_insertion_point ... FAILED
+test typst_editor::tests::empty_inline_formula_and_empty_fraction_denominator_have_current_geometry ... ok
+test typst_editor::tests::every_scene_identity_field_gates_adoption_of_failed_results ... ok
+test typst_editor::tests::horizontal_arrows_cross_identified_body_and_math_leaves_without_wrapping ... FAILED
+test typst_editor::tests::ime_commit_and_duplicate_text_event_create_one_action_and_one_value ... ok
+test typst_editor::tests::joining_emoji_graphemes_does_not_strand_following_input_inside_a_cluster ... FAILED
+test typst_editor::tests::multi_event_frame_enters_fraction_and_nested_denominator_without_losing_input ... ok
+test typst_editor::tests::rejected_multiline_paste_keeps_authority_and_copyable_draft ... ok
+test typst_editor::tests::save_reopen_preserves_holes_and_can_continue_after_redo ... ok
+test typst_editor::tests::undo_redo_preserves_request_ids_and_rejects_old_scene_at_same_revision ... ok
+
+failures:
+
+---- typst_editor::tests::deletion_that_joins_regional_indicators_keeps_a_valid_insertion_point stdout ----
+
+thread 'typst_editor::tests::deletion_that_joins_regional_indicators_keeps_a_valid_insertion_point' (466570) panicked at ../../crates/scholium-app/src/typst_editor/tests.rs:278:5:
+assertion `left == right` failed
+  left: "🇦🇧"
+ right: "🇦🇧y"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- typst_editor::tests::horizontal_arrows_cross_identified_body_and_math_leaves_without_wrapping stdout ----
+
+thread 'typst_editor::tests::horizontal_arrows_cross_identified_body_and_math_leaves_without_wrapping' (466610) panicked at ../../crates/scholium-app/src/typst_editor/tests.rs:291:5:
+assertion `left == right` failed
+  left: (NodeId(219ce348-239c-4b08-82f5-b954c8cffa9e), 0)
+ right: (NodeId(175d6c3f-f6e1-4e75-b583-225cd86482f5), 2)
+
+---- typst_editor::tests::joining_emoji_graphemes_does_not_strand_following_input_inside_a_cluster stdout ----
+
+thread 'typst_editor::tests::joining_emoji_graphemes_does_not_strand_following_input_inside_a_cluster' (466614) panicked at ../../crates/scholium-app/src/typst_editor/tests.rs:266:5:
+assertion `left == right` failed
+  left: "👩\u{200d}🔬"
+ right: "👩\u{200d}🔬x"
+
+
+failures:
+    typst_editor::tests::deletion_that_joins_regional_indicators_keeps_a_valid_insertion_point
+    typst_editor::tests::horizontal_arrows_cross_identified_body_and_math_leaves_without_wrapping
+    typst_editor::tests::joining_emoji_graphemes_does_not_strand_following_input_inside_a_cluster
+
+test result: FAILED. 8 passed; 3 failed; 0 ignored; 0 measured; 112 filtered out; finished in 23.57s
+
+error: test failed, to rerun pass `--bin scholium-app`

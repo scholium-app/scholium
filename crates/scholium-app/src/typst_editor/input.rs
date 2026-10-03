@@ -108,7 +108,7 @@ impl CandidateSession {
             },
             state,
         ) {
-            self.cursor.byte += length;
+            self.place_after_edit(at + length);
             self.cursor.affinity = Affinity::Upstream;
         } else {
             // Rejected pasted/committed input stays copyable outside the document surface.
@@ -149,8 +149,8 @@ impl CandidateSession {
             .find(|i| *i > self.cursor.byte)
             .unwrap_or(text.len());
         match key {
-            egui::Key::ArrowLeft => self.cursor.byte = before.unwrap_or(0),
-            egui::Key::ArrowRight => self.cursor.byte = after,
+            egui::Key::ArrowLeft => self.horizontal(false, before.unwrap_or(0)),
+            egui::Key::ArrowRight => self.horizontal(true, after),
             egui::Key::Home => self.cursor.byte = 0,
             egui::Key::End => self.cursor.byte = text.len(),
             egui::Key::Tab => self.next_leaf(modifiers.shift),
@@ -172,7 +172,46 @@ impl CandidateSession {
             },
             state,
         ) {
-            self.cursor.byte = start;
+            self.place_after_edit(start);
+        }
+    }
+
+    fn place_after_edit(&mut self, byte: usize) {
+        let Some(leaf) = leaves(&self.snapshot)
+            .into_iter()
+            .find(|l| l.id == self.cursor.leaf)
+        else {
+            return;
+        };
+        // Insert/delete can join neighboring graphemes (ZWJ, flags, combining marks).
+        // The surviving byte offset must be revalidated against accepted content.
+        self.cursor.byte = leaf
+            .text
+            .grapheme_indices(true)
+            .map(|(at, _)| at)
+            .chain(std::iter::once(leaf.text.len()))
+            .find(|at| *at >= byte)
+            .unwrap_or(leaf.text.len());
+    }
+
+    fn horizontal(&mut self, forward: bool, within: usize) {
+        let leaves = leaves(&self.snapshot);
+        let Some(at) = leaves.iter().position(|l| l.id == self.cursor.leaf) else {
+            return;
+        };
+        let edge = if forward { leaves[at].text.len() } else { 0 };
+        if self.cursor.byte != edge {
+            self.cursor.byte = within;
+            return;
+        }
+        let next = if forward {
+            at.checked_add(1)
+        } else {
+            at.checked_sub(1)
+        };
+        if let Some(leaf) = next.and_then(|i| leaves.get(i)) {
+            self.cursor.leaf = leaf.id;
+            self.cursor.byte = if forward { 0 } else { leaf.text.len() };
         }
     }
 
