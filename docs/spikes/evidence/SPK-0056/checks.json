@@ -1,0 +1,27 @@
+{
+  "rust": "1.96.0",
+  "root": {
+    "fmt": 0,
+    "clippy": 0,
+    "tests": 0,
+    "doc": 0,
+    "size": 0,
+    "licenses_bans_sources": 0,
+    "advisories": 1,
+    "totals": {
+      "passed": 153,
+      "failed": 0,
+      "ignored": 32
+    }
+  },
+  "candidate_compat": {
+    "clippy": 0,
+    "tests": 0,
+    "totals": {
+      "passed": 91,
+      "failed": 0,
+      "ignored": 32
+    }
+  },
+  "advisories": "7 existing errors; yoke-derive yanked warning; no ignore or dependency changes"
+}

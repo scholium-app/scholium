@@ -17,6 +17,7 @@
 候选已提交正文不走 egui 回显，普通启动尚未替换，兼容/分页/性能/安全门禁仍须后续验证。
 字素合并后的插入位置和跨文字/数学叶逻辑导航见[报告 0055](SPK-0055-typst-grapheme-navigation.md)；
 这是 C 的限定输入批次，选区/剪贴板和完整竞态出口仍未通过。
+正文端点跨叶/块的单次原子替换内核见[报告 0056](SPK-0056-structured-body-range.md)；页面选区尚未接入。
 
 - 报告按 `SPK-NNNN-short-title.md` 命名，模板见 [SPK-0000-template.md](SPK-0000-template.md)；
   证据文件按报告编号归入 `evidence/SPK-NNNN/`。

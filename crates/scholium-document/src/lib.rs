@@ -11,7 +11,9 @@ mod structured_session;
 use scholium_model::layout_identity::{
     LayoutEpoch, LayoutRequestId, ProfileGeneration, ResourceGeneration, SceneStamp,
 };
-pub use structured_session::{MigrationFailure, StructuralEdit, StructuralRequest};
+pub use structured_session::{
+    BodyTextPosition, MigrationFailure, StructuralEdit, StructuralRequest,
+};
 
 /// Maximum UTF-8 text bytes accepted per block edit.
 pub const MAX_TEXT_BYTES: usize = 1024 * 1024;
