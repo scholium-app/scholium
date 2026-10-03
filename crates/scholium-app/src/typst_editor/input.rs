@@ -61,8 +61,13 @@ fn math_leaves<'a>(node: &'a MathNode, block: NodeId, result: &mut Vec<Leaf<'a>>
 }
 
 impl CandidateSession {
-    pub(super) fn events(&mut self, events: Vec<egui::Event>, state: &mut WorkspaceState) {
+    pub(super) fn events(
+        &mut self,
+        events: Vec<egui::Event>,
+        state: &mut WorkspaceState,
+    ) -> Option<String> {
         let ime_frame = events.iter().any(|e| matches!(e, egui::Event::Ime(_)));
+        let mut clipboard = None;
         for event in events {
             self.pointer_event(&event, state);
             match event {
@@ -71,6 +76,12 @@ impl CandidateSession {
                 }
                 egui::Event::Paste(text) if state.composition.is_none() => {
                     self.insert(text, false, state)
+                }
+                egui::Event::Copy if state.composition.is_none() => {
+                    clipboard = self.copy_selection(state);
+                }
+                egui::Event::Cut if state.composition.is_none() => {
+                    clipboard = self.cut_selection(state);
                 }
                 egui::Event::Ime(egui::ImeEvent::Preedit { text, .. }) => {
                     state.composition = (!text.is_empty()).then_some(text)
@@ -88,6 +99,7 @@ impl CandidateSession {
                 _ => {}
             }
         }
+        clipboard
     }
 
     fn insert(&mut self, text: String, typed: bool, state: &mut WorkspaceState) {

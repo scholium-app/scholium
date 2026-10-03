@@ -373,3 +373,87 @@ fn pending_range_covering_raw_math_is_rejected_without_losing_selection() {
     assert_eq!(f.candidate.rejected_input.as_deref(), Some("replacement"));
     assert!(f.state.edit_error.is_some());
 }
+
+#[test]
+fn copy_selection_preserves_unicode_and_empty_paragraph_boundaries() {
+    let mut f = Fixture::new();
+    f.events(vec![egui::Event::Paste("A👩‍🔬B\n\nC".into())]);
+    let positions = body_positions(&f);
+    let start = Position {
+        leaf: positions[0].leaf,
+        byte: 1,
+        affinity: Affinity::Downstream,
+    };
+    let end = Position {
+        leaf: positions[2].leaf,
+        byte: 1,
+        affinity: Affinity::Upstream,
+    };
+    f.candidate.move_to(start, false);
+    f.candidate.move_to(end, true);
+
+    // 端点是 UTF-8 byte offset，换行空段仍须在剪贴板文本中保留。
+    assert_eq!(
+        f.candidate.copy_selection(&mut f.state).as_deref(),
+        Some("👩‍🔬B\n\nC")
+    );
+    assert!(f.state.edit_error.is_none());
+}
+
+#[test]
+fn cut_selection_returns_exact_text_and_undo_restores_original_range() {
+    let mut f = Fixture::new();
+    f.events(vec![egui::Event::Paste("left\nright".into())]);
+    let positions = body_positions(&f);
+    let start = Position {
+        leaf: positions[0].leaf,
+        byte: 2,
+        affinity: Affinity::Downstream,
+    };
+    let end = Position {
+        leaf: positions[1].leaf,
+        byte: 3,
+        affinity: Affinity::Upstream,
+    };
+    f.candidate.move_to(start, false);
+    f.candidate.move_to(end, true);
+    let before = f.candidate.snapshot.clone();
+    let selected = f.candidate.range().expect("range");
+
+    assert_eq!(
+        f.candidate.cut_selection(&mut f.state).as_deref(),
+        Some("ft\nrig")
+    );
+    assert_eq!(values(&f), ["le", "ht"]);
+    assert!(f.candidate.range().expect("collapsed range").is_none());
+
+    f.candidate.history(false, &mut f.state);
+    f.settle();
+    assert_eq!(f.candidate.snapshot, before);
+    assert_eq!(f.candidate.range().expect("restored range"), selected);
+}
+
+#[test]
+fn copy_and_cut_reject_formula_selection_without_mutating_authority() {
+    let mut f = Fixture::new();
+    f.events(vec![text("A"), text("$"), text("12"), text("$"), text("B")]);
+    let positions = body_positions(&f);
+    assert!(positions.len() >= 2, "body endpoints around formula");
+    f.candidate.move_to(
+        Position {
+            leaf: positions[0].leaf,
+            byte: 0,
+            affinity: Affinity::Downstream,
+        },
+        false,
+    );
+    f.candidate.move_to(positions[1], true);
+    let before = f.candidate.snapshot.clone();
+    let range = f.candidate.range().expect("range");
+
+    assert!(f.candidate.copy_selection(&mut f.state).is_none());
+    assert!(f.state.edit_error.is_some());
+    assert!(f.candidate.cut_selection(&mut f.state).is_none());
+    assert_eq!(f.candidate.snapshot, before);
+    assert_eq!(f.candidate.range().expect("preserved range"), range);
+}

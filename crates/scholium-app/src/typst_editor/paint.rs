@@ -145,7 +145,9 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut Candidate
         });
         if !session.confirm_new && !session.confirm_close {
             let events = ui.input(|i| i.events.clone());
-            session.events(events, state);
+            if let Some(text) = session.events(events, state) {
+                ui.ctx().copy_text(text);
+            }
         }
     }
     // All accepted intents have reached LocalSession and the worker before this pass.
