@@ -1,0 +1,6 @@
+    Checking scholium-model v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-model)
+    Checking scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-storage)
+    Checking scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-typst)
+    Checking scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-document)
+    Checking scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-app)
+    Finished `dev` profile [unoptimized] target(s) in 3.00s

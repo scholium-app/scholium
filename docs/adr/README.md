@@ -80,3 +80,5 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0030](ADR-0030-incomplete-formula-feedback.md)：未完成公式的原位输入反馈、真实诊断与排版 worker 主动唤醒。
 
 [ADR 0031](ADR-0031-structural-cursor.md)：结构光标取代页面编辑器的全局字节偏移，固定结构编辑语义与几何 revision 归属。
+
+[ADR 0035](ADR-0035-typst-page-selection.md)：Typst 候选页面选区——语义端点、核心存活光标与同源 Frame 几何。

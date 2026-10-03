@@ -64,6 +64,7 @@ impl CandidateSession {
     pub(super) fn events(&mut self, events: Vec<egui::Event>, state: &mut WorkspaceState) {
         let ime_frame = events.iter().any(|e| matches!(e, egui::Event::Ime(_)));
         for event in events {
+            self.pointer_event(&event, state);
             match event {
                 egui::Event::Text(text) if !ime_frame && state.composition.is_none() => {
                     self.insert(text, true, state)
@@ -93,6 +94,12 @@ impl CandidateSession {
         if text.is_empty() {
             return;
         }
+        if self.selected() || (text.contains(['\n', '\r']) && self.body_leaf(self.cursor.leaf)) {
+            if !self.replace_range(text.clone(), state) {
+                self.rejected_input = Some(text);
+            }
+            return;
+        }
         if typed && text == "$" {
             self.command(Command::Math, state);
             return;
@@ -119,6 +126,8 @@ impl CandidateSession {
     fn key(&mut self, key: egui::Key, modifiers: egui::Modifiers, state: &mut WorkspaceState) {
         if key == egui::Key::Escape {
             state.composition = None;
+            self.anchor = None;
+            self.drag = None;
             return;
         }
         if state.composition.is_some() {
@@ -130,6 +139,9 @@ impl CandidateSession {
                 egui::Key::M => self.command(Command::Math, state),
                 _ => {}
             }
+            return;
+        }
+        if self.selection_key(key, modifiers.shift, state) {
             return;
         }
         let Some(leaf) = leaves(&self.snapshot)
@@ -240,6 +252,10 @@ impl CandidateSession {
         if state.composition.is_some() {
             return;
         }
+        if self.selected() {
+            state.edit_error = Some("选区格式与结构命令尚未接入；可输入或删除替换此选区。".into());
+            return;
+        }
         let Some((block, math)) = leaves(&self.snapshot)
             .into_iter()
             .find(|l| l.id == self.cursor.leaf)
@@ -334,31 +350,11 @@ impl CandidateSession {
     }
 
     fn split(&mut self, state: &mut WorkspaceState) {
-        let Some((index, block)) = self
-            .snapshot
-            .blocks
-            .iter()
-            .enumerate()
-            .find(|(_, b)| b.content.iter().any(|i| i.node == self.cursor.leaf))
-            .map(|(i, b)| (i, b.node))
-        else {
+        if !self.body_leaf(self.cursor.leaf) {
             state.edit_error = Some("数学槽内的换行尚未接入。".into());
             return;
-        };
-        if self.apply(
-            StructuralEdit::SplitBlock {
-                block,
-                leaf: self.cursor.leaf,
-                at: self.cursor.byte,
-            },
-            state,
-        ) {
-            self.cursor = Position {
-                leaf: self.snapshot.blocks[index + 1].content[0].node,
-                byte: 0,
-                affinity: Affinity::Downstream,
-            };
         }
+        self.replace_range("\n".into(), state);
     }
 }
 

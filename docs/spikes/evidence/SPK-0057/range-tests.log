@@ -1,0 +1,19 @@
+   Compiling scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-document)
+    Finished `test` profile [unoptimized] target(s) in 0.41s
+     Running unittests src/lib.rs (target/debug/deps/scholium_document-48cda8d9f3f72ce4)
+
+running 12 tests
+test structured_session::range::tests::capacity_failure_after_prefix_planning_rolls_back_and_request_can_retry ... ok
+test structured_session::range::tests::cross_block_deletion_keeps_outer_blocks_and_surviving_inline_identities ... ok
+test structured_session::range::tests::cross_inline_range_removes_whole_math_and_raw_and_retains_both_styles ... ok
+test structured_session::range::tests::excessive_line_count_is_rejected_before_publication ... ok
+test structured_session::range::tests::invalid_grapheme_order_unknown_and_math_endpoints_reject_atomically ... ok
+test structured_session::range::tests::multiline_cross_block_replacement_retains_right_suffix_style_and_identity ... ok
+test structured_session::range::tests::multiline_paste_at_zero_splits_once_and_preserves_trailing_empty_line ... ok
+test structured_session::range::tests::no_op_does_not_consume_request_or_increment_revision ... ok
+test structured_session::range::tests::range_outcome_identifies_the_fresh_multiline_cursor_in_accepted_authority ... ok
+test structured_session::range::tests::range_outcome_revalidates_grapheme_join_and_noop_still_returns_valid_cursor ... ok
+test structured_session::range::tests::same_leaf_replacement_is_literal_and_preserves_identity_and_style ... ok
+test structured_session::range::tests::stale_and_duplicate_requests_reject_and_restore_preserves_the_range_result ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 21 filtered out; finished in 0.01s

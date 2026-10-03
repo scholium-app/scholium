@@ -85,6 +85,24 @@ def click(state, leaf_debug, byte):
     command("click", 1)
 
 
+def caret_point(state, leaf, byte):
+    caret = next(c for c in state["carets"] if c["leaf"] == leaf and c["byte"] == byte and c["exact"])
+    return round(caret["x"]), round(caret["y"])
+
+
+def drag(state, first, last):
+    x, y = caret_point(state, *first)
+    command("mousemove", "--window", window, x, y)
+    command("mousedown", 1)
+    wait(lambda s: s["cursor_leaf"] == first[0] and s["cursor_byte"] == first[1])
+    x, y = caret_point(state, *last)
+    command("mousemove", "--window", window, x, y)
+    selected = wait(lambda s: s["selection"] is not None and s["selection_quads"] > 0)
+    command("mouseup", 1)
+    return selected
+
+
+
 def record(name, state):
     assert state["backend"] == "Typst Content main app"
     assert state["current"]
@@ -93,6 +111,9 @@ def record(name, state):
     assert state["page_text_draws"] == 0
     assert state["source_reads"] == 0
     (output / f"{name}.json").write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n")
+    # Audit is emitted before the GPU swap. Allow presentation before capturing;
+    # this capture delay is not an input latency measurement.
+    time.sleep(0.12)
     subprocess.run(["import", "-window", str(window), str(output / f"{name}.png")], check=True, env=env)
     print(f"PASS {name}", flush=True)
 
@@ -227,16 +248,71 @@ try:
     state = start("unicode-reopened")
     assert state["snapshot"] == unicode_snapshot
     record("13-unicode-reopened", state)
+    original = state["snapshot"]
+    tail = state["body_leaves"][-1]
+    click(state, tail["leaf"], 0)
+    wait(lambda s: s["cursor_leaf"] == tail["leaf"] and s["cursor_byte"] == 0)
+    command("key", "--clearmodifiers", "shift+Left")
+    state = wait(lambda s: s["current"] and s["selection"] is not None and s["selection_quads"] > 0)
+    record("14-whole-formula-selection", state)
+    revision = state["revision"]
+    type_text("Q")
+    state = wait(lambda s: s["current"] and values(s) == ["English 中文 空格Q", "👩‍🔬x 🇦🇧y"])
+    assert state["revision"] == revision + 1
+    record("15-whole-formula-replaced", state)
+    command("key", "--clearmodifiers", "ctrl+z")
+    state = wait(lambda s: s["current"] and s["snapshot"] == original and s["selection"] is not None)
+    assert state["selection_quads"] > 0
+    record("16-undo-restores-selection", state)
+    first, last = state["body_leaves"][0], state["body_leaves"][-1]
+    state = drag(state, (last["leaf"], last["bytes"]), (first["leaf"], 0))
+    record("17-reverse-drag", state)
+    revision = state["revision"]
+    paste("A👩‍🔬\n\nMiddle\nZ")
+    state = wait(lambda s: s["current"] and values(s) == ["A👩‍🔬", "", "Middle", "Z", ""])
+    assert state["revision"] == revision + 1
+    record("18-multiline-paste", state)
+    original = state["snapshot"]
+    start_leaf = state["body_leaves"][2]["leaf"]
+    end_leaf = state["body_leaves"][3]["leaf"]
+    command("key", "--clearmodifiers", "shift+Home", "shift+Left", "shift+Home")
+    state = wait(lambda s: s["current"] and s["selection"] is not None
+                 and s["selection"]["start_leaf"] == start_leaf and s["selection"]["end_leaf"] == end_leaf
+                 and s["selection"]["start_byte"] == 0 and s["selection_quads"] > 0)
+    record("19-cross-paragraph-shift-selection", state)
+    revision = state["revision"]
+    paste("R\nS")
+    wait(lambda s: s["current"] and values(s) == ["A👩‍🔬", "", "R", "S", "", ""])
+    type_text("x")
+    state = wait(lambda s: s["current"] and values(s) == ["A👩‍🔬", "", "R", "Sx", "", ""])
+    assert state["revision"] == revision + 2
+    record("20-range-replaced-and-continued", state)
+    final_snapshot = state["snapshot"]
+    command("key", "--clearmodifiers", "ctrl+z", "ctrl+z")
+    state = wait(lambda s: s["current"] and s["snapshot"] == original and s["selection"] is not None)
+    assert state["selection_quads"] > 0
+    record("21-range-undo", state)
+    command("key", "--clearmodifiers", "ctrl+shift+z", "ctrl+shift+z")
+    state = wait(lambda s: s["current"] and s["snapshot"] == final_snapshot)
+    record("22-range-redo", state)
+    command("key", "--clearmodifiers", "ctrl+s")
+    state = wait(lambda s: s["saved"])
+    record("23-range-saved", state)
+    close()
+    state = start("selection-reopened")
+    assert state["snapshot"] == final_snapshot
+    record("24-range-reopened", state)
     close()
     all_events = []
-    for name in ("first", "reopened", "unicode-reopened"):
+    for name in ("first", "reopened", "unicode-reopened", "selection-reopened"):
         log_path = output / f"{name}.log"
         all_events.extend(entries())
     assert any(not event["current"] for event in all_events), "pending frames were observed"
     assert all(event["page_text_draws"] == 0 for event in all_events)
     result = {"binary": str(binary), "sha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
               "native_backend": "X11/Xvfb", "audit_frames": len(all_events), "pending_frames": sum(not s["current"] for s in all_events),
-              "committed_egui_text_draws": 0, "saved_and_reopened": True}
+              "committed_egui_text_draws": 0, "saved_and_reopened": True, "selection_workflow_stages": 24,
+              "selection_frames": sum(s["selection"] is not None for s in all_events)}
     (output / "summary.json").write_text(json.dumps(result, indent=2) + "\n")
 finally:
     if app and app.poll() is None:

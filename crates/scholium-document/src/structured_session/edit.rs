@@ -1,14 +1,25 @@
 //! Bounded local structural planning; temporary changes never mutate live authority.
 
-use super::{EditError, StructuralEdit};
+use super::{BodyTextPosition, EditError, StructuralEdit};
 use scholium_model::{NodeId, structured::*};
 use unicode_segmentation::UnicodeSegmentation;
 
-pub(super) fn apply(doc: &mut StructuredDocument, edit: StructuralEdit) -> Result<(), EditError> {
+pub(super) fn apply(
+    doc: &mut StructuredDocument,
+    edit: StructuralEdit,
+) -> Result<Option<BodyTextPosition>, EditError> {
     match edit {
         StructuralEdit::ReplaceBodyRange { start, end, text } => {
-            super::range::replace(doc, start, end, &text)
+            super::range::replace(doc, start, end, &text).map(Some)
         }
+        edit => apply_single(doc, edit).map(|()| None),
+    }
+}
+
+fn apply_single(doc: &mut StructuredDocument, edit: StructuralEdit) -> Result<(), EditError> {
+    match edit {
+        // The dispatcher handles ranges and their surviving cursor separately.
+        StructuralEdit::ReplaceBodyRange { .. } => unreachable!("range dispatched above"),
         StructuralEdit::ReplaceText {
             leaf,
             start,

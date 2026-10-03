@@ -15,7 +15,7 @@ pub(super) fn replace(
     start: BodyTextPosition,
     end: BodyTextPosition,
     text: &str,
-) -> Result<(), EditError> {
+) -> Result<BodyTextPosition, EditError> {
     let start = locate(doc, start)?;
     let end = locate(doc, end)?;
     if start > end {
@@ -31,11 +31,44 @@ pub(super) fn replace(
         return Err(EditError::Capacity);
     }
     if start.block == end.block && start.inline == end.inline && lines.len() == 1 {
-        return within_leaf(doc, start, end, lines[0]);
+        within_leaf(doc, start, end, lines[0])?;
+        return Ok(cursor(
+            &doc.blocks[start.block].content[start.inline],
+            start.byte + lines[0].len(),
+        ));
     }
     let blocks = build_blocks(doc, start, end, &lines)?;
+    let target = if lines.len() == 1 {
+        &blocks[0].content[start.inline]
+    } else {
+        &blocks[lines.len() - 1].content[0]
+    };
+    let byte = if lines.len() == 1 {
+        start.byte + lines[0].len()
+    } else {
+        lines[lines.len() - 1].len()
+    };
+    let position = cursor(target, byte);
     doc.blocks.splice(start.block..=end.block, blocks);
-    Ok(())
+    Ok(position)
+}
+
+fn cursor(leaf: &StructuredInline, wanted: usize) -> BodyTextPosition {
+    let InlineBody::Text { text, .. } = &leaf.body else {
+        // The range planner only constructs body Text endpoints.
+        unreachable!("planned body leaf");
+    };
+    // Adjacent inserted/surviving characters can join into a new grapheme.
+    let byte = text
+        .grapheme_indices(true)
+        .map(|(at, _)| at)
+        .chain(std::iter::once(text.len()))
+        .find(|at| *at >= wanted)
+        .unwrap_or(text.len());
+    BodyTextPosition {
+        leaf: leaf.node,
+        byte,
+    }
 }
 
 fn locate(doc: &StructuredDocument, at: BodyTextPosition) -> Result<Address, EditError> {

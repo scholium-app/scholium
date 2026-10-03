@@ -1,0 +1,226 @@
+{
+  "backend": "Typst Content main app",
+  "body_leaves": [
+    {
+      "bytes": 21,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)"
+    }
+  ],
+  "carets": [
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 20.0,
+      "y": 264.3203125
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 34.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 34.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 46.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 46.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 3,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 58.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 3,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 58.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 4,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 65.328125,
+      "y": 264.3203125
+    },
+    {
+      "byte": 4,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 65.328125,
+      "y": 264.3203125
+    },
+    {
+      "byte": 5,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 71.99609375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 5,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 71.99609375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 6,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 81.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 6,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 81.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 7,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 93.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 7,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 93.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 8,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 99.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 8,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 99.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 11,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 123.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 11,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 123.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 14,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 147.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 14,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 147.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 15,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 153.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 15,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 153.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 18,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 177.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 18,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 177.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 21,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 201.3359375,
+      "y": 264.3203125
+    }
+  ],
+  "current": true,
+  "cursor_byte": 21,
+  "cursor_leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+  "layout_error": null,
+  "page_text_draws": 0,
+  "revision": 9,
+  "saved": false,
+  "selection": null,
+  "selection_geometry_error": null,
+  "selection_quads": 0,
+  "shown": "SceneStamp { document: DocumentId(5a7efaa0-4402-410f-b073-0598495ba87c), epoch: LayoutEpoch(fc547d30-9319-4134-ac4a-eb955281c555), request: LayoutRequestId(cb0521a4-201f-42ef-b6a6-75c79702117e), revision: Revision(9), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }",
+  "snapshot": {
+    "blocks": [
+      {
+        "content": [
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": "English 中文 空格"
+            },
+            "node": "a024ddc0-7c25-4367-b656-c825f28fcd17"
+          }
+        ],
+        "kind": "Paragraph",
+        "node": "57416c93-2578-4aba-bec6-d48b949fc906"
+      }
+    ],
+    "document": "5a7efaa0-4402-410f-b073-0598495ba87c",
+    "revision": 9
+  },
+  "source_reads": 0,
+  "wanted": "SceneStamp { document: DocumentId(5a7efaa0-4402-410f-b073-0598495ba87c), epoch: LayoutEpoch(fc547d30-9319-4134-ac4a-eb955281c555), request: LayoutRequestId(cb0521a4-201f-42ef-b6a6-75c79702117e), revision: Revision(9), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }"
+}

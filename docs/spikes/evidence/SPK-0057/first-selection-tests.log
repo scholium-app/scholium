@@ -1,0 +1,58 @@
+   Compiling typst-utils v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-utils)
+   Compiling typst-timing v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-timing)
+   Compiling scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-document)
+   Compiling scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-storage)
+   Compiling typst-syntax v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-syntax)
+   Compiling typst-library v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-library)
+   Compiling typst-layout v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-layout)
+   Compiling typst-eval v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-eval)
+   Compiling typst-kit v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-kit)
+   Compiling typst-svg v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-svg)
+   Compiling typst-render v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-render)
+   Compiling typst-html v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-html)
+   Compiling typst-realize v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst-realize)
+   Compiling typst v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium/vendor/typst-edit/crates/typst)
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-typst)
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/dev/typst-editor)
+    Finished `test` profile [unoptimized] target(s) in 10.72s
+     Running unittests ../../crates/scholium-app/src/main.rs (dev/typst-editor/target/debug/deps/scholium_app-74092acb385b791c)
+
+running 22 tests
+test typst_editor::selection::tests::approximate_or_unknown_caret_cannot_become_a_pointer_endpoint ... ok
+test typst_editor::selection::tests::body_shift_crosses_whole_fraction_and_selection_includes_its_rule_extent ... FAILED
+test typst_editor::selection::tests::deletion_and_enter_each_replace_cross_paragraph_selection_as_one_action ... ok
+test typst_editor::selection::tests::drag_rejects_epoch_reuse_and_changed_placement ... ok
+test typst_editor::selection::tests::math_shift_and_selection_format_commands_do_not_mutate_authority ... ok
+test typst_editor::selection::tests::multiline_paste_keeps_empty_paragraphs_and_places_following_input_in_new_leaf ... ok
+test typst_editor::selection::tests::rejected_capacity_preserves_selection_and_copyable_paste ... ok
+test typst_editor::selection::tests::reverse_drag_across_paragraphs_replaces_once_and_undo_restores_selection ... ok
+test typst_editor::selection::tests::same_frame_accepted_text_makes_later_pointer_event_stale ... ok
+test typst_editor::selection::tests::selection_extent_uses_current_cluster_edges_and_pending_hides_it ... ok
+test typst_editor::selection::tests::shift_unicode_selection_replaces_once_with_literal_text_and_retains_identity ... ok
+test typst_editor::tests::committed_canvas_contains_no_egui_text_shapes_even_while_pending ... ok
+test typst_editor::tests::deletion_that_joins_regional_indicators_keeps_a_valid_insertion_point ... ok
+test typst_editor::tests::empty_inline_formula_and_empty_fraction_denominator_have_current_geometry ... ok
+test typst_editor::tests::every_scene_identity_field_gates_adoption_of_failed_results ... ok
+test typst_editor::tests::horizontal_arrows_cross_identified_body_and_math_leaves_without_wrapping ... ok
+test typst_editor::tests::ime_commit_and_duplicate_text_event_create_one_action_and_one_value ... ok
+test typst_editor::tests::joining_emoji_graphemes_does_not_strand_following_input_inside_a_cluster ... ok
+test typst_editor::tests::multi_event_frame_enters_fraction_and_nested_denominator_without_losing_input ... ok
+test typst_editor::tests::rejected_math_multiline_paste_keeps_authority_and_copyable_draft ... ok
+test typst_editor::tests::save_reopen_preserves_holes_and_can_continue_after_redo ... ok
+test typst_editor::tests::undo_redo_preserves_request_ids_and_rejects_old_scene_at_same_revision ... ok
+
+failures:
+
+---- typst_editor::selection::tests::body_shift_crosses_whole_fraction_and_selection_includes_its_rule_extent stdout ----
+
+thread 'typst_editor::selection::tests::body_shift_crosses_whole_fraction_and_selection_includes_its_rule_extent' (84947) panicked at ../../crates/scholium-app/src/typst_editor/selection/tests.rs:119:10:
+whole formula bound includes fraction rule: Geometry
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    typst_editor::selection::tests::body_shift_crosses_whole_fraction_and_selection_includes_its_rule_extent
+
+test result: FAILED. 21 passed; 1 failed; 0 ignored; 0 measured; 112 filtered out; finished in 60.46s
+
+error: test failed, to rerun pass `--bin scholium-app`

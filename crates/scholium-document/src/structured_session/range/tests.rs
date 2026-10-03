@@ -351,3 +351,48 @@ fn stale_and_duplicate_requests_reject_and_restore_preserves_the_range_result() 
     assert_eq!(restored.actions().len(), 1);
     assert_ne!(restored.layout_epoch(), s.layout_epoch());
 }
+
+#[test]
+fn range_outcome_identifies_the_fresh_multiline_cursor_in_accepted_authority() {
+    let leaf = text("AB", TextStyle::Strong);
+    let mut s = session(vec![new_block(BlockKind::Paragraph, vec![leaf.clone()])]);
+    let r = request(&s, at(&leaf, 1), at(&leaf, 1), "x\nY");
+    let result = s.apply_structural_outcome(r).expect("accepted");
+    let snapshot = s.snapshot();
+    assert!(result.changed);
+    assert_eq!(
+        result.cursor,
+        Some(BodyTextPosition {
+            leaf: snapshot.blocks[1].content[0].node,
+            byte: 1,
+        })
+    );
+    assert_ne!(result.cursor.expect("cursor").leaf, leaf.node);
+    assert_eq!(value(&snapshot.blocks[1].content[0]), "YB");
+}
+
+#[test]
+fn range_outcome_revalidates_grapheme_join_and_noop_still_returns_valid_cursor() {
+    let leaf = text("👩🔬", TextStyle::Plain);
+    let mut s = session(vec![new_block(BlockKind::Paragraph, vec![leaf.clone()])]);
+    let r = request(&s, at(&leaf, "👩".len()), at(&leaf, "👩".len()), "\u{200d}");
+    let result = s.apply_structural_outcome(r).expect("joined");
+    assert_eq!(
+        result.cursor,
+        Some(BodyTextPosition {
+            leaf: leaf.node,
+            byte: "👩‍🔬".len()
+        })
+    );
+    let r = request(&s, at(&leaf, 0), at(&leaf, "👩‍🔬".len()), "👩‍🔬");
+    let result = s.apply_structural_outcome(r).expect("no-op");
+    assert!(!result.changed);
+    assert_eq!(
+        result.cursor,
+        Some(BodyTextPosition {
+            leaf: leaf.node,
+            byte: "👩‍🔬".len()
+        })
+    );
+    assert_eq!(s.actions().len(), 1);
+}

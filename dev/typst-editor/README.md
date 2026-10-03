@@ -17,8 +17,11 @@ SCHOLIUM_SESSION_FILE=/tmp/scholium-typst-candidate.sqlite \
 `$` / Ctrl+M 进入或离开公式；Ctrl+/ 把当前数学叶包成分数，光标进入空分母；Tab /
 Shift+Tab 切换叶/槽位；Ctrl+Z / Ctrl+Shift+Z 撤销/重做；Ctrl+S 保存。
 左右方向键可在正文和数学 Text/Hole 叶之间按逻辑顺序移动，文档首尾停止。
-候选采用受控不分页 flow，Source 按钮显示只读结构 JSON。整叶格式、正文 Enter 拆段可用；
-跨叶选区、复制剪切、多行粘贴、旧 RawMath 转换、分页和实机输入法/无障碍仍待后续验收。
+Shift+左右/Home/End 与鼠标拖选支持正文端点的跨叶/段落范围，覆盖的公式按整对象选中。
+Backspace/Delete、输入和多行粘贴一次替换选区；Enter 拆段，撤销恢复选区。
+选框取同源 Frame，pending 停用鼠标；非精确合字端点、未知映射和 Raw 范围明确拒绝。
+候选采用受控不分页 flow，Source 按钮显示只读结构 JSON。整叶格式可用；选区格式、
+数学内部跨槽位选区、复制剪切、旧 RawMath 转换、分页和实机输入法/无障碍仍待后续验收。
 RawMath 不执行，布局明确报错；失败不切回 egui 正文回显。
 
 ```sh
@@ -41,4 +44,6 @@ python3 dev/typst-editor/verify-fork.py /path/to/pinned/typst/git/checkout
 
 完整来源、独立 stock 对照、依赖通告与边界见
 [报告 0054](../../docs/spikes/SPK-0054-typst-main-app-candidate.md)、
-[ADR 0034](../../docs/adr/ADR-0034-typst-main-app-candidate.md)。
+[选区报告 0057](../../docs/spikes/SPK-0057-typst-page-selection.md)、
+[ADR 0034](../../docs/adr/ADR-0034-typst-main-app-candidate.md)、
+[ADR 0035](../../docs/adr/ADR-0035-typst-page-selection.md)。

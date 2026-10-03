@@ -1,0 +1,298 @@
+{
+  "backend": "Typst Content main app",
+  "body_leaves": [
+    {
+      "bytes": 21,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)"
+    },
+    {
+      "bytes": 0,
+      "leaf": "NodeId(c895aab9-cc58-48f9-9f75-df33486f8d66)"
+    }
+  ],
+  "carets": [
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(2671b28d-dce5-4117-8a2c-229b5dc17f58)",
+      "x": 213.29513549804688,
+      "y": 276.76861572265625
+    },
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 20.0,
+      "y": 264.3203125
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 34.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 34.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 46.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 46.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 3,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 58.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 3,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 58.66015625,
+      "y": 264.3203125
+    },
+    {
+      "byte": 4,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 65.328125,
+      "y": 264.3203125
+    },
+    {
+      "byte": 4,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 65.328125,
+      "y": 264.3203125
+    },
+    {
+      "byte": 5,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 71.99609375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 5,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 71.99609375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 6,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 81.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 6,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 81.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 7,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 93.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 7,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 93.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 8,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 99.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 8,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 99.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 11,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 123.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 11,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 123.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 14,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 147.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 14,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 147.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 15,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 153.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 15,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 153.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 18,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 177.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 18,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 177.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 21,
+      "exact": true,
+      "leaf": "NodeId(a024ddc0-7c25-4367-b656-c825f28fcd17)",
+      "x": 201.3359375,
+      "y": 264.3203125
+    },
+    {
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(e4b273db-34e2-4684-b4b0-a85febeeafd3)",
+      "x": 203.73593139648438,
+      "y": 257.6070251464844
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(e4b273db-34e2-4684-b4b0-a85febeeafd3)",
+      "x": 213.29513549804688,
+      "y": 257.6070251464844
+    },
+    {
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(e4b273db-34e2-4684-b4b0-a85febeeafd3)",
+      "x": 213.29513549804688,
+      "y": 257.6070251464844
+    },
+    {
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(e4b273db-34e2-4684-b4b0-a85febeeafd3)",
+      "x": 222.85433959960938,
+      "y": 257.6070251464844
+    }
+  ],
+  "current": true,
+  "cursor_byte": 0,
+  "cursor_leaf": "NodeId(2671b28d-dce5-4117-8a2c-229b5dc17f58)",
+  "layout_error": null,
+  "page_text_draws": 0,
+  "revision": 13,
+  "saved": false,
+  "selection": null,
+  "selection_geometry_error": null,
+  "selection_quads": 0,
+  "shown": "SceneStamp { document: DocumentId(5a7efaa0-4402-410f-b073-0598495ba87c), epoch: LayoutEpoch(fc547d30-9319-4134-ac4a-eb955281c555), request: LayoutRequestId(8a22041d-5ea7-4096-8b07-0f81697357b1), revision: Revision(13), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }",
+  "snapshot": {
+    "blocks": [
+      {
+        "content": [
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": "English 中文 空格"
+            },
+            "node": "a024ddc0-7c25-4367-b656-c825f28fcd17"
+          },
+          {
+            "body": {
+              "kind": "math",
+              "root": {
+                "body": {
+                  "denominator": {
+                    "body": {
+                      "kind": "hole"
+                    },
+                    "node": "2671b28d-dce5-4117-8a2c-229b5dc17f58"
+                  },
+                  "kind": "fraction",
+                  "numerator": {
+                    "body": {
+                      "kind": "text",
+                      "text": "12"
+                    },
+                    "node": "e4b273db-34e2-4684-b4b0-a85febeeafd3"
+                  }
+                },
+                "node": "2979efbb-2593-4b16-b230-42b65eebcbe3"
+              }
+            },
+            "node": "9d31c208-1827-4938-a18f-696ddc1670e2"
+          },
+          {
+            "body": {
+              "kind": "text",
+              "style": "plain",
+              "text": ""
+            },
+            "node": "c895aab9-cc58-48f9-9f75-df33486f8d66"
+          }
+        ],
+        "kind": "Paragraph",
+        "node": "57416c93-2578-4aba-bec6-d48b949fc906"
+      }
+    ],
+    "document": "5a7efaa0-4402-410f-b073-0598495ba87c",
+    "revision": 13
+  },
+  "source_reads": 0,
+  "wanted": "SceneStamp { document: DocumentId(5a7efaa0-4402-410f-b073-0598495ba87c), epoch: LayoutEpoch(fc547d30-9319-4134-ac4a-eb955281c555), request: LayoutRequestId(8a22041d-5ea7-4096-8b07-0f81697357b1), revision: Revision(13), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }"
+}
