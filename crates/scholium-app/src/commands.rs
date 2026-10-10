@@ -9,7 +9,6 @@ pub(crate) enum ViewCommand {
     Source,
     Navigation,
     Diagnostics,
-    EqualSplit,
     FitWidth,
     ZoomIn,
     ZoomOut,
@@ -39,13 +38,13 @@ pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
         ViewCommand::Save => state.save_requested = true,
         ViewCommand::ToggleRibbon => state.ribbon.collapsed = !state.ribbon.collapsed,
         ViewCommand::Visual => {
+            // The page widget was not drawn in Source mode, so egui dropped its focus.
             state.mode = ViewMode::Visual;
-            state.page_editor.request_focus();
+            state.focus_requested = true;
         }
         ViewCommand::Source => state.mode = ViewMode::Source,
         ViewCommand::Navigation => state.navigation = !state.navigation,
         ViewCommand::Diagnostics => state.diagnostics = !state.diagnostics,
-        ViewCommand::EqualSplit => state.split = 0.5,
         ViewCommand::FitWidth => state.fit_width = true,
         ViewCommand::ActualSize => set_zoom(state, 1.0),
         ViewCommand::ZoomIn => set_zoom(state, zoom + 0.1),
@@ -72,9 +71,8 @@ pub(crate) fn shortcuts(ctx: &egui::Context, state: &mut WorkspaceState) {
         (Modifiers::COMMAND, Key::Equals, ViewCommand::ZoomIn),
         (Modifiers::COMMAND, Key::Minus, ViewCommand::ZoomOut),
     ];
-    // Consume these so TextEdit's private snapshot undo never fires: the
-    // application's undo is its own action-layer history (`crate::undo`), and
-    // letting both run would apply two different notions of "back".
+    // Consume these so no egui widget's private undo fires: the editor keeps its
+    // own action-layer history, and two notions of "back" must never both run.
     if state.has_document() {
         // Ctrl+Z is undo; Ctrl+Shift+Z and Ctrl+Y are redo.
         //
@@ -102,9 +100,10 @@ pub(crate) fn shortcuts(ctx: &egui::Context, state: &mut WorkspaceState) {
     }
 }
 
+/// Menu entry for a command that is not integrated yet; never silently does nothing.
 pub(crate) fn unavailable(ui: &mut egui::Ui, label: &str) {
     ui.add_enabled(false, egui::Button::new(label))
-        .on_disabled_hover_text("界面预览：此操作尚未接入");
+        .on_disabled_hover_text("此操作尚未接入");
 }
 
 #[cfg(test)]

@@ -2,7 +2,7 @@
 use super::*;
 use serde_json::json;
 
-impl CandidateSession {
+impl EditorSession {
     pub(super) fn audit(&mut self, rect: egui::Rect, scale: f32, text_shapes: usize) {
         if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_none() {
             return;

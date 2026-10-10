@@ -30,9 +30,12 @@
 | `crates/scholium-document/src/lib.rs` | LocalSession 接受文字/结构命令，发布已接受变更；拆块/合块/格式操作维持身份和动作边界 |
 | `crates/scholium-storage/src/lib.rs` | schema 识别、旧会话无损迁移和失败保护；保存结构空槽、身份及请求日志 |
 | `crates/scholium-typst/src/` | model → Content 增量 adapter、常驻编辑布局会话、同源 Scene；保留源码/严格编译用途 |
-| `crates/scholium-app/src/session.rs` | 串行接受输入、派发布局更新、管理会话代际、采纳场景；保存始终读取权威会话 |
-| `crates/scholium-app/src/page_editor/` | 语义位置 ↔ 当前 Scene 几何；绘制、命中、选区与 IME 共用 placement，取消新路径回显 |
-| `crates/scholium-app/src/main.rs` | 输入/会话/绘制的帧时序与开发入口；验证布局任务不阻塞 UI |
+| `crates/scholium-app/src/typst_editor.rs` | 串行接受输入、派发布局更新、管理会话代际、采纳场景；保存始终读取权威会话 |
+| `crates/scholium-app/src/typst_editor/` | 语义位置 ↔ 当前 Scene 几何；绘制、命中、选区与 IME 共用 placement，无回显 |
+| `crates/scholium-app/src/main.rs` | 输入/会话/绘制的帧时序；验证布局任务不阻塞 UI |
+
+旧接入点 `session.rs`、`page_editor/` 与 `SessionBridge` 已随旧编辑器删除
+（[ADR 0037](../adr/ADR-0037-remove-legacy-editor.md)），下文提到它们处按 `typst_editor` 理解。
 
 不把 `spikes/native-ui/core` 的 Editor 嵌入主程序充当另一份可写正文；复用实验结论与可抽取的
 布局算法适配代码。权威仍由 document/session 管理，UI 与 Typst 会话只持有派生物。

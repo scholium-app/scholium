@@ -1,0 +1,9 @@
+{
+  "binary_sha256": "9e5788fe19288d2de42ccee16d87ec01d01c2478c4ea0042aa90ffd39a64098b",
+  "legacy_heads": 1,
+  "legacy_sha256_unchanged": true,
+  "v1_created": true,
+  "default_backend": "Typst Content main app",
+  "audit_frames": 2,
+  "committed_egui_text_draws": 0
+}

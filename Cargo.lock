@@ -3655,6 +3655,7 @@ version = "0.1.0"
 dependencies = [
  "comemo",
  "scholium-model",
+ "serde_json",
  "thiserror 2.0.20",
  "typst",
  "typst-kit",

@@ -1,5 +1,5 @@
-//! Candidate intents use the existing native Ribbon controls and view flags.
-use super::{CandidateView, Command};
+//! Editor Ribbon groups: intents reuse the native Ribbon controls and view flags.
+use super::{Command, EditorView};
 use crate::{
     commands::{self, ViewCommand},
     icons::Icon,
@@ -23,7 +23,7 @@ pub(crate) fn home(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         }
     });
     group(ui, "剪贴板", 100.0, |ui| {
-        let selected = state.candidate.as_ref().is_some_and(|v| v.selected);
+        let selected = state.editor.as_ref().is_some_and(|v| v.selected);
         ui.vertical(|ui| {
             for (label, command) in [
                 ("复制", egui::ViewportCommand::RequestCopy),
@@ -67,7 +67,7 @@ pub(crate) fn home(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 
 fn history(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     let (undo, redo) = state
-        .candidate
+        .editor
         .as_ref()
         .map(|v| (v.can_undo, v.can_redo))
         .unwrap_or_default();
@@ -133,7 +133,7 @@ fn intent(ui: &mut egui::Ui, state: &mut WorkspaceState, label: &str, command: C
 }
 
 fn queue(state: &mut WorkspaceState, command: Command) {
-    if let Some(CandidateView { commands, .. }) = &mut state.candidate {
+    if let Some(EditorView { commands, .. }) = &mut state.editor {
         commands.push(command);
     }
 }

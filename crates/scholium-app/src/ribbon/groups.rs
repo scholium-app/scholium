@@ -1,223 +1,18 @@
+//! Ribbon tab contents. Home/Insert belong to the editor; Layout/View are view settings.
 use super::controls::{group, large, small, unavailable};
 use crate::{
     commands::{self, ViewCommand},
     icons::Icon,
-    state::{Dialect, ViewMode, WorkspaceState},
-    theme,
+    state::{ViewMode, WorkspaceState},
 };
-use eframe::egui::{self, RichText};
-use scholium_model::{BlockEdit, BlockKind};
-
-fn editable(state: &WorkspaceState) -> bool {
-    state.has_document()
-        && state.mode == ViewMode::Visual
-        && state.composition.is_none()
-        && state.pending_edit.is_none()
-}
-
-fn focus_page(ui: &egui::Ui, state: &mut WorkspaceState) {
-    if state.visual_typeset {
-        state.page_editor.request_focus();
-        ui.memory_mut(|memory| memory.request_focus(crate::page_editor::id()));
-    }
-}
+use eframe::egui;
 
 pub(super) fn home(ui: &mut egui::Ui, state: &mut WorkspaceState) {
-    #[cfg(feature = "typst-editor")]
-    if state.candidate.is_some() {
-        crate::typst_editor::ribbon::home(ui, state);
-        return;
-    }
-    group(ui, "文档", 146.0, |ui| {
-        if large(ui, Icon::New, "新建", state.composition.is_none(), false).clicked() {
-            commands::dispatch(state, ViewCommand::NewDocument);
-        }
-        if large(
-            ui,
-            Icon::Save,
-            "保存",
-            state.has_document() && state.composition.is_none(),
-            false,
-        )
-        .on_hover_text("保存到本地会话文件 · Ctrl+S")
-        .clicked()
-        {
-            commands::dispatch(state, ViewCommand::Save);
-        }
-    });
-    group(ui, "剪贴板", 144.0, |ui| clipboard(ui, state));
-    group(ui, "文字", 132.0, |ui| {
-        ui.vertical(|ui| {
-            ui.horizontal(|ui| {
-                markup(ui, state, "B  粗体", "**", 1);
-                markup(ui, state, "I  斜体", "__", 1);
-            });
-            small(ui, "清除格式", false).on_disabled_hover_text("此功能尚未接入");
-        });
-    });
-    group(ui, "段落样式", 250.0, |ui| styles(ui, state));
-    group(ui, "数学", 146.0, |ui| {
-        formula(ui, state, "行内公式", "$$", 1);
-        formula(ui, state, "独立公式", "$  $", 2);
-    });
-    group(ui, "历史", 146.0, |ui| {
-        history(ui, state);
-    });
-}
-
-/// Undo and redo buttons, enabled only when there is something to take back.
-///
-/// The buttons raise the same request flags the keyboard sets, so both entry
-/// points go through the one action-layer history the session owns.
-fn history(ui: &mut egui::Ui, state: &mut WorkspaceState) {
-    let (can_undo, can_redo) = (state.undo.can_undo(), state.undo.can_redo());
-    ui.horizontal(|ui| {
-        if large(ui, Icon::Undo, "撤销", can_undo, false)
-            .on_hover_text("撤销 · Ctrl+Z")
-            .clicked()
-        {
-            state.undo_requested = true;
-            focus_page(ui, state);
-        }
-        if large(ui, Icon::Redo, "重做", can_redo, false)
-            .on_hover_text("重做 · Ctrl+Shift+Z")
-            .clicked()
-        {
-            state.redo_requested = true;
-            focus_page(ui, state);
-        }
-    });
-}
-
-fn clipboard(ui: &mut egui::Ui, state: &mut WorkspaceState) {
-    let enabled = editable(state);
-    if large(ui, Icon::Paste, "粘贴", enabled, false)
-        .on_hover_text("粘贴 · Ctrl+V")
-        .clicked()
-    {
-        focus_page(ui, state);
-        ui.ctx()
-            .send_viewport_cmd(egui::ViewportCommand::RequestPaste);
-    }
-    ui.vertical(|ui| {
-        for (title, command) in [
-            ("剪切", egui::ViewportCommand::RequestCut),
-            ("复制", egui::ViewportCommand::RequestCopy),
-        ] {
-            if small(ui, title, enabled).clicked() {
-                focus_page(ui, state);
-                ui.ctx().send_viewport_cmd(command);
-            }
-        }
-    });
-}
-
-fn markup(
-    ui: &mut egui::Ui,
-    state: &mut WorkspaceState,
-    label: &str,
-    fragment: &str,
-    shift: usize,
-) {
-    if small(ui, label, editable(state)).clicked() {
-        crate::native_text::insert_markup_at_caret(ui.ctx(), state, fragment, shift);
-    }
-}
-
-fn formula(
-    ui: &mut egui::Ui,
-    state: &mut WorkspaceState,
-    label: &str,
-    fragment: &str,
-    shift: usize,
-) {
-    if large(ui, Icon::Formula, label, editable(state), false).clicked() {
-        crate::native_text::insert_markup_at_caret(ui.ctx(), state, fragment, shift);
-    }
-}
-
-fn styles(ui: &mut egui::Ui, state: &mut WorkspaceState) {
-    let current = state
-        .document
-        .as_ref()
-        .and_then(|snapshot| {
-            snapshot
-                .blocks
-                .iter()
-                .find(|block| Some(block.node) == state.focus_block)
-        })
-        .map(|block| block.kind);
-    for (kind, title, size) in [
-        (BlockKind::Paragraph, "正文", 15.0),
-        (BlockKind::Heading1, "标题 1", 19.0),
-        (BlockKind::Heading2, "标题 2", 17.0),
-    ] {
-        let selected = current == Some(kind);
-        let palette = theme::colors(ui);
-        let response = ui
-            .add_enabled_ui(editable(state), |ui| {
-                ui.add_sized(
-                    [77.0, 61.0],
-                    egui::Button::new(RichText::new(title).size(size))
-                        .selected(selected)
-                        .corner_radius(4.0)
-                        .fill(if selected {
-                            palette.selection
-                        } else {
-                            palette.canvas
-                        }),
-                )
-            })
-            .inner;
-        if response.clicked()
-            && let (Some(snapshot), Some(block)) = (&state.document, state.focus_block)
-        {
-            state.pending_edit = Some(snapshot.request(BlockEdit::SetKind { block, kind }));
-            focus_page(ui, state);
-        }
-    }
+    crate::typst_editor::ribbon::home(ui, state);
 }
 
 pub(super) fn insert(ui: &mut egui::Ui, state: &mut WorkspaceState) {
-    #[cfg(feature = "typst-editor")]
-    if state.candidate.is_some() {
-        crate::typst_editor::ribbon::insert(ui, state);
-        return;
-    }
-    group(ui, "公式", 146.0, |ui| {
-        formula(ui, state, "行内公式", "$$", 1);
-        formula(ui, state, "独立公式", "$  $", 2);
-    });
-    group(ui, "数学结构", 288.0, |ui| {
-        // Structural slots require the math tree adapter; these are not fake
-        // source templates presented as complete structural editing commands.
-        unavailable(ui, Icon::Fraction, "分数");
-        unavailable(ui, Icon::Root, "根式");
-        ui.vertical(|ui| {
-            small(ui, "上下标", false).on_disabled_hover_text("结构数学命令尚未接入");
-            small(ui, "定界符", false).on_disabled_hover_text("结构数学命令尚未接入");
-        });
-        ui.vertical(|ui| {
-            small(ui, "矩阵", false).on_disabled_hover_text("结构数学命令尚未接入");
-            small(ui, "多行公式", false).on_disabled_hover_text("结构数学命令尚未接入");
-        });
-    });
-    group(ui, "文档对象", 146.0, |ui| {
-        ui.vertical(|ui| {
-            small(ui, "表格", false);
-            small(ui, "图片", false);
-        });
-        ui.vertical(|ui| {
-            small(ui, "引用", false);
-            small(ui, "链接", false);
-        });
-    });
-    group(ui, "输入方式", 162.0, |ui| {
-        ui.vertical(|ui| {
-            ui.label(RichText::new("$  行内数学").color(theme::colors(ui).accent));
-            ui.weak("在页面内直接输入");
-        });
-    });
+    crate::typst_editor::ribbon::insert(ui, state);
 }
 
 pub(super) fn layout(ui: &mut egui::Ui, state: &mut WorkspaceState) {
@@ -256,15 +51,7 @@ pub(super) fn layout(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     });
     group(ui, "排版", 160.0, |ui| {
         ui.vertical(|ui| {
-            #[cfg(feature = "typst-editor")]
-            let label = if state.candidate.is_some() {
-                "Typst · 受控流"
-            } else {
-                "Typst · A4"
-            };
-            #[cfg(not(feature = "typst-editor"))]
-            let label = "Typst · A4";
-            ui.label(label);
+            ui.label("Typst · 受控流");
             small(ui, "最终排版检查", false).on_disabled_hover_text("最终构建尚未接入");
         });
     });
@@ -280,7 +67,6 @@ fn view_button(
 ) {
     let enabled = match command {
         ViewCommand::Visual | ViewCommand::Source => state.composition.is_none(),
-        ViewCommand::EqualSplit => state.mode == ViewMode::Source,
         _ => true,
     };
     if large(ui, icon, title, enabled, selected).clicked() {
@@ -292,32 +78,10 @@ pub(super) fn view(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     workspace_controls(ui, state);
     group(ui, "缩放", 215.0, |ui| zoom_controls(ui, state));
     group(ui, "窗口", 146.0, |ui| {
-        view_button(
-            ui,
-            state,
-            Icon::Split,
-            "等宽分屏",
-            ViewCommand::EqualSplit,
-            false,
-        );
         if large(ui, Icon::Page, "收起功能区", true, false).clicked() {
             commands::dispatch(state, ViewCommand::ToggleRibbon);
         }
     });
-    if !state.has_document() {
-        group(ui, "示例源码", 125.0, |ui| {
-            ui.vertical(|ui| {
-                egui::ComboBox::from_id_salt("dialect")
-                    .selected_text(state.dialect.label())
-                    .width(112.0)
-                    .show_ui(ui, |ui| {
-                        ui.selectable_value(&mut state.dialect, Dialect::Latex, "LaTeX");
-                        ui.selectable_value(&mut state.dialect, Dialect::Typst, "Typst");
-                    });
-                ui.weak("只读生成示例");
-            });
-        });
-    }
 }
 
 fn workspace_controls(ui: &mut egui::Ui, state: &mut WorkspaceState) {

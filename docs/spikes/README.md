@@ -21,6 +21,7 @@
 候选同源 Frame 拖选/Shift 选区、整公式覆盖和原子多行替换见[报告 0057](SPK-0057-typst-page-selection.md)；
 视觉行上下/Home/End、分子分母切换与几何键有序排队见[报告 0058](SPK-0058-typst-vertical-navigation.md)；
 普通启动改用 Typst Content 编辑器（无 egui 回显）并迁移旧版文档见[报告 0059](SPK-0059-typst-default-editor.md)；
+旧页面编辑器删除与开发构建合并见[报告 0060](SPK-0060-remove-legacy-editor.md)；
 完整 C、结构化剪贴板、分页、实机输入法/无障碍和安全门禁仍未关闭。
 
 - 报告按 `SPK-NNNN-short-title.md` 命名，模板见 [SPK-0000-template.md](SPK-0000-template.md)；

@@ -4,6 +4,7 @@
 
 接受。取代 [ADR 0034](ADR-0034-typst-main-app-candidate.md) 第 1、3 条及其“安全门禁不通过前
 不将 fork 合入默认发行依赖”的限定；ADR 0034 其余决定（单一权威、同源 Scene、历史）继续有效。
+第 1 条的开发 manifest 与第 2 条的 `--legacy` 入口已由 [ADR 0037](ADR-0037-remove-legacy-editor.md) 取代。
 
 ## 背景
 

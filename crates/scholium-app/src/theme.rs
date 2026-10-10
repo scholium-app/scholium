@@ -6,26 +6,22 @@ use eframe::egui::{self, Color32, FontData, FontDefinitions, FontFamily, FontId,
 pub(crate) struct Palette {
     pub(crate) canvas: Color32,
     pub(crate) panel: Color32,
-    pub(crate) paper: Color32,
     pub(crate) border: Color32,
     pub(crate) text: Color32,
     pub(crate) muted: Color32,
     pub(crate) accent: Color32,
     pub(crate) selection: Color32,
-    pub(crate) syntax_delimiter: Color32,
 }
 
 impl Palette {
     pub(crate) const DARK: Self = Self {
         canvas: Color32::from_rgb(29, 31, 35),
         panel: Color32::from_rgb(37, 39, 44),
-        paper: Color32::from_rgb(43, 45, 50),
         border: Color32::from_rgb(61, 65, 73),
         text: Color32::from_rgb(218, 223, 231),
         muted: Color32::from_rgb(147, 157, 173),
         accent: Color32::from_rgb(151, 183, 227),
         selection: Color32::from_rgb(57, 77, 104),
-        syntax_delimiter: Color32::from_rgb(205, 175, 129),
     };
 }
 
@@ -37,9 +33,6 @@ pub(crate) fn colors(ui: &egui::Ui) -> Palette {
 
 // All geometry constants are egui logical pixels, independent of the monitor's DPI.
 pub(crate) const NARROW_WIDTH: f32 = 900.0;
-pub(crate) const PAGE_WIDTH: f32 = 790.0;
-pub(crate) const PAGE_HEIGHT: f32 = 1040.0;
-pub(crate) const GUTTER: f32 = 16.0;
 
 pub(crate) fn install(ctx: &egui::Context) {
     let mut fonts = FontDefinitions::default();

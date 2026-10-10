@@ -10,9 +10,9 @@ pub(super) fn id() -> egui::Id {
     egui::Id::new("typst-structural-page")
 }
 
-pub(super) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut CandidateSession) {
+pub(super) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSession) {
     if state.navigation && ui.available_width() >= theme::NARROW_WIDTH {
-        egui::Panel::left("candidate-navigation")
+        egui::Panel::left("editor-navigation")
             .default_size(180.0)
             .show(ui, |ui| {
                 ui.label("未命名 · 结构会话");
@@ -30,7 +30,7 @@ pub(super) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut 
                 return;
             }
             egui::ScrollArea::both()
-                .id_salt("candidate-flow")
+                .id_salt("editor-flow")
                 .auto_shrink([false, false])
                 .show(ui, |ui| {
                     canvas(ui, state, session);
@@ -38,7 +38,7 @@ pub(super) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut 
         });
 }
 
-fn header(ui: &mut egui::Ui, state: &WorkspaceState, session: &CandidateSession) {
+fn header(ui: &mut egui::Ui, state: &WorkspaceState, session: &EditorSession) {
     let shown = session.scene.as_ref().map(|s| s.stamp.revision.0);
     ui.label(format!(
         "Typst Content · 正文 r{} · 画面 {}{}",
@@ -111,7 +111,7 @@ fn source(ui: &mut egui::Ui, snapshot: &StructuredDocument) {
     }
 }
 
-fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut CandidateSession) {
+fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSession) {
     let size = session.scene.as_ref().map_or([440.0, 40.0], |s| s.size_pt);
     let scale = if state.fit_width {
         ((ui.available_width() - OUTER_MARGIN * 2.0) / size[0] as f32).clamp(0.5, 2.0)
@@ -162,7 +162,7 @@ pub(super) fn body(
     ui: &egui::Ui,
     rect: Rect,
     scale: f32,
-    session: &CandidateSession,
+    session: &EditorSession,
     state: &WorkspaceState,
 ) -> usize {
     let painter = ui.painter().with_clip_rect(rect.intersect(ui.clip_rect()));
@@ -215,7 +215,7 @@ pub(super) fn body(
     0
 }
 
-fn selection_overlay(painter: &egui::Painter, rect: Rect, scale: f32, session: &CandidateSession) {
+fn selection_overlay(painter: &egui::Painter, rect: Rect, scale: f32, session: &EditorSession) {
     let Ok(quads) = session.selection_quads() else {
         return;
     };

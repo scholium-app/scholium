@@ -1,0 +1,156 @@
+//! Whole-window frames: shortcuts, chrome, Ribbon and the editor in one egui pass.
+use super::*;
+use crate::{chrome, commands, state::ViewMode, typst_editor::tests::Fixture};
+
+fn frame(f: &mut Fixture, size: egui::Vec2, events: Vec<egui::Event>) -> egui::FullOutput {
+    let mut output = f.ctx.run_ui(
+        egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(egui::Pos2::ZERO, size)),
+            events,
+            ..Default::default()
+        },
+        |ui| {
+            commands::shortcuts(ui.ctx(), &mut f.state);
+            chrome::show(ui, &mut f.state);
+            f.editor.show(ui, &mut f.state);
+        },
+    );
+    output.textures_delta.clear();
+    output
+}
+
+fn window() -> Fixture {
+    let f = Fixture::new();
+    crate::theme::install(&f.ctx);
+    f
+}
+
+fn command(key: egui::Key) -> egui::Event {
+    egui::Event::Key {
+        key,
+        physical_key: None,
+        pressed: true,
+        repeat: false,
+        modifiers: egui::Modifiers::COMMAND,
+    }
+}
+
+#[test]
+fn whole_window_stays_inside_tiled_sizes_in_both_modes() {
+    let mut f = window();
+    f.settle();
+    for (mode, navigation) in [
+        (ViewMode::Visual, false),
+        (ViewMode::Visual, true),
+        (ViewMode::Source, false),
+    ] {
+        f.state.mode = mode;
+        f.state.navigation = navigation;
+        for size in [
+            egui::vec2(640.0, 480.0),
+            egui::vec2(844.0, 1011.0),
+            egui::vec2(1280.0, 900.0),
+        ] {
+            let output = frame(&mut f, size, vec![]);
+            let bounds = output
+                .shapes
+                .iter()
+                .map(|s| s.shape.visual_bounding_rect().intersect(s.clip_rect))
+                .reduce(|a, b| a.union(b))
+                .expect("chrome produces shapes");
+            assert!(
+                egui::Rect::from_min_size(egui::Pos2::ZERO, size).contains_rect(bounds),
+                "{mode:?} {size:?} {bounds:?}"
+            );
+        }
+    }
+}
+
+#[test]
+fn view_shortcuts_switch_modes_without_touching_the_document() {
+    let mut f = window();
+    f.events(vec![tests::text("abc")]);
+    f.settle();
+    let before = f.editor.record();
+    let size = egui::vec2(1280.0, 900.0);
+    frame(&mut f, size, vec![command(egui::Key::Num2)]);
+    assert_eq!(f.state.mode, ViewMode::Source);
+    frame(&mut f, size, vec![command(egui::Key::J)]);
+    assert!(f.state.diagnostics);
+    frame(&mut f, size, vec![command(egui::Key::Num1)]);
+    assert_eq!(f.state.mode, ViewMode::Visual);
+    frame(&mut f, size, vec![command(egui::Key::F1)]);
+    assert!(f.state.ribbon.collapsed);
+    assert_eq!(f.editor.record().snapshot, before.snapshot);
+}
+
+#[test]
+fn ribbon_intents_apply_in_order_through_the_editor_session() {
+    let mut f = window();
+    f.events(vec![tests::text("x")]);
+    f.settle();
+    if let Some(view) = &mut f.state.editor {
+        view.commands.extend([Command::Math, Command::Fraction]);
+    }
+    frame(&mut f, egui::vec2(1280.0, 900.0), vec![]);
+    let values: Vec<_> = input::leaves(&f.editor.snapshot)
+        .iter()
+        .map(|l| l.text.to_owned())
+        .collect();
+    assert_eq!(
+        values,
+        ["x", "", "", ""],
+        "formula, then a fraction around its slot"
+    );
+    assert!(
+        f.state
+            .editor
+            .as_ref()
+            .is_some_and(|v| v.commands.is_empty())
+    );
+}
+
+#[test]
+fn save_shortcut_persists_through_the_editor_and_clears_dirty() {
+    let mut f = window();
+    f.events(vec![tests::text("saved")]);
+    f.settle();
+    assert!(f.state.unsaved());
+    frame(
+        &mut f,
+        egui::vec2(1280.0, 900.0),
+        vec![command(egui::Key::S)],
+    );
+    assert!(!f.state.unsaved());
+    assert!(f.state.storage_error.is_none());
+}
+
+#[test]
+fn returning_from_source_view_restores_typing_on_the_page() {
+    let mut f = window();
+    f.settle();
+    let size = egui::vec2(1280.0, 900.0);
+    frame(&mut f, size, vec![]);
+    frame(&mut f, size, vec![command(egui::Key::Num2)]);
+    frame(&mut f, size, vec![]);
+    frame(&mut f, size, vec![command(egui::Key::Num1)]);
+    frame(&mut f, size, vec![]);
+    frame(&mut f, size, vec![tests::text("k")]);
+    assert_eq!(input::leaves(&f.editor.snapshot)[0].text, "k");
+}
+
+#[test]
+fn ribbon_intents_queued_in_source_view_never_reach_the_document() {
+    let mut f = window();
+    f.events(vec![tests::text("x")]);
+    f.settle();
+    f.state.mode = ViewMode::Source;
+    let revision = f.editor.snapshot.revision;
+    if let Some(view) = &mut f.state.editor {
+        view.commands
+            .extend([Command::Math, Command::Style(TextStyle::Strong)]);
+    }
+    frame(&mut f, egui::vec2(1280.0, 900.0), vec![]);
+    assert_eq!(f.editor.snapshot.revision, revision);
+    assert!(f.state.edit_error.is_some());
+}

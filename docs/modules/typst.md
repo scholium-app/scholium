@@ -49,6 +49,8 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
   内存与网络策略。
 - `locate(span) -> Option<NodeId | Derived>`；`diagnostics() -> Vec<Diagnostic>`。
 
+以下预览适配器面向旧 `DocumentSnapshot`，应用已不再调用；结构源码工作区/预览接入时移植或替换后删除
+（[ADR 0037](../adr/ADR-0037-remove-legacy-editor.md) 第 4 条）。
 本地受信块文档的预览适配器提供 `PreviewCompiler::submit_snapshot(&DocumentSnapshot)`、
 `request_page(document, revision, page)` 与 `poll() -> PreviewEvent`。`CompileOutcome` 包含
 文档 ID/revision、页数、耗时、错误/输入期提示、块首/末锚点与 `Vec<PageGeometry>`。
@@ -64,8 +66,9 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 
 ## 直接 Content 开发接口
 
-`editor` feature 仅供 [隔离开发 manifest](../../dev/typst-editor/Cargo.toml)，须统一加载
-锁定 fork 的 13 个库；根 workspace 默认不加载 fork。见 [ADR 0034](../adr/ADR-0034-typst-main-app-candidate.md)。
+`editor` feature 由 `scholium-app` 启用，并打开 `typst-layout/editor`；它要求根 workspace
+统一 patch 的锁定 fork 13 个库（[ADR 0036](../adr/ADR-0036-typst-default-editor.md)）。
+`typst-main-fork-check` 示例按同一 fixture 输出 fork 像素，供与独立 stock 参照逐像素比较。
 `EditorWorker::spawn(wake)` 在 CPU 线程驻留 World/字体和 Content cache；
 `submit(Arc<StructuredDocument>, SceneStamp)` 传递完整已接受快照，`poll()` 非阻塞返回
 带 stamp 的结果。队列和结果分别只保留最新一份派生工作；关闭不在 UI join。

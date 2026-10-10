@@ -1,0 +1,13 @@
+{
+  "binary": "/home/ation_ciger/Projects/Mogan/scholium/target/debug/scholium-app",
+  "sha256": "9e5788fe19288d2de42ccee16d87ec01d01c2478c4ea0042aa90ffd39a64098b",
+  "native_backend": "X11/Xvfb",
+  "audit_frames": 111,
+  "pending_frames": 47,
+  "committed_egui_text_draws": 0,
+  "saved_and_reopened": true,
+  "selection_workflow_stages": 24,
+  "vertical_workflow_stages": 9,
+  "deferred_frames": 1,
+  "selection_frames": 12
+}

@@ -1,4 +1,4 @@
-//! Main-program development candidate: one LocalSession authority, derived Typst scenes.
+//! The Typst Content editor: one LocalSession authority, derived Typst scenes.
 mod audit;
 mod deferred;
 mod input;
@@ -10,6 +10,8 @@ pub(crate) use startup::show_error as show_startup_error;
 #[cfg(test)]
 mod tests;
 mod vertical;
+#[cfg(test)]
+mod window_tests;
 
 use crate::state::WorkspaceState;
 use eframe::egui;
@@ -22,7 +24,7 @@ use std::{collections::VecDeque, path::PathBuf, sync::Arc};
 const HISTORY_LIMIT: usize = 512;
 
 #[derive(Debug, thiserror::Error)]
-pub(crate) enum CandidateError {
+pub(crate) enum SessionError {
     #[error("启动失败：{0}")]
     Startup(String),
     #[error(transparent)]
@@ -45,7 +47,7 @@ pub(crate) enum Command {
 
 /// UI metadata and outgoing intents only; contains no writable document.
 #[derive(Debug, Default)]
-pub(crate) struct CandidateView {
+pub(crate) struct EditorView {
     pub revision: u64,
     pub dirty: bool,
     pub selected: bool,
@@ -62,8 +64,8 @@ struct HistoryEntry {
     anchor: Option<Position>,
 }
 
-/// Mutually exclusive with SessionBridge's legacy LocalSession.
-pub(crate) struct CandidateSession {
+/// The only editor: owns the authoritative LocalSession and its derived Typst scenes.
+pub(crate) struct EditorSession {
     session: LocalSession<StructuredDocument>,
     snapshot: Arc<StructuredDocument>,
     store: SessionStore,
@@ -90,20 +92,20 @@ pub(crate) struct CandidateSession {
     last_audit: Option<String>,
 }
 
-impl std::fmt::Debug for CandidateSession {
+impl std::fmt::Debug for EditorSession {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("CandidateSession")
+        f.debug_struct("EditorSession")
             .field("wanted", &self.wanted)
             .field("current", &self.current())
             .finish_non_exhaustive()
     }
 }
 
-impl CandidateSession {
+impl EditorSession {
     pub(crate) fn open(
         ctx: &egui::Context,
         state: &mut WorkspaceState,
-    ) -> Result<Self, CandidateError> {
+    ) -> Result<Self, SessionError> {
         // An explicit file (tests, multiple instances) must already be schema v1.
         let (path, notice) =
             match std::env::var_os("SCHOLIUM_SESSION_FILE").filter(|p| !p.is_empty()) {
@@ -119,15 +121,13 @@ impl CandidateSession {
         ctx: &egui::Context,
         state: &mut WorkspaceState,
         path: &std::path::Path,
-    ) -> Result<Self, CandidateError> {
+    ) -> Result<Self, SessionError> {
         let (store, saved, session) = restore(path)?;
         let snapshot = Arc::new(session.snapshot());
         let first = input::leaves(&snapshot)
             .first()
             .map(|l| l.id)
-            .ok_or_else(|| {
-                CandidateError::Startup("no supported text or math input leaf".into())
-            })?;
+            .ok_or_else(|| SessionError::Startup("no supported text or math input leaf".into()))?;
         let cursor = Position {
             leaf: first,
             byte: 0,
@@ -163,7 +163,7 @@ impl CandidateSession {
             notice: None,
             last_audit: None,
         };
-        state.candidate = Some(CandidateView::default());
+        state.editor = Some(EditorView::default());
         result.metadata(state);
         Ok(result)
     }
@@ -284,7 +284,7 @@ impl CandidateSession {
     }
 
     fn metadata(&self, state: &mut WorkspaceState) {
-        if let Some(view) = &mut state.candidate {
+        if let Some(view) = &mut state.editor {
             view.revision = self.snapshot.revision.0;
             view.dirty = self.saved.as_ref() != Some(&self.snapshot);
             view.selected = self.selected();
@@ -335,6 +335,9 @@ impl CandidateSession {
         if std::mem::take(&mut state.new_requested) {
             self.confirm_new = true;
         }
+        if std::mem::take(&mut state.focus_requested) {
+            self.focus = true;
+        }
         // Input still waiting for layout is not in the snapshot yet, but is unsaved work.
         let dirty = self.saved.as_ref() != Some(&self.snapshot) || !self.deferred.is_empty();
         if ctx.input(|i| i.viewport().close_requested()) && dirty && !self.allow_close {
@@ -355,7 +358,7 @@ impl CandidateSession {
             self.history(true, state);
         }
         let intents = state
-            .candidate
+            .editor
             .as_mut()
             .map(|v| std::mem::take(&mut v.commands))
             .unwrap_or_default();
@@ -383,7 +386,7 @@ impl CandidateSession {
         if !self.confirm_new && !self.confirm_close {
             return;
         }
-        egui::Modal::new(egui::Id::new("candidate-discard")).show(ctx, |ui| {
+        egui::Modal::new(egui::Id::new("editor-discard")).show(ctx, |ui| {
             ui.heading("继续将关闭当前文档");
             ui.label("未保存的修改将丢弃。新文档再次保存会替换隔离会话文件的当前内容。");
             ui.horizontal(|ui| {
@@ -446,7 +449,7 @@ type Restored = (
 );
 
 /// Open or create the isolated store; the saved snapshot seeds dirty tracking.
-fn restore(path: &std::path::Path) -> Result<Restored, CandidateError> {
+fn restore(path: &std::path::Path) -> Result<Restored, SessionError> {
     let store = if path.try_exists()? {
         SessionStore::open_structured(path)?
     } else {
@@ -461,9 +464,9 @@ fn restore(path: &std::path::Path) -> Result<Restored, CandidateError> {
     Ok((store, saved, session))
 }
 
-fn blank() -> Result<LocalSession<StructuredDocument>, CandidateError> {
+fn blank() -> Result<LocalSession<StructuredDocument>, SessionError> {
     LocalSession::default()
         .into_structured()
         .map(|(s, _)| s)
-        .map_err(|e| CandidateError::Startup(e.error.to_string()))
+        .map_err(|e| SessionError::Startup(e.error.to_string()))
 }
