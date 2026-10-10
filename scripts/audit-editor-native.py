@@ -25,7 +25,7 @@ class Window:
         self.env.update(WINIT_UNIX_BACKEND="x11", WINIT_X11_SCALE_FACTOR="1",
                         SCHOLIUM_SESSION_FILE=str(self.database))
         self.log = (directory / "app.log").open("a")
-        self.app = subprocess.Popen([str(ROOT / "target/debug/scholium-app")], env=self.env,
+        self.app = subprocess.Popen([str(ROOT / "target/debug/scholium-app"), "--legacy"], env=self.env,
                                     stdout=self.log, stderr=subprocess.STDOUT)
         try:
             self.window = self.wait_window()

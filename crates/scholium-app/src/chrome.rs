@@ -112,7 +112,7 @@ fn status(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     if let Some(candidate) = &state.candidate {
         ui.horizontal_centered(|ui| {
             ui.label(format!(
-                "Typst Content · 候选 r{} · {}",
+                "Typst Content · r{} · {}",
                 candidate.revision,
                 if candidate.dirty {
                     "未保存"

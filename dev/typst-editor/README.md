@@ -1,17 +1,19 @@
-# 主程序 Typst Content 开发候选
+# 主程序 Typst Content 编辑器（开发 manifest）
 
-该 manifest 编译真正的 `scholium-app` 源码，统一使用跟踪的 Typst fork。
-普通仓库根构建仍使用 stock Typst。选项只在此开发构建中可用，**不替换默认后端**。
+Typst Content 编辑器已是普通启动的默认路径，根构建同样统一使用跟踪的 Typst fork
+（[ADR 0036](../../docs/adr/ADR-0036-typst-default-editor.md)）。此 manifest 暂保留给
+fork 像素对照（`typst-main-fork-check`）与 CI 候选作业，随旧编辑器删除一并合并。
 
-在仓库根执行，显式选择一个隔离的新文件路径：
+普通启动（根目录 `cargo run -p scholium-app`）使用 XDG 数据目录下的 `document.v1.sqlite`，
+首次启动时一次性迁移同目录的旧版会话，原文件保留。也可显式指定隔离 v1 文件：
 
 ```sh
 SCHOLIUM_SESSION_FILE=/tmp/scholium-typst-candidate.sqlite \
-  cargo +1.96.0 run --locked --manifest-path dev/typst-editor/Cargo.toml \
-  --bin scholium-app -- --typst-editor
+  cargo +1.96.0 run --locked --manifest-path dev/typst-editor/Cargo.toml --bin scholium-app
 ```
 
-已有路径必须是结构 schema v1；旧库/损坏库会拒绝启动。自动迁移不属于这个入口。
+显式路径必须是结构 schema v1；旧库/损坏库会拒绝启动，不自动迁移。旧编辑器只经
+`--legacy` 显式启动。
 保存可保留空数学槽，重开时 IDs 和请求日志不变。
 
 `$` / Ctrl+M 进入或离开公式；Ctrl+/ 把当前数学叶包成分数，光标进入空分母；Tab /

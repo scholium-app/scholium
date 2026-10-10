@@ -128,7 +128,8 @@ def start(name):
     global app, log_path, window
     log_path = output / f"{name}.log"
     with log_path.open("w") as log:
-        app = subprocess.Popen([str(binary), "--typst-editor"], env=env, stdout=log, stderr=subprocess.STDOUT)
+        # Plain launch: the Typst Content editor is the default (ADR 0036).
+        app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
     state = wait(lambda s: s["current"])
     window = subprocess.check_output(["xdotool", "search", "--pid", str(app.pid)], env=env, text=True).splitlines()[0]
     command("windowfocus", window)

@@ -1,0 +1,18 @@
+{
+  "base": "6765437ed9abafe89e4ce6225b5edda02d7c0e03",
+  "files": {
+    "Cargo.toml": "b431ad034f553dcc033e71014accc398644ac0f2231f059c3ebbb7be4c4028f5",
+    "Cargo.lock": "7f2bd1053a4480619aa40790db4edf560f6bc90a1eebcbdd15100b8f466e31e0",
+    "crates/scholium-app/Cargo.toml": "b9a35ef62fe61b15280fc7adbeafc55ab3339f347ddc3f7eef03785a23209a9e",
+    "crates/scholium-typst/Cargo.toml": "82ccdf813e1dd26d9eea268e173e4387dd1b29a439dedbbf2bff2bb1c26832f8",
+    "crates/scholium-app/src/main.rs": "12c99a0449175956ab9f86ee2eee0cbea0695e9bdb8c0c6bc63c7316d001e037",
+    "crates/scholium-app/src/typst_editor.rs": "64708b1b24360beb7ea13bca6d38e6fb7882fc7a7317cf15f3d46080c19620dc",
+    "crates/scholium-app/src/typst_editor/startup.rs": "9a66f4e48703c5f046e72448c907557f682666684524ad5772b79581d881b1af",
+    "crates/scholium-storage/src/lib.rs": "a8e46e24027bc88c5f02e8e871daa6ee291561119e5481416ac8f24e473b4008",
+    "crates/scholium-storage/src/migration.rs": "a7bdc25ccbeafc75ec1621182ca42b043829fe7015445972eebc3d47cd52098f",
+    "spikes/typst-main-editor/default-launch-check.py": "fb3b16846da21dab7beff89296accd36c1d939e3e8764c96c8e1ff0faf790f69",
+    "spikes/typst-main-editor/native-check.py": "2732efb2a1911f3b796d4eb2c2136f61096cd97c2892436f15b4b9cda38b65da"
+  },
+  "binary": "target/debug/scholium-app",
+  "binary_sha256": "3f63c1a0a18fe13127df81ecc9643f787dc70379c1e11e46a4a37e50cb876a51"
+}

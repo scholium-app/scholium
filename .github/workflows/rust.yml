@@ -50,11 +50,14 @@ jobs:
           cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir dev/typst-editor/target -- /tmp/typst-stock-pixels
           python3 spikes/typst-main-editor/compare.py /tmp/typst-fork-pixels /tmp/typst-stock-pixels > /tmp/typst-stock-comparison.json
       - run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/native-check.py dev/typst-editor/target/debug/scholium-app /tmp/scholium-native-evidence
+      - name: Plain launch migrates a legacy document into the default Typst editor
+        run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/default-launch-check.py dev/typst-editor/target/debug/scholium-app /tmp/scholium-default-launch
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: typst-main-native-evidence
           path: |
             /tmp/scholium-native-evidence
+            /tmp/scholium-default-launch
             /tmp/typst-fork-source.json
             /tmp/typst-stock-comparison.json

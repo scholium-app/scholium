@@ -82,3 +82,5 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0031](ADR-0031-structural-cursor.md)：结构光标取代页面编辑器的全局字节偏移，固定结构编辑语义与几何 revision 归属。
 
 [ADR 0035](ADR-0035-typst-page-selection.md)：Typst 候选页面选区——语义端点、核心存活光标与同源 Frame 几何。
+
+[ADR 0036](ADR-0036-typst-default-editor.md)：Typst Content 编辑器成为默认启动路径，根构建统一使用跟踪的 Typst fork，旧版文档一次性迁移。

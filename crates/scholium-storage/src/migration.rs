@@ -72,6 +72,32 @@ pub fn migrate_legacy_file(
     })
 }
 
+/// Whether a schema-0 legacy file has a saved head; opened read-only, never modified.
+///
+/// A 0-byte or never-initialized file and a blank store (`head_revision = -1`) both
+/// report `false`.
+///
+/// # Errors
+/// Rejects unreadable files and any schema version other than the legacy 0.
+pub fn legacy_has_head(source: &Path) -> Result<bool, StructuredStoreError> {
+    let db = Connection::open_with_flags(source, OpenFlags::SQLITE_OPEN_READ_ONLY)?;
+    structured::require_version(&db, 0)?;
+    let has_meta: i64 = db.query_row(
+        "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='meta'",
+        [],
+        |r| r.get(0),
+    )?;
+    if has_meta == 0 {
+        return Ok(false);
+    }
+    let heads: i64 = db.query_row(
+        "SELECT COUNT(*) FROM meta WHERE key='head_revision' AND value >= 0",
+        [],
+        |r| r.get(0),
+    )?;
+    Ok(heads > 0)
+}
+
 fn read_head(
     db: &Connection,
 ) -> Result<(DocumentSnapshot, Vec<scholium_model::RequestId>), StructuredStoreError> {
