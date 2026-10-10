@@ -1,0 +1,13 @@
+{
+  "binary": "/home/ation_ciger/Projects/Mogan/scholium/dev/typst-editor/target/debug/scholium-app",
+  "sha256": "6f1997e8cdc48f47e812828e5b22a6da065755b81d036896874c3a439e862c5d",
+  "native_backend": "X11/Xvfb",
+  "audit_frames": 121,
+  "pending_frames": 48,
+  "committed_egui_text_draws": 0,
+  "saved_and_reopened": true,
+  "selection_workflow_stages": 24,
+  "vertical_workflow_stages": 9,
+  "deferred_frames": 1,
+  "selection_frames": 12
+}

@@ -19,7 +19,8 @@
 这是 C 的限定输入批次，选区/剪贴板和完整竞态出口仍未通过。
 正文端点跨叶/块的单次原子替换内核见[报告 0056](SPK-0056-structured-body-range.md)。
 候选同源 Frame 拖选/Shift 选区、整公式覆盖和原子多行替换见[报告 0057](SPK-0057-typst-page-selection.md)；
-完整 C、剪贴板、分页、实机输入法/无障碍和安全门禁仍未关闭。
+视觉行上下/Home/End、分子分母切换与几何键有序排队见[报告 0058](SPK-0058-typst-vertical-navigation.md)；
+完整 C、结构化剪贴板、分页、实机输入法/无障碍和安全门禁仍未关闭。
 
 - 报告按 `SPK-NNNN-short-title.md` 命名，模板见 [SPK-0000-template.md](SPK-0000-template.md)；
   证据文件按报告编号归入 `evidence/SPK-NNNN/`。

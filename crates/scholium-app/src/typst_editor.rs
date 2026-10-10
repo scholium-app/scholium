@@ -1,11 +1,13 @@
 //! Main-program development candidate: one LocalSession authority, derived Typst scenes.
 mod audit;
+mod deferred;
 mod input;
 mod paint;
 pub(crate) mod ribbon;
 mod selection;
 #[cfg(test)]
 mod tests;
+mod vertical;
 
 use crate::state::WorkspaceState;
 use eframe::egui;
@@ -13,7 +15,7 @@ use scholium_document::{BodyTextPosition, LocalSession, StructuralEdit, Structur
 use scholium_model::{RequestId, layout_identity::*, structured::*};
 use scholium_storage::SessionStore;
 use scholium_typst::editor::{Affinity, EditorScene, EditorWorker, Position};
-use std::{path::PathBuf, sync::Arc};
+use std::{collections::VecDeque, path::PathBuf, sync::Arc};
 
 const HISTORY_LIMIT: usize = 512;
 
@@ -73,6 +75,8 @@ pub(crate) struct CandidateSession {
     cursor: Position,
     anchor: Option<Position>,
     drag: Option<selection::Drag>,
+    goal: Option<vertical::Goal>,
+    deferred: VecDeque<egui::Event>,
     placement: Option<(egui::Rect, f32)>,
     undo: Vec<HistoryEntry>,
     redo: Vec<HistoryEntry>,
@@ -111,17 +115,7 @@ impl CandidateSession {
         state: &mut WorkspaceState,
         path: &std::path::Path,
     ) -> Result<Self, CandidateError> {
-        let store = if path.try_exists()? {
-            SessionStore::open_structured(path)?
-        } else {
-            SessionStore::create_structured(path)?
-        };
-        let persisted = store.load_structured()?;
-        let saved = persisted.as_ref().map(|p| p.snapshot.clone());
-        let session = match persisted {
-            Some(p) => LocalSession::restore_structured(p.snapshot, p.requests)?,
-            None => blank()?,
-        };
+        let (store, saved, session) = restore(path)?;
         let snapshot = Arc::new(session.snapshot());
         let first = input::leaves(&snapshot)
             .first()
@@ -148,6 +142,8 @@ impl CandidateSession {
             cursor,
             anchor: None,
             drag: None,
+            goal: None,
+            deferred: VecDeque::new(),
             placement: None,
             scene: None,
             texture: None,
@@ -168,9 +164,16 @@ impl CandidateSession {
 
     pub(crate) fn show(&mut self, ui: &mut egui::Ui, state: &mut WorkspaceState) {
         self.poll(ui.ctx());
+        if !self.confirm_new
+            && !self.confirm_close
+            && let Some(text) = self.drain(state)
+        {
+            ui.ctx().copy_text(text);
+        }
         self.controls(ui.ctx(), state);
         paint::show(ui, state, self);
-        if std::mem::take(&mut state.save_requested) {
+        // Saving while input waits for layout would persist a state the user never saw.
+        if self.deferred.is_empty() && std::mem::take(&mut state.save_requested) {
             self.save(state);
             self.focus = true;
             ui.ctx().request_repaint();
@@ -319,6 +322,26 @@ impl CandidateSession {
     }
 
     fn controls(&mut self, ctx: &egui::Context, state: &mut WorkspaceState) {
+        // Ribbon and history actions arrived after queued keys; keep them requested.
+        if self.deferred.is_empty() {
+            self.intents(state);
+        }
+        if std::mem::take(&mut state.new_requested) {
+            self.confirm_new = true;
+        }
+        // Input still waiting for layout is not in the snapshot yet, but is unsaved work.
+        let dirty = self.saved.as_ref() != Some(&self.snapshot) || !self.deferred.is_empty();
+        if ctx.input(|i| i.viewport().close_requested()) && dirty && !self.allow_close {
+            ctx.send_viewport_cmd(egui::ViewportCommand::CancelClose);
+            self.confirm_close = true;
+        }
+        ctx.send_viewport_cmd(egui::ViewportCommand::Title(format!(
+            "未命名 — Scholium · Typst 候选 · {}",
+            if dirty { "未保存" } else { "已保存" }
+        )));
+    }
+
+    fn intents(&mut self, state: &mut WorkspaceState) {
         if std::mem::take(&mut state.undo_requested) {
             self.history(false, state);
         }
@@ -334,18 +357,6 @@ impl CandidateSession {
             self.command(intent, state);
             self.focus = true;
         }
-        if std::mem::take(&mut state.new_requested) {
-            self.confirm_new = true;
-        }
-        let dirty = self.saved.as_ref() != Some(&self.snapshot);
-        if ctx.input(|i| i.viewport().close_requested()) && dirty && !self.allow_close {
-            ctx.send_viewport_cmd(egui::ViewportCommand::CancelClose);
-            self.confirm_close = true;
-        }
-        ctx.send_viewport_cmd(egui::ViewportCommand::Title(format!(
-            "未命名 — Scholium · Typst 候选 · {}",
-            if dirty { "未保存" } else { "已保存" }
-        )));
     }
 
     fn save(&mut self, state: &mut WorkspaceState) {
@@ -396,6 +407,8 @@ impl CandidateSession {
                     self.session = session;
                     self.anchor = None;
                     self.drag = None;
+                    // Queued input addressed the discarded document.
+                    self.deferred.clear();
                     self.undo.clear();
                     self.redo.clear();
                     self.saved = None;
@@ -418,6 +431,28 @@ impl CandidateSession {
         self.confirm_new = false;
         self.confirm_close = false;
     }
+}
+
+type Restored = (
+    SessionStore,
+    Option<StructuredDocument>,
+    LocalSession<StructuredDocument>,
+);
+
+/// Open or create the isolated store; the saved snapshot seeds dirty tracking.
+fn restore(path: &std::path::Path) -> Result<Restored, CandidateError> {
+    let store = if path.try_exists()? {
+        SessionStore::open_structured(path)?
+    } else {
+        SessionStore::create_structured(path)?
+    };
+    let persisted = store.load_structured()?;
+    let saved = persisted.as_ref().map(|p| p.snapshot.clone());
+    let session = match persisted {
+        Some(p) => LocalSession::restore_structured(p.snapshot, p.requests)?,
+        None => blank()?,
+    };
+    Ok((store, saved, session))
 }
 
 fn blank() -> Result<LocalSession<StructuredDocument>, CandidateError> {
