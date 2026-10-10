@@ -1,65 +1,43 @@
-//! Scholium 原生排版工作区；Ribbon、页面编辑与会话命令共用文档投影。
+//! Scholium 原生排版工作区：Ribbon 与 Typst Content 编辑面共用一个结构会话。
 
 mod chrome;
 mod commands;
 mod icons;
-mod native_text;
-mod page_editor;
-mod paper;
-mod preview;
 mod ribbon;
-mod sample;
-mod session;
 mod state;
 mod theme;
-#[cfg(feature = "typst-editor")]
 mod typst_editor;
-mod undo;
-mod workspace;
 
 use eframe::egui;
 use state::WorkspaceState;
+use typst_editor::EditorSession;
 
 #[derive(Default)]
 struct ScholiumApp {
     state: WorkspaceState,
-    session: session::SessionBridge,
-    /// Default editor failed to open; shown in the window, no editor runs.
-    #[cfg_attr(not(feature = "typst-editor"), allow(dead_code))]
+    editor: Option<EditorSession>,
+    /// The document could not be opened; shown in the window, no editor runs.
     startup_error: Option<String>,
 }
 
 impl eframe::App for ScholiumApp {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
-        #[cfg(feature = "typst-editor")]
         if let Some(error) = &self.startup_error {
             typst_editor::show_startup_error(ui, error);
             return;
         }
         commands::shortcuts(ui.ctx(), &mut self.state);
         chrome::show(ui, &mut self.state);
-        #[cfg(feature = "typst-editor")]
-        if self.session.show_candidate(ui, &mut self.state) {
-            return;
+        if let Some(editor) = &mut self.editor {
+            editor.show(ui, &mut self.state);
         }
-        workspace::show(ui, &mut self.state);
-        self.session.update(ui.ctx(), &mut self.state);
     }
 }
 
 fn main() -> eframe::Result {
-    // The Typst Content editor is the default (ADR 0036). The legacy echo editor runs only
-    // when asked for explicitly; a failing default never falls back to it silently.
-    #[cfg(feature = "typst-editor")]
-    let candidate = !std::env::args().any(|arg| arg == "--legacy");
-    #[cfg(not(feature = "typst-editor"))]
-    if std::env::args().any(|arg| arg == "--typst-editor") {
-        eprintln!("This build has no Typst Content editor; enable the typst-editor feature.");
-        std::process::exit(2);
-    }
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
-            .with_title("谱与振动 — Scholium · 界面预览")
+            .with_title("Scholium")
             .with_inner_size([1280.0, 900.0])
             .with_min_inner_size([640.0, 480.0]),
         renderer: eframe::Renderer::Glow,
@@ -68,171 +46,17 @@ fn main() -> eframe::Result {
     eframe::run_native(
         "Scholium",
         options,
-        Box::new(move |cc| {
+        Box::new(|cc| {
             let mut app = ScholiumApp::default();
-            #[cfg(feature = "typst-editor")]
-            if candidate {
-                if let Err(error) = app.session.enable_candidate(&cc.egui_ctx, &mut app.state) {
+            theme::install(&cc.egui_ctx);
+            match EditorSession::open(&cc.egui_ctx, &mut app.state) {
+                Ok(editor) => app.editor = Some(editor),
+                Err(error) => {
                     eprintln!("{error}");
                     app.startup_error = Some(error.to_string());
                 }
-            } else {
-                app.session.prepare_preview(&cc.egui_ctx);
             }
-            #[cfg(not(feature = "typst-editor"))]
-            app.session.prepare_preview(&cc.egui_ctx);
-            theme::install(&cc.egui_ctx);
             Ok(Box::new(app))
         }),
     )
-}
-
-#[cfg(test)]
-mod tests {
-    use super::{chrome, theme, workspace};
-    use crate::state::WorkspaceState;
-    use eframe::egui::{self, Rect};
-
-    fn draw_at(size: egui::Vec2, mode: crate::state::ViewMode) -> egui::Rect {
-        let ctx = egui::Context::default();
-        theme::install(&ctx);
-        let mut state = WorkspaceState {
-            mode,
-            ..Default::default()
-        };
-        let mut output = ctx.run_ui(
-            egui::RawInput {
-                screen_rect: Some(Rect::from_min_size(egui::Pos2::ZERO, size)),
-                ..Default::default()
-            },
-            |ui| {
-                chrome::show(ui, &mut state);
-                workspace::show(ui, &mut state);
-            },
-        );
-        let bounds = output
-            .shapes
-            .iter()
-            .map(|shape| {
-                shape
-                    .shape
-                    .visual_bounding_rect()
-                    .intersect(shape.clip_rect)
-            })
-            .reduce(|left, right| left.union(right))
-            // The menu and panel backgrounds always produce visible shapes.
-            .expect("base UI produces visible shapes");
-        output.textures_delta.clear();
-        bounds
-    }
-
-    #[test]
-    fn visual_layout_stays_inside_tiled_window() {
-        for size in [
-            egui::vec2(640.0, 480.0),
-            egui::vec2(844.0, 1011.0),
-            egui::vec2(1280.0, 900.0),
-        ] {
-            let bounds = draw_at(size, crate::state::ViewMode::Visual);
-            assert!(
-                Rect::from_min_size(egui::Pos2::ZERO, size).contains_rect(bounds),
-                "{bounds:?}"
-            );
-        }
-    }
-
-    #[test]
-    fn source_layout_stays_inside_tiled_window() {
-        for size in [
-            egui::vec2(640.0, 480.0),
-            egui::vec2(844.0, 1011.0),
-            egui::vec2(1280.0, 900.0),
-        ] {
-            let bounds = draw_at(size, crate::state::ViewMode::Source);
-            assert!(
-                Rect::from_min_size(egui::Pos2::ZERO, size).contains_rect(bounds),
-                "{bounds:?}"
-            );
-        }
-    }
-
-    #[test]
-    fn keyboard_events_switch_views_and_resize_splitter() {
-        let ctx = egui::Context::default();
-        theme::install(&ctx);
-        let mut state = WorkspaceState::default();
-        let mut frame = |events| {
-            let mut output = ctx.run_ui(
-                egui::RawInput {
-                    screen_rect: Some(Rect::from_min_size(
-                        egui::Pos2::ZERO,
-                        egui::vec2(1280.0, 900.0),
-                    )),
-                    events,
-                    ..Default::default()
-                },
-                |ui| {
-                    super::commands::shortcuts(ui.ctx(), &mut state);
-                    chrome::show(ui, &mut state);
-                    workspace::show(ui, &mut state);
-                },
-            );
-            output.textures_delta.clear();
-            (state.mode, state.split, state.diagnostics)
-        };
-        frame(vec![]);
-        let result = frame(vec![key(egui::Key::Num2, egui::Modifiers::COMMAND)]);
-        assert_eq!(result.0, crate::state::ViewMode::Source);
-        frame(vec![]);
-        let pos = egui::pos2(640.0, 300.0);
-        frame(vec![
-            egui::Event::PointerMoved(pos),
-            egui::Event::PointerButton {
-                pos,
-                button: egui::PointerButton::Primary,
-                pressed: true,
-                modifiers: egui::Modifiers::NONE,
-            },
-        ]);
-        frame(vec![egui::Event::PointerButton {
-            pos,
-            button: egui::PointerButton::Primary,
-            pressed: false,
-            modifiers: egui::Modifiers::NONE,
-        }]);
-        frame(vec![]);
-        let result = frame(vec![key(egui::Key::ArrowRight, egui::Modifiers::NONE)]);
-        assert!(result.1 > 0.5);
-        let result = frame(vec![key(egui::Key::Home, egui::Modifiers::NONE)]);
-        assert_eq!(result.1, 0.5);
-        let result = frame(vec![key(egui::Key::J, egui::Modifiers::COMMAND)]);
-        assert!(result.2);
-        // Document tabs remain above the Ribbon; their view controls stay clickable.
-        frame(vec![
-            egui::Event::PointerMoved(egui::pos2(1226.0, 16.0)),
-            egui::Event::PointerButton {
-                pos: egui::pos2(1226.0, 16.0),
-                button: egui::PointerButton::Primary,
-                pressed: true,
-                modifiers: egui::Modifiers::NONE,
-            },
-        ]);
-        let result = frame(vec![egui::Event::PointerButton {
-            pos: egui::pos2(1226.0, 16.0),
-            button: egui::PointerButton::Primary,
-            pressed: false,
-            modifiers: egui::Modifiers::NONE,
-        }]);
-        assert_eq!(result.0, crate::state::ViewMode::Visual);
-    }
-
-    fn key(key: egui::Key, modifiers: egui::Modifiers) -> egui::Event {
-        egui::Event::Key {
-            key,
-            physical_key: None,
-            pressed: true,
-            repeat: false,
-            modifiers,
-        }
-    }
 }

@@ -8,7 +8,7 @@
 ## 状态
 
 阶段判定以 [阶段出口报告](docs/spikes/SPK-0012-exit-criteria.md) 为准。
-根 workspace 提供 egui 应用壳，启动即进入 Typst Content 结构编辑：输入直接经 Typst 排版呈现，不经 egui 文字回显（[ADR 0036](docs/adr/ADR-0036-typst-default-editor.md)）。旧版回显编辑器只经 `--legacy` 启动。
+根 workspace 提供 egui 应用壳，启动即进入 Typst Content 结构编辑：输入直接经 Typst 排版呈现，不经 egui 文字回显（[ADR 0036](docs/adr/ADR-0036-typst-default-editor.md)、[ADR 0037](docs/adr/ADR-0037-remove-legacy-editor.md)）。旧版回显编辑器已删除。
 废弃实现已经删除，旧实验结果仍可在归档文档和 Git 历史中查阅。
 
 新方案聚焦 Liii STEM 式结构编辑体验、LaTeX/Typst 源码模式、双后端预览、非线性历史、
@@ -29,15 +29,11 @@ cargo run -p scholium-app
 使用 Rust 1.96.0 和 egui / eframe 0.36.2；Linux 需要可用的 X11 或 Wayland 会话与 OpenGL/EGL 驱动。
 中文字体随应用嵌入，无需额外安装。字体来源与许可见 [字体说明](crates/scholium-app/assets/fonts/README.md)。
 
-- 默认是 Typst Content 编辑面（受控不分页流）：`$` / `Ctrl+M` 公式、`Ctrl+/` 分数、Tab 切换槽位，
-  方向键/Home/End 按视觉行导航，`Ctrl+S` 保存到 XDG 数据目录的 `scholium/document.v1.sqlite`；
-  首次启动一次性迁移同目录旧版会话，原文件保留；迁移只发生一次：此后用 `--legacy` 保存的修改只写旧文件，不会同步进默认文档。源码按钮暂显示只读结构 JSON。
-- 以下为 `cargo run -p scholium-app -- --legacy` 旧版工作区：`Ctrl+1` / `Ctrl+2` 切换页面和源码工作区。
-- 源码模式默认等宽分屏；拖动分隔条调整，双击恢复等宽；分隔条获得焦点后支持左右方向键和 Home。
-- `Ctrl+B` / `Ctrl+J` 开关文件导航与诊断，二者默认收起。
+- 编辑面是 Typst Content（受控不分页流）：`$` / `Ctrl+M` 公式、`Ctrl+/` 分数、Tab 切换槽位，
+  方向键/Home/End 按视觉行导航，`Ctrl+Z` / `Ctrl+Shift+Z` 撤销重做，`Ctrl+S` 保存到 XDG 数据目录的
+  `scholium/document.v1.sqlite`；首次启动一次性迁移同目录旧版会话，原文件保留不再写入。
+- `Ctrl+1` / `Ctrl+2` 切换编辑面和只读结构视图；`Ctrl+B` / `Ctrl+J` 开关导航与诊断。
 - 底部按钮调整页面缩放；`Ctrl+0` 恢复 100%，`Ctrl++` / `Ctrl+-` 放大和缩小。
-- 窄窗口自动收起导航并提供源码 / 页面单窗格切换，保留可读字号。
-- 启动时的正文和两种方言源码是只读布局示例；新建文档后可编辑正文，并在源码工作区查看只读生成源码与 Typst 预览。
 
 主题颜色集中在 `crates/scholium-app/src/theme.rs` 的 `Palette`，正文、源码和 egui 控件共享语义颜色。
 目前只提供默认深色主题；主题选择器、主题文件及偏好持久化留待后续接入。
@@ -55,27 +51,26 @@ python3 scripts/check-rust-size.py
 cargo deny check licenses bans sources
 ```
 
-当前编辑体验的独立验收（包含尚未满足的操作契约，失败会返回非零退出码）：
+真实窗口验收（Xvfb；需要 `xdotool`、`xclip`、ImageMagick，会话均为隔离夹具）：
 
 ```bash
-python3 scripts/audit-editor.py             # 基础门禁 + 页面输入/真实 Typst 字形验收
-python3 scripts/audit-editor.py --native    # 另跑隔离 Xvfb 原生窗口、剪贴板、保存重开
-python3 scripts/audit-editor.py --quick     # 只重跑体验用例
+cargo build -p scholium-app -p scholium-storage --bins
+xvfb-run -a -s '-screen 0 1280x900x24' \
+  python3 spikes/typst-main-editor/native-check.py target/debug/scholium-app /tmp/scholium-native
+xvfb-run -a -s '-screen 0 1280x900x24' \
+  python3 spikes/typst-main-editor/default-launch-check.py target/debug/scholium-app target/debug/hammer /tmp/scholium-default
 ```
 
-脚本输出独立目录中的 `summary.md`、`summary.json` 和逐项日志；原生模式需要
-`xvfb-run`、`xdotool`、`xclip`、ImageMagick。所有会话均为测试夹具，不读取个人文档。
-体验测试显式 opt-in，普通 `cargo test` 不运行它们；基础测试全绿不能替代体验验收。
-本轮结论与边界见 [页面编辑体验审计](docs/spikes/SPK-0046-editor-usability-audit.md)。
+Typst fork 来源校验与 stock 像素对照见 [vendor 说明](vendor/README.md)。
 
 ## 基础接入（开发中）
 
-文件菜单“新建”或 Ctrl+N 创建本地会话文档，支持中英文段落、标题、行内公式与粗体/强调编辑。
-所有已接受修改经过本地会话校验，并记录请求和正文 revision。
-Ctrl+S 将当前快照与请求身份日志保存到 SQLite；重启时恢复最后一次成功保存的会话。数据库无法打开或恢复时显示错误并阻止覆盖；未手动保存的编辑仍会在强杀后丢失。
-新建或关闭窗口会确认是否丢弃未保存内容。源码视图显示当前文档的只读 Typst 生成源码和快速预览；点击预览可定位到对应块。
-**完整撤销、结构化数学、可编辑源码、`.tex/.typ` 原格式打开保存和最终 PDF 尚未接入。**
-详见 [ADR 0024](docs/adr/ADR-0024-local-paragraph-integration.md)。
+启动即打开结构文档，支持中英文段落、一二级标题、粗体/强调、行内公式与分数结构，以及跨段选区、
+纯文本复制剪切和单机撤销重做。所有输入先经本地结构会话接受，再异步交给 Typst 排版；
+已提交内容只由 Typst 绘制。Ctrl+S 将快照与请求日志保存到 SQLite，重启时恢复；文件无法打开时
+窗口只显示原因与恢复方式，不覆盖。新建或关闭窗口会确认是否丢弃未保存内容。
+**分页、生成源码工作区与最终预览、正文无障碍文本、可编辑源码和最终 PDF 尚未接入。**
+详见 [ADR 0036](docs/adr/ADR-0036-typst-default-editor.md)。
 
 ## 设计目标
 

@@ -84,3 +84,5 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0035](ADR-0035-typst-page-selection.md)：Typst 候选页面选区——语义端点、核心存活光标与同源 Frame 几何。
 
 [ADR 0036](ADR-0036-typst-default-editor.md)：Typst Content 编辑器成为默认启动路径，根构建统一使用跟踪的 Typst fork，旧版文档一次性迁移。
+
+[ADR 0037](ADR-0037-remove-legacy-editor.md)：删除旧页面编辑器与 egui 回显，开发构建合并进根 workspace。

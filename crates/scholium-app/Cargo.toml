@@ -6,11 +6,6 @@ license.workspace = true
 rust-version.workspace = true
 publish = false
 
-[features]
-default = ["typst-editor"]
-# The Typst Content editor is the default surface (ADR 0036).
-typst-editor = []
-
 [dependencies]
 eframe.workspace = true
 unicode-segmentation = "=1.13.3"

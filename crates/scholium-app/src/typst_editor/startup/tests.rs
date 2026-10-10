@@ -97,7 +97,7 @@ fn startup_error_page_shows_the_reason_and_recovery_without_an_editor() {
         })
         .collect();
     assert!(shown.contains("bad schema"), "{shown}");
-    assert!(shown.contains("--legacy"), "{shown}");
+    assert!(shown.contains("移走"), "{shown}");
 }
 
 #[test]

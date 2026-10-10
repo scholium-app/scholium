@@ -172,7 +172,7 @@ fn slot_leaves(node: &MathNode, result: &mut Vec<NodeId>) {
     }
 }
 
-impl CandidateSession {
+impl EditorSession {
     /// Move by visual line or to a visual line edge; `extend` keeps the anchor.
     ///
     /// Callers guarantee a current Scene (see `deferred`); stale geometry is never read.

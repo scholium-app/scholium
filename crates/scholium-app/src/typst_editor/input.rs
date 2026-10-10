@@ -60,7 +60,7 @@ fn math_leaves<'a>(node: &'a MathNode, block: NodeId, result: &mut Vec<Leaf<'a>>
     }
 }
 
-impl CandidateSession {
+impl EditorSession {
     pub(super) fn events(
         &mut self,
         events: Vec<egui::Event>,
@@ -285,6 +285,11 @@ impl CandidateSession {
 
     pub(super) fn command(&mut self, command: Command, state: &mut WorkspaceState) {
         if state.composition.is_some() {
+            return;
+        }
+        // Ribbon buttons are disabled outside the page; an intent queued anyway must not write.
+        if state.mode != crate::state::ViewMode::Visual {
+            state.edit_error = Some("结构视图只读；回到编辑面后再执行正文命令。".into());
             return;
         }
         if self.selected() {

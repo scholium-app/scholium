@@ -34,8 +34,6 @@ pub(crate) enum Icon {
     Zoom,
     /// Paper margins.
     Margins,
-    /// Horizontal split.
-    Split,
 }
 
 /// 图标按钮。选中态用于视图切换这类开关；包在 `add_enabled(false)` 中即为未接入占位。
@@ -232,10 +230,6 @@ fn paint_structure_icon(ui: &egui::Ui, icon: Icon, p: &dyn Fn(f32, f32) -> Pos2,
         Icon::Margins => {
             line(&[(2., 1.), (14., 1.), (14., 15.), (2., 15.), (2., 1.)]);
             line(&[(5., 4.), (11., 4.), (11., 12.), (5., 12.), (5., 4.)]);
-        }
-        Icon::Split => {
-            line(&[(1., 3.), (15., 3.), (15., 13.), (1., 13.), (1., 3.)]);
-            line(&[(8., 3.), (8., 13.)]);
         }
         _ => {}
     }

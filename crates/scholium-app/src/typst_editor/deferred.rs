@@ -53,7 +53,7 @@ fn queueable(event: &egui::Event) -> bool {
     )
 }
 
-impl CandidateSession {
+impl EditorSession {
     /// Run or queue one event in arrival order; returns clipboard text for Copy/Cut.
     pub(super) fn route(
         &mut self,

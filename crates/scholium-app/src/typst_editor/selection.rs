@@ -10,7 +10,7 @@ pub(super) struct Drag {
     placement: Option<(egui::Rect, f32)>,
 }
 
-impl CandidateSession {
+impl EditorSession {
     pub(super) fn copy_selection(&self, state: &mut WorkspaceState) -> Option<String> {
         match self.selection_text() {
             Ok(text) => {
@@ -262,7 +262,7 @@ impl CandidateSession {
         .then_some(caret.position)
     }
 
-    pub(super) fn selection_quads(&self) -> Result<Vec<SelectionQuad>, CandidateError> {
+    pub(super) fn selection_quads(&self) -> Result<Vec<SelectionQuad>, SessionError> {
         if !self.current() {
             return Ok(Vec::new());
         }
@@ -322,7 +322,7 @@ impl CandidateSession {
     }
 }
 
-impl CandidateSession {
+impl EditorSession {
     pub(super) fn selection_key(
         &mut self,
         key: egui::Key,

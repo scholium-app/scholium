@@ -10,7 +10,9 @@ import sys
 import time
 
 binary = Path(sys.argv[1]).resolve()
-output = Path(sys.argv[2]).resolve()
+# scholium-storage's `hammer` writes genuine legacy (schema 0) heads; the legacy editor is gone.
+hammer = Path(sys.argv[2]).resolve()
+output = Path(sys.argv[3]).resolve()
 output.mkdir(parents=True, exist_ok=True)
 if any(output.iterdir()):
     raise SystemExit("output directory must be empty")
@@ -37,24 +39,11 @@ def run(args, name, actions):
         app.wait(timeout=15)
 
 
-def key(*keys):
-    subprocess.run(["xdotool", "key", "--clearmodifiers", *keys], env=env, check=True)
-
-
-def legacy_edit(window):
-    # An empty legacy store opens the read-only sample; create an editable document first.
-    key("ctrl+n")
-    time.sleep(2)
-    subprocess.run(["xdotool", "type", "--delay", "20", "legacy body"], env=env, check=True)
-    time.sleep(1)
-    key("ctrl+s")
-    time.sleep(2)
-
-
-run(["--legacy"], "legacy", legacy_edit)
+legacy.parent.mkdir(parents=True)
+subprocess.run([str(hammer), str(legacy), "1"], env=env, check=True, stdout=subprocess.DEVNULL)
 heads = sqlite3.connect(f"file:{legacy}?mode=ro", uri=True).execute("select count(*) from snapshots").fetchone()[0]
-assert heads > 0, "legacy editor saved a head"
-assert not target.exists(), "legacy launch never creates the v1 document"
+assert heads > 0, "hammer wrote a legacy head"
+assert not target.exists(), "writing a legacy head never creates the v1 document"
 before = hashlib.sha256(legacy.read_bytes()).hexdigest()
 def current(window):
     # Cold debug starts scan fonts before the first Content layout; wait for it.
@@ -75,7 +64,7 @@ last = audits[-1]
 assert last["backend"] == "Typst Content main app" and last["current"]
 assert all(a["page_text_draws"] == 0 for a in audits)
 text = json.dumps(last["snapshot"], ensure_ascii=False)
-assert "legacy body" in text, "migrated content is the authority"
+assert "内容 1" in text, "migrated content is the authority"
 result = {"binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "legacy_heads": heads,
           "legacy_sha256_unchanged": True, "v1_created": True, "default_backend": last["backend"],
           "audit_frames": len(audits), "committed_egui_text_draws": 0}

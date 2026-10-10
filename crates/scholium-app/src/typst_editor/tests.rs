@@ -4,41 +4,40 @@ pub(super) struct Fixture {
     pub(super) path: PathBuf,
     pub(super) ctx: egui::Context,
     pub(super) state: WorkspaceState,
-    pub(super) candidate: CandidateSession,
+    pub(super) editor: EditorSession,
 }
 
 impl Fixture {
     pub(super) fn new() -> Self {
         let path =
-            std::env::temp_dir().join(format!("scholium-candidate-{:?}.db", RequestId::fresh()));
+            std::env::temp_dir().join(format!("scholium-editor-{:?}.db", RequestId::fresh()));
         let ctx = egui::Context::default();
         let mut state = WorkspaceState::default();
-        let candidate =
-            CandidateSession::open_file(&ctx, &mut state, &path).expect("isolated fixture");
+        let editor = EditorSession::open_file(&ctx, &mut state, &path).expect("isolated fixture");
         Self {
             path,
             ctx,
             state,
-            candidate,
+            editor,
         }
     }
     pub(super) fn settle(&mut self) {
         let end = std::time::Instant::now() + std::time::Duration::from_secs(30);
         // Settled means the current Scene exists and no queued input still waits for it.
-        while !self.candidate.current() || !self.candidate.deferred.is_empty() {
-            self.candidate.poll(&self.ctx);
-            self.candidate.drain(&mut self.state);
+        while !self.editor.current() || !self.editor.deferred.is_empty() {
+            self.editor.poll(&self.ctx);
+            self.editor.drain(&mut self.state);
             assert!(
-                self.candidate.layout_error.is_none(),
+                self.editor.layout_error.is_none(),
                 "{:?}",
-                self.candidate.layout_error
+                self.editor.layout_error
             );
             assert!(std::time::Instant::now() < end, "worker timeout");
             std::thread::sleep(std::time::Duration::from_millis(10));
         }
     }
     pub(super) fn events(&mut self, events: Vec<egui::Event>) {
-        self.candidate.events(events, &mut self.state);
+        self.editor.events(events, &mut self.state);
     }
 }
 
@@ -73,23 +72,23 @@ fn empty_inline_formula_and_empty_fraction_denominator_have_current_geometry() {
     f.events(vec![text("$")]);
     f.settle();
     assert!(
-        f.candidate
+        f.editor
             .scene
             .as_ref()
             .expect("empty formula")
             .geometry
-            .caret(f.candidate.cursor)
+            .caret(f.editor.cursor)
             .is_some()
     );
     f.events(vec![text("12"), key(egui::Key::Slash, true)]);
     f.settle();
     assert!(
-        f.candidate
+        f.editor
             .scene
             .as_ref()
             .expect("empty denominator")
             .geometry
-            .caret(f.candidate.cursor)
+            .caret(f.editor.cursor)
             .is_some()
     );
 }
@@ -106,16 +105,16 @@ fn multi_event_frame_enters_fraction_and_nested_denominator_without_losing_input
         key(egui::Key::Slash, true),
         text("4"),
     ]);
-    let values: Vec<_> = input::leaves(&f.candidate.snapshot)
+    let values: Vec<_> = input::leaves(&f.editor.snapshot)
         .into_iter()
         .map(|l| l.text.to_owned())
         .collect();
     assert_eq!(values, ["中文 English ", "12", "3", "4", ""]);
-    assert_eq!(f.candidate.snapshot.revision.0, 7);
+    assert_eq!(f.editor.snapshot.revision.0, 7);
     f.settle();
-    let scene = f.candidate.scene.as_ref().expect("settled scene");
+    let scene = f.editor.scene.as_ref().expect("settled scene");
     assert_eq!(scene.stats.source_reads, 0);
-    assert!(scene.geometry.caret(f.candidate.cursor).is_some());
+    assert!(scene.geometry.caret(f.editor.cursor).is_some());
 }
 
 #[test]
@@ -123,25 +122,25 @@ fn undo_redo_preserves_request_ids_and_rejects_old_scene_at_same_revision() {
     let mut f = Fixture::new();
     f.events(vec![text("a")]);
     f.settle();
-    f.candidate.save(&mut f.state);
-    let old = f.candidate.scene.take().expect("scene");
+    f.editor.save(&mut f.state);
+    let old = f.editor.scene.take().expect("scene");
     let old_stamp = old.stamp;
-    let request = f.candidate.session.actions()[0].request;
-    f.candidate.history(false, &mut f.state);
-    f.candidate.history(true, &mut f.state);
-    assert_eq!(f.candidate.session.actions()[0].request, request);
-    assert_eq!(f.candidate.wanted.revision, old_stamp.revision);
-    assert_ne!(f.candidate.wanted.epoch, old_stamp.epoch);
-    f.candidate.adopt(&f.ctx, old_stamp, Ok(old));
-    assert!(f.candidate.scene.is_none());
+    let request = f.editor.session.actions()[0].request;
+    f.editor.history(false, &mut f.state);
+    f.editor.history(true, &mut f.state);
+    assert_eq!(f.editor.session.actions()[0].request, request);
+    assert_eq!(f.editor.wanted.revision, old_stamp.revision);
+    assert_ne!(f.editor.wanted.epoch, old_stamp.epoch);
+    f.editor.adopt(&f.ctx, old_stamp, Ok(old));
+    assert!(f.editor.scene.is_none());
     f.settle();
-    f.candidate.history(false, &mut f.state);
+    f.editor.history(false, &mut f.state);
     f.events(vec![text("b")]);
     f.settle();
-    assert_ne!(f.candidate.session.actions()[0].request, request);
-    assert_eq!(f.candidate.snapshot.revision.0, 1);
+    assert_ne!(f.editor.session.actions()[0].request, request);
+    assert_eq!(f.editor.snapshot.revision.0, 1);
     assert!(
-        f.state.candidate.as_ref().expect("view").dirty,
+        f.state.editor.as_ref().expect("view").dirty,
         "same revision is not the saved content"
     );
 }
@@ -150,17 +149,16 @@ fn undo_redo_preserves_request_ids_and_rejects_old_scene_at_same_revision() {
 fn save_reopen_preserves_holes_and_can_continue_after_redo() {
     let mut f = Fixture::new();
     f.events(vec![text("$"), text("n"), key(egui::Key::Slash, true)]);
-    let hole = f.candidate.cursor;
-    f.candidate.history(false, &mut f.state);
-    f.candidate.history(true, &mut f.state);
-    f.candidate.save(&mut f.state);
+    let hole = f.editor.cursor;
+    f.editor.history(false, &mut f.state);
+    f.editor.history(true, &mut f.state);
+    f.editor.save(&mut f.state);
     assert!(f.state.storage_error.is_none());
-    let expected = f.candidate.record();
-    let mut restored =
-        CandidateSession::open_file(&f.ctx, &mut f.state, &f.path).expect("reopen v1");
+    let expected = f.editor.record();
+    let mut restored = EditorSession::open_file(&f.ctx, &mut f.state, &f.path).expect("reopen v1");
     assert_eq!(*restored.snapshot, expected.snapshot);
     assert_eq!(restored.record().requests, expected.requests);
-    assert_ne!(restored.wanted.epoch, f.candidate.wanted.epoch);
+    assert_ne!(restored.wanted.epoch, f.editor.wanted.epoch);
     restored.cursor = hole;
     restored.events(vec![text("d")], &mut f.state);
     assert_eq!(
@@ -188,7 +186,7 @@ fn committed_canvas_contains_no_egui_text_shapes_even_while_pending() {
                 ui,
                 egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(880.0, 600.0)),
                 2.0,
-                &f.candidate,
+                &f.editor,
                 &f.state,
             );
         });
@@ -217,23 +215,23 @@ fn ime_commit_and_duplicate_text_event_create_one_action_and_one_value() {
         text: "中文".into(),
         active_range_chars: None,
     })]);
-    assert_eq!(f.candidate.snapshot.revision.0, 0);
+    assert_eq!(f.editor.snapshot.revision.0, 0);
     f.events(vec![
         egui::Event::Ime(egui::ImeEvent::Commit("中文".into())),
         text("中文"),
     ]);
-    assert_eq!(f.candidate.snapshot.revision.0, 1);
-    assert_eq!(input::leaves(&f.candidate.snapshot)[0].text, "中文");
+    assert_eq!(f.editor.snapshot.revision.0, 1);
+    assert_eq!(input::leaves(&f.editor.snapshot)[0].text, "中文");
 }
 
 #[test]
 fn rejected_math_multiline_paste_keeps_authority_and_copyable_draft() {
     let mut f = Fixture::new();
     f.events(vec![text("$")]);
-    let before = f.candidate.record();
+    let before = f.editor.record();
     f.events(vec![egui::Event::Paste("first\nsecond".into())]);
-    assert_eq!(*f.candidate.snapshot, before.snapshot);
-    assert_eq!(f.candidate.rejected_input.as_deref(), Some("first\nsecond"));
+    assert_eq!(*f.editor.snapshot, before.snapshot);
+    assert_eq!(f.editor.rejected_input.as_deref(), Some("first\nsecond"));
     assert!(f.state.edit_error.is_some());
 }
 
@@ -241,7 +239,7 @@ fn rejected_math_multiline_paste_keeps_authority_and_copyable_draft() {
 fn every_scene_identity_field_gates_adoption_of_failed_results() {
     let mut f = Fixture::new();
     f.settle();
-    let stamp = f.candidate.wanted;
+    let stamp = f.editor.wanted;
     let mut variants = [stamp; 6];
     variants[0].document = scholium_model::DocumentId::fresh();
     variants[1].epoch = LayoutEpoch::fresh();
@@ -250,13 +248,13 @@ fn every_scene_identity_field_gates_adoption_of_failed_results() {
     variants[4].profile = ProfileGeneration(1);
     variants[5].resources = ResourceGeneration(1);
     for stale in variants {
-        f.candidate.adopt(
+        f.editor.adopt(
             &f.ctx,
             stale,
             Err(scholium_typst::editor::EditorError::Capacity),
         );
-        assert!(f.candidate.layout_error.is_none());
-        assert!(f.candidate.current());
+        assert!(f.editor.layout_error.is_none());
+        assert!(f.editor.current());
     }
 }
 
@@ -264,66 +262,51 @@ fn every_scene_identity_field_gates_adoption_of_failed_results() {
 fn joining_emoji_graphemes_does_not_strand_following_input_inside_a_cluster() {
     let mut f = Fixture::new();
     f.events(vec![text("👩🔬")]);
-    f.candidate.cursor.byte = "👩".len();
+    f.editor.cursor.byte = "👩".len();
     f.events(vec![text("\u{200d}"), text("x")]);
-    assert_eq!(input::leaves(&f.candidate.snapshot)[0].text, "👩‍🔬x");
-    assert_eq!(f.candidate.cursor.byte, "👩‍🔬x".len());
-    assert_eq!(f.candidate.snapshot.revision.0, 3);
-    assert!(f.candidate.rejected_input.is_none());
+    assert_eq!(input::leaves(&f.editor.snapshot)[0].text, "👩‍🔬x");
+    assert_eq!(f.editor.cursor.byte, "👩‍🔬x".len());
+    assert_eq!(f.editor.snapshot.revision.0, 3);
+    assert!(f.editor.rejected_input.is_none());
 }
 
 #[test]
 fn deletion_that_joins_regional_indicators_keeps_a_valid_insertion_point() {
     let mut f = Fixture::new();
     f.events(vec![text("🇦x🇧")]);
-    f.candidate.cursor.byte = "🇦x".len();
+    f.editor.cursor.byte = "🇦x".len();
     f.events(vec![key(egui::Key::Backspace, false), text("y")]);
-    assert_eq!(input::leaves(&f.candidate.snapshot)[0].text, "🇦🇧y");
-    assert_eq!(f.candidate.cursor.byte, "🇦🇧y".len());
-    assert_eq!(f.candidate.snapshot.revision.0, 3);
-    assert!(f.candidate.rejected_input.is_none());
+    assert_eq!(input::leaves(&f.editor.snapshot)[0].text, "🇦🇧y");
+    assert_eq!(f.editor.cursor.byte, "🇦🇧y".len());
+    assert_eq!(f.editor.snapshot.revision.0, 3);
+    assert!(f.editor.rejected_input.is_none());
 }
 
 #[test]
 fn horizontal_arrows_cross_identified_body_and_math_leaves_without_wrapping() {
     let mut f = Fixture::new();
     f.events(vec![text("A"), text("$"), text("12"), text("$"), text("Z")]);
-    let ids: Vec<_> = input::leaves(&f.candidate.snapshot)
+    let ids: Vec<_> = input::leaves(&f.editor.snapshot)
         .iter()
         .map(|l| l.id)
         .collect();
-    let revision = f.candidate.snapshot.revision;
+    let revision = f.editor.snapshot.revision;
     f.events(vec![
         key(egui::Key::ArrowLeft, false),
         key(egui::Key::ArrowLeft, false),
     ]);
-    assert_eq!(
-        (f.candidate.cursor.leaf, f.candidate.cursor.byte),
-        (ids[1], 2)
-    );
+    assert_eq!((f.editor.cursor.leaf, f.editor.cursor.byte), (ids[1], 2));
     f.events(vec![key(egui::Key::ArrowLeft, false); 3]);
-    assert_eq!(
-        (f.candidate.cursor.leaf, f.candidate.cursor.byte),
-        (ids[0], 1)
-    );
+    assert_eq!((f.editor.cursor.leaf, f.editor.cursor.byte), (ids[0], 1));
     f.events(vec![key(egui::Key::ArrowRight, false); 4]);
-    assert_eq!(
-        (f.candidate.cursor.leaf, f.candidate.cursor.byte),
-        (ids[2], 0)
-    );
+    assert_eq!((f.editor.cursor.leaf, f.editor.cursor.byte), (ids[2], 0));
     f.events(vec![key(egui::Key::ArrowRight, false); 2]);
-    assert_eq!(
-        (f.candidate.cursor.leaf, f.candidate.cursor.byte),
-        (ids[2], 1)
-    );
-    f.candidate.cursor.leaf = ids[0];
-    f.candidate.cursor.byte = 0;
+    assert_eq!((f.editor.cursor.leaf, f.editor.cursor.byte), (ids[2], 1));
+    f.editor.cursor.leaf = ids[0];
+    f.editor.cursor.byte = 0;
     f.events(vec![key(egui::Key::ArrowLeft, false)]);
-    assert_eq!(
-        (f.candidate.cursor.leaf, f.candidate.cursor.byte),
-        (ids[0], 0)
-    );
-    assert_eq!(f.candidate.snapshot.revision, revision);
+    assert_eq!((f.editor.cursor.leaf, f.editor.cursor.byte), (ids[0], 0));
+    assert_eq!(f.editor.snapshot.revision, revision);
 }
 
 #[test]
@@ -331,12 +314,12 @@ fn close_with_queued_input_asks_before_discarding_it() {
     let mut f = Fixture::new();
     f.events(vec![text("a")]);
     f.settle();
-    f.candidate.save(&mut f.state);
+    f.editor.save(&mut f.state);
     // A fresh layout request leaves the saved content unchanged but the Scene pending.
-    f.candidate.publish(&mut f.state);
+    f.editor.publish(&mut f.state);
     f.events(vec![key(egui::Key::ArrowUp, false), text("b")]);
-    assert!(!f.state.candidate.as_ref().expect("view").dirty);
-    assert!(!f.candidate.deferred.is_empty());
+    assert!(!f.state.editor.as_ref().expect("view").dirty);
+    assert!(!f.editor.deferred.is_empty());
     let mut input = egui::RawInput::default();
     input
         .viewports
@@ -345,8 +328,8 @@ fn close_with_queued_input_asks_before_discarding_it() {
         .events
         .push(egui::ViewportEvent::Close);
     let mut output = f.ctx.run_ui(input, |ui| {
-        f.candidate.controls(ui.ctx(), &mut f.state);
+        f.editor.controls(ui.ctx(), &mut f.state);
     });
     output.textures_delta.clear();
-    assert!(f.candidate.confirm_close);
+    assert!(f.editor.confirm_close);
 }
