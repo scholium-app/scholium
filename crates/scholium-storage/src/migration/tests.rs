@@ -230,3 +230,30 @@ fn unknown_legacy_fields_and_storage_extensions_are_not_dropped() {
         );
     }
 }
+
+#[test]
+fn head_probe_is_read_only_and_distinguishes_blank_from_saved_files() {
+    let zero_bytes = Fixture::fresh();
+    std::fs::write(&zero_bytes.0, b"").expect("0-byte file");
+    assert!(!legacy_has_head(&zero_bytes.0).expect("0-byte probe"));
+    assert_eq!(std::fs::read(&zero_bytes.0).expect("bytes"), b"");
+
+    let blank = Fixture::fresh();
+    SessionStore::open(&blank.0).expect("blank legacy store");
+    let before = std::fs::read(&blank.0).expect("bytes");
+    assert!(!legacy_has_head(&blank.0).expect("blank probe"));
+    assert_eq!(std::fs::read(&blank.0).expect("bytes"), before);
+
+    let saved = Fixture::fresh();
+    legacy(&saved.0);
+    let before = std::fs::read(&saved.0).expect("bytes");
+    assert!(legacy_has_head(&saved.0).expect("saved probe"));
+    assert_eq!(std::fs::read(&saved.0).expect("bytes"), before);
+
+    let v1 = Fixture::fresh();
+    SessionStore::create_structured(&v1.0).expect("v1 store");
+    assert!(
+        legacy_has_head(&v1.0).is_err(),
+        "only schema 0 is a legacy file"
+    );
+}

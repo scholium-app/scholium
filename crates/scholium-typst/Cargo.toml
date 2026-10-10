@@ -6,8 +6,8 @@ license = "MIT OR Apache-2.0"
 rust-version = "1.96"
 
 [features]
-# Enabled only by dev/typst-editor with the complete pinned fork group.
-editor = ["dep:comemo", "dep:thiserror"]
+# Requires the complete pinned fork group patched in at the workspace root.
+editor = ["dep:comemo", "dep:thiserror", "typst-layout/editor"]
 
 [dependencies]
 comemo = { version = "=0.5.1", optional = true }

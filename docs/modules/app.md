@@ -51,11 +51,14 @@ egui 控件与自绘区域从同一主题取色；配色变更不修改布局、
 
 ## ProjectSession
 
-### 显式本地结构开发入口
+### 默认 Typst Content 编辑入口
 
-`dev/typst-editor` 直接编译本模块同一 main.rs，`--typst-editor` 在 legacy 恢复前选择
-SessionBridge 的互斥候选，必须提供隔离 `SCHOLIUM_SESSION_FILE`。没有可写副本对拷或旧库
-失败后的新库回退。普通 root 构建仍用其默认入口；隔离裁决见 [ADR 0034](../adr/ADR-0034-typst-main-app-candidate.md)。
+普通启动在 legacy 恢复前选择 SessionBridge 的 Typst Content 会话（[ADR 0036](../adr/ADR-0036-typst-default-editor.md)）；
+旧回显编辑器只经 `--legacy` 显式启动，默认路径失败报错而不回退。未设 `SCHOLIUM_SESSION_FILE`
+时文档为 XDG 数据目录 `scholium/document.v1.sqlite`；它不存在而同目录旧版会话有已保存 head 时
+一次性迁移到新文件，旧文件只读、保持原样，页头显示迁移提示与转为原串的公式数。已有 v1
+文件不被迁移覆盖；显式 `SCHOLIUM_SESSION_FILE` 必须是 v1。没有可写副本对拷。旧文件只读探测；
+迁移或打开失败时窗口只显示原因与恢复方式，不运行编辑器。迁移只发生一次：此后用 `--legacy` 保存的修改只写旧文件，不会同步进默认文档。
 
 候选按事件顺序向 `LocalSession<StructuredDocument>` 提交字素文字/结构请求，布局仅持有
 完整不可变投影。输入接受和提交先于页面绘制，后台完成唤醒 UI，不去抖源码求值。界面

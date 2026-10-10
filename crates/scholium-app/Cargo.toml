@@ -7,15 +7,18 @@ rust-version.workspace = true
 publish = false
 
 [features]
-# Source feature for the isolated development manifest; stock workspace stays default.
+default = ["typst-editor"]
+# The Typst Content editor is the default surface (ADR 0036).
 typst-editor = []
 
 [dependencies]
 eframe.workspace = true
 unicode-segmentation = "=1.13.3"
+thiserror = "=2.0.20"
+serde_json = "=1.0.151"
 scholium-model = { path = "../scholium-model", version = "0.1.0" }
 scholium-document = { path = "../scholium-document", version = "0.1.0" }
-scholium-typst = { path = "../scholium-typst", version = "0.1.0" }
+scholium-typst = { path = "../scholium-typst", version = "0.1.0", features = ["editor"] }
 scholium-storage = { path = "../scholium-storage", version = "0.1.0" }
 
 [lints]

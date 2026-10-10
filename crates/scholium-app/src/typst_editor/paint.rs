@@ -41,7 +41,7 @@ pub(super) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut 
 fn header(ui: &mut egui::Ui, state: &WorkspaceState, session: &CandidateSession) {
     let shown = session.scene.as_ref().map(|s| s.stamp.revision.0);
     ui.label(format!(
-        "Typst Content · 开发候选 · 正文 r{} · 画面 {}{}",
+        "Typst Content · 正文 r{} · 画面 {}{}",
         session.snapshot.revision.0,
         shown.map_or("—".into(), |r| format!("r{r}")),
         if session.current() {
@@ -70,6 +70,9 @@ fn header(ui: &mut egui::Ui, state: &WorkspaceState, session: &CandidateSession)
             }
             _ => {}
         }
+    }
+    if let Some(notice) = &session.notice {
+        ui.weak(notice);
     }
     for error in [
         &state.edit_error,

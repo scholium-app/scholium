@@ -5,6 +5,8 @@ mod input;
 mod paint;
 pub(crate) mod ribbon;
 mod selection;
+mod startup;
+pub(crate) use startup::show_error as show_startup_error;
 #[cfg(test)]
 mod tests;
 mod vertical;
@@ -21,9 +23,7 @@ const HISTORY_LIMIT: usize = 512;
 
 #[derive(Debug, thiserror::Error)]
 pub(crate) enum CandidateError {
-    #[error("Typst candidate requires SCHOLIUM_SESSION_FILE pointing to an isolated v1 file")]
-    MissingFile,
-    #[error("candidate startup failed: {0}")]
+    #[error("启动失败：{0}")]
     Startup(String),
     #[error(transparent)]
     Storage(#[from] scholium_storage::StructuredStoreError),
@@ -86,6 +86,7 @@ pub(crate) struct CandidateSession {
     allow_close: bool,
     layout_error: Option<String>,
     rejected_input: Option<String>,
+    notice: Option<String>,
     last_audit: Option<String>,
 }
 
@@ -103,11 +104,15 @@ impl CandidateSession {
         ctx: &egui::Context,
         state: &mut WorkspaceState,
     ) -> Result<Self, CandidateError> {
-        let path = std::env::var_os("SCHOLIUM_SESSION_FILE")
-            .filter(|p| !p.is_empty())
-            .map(PathBuf::from)
-            .ok_or(CandidateError::MissingFile)?;
-        Self::open_file(ctx, state, &path)
+        // An explicit file (tests, multiple instances) must already be schema v1.
+        let (path, notice) =
+            match std::env::var_os("SCHOLIUM_SESSION_FILE").filter(|p| !p.is_empty()) {
+                Some(path) => (PathBuf::from(path), None),
+                None => startup::default_document()?,
+            };
+        let mut session = Self::open_file(ctx, state, &path)?;
+        session.notice = notice;
+        Ok(session)
     }
 
     fn open_file(
@@ -155,6 +160,7 @@ impl CandidateSession {
             allow_close: false,
             layout_error: None,
             rejected_input: None,
+            notice: None,
             last_audit: None,
         };
         state.candidate = Some(CandidateView::default());
@@ -336,7 +342,7 @@ impl CandidateSession {
             self.confirm_close = true;
         }
         ctx.send_viewport_cmd(egui::ViewportCommand::Title(format!(
-            "未命名 — Scholium · Typst 候选 · {}",
+            "未命名 — Scholium · {}",
             if dirty { "未保存" } else { "已保存" }
         )));
     }

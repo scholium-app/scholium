@@ -5,7 +5,7 @@ out=Path(tempfile.mkdtemp(prefix='scholium-direct-review-'))
 print(out, flush=True)
 env=os.environ.copy();env.pop('WAYLAND_DISPLAY',None)
 env.update(WINIT_UNIX_BACKEND='x11', WINIT_X11_SCALE_FACTOR='1', SCHOLIUM_SESSION_FILE=str(out/'session.sqlite'))
-app=subprocess.Popen(['target/debug/scholium-app'],env=env,stdout=open(out/'app.log','w'),stderr=subprocess.STDOUT)
+app=subprocess.Popen(['target/debug/scholium-app','--legacy'],env=env,stdout=open(out/'app.log','w'),stderr=subprocess.STDOUT)
 def x(*args): return subprocess.check_output(['xdotool',*map(str,args)],env=env,text=True).strip()
 def paste(text):
  subprocess.run(['xclip','-selection','clipboard'],input=text.encode(),env=env,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)

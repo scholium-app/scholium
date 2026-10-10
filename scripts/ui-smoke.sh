@@ -73,7 +73,8 @@ focus_window() {
 }
 
 launch() {
-  ("$BIN" >"$OUT/app.log" 2>&1 &)
+  # Legacy workspace smoke; the default launch is the Typst Content editor.
+  ("$BIN" --legacy >"$OUT/app.log" 2>&1 &)
   local waited=0
   until pgrep -f "$BIN" >/dev/null; do
     (( waited += 200 )); (( waited > 15000 )) && die "应用未启动，见 $OUT/app.log"

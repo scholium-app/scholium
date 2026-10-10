@@ -8,7 +8,7 @@
 ## 状态
 
 阶段判定以 [阶段出口报告](docs/spikes/SPK-0012-exit-criteria.md) 为准。
-根 workspace 提供独立的 egui 应用壳，启动显示只读布局示例；文件菜单“新建”进入基础结构编辑，支持手动保存到本地 SQLite 会话文件与 Typst 快速预览。
+根 workspace 提供 egui 应用壳，启动即进入 Typst Content 结构编辑：输入直接经 Typst 排版呈现，不经 egui 文字回显（[ADR 0036](docs/adr/ADR-0036-typst-default-editor.md)）。旧版回显编辑器只经 `--legacy` 启动。
 废弃实现已经删除，旧实验结果仍可在归档文档和 Git 历史中查阅。
 
 新方案聚焦 Liii STEM 式结构编辑体验、LaTeX/Typst 源码模式、双后端预览、非线性历史、
@@ -29,7 +29,10 @@ cargo run -p scholium-app
 使用 Rust 1.96.0 和 egui / eframe 0.36.2；Linux 需要可用的 X11 或 Wayland 会话与 OpenGL/EGL 驱动。
 中文字体随应用嵌入，无需额外安装。字体来源与许可见 [字体说明](crates/scholium-app/assets/fonts/README.md)。
 
-- 默认是单一页面的所见即所得布局；`Ctrl+1` / `Ctrl+2` 切换页面和源码工作区。
+- 默认是 Typst Content 编辑面（受控不分页流）：`$` / `Ctrl+M` 公式、`Ctrl+/` 分数、Tab 切换槽位，
+  方向键/Home/End 按视觉行导航，`Ctrl+S` 保存到 XDG 数据目录的 `scholium/document.v1.sqlite`；
+  首次启动一次性迁移同目录旧版会话，原文件保留；迁移只发生一次：此后用 `--legacy` 保存的修改只写旧文件，不会同步进默认文档。源码按钮暂显示只读结构 JSON。
+- 以下为 `cargo run -p scholium-app -- --legacy` 旧版工作区：`Ctrl+1` / `Ctrl+2` 切换页面和源码工作区。
 - 源码模式默认等宽分屏；拖动分隔条调整，双击恢复等宽；分隔条获得焦点后支持左右方向键和 Home。
 - `Ctrl+B` / `Ctrl+J` 开关文件导航与诊断，二者默认收起。
 - 底部按钮调整页面缩放；`Ctrl+0` 恢复 100%，`Ctrl++` / `Ctrl+-` 放大和缩小。

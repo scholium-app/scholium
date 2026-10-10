@@ -24,10 +24,18 @@ use state::WorkspaceState;
 struct ScholiumApp {
     state: WorkspaceState,
     session: session::SessionBridge,
+    /// Default editor failed to open; shown in the window, no editor runs.
+    #[cfg_attr(not(feature = "typst-editor"), allow(dead_code))]
+    startup_error: Option<String>,
 }
 
 impl eframe::App for ScholiumApp {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        #[cfg(feature = "typst-editor")]
+        if let Some(error) = &self.startup_error {
+            typst_editor::show_startup_error(ui, error);
+            return;
+        }
         commands::shortcuts(ui.ctx(), &mut self.state);
         chrome::show(ui, &mut self.state);
         #[cfg(feature = "typst-editor")]
@@ -40,10 +48,13 @@ impl eframe::App for ScholiumApp {
 }
 
 fn main() -> eframe::Result {
-    let candidate = std::env::args().any(|arg| arg == "--typst-editor");
+    // The Typst Content editor is the default (ADR 0036). The legacy echo editor runs only
+    // when asked for explicitly; a failing default never falls back to it silently.
+    #[cfg(feature = "typst-editor")]
+    let candidate = !std::env::args().any(|arg| arg == "--legacy");
     #[cfg(not(feature = "typst-editor"))]
-    if candidate {
-        eprintln!("Use the isolated dev/typst-editor/Cargo.toml build for --typst-editor.");
+    if std::env::args().any(|arg| arg == "--typst-editor") {
+        eprintln!("This build has no Typst Content editor; enable the typst-editor feature.");
         std::process::exit(2);
     }
     let options = eframe::NativeOptions {
@@ -61,7 +72,10 @@ fn main() -> eframe::Result {
             let mut app = ScholiumApp::default();
             #[cfg(feature = "typst-editor")]
             if candidate {
-                app.session.enable_candidate(&cc.egui_ctx, &mut app.state)?;
+                if let Err(error) = app.session.enable_candidate(&cc.egui_ctx, &mut app.state) {
+                    eprintln!("{error}");
+                    app.startup_error = Some(error.to_string());
+                }
             } else {
                 app.session.prepare_preview(&cc.egui_ctx);
             }

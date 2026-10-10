@@ -161,7 +161,7 @@ if __name__ == "__main__":
     print(OUT, flush=True)
     with (OUT / "app.log").open("w") as log:
         app = subprocess.Popen(
-            [str(ROOT / "target/debug/scholium-app")], env=ENV,
+            [str(ROOT / "target/debug/scholium-app"), "--legacy"], env=ENV,
             stdout=log, stderr=subprocess.STDOUT,
         )
         try:

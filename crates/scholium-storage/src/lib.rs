@@ -4,7 +4,7 @@
 
 mod migration;
 mod structured;
-pub use migration::{FileMigrationReport, migrate_legacy_file};
+pub use migration::{FileMigrationReport, legacy_has_head, migrate_legacy_file};
 pub use structured::{PersistedStructuredSession, StructuredStoreError};
 
 use std::path::{Path, PathBuf};
@@ -205,6 +205,16 @@ impl<'a> Prepared<'a> {
                 .map_err(|e| e.to_string())?,
         })
     }
+}
+
+/// 默认编辑器的结构文档（schema v1）位置，与旧版会话文件同目录。
+///
+/// 与 [`default_session_path`] 一样会创建所在目录。
+///
+/// # Errors
+/// 无 HOME 或无法创建目录时返回错误。
+pub fn default_document_path() -> Result<PathBuf, String> {
+    default_session_path().map(|legacy| legacy.with_file_name("document.v1.sqlite"))
 }
 
 /// 默认会话文件位置（XDG 数据目录）。
