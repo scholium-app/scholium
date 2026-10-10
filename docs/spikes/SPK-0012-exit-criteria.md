@@ -29,7 +29,8 @@
 ## 证据入口
 
 结构正文跨叶/块的原子替换内核见[报告 0056](SPK-0056-structured-body-range.md)；
-同源 Frame 页面选区与多行替换见[报告 0057](SPK-0057-typst-page-selection.md)。
+同源 Frame 页面选区与多行替换见[报告 0057](SPK-0057-typst-page-selection.md)；
+视觉行导航与几何键有序排队见[报告 0058](SPK-0058-typst-vertical-navigation.md)。
 这些限定报告不改变上表阶段判定，完整 C 与默认后端替换未验收。
 
 - 条件 1：[egui 原始验收](SPK-0004-native-ui-egui.md)、[ADR 0006](../adr/ADR-0006-native-ui-framework.md)、

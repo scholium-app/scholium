@@ -168,6 +168,8 @@ impl CandidateSession {
     }
 
     pub(super) fn move_to(&mut self, target: Position, extend: bool) {
+        // Vertical motion re-sets the goal after moving; every other caller drops it.
+        self.goal = None;
         if extend {
             self.anchor.get_or_insert(self.cursor);
         } else {
@@ -288,6 +290,17 @@ impl CandidateSession {
                 InlineBody::Text { text, .. } => {
                     let from = if index == a { start.byte } else { 0 };
                     let to = if index == b { end.byte } else { text.len() };
+                    if text.is_empty()
+                        && !scene
+                            .geometry
+                            .carets
+                            .iter()
+                            .any(|c| c.position.leaf == inline.node)
+                    {
+                        // An empty leaf beside other inline content shapes no Typst cluster:
+                        // it has no extent to draw, yet stays inside the semantic range.
+                        continue;
+                    }
                     if from < to || (index > a && index < b) {
                         quads.extend(scene.geometry.selection_text(inline.node, from..to)?);
                     }
@@ -349,10 +362,18 @@ impl CandidateSession {
         }
         let navigation = matches!(
             key,
-            egui::Key::ArrowLeft | egui::Key::ArrowRight | egui::Key::Home | egui::Key::End
+            egui::Key::ArrowLeft
+                | egui::Key::ArrowRight
+                | egui::Key::ArrowUp
+                | egui::Key::ArrowDown
+                | egui::Key::Home
+                | egui::Key::End
         );
         if shift && navigation {
-            self.extend_keyboard(key, state);
+            match vertical::Motion::of(key) {
+                Some(motion) => self.line_motion(motion, true, state),
+                None => self.extend_keyboard(key, state),
+            }
             return true;
         }
         if navigation || key == egui::Key::Tab {
@@ -375,8 +396,6 @@ impl CandidateSession {
         let mut target = self.cursor;
         let value = body[at].text;
         match key {
-            egui::Key::Home => target.byte = 0,
-            egui::Key::End => target.byte = value.len(),
             egui::Key::ArrowLeft if target.byte > 0 => {
                 target.byte = value
                     .grapheme_indices(true)

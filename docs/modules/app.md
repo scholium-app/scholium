@@ -72,10 +72,21 @@ Ribbon 的开发命令发结构 intent；文字样式作用于整叶，标题作
 指示符或组合字符可能把原先独立的邻接字素合并；此时光标移动到原目标 byte 之后的首个
 合法边界，不能把下一次输入提交到字素内部。正文与数学 Text/Hole 的左右方向键在文档
 逻辑叶顺序中跨边界移动，文档首尾停止，不循环；导航不产生语义动作。Tab 仍用于显式
-槽位切换。视觉 bidi/行间导航不从逻辑顺序猜其几何。
+槽位切换。
+
+上下方向键与 Home/End 只读当前 Scene 的精确正文 caret（padded Frame pt）推出视觉行：
+行内公式的槽位与正文行纵向重叠，不参与划行。上下键取纵向最近的相邻行、再取最接近目标
+x 的停靠点；连续上下在光标和期望 Scene 都未变时保留目标 x。软换行同一字节的 Upstream
+停靠点属于上一行末、Downstream 属于下一行首，等 x 时取逻辑较后者。无相邻行时停在本行首/末。
+数学槽内上下先在最近的分子/分母间切换，否则以整公式 bounds 代表当前行离开公式；
+槽内 Home/End 保持槽内首末。Ctrl+Home/End 按逻辑顺序到正文首末，不需要几何。
+排版未就绪时几何键及其后的输入按到达顺序排队（上限 256，超限文字保留可复制草稿；
+IME 与 Escape 不受上限丢弃），Ribbon/撤销/保存也等队列清空，关闭时排队输入按未保存处理；
+排队期间的鼠标按下被拒绝，布局失败只放弃排队的几何键。目标 x 只在连续上下间保留。
+视觉 bidi 不从逻辑顺序猜几何；仅有公式而无正文 caret 的行不作为上下停靠行。
 
 候选选区用正文 Text 叶的稳定身份、UTF-8 字素边界保存 anchor/focus。Shift 左右键按正文
-逻辑顺序跨叶/块，完整覆盖的结构公式作为对象选中；Shift Home/End 定位当前叶首/末。
+逻辑顺序跨叶/块，完整覆盖的结构公式作为对象选中；Shift 上下/Home/End 按视觉行扩展。
 普通左右键折叠已有选区。鼠标按输入事件顺序命中同一当前 Scene 的精确 caret；拖选绑定
 完整 SceneStamp 和 placement，epoch、布局请求或页面位置/缩放改变即停止旧拖选。
 比例合字内部 caret 不作鼠标端点；未知身份和 pending Scene 不能恢复命中能力。
@@ -85,7 +96,10 @@ Ribbon 的开发命令发结构 intent；文字样式作用于整叶，标题作
 几何判断位置。范围内 RawMath 明确拒绝，失败保留正文、端点和可复制输入草稿。
 输入、Backspace/Delete、Enter 和多行 Paste 通过一个 ReplaceBodyRange 提交；核心返回
 存活叶和合法字素位置，UI 不猜拆段后的新 ID。撤销恢复两端并换 epoch。数学内部槽位
-选区、选区格式和结构命令、复制剪切另行接入。见 [ADR 0035](../adr/ADR-0035-typst-page-selection.md)。
+选区、选区格式和结构命令另行接入。复制/剪切只输出纯文本：段落以换行连接，范围含公式或
+原串时拒绝且不改正文。见 [ADR 0035](../adr/ADR-0035-typst-page-selection.md)。
+与其他行内内容相邻的空 Text 叶在 Typst 中不成 cluster、没有可绘范围；选框跳过它，
+语义范围仍包含它。视觉行导航见[报告 0058](../spikes/SPK-0058-typst-vertical-navigation.md)。
 
 一个打开项目对应一个串行 session actor，持有 authority mode、语义/源码共享文档 handles、history facade、
 format/index service、render/build scheduler 和 sync client。所有写命令串行化，长任务只持有不可变 snapshot，完成后按

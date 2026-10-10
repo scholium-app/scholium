@@ -9,6 +9,7 @@ impl CandidateSession {
         }
         let carets: Vec<_> = self.scene.as_ref().into_iter().flat_map(|s| &s.geometry.carets).map(|c| json!({
             "leaf": format!("{:?}", c.position.leaf), "byte": c.position.byte,
+            "affinity": format!("{:?}", c.position.affinity),
             "x": rect.left() + c.top[0] as f32 * scale,
             "y": rect.top() + (c.top[1] + c.bottom[1]) as f32 * 0.5 * scale, "exact": c.exact
         })).collect();
@@ -29,13 +30,14 @@ impl CandidateSession {
             "revision": self.snapshot.revision.0, "wanted": format!("{:?}", self.wanted),
             "shown": self.scene.as_ref().map(|s| format!("{:?}", s.stamp)),
             "cursor_leaf": format!("{:?}", self.cursor.leaf), "cursor_byte": self.cursor.byte,
+            "cursor_affinity": format!("{:?}", self.cursor.affinity),
             "saved": self.saved.as_ref() == Some(&self.snapshot),
             "snapshot": self.snapshot.as_ref(), "carets": carets, "page_text_draws": text_shapes,
             "source_reads": self.scene.as_ref().map(|s| s.stats.source_reads),
             "layout_error": self.layout_error,
             "selection": selection, "selection_quads": quads.as_ref().map(|q| q.len()).ok(),
             "selection_geometry_error": quads.err().map(|e| e.to_string()),
-            "body_leaves": body_leaves,
+            "body_leaves": body_leaves, "deferred": self.deferred.len(),
 
         })
         .to_string();

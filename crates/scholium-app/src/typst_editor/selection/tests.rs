@@ -311,6 +311,8 @@ fn math_shift_and_selection_format_commands_do_not_mutate_authority() {
     assert!(!f.candidate.selected());
     assert_eq!(f.candidate.snapshot, before);
     f.events(vec![text("$"), text("Z"), shift(egui::Key::Home)]);
+    // Visual line Home waits for the current Scene before extending.
+    f.settle();
     let before = f.candidate.snapshot.clone();
     f.candidate
         .command(Command::Style(TextStyle::Strong), &mut f.state);

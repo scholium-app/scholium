@@ -24,8 +24,10 @@ impl Fixture {
     }
     pub(super) fn settle(&mut self) {
         let end = std::time::Instant::now() + std::time::Duration::from_secs(30);
-        while !self.candidate.current() {
+        // Settled means the current Scene exists and no queued input still waits for it.
+        while !self.candidate.current() || !self.candidate.deferred.is_empty() {
             self.candidate.poll(&self.ctx);
+            self.candidate.drain(&mut self.state);
             assert!(
                 self.candidate.layout_error.is_none(),
                 "{:?}",
@@ -322,4 +324,29 @@ fn horizontal_arrows_cross_identified_body_and_math_leaves_without_wrapping() {
         (ids[0], 0)
     );
     assert_eq!(f.candidate.snapshot.revision, revision);
+}
+
+#[test]
+fn close_with_queued_input_asks_before_discarding_it() {
+    let mut f = Fixture::new();
+    f.events(vec![text("a")]);
+    f.settle();
+    f.candidate.save(&mut f.state);
+    // A fresh layout request leaves the saved content unchanged but the Scene pending.
+    f.candidate.publish(&mut f.state);
+    f.events(vec![key(egui::Key::ArrowUp, false), text("b")]);
+    assert!(!f.state.candidate.as_ref().expect("view").dirty);
+    assert!(!f.candidate.deferred.is_empty());
+    let mut input = egui::RawInput::default();
+    input
+        .viewports
+        .entry(egui::ViewportId::ROOT)
+        .or_default()
+        .events
+        .push(egui::ViewportEvent::Close);
+    let mut output = f.ctx.run_ui(input, |ui| {
+        f.candidate.controls(ui.ctx(), &mut f.state);
+    });
+    output.textures_delta.clear();
+    assert!(f.candidate.confirm_close);
 }
