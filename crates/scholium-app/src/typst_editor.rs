@@ -46,6 +46,7 @@ pub(crate) enum Command {
 pub(crate) struct CandidateView {
     pub revision: u64,
     pub dirty: bool,
+    pub selected: bool,
     pub can_undo: bool,
     pub can_redo: bool,
     pub commands: Vec<Command>,
@@ -277,6 +278,7 @@ impl CandidateSession {
         if let Some(view) = &mut state.candidate {
             view.revision = self.snapshot.revision.0;
             view.dirty = self.saved.as_ref() != Some(&self.snapshot);
+            view.selected = self.selected();
             view.can_undo = !self.undo.is_empty();
             view.can_redo = !self.redo.is_empty();
         }

@@ -11,6 +11,74 @@ pub(super) struct Drag {
 }
 
 impl CandidateSession {
+    pub(super) fn copy_selection(&self, state: &mut WorkspaceState) -> Option<String> {
+        match self.selection_text() {
+            Ok(text) => {
+                state.edit_error = None;
+                text
+            }
+            Err(message) => {
+                state.edit_error = Some(message.into());
+                None
+            }
+        }
+    }
+
+    pub(super) fn cut_selection(&mut self, state: &mut WorkspaceState) -> Option<String> {
+        let text = self.copy_selection(state)?;
+        if self.replace_range(String::new(), state) {
+            Some(text)
+        } else {
+            None
+        }
+    }
+
+    fn selection_text(&self) -> Result<Option<String>, &'static str> {
+        let Some((start, end)) = self.range().map_err(|_| "选区端点无效；未复制。")?
+        else {
+            return Ok(None);
+        };
+        let mut selected = Vec::new();
+        let mut active = false;
+        for block in &self.snapshot.blocks {
+            let mut block_part = String::new();
+            for inline in &block.content {
+                if inline.node == start.leaf {
+                    active = true;
+                }
+                if !active {
+                    continue;
+                }
+                match &inline.body {
+                    InlineBody::Text { text, .. } => {
+                        let from = if inline.node == start.leaf {
+                            start.byte
+                        } else {
+                            0
+                        };
+                        let to = if inline.node == end.leaf {
+                            end.byte
+                        } else {
+                            text.len()
+                        };
+                        block_part.push_str(text.get(from..to).ok_or("选区端点无效；未复制。")?);
+                    }
+                    InlineBody::Math { .. } | InlineBody::RawMath { .. } => {
+                        return Err("选区含公式或原串，纯文本剪贴板不能无损表示；未复制。");
+                    }
+                }
+                if inline.node == end.leaf {
+                    selected.push(block_part);
+                    return Ok(Some(selected.join("\n")));
+                }
+            }
+            if active {
+                selected.push(block_part);
+            }
+        }
+        Err("选区端点无效；未复制。")
+    }
+
     pub(super) fn range(&self) -> Result<Option<(BodyTextPosition, BodyTextPosition)>, EditError> {
         let Some(anchor) = self.anchor else {
             return Ok(None);
