@@ -32,7 +32,8 @@ cargo run -p scholium-app
 - 编辑面是 Typst Content（受控不分页流）：`$` / `Ctrl+M` 公式、`Ctrl+/` 分数、Tab 切换槽位，
   方向键/Home/End 按视觉行导航，`Ctrl+Z` / `Ctrl+Shift+Z` 撤销重做，`Ctrl+S` 保存到 XDG 数据目录的
   `scholium/document.v1.sqlite`；首次启动一次性迁移同目录旧版会话，原文件保留不再写入。
-- `Ctrl+1` / `Ctrl+2` 切换编辑面和只读结构视图；`Ctrl+B` / `Ctrl+J` 开关导航与诊断。
+- `Ctrl+1` / `Ctrl+2` 切换编辑面和源码工作区（只读生成 Typst + A4 快速预览，点击预览定位到块）；
+  `Ctrl+B` / `Ctrl+J` 开关导航与诊断。
 - 底部按钮调整页面缩放；`Ctrl+0` 恢复 100%，`Ctrl++` / `Ctrl+-` 放大和缩小。
 
 主题颜色集中在 `crates/scholium-app/src/theme.rs` 的 `Palette`，正文、源码和 egui 控件共享语义颜色。
@@ -69,7 +70,7 @@ Typst fork 来源校验与 stock 像素对照见 [vendor 说明](vendor/README.m
 纯文本复制剪切和单机撤销重做。所有输入先经本地结构会话接受，再异步交给 Typst 排版；
 已提交内容只由 Typst 绘制。Ctrl+S 将快照与请求日志保存到 SQLite，重启时恢复；文件无法打开时
 窗口只显示原因与恢复方式，不覆盖。新建或关闭窗口会确认是否丢弃未保存内容。
-**分页、生成源码工作区与最终预览、正文无障碍文本、可编辑源码和最终 PDF 尚未接入。**
+**编辑面分页、可编辑源码、原串公式转换和最终 PDF 构建尚未接入；源码工作区是只读生成视图与快速预览。**
 详见 [ADR 0036](docs/adr/ADR-0036-typst-default-editor.md)。
 
 ## 设计目标

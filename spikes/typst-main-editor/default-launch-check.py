@@ -50,7 +50,7 @@ def current(window):
     end = time.monotonic() + 60
     log = output / "default.log"
     while not any(l.startswith("AUDIT ") and json.loads(l[6:])["current"]
-                  for l in log.read_text().splitlines()):
+                  for l in log.read_text().split("\n")[:-1]):
         assert time.monotonic() < end, "first Typst scene timeout"
         time.sleep(0.1)
     time.sleep(0.12)
@@ -59,7 +59,7 @@ def current(window):
 run([], "default", current)
 assert target.exists(), "plain launch created the v1 document by migration"
 assert hashlib.sha256(legacy.read_bytes()).hexdigest() == before, "legacy file untouched"
-audits = [json.loads(l[6:]) for l in (output / "default.log").read_text().splitlines() if l.startswith("AUDIT ")]
+audits = [json.loads(l[6:]) for l in (output / "default.log").read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
 last = audits[-1]
 assert last["backend"] == "Typst Content main app" and last["current"]
 assert all(a["page_text_draws"] == 0 for a in audits)

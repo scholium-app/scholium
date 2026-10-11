@@ -26,7 +26,8 @@ pub(super) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut 
             if state.mode == ViewMode::Source {
                 session.drag = None;
                 session.placement = None;
-                source(ui, &session.snapshot);
+                session.show_source(ui);
+                session.audit_source();
                 return;
             }
             egui::ScrollArea::both()
@@ -99,15 +100,6 @@ fn header(ui: &mut egui::Ui, state: &WorkspaceState, session: &EditorSession) {
             "Content 新建 {} / 复用 {} · source reads {} · 布局+栅格 {} ms",
             scene.stats.built, scene.stats.reused, scene.stats.source_reads, scene.stats.elapsed_ms
         ));
-    }
-}
-
-fn source(ui: &mut egui::Ui, snapshot: &StructuredDocument) {
-    ui.label("结构快照 · 只读 · 不参与布局或输入接受");
-    if let Ok(json) = serde_json::to_string_pretty(snapshot) {
-        egui::ScrollArea::both().show(ui, |ui| {
-            ui.monospace(json);
-        });
     }
 }
 

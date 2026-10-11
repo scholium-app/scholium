@@ -1,0 +1,4 @@
+    Checking scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/crates/scholium-typst)
+    Checking render-latency v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/spikes/render-latency)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.24s
+exit 0

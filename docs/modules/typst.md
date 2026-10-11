@@ -49,20 +49,19 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
   内存与网络策略。
 - `locate(span) -> Option<NodeId | Derived>`；`diagnostics() -> Vec<Diagnostic>`。
 
-以下预览适配器面向旧 `DocumentSnapshot`，应用已不再调用；结构源码工作区/预览接入时移植或替换后删除
-（[ADR 0037](../adr/ADR-0037-remove-legacy-editor.md) 第 4 条）。
-本地受信块文档的预览适配器提供 `PreviewCompiler::submit_snapshot(&DocumentSnapshot)`、
-`request_page(document, revision, page)` 与 `poll() -> PreviewEvent`。`CompileOutcome` 包含
-文档 ID/revision、页数、耗时、错误/输入期提示、块首/末锚点与 `Vec<PageGeometry>`。
-`GlyphBox { block, input, rect, decoration }` 的 `input` 是块的规范标记文本 UTF-8 字节范围，
-`rect` 是页面 pt 的左/上/右/下坐标。编译器遍历实际 Frame 变换、glyph span/offset 和形状，
-通过生成源码区间关联稳定 NodeId；字符偏移不等于 Unicode 字符序号或 UTF-16。
-数学命名符号保留完整 token，装饰与空槽显式区分，未映射内容不猜测归属。
+`generate_source(&StructuredDocument, SourceMode)` 从结构文档派生 Typst 文本，不回读：
+正文按字面转义，粗体/强调为 `*…*`/`_…_`，一二级标题为 `=`/`==`；数学文字作字面量（单个字母/数字
+裸写，其余加引号），分数为 `(a)/(b)`，必填空槽显示为 `□` 并计入 `holes`（严格输出须拒绝）。
+`View` 模式给用户看，原串公式逐字显示；`Preview` 模式加预览 preamble 与 `blkstart{i}`/`blk{i}`
+块锚点，原串公式换成可见占位、**从不在进程内编译**，其 ID 计入 `raw`。`blocks` 给出每块的源码区间。
 
-当前页栅格结果单独交付；调用方须同时校验文档 ID、revision 和页码，再组合画面与几何。
-`submit(document, revision, source, block_count)` 仅供无编辑映射的源码夹具编译，返回空字形映射。
+`PreviewCompiler::submit(document, generation, source, block_count)` 编译预览模式源码，
+`request_page(document, generation, page, px_per_pt)` 按需栅格，`poll() -> PreviewEvent` 非阻塞。
+`generation` 是调用方单调递增的提交序号而非 revision（撤销会在新 epoch 回到旧 revision）；
+请求槽只保留最新一份。`CompileOutcome` 含页数、耗时、错误/Typst 警告与块锚点，
+`block_at_click(anchors, page, y_pt)` 把预览点击映射到块序号。旧 `DocumentSnapshot` 的投影、
+字形几何与输入期公式反馈随旧编辑器删除（[ADR 0037](../adr/ADR-0037-remove-legacy-editor.md)）。
 这一窄接口不是上面的正式 `compile(revision, inputs)` 沙箱构建接口。
-直接编辑边界见 [ADR 0029](../adr/ADR-0029-direct-page-editing.md)。
 
 ## 直接 Content 开发接口
 
@@ -130,14 +129,6 @@ worker 调用，不能在 core 中绕过取消、内存和网络策略。新增�
 当前 mixed-build spike 的 Typst 编译、内省和 PDF/SVG 导出已进入独立沙箱 worker，
 见[报告 0018](../spikes/SPK-0018-typst-worker-isolation.md)与[ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。
 每次新进程不保留增量缓存；临时 JSON 不是正式存储或网络协议。
-
-## 公式输入期反馈
-
-`submit_snapshot` 在严格编译失败且每条诊断均落在已知 Math 源范围内时，
-仅把这些公式在交互投影中渲染为原位置的琥珀色文字，返回当前 revision 的可编辑字形。
-`CompileOutcome.warning` 保留原始诊断，`error` 为空表示页面已生成，不表示公式通过最终检查。
-其它公式照常排版；语义快照与 `generate_typst` 不变。未知来源错误不猜测范围，仍报失败。
-`submit` 的严格源码编译不采用输入期替代；正式输出不能使用该交互页面冒充有效结果。
 
 `spawn_with_wake` 的回调在编译/页面事件入队后通知宿主重绘，不能阻塞工作线程。
 输入队列通过通道唤醒线程，无输入时阻塞等待；丢弃句柄关闭通道，不在 UI 线程 join。

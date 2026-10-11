@@ -25,7 +25,7 @@ results = {}
 
 
 def audits():
-    return [json.loads(l[6:]) for l in log_path.read_text().splitlines() if l.startswith("AUDIT ")]
+    return [json.loads(l[6:]) for l in log_path.read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
 
 
 def wait(predicate, what, timeout=30):

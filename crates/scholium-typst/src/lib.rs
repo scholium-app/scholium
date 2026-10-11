@@ -1,11 +1,10 @@
-//! In-process Typst preview for the local block document: source generation,
+//! In-process Typst preview for the structured document: source generation,
 //! a resident compile thread and rasterized pages. The compiled content is
 //! always this app's own in-memory document — untrusted project sources still
 //! require the OS-sandboxed entry (ADR 0012/0023) and are not handled here.
 
 use std::sync::Mutex;
 
-use scholium_model::DocumentSnapshot;
 use typst::foundations::Label;
 use typst::introspection::Introspector;
 use typst::syntax::{FileId, RootedPath, Source, VirtualPath, VirtualRoot};
@@ -16,13 +15,11 @@ use typst_kit::fonts::FontStore;
 use typst_layout::{PagedDocument, PagedIntrospector};
 
 mod compiler;
-mod edit_compile;
 #[cfg(feature = "editor")]
 pub mod editor;
-mod geometry;
-mod projection;
+mod structured_source;
 pub use compiler::{CompileOutcome, PageOutcome, PagePixels, PreviewCompiler, PreviewEvent};
-pub use geometry::{GlyphBox, PageGeometry};
+pub use structured_source::{GeneratedSource, SourceBlock, SourceMode, generate_source};
 
 /// Paper fonts for the preview: Latin serif plus the classic Chinese thesis
 /// pairing. Taken from system-installed fonts; typst-kit embedded fonts are
@@ -53,19 +50,6 @@ pub struct BlockAnchor {
     pub x: f32,
     /// Vertical position in pt from the page top.
     pub y: f32,
-}
-
-/// Generate the read-only Typst projection of a block document. The text of
-/// every block is escaped, so user punctuation never becomes Typst syntax.
-#[must_use]
-pub fn generate_typst(snapshot: &DocumentSnapshot) -> String {
-    projection::generate(snapshot, false).source
-}
-
-/// Generate the compile variant with invisible block and empty-slot markers.
-#[must_use]
-pub fn generate_typst_anchored(snapshot: &DocumentSnapshot) -> String {
-    projection::generate(snapshot, true).source
 }
 
 const PREAMBLE: &str = concat!(
@@ -162,7 +146,7 @@ impl typst::World for PreviewWorld {
     }
 }
 
-// Labels blk0..blk{count-1} come from `generate_typst_anchored`.
+// Labels blkstart{i}/blk{i} come from `generate_source` in preview mode.
 fn extract_anchors(document: &PagedDocument, block_count: usize) -> Vec<BlockAnchor> {
     let introspector = document.introspector();
     let mut anchors = Vec::new();

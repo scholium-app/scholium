@@ -4,6 +4,7 @@
 
 接受。取代 [ADR 0036](ADR-0036-typst-default-editor.md) 第 1 条中的开发 manifest 与第 2 条的
 `--legacy` 入口；ADR 0036 的依赖、默认文档与迁移决定继续有效。
+第 4 条暂留的旧模型预览栈已随结构源码工作区删除（[报告 0062](../spikes/SPK-0062-structured-source-view.md)）。
 
 ## 背景
 

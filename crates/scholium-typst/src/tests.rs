@@ -1,91 +1,163 @@
 use super::*;
-use scholium_model::{Block, BlockKind, DocumentId, Inline, NodeId, Revision};
+use scholium_model::{
+    BlockKind, DocumentId, NodeId, Revision,
+    structured::{
+        InlineBody, MathBody, MathNode, StructuredBlock, StructuredDocument, StructuredInline,
+        TextStyle,
+    },
+};
 
-fn snapshot(blocks: &[(BlockKind, &str)]) -> DocumentSnapshot {
-    DocumentSnapshot {
+fn inline(body: InlineBody) -> StructuredInline {
+    StructuredInline {
+        node: NodeId::fresh(),
+        body,
+    }
+}
+
+fn text(value: &str, style: TextStyle) -> StructuredInline {
+    inline(InlineBody::Text {
+        text: value.into(),
+        style,
+    })
+}
+
+fn plain(value: &str) -> StructuredInline {
+    text(value, TextStyle::Plain)
+}
+
+fn leaf(body: MathBody) -> MathNode {
+    MathNode {
+        node: NodeId::fresh(),
+        body,
+    }
+}
+
+fn math(root: MathNode) -> StructuredInline {
+    inline(InlineBody::Math { root })
+}
+
+fn doc(blocks: Vec<(BlockKind, Vec<StructuredInline>)>) -> StructuredDocument {
+    StructuredDocument {
         document: DocumentId::fresh(),
         revision: Revision(1),
         blocks: blocks
-            .iter()
-            .map(|(kind, text)| Block {
+            .into_iter()
+            .map(|(kind, content)| StructuredBlock {
                 node: NodeId::fresh(),
-                kind: *kind,
-                content: vec![Inline::Text((*text).to_owned())],
+                kind,
+                content,
             })
             .collect(),
     }
 }
 
-#[test]
-fn generation_maps_kinds_and_escapes_punctuation() {
-    let snap = snapshot(&[
-        (BlockKind::Heading1, "谱与振动"),
-        (BlockKind::Paragraph, "设 $x > 0$ 与 #tag*强调*不生效"),
-        (BlockKind::Heading2, "能量法"),
-    ]);
-    let source = generate_typst(&snap);
-    assert!(source.contains("= 谱与振动"), "heading1 uses level 1");
-    assert!(source.contains("== 能量法"), "heading2 uses level 2");
-    assert!(
-        source.contains(r"设 \$x \> 0\$ 与 \#tag\*强调\*不生效"),
-        "user punctuation stays literal: {source}"
-    );
-    assert!(source.contains(r#""Times New Roman", "SimSun""#));
-    assert!(source.contains(r#""Times New Roman", "SimHei""#));
+fn preview(doc: &StructuredDocument) -> String {
+    generate_source(doc, SourceMode::Preview).source
 }
 
 #[test]
-fn math_segments_render_as_formulas_not_literal_text() {
-    let snap = DocumentSnapshot {
-        document: DocumentId::fresh(),
-        revision: Revision(1),
-        blocks: vec![Block {
-            node: NodeId::fresh(),
-            kind: scholium_model::BlockKind::Paragraph,
-            content: vec![
-                Inline::Text("频率比 ".into()),
-                Inline::Math("alpha/2 + sqrt(T/rho)".into()),
-                Inline::Text(" 决定模态。".into()),
+fn view_source_maps_blocks_styles_and_escapes_markup() {
+    let d = doc(vec![
+        (BlockKind::Heading1, vec![plain("谱与振动")]),
+        (BlockKind::Heading2, vec![plain("1 = 模态")]),
+        (
+            BlockKind::Paragraph,
+            vec![
+                plain("a*b #x $y "),
+                text("粗", TextStyle::Strong),
+                text("强调_", TextStyle::Emphasis),
             ],
-        }],
-    };
-    let source = generate_typst(&snap);
-    assert!(
-        source.contains("频率比 $alpha/2 + sqrt(T/rho)$ 决定模态。"),
-        "math stays unescaped between $ delimiters: {source}"
+        ),
+    ]);
+    let generated = generate_source(&d, SourceMode::View);
+    assert_eq!(
+        generated.source,
+        "= 谱与振动\n\n== 1 \\= 模态\n\na\\*b \\#x \\$y #strong[粗]#emph[强调\\_]\n"
     );
-    let mut compiler = PreviewCompiler::spawn();
-    compiler.submit(snap.document, 1, source, snap.blocks.len());
-    let outcome = wait_for_compile(&mut compiler, snap.document, 1);
-    assert!(
-        outcome.error.is_none(),
-        "math must compile: {:?}",
-        outcome.error
+    assert_eq!(generated.blocks.len(), 3);
+    for (block, generated_block) in d.blocks.iter().zip(&generated.blocks) {
+        assert_eq!(block.node, generated_block.node);
+    }
+    assert_eq!(
+        &generated.source[generated.blocks[0].range.clone()],
+        "= 谱与振动"
     );
-    assert!(outcome.page_count > 0);
+    assert!(
+        !generated.source.contains("metadata"),
+        "the view has no anchors"
+    );
 }
 
 #[test]
-fn compiler_produces_pages_for_a_document() {
-    let snap = snapshot(&[
-        (BlockKind::Heading1, "谱与振动"),
-        (BlockKind::Paragraph, "设弦的长度为 L，张力为 T。"),
-        (BlockKind::Paragraph, "固定端点给出边界条件。"),
+fn math_text_is_literal_fractions_group_and_holes_are_counted() {
+    let fraction = leaf(MathBody::Fraction {
+        numerator: Box::new(leaf(MathBody::Text {
+            text: r#"ab, c""#.into(),
+        })),
+        denominator: Box::new(MathNode::hole()),
+    });
+    let row = leaf(MathBody::Row {
+        children: vec![
+            leaf(MathBody::Text { text: "x".into() }),
+            leaf(MathBody::Symbol { symbol: '+' }),
+            leaf(MathBody::Text { text: "12".into() }),
+            fraction,
+        ],
+    });
+    let generated = generate_source(
+        &doc(vec![(BlockKind::Paragraph, vec![math(row)])]),
+        SourceMode::View,
+    );
+    assert_eq!(generated.source, "$x \"+\" 12 (\"ab, c\\\"\")/(□)$\n");
+    assert_eq!(generated.holes, 1);
+}
+
+#[test]
+fn raw_formulas_are_shown_verbatim_but_never_compiled() {
+    let raw = inline(InlineBody::RawMath {
+        source: r#"#sys.inputs.at("x")"#.into(),
+    });
+    let id = raw.node;
+    let d = doc(vec![(BlockKind::Paragraph, vec![plain("前"), raw])]);
+    let view = generate_source(&d, SourceMode::View);
+    assert!(view.source.contains(r#"$#sys.inputs.at("x")$"#));
+    let compiled = generate_source(&d, SourceMode::Preview);
+    assert_eq!(compiled.raw, vec![id]);
+    assert!(
+        !compiled.source.contains("sys.inputs"),
+        "raw source never reaches Typst"
+    );
+    assert!(compiled.source.contains("原串公式未执行"));
+}
+
+#[test]
+fn compiler_produces_pages_for_a_structured_document() {
+    let d = doc(vec![
+        (BlockKind::Heading1, vec![plain("谱与振动")]),
+        (
+            BlockKind::Paragraph,
+            vec![plain("设弦的长度为 L，张力为 T。")],
+        ),
+        (
+            BlockKind::Paragraph,
+            vec![
+                plain("比值 "),
+                math(leaf(MathBody::Fraction {
+                    numerator: Box::new(leaf(MathBody::Text { text: "T".into() })),
+                    denominator: Box::new(MathNode::hole()),
+                })),
+            ],
+        ),
     ]);
     let mut compiler = PreviewCompiler::spawn();
-    compiler.submit(
-        snap.document,
-        1,
-        generate_typst_anchored(&snap),
-        snap.blocks.len(),
-    );
-    let outcome = wait_for_compile(&mut compiler, snap.document, 1);
-    assert_eq!(outcome.revision, 1);
+    compiler.submit(d.document, 1, preview(&d), d.blocks.len());
+    let outcome = wait_for_compile(&mut compiler, d.document, 1);
     let error = outcome.error.unwrap_or_default();
     assert!(error.is_empty(), "compile should succeed: {error}");
-    assert!(outcome.page_count > 0, "at least one compiled page");
-    compiler.request_page(snap.document, 1, 0, 2.0);
-    let page = wait_for_page(&mut compiler, snap.document, 1, 0).pixels;
+    assert!(outcome.page_count > 0);
+    assert_eq!(outcome.anchors.len(), 3);
+    compiler.request_page(d.document, 1, 0, 2.0);
+    let page = wait_for_page(&mut compiler, d.document, 1, 0).pixels;
     assert!(page.width > 0 && page.height > page.width, "A4 portrait");
     assert_eq!(
         page.rgba.len(),
@@ -94,26 +166,73 @@ fn compiler_produces_pages_for_a_document() {
 }
 
 #[test]
-fn latest_revision_wins_when_requests_overtake_each_other() {
-    let snap = snapshot(&[(BlockKind::Paragraph, "短文档")]);
+fn latest_generation_wins_when_requests_overtake_each_other() {
+    let d = doc(vec![(BlockKind::Paragraph, vec![plain("短文档")])]);
     let mut compiler = PreviewCompiler::spawn();
-    compiler.submit(
-        snap.document,
-        7,
-        generate_typst_anchored(&snap),
-        snap.blocks.len(),
-    );
-    compiler.submit(
-        snap.document,
-        9,
-        generate_typst_anchored(&snap),
-        snap.blocks.len(),
-    );
-    let outcome = wait_for_compile(&mut compiler, snap.document, 9);
+    compiler.submit(d.document, 7, preview(&d), d.blocks.len());
+    compiler.submit(d.document, 9, preview(&d), d.blocks.len());
+    let outcome = wait_for_compile(&mut compiler, d.document, 9);
     assert_eq!(
         outcome.revision, 9,
         "queued request is replaced, not queued up"
     );
+}
+
+#[test]
+fn anchors_locate_every_block_and_map_clicks() {
+    let d = doc(vec![
+        (BlockKind::Heading1, vec![plain("谱与振动")]),
+        (BlockKind::Paragraph, vec![plain("第一段正文。")]),
+        (BlockKind::Paragraph, vec![plain("第二段正文。")]),
+    ]);
+    let mut compiler = PreviewCompiler::spawn();
+    compiler.submit(d.document, 1, preview(&d), d.blocks.len());
+    let outcome = wait_for_compile(&mut compiler, d.document, 1);
+    assert!(outcome.error.is_none(), "{:?}", outcome.error);
+    assert_eq!(outcome.anchors.len(), 3, "one anchor per block");
+    assert!(
+        outcome
+            .anchors
+            .iter()
+            .all(|a| a.page == 1 && a.start_page == 1)
+    );
+    assert!(outcome.anchors[0].start_y < outcome.anchors[0].y);
+    assert!(outcome.anchors[0].y < outcome.anchors[1].y);
+    assert!(outcome.anchors[1].y < outcome.anchors[2].y);
+    let mid = (outcome.anchors[1].y + outcome.anchors[2].y) / 2.0;
+    assert_eq!(block_at_click(&outcome.anchors, 1, mid), Some(2));
+    assert_eq!(block_at_click(&outcome.anchors, 1, 0.0), Some(0));
+    assert_eq!(block_at_click(&outcome.anchors, 1, f32::MAX), Some(2));
+    assert_eq!(
+        block_at_click(&outcome.anchors, 9, 10.0),
+        None,
+        "unknown page"
+    );
+}
+
+#[test]
+fn preview_worker_wakes_the_host_for_compile_and_page_delivery() {
+    let (wake, events) = std::sync::mpsc::channel();
+    let mut compiler = PreviewCompiler::spawn_with_wake(move || {
+        let _ = wake.send(());
+    });
+    let mut d = doc(vec![(BlockKind::Paragraph, vec![plain("正文")])]);
+    for generation in 1..=3u64 {
+        d.blocks[0].content = vec![plain(&"正文".repeat(generation as usize))];
+        compiler.submit(d.document, generation, preview(&d), d.blocks.len());
+        events
+            .recv_timeout(std::time::Duration::from_secs(15))
+            .expect("compile notification");
+        let Some(PreviewEvent::Compiled(result)) = compiler.poll() else {
+            panic!("metadata is sent before the notification");
+        };
+        assert!(result.error.is_none(), "{:?}", result.error);
+        compiler.request_page(d.document, generation, 0, 2.0);
+        events
+            .recv_timeout(std::time::Duration::from_secs(15))
+            .expect("page notification");
+        assert!(matches!(compiler.poll(), Some(PreviewEvent::Page(_))));
+    }
 }
 
 // Compile includes a system font scan on first use; allow seconds, not ms.
@@ -152,40 +271,6 @@ fn wait_for_page(
         std::thread::sleep(std::time::Duration::from_millis(25));
     }
     panic!("no page outcome within 15s");
-}
-
-#[test]
-fn anchors_locate_every_block_and_map_clicks() {
-    let snap = snapshot(&[
-        (BlockKind::Heading1, "谱与振动"),
-        (BlockKind::Paragraph, "第一段正文。"),
-        (BlockKind::Paragraph, "第二段正文。"),
-    ]);
-    let mut compiler = PreviewCompiler::spawn();
-    compiler.submit(
-        snap.document,
-        1,
-        generate_typst_anchored(&snap),
-        snap.blocks.len(),
-    );
-    let outcome = wait_for_compile(&mut compiler, snap.document, 1);
-    assert!(outcome.error.is_none(), "{:?}", outcome.error);
-    assert_eq!(outcome.anchors.len(), 3, "one anchor per block");
-    assert!(outcome.anchors.iter().all(|a| a.page == 1));
-    assert!(outcome.anchors.iter().all(|a| a.start_page == 1));
-    assert!(outcome.anchors[0].start_y < outcome.anchors[0].y);
-    assert!(outcome.anchors[0].y < outcome.anchors[1].y);
-    assert!(outcome.anchors[1].y < outcome.anchors[2].y);
-    // An anchor follows its block: the next marker below the pointer owns it.
-    let mid = (outcome.anchors[1].y + outcome.anchors[2].y) / 2.0;
-    assert_eq!(block_at_click(&outcome.anchors, 1, mid), Some(2));
-    assert_eq!(block_at_click(&outcome.anchors, 1, 0.0), Some(0));
-    assert_eq!(block_at_click(&outcome.anchors, 1, f32::MAX), Some(2));
-    assert_eq!(
-        block_at_click(&outcome.anchors, 9, 10.0),
-        None,
-        "unknown page"
-    );
 }
 
 #[test]
@@ -256,143 +341,60 @@ fn exceeding_the_page_limit_reports_failure_instead_of_truncating() {
 }
 
 #[test]
-fn new_document_and_plain_typing_compile_with_editable_geometry() {
+fn clicks_in_the_last_line_of_a_multiline_block_stay_in_that_block() {
+    let d = doc(vec![
+        (
+            BlockKind::Paragraph,
+            vec![plain(&"第一段很长的正文。".repeat(20))],
+        ),
+        (BlockKind::Paragraph, vec![plain("第二段正文。")]),
+        (BlockKind::Paragraph, vec![plain("第三段正文。")]),
+    ]);
     let mut compiler = PreviewCompiler::spawn();
-    for content in [
-        vec![],
-        vec![Inline::Text("a".into())],
-        vec![Inline::Text("abc".into())],
-        vec![Inline::Text("你好".into())],
-    ] {
-        let mut snap = snapshot(&[(BlockKind::Paragraph, "")]);
-        snap.blocks[0].content = content;
-        compiler.submit_snapshot(&snap);
-        let outcome = wait_for_compile(&mut compiler, snap.document, snap.revision.0);
-        assert!(
-            outcome.error.is_none(),
-            "{:?}: {:?}\n{}",
-            snap.blocks[0].content,
-            outcome.error,
-            generate_typst_anchored(&snap)
-        );
-        assert!(!outcome.geometry[0].cells.is_empty());
-    }
-}
-
-#[test]
-fn incomplete_formula_input_remains_visible_and_editable_until_completed() {
-    let mut compiler = PreviewCompiler::spawn();
-    let mut snap = snapshot(&[(BlockKind::Paragraph, "")]);
-    for (revision, formula) in [
-        "a", "al", "alp", "alph", "alpha", "alpha/", "alpha/2", "sqrt(", "sqrt(x)", "hello",
-    ]
-    .iter()
-    .enumerate()
-    {
-        snap.revision = Revision(revision as u64);
-        snap.blocks[0].content = vec![Inline::Math((*formula).into())];
-        compiler.submit_snapshot(&snap);
-        let start = std::time::Instant::now();
-        let outcome = wait_for_compile(&mut compiler, snap.document, snap.revision.0);
-        eprintln!(
-            "formula={formula:?} compile={}ms result={:?} receive={}ms",
-            outcome.elapsed_ms,
-            outcome.error,
-            start.elapsed().as_millis()
-        );
-        assert!(outcome.error.is_none(), "{formula}: {:?}", outcome.error);
-        assert!(!outcome.geometry[0].cells.is_empty(), "{formula}");
-        let complete = matches!(*formula, "a" | "alpha" | "alpha/2" | "sqrt(x)");
-        assert_eq!(outcome.warning.is_none(), complete, "{formula}");
-        compiler.request_page(snap.document, snap.revision.0, 0, 2.0);
-        let raster_start = std::time::Instant::now();
-        wait_for_page(&mut compiler, snap.document, snap.revision.0, 0);
-        eprintln!("raster={}ms", raster_start.elapsed().as_millis());
-    }
-}
-
-#[test]
-fn formula_feedback_preserves_source_and_does_not_degrade_healthy_formulas() {
-    let mut compiler = PreviewCompiler::spawn();
-    let mut snap = snapshot(&[(BlockKind::Paragraph, "")]);
-    snap.blocks[0].content = vec![
-        Inline::Text("正文 ".into()),
-        Inline::Math("al".into()),
-        Inline::Text(" 后续 ".into()),
-        Inline::Math("beta/2".into()),
-        Inline::Math("sqrt(".into()),
-    ];
-    let source = generate_typst(&snap);
-    compiler.submit_snapshot(&snap);
-    let feedback = wait_for_compile(&mut compiler, snap.document, snap.revision.0);
-    assert!(feedback.error.is_none(), "{:?}", feedback.error);
-    let warning = feedback.warning.expect("draft diagnostics");
-    assert!(warning.contains("unknown variable: al"), "{warning}");
-    assert!(warning.contains("unclosed delimiter"), "{warning}");
-    let markup = snap.blocks[0].markup_text();
-    let cells = &feedback.geometry[0].cells;
-    assert!(
-        cells
-            .iter()
-            .any(|cell| markup.get(cell.input.clone()) == Some("beta")),
-        "healthy Greek glyph retains its complete token"
-    );
-    assert!(
-        cells
-            .iter()
-            .any(|cell| markup.get(cell.input.clone()) == Some("l")),
-        "unfinished formula exposes each typed character for editing"
-    );
+    compiler.submit(d.document, 1, preview(&d), d.blocks.len());
+    let outcome = wait_for_compile(&mut compiler, d.document, 1);
+    let a = &outcome.anchors;
+    // A non-final block's end tag sits at its bottom edge, which is the next block's start.
+    assert_eq!(a[0].y, a[1].start_y);
     assert_eq!(
-        generate_typst(&snap),
-        source,
-        "feedback never rewrites authority"
+        block_at_click(a, 1, a[0].y - 2.0),
+        Some(0),
+        "last line of block 0"
     );
-    compiler.submit(snap.document, 2, source, 1);
-    let strict = wait_for_compile(&mut compiler, snap.document, 2);
-    assert!(
-        strict.error.is_some(),
-        "strict source compilation cannot silently repair formulas"
+    assert_eq!(block_at_click(a, 1, a[1].start_y + 2.0), Some(1));
+    assert_eq!(
+        block_at_click(a, 1, a[2].y + 10.0),
+        Some(2),
+        "below the last block"
     );
-    assert!(strict.warning.is_none());
 }
 
 #[test]
-fn preview_worker_wakes_the_host_for_compile_and_page_delivery() {
-    let (wake, events) = std::sync::mpsc::channel();
-    let mut compiler = PreviewCompiler::spawn_with_wake(move || {
-        let _ = wake.send(());
-    });
-    let mut snap = snapshot(&[(BlockKind::Paragraph, "正文")]);
-    compiler.submit_snapshot(&snap);
-    events
-        .recv_timeout(std::time::Duration::from_secs(15))
-        .expect("cold font setup + compile");
-    let cold = compiler.poll().expect("metadata sent before notification");
-    assert!(matches!(
-        cold,
-        PreviewEvent::Compiled(CompileOutcome { error: None, .. })
-    ));
-    for (revision, formula) in ["al", "alpha/", "alpha/2"].iter().enumerate() {
-        snap.revision = Revision(revision as u64 + 2);
-        snap.blocks[0].content = vec![Inline::Math((*formula).into())];
-        let started = std::time::Instant::now();
-        compiler.submit_snapshot(&snap);
-        events
-            .recv_timeout(std::time::Duration::from_secs(15))
-            .expect("compile notification");
-        let Some(PreviewEvent::Compiled(result)) = compiler.poll() else {
-            panic!("compile event");
-        };
-        assert!(result.error.is_none());
-        compiler.request_page(snap.document, snap.revision.0, 0, 2.0);
-        events
-            .recv_timeout(std::time::Duration::from_secs(15))
-            .expect("page notification");
-        assert!(matches!(compiler.poll(), Some(PreviewEvent::Page(_))));
-        eprintln!(
-            "warm formula {formula:?}: submit through raster delivery = {}ms",
-            started.elapsed().as_millis()
-        );
-    }
+fn in_word_styles_parentheses_list_markers_and_unicode_newlines_stay_literal() {
+    let d = doc(vec![
+        (BlockKind::Heading1, vec![plain("1. 标题\u{2028}续")]),
+        (
+            BlockKind::Paragraph,
+            vec![
+                plain("foo"),
+                text("bar", TextStyle::Strong),
+                text("baz", TextStyle::Emphasis),
+                plain("(x)"),
+            ],
+        ),
+    ]);
+    let view = generate_source(&d, SourceMode::View).source;
+    assert_eq!(
+        view,
+        "= 1\\. 标题\\u{2028}续\n\nfoo#strong[bar]#emph[baz]\\(x\\)\n"
+    );
+    let mut compiler = PreviewCompiler::spawn();
+    compiler.submit(d.document, 1, preview(&d), d.blocks.len());
+    let outcome = wait_for_compile(&mut compiler, d.document, 1);
+    assert!(outcome.error.is_none(), "{:?}", outcome.error);
+    assert_eq!(
+        outcome.anchors.len(),
+        2,
+        "no extra structure from user text"
+    );
 }
