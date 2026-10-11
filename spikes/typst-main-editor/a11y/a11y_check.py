@@ -156,7 +156,8 @@ try:
            math.get_name() == "公式：分数（分子：12；分母：空）" and status.get_name() == "分数分母：空",
            math=math.get_name(), status=status.get_name(), status_role=status.get_role_name())
 
-    copy = find(app_root(), lambda n: n.get_name() == "复制" and n.get_role_name() == "button")
+    # at-spi2-core renamed "push button" to "button" (2.62 locally, older on CI runners).
+    copy = find(app_root(), lambda n: n.get_name() == "复制" and n.get_role_name() in ("button", "push button"))
     paste_button = find(app_root(), lambda n: n.get_name() == "粘贴")
     record("09-disabled-controls-are-not-enabled",
            copy is not None and not states(copy)["ENABLED"] and not states(copy)["SENSITIVE"]
