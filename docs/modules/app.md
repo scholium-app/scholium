@@ -190,6 +190,17 @@ Typst Content 编辑面取代并删除（[ADR 0037](../adr/ADR-0037-remove-legac
 [ADR 0030](../adr/ADR-0030-incomplete-formula-feedback.md)、[ADR 0031](../adr/ADR-0031-structural-cursor.md)，
 以及报告 0019–0021、0044、0046–0048。
 
-旧编辑面已验收而新编辑面尚未具备、须在其上重新实现与验收的能力：正文无障碍 Text/选区接口
-与数学播报、分页与纸张设置、生成源码工作区与快速预览定位、未完成公式的原位诊断、
-受信远端动作注入的阶段 0 窗口验证。不得以恢复旧代码代替这些验收。
+旧编辑面已验收而新编辑面尚未具备、须在其上重新实现与验收的能力：分页与纸张设置、
+生成源码工作区与快速预览定位、未完成公式的原位诊断、受信远端动作注入的阶段 0 窗口验证。
+不得以恢复旧代码代替这些验收。正文无障碍已在新编辑面重新实现，见下节。
+
+## 编辑面无障碍
+
+`typst_editor::access` 把编辑面发布为 AccessKit `MultilineTextInput`（“正文”），子节点为按当前 Scene
+精确 caret 分视觉行的 TextRun，段落末尾追加 `\n`；字符几何为屏幕逻辑像素，同簇字符共享停靠点。
+位置换算只在（TextRun、Unicode 标量序号）与（叶、UTF-8 字节）之间进行；没有正文 run 的位置
+（公式旁空叶、数学槽、纯公式段落）读作本段最近正文或段落占位 run，每段至少一个 run，光标不会消失。
+runs 以快照身份与 Scene 是否当前缓存，几何存 Frame pt，发布时才乘页面 placement，滚动不重建。pending 时发布权威文本而不带几何，不移除 TextRun。`SetTextSelection` 只按上一帧发布的 runs
+解码，正文已变、字素内部、输入排队或组合期间拒绝并提示。行内公式是 `Math` 兄弟节点，不进入正文文本；
+数学槽位上下文由稳定的 polite `Status` 节点按由外到内路径播报，空槽读“空”。禁用控件依赖根 workspace
+的 `accesskit_atspi_common` 补丁不报 Enabled/Sensitive。裁决见 [ADR 0038](../adr/ADR-0038-editor-accessibility.md)。

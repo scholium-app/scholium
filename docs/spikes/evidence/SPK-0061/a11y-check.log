@@ -1,0 +1,12 @@
+
+PASS 01-body-text-object
+PASS 02-typed-text-and-caret
+PASS 03-paragraph-breaks
+PASS 04-assistive-selection
+PASS 05-selection-replaced-once
+PASS 06-text-survives-pending-layout
+PASS 07-character-extents
+PASS 08-math-object-and-slot-status
+PASS 09-disabled-controls-are-not-enabled
+X connection to :99 broken (explicit kill or server shutdown).
+exit 0

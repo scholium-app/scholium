@@ -30,7 +30,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.96.0
       - name: Install native build and window dependencies
         timeout-minutes: 6
-        run: bash scripts/install-ci-native-deps.sh libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libegl1-mesa-dev xvfb xdotool xclip imagemagick fonts-noto-cjk
+        run: bash scripts/install-ci-native-deps.sh libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libegl1-mesa-dev xvfb xdotool xclip imagemagick fonts-noto-cjk at-spi2-core dbus python3-gi gir1.2-atspi-2.0
       - name: Check native X11 runtime libraries
         run: python3 -c 'import ctypes; ctypes.CDLL("libxkbcommon-x11.so.0"); ctypes.CDLL("libX11.so.6")'
       - name: Rebuild the pinned fork from upstream objects
@@ -45,6 +45,9 @@ jobs:
           cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir target/stock-reference -- /tmp/typst-stock-pixels
           python3 spikes/typst-main-editor/compare.py /tmp/typst-fork-pixels /tmp/typst-stock-pixels > /tmp/typst-stock-comparison.json
       - run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/native-check.py target/debug/scholium-app /tmp/scholium-native-evidence
+      - name: AT-SPI reads, selects and announces the editor body in an isolated session
+        timeout-minutes: 5
+        run: xvfb-run -a -s '-screen 0 1280x900x24' dbus-run-session -- bash spikes/typst-main-editor/a11y/run.sh target/debug/scholium-app /tmp/scholium-a11y
       - name: Plain launch migrates a legacy session into the Typst editor
         run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/default-launch-check.py target/debug/scholium-app target/debug/hammer /tmp/scholium-default-launch
       - uses: actions/upload-artifact@v4
@@ -54,5 +57,6 @@ jobs:
           path: |
             /tmp/scholium-native-evidence
             /tmp/scholium-default-launch
+            /tmp/scholium-a11y
             /tmp/typst-fork-source.json
             /tmp/typst-stock-comparison.json

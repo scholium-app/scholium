@@ -1,0 +1,10 @@
+# AT-SPI tree of main ca846ba (before this batch), captured with the isolated harness probe
+# (dbus-run-session + private a11y bus + at-spi2-registryd; probe depth 8). Excerpt: page body only.
+application 'scholium-app'
+  frame ''
+    ... Ribbon and chrome controls (named buttons/labels) ...
+    label 'Typst Content · 正文 r0 · 画面 — · 排版待更新，页面命中暂停'
+    label '受控单页流 · $ / Ctrl+M 公式 · Ctrl+/ 分数 · Tab 槽位'
+    unknown ''            <- the editor page: no name, no role, no Text interface
+    scroll bar ''
+# Disabled '复制' (no selection) was reported ENABLED + SENSITIVE.

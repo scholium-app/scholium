@@ -23,3 +23,12 @@ python3 spikes/typst-main-editor/compare.py /tmp/fork-pixels /tmp/stock-pixels
 ```
 
 该 vendor 不批准绕过依赖安全通告：通告照常失败报告，不加 ignore。
+
+## accesskit_atspi_common
+
+`accesskit_atspi_common/` 是 crates.io 0.18.1 发布包（上游 `AccessKit/accesskit@f40dfc01a0c0e76de535969f82fb35e19513737d`，
+发布包 SHA-256 `1e8c61bee90b42a772d39d06a740207dc71a4e780004ace1db8d99fb1baaa954`），MIT OR Apache-2.0，保留
+LICENSE.chromium。唯一源码差异在 `src/node.rs` 的一处条件：禁用节点不再发布 Enabled/Sensitive，只读未禁用节点同时发布
+ReadOnly 与 Enabled/Sensitive
+（[ADR 0038](../docs/adr/ADR-0038-editor-accessibility.md)，源自 ADR 0021 的阶段 0 补丁）。升级时与新发布包逐文件比较，
+只允许这一处差异，并重跑 `spikes/typst-main-editor/a11y/run.sh` 的禁用控件检查。

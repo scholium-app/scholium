@@ -86,3 +86,5 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0036](ADR-0036-typst-default-editor.md)：Typst Content 编辑器成为默认启动路径，根构建统一使用跟踪的 Typst fork，旧版文档一次性迁移。
 
 [ADR 0037](ADR-0037-remove-legacy-editor.md)：删除旧页面编辑器与 egui 回显，开发构建合并进根 workspace。
+
+[ADR 0038](ADR-0038-editor-accessibility.md)：Typst 编辑面的正文 AccessKit Text/选区、数学对象与槽位播报；主程序采用禁用状态 AT-SPI 补丁。

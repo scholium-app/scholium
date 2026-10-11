@@ -153,6 +153,7 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
             }
         }
     }
+    session.accessibility(ui, response.has_focus(), state);
     // All accepted intents have reached LocalSession and the worker before this pass.
     let text_shapes = body(ui, rect, scale, session, state);
     session.audit(rect, scale, text_shapes);
