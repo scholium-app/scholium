@@ -23,6 +23,7 @@
 普通启动改用 Typst Content 编辑器（无 egui 回显）并迁移旧版文档见[报告 0059](SPK-0059-typst-default-editor.md)；
 旧页面编辑器删除与开发构建合并见[报告 0060](SPK-0060-remove-legacy-editor.md)；
 编辑面正文无障碍（AT-SPI Text/选区、数学对象、禁用状态补丁）见[报告 0061](SPK-0061-editor-accessibility.md)；
+结构源码工作区与 A4 快速预览（旧预览栈删除）见[报告 0062](SPK-0062-structured-source-view.md)；
 完整 C、结构化剪贴板、分页、实机输入法/无障碍和安全门禁仍未关闭。
 
 - 报告按 `SPK-NNNN-short-title.md` 命名，模板见 [SPK-0000-template.md](SPK-0000-template.md)；

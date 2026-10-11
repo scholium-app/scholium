@@ -1,0 +1,42 @@
+{
+  "01-document-edited": {
+    "pass": true,
+    "texts": [
+      "第一段 alpha",
+      "第二段 beta",
+      "第三段 gamma ",
+      ""
+    ]
+  },
+  "02-source-and-preview": {
+    "pass": true,
+    "preview": {
+      "generation": 1,
+      "pages": 1,
+      "error": null
+    }
+  },
+  "03-click-locates-block": {
+    "pass": true,
+    "cursor": [
+      "NodeId(dbb31b6d-9c00-4913-bfbf-cafb2ba1b2a2)",
+      0
+    ]
+  },
+  "04-typing-after-return": {
+    "pass": true,
+    "texts": [
+      "第一段 alpha",
+      "X第二段 beta",
+      "第三段 gamma ",
+      ""
+    ]
+  },
+  "05-preview-follows-edits": {
+    "pass": true,
+    "generation": [
+      1,
+      2
+    ]
+  }
+}

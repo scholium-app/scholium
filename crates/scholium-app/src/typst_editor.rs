@@ -6,6 +6,7 @@ mod input;
 mod paint;
 pub(crate) mod ribbon;
 mod selection;
+mod source_view;
 mod startup;
 pub(crate) use startup::show_error as show_startup_error;
 #[cfg(test)]
@@ -80,6 +81,7 @@ pub(crate) struct EditorSession {
     drag: Option<selection::Drag>,
     goal: Option<vertical::Goal>,
     published: Option<access::Published>,
+    source_view: source_view::SourceView,
     deferred: VecDeque<egui::Event>,
     placement: Option<(egui::Rect, f32)>,
     undo: Vec<HistoryEntry>,
@@ -151,6 +153,7 @@ impl EditorSession {
             drag: None,
             goal: None,
             published: None,
+            source_view: Default::default(),
             deferred: VecDeque::new(),
             placement: None,
             scene: None,

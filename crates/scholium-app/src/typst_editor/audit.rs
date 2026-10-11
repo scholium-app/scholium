@@ -4,6 +4,21 @@ use serde_json::json;
 
 impl EditorSession {
     pub(super) fn audit(&mut self, rect: egui::Rect, scale: f32, text_shapes: usize) {
+        self.audit_with(Some((rect, scale)), text_shapes, false);
+    }
+
+    /// Source-workspace frames also report, so window checks can follow the preview.
+    pub(super) fn audit_source(&mut self) {
+        self.audit_with(None, 0, true);
+    }
+
+    fn audit_with(
+        &mut self,
+        placement: Option<(egui::Rect, f32)>,
+        text_shapes: usize,
+        source_mode: bool,
+    ) {
+        let (rect, scale) = placement.unwrap_or((egui::Rect::ZERO, 1.0));
         if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_none() {
             return;
         }
@@ -38,6 +53,7 @@ impl EditorSession {
             "selection": selection, "selection_quads": quads.as_ref().map(|q| q.len()).ok(),
             "selection_geometry_error": quads.err().map(|e| e.to_string()),
             "body_leaves": body_leaves, "deferred": self.deferred.len(),
+            "source_mode": source_mode, "preview": self.source_view.audit(),
 
         })
         .to_string();

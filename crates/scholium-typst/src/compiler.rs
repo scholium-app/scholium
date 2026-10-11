@@ -3,8 +3,7 @@
 use std::sync::{Arc, Mutex, mpsc};
 use std::time::Instant;
 
-use crate::{PageGeometry, projection::Projection};
-use scholium_model::{DocumentId, DocumentSnapshot};
+use scholium_model::DocumentId;
 use typst_layout::PagedDocument;
 
 use super::{BlockAnchor, MAX_PREVIEW_PAGES, PreviewWorld, extract_anchors};
@@ -25,7 +24,7 @@ pub struct PagePixels {
 pub struct CompileOutcome {
     /// Source document identity.
     pub document: DocumentId,
-    /// Source document revision.
+    /// Caller generation this result belongs to (monotonic per document, not a revision).
     pub revision: u64,
     /// Total page count, including pages beyond the visible page.
     pub page_count: usize,
@@ -33,12 +32,10 @@ pub struct CompileOutcome {
     pub elapsed_ms: u64,
     /// Compile error or explicit preview limit error.
     pub error: Option<String>,
-    /// Incomplete formulas shown as editable on-page text, with original diagnostics.
+    /// Typst warnings of a successful compile.
     pub warning: Option<String>,
     /// Per-block anchors extracted from the compiled document.
     pub anchors: Vec<BlockAnchor>,
-    /// Per-page glyph geometry for direct editing; never reuse across revisions.
-    pub geometry: Vec<PageGeometry>,
 }
 
 /// Completed rasterization of one zero-based page.
@@ -91,9 +88,8 @@ struct Queue {
 struct CompileRequest {
     document: DocumentId,
     revision: u64,
-    projection: Projection,
+    source: String,
     block_count: usize,
-    snapshot: Option<DocumentSnapshot>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -138,33 +134,16 @@ impl PreviewCompiler {
         }
     }
 
-    /// Replace any unconsumed compile request with this document revision.
+    /// Replace any unconsumed compile request. `revision` is the caller's monotonic
+    /// generation; `source` must carry `blkstart{i}`/`blk{i}` anchors for `block_count`
+    /// blocks (see [`crate::generate_source`] in preview mode).
     pub fn submit(&self, document: DocumentId, revision: u64, source: String, block_count: usize) {
         if let Ok(mut slot) = self.pending.lock() {
             slot.compile = Some(CompileRequest {
                 document,
                 revision,
-                projection: Projection {
-                    source,
-                    ..Default::default()
-                },
+                source,
                 block_count,
-                snapshot: None,
-            });
-            slot.page = None;
-        }
-        let _ = self.wake.try_send(());
-    }
-
-    /// Compile a semantic snapshot together with its editable glyph source map.
-    pub fn submit_snapshot(&self, snapshot: &DocumentSnapshot) {
-        if let Ok(mut slot) = self.pending.lock() {
-            slot.compile = Some(CompileRequest {
-                document: snapshot.document,
-                revision: snapshot.revision.0,
-                projection: crate::projection::generate(snapshot, true),
-                block_count: snapshot.blocks.len(),
-                snapshot: Some(snapshot.clone()),
             });
             slot.page = None;
         }
@@ -289,36 +268,30 @@ fn compile(
     request: CompileRequest,
 ) -> (CompileOutcome, Option<(DocumentId, u64, PagedDocument)>) {
     let start = Instant::now();
-    let result = crate::edit_compile::compile(world, request.projection, request.snapshot.as_ref());
-    let (page_count, anchors, geometry, warning, error, document) = match result {
-        Ok((document, projection, warning)) if document.pages().len() <= MAX_PREVIEW_PAGES => {
+    world.set_source(request.source);
+    let compiled = typst::compile::<PagedDocument>(world);
+    let messages = |diagnostics: &[typst::diag::SourceDiagnostic]| {
+        (!diagnostics.is_empty()).then(|| {
+            diagnostics
+                .iter()
+                .map(|d| d.message.to_string())
+                .collect::<Vec<_>>()
+                .join("\n")
+        })
+    };
+    let warning = messages(&compiled.warnings);
+    let (page_count, anchors, error, document) = match compiled.output {
+        Ok(document) if document.pages().len() <= MAX_PREVIEW_PAGES => {
             let anchors = extract_anchors(&document, request.block_count);
-            let geometry = crate::geometry::extract(&document, world, &projection);
-            let count = document.pages().len();
-            (count, anchors, geometry, warning, None, Some(document))
+            (document.pages().len(), anchors, None, Some(document))
         }
-        Ok((document, _, _)) => (
+        Ok(document) => (
             document.pages().len(),
             Vec::new(),
-            Vec::new(),
-            None,
             Some(format!("预览最多支持 {MAX_PREVIEW_PAGES} 页")),
             None,
         ),
-        Err(diagnostics) => (
-            0,
-            Vec::new(),
-            Vec::new(),
-            None,
-            Some(
-                diagnostics
-                    .iter()
-                    .map(|d| d.message.to_string())
-                    .collect::<Vec<_>>()
-                    .join("\n"),
-            ),
-            None,
-        ),
+        Err(diagnostics) => (0, Vec::new(), messages(&diagnostics), None),
     };
     let outcome = CompileOutcome {
         document: request.document,
@@ -328,7 +301,6 @@ fn compile(
         error,
         warning,
         anchors,
-        geometry,
     };
     let compiled = document.map(|doc| (request.document, request.revision, doc));
     (outcome, compiled)

@@ -76,13 +76,23 @@ fn snapshot(blocks: usize, revision: u64) -> scholium_model::DocumentSnapshot {
     }
 }
 
+/// Submit a legacy fixture through the structured preview projection (ADR 0037).
+fn submit(compiler: &PreviewCompiler, doc: &scholium_model::DocumentSnapshot) {
+    let structured = scholium_model::structured::StructuredDocument::migrate(doc)
+        .expect("spike 夹具可迁移")
+        .document;
+    let generated =
+        scholium_typst::generate_source(&structured, scholium_typst::SourceMode::Preview);
+    compiler.submit(doc.document, doc.revision.0, generated.source, generated.blocks.len());
+}
+
 fn measure(blocks: usize) {
     println!("=== {blocks} 段 ===");
     let mut compiler = PreviewCompiler::spawn();
     let mut doc = snapshot(blocks, 1);
 
     // 冷启动：首次编译包含系统字体扫描，单列不计入热态分布。
-    compiler.submit_snapshot(&doc);
+    submit(&compiler, &doc);
     let cold = wait_compile(&mut compiler, &doc);
     println!("  冷启动首编（含字体扫描）：{:>8.1} ms", cold.elapsed_ms);
     raster_baseline(&doc);
@@ -96,20 +106,13 @@ fn measure(blocks: usize) {
         text.push('字');
         doc.blocks.last_mut().expect("non-empty").content = parse_line(&text);
 
-        compiler.submit_snapshot(&doc);
+        submit(&compiler, &doc);
         let outcome = wait_compile(&mut compiler, &doc);
         compile_ms.push(outcome.elapsed_ms as f64);
         raster_ms.push(raster_once(&doc));
         if i + 1 == WARM_SAMPLES {
-            println!(
-                "  geometry cells: {} 页 · {:>6} cells",
-                outcome.geometry.len(),
-                outcome
-                    .geometry
-                    .iter()
-                    .map(|g| g.cells.len())
-                    .sum::<usize>()
-            );
+            // Glyph hit geometry left with the legacy page editor (ADR 0037).
+            println!("  页数：{}", outcome.page_count);
         }
     }
     report("热态编译段", &compile_ms);
@@ -176,7 +179,13 @@ fn raster_baseline(doc: &scholium_model::DocumentSnapshot) {
 /// 整页光栅化耗时（毫秒）：在调用线程上编译并光栅化第 0 页。
 /// 编译段已由 PreviewCompiler 自报，此处单独计时光栅调用本身。
 fn raster_document(doc: &scholium_model::DocumentSnapshot) -> f64 {
-    let source = scholium_typst::generate_typst(doc);
+    // The legacy generator was removed with the old editor (ADR 0037); migrate the
+    // fixture and use the structured preview projection instead.
+    let structured = scholium_model::structured::StructuredDocument::migrate(doc)
+        .expect("spike 夹具可迁移")
+        .document;
+    let source =
+        scholium_typst::generate_source(&structured, scholium_typst::SourceMode::Preview).source;
     let world = preview_world(&source);
     let document = typst::compile::<typst_layout::PagedDocument>(&world)
         .output
