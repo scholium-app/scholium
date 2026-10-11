@@ -25,7 +25,7 @@ results = {}
 
 
 def state():
-    lines = [l for l in log_path.read_text().splitlines() if l.startswith("AUDIT ")]
+    lines = [l for l in log_path.read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
     return json.loads(lines[-1][6:]) if lines else None
 
 

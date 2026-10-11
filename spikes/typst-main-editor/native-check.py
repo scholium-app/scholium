@@ -23,7 +23,8 @@ window = None
 
 
 def entries(prefix="AUDIT "):
-    return [json.loads(line[len(prefix):]) for line in log_path.read_text().splitlines()
+    # The app may be mid-write; only newline-terminated lines are complete audits.
+    return [json.loads(line[len(prefix):]) for line in log_path.read_text().split("\n")[:-1]
             if line.startswith(prefix)]
 
 
