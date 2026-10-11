@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-exclude = ["vendor/typst-edit"]
+exclude = ["vendor/typst-edit", "vendor/accesskit_atspi_common"]
 members = ["crates/scholium-app", "crates/scholium-model", "crates/scholium-document", "crates/scholium-typst", "crates/scholium-storage"]
 
 [workspace.package]
@@ -28,6 +28,8 @@ typst-svg = { path = "vendor/typst-edit/crates/typst-svg" }
 typst-syntax = { path = "vendor/typst-edit/crates/typst-syntax" }
 typst-timing = { path = "vendor/typst-edit/crates/typst-timing" }
 typst-utils = { path = "vendor/typst-edit/crates/typst-utils" }
+# Disabled controls must not be reported Enabled/Sensitive to AT-SPI (ADR 0038, from ADR 0021).
+accesskit_atspi_common = { path = "vendor/accesskit_atspi_common" }
 
 [profile.dev]
 debug = 0

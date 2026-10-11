@@ -1,0 +1,83 @@
+{
+  "01-body-text-object": {
+    "pass": true,
+    "role": "entry",
+    "states": {
+      "ENABLED": true,
+      "SENSITIVE": true,
+      "FOCUSED": true,
+      "EDITABLE": true,
+      "MULTI_LINE": true
+    },
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ]
+  },
+  "02-typed-text-and-caret": {
+    "pass": true,
+    "text": "Hello 中文 👩‍🔬",
+    "caret": 12
+  },
+  "03-paragraph-breaks": {
+    "pass": true,
+    "text": "Hello 中文 👩‍🔬\nsecond line\n\nfourth"
+  },
+  "04-assistive-selection": {
+    "pass": true,
+    "selection": {
+      "end_byte": 5,
+      "end_leaf": "NodeId(42778f0f-1354-4030-9cb5-82904206f730)",
+      "start_byte": 0,
+      "start_leaf": "NodeId(42778f0f-1354-4030-9cb5-82904206f730)"
+    },
+    "read_back": [
+      0,
+      5
+    ]
+  },
+  "05-selection-replaced-once": {
+    "pass": true,
+    "text": "Q 中文 👩‍🔬\nsecond line\n\nfourth"
+  },
+  "06-text-survives-pending-layout": {
+    "pass": true,
+    "samples": 91,
+    "failures": 0,
+    "pending_frames": 34
+  },
+  "07-character-extents": {
+    "pass": true,
+    "extents": [
+      20,
+      261,
+      17,
+      16
+    ]
+  },
+  "08-math-object-and-slot-status": {
+    "pass": true,
+    "math": "公式：分数（分子：12；分母：空）",
+    "status": "分数分母：空",
+    "status_role": "status bar"
+  },
+  "09-disabled-controls-are-not-enabled": {
+    "pass": true,
+    "copy": {
+      "ENABLED": false,
+      "SENSITIVE": false,
+      "FOCUSED": false,
+      "EDITABLE": false,
+      "MULTI_LINE": false
+    },
+    "paste": {
+      "ENABLED": true,
+      "SENSITIVE": true,
+      "FOCUSED": false,
+      "EDITABLE": false,
+      "MULTI_LINE": false
+    }
+  }
+}

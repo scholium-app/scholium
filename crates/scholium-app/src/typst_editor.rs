@@ -1,4 +1,5 @@
 //! The Typst Content editor: one LocalSession authority, derived Typst scenes.
+mod access;
 mod audit;
 mod deferred;
 mod input;
@@ -78,6 +79,7 @@ pub(crate) struct EditorSession {
     anchor: Option<Position>,
     drag: Option<selection::Drag>,
     goal: Option<vertical::Goal>,
+    published: Option<access::Published>,
     deferred: VecDeque<egui::Event>,
     placement: Option<(egui::Rect, f32)>,
     undo: Vec<HistoryEntry>,
@@ -148,6 +150,7 @@ impl EditorSession {
             anchor: None,
             drag: None,
             goal: None,
+            published: None,
             deferred: VecDeque::new(),
             placement: None,
             scene: None,
