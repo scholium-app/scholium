@@ -23,10 +23,14 @@ use eframe::egui;
 use scholium_document::{BodyTextPosition, LocalSession, StructuralEdit, StructuralRequest};
 use scholium_model::{RequestId, layout_identity::*, structured::*};
 use scholium_storage::SessionStore;
-use scholium_typst::editor::{Affinity, EditorScene, EditorWorker, Position, RasterSpec};
+use scholium_typst::editor::{
+    Affinity, EditorScene, EditorWorker, Position, RasterSpec, ViewRange,
+};
 use std::{collections::VecDeque, path::PathBuf, sync::Arc};
 
 const HISTORY_LIMIT: usize = 512;
+/// Visible page range assumed until the page has been placed once, in pt.
+const INITIAL_VIEW_PT: f64 = 800.0;
 
 #[derive(Debug, thiserror::Error)]
 pub(crate) enum SessionError {
@@ -90,7 +94,10 @@ pub(crate) struct EditorSession {
     worker: EditorWorker,
     wanted: SceneStamp,
     scene: Option<EditorScene>,
-    texture: Option<raster::Textures>,
+    texture: Option<raster::Layers>,
+    /// Visible part of the page in pt, and what the worker was last told.
+    view: ViewRange,
+    sent: Option<(std::time::Instant, ViewRange)>,
     /// Raster resolution wanted for 1:1 display; layouts are submitted with it.
     spec: RasterSpec,
     settle: raster::Settle,
@@ -172,14 +179,17 @@ impl EditorSession {
         let wake = ctx.clone();
         let worker = EditorWorker::spawn(move || wake.request_repaint())?;
         let wanted = session.scene_stamp(ProfileGeneration(0), ResourceGeneration(0));
-        // Display scale is unknown until the first page is placed; this guess is corrected
-        // by the first re-raster.
+        // A guess until the first page is placed; the first re-raster corrects it.
         let spec = RasterSpec {
             px_per_pt: raster::forced_px_per_pt()
                 .unwrap_or(f64::from(ctx.pixels_per_point()) * 96.0 / 72.0),
             max_side: ctx.input(|i| i.max_texture_side) as u32,
         };
-        worker.submit(snapshot.clone(), wanted, spec);
+        let view = ViewRange {
+            top_pt: 0.0,
+            bottom_pt: INITIAL_VIEW_PT,
+        };
+        worker.submit(snapshot.clone(), wanted, spec, view);
         let result = Self {
             session,
             snapshot,
@@ -199,6 +209,8 @@ impl EditorSession {
             scene: None,
             texture: None,
             spec,
+            view,
+            sent: Some((std::time::Instant::now(), view)),
             settle: raster::Settle::default(),
             pixels_per_point: 1.0,
             undo: Vec::new(),
@@ -302,7 +314,8 @@ impl EditorSession {
             .session
             .scene_stamp(ProfileGeneration(0), ResourceGeneration(0));
         self.worker
-            .submit(self.snapshot.clone(), self.wanted, self.spec);
+            .submit(self.snapshot.clone(), self.wanted, self.spec, self.view);
+        self.sent = Some((std::time::Instant::now(), self.view));
         self.layout_error = None;
         state.edit_error = None;
         self.metadata(state);
@@ -312,8 +325,8 @@ impl EditorSession {
         if let Some((stamp, outcome)) = self.worker.poll() {
             self.adopt(ctx, stamp, outcome);
         }
-        if let Some((stamp, raster)) = self.worker.poll_raster() {
-            self.adopt_raster(ctx, stamp, raster);
+        for update in self.worker.poll_strips() {
+            self.adopt_strip(ctx, update);
         }
     }
 
@@ -329,7 +342,7 @@ impl EditorSession {
         match outcome {
             Ok(mut scene) => {
                 self.settle.arrived();
-                self.texture = Some(raster::Textures::upload(ctx, &mut scene.raster));
+                self.texture = Some(raster::Layers::from_scene(ctx, &mut scene));
                 self.scene = Some(scene);
             }
             Err(error) => self.layout_error = Some(error.to_string()),

@@ -98,16 +98,22 @@ pub(crate) fn text(value: &str) -> Content {
 }
 
 pub(crate) fn page(frame: &Frame) -> typst_layout::Page {
-    use typst::foundations::Smart;
-    use typst::layout::{Point, Sides};
+    use typst::layout::Point;
     let margin = Point::new(
         Abs::pt(crate::style::margin_x_pt()),
         Abs::pt(crate::style::margin_y_pt()),
     );
     let mut padded = Frame::soft(frame.size() + Size::new(margin.x * 2.0, margin.y * 2.0));
     padded.push_frame(margin, frame.clone());
+    sheet(padded)
+}
+
+/// A white, unnumbered page around an already padded frame.
+pub(crate) fn sheet(frame: Frame) -> typst_layout::Page {
+    use typst::foundations::Smart;
+    use typst::layout::Sides;
     typst_layout::Page {
-        frame: padded,
+        frame,
         bleed: Sides::default(),
         fill: Smart::Auto,
         numbering: None,

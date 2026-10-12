@@ -258,58 +258,100 @@ fn wait_for<T>(mut poll: impl FnMut() -> Option<T>) -> T {
 }
 
 #[test]
-fn rerender_changes_resolution_of_the_laid_out_page_without_a_new_layout() {
-    use super::{EditorWorker, RasterSpec};
+fn scene_carries_a_cheap_base_and_only_the_visible_sharp_strips() {
+    use super::{EditorWorker, RasterSpec, ViewRange, strip_count, strip_window};
+    let spec = RasterSpec {
+        px_per_pt: 3.0,
+        max_side: 16384,
+    };
+    let view = ViewRange {
+        top_pt: 0.0,
+        bottom_pt: 300.0,
+    };
+    let worker = EditorWorker::spawn(|| {}).expect("worker");
+    let doc = std::sync::Arc::new(paragraph_doc(1500));
+    let stamp = stamp_of(&doc);
+    worker.submit(doc, stamp, spec, view);
+    let (_, scene) = wait_for(|| worker.poll());
+    let scene = scene.expect("scene");
+    assert!(scene.base.px_per_pt <= 1.0);
+    let base_rows: u32 = scene.base.strips.iter().map(|s| s.height).sum();
+    assert_eq!(base_rows, scene.base.height, "base tiles the whole page");
+    assert_eq!(scene.sharp.px_per_pt, 3.0);
+    let window = strip_window(view, 3.0, scene.sharp.height);
+    let delivered: Vec<u32> = scene
+        .sharp
+        .strips
+        .iter()
+        .map(|s| s.y / super::SHARP_STRIP_PX)
+        .collect();
+    assert_eq!(delivered, window.visible.clone().collect::<Vec<_>>());
+    assert!(delivered.len() < strip_count(scene.sharp.height) as usize);
+
+    // The margin follows as separate updates for the same Scene, never repeating a strip.
+    let mut margin = Vec::new();
+    let want = window.keep.len() - window.visible.len();
+    while margin.len() < want {
+        margin.extend(wait_for(|| {
+            Some(worker.poll_strips()).filter(|v| !v.is_empty())
+        }));
+    }
+    assert!(
+        margin
+            .iter()
+            .all(|u| u.stamp == stamp && u.px_per_pt == 3.0)
+    );
+    let mut indices: Vec<u32> = margin.iter().map(|u| u.strip.y / 512).collect();
+    indices.sort_unstable();
+    indices.dedup();
+    assert_eq!(indices.len(), want);
+    assert!(
+        indices
+            .iter()
+            .all(|i| window.keep.contains(i) && !window.visible.contains(i))
+    );
+}
+
+#[test]
+fn view_and_scale_changes_render_strips_without_a_new_layout() {
+    use super::{EditorWorker, RasterSpec, ViewRange, strip_window};
     let spec = |px_per_pt| RasterSpec {
         px_per_pt,
         max_side: 16384,
     };
-    let worker = EditorWorker::spawn(|| {}).expect("worker");
-    let doc = std::sync::Arc::new(paragraph_doc(40));
-    let stamp = stamp_of(&doc);
-    worker.submit(doc, stamp, spec(2.0));
-    let (_, scene) = wait_for(|| worker.poll());
-    let scene = scene.expect("scene");
-    assert_eq!(scene.raster.px_per_pt, 2.0);
-
-    worker.rerender(spec(3.0));
-    let (shown, bigger) = wait_for(|| worker.poll_raster());
-    assert_eq!(shown, stamp, "raster belongs to the laid-out scene");
-    assert_eq!(bigger.px_per_pt, 3.0);
-    let ratio = f64::from(bigger.width) / f64::from(scene.raster.width);
-    assert!((ratio - 1.5).abs() < 0.01, "{ratio}");
-    assert!(worker.poll().is_none(), "no layout ran");
-
-    worker.rerender(spec(3.0));
-    std::thread::sleep(std::time::Duration::from_millis(100));
-    assert!(worker.poll_raster().is_none(), "same resolution is a no-op");
-}
-
-#[test]
-fn tall_pages_are_split_into_strips_that_tile_the_bitmap() {
-    use super::{EditorWorker, RasterSpec};
+    let top = ViewRange {
+        top_pt: 0.0,
+        bottom_pt: 100.0,
+    };
     let worker = EditorWorker::spawn(|| {}).expect("worker");
     let doc = std::sync::Arc::new(paragraph_doc(1500));
     let stamp = stamp_of(&doc);
-    // A small texture side forces several strips and caps the width.
-    worker.submit(
-        doc,
-        stamp,
-        RasterSpec {
-            px_per_pt: 3.0,
-            max_side: 1024,
-        },
-    );
+    worker.submit(doc, stamp, spec(3.0), top);
     let (_, scene) = wait_for(|| worker.poll());
-    let raster = scene.expect("scene").raster;
-    assert!(raster.width <= 1024);
-    assert!(raster.strips.len() > 1, "{} strips", raster.strips.len());
-    let mut next = 0;
-    for strip in &raster.strips {
-        assert_eq!(strip.y, next);
-        assert!(strip.height <= 1024);
-        assert_eq!(strip.rgba.len(), (raster.width * strip.height * 4) as usize);
-        next += strip.height;
-    }
-    assert_eq!(next, raster.height);
+    let scene = scene.expect("scene");
+    let (height, page_pt) = (scene.sharp.height, scene.size_pt[1]);
+    // Let the margin fill finish, then scroll far away.
+    std::thread::sleep(std::time::Duration::from_millis(400));
+    worker.poll_strips();
+    let far = ViewRange {
+        top_pt: page_pt * 0.8,
+        bottom_pt: page_pt * 0.8 + 100.0,
+    };
+    worker.set_view(spec(3.0), far);
+    let window = strip_window(far, 3.0, height);
+    let first = wait_for(|| worker.poll_strips().into_iter().next());
+    assert_eq!(first.stamp, stamp);
+    assert!(
+        window.visible.contains(&(first.strip.y / 512)),
+        "visible strip first"
+    );
+    assert!(worker.poll().is_none(), "no layout ran");
+
+    // A new scale discards delivered strips and renders the window at that scale.
+    worker.set_view(spec(2.0), far);
+    std::thread::sleep(std::time::Duration::from_millis(400));
+    let updates = worker.poll_strips();
+    let scaled: Vec<_> = updates.iter().filter(|u| u.px_per_pt == 2.0).collect();
+    assert!(!scaled.is_empty());
+    assert!(scaled.iter().all(|u| u.page_height < height));
 }

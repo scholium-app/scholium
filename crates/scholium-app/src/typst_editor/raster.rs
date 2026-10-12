@@ -1,11 +1,9 @@
 //! Display-resolution raster policy: which resolution to ask for, where to put the page so
-//! texels land on physical pixels, when to re-raster, and how the strip textures are drawn.
+//! texels land on physical pixels, and when to re-raster.
 //!
 //! Everything here is pure arithmetic over logical px, physical px and Typst pt except
-//! [`Textures`], which owns the uploaded strips.
-use super::{RasterSpec, SceneStamp};
+//! [`Layers`], which owns the uploaded textures.
 use eframe::egui::{self, Pos2, Rect};
-use scholium_typst::editor::Raster;
 use std::time::{Duration, Instant};
 
 /// A re-raster waits until the wanted resolution has been unchanged this long, so resize
@@ -147,94 +145,8 @@ impl Settle {
     }
 }
 
-/// The page raster uploaded as one texture per strip.
-pub(super) struct Textures {
-    pub px_per_pt: f64,
-    pub width: u32,
-    pub height: u32,
-    strips: Vec<(u32, u32, egui::TextureHandle)>,
-}
-
-impl Textures {
-    /// Upload the strips of `raster`, taking their bitmaps.
-    pub(super) fn upload(ctx: &egui::Context, raster: &mut Raster) -> Self {
-        let width = raster.width as usize;
-        let strips = std::mem::take(&mut raster.strips)
-            .into_iter()
-            .enumerate()
-            .map(|(index, strip)| {
-                let image = egui::ColorImage::from_rgba_premultiplied(
-                    [width, strip.height as usize],
-                    &strip.rgba,
-                );
-                let handle = ctx.load_texture(
-                    format!("typst-content-scene-{index}"),
-                    image,
-                    egui::TextureOptions::LINEAR,
-                );
-                (strip.y, strip.height, handle)
-            })
-            .collect();
-        Self {
-            px_per_pt: raster.px_per_pt,
-            width: raster.width,
-            height: raster.height,
-            strips,
-        }
-    }
-
-    pub(super) fn strip_count(&self) -> usize {
-        self.strips.len()
-    }
-
-    /// Draw edge to edge from `origin` (logical px) at `scale` logical px per pt.
-    pub(super) fn paint(&self, painter: &egui::Painter, origin: Pos2, scale: f32) {
-        let ppp = painter.ctx().pixels_per_point();
-        let rows: Vec<_> = self.strips.iter().map(|(y, h, _)| (*y, *h)).collect();
-        let rects = strip_rects(origin, scale, ppp, self.px_per_pt, self.width, &rows);
-        for (rect, (_, _, texture)) in rects.into_iter().zip(&self.strips) {
-            painter.image(
-                texture.id(),
-                rect,
-                Rect::from_min_max(Pos2::ZERO, egui::pos2(1.0, 1.0)),
-                egui::Color32::WHITE,
-            );
-        }
-    }
-}
-
-impl super::EditorSession {
-    /// A re-raster of the page already on screen; a different scene's raster is dropped.
-    pub(super) fn adopt_raster(
-        &mut self,
-        ctx: &egui::Context,
-        stamp: SceneStamp,
-        mut raster: Raster,
-    ) {
-        self.settle.arrived();
-        if self.scene.as_ref().is_some_and(|s| s.stamp == stamp) {
-            self.texture = Some(Textures::upload(ctx, &mut raster));
-        }
-    }
-
-    /// Follow the resolution the placed page needs: ask the worker for it once it is stable.
-    pub(super) fn track_raster(&mut self, ctx: &egui::Context, px_per_pt: f64) {
-        self.spec = RasterSpec {
-            px_per_pt: forced_px_per_pt().unwrap_or(px_per_pt),
-            max_side: ctx.input(|i| i.max_texture_side) as u32,
-        };
-        let Some(scene) = &self.scene else {
-            return;
-        };
-        let wanted = self.spec.resolve(scene.size_pt);
-        let shown = self.texture.as_ref().map(|t| t.px_per_pt);
-        match self.settle.step(std::time::Instant::now(), wanted, shown) {
-            Step::Idle => {}
-            Step::Wait(after) => ctx.request_repaint_after(after),
-            Step::Request => self.worker.rerender(self.spec),
-        }
-    }
-}
+mod layers;
+pub(super) use layers::Layers;
 
 #[cfg(test)]
 mod tests;

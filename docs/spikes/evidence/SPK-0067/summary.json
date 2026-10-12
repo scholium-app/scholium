@@ -20,6 +20,36 @@
     "pass": true,
     "value": 291.0
   },
+  "04b-scrolling-moves-the-page": {
+    "pass": true,
+    "scrolled": {
+      "top": {
+        "page_top_px": 291.0,
+        "strips": 4,
+        "total_strips": 15
+      },
+      "bottom": {
+        "page_top_px": -6328.0,
+        "strips": 5,
+        "total_strips": 15
+      }
+    }
+  },
+  "04c-only-a-window-of-strips-is-resident": {
+    "pass": true,
+    "scrolled": {
+      "top": {
+        "page_top_px": 291.0,
+        "strips": 4,
+        "total_strips": 15
+      },
+      "bottom": {
+        "page_top_px": -6328.0,
+        "strips": 5,
+        "total_strips": 15
+      }
+    }
+  },
   "05-baseline-uses-former-scale": {
     "pass": true,
     "px_per_pt": 2.0

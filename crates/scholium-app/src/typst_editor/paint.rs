@@ -51,7 +51,6 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
     // The page is a whole number of physical pixels wide, so its raster maps 1:1 onto it.
     let fit = raster::fit(size[0], wanted, ppp);
     let scale = fit.scale;
-    session.track_raster(ui.ctx(), fit.px_per_pt);
     state.rendered_zoom = scale / (96.0 / 72.0);
     ui.add_space(OUTER_MARGIN);
     let dimensions = egui::vec2(
@@ -68,6 +67,12 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
         ppp,
     );
     let rect = Rect::from_min_size(origin, dimensions);
+    let visible = ui.clip_rect();
+    let view = scholium_typst::editor::ViewRange {
+        top_pt: f64::from(((visible.top() - rect.top()) / scale).max(0.0)),
+        bottom_pt: f64::from(((visible.bottom() - rect.top()) / scale).max(0.0)),
+    };
+    session.track_raster(ui.ctx(), fit.px_per_pt, view);
     let response = ui.interact(rect, id(), Sense::click_and_drag());
     session.placement = Some((rect, scale));
     if session.focus {
@@ -150,8 +155,8 @@ pub(super) fn body(
 ) -> usize {
     let painter = ui.painter().with_clip_rect(rect.intersect(ui.clip_rect()));
     painter.rect_filled(rect, 0.0, egui::Color32::WHITE);
-    if let Some(textures) = &session.texture {
-        textures.paint(&painter, rect.min, scale);
+    if let Some(layers) = &session.texture {
+        layers.paint(&painter, rect.min, scale);
     }
     if !session.current() {
         return 0;

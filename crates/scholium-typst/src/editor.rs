@@ -13,9 +13,13 @@ mod style;
 mod tests;
 mod worker;
 pub use geometry::{Affinity, Caret, EditGeometry, Position};
-pub use raster::{MAX_RASTER_PIXELS, MAX_STRIP_PX, Raster, RasterSpec, RasterStrip, strip_ranges};
+pub use raster::{
+    BASE_MAX_PX_PER_PT, MAX_RASTER_PIXELS, MAX_STRIP_PX, Raster, RasterSpec, RasterStrip,
+    SHARP_STRIP_PX, StripWindow, ViewRange, page_px, strip_count, strip_ranges, strip_rows,
+    strip_window,
+};
 pub use selection::SelectionQuad;
-pub use worker::EditorWorker;
+pub use worker::{EditorWorker, StripUpdate};
 
 use scholium_model::layout_identity::SceneStamp;
 
@@ -26,8 +30,11 @@ pub struct EditorScene {
     pub stamp: SceneStamp,
     /// Raster and geometry use this same padded frame, in Typst pt.
     pub size_pt: [f64; 2],
-    /// Typst-rendered committed content, including math rules, at the requested resolution.
-    pub raster: Raster,
+    /// Whole page at no more than 1 px/pt: the stand-in wherever a sharp strip is missing.
+    pub base: Raster,
+    /// Sharp strips (Typst-rendered committed content, math rules included) at the display
+    /// resolution for the visible part of the page; sparse.
+    pub sharp: Raster,
     /// Typed leaf insertion stops in frame pt, never markup offsets.
     pub geometry: EditGeometry,
     /// Observable adapter work for this result.

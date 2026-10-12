@@ -42,10 +42,12 @@ impl EditorSession {
             .map(|l| json!({"leaf": format!("{:?}", l.id), "bytes": l.text.len()}))
             .collect();
         let ppp = self.pixels_per_point;
-        let raster = self.texture.as_ref().map(|t| {
+        let raster = self.texture.as_ref().map(|layers| {
+            let (base, width_px, height_px, strips) = layers.audit();
             json!({
-                "px_per_pt": t.px_per_pt, "width_px": t.width, "height_px": t.height,
-                "strips": t.strip_count(),
+                "px_per_pt": layers.sharp_px_per_pt(), "width_px": width_px, "height_px": height_px,
+                "strips": strips, "base_px_per_pt": base,
+                "visible_sharp": layers.covers(self.view),
                 "wanted_px_per_pt": self.spec.px_per_pt,
                 "pixels_per_point": ppp,
                 "displayed_width_px": rect.width() * ppp,

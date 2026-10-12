@@ -56,7 +56,7 @@ def gradient(png, box):
     return total / (w * h)
 
 
-def run(label, extra_env):
+def run(label, extra_env, scroll=False):
     folder = output / label
     folder.mkdir()
     env = dict(os.environ, SCHOLIUM_SESSION_FILE=str(folder / "doc.sqlite"), SCHOLIUM_EDITOR_AUDIT="1",
@@ -79,7 +79,7 @@ def run(label, extra_env):
 
     def sharp(s):
         r = s.get("raster")
-        return bool(r) and abs(r["px_per_pt"] - r["wanted_px_per_pt"]) < 1e-6
+        return bool(r) and abs(r["px_per_pt"] - r["wanted_px_per_pt"]) < 1e-6 and r["visible_sharp"]
 
     with log_path.open("w") as log:
         app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
@@ -95,7 +95,8 @@ def run(label, extra_env):
         s = state()
         png = folder / "page.png"
         subprocess.run(["import", "-window", window, str(png)], check=True, env=env)
-        return s, png
+        scrolled = scroll_case(window, env, wait, sharp) if scroll else None
+        return s, png, scrolled
     finally:
         if app.poll() is None:
             app.terminate()
@@ -103,6 +104,26 @@ def run(label, extra_env):
                 app.wait(timeout=15)
             except subprocess.TimeoutExpired:
                 app.kill()
+
+
+def scroll_case(window, env, wait, sharp):
+    """Lengthen the page past the viewport, then scroll to both ends: sharp strips follow."""
+    xdo = lambda *args: subprocess.run(["xdotool", *map(str, args)], check=True, env=env)
+    xdo("key", "Return")
+    for number in range(150):
+        xdo("type", "--delay", "2", f"Line {number} of a page longer than the viewport")
+        xdo("key", "Return")
+    wait(lambda s: s["current"] and s["raster"] and s["raster"]["height_px"] > 4000, "long page laid out")
+    xdo("mousemove", "--window", window, "600", "400")
+    seen = {}
+    for name, button in (("top", 4), ("bottom", 5)):
+        for _ in range(120):
+            xdo("click", button)
+        time.sleep(0.2)
+        s = wait(lambda s: sharp(s) and s["raster"]["strips"] > 0, f"sharp strips at the {name}")
+        seen[name] = {"page_top_px": s["raster"]["page_top_px"], "strips": s["raster"]["strips"],
+                      "total_strips": -(-s["raster"]["height_px"] // 512)}
+    return seen
 
 
 def text_box(s):
@@ -114,7 +135,7 @@ def text_box(s):
     return left, int(y * ppp) - 20, right - left, 40
 
 
-sharp_state, sharp_png = run("display-resolution", {})
+sharp_state, sharp_png, scrolled = run("display-resolution", {}, scroll=True)
 raster = sharp_state["raster"]
 record("01-fractional-scale-in-effect", abs(raster["pixels_per_point"] - float(SCALE)) < 1e-6,
        pixels_per_point=raster["pixels_per_point"])
@@ -125,7 +146,11 @@ record("03-raster-is-denser-than-the-former-2px-per-pt", raster["px_per_pt"] > 2
 for axis in ("page_left_px", "page_top_px"):
     record(f"04-{axis}-on-pixel-grid", abs(raster[axis] - round(raster[axis])) < 1e-2, value=raster[axis])
 
-old_state, old_png = run("fixed-2px-per-pt", {"SCHOLIUM_RASTER_PX_PER_PT": "2"})
+old_state, old_png, _ = run("fixed-2px-per-pt", {"SCHOLIUM_RASTER_PX_PER_PT": "2"})
+record("04b-scrolling-moves-the-page", scrolled["top"]["page_top_px"] > scrolled["bottom"]["page_top_px"],
+       scrolled=scrolled)
+record("04c-only-a-window-of-strips-is-resident",
+       all(v["strips"] < v["total_strips"] for v in scrolled.values()), scrolled=scrolled)
 record("05-baseline-uses-former-scale", abs(old_state["raster"]["px_per_pt"] - 2.0) < 1e-9,
        px_per_pt=old_state["raster"]["px_per_pt"])
 

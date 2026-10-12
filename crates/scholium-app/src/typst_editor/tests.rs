@@ -393,37 +393,110 @@ fn styled_leaf_has_exact_carets_at_every_grapheme_before_and_after_relayout() {
     }
 }
 
+fn view_of(top_pt: f64, bottom_pt: f64) -> ViewRange {
+    ViewRange { top_pt, bottom_pt }
+}
+
+fn sharp_scale(f: &Fixture) -> Option<f64> {
+    f.editor.texture.as_ref().map(|t| t.sharp_px_per_pt())
+}
+
+/// Frames until `done`, each one polling the worker and tracking the page like paint does.
+fn pump(f: &mut Fixture, px_per_pt: f64, view: ViewRange, done: impl Fn(&Fixture) -> bool) {
+    let end = std::time::Instant::now() + std::time::Duration::from_secs(30);
+    while !done(f) {
+        f.editor.poll(&f.ctx);
+        f.editor.track_raster(&f.ctx, px_per_pt, view);
+        assert!(std::time::Instant::now() < end, "worker timeout");
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+}
+
 #[test]
-fn scale_change_re_rasters_the_shown_scene_after_the_debounce_and_edits_use_the_new_scale() {
+fn scale_change_re_rasters_after_the_debounce_without_layout_and_edits_use_the_new_scale() {
     let mut f = Fixture::new();
     f.events(vec![text("sharp text")]);
     f.settle();
     let stamp = f.editor.scene.as_ref().expect("scene").stamp;
-    let shown = |f: &Fixture| f.editor.texture.as_ref().map(|t| t.px_per_pt);
-    f.editor.track_raster(&f.ctx, 3.0);
+    let view = view_of(0.0, 800.0);
+    f.editor.track_raster(&f.ctx, 3.0, view);
     assert_ne!(
-        shown(&f),
+        sharp_scale(&f),
         Some(3.0),
         "a changing target does not re-raster at once"
     );
     std::thread::sleep(raster::DEBOUNCE + std::time::Duration::from_millis(30));
-    f.editor.track_raster(&f.ctx, 3.0);
-    let end = std::time::Instant::now() + std::time::Duration::from_secs(30);
-    while shown(&f) != Some(3.0) {
-        f.editor.poll(&f.ctx);
-        assert!(std::time::Instant::now() < end, "re-raster timeout");
-        std::thread::sleep(std::time::Duration::from_millis(10));
-    }
+    pump(&mut f, 3.0, view, |f| sharp_scale(f) == Some(3.0));
     assert_eq!(
         f.editor.scene.as_ref().map(|s| s.stamp),
         Some(stamp),
-        "same layout, only the bitmap changed"
+        "same layout, only the strips changed"
     );
     f.events(vec![text(" more")]);
     f.settle();
     assert_eq!(
-        shown(&f),
+        sharp_scale(&f),
         Some(3.0),
         "a keystroke lays out at the wanted scale"
+    );
+}
+
+#[test]
+fn strips_of_an_older_scene_are_never_adopted_over_a_newer_one() {
+    use scholium_typst::editor::{RasterStrip, StripUpdate};
+    let mut f = Fixture::new();
+    f.events(vec![text("first")]);
+    f.settle();
+    let old = f.editor.scene.as_ref().expect("scene").stamp;
+    f.events(vec![text(" second")]);
+    f.settle();
+    let layers = f.editor.texture.as_ref().expect("layers");
+    let (_, width, height, before) = layers.audit();
+    let stale = StripUpdate {
+        stamp: old,
+        px_per_pt: layers.sharp_px_per_pt(),
+        page_width: width,
+        page_height: height,
+        strip: RasterStrip {
+            y: 512 * 40,
+            height: 512,
+            rgba: vec![0; width as usize * 512 * 4],
+        },
+    };
+    f.editor.adopt_strip(&f.ctx, stale);
+    let (_, _, _, after) = f.editor.texture.as_ref().expect("layers").audit();
+    assert_eq!(before, after, "stale strip dropped");
+}
+
+#[test]
+fn scrolling_loads_visible_strips_and_evicts_those_outside_three_viewports() {
+    let mut f = Fixture::new();
+    let lines: String = (0..160).map(|n| format!("line {n}\n")).collect();
+    f.events(vec![egui::Event::Paste(lines)]);
+    f.settle();
+    let scene = f.editor.scene.as_ref().expect("scene");
+    let page_pt = scene.size_pt[1];
+    assert!(page_pt > 2400.0 * 0.5, "tall page: {page_pt}");
+    let px_per_pt = 3.0;
+    let top = view_of(0.0, 300.0);
+    pump(&mut f, px_per_pt, top, |f| {
+        sharp_scale(f) == Some(px_per_pt)
+    });
+    let near_end = view_of(page_pt - 300.0, page_pt);
+    pump(&mut f, px_per_pt, near_end, |f| {
+        f.editor
+            .texture
+            .as_ref()
+            .is_some_and(|t| t.covers(near_end))
+    });
+    let (_, _, height, strips) = f.editor.texture.as_ref().expect("layers").audit();
+    let keep = scholium_typst::editor::strip_window(near_end, px_per_pt, height).keep;
+    assert!(
+        strips <= keep.len(),
+        "{strips} strips, keep window {keep:?}"
+    );
+    assert!(
+        strips < scholium_typst::editor::strip_count(height) as usize,
+        "far strips were evicted"
     );
 }
