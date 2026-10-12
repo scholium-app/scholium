@@ -81,7 +81,16 @@ Attach 为 `AttachElem`（t=sup、b=sub），槽编号 base 1、sub 2、sup 3。
 生成源码（`structured_source`）对数学文字同样逐原子输出：ASCII 字母与数字串裸写并以空格分隔，
 白名单运算符裸写，其余为转义引号串；Attach 写为 `base^(sup)_(sub)`，多原子 base 加括号。
 World 的 source/file 均拒绝，today 无环境求值。RawMath 返回明确节点错误，既不改变模型
-也不走旧输入期文字替代。受控 flow 宽 420 pt、高度预算 2000 pt，超过预算拒绝而非截断。
+也不走旧输入期文字替代。受控 flow 宽为 A4 版心宽（210 mm − 2×2.5 cm，约 453.5 pt）、
+高度预算 2400 pt（约 3.4 个 A4 版心高），超过预算拒绝而非截断；画面四周补 A4 页边距
+（左右 2.5 cm、上下 2.54 cm），高度连续、不分页（"连续视图"）。
+
+文档样式只有一处定义：`style.rs` 的常量（字体、字号、行距、首行缩进、语言、页边距）同时生成
+预览 preamble 和编辑面的 Content 样式，二者的断行与垂直节奏必须一致（`editor/parity.rs` 以
+同一夹具逐行比对）。标题在编辑面使用真正的 `HeadingElem`，与预览同套默认字号、间距与标题字体。
+标题编号**不在** preamble 中：编辑面以空 introspector 布局，无法运行 counter；编号随文档模板回归。
+空块不设首行缩进：fork 以行文本锚定空行 caret，缩进占位字符会使该行失去 caret。
+预览源码的块起点锚点对标题单独成行放在 `=` 之前，因为标题正文前的元素会改变标题块间距。
 
 `EditorScene` 的 raster 和 `EditGeometry` 都取同一个 padded Frame；caret 位置是 typed
 NodeId、叶内 UTF-8 byte 与 affinity，top/bottom 为该 Frame 的 pt。opaque ID 只在 adapter

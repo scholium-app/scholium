@@ -6,10 +6,9 @@ use scholium_model::{BlockKind, NodeId, structured::*};
 use std::collections::HashMap;
 use typst::editor::{EditHoleElem, EditOrigin};
 use typst::foundations::{Content, NativeElement};
-use typst::layout::Abs;
 use typst::math::{AttachElem, ClassElem, EquationElem, FracElem};
 use typst::model::{EmphElem, ParElem, StrongElem};
-use typst::text::{FontFamily, FontList, TextElem, TextSize};
+use typst::text::TextElem;
 use unicode_segmentation::UnicodeSegmentation;
 
 #[derive(Clone, PartialEq, Eq)]
@@ -43,16 +42,8 @@ impl ContentCache {
         self.cache.retain(|id, _| self.live.contains(id));
         self.ids.retain(|id, _| self.live.contains(id));
         self.reverse.retain(|_, id| self.live.contains(id));
-        let content = sequence(children)
-            .styled(
-                TextElem::font.set(FontList(
-                    crate::BODY_FONTS
-                        .iter()
-                        .map(|f| FontFamily::new(f))
-                        .collect(),
-                )),
-            )
-            .styled(TextElem::size.set(TextSize(Abs::pt(12.0).into())));
+        let content = sequence(children);
+        let content = super::style::apply_document_style(content);
         Ok(content)
     }
 
@@ -143,15 +134,16 @@ impl ContentCache {
                 .collect::<Result<_, _>>()?,
         );
         let body = match block.kind {
-            BlockKind::Paragraph => body,
-            BlockKind::Heading1 => StrongElem::new(body)
-                .pack()
-                .styled(TextElem::size.set(TextSize(Abs::pt(20.0).into()))),
-            BlockKind::Heading2 => StrongElem::new(body)
-                .pack()
-                .styled(TextElem::size.set(TextSize(Abs::pt(16.0).into()))),
+            BlockKind::Paragraph => ParElem::new(body).pack(),
+            BlockKind::Heading1 => super::style::heading(1, body),
+            BlockKind::Heading2 => super::style::heading(2, body),
         };
-        Ok(self.keep(block.node, value, ParElem::new(body).pack(), false))
+        let body = if block_is_empty(block) {
+            super::style::without_indent(body)
+        } else {
+            body
+        };
+        Ok(self.keep(block.node, value, body, false))
     }
 
     fn inline(&mut self, inline: &StructuredInline) -> Result<Content, EditorError> {
@@ -277,6 +269,13 @@ fn display(grapheme: &str) -> String {
         _ => None,
     };
     shown.map_or_else(|| grapheme.to_owned(), String::from)
+}
+
+fn block_is_empty(block: &StructuredBlock) -> bool {
+    block
+        .content
+        .iter()
+        .all(|inline| matches!(&inline.body, InlineBody::Text { text, .. } if text.is_empty()))
 }
 
 fn style_text(text: &str, style: TextStyle) -> Content {

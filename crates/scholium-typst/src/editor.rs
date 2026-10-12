@@ -4,7 +4,10 @@
 mod content;
 mod geometry;
 mod kernel;
+#[cfg(test)]
+mod parity;
 mod selection;
+mod style;
 #[cfg(test)]
 mod tests;
 mod worker;

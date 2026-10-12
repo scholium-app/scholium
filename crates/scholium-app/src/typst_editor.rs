@@ -56,6 +56,16 @@ pub(crate) struct EditorView {
     pub selected: bool,
     pub can_undo: bool,
     pub can_redo: bool,
+    /// Revision of the Scene on screen; `None` before the first layout.
+    pub shown_revision: Option<u64>,
+    /// The Scene on screen is not the one wanted for `revision`.
+    pub pending: bool,
+    /// One transient warning for the status bar (highest priority first).
+    pub warning: Option<String>,
+    /// Rejected input kept for copying.
+    pub rejected_input: Option<String>,
+    /// Layout statistics, filled only while diagnostics are shown.
+    pub diagnostics: Option<String>,
     pub commands: Vec<Command>,
 }
 
@@ -99,6 +109,13 @@ pub(crate) struct EditorSession {
     notice: Option<String>,
     last_audit: Option<String>,
     placeholder: Option<attach::Placeholder>,
+}
+
+fn diagnostics_line(scene: &EditorScene) -> String {
+    format!(
+        "Content 新建 {} / 复用 {} · source reads {} · 布局+栅格 {} ms",
+        scene.stats.built, scene.stats.reused, scene.stats.source_reads, scene.stats.elapsed_ms
+    )
 }
 
 impl std::fmt::Debug for EditorSession {
@@ -200,7 +217,15 @@ impl EditorSession {
             ui.ctx().request_repaint();
         }
         self.confirm(ui.ctx(), state);
-        self.metadata(state);
+        // The status bar is drawn before this pass; if what it shows just changed, draw it again.
+        if self.metadata(state) {
+            ui.ctx().request_repaint();
+        }
+        if std::mem::take(&mut state.status_copy)
+            && let Some(draft) = state.editor.as_ref().and_then(|v| v.rejected_input.clone())
+        {
+            ui.ctx().copy_text(draft);
+        }
     }
 
     fn record(&self) -> HistoryEntry {
@@ -298,14 +323,68 @@ impl EditorSession {
         self.scene.as_ref().is_some_and(|s| s.stamp == self.wanted) && self.layout_error.is_none()
     }
 
-    fn metadata(&self, state: &mut WorkspaceState) {
+    /// Publishes view metadata; true when something the status bar shows changed.
+    fn metadata(&self, state: &mut WorkspaceState) -> bool {
+        let shown = |v: &EditorView| {
+            (
+                v.revision,
+                v.shown_revision,
+                v.pending,
+                v.dirty,
+                v.warning.clone(),
+                v.rejected_input.is_some(),
+                v.diagnostics.clone(),
+            )
+        };
+        let before = state.editor.as_ref().map(shown);
+        let warning = self.warning(state);
+        let diagnostics = state.diagnostics;
         if let Some(view) = &mut state.editor {
             view.revision = self.snapshot.revision.0;
             view.dirty = self.saved.as_ref() != Some(&self.snapshot);
             view.selected = self.selected();
             view.can_undo = !self.undo.is_empty();
             view.can_redo = !self.redo.is_empty();
+            view.shown_revision = self.scene.as_ref().map(|s| s.stamp.revision.0);
+            view.pending = !self.current();
+            view.warning = warning;
+            view.rejected_input = self.rejected_input.clone();
+            view.diagnostics = diagnostics
+                .then(|| self.scene.as_ref().map(diagnostics_line))
+                .flatten();
         }
+        state.editor.as_ref().map(shown) != before
+    }
+
+    /// The single transient message the status bar shows, in priority order.
+    fn warning(&self, state: &WorkspaceState) -> Option<String> {
+        let errors = [&state.edit_error, &state.storage_error, &self.layout_error];
+        if let Some(error) = errors.into_iter().flatten().next() {
+            return Some(error.clone());
+        }
+        if self.rejected_input.is_some() {
+            return Some("被拒绝输入已保留".into());
+        }
+        if let Some(notice) = &self.notice {
+            return Some(notice.clone());
+        }
+        if !self.current() || state.mode == crate::state::ViewMode::Source {
+            return None;
+        }
+        if self.selected() {
+            match self.selection_quads() {
+                Err(_) => return Some("选区几何不支持此范围；页面写操作暂停。".into()),
+                Ok(quads) if quads.iter().any(|q| !q.exact) => {
+                    return Some("合字内部选区边界为估计；鼠标仅定位精确边界。".into());
+                }
+                _ => {}
+            }
+        }
+        let caret = self
+            .scene
+            .as_ref()
+            .and_then(|s| s.geometry.caret(self.cursor));
+        caret.is_none().then(|| "此处暂时无法显示光标".into())
     }
 
     fn history(&mut self, redo: bool, state: &mut WorkspaceState) {

@@ -3,6 +3,7 @@ use crate::{
     icons,
     state::{ViewMode, WorkspaceState},
     theme,
+    typst_editor::EditorView,
 };
 use eframe::egui::{self, Align, Layout, RichText};
 
@@ -118,26 +119,65 @@ fn status(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         }
         ui.separator();
         if let Some(editor) = &state.editor {
+            ui.label(RichText::new(revisions(editor)).small());
             ui.label(
-                RichText::new(format!(
-                    "Typst Content · r{} · {}",
-                    editor.revision,
-                    if editor.dirty {
-                        "未保存"
-                    } else {
-                        "已保存"
-                    }
-                ))
-                .small(),
-            );
-            ui.label(
-                RichText::new("受控不分页流")
+                RichText::new("连续视图")
                     .small()
                     .color(theme::colors(ui).muted),
+            );
+            ui.label(
+                RichText::new(if editor.dirty {
+                    "未保存"
+                } else {
+                    "已保存"
+                })
+                .small(),
+            );
+            let room = (ui.available_width() - ZOOM_WIDTH).max(0.0);
+            ui.allocate_ui_with_layout(
+                egui::vec2(room, 22.0),
+                Layout::left_to_right(Align::Center),
+                |ui| warning(ui, state),
             );
         }
         ui.with_layout(Layout::right_to_left(Align::Center), |ui| zoom(ui, state));
     });
+}
+
+// Logical pixels kept free for the zoom controls at the right end of the status bar.
+const ZOOM_WIDTH: f32 = 150.0;
+
+/// Backend, 正文 revision and 画面 revision; a stale 画面 is marked, never hidden.
+fn revisions(editor: &EditorView) -> String {
+    let shown = editor
+        .shown_revision
+        .map_or("—".to_owned(), |r| format!("r{r}"));
+    let marker = if editor.pending { " 待更新" } else { "" };
+    let mut line = format!(
+        "Typst Content · 正文 r{} · 画面 {shown}{marker}",
+        editor.revision
+    );
+    if let Some(stats) = &editor.diagnostics {
+        line.push_str(" · ");
+        line.push_str(stats);
+    }
+    line
+}
+
+fn warning(ui: &mut egui::Ui, state: &mut WorkspaceState) {
+    let Some(editor) = &state.editor else {
+        return;
+    };
+    let draft = editor.rejected_input.is_some();
+    let Some(text) = editor.warning.clone() else {
+        return;
+    };
+    let color = theme::colors(ui).warning;
+    let label = ui.add(egui::Label::new(RichText::new(&text).small().color(color)).truncate());
+    label.on_hover_text(&text);
+    if draft && ui.small_button("复制").clicked() {
+        state.status_copy = true;
+    }
 }
 
 fn zoom(ui: &mut egui::Ui, state: &mut WorkspaceState) {
