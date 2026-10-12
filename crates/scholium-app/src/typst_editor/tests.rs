@@ -392,3 +392,38 @@ fn styled_leaf_has_exact_carets_at_every_grapheme_before_and_after_relayout() {
         assert!(f.editor.warning(&f.state).is_none(), "caret notice shown");
     }
 }
+
+#[test]
+fn scale_change_re_rasters_the_shown_scene_after_the_debounce_and_edits_use_the_new_scale() {
+    let mut f = Fixture::new();
+    f.events(vec![text("sharp text")]);
+    f.settle();
+    let stamp = f.editor.scene.as_ref().expect("scene").stamp;
+    let shown = |f: &Fixture| f.editor.texture.as_ref().map(|t| t.px_per_pt);
+    f.editor.track_raster(&f.ctx, 3.0);
+    assert_ne!(
+        shown(&f),
+        Some(3.0),
+        "a changing target does not re-raster at once"
+    );
+    std::thread::sleep(raster::DEBOUNCE + std::time::Duration::from_millis(30));
+    f.editor.track_raster(&f.ctx, 3.0);
+    let end = std::time::Instant::now() + std::time::Duration::from_secs(30);
+    while shown(&f) != Some(3.0) {
+        f.editor.poll(&f.ctx);
+        assert!(std::time::Instant::now() < end, "re-raster timeout");
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+    assert_eq!(
+        f.editor.scene.as_ref().map(|s| s.stamp),
+        Some(stamp),
+        "same layout, only the bitmap changed"
+    );
+    f.events(vec![text(" more")]);
+    f.settle();
+    assert_eq!(
+        shown(&f),
+        Some(3.0),
+        "a keystroke lays out at the wanted scale"
+    );
+}

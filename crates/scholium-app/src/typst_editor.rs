@@ -6,6 +6,7 @@ mod deferred;
 mod indicator;
 mod input;
 mod paint;
+mod raster;
 pub(crate) mod ribbon;
 mod selection;
 mod source_view;
@@ -22,7 +23,7 @@ use eframe::egui;
 use scholium_document::{BodyTextPosition, LocalSession, StructuralEdit, StructuralRequest};
 use scholium_model::{RequestId, layout_identity::*, structured::*};
 use scholium_storage::SessionStore;
-use scholium_typst::editor::{Affinity, EditorScene, EditorWorker, Position};
+use scholium_typst::editor::{Affinity, EditorScene, EditorWorker, Position, RasterSpec};
 use std::{collections::VecDeque, path::PathBuf, sync::Arc};
 
 const HISTORY_LIMIT: usize = 512;
@@ -89,7 +90,12 @@ pub(crate) struct EditorSession {
     worker: EditorWorker,
     wanted: SceneStamp,
     scene: Option<EditorScene>,
-    texture: Option<egui::TextureHandle>,
+    texture: Option<raster::Textures>,
+    /// Raster resolution wanted for 1:1 display; layouts are submitted with it.
+    spec: RasterSpec,
+    settle: raster::Settle,
+    /// Last display scale, for diagnostics.
+    pixels_per_point: f32,
     cursor: Position,
     anchor: Option<Position>,
     drag: Option<selection::Drag>,
@@ -166,7 +172,14 @@ impl EditorSession {
         let wake = ctx.clone();
         let worker = EditorWorker::spawn(move || wake.request_repaint())?;
         let wanted = session.scene_stamp(ProfileGeneration(0), ResourceGeneration(0));
-        worker.submit(snapshot.clone(), wanted);
+        // Display scale is unknown until the first page is placed; this guess is corrected
+        // by the first re-raster.
+        let spec = RasterSpec {
+            px_per_pt: raster::forced_px_per_pt()
+                .unwrap_or(f64::from(ctx.pixels_per_point()) * 96.0 / 72.0),
+            max_side: ctx.input(|i| i.max_texture_side) as u32,
+        };
+        worker.submit(snapshot.clone(), wanted, spec);
         let result = Self {
             session,
             snapshot,
@@ -185,6 +198,9 @@ impl EditorSession {
             ime_anchor: None,
             scene: None,
             texture: None,
+            spec,
+            settle: raster::Settle::default(),
+            pixels_per_point: 1.0,
             undo: Vec::new(),
             redo: Vec::new(),
             focus: true,
@@ -285,17 +301,20 @@ impl EditorSession {
         self.wanted = self
             .session
             .scene_stamp(ProfileGeneration(0), ResourceGeneration(0));
-        self.worker.submit(self.snapshot.clone(), self.wanted);
+        self.worker
+            .submit(self.snapshot.clone(), self.wanted, self.spec);
         self.layout_error = None;
         state.edit_error = None;
         self.metadata(state);
     }
 
     fn poll(&mut self, ctx: &egui::Context) {
-        let Some((stamp, outcome)) = self.worker.poll() else {
-            return;
-        };
-        self.adopt(ctx, stamp, outcome);
+        if let Some((stamp, outcome)) = self.worker.poll() {
+            self.adopt(ctx, stamp, outcome);
+        }
+        if let Some((stamp, raster)) = self.worker.poll_raster() {
+            self.adopt_raster(ctx, stamp, raster);
+        }
     }
 
     fn adopt(
@@ -308,16 +327,9 @@ impl EditorSession {
             return;
         }
         match outcome {
-            Ok(scene) => {
-                let image = egui::ColorImage::from_rgba_premultiplied(
-                    [scene.pixels.width as usize, scene.pixels.height as usize],
-                    &scene.pixels.rgba,
-                );
-                self.texture = Some(ctx.load_texture(
-                    "typst-content-scene",
-                    image,
-                    egui::TextureOptions::LINEAR,
-                ));
+            Ok(mut scene) => {
+                self.settle.arrived();
+                self.texture = Some(raster::Textures::upload(ctx, &mut scene.raster));
                 self.scene = Some(scene);
             }
             Err(error) => self.layout_error = Some(error.to_string()),

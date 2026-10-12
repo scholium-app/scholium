@@ -31,3 +31,9 @@ serde_json = "=1.0.151"
 name = "typst-main-fork-check"
 path = "../../spikes/typst-main-editor/fork-check.rs"
 required-features = ["editor"]
+
+# Per-keystroke layout+raster cost at several raster scales (SPK-0067).
+[[example]]
+name = "typst-main-raster-bench"
+path = "../../spikes/typst-main-editor/raster-bench.rs"
+required-features = ["editor"]

@@ -9,8 +9,23 @@ use scholium_typst::{
     CompileOutcome, GeneratedSource, PreviewCompiler, PreviewEvent, SourceMode, generate_source,
 };
 
-/// Bitmap px per Typst pt for preview pages; the image is scaled to the pane on screen.
-const PREVIEW_PX_PER_PT: f32 = 2.0;
+/// A4 in Typst pt, the preview page size the display-resolution request is derived from.
+const A4_PT: [f64; 2] = [595.276, 841.89];
+/// Request scale before the pane has been placed once.
+const FALLBACK_PX_PER_PT: f64 = 2.0;
+/// Compiler's accepted range of px per pt.
+const PX_PER_PT_RANGE: (f64, f64) = (0.25, 8.0);
+
+/// Bitmap px per pt that shows an A4 page `width` logical px wide 1:1 on a display of `ppp`
+/// pixels per point whose textures are at most `max_side` px; lowered, never failing, when the
+/// page would not fit one texture.
+fn preview_px_per_pt(width: f32, ppp: f32, max_side: u32) -> f64 {
+    let fit = raster::fit(A4_PT[0], width / A4_PT[0] as f32, ppp);
+    let side = f64::from(max_side.min(scholium_typst::editor::MAX_STRIP_PX));
+    fit.px_per_pt
+        .min(side / A4_PT[1])
+        .clamp(PX_PER_PT_RANGE.0, PX_PER_PT_RANGE.1)
+}
 /// Preview pane share of the source workspace, per P1_UI's roughly equal split.
 const PREVIEW_SHARE: f32 = 0.5;
 
@@ -29,6 +44,9 @@ pub(super) struct SourceView {
     texture: Option<Page>,
     /// Screen rect of the shown page image and its logical px per Typst pt (for audits).
     shown_at: Option<(egui::Rect, f32)>,
+    /// Bitmap px per pt that shows the page 1:1 in the pane; page requests use it.
+    px_per_pt: f64,
+    settle: raster::Settle,
 }
 
 /// Laid-out source keyed by snapshot identity and highlighted byte range.
@@ -43,6 +61,9 @@ struct Page {
     generation: u64,
     index: usize,
     size_pt: egui::Vec2,
+    /// Bitmap size in px and the px per pt it was rasterized at.
+    px: [u32; 2],
+    px_per_pt: f64,
     texture: egui::TextureHandle,
 }
 
@@ -153,10 +174,13 @@ impl SourceView {
                 }
                 let size = [page.pixels.width as usize, page.pixels.height as usize];
                 let image = egui::ColorImage::from_rgba_premultiplied(size, &page.pixels.rgba);
+                self.settle.arrived();
                 self.texture = Some(Page {
                     generation: self.generation,
                     index: page.page,
                     size_pt: egui::vec2(size[0] as f32, size[1] as f32) / page.pixel_per_pt,
+                    px: [page.pixels.width, page.pixels.height],
+                    px_per_pt: f64::from(page.pixel_per_pt),
                     texture: ctx.load_texture(
                         "typst-preview-page",
                         image,
@@ -167,9 +191,35 @@ impl SourceView {
         }
     }
 
-    fn request_page(&self, document: scholium_model::DocumentId) {
+    fn request_page(&mut self, document: scholium_model::DocumentId) {
+        let px_per_pt = if self.px_per_pt > 0.0 {
+            self.px_per_pt
+        } else {
+            FALLBACK_PX_PER_PT
+        };
         if let Some(compiler) = &self.compiler {
-            compiler.request_page(document, self.generation, self.page, PREVIEW_PX_PER_PT);
+            compiler.request_page(document, self.generation, self.page, px_per_pt as f32);
+            self.settle.requested(px_per_pt);
+        }
+    }
+
+    /// Follow the pane's display resolution: re-request the shown page once it is stable.
+    fn track_resolution(&mut self, ctx: &egui::Context, document: scholium_model::DocumentId) {
+        let Some(shown) = self
+            .texture
+            .as_ref()
+            .filter(|p| p.generation == self.generation)
+        else {
+            return;
+        };
+        let shown = shown.px_per_pt;
+        match self
+            .settle
+            .step(std::time::Instant::now(), self.px_per_pt, Some(shown))
+        {
+            raster::Step::Idle => {}
+            raster::Step::Wait(after) => ctx.request_repaint_after(after),
+            raster::Step::Request => self.request_page(document),
         }
     }
 
@@ -198,6 +248,9 @@ impl SourceView {
             "shown": current,
             "rect": self.shown_at.map(|(r, _)| [r.min.x, r.min.y, r.max.x, r.max.y]),
             "scale": self.shown_at.map(|(_, s)| s),
+            "px_per_pt": self.texture.as_ref().map(|p| p.px_per_pt),
+            "wanted_px_per_pt": self.px_per_pt,
+            "bitmap_px": self.texture.as_ref().map(|p| p.px),
             "anchors": self.compiled.as_ref().map(|c| c.anchors.iter()
                 .map(|a| serde_json::json!({"page": a.page, "start_y": a.start_y, "y": a.y}))
                 .collect::<Vec<_>>()),
@@ -297,13 +350,22 @@ impl EditorSession {
             }
             ui.label(self.source_view.status());
         });
+        let ppp = ui.ctx().pixels_per_point();
+        let max_side = ui.ctx().input(|i| i.max_texture_side) as u32;
+        self.source_view.px_per_pt = preview_px_per_pt(ui.available_width(), ppp, max_side);
+        self.source_view.track_resolution(ui.ctx(), document);
         // While a new generation compiles, keep the last page visible but inert.
         let Some(page) = self.source_view.texture.as_ref() else {
             return;
         };
         let current = page.generation == self.source_view.generation;
-        let scale = ui.available_width() / page.size_pt.x;
-        let size = page.size_pt * scale;
+        // A raster made for this pane maps texel to physical pixel; otherwise stretch to width.
+        let size = if (page.px_per_pt - self.source_view.px_per_pt).abs() < 1e-6 {
+            egui::vec2(page.px[0] as f32, page.px[1] as f32) / ppp
+        } else {
+            page.size_pt * (ui.available_width() / page.size_pt.x)
+        };
+        let scale = size.x / page.size_pt.x;
         let texture = page.texture.id();
         let mut clicked = None;
         let mut shown_at = None;
@@ -311,8 +373,14 @@ impl EditorSession {
             .id_salt("preview-page")
             .auto_shrink([false, false])
             .show(ui, |ui| {
-                let response =
-                    ui.add(egui::Image::new((texture, size)).sense(egui::Sense::click()));
+                let (rect, response) = ui.allocate_exact_size(size, egui::Sense::click());
+                let drawn = egui::Rect::from_min_size(raster::snap_pos(rect.min, ppp), size);
+                ui.painter().image(
+                    texture,
+                    drawn,
+                    egui::Rect::from_min_max(egui::Pos2::ZERO, egui::pos2(1.0, 1.0)),
+                    egui::Color32::WHITE,
+                );
                 shown_at = Some((response.rect, scale));
                 if current
                     && response.clicked()

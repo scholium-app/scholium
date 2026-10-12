@@ -1,0 +1,40 @@
+{
+  "01-fractional-scale-in-effect": {
+    "pass": true,
+    "pixels_per_point": 1.5
+  },
+  "02-raster-width-equals-displayed-width": {
+    "pass": true,
+    "width_px": 1786,
+    "displayed_width_px": 1786.0
+  },
+  "03-raster-is-denser-than-the-former-2px-per-pt": {
+    "pass": true,
+    "px_per_pt": 3.0002910052910052
+  },
+  "04-page_left_px-on-pixel-grid": {
+    "pass": true,
+    "value": 67.0
+  },
+  "04-page_top_px-on-pixel-grid": {
+    "pass": true,
+    "value": 291.0
+  },
+  "05-baseline-uses-former-scale": {
+    "pass": true,
+    "px_per_pt": 2.0
+  },
+  "06-text-edges-are-sharper": {
+    "pass": true,
+    "display_resolution": 38.77850515463918,
+    "fixed_2px_per_pt": 31.376443298969072,
+    "gain": 1.2359114379262137,
+    "required": 1.2,
+    "crop": [
+      349,
+      499,
+      970,
+      40
+    ]
+  }
+}

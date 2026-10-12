@@ -13,7 +13,6 @@ use typst::utils::{LazyHash, Protected};
 use typst::{Library, LibraryExt, World};
 use typst_kit::fonts::FontStore;
 
-pub(crate) const RASTER_PX_PER_PT: f64 = 2.0;
 /// Content height budget in pt (texture memory bound); the sheet adds the page margins.
 const HEIGHT_PT: f64 = 2400.0;
 
@@ -160,9 +159,9 @@ pub(crate) fn layout_in(
     Ok(frame)
 }
 
-pub(crate) fn render_options() -> typst_render::RenderOptions {
+pub(crate) fn render_options(px_per_pt: f64) -> typst_render::RenderOptions {
     typst_render::RenderOptions {
-        pixel_per_pt: RASTER_PX_PER_PT.into(),
+        pixel_per_pt: px_per_pt.into(),
         ..Default::default()
     }
 }

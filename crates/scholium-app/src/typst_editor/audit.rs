@@ -3,7 +3,8 @@ use super::*;
 use serde_json::json;
 
 impl EditorSession {
-    pub(super) fn audit(&mut self, rect: egui::Rect, scale: f32, text_shapes: usize) {
+    pub(super) fn audit(&mut self, rect: egui::Rect, scale: f32, text_shapes: usize, ppp: f32) {
+        self.pixels_per_point = ppp;
         self.audit_with(Some((rect, scale)), text_shapes, false);
     }
 
@@ -40,6 +41,17 @@ impl EditorSession {
             .filter(|l| !l.math)
             .map(|l| json!({"leaf": format!("{:?}", l.id), "bytes": l.text.len()}))
             .collect();
+        let ppp = self.pixels_per_point;
+        let raster = self.texture.as_ref().map(|t| {
+            json!({
+                "px_per_pt": t.px_per_pt, "width_px": t.width, "height_px": t.height,
+                "strips": t.strip_count(),
+                "wanted_px_per_pt": self.spec.px_per_pt,
+                "pixels_per_point": ppp,
+                "displayed_width_px": rect.width() * ppp,
+                "page_left_px": rect.min.x * ppp, "page_top_px": rect.min.y * ppp,
+            })
+        });
         let value = json!({
             "backend": "Typst Content main app", "current": self.current(),
             "revision": self.snapshot.revision.0, "wanted": format!("{:?}", self.wanted),
@@ -54,6 +66,7 @@ impl EditorSession {
             "selection_geometry_error": quads.err().map(|e| e.to_string()),
             "body_leaves": body_leaves, "deferred": self.deferred.len(),
             "source_mode": source_mode, "preview": self.source_view.audit(),
+            "raster": raster,
 
         })
         .to_string();

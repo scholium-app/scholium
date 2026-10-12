@@ -69,8 +69,13 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 统一 patch 的锁定 fork 13 个库（[ADR 0036](../adr/ADR-0036-typst-default-editor.md)）。
 `typst-main-fork-check` 示例按同一 fixture 输出 fork 像素，供与独立 stock 参照逐像素比较。
 `EditorWorker::spawn(wake)` 在 CPU 线程驻留 World/字体和 Content cache；
-`submit(Arc<StructuredDocument>, SceneStamp)` 传递完整已接受快照，`poll()` 非阻塞返回
+`submit(Arc<StructuredDocument>, SceneStamp, RasterSpec)` 传递完整已接受快照与栅格分辨率，`poll()` 非阻塞返回
 带 stamp 的结果。队列和结果分别只保留最新一份派生工作；关闭不在 UI join。
+栅格分辨率跟随显示：`RasterSpec { px_per_pt, max_side }` 由调用方按“页面物理像素宽 / 页宽 pt”给出，
+worker 只会把它压低（页宽不超过 `max_side`，整页不超过 `MAX_RASTER_PIXELS` = 64 MP，略软而不失败），
+并把整页位图切成不超过 `min(max_side, 4096)` 行的水平条带（`Raster`/`RasterStrip`，恰好无缝覆盖整页）。
+`rerender(RasterSpec)` 对 worker 保留的最新已排版页面只重新栅格、不重新排版，结果由 `poll_raster()`
+带该页 stamp 返回；已在目标分辨率时为空操作，排队的排版总是先于重栅格。`EditorStats.raster_ms` 为栅格耗时。
 节点/子树未变则保留 Content，变动的祖先重建；传输与快照复制仍有全文成本。
 
 结构直接构造正文/样式、Par、Equation、Frac、Attach 与 EditHole；字串不作为 source 执行。

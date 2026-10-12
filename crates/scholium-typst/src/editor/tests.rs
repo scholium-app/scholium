@@ -214,3 +214,102 @@ fn a_formula_row_around_an_attach_keeps_every_leaf_addressable() {
         );
     }
 }
+
+fn paragraph_doc(words: usize) -> StructuredDocument {
+    let body = "lorem ipsum dolor ".repeat(words);
+    StructuredDocument {
+        document: DocumentId::fresh(),
+        revision: Revision(1),
+        blocks: vec![StructuredBlock {
+            node: NodeId::fresh(),
+            kind: BlockKind::Paragraph,
+            content: vec![scholium_model::structured::StructuredInline {
+                node: NodeId::fresh(),
+                body: InlineBody::Text {
+                    text: body,
+                    style: scholium_model::structured::TextStyle::Plain,
+                },
+            }],
+        }],
+    }
+}
+
+fn stamp_of(doc: &StructuredDocument) -> scholium_model::layout_identity::SceneStamp {
+    use scholium_model::layout_identity::*;
+    SceneStamp {
+        document: doc.document,
+        epoch: LayoutEpoch::fresh(),
+        request: LayoutRequestId::fresh(),
+        revision: doc.revision,
+        profile: ProfileGeneration(0),
+        resources: ResourceGeneration(0),
+    }
+}
+
+fn wait_for<T>(mut poll: impl FnMut() -> Option<T>) -> T {
+    let at = std::time::Instant::now();
+    loop {
+        if let Some(value) = poll() {
+            return value;
+        }
+        assert!(at.elapsed().as_secs() < 30, "worker timeout");
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
+}
+
+#[test]
+fn rerender_changes_resolution_of_the_laid_out_page_without_a_new_layout() {
+    use super::{EditorWorker, RasterSpec};
+    let spec = |px_per_pt| RasterSpec {
+        px_per_pt,
+        max_side: 16384,
+    };
+    let worker = EditorWorker::spawn(|| {}).expect("worker");
+    let doc = std::sync::Arc::new(paragraph_doc(40));
+    let stamp = stamp_of(&doc);
+    worker.submit(doc, stamp, spec(2.0));
+    let (_, scene) = wait_for(|| worker.poll());
+    let scene = scene.expect("scene");
+    assert_eq!(scene.raster.px_per_pt, 2.0);
+
+    worker.rerender(spec(3.0));
+    let (shown, bigger) = wait_for(|| worker.poll_raster());
+    assert_eq!(shown, stamp, "raster belongs to the laid-out scene");
+    assert_eq!(bigger.px_per_pt, 3.0);
+    let ratio = f64::from(bigger.width) / f64::from(scene.raster.width);
+    assert!((ratio - 1.5).abs() < 0.01, "{ratio}");
+    assert!(worker.poll().is_none(), "no layout ran");
+
+    worker.rerender(spec(3.0));
+    std::thread::sleep(std::time::Duration::from_millis(100));
+    assert!(worker.poll_raster().is_none(), "same resolution is a no-op");
+}
+
+#[test]
+fn tall_pages_are_split_into_strips_that_tile_the_bitmap() {
+    use super::{EditorWorker, RasterSpec};
+    let worker = EditorWorker::spawn(|| {}).expect("worker");
+    let doc = std::sync::Arc::new(paragraph_doc(1500));
+    let stamp = stamp_of(&doc);
+    // A small texture side forces several strips and caps the width.
+    worker.submit(
+        doc,
+        stamp,
+        RasterSpec {
+            px_per_pt: 3.0,
+            max_side: 1024,
+        },
+    );
+    let (_, scene) = wait_for(|| worker.poll());
+    let raster = scene.expect("scene").raster;
+    assert!(raster.width <= 1024);
+    assert!(raster.strips.len() > 1, "{} strips", raster.strips.len());
+    let mut next = 0;
+    for strip in &raster.strips {
+        assert_eq!(strip.y, next);
+        assert!(strip.height <= 1024);
+        assert_eq!(strip.rgba.len(), (raster.width * strip.height * 4) as usize);
+        next += strip.height;
+    }
+    assert_eq!(next, raster.height);
+}
