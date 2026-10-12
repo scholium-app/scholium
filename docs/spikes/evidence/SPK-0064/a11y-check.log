@@ -1,0 +1,13 @@
+
+(process:196635): atspi-WARNING **: 00:35:38.896: AT-SPI: Error in GetItems, sender=:1.1, error=Unknown object '/org/a11y/atspi/cache'
+PASS 01-body-text-object
+PASS 02-typed-text-and-caret
+PASS 03-paragraph-breaks
+PASS 04-assistive-selection
+PASS 05-selection-replaced-once
+PASS 06-text-survives-pending-layout
+PASS 07-character-extents
+PASS 08-math-object-and-slot-status
+PASS 09-disabled-controls-are-not-enabled
+X connection to :100 broken (explicit kill or server shutdown).
+a11y exit 0

@@ -1,6 +1,6 @@
 //! Bounded local structural planning; temporary changes never mutate live authority.
 
-use super::{BodyTextPosition, EditError, StructuralEdit};
+use super::{BodyTextPosition, EditError, StructuralEdit, attach};
 use scholium_model::{NodeId, structured::*};
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -12,14 +12,20 @@ pub(super) fn apply(
         StructuralEdit::ReplaceBodyRange { start, end, text } => {
             super::range::replace(doc, start, end, &text).map(Some)
         }
+        StructuralEdit::Attach { leaf, at, slot } => attach::attach(doc, leaf, at, slot).map(Some),
+        StructuralEdit::LeaveSlot { leaf, at } => attach::leave(doc, leaf, at),
+        StructuralEdit::RemoveSlot { leaf } => attach::remove(doc, leaf),
         edit => apply_single(doc, edit).map(|()| None),
     }
 }
 
 fn apply_single(doc: &mut StructuredDocument, edit: StructuralEdit) -> Result<(), EditError> {
     match edit {
-        // The dispatcher handles ranges and their surviving cursor separately.
-        StructuralEdit::ReplaceBodyRange { .. } => unreachable!("range dispatched above"),
+        // The dispatcher handles ranges and attach edits (which return carets) separately.
+        StructuralEdit::ReplaceBodyRange { .. }
+        | StructuralEdit::Attach { .. }
+        | StructuralEdit::LeaveSlot { .. }
+        | StructuralEdit::RemoveSlot { .. } => unreachable!("dispatched above"),
         StructuralEdit::ReplaceText {
             leaf,
             start,
@@ -141,7 +147,7 @@ fn replace_value(
     Ok(())
 }
 
-fn boundary(value: &str, byte: usize) -> bool {
+pub(super) fn boundary(value: &str, byte: usize) -> bool {
     byte == value.len() || value.grapheme_indices(true).any(|(at, _)| at == byte)
 }
 
@@ -210,6 +216,9 @@ fn find(node: &mut MathNode, id: NodeId) -> Option<&mut MathNode> {
             numerator,
             denominator,
         } => find(numerator, id).or_else(|| find(denominator, id)),
+        MathBody::Attach { base, sub, sup } => find(base, id)
+            .or_else(|| sub.as_deref_mut().and_then(|n| find(n, id)))
+            .or_else(|| sup.as_deref_mut().and_then(|n| find(n, id))),
         _ => None,
     }
 }

@@ -22,6 +22,16 @@ pub(super) fn describe(node: &MathNode) -> String {
             describe(numerator),
             describe(denominator)
         ),
+        MathBody::Attach { base, sub, sup } => {
+            let slots = [("下标", sub), ("上标", sup)]
+                .into_iter()
+                .filter_map(|(name, slot)| Some(format!("；{name}：{}", describe(slot.as_ref()?))));
+            format!(
+                "上下标（底数：{}{}）",
+                describe(base),
+                slots.collect::<String>()
+            )
+        }
     }
 }
 
@@ -59,16 +69,38 @@ fn locate<'a>(
         MathBody::Fraction {
             numerator,
             denominator,
-        } => [(numerator, "分数分子"), (denominator, "分数分母")]
+        } => in_slots(
+            [(numerator, "分数分子"), (denominator, "分数分母")],
+            leaf,
+            path,
+        ),
+        MathBody::Attach { base, sub, sup } => in_slots(
+            [
+                (Some(base), "底数"),
+                (sub.as_ref(), "下标"),
+                (sup.as_ref(), "上标"),
+            ]
             .into_iter()
-            .find_map(|(slot, name)| {
-                path.push(name);
-                let found = locate(slot, leaf, path);
-                if found.is_none() {
-                    path.pop();
-                }
-                found
-            }),
+            .filter_map(|(slot, name)| Some((slot?, name))),
+            leaf,
+            path,
+        ),
         _ => None,
     }
+}
+
+/// First named slot containing `leaf`; its name stays on `path` only when found.
+fn in_slots<'a>(
+    slots: impl IntoIterator<Item = (&'a Box<MathNode>, &'static str)>,
+    leaf: NodeId,
+    path: &mut Vec<&'static str>,
+) -> Option<&'a MathNode> {
+    slots.into_iter().find_map(|(slot, name)| {
+        path.push(name);
+        let found = locate(slot, leaf, path);
+        if found.is_none() {
+            path.pop();
+        }
+        found
+    })
 }

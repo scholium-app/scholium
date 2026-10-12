@@ -1,5 +1,6 @@
 //! Candidate authority uses the existing LocalSession, not a second writable editor.
 
+mod attach;
 mod edit;
 mod range;
 #[cfg(test)]
@@ -17,6 +18,8 @@ pub struct MigrationFailure {
     pub error: StructureError,
 }
 
+pub use attach::{AttachSlot, base_before_slot};
+
 /// Stable body-text endpoint, independent of layout and source projection.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct BodyTextPosition {
@@ -31,8 +34,9 @@ pub struct BodyTextPosition {
 pub struct StructuralOutcome {
     /// Whether one revision and action were added.
     pub changed: bool,
-    /// Surviving body cursor for a range replacement, including newly split leaves.
-    /// Other edits return None; no-op body ranges still return a legal cursor.
+    /// Surviving body cursor for a range replacement, including newly split leaves, or the
+    /// math caret an attach/leave/remove edit asks for (even when unchanged). Other edits
+    /// return None; no-op body ranges still return a legal cursor.
     pub cursor: Option<BodyTextPosition>,
 }
 
@@ -80,6 +84,32 @@ pub enum StructuralEdit {
     WrapFraction {
         /// Surviving numerator subtree identity.
         node: NodeId,
+    },
+    /// Attach a subscript/superscript at a math caret (a Text or Hole leaf, grapheme boundary).
+    /// The base is the last grapheme before the caret, a new Hole at the start of a leaf or in a
+    /// Hole, or the Attach the caret sits immediately behind (its missing slot is added; an
+    /// existing slot only receives the caret). The outcome cursor is the target slot's caret.
+    Attach {
+        /// Math Text or Hole leaf holding the caret.
+        leaf: NodeId,
+        /// Leaf-local UTF-8 grapheme boundary.
+        at: usize,
+        /// Slot to create or enter.
+        slot: AttachSlot,
+    },
+    /// Locate the caret just after the Attach whose slot ends at `leaf`/`at`, appending a
+    /// placeholder Hole only when nothing follows. No cursor means this is not a slot end.
+    LeaveSlot {
+        /// Math Text or Hole leaf at the end of a subscript/superscript slot.
+        leaf: NodeId,
+        /// Leaf-local UTF-8 grapheme boundary (must be the leaf end to apply).
+        at: usize,
+    },
+    /// Backspace in an empty Hole: remove its Sub/Sup slot (an Attach with no slot left is
+    /// replaced by its base, merging adjacent Text) or a placeholder Hole behind an Attach.
+    RemoveSlot {
+        /// Empty Hole leaf.
+        leaf: NodeId,
     },
     /// Split at a body leaf boundary; the left block/leaf retain their identities.
     SplitBlock {

@@ -8,6 +8,8 @@ mod kernel;
 mod parity;
 mod selection;
 mod style;
+#[cfg(test)]
+mod tests;
 mod worker;
 pub use geometry::{Affinity, Caret, EditGeometry, Position};
 pub use selection::SelectionQuad;

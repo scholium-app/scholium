@@ -95,7 +95,7 @@ Document
           | Figure | Table | Theorem | Proof | RawBlock | ForeignSource
 Inline*: Text | Emphasis | Strong | Code | Math | Link | Citation
          | Reference | Footnote | RawInline | ForeignSource(placement=inline)
-Math: Row | Symbol | Fraction | Root | Script | Delimited | Matrix
+Math: Row | Symbol | Fraction | Attach(base, sub?, sup?) | Root | Delimited | Matrix
       | Cases | Aligned | Operator | Accent | RawMath | ForeignSource(placement=inline)
 ```
 

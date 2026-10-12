@@ -43,20 +43,25 @@ fn math_leaves<'a>(node: &'a MathNode, block: NodeId, result: &mut Vec<Leaf<'a>>
             math: true,
         });
     }
+    for child in math_children(node) {
+        math_leaves(child, block, result);
+    }
+}
+
+/// Direct child slots in caret order: Attach reads base, subscript, superscript.
+pub(super) fn math_children(node: &MathNode) -> Vec<&MathNode> {
     match &node.body {
-        MathBody::Row { children } => {
-            for child in children {
-                math_leaves(child, block, result);
-            }
-        }
+        MathBody::Row { children } => children.iter().collect(),
         MathBody::Fraction {
             numerator,
             denominator,
-        } => {
-            math_leaves(numerator, block, result);
-            math_leaves(denominator, block, result);
-        }
-        _ => {}
+        } => vec![numerator, denominator],
+        MathBody::Attach { base, sub, sup } => std::iter::once(base)
+            .chain(sub)
+            .chain(sup)
+            .map(|b| b.as_ref())
+            .collect(),
+        _ => Vec::new(),
     }
 }
 
@@ -122,6 +127,7 @@ impl EditorSession {
             } => self.key(key, modifiers, state),
             _ => {}
         }
+        self.settle_placeholder(state);
         None
     }
 
@@ -137,6 +143,9 @@ impl EditorSession {
         }
         if typed && text == "$" {
             self.command(Command::Math, state);
+            return;
+        }
+        if typed && self.attach_key(&text, state) {
             return;
         }
         let length = text.len();
@@ -197,6 +206,7 @@ impl EditorSession {
             return;
         };
         let text = leaf.text.to_owned();
+        let math = leaf.math;
         let before = text
             .grapheme_indices(true)
             .map(|(i, _)| i)
@@ -207,9 +217,12 @@ impl EditorSession {
             .find(|i| *i > self.cursor.byte)
             .unwrap_or(text.len());
         match key {
+            egui::Key::ArrowLeft if self.enter_base(math) => {}
             egui::Key::ArrowLeft => self.horizontal(false, before.unwrap_or(0)),
+            egui::Key::ArrowRight if self.leave_slot(math, text.len(), state) => {}
             egui::Key::ArrowRight => self.horizontal(true, after),
             egui::Key::Tab => self.next_leaf(modifiers.shift),
+            egui::Key::Backspace if self.remove_slot(math && text.is_empty(), state) => {}
             egui::Key::Backspace => self.erase(before.unwrap_or(0), self.cursor.byte, state),
             egui::Key::Delete => self.erase(self.cursor.byte, after, state),
             egui::Key::Enter => self.split(state),
@@ -419,7 +432,9 @@ fn denominator_of(node: &MathNode, leaf: NodeId) -> Option<NodeId> {
             numerator,
             denominator,
         } => denominator_of(numerator, leaf).or_else(|| denominator_of(denominator, leaf)),
-        MathBody::Row { children } => children.iter().find_map(|c| denominator_of(c, leaf)),
+        MathBody::Row { .. } | MathBody::Attach { .. } => math_children(node)
+            .into_iter()
+            .find_map(|c| denominator_of(c, leaf)),
         _ => None,
     }
 }

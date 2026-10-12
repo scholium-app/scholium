@@ -1,5 +1,6 @@
 //! The Typst Content editor: one LocalSession authority, derived Typst scenes.
 mod access;
+mod attach;
 mod audit;
 mod deferred;
 mod input;
@@ -107,6 +108,7 @@ pub(crate) struct EditorSession {
     rejected_input: Option<String>,
     notice: Option<String>,
     last_audit: Option<String>,
+    placeholder: Option<attach::Placeholder>,
 }
 
 fn diagnostics_line(scene: &EditorScene) -> String {
@@ -189,6 +191,7 @@ impl EditorSession {
             rejected_input: None,
             notice: None,
             last_audit: None,
+            placeholder: None,
         };
         state.editor = Some(EditorView::default());
         result.metadata(state);
@@ -205,6 +208,8 @@ impl EditorSession {
         }
         self.controls(ui.ctx(), state);
         paint::show(ui, state, self);
+        // A click inside paint may have moved the caret out of a placeholder.
+        self.settle_placeholder(state);
         // Saving while input waits for layout would persist a state the user never saw.
         if self.deferred.is_empty() && std::mem::take(&mut state.save_requested) {
             self.save(state);
@@ -386,6 +391,7 @@ impl EditorSession {
         if state.composition.is_some() {
             return;
         }
+        self.placeholder = None;
         let target = if redo {
             self.redo.pop()
         } else {
@@ -507,6 +513,7 @@ impl EditorSession {
                     self.drag = None;
                     // Queued input addressed the discarded document.
                     self.deferred.clear();
+                    self.placeholder = None;
                     self.undo.clear();
                     self.redo.clear();
                     self.saved = None;

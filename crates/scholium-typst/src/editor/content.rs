@@ -1,12 +1,15 @@
 //! Persistent derived Content, keyed by typed identity and semantic subtree value.
 
+use super::geometry::atom_key;
 use super::{EditorError, EditorStats};
 use scholium_model::{BlockKind, NodeId, structured::*};
 use std::collections::HashMap;
 use typst::editor::{EditHoleElem, EditOrigin};
 use typst::foundations::{Content, NativeElement};
-use typst::math::{EquationElem, FracElem};
+use typst::math::{AttachElem, ClassElem, EquationElem, FracElem};
 use typst::model::{EmphElem, ParElem, StrongElem};
+use typst::text::TextElem;
+use unicode_segmentation::UnicodeSegmentation;
 
 #[derive(Clone, PartialEq, Eq)]
 enum Value {
@@ -71,6 +74,12 @@ impl ContentCache {
                 self.register_math(numerator);
                 self.register_math(denominator);
             }
+            MathBody::Attach { base, sub, sup } => {
+                self.register_math(base);
+                for slot in [sub, sup].into_iter().flatten() {
+                    self.register_math(slot);
+                }
+            }
             _ => {}
         }
     }
@@ -103,6 +112,10 @@ impl ContentCache {
             slot: hole.then_some(0),
             hole,
         });
+        self.store(id, value, content)
+    }
+
+    fn store(&mut self, id: NodeId, value: Value, content: Content) -> Content {
         self.stats.built += 1;
         self.cache.insert(id, (value, content.clone()));
         content
@@ -152,7 +165,11 @@ impl ContentCache {
             return Ok(content);
         }
         let body = match &node.body {
-            MathBody::Text { text } => super::kernel::text(text),
+            // Atoms carry their own origins; a node origin would replace a lone atom's.
+            MathBody::Text { text } => {
+                let atoms = self.atoms(node.node, text);
+                return Ok(self.store(node.node, value, atoms));
+            }
             MathBody::Symbol { symbol } => super::kernel::text(&symbol.to_string()),
             MathBody::Hole => EditHoleElem::new().pack(),
             MathBody::Row { children } => sequence(
@@ -165,6 +182,9 @@ impl ContentCache {
                 numerator,
                 denominator,
             } => self.fraction(node.node, numerator, denominator)?,
+            MathBody::Attach { base, sub, sup } => {
+                self.attach(node.node, base, sub.as_deref(), sup.as_deref())?
+            }
         };
         Ok(self.keep(node.node, value, body, matches!(node.body, MathBody::Hole)))
     }
@@ -175,15 +195,80 @@ impl ContentCache {
         top: &MathNode,
         bottom: &MathNode,
     ) -> Result<Content, EditorError> {
-        let mut slot = |node, number| -> Result<_, EditorError> {
-            Ok(self.math(node)?.with_edit_slot(EditOrigin {
-                node: self.ids[&owner],
-                slot: Some(number),
-                hole: false,
-            }))
-        };
-        Ok(FracElem::new(slot(top, 1)?, slot(bottom, 2)?).pack())
+        Ok(FracElem::new(self.slot(owner, top, 1)?, self.slot(owner, bottom, 2)?).pack())
     }
+
+    /// `AttachElem` with `t` = sup and `b` = sub; slot numbers are base 1, sub 2, sup 3.
+    fn attach(
+        &mut self,
+        owner: NodeId,
+        base: &MathNode,
+        sub: Option<&MathNode>,
+        sup: Option<&MathNode>,
+    ) -> Result<Content, EditorError> {
+        let mut elem = AttachElem::new(self.slot(owner, base, 1)?);
+        if let Some(sub) = sub {
+            elem.b.set(Some(self.slot(owner, sub, 2)?));
+        }
+        if let Some(sup) = sup {
+            elem.t.set(Some(self.slot(owner, sup, 3)?));
+        }
+        Ok(elem.pack())
+    }
+
+    fn slot(
+        &mut self,
+        owner: NodeId,
+        node: &MathNode,
+        number: u128,
+    ) -> Result<Content, EditorError> {
+        Ok(self.math(node)?.with_edit_slot(EditOrigin {
+            node: self.ids[&owner],
+            slot: Some(number),
+            hole: false,
+        }))
+    }
+
+    /// One math atom per grapheme, so Typst applies per-atom math classes and variables
+    /// italicize, while every grapheme boundary keeps its own exact cluster geometry.
+    fn atoms(&self, leaf: NodeId, text: &str) -> Content {
+        let key = self.ids[&leaf];
+        let atoms = text
+            .grapheme_indices(true)
+            .map(|(start, grapheme)| {
+                let origin = EditOrigin {
+                    node: atom_key(key, start..start + grapheme.len()),
+                    slot: None,
+                    hole: false,
+                };
+                let body = TextElem::new(display(grapheme).into())
+                    .pack()
+                    .with_edit_origin(origin);
+                // The class wrapper also shields the atom's origin from a parent's.
+                let single = (grapheme.chars().count() == 1).then(|| grapheme.chars().next());
+                let class = single
+                    .flatten()
+                    .and_then(typst::utils::default_math_class)
+                    .or_else(|| typst::utils::default_math_class('x'))
+                    .expect("letters have a math class");
+                ClassElem::new(class, body).pack()
+            })
+            .collect();
+        sequence(atoms)
+    }
+}
+
+/// Shown text of an atom: ASCII letters use the math-italic code points (Typst's own
+/// auto-italic only applies to symbol elements, which carry no cluster geometry).
+fn display(grapheme: &str) -> String {
+    let mut chars = grapheme.chars();
+    let shown = match (chars.next(), chars.next()) {
+        (Some('h'), None) => Some('\u{210E}'),
+        (Some(c @ 'a'..='z'), None) => char::from_u32(0x1D44E + (c as u32 - 'a' as u32)),
+        (Some(c @ 'A'..='Z'), None) => char::from_u32(0x1D434 + (c as u32 - 'A' as u32)),
+        _ => None,
+    };
+    shown.map_or_else(|| grapheme.to_owned(), String::from)
 }
 
 fn block_is_empty(block: &StructuredBlock) -> bool {

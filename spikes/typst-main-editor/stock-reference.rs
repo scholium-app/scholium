@@ -6,7 +6,7 @@ use std::num::NonZeroUsize;
 use std::str::FromStr;
 use typst::foundations::{Content, Dict, FromValue, IntoValue, NativeElement, Smart, Value};
 use typst::layout::{Abs, Em, Frame, Length, Point, Sides, Size};
-use typst::math::{EquationElem, FracElem};
+use typst::math::{AttachElem, ClassElem, EquationElem, FracElem};
 use typst::model::{EmphElem, FirstLineIndent, HeadingElem, ParElem, StrongElem};
 use typst::text::{FontFamily, FontList, FontWeight, Lang, Region, TextElem, TextSize};
 
@@ -37,6 +37,32 @@ fn first_line_indent() -> FirstLineIndent {
     FirstLineIndent::from_value(Value::Dict(dict)).expect("fixed indent dictionary")
 }
 
+/// One math atom the way the editor shows it: a text element in its default math class.
+/// Letters use the math-italic code points, since stock auto-italic only reaches symbol
+/// elements. A native symbol element differs only in its script-size glyph forms (ssty),
+/// by at most one pixel column inside scripts; that is why this fixture mirrors the atom.
+fn symbol(value: &str) -> Content {
+    let mut chars = value.chars();
+    let shown = match (chars.next(), chars.next()) {
+        (Some(c @ 'a'..='z'), None) => char::from_u32(0x1D44E + (c as u32 - 'a' as u32)),
+        (Some(c @ 'A'..='Z'), None) => char::from_u32(0x1D434 + (c as u32 - 'A' as u32)),
+        _ => None,
+    };
+    let text = kernel::text(&shown.map_or_else(|| value.to_owned(), String::from));
+    let class = value
+        .chars()
+        .next()
+        .and_then(typst::utils::default_math_class);
+    class.map_or(text.clone(), |class| ClassElem::new(class, text).pack())
+}
+
+fn scripts(base: Content, sub: Option<Content>, sup: Option<Content>) -> Content {
+    let mut elem = AttachElem::new(base);
+    elem.b.set(sub);
+    elem.t.set(sup);
+    elem.pack()
+}
+
 fn fixture(name: &str) -> Content {
     let paragraph = |body| ParElem::new(body).pack();
     let block = match name {
@@ -49,6 +75,20 @@ fn fixture(name: &str) -> Content {
                 )
                 .pack(),
             )
+            .pack(),
+            kernel::text(""),
+        ])),
+        // `x^2 + y_i = a_n^23` as independent stock Content: atoms in math classes,
+        // numbers as text, scripts as AttachElem.
+        "scripts" => paragraph(Content::sequence([
+            kernel::text("E = "),
+            EquationElem::new(Content::sequence([
+                scripts(symbol("x"), None, Some(kernel::text("2"))),
+                symbol("+"),
+                scripts(symbol("y"), Some(symbol("i")), None),
+                symbol("="),
+                scripts(symbol("a"), Some(symbol("n")), Some(kernel::text("23"))),
+            ]))
             .pack(),
             kernel::text(""),
         ])),
@@ -96,7 +136,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let output = std::path::PathBuf::from(std::env::args().nth(1).ok_or("output path required")?);
     std::fs::create_dir_all(&output)?;
     let world = kernel::ProbeWorld::new();
-    for name in ["full", "styles", "heading"] {
+    for name in ["full", "scripts", "styles", "heading"] {
         let frame = kernel::layout_in(
             &world,
             &fixture(name),
