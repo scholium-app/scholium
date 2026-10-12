@@ -212,7 +212,10 @@ impl EditorSession {
             ui.ctx().request_repaint();
         }
         self.confirm(ui.ctx(), state);
-        self.metadata(state);
+        // The status bar is drawn before this pass; if what it shows just changed, draw it again.
+        if self.metadata(state) {
+            ui.ctx().request_repaint();
+        }
         if std::mem::take(&mut state.status_copy)
             && let Some(draft) = state.editor.as_ref().and_then(|v| v.rejected_input.clone())
         {
@@ -315,7 +318,20 @@ impl EditorSession {
         self.scene.as_ref().is_some_and(|s| s.stamp == self.wanted) && self.layout_error.is_none()
     }
 
-    fn metadata(&self, state: &mut WorkspaceState) {
+    /// Publishes view metadata; true when something the status bar shows changed.
+    fn metadata(&self, state: &mut WorkspaceState) -> bool {
+        let shown = |v: &EditorView| {
+            (
+                v.revision,
+                v.shown_revision,
+                v.pending,
+                v.dirty,
+                v.warning.clone(),
+                v.rejected_input.is_some(),
+                v.diagnostics.clone(),
+            )
+        };
+        let before = state.editor.as_ref().map(shown);
         let warning = self.warning(state);
         let diagnostics = state.diagnostics;
         if let Some(view) = &mut state.editor {
@@ -332,6 +348,7 @@ impl EditorSession {
                 .then(|| self.scene.as_ref().map(diagnostics_line))
                 .flatten();
         }
+        state.editor.as_ref().map(shown) != before
     }
 
     /// The single transient message the status bar shows, in priority order.

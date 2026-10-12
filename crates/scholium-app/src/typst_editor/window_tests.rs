@@ -250,3 +250,38 @@ fn page_is_centered_in_a_wide_viewport() {
     let (left, right) = (rect.left(), size.x - rect.right());
     assert!((left - right).abs() < 20.0, "left {left} right {right}");
 }
+
+#[test]
+fn status_bar_is_redrawn_once_a_stale_marker_clears() {
+    let mut f = window();
+    f.settle();
+    let size = egui::vec2(1280.0, 900.0);
+    frame(&mut f, size, vec![]);
+    frame(&mut f, size, vec![]);
+    assert!(
+        !f.editor.metadata(&mut f.state),
+        "settled view is unchanged"
+    );
+    // The status bar paints from the previous frame's view; the editor then adopts the Scene.
+    if let Some(view) = &mut f.state.editor {
+        view.pending = true;
+    }
+    let wake = frame(&mut f, size, vec![]);
+    assert!(status_text(&wake, size.y).contains("待更新"));
+    assert!(!f.state.editor.as_ref().is_some_and(|v| v.pending));
+    let next = frame(&mut f, size, vec![]);
+    assert!(!status_text(&next, size.y).contains("待更新"));
+}
+
+#[test]
+fn metadata_reports_changes_the_status_bar_shows() {
+    let mut f = window();
+    f.settle();
+    frame(&mut f, egui::vec2(1280.0, 900.0), vec![]);
+    f.editor.metadata(&mut f.state);
+    f.state.edit_error = Some("失败".into());
+    assert!(f.editor.metadata(&mut f.state), "new warning");
+    assert!(!f.editor.metadata(&mut f.state), "unchanged");
+    f.state.edit_error = None;
+    assert!(f.editor.metadata(&mut f.state), "warning cleared");
+}
