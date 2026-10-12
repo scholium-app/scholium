@@ -9,6 +9,7 @@ use scholium_model::{
     structured::{InlineBody, MathBody, MathNode, StructuredDocument, TextStyle},
 };
 use std::ops::Range;
+use unicode_segmentation::UnicodeSegmentation;
 
 /// Which consumer the source is for.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -172,21 +173,95 @@ fn math(out: &mut GeneratedSource, node: &MathNode) {
             math(out, denominator);
             out.source.push(')');
         }
+        MathBody::Attach { base, sub, sup } => {
+            // A multi-atom base would otherwise attach only to its last atom.
+            let group = atom_count(base) > 1;
+            if group {
+                out.source.push('(');
+            }
+            math(out, base);
+            if group {
+                out.source.push(')');
+            }
+            for (mark, slot) in [('^', sup), ('_', sub)] {
+                if let Some(slot) = slot {
+                    out.source.push(mark);
+                    out.source.push('(');
+                    math(out, slot);
+                    out.source.push(')');
+                }
+            }
+        }
     }
 }
 
-/// Literal math text: single letters/digits stay bare (as typed math), anything else is a
-/// quoted string so it is never read as an identifier, operator or call.
+fn atom_count(node: &MathNode) -> usize {
+    match &node.body {
+        MathBody::Text { text } => text.graphemes(true).count(),
+        MathBody::Row { children } => children.iter().map(atom_count).sum(),
+        MathBody::Fraction { .. } | MathBody::Attach { .. } => 2,
+        MathBody::Symbol { .. } | MathBody::Hole => 1,
+    }
+}
+
+/// Operators that are safe as bare math tokens: each is its own atom (atoms are separated
+/// by spaces, so `<` `=` never fuse into a shorthand) and none has syntax meaning on its own.
+const BARE_OPERATORS: &str = "+-=<>!,;:.?";
+
+/// Literal math text, one atom at a time and space separated: ASCII letters and digit runs
+/// stay bare (variables, numbers), whitelisted operators stay bare, anything else is a quoted
+/// string so it is never read as an identifier, operator, call or script marker.
 fn math_text(out: &mut String, text: &str) {
-    let mut chars = text.chars();
-    let bare = matches!((chars.next(), chars.next()), (Some(c), None) if c.is_alphanumeric())
-        || (!text.is_empty() && text.chars().all(|c| c.is_ascii_digit()));
+    let mut first = true;
+    let mut rest = text;
+    while !rest.is_empty() {
+        let digits = digit_run(rest);
+        let atom_len = if digits > 0 {
+            digits
+        } else {
+            rest.graphemes(true).next().map_or(rest.len(), str::len)
+        };
+        let (atom, tail) = rest.split_at(atom_len);
+        rest = tail;
+        // A typed space only separates atoms; it has no source form.
+        if atom == " " {
+            continue;
+        }
+        if !first {
+            out.push(' ');
+        }
+        first = false;
+        push_atom(out, atom, digits > 0);
+    }
+}
+
+/// Byte length of the leading number: ASCII digits with single inner dots (`3.14`).
+fn digit_run(text: &str) -> usize {
+    let bytes = text.as_bytes();
+    let mut end = 0;
+    while end < bytes.len() {
+        let digit = bytes[end].is_ascii_digit();
+        let inner_dot =
+            bytes[end] == b'.' && end > 0 && bytes.get(end + 1).is_some_and(u8::is_ascii_digit);
+        if !(digit || inner_dot) {
+            break;
+        }
+        end += 1;
+    }
+    end
+}
+
+fn push_atom(out: &mut String, atom: &str, number: bool) {
+    let mut chars = atom.chars();
+    let bare = number
+        || matches!((chars.next(), chars.next()), (Some(c), None)
+            if c.is_ascii_alphabetic() || BARE_OPERATORS.contains(c));
     if bare {
-        out.push_str(text);
+        out.push_str(atom);
         return;
     }
     out.push('"');
-    for ch in text.chars() {
+    for ch in atom.chars() {
         if matches!(ch, '"' | '\\') {
             out.push('\\');
         }

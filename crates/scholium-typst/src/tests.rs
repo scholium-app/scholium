@@ -108,7 +108,7 @@ fn math_text_is_literal_fractions_group_and_holes_are_counted() {
         &doc(vec![(BlockKind::Paragraph, vec![math(row)])]),
         SourceMode::View,
     );
-    assert_eq!(generated.source, "$x \"+\" 12 (\"ab, c\\\"\")/(□)$\n");
+    assert_eq!(generated.source, "$x + 12 (a b , c \"\\\"\")/(□)$\n");
     assert_eq!(generated.holes, 1);
 }
 
@@ -397,4 +397,129 @@ fn in_word_styles_parentheses_list_markers_and_unicode_newlines_stay_literal() {
         2,
         "no extra structure from user text"
     );
+}
+
+fn text_node(value: &str) -> MathNode {
+    leaf(MathBody::Text { text: value.into() })
+}
+
+fn attach(base: MathNode, sub: Option<MathNode>, sup: Option<MathNode>) -> MathNode {
+    leaf(MathBody::Attach {
+        base: Box::new(base),
+        sub: sub.map(Box::new),
+        sup: sup.map(Box::new),
+    })
+}
+
+fn view_of(root: MathNode) -> String {
+    generate_source(
+        &doc(vec![(BlockKind::Paragraph, vec![math(root)])]),
+        SourceMode::View,
+    )
+    .source
+}
+
+/// Text of every shaped run in the first page, as Typst laid it out.
+fn rendered_text(source: &str) -> String {
+    use typst::layout::{Frame, FrameItem};
+    fn walk(frame: &Frame, out: &mut String) {
+        for (_, item) in frame.items() {
+            match item {
+                FrameItem::Text(run) => out.push_str(&run.text),
+                FrameItem::Group(group) => walk(&group.frame, out),
+                _ => {}
+            }
+        }
+    }
+    let world = PreviewWorld::new();
+    world.set_source(source.into());
+    let compiled = typst::compile::<PagedDocument>(&world);
+    let document = compiled.output.expect("generated source compiles");
+    let mut out = String::new();
+    walk(&document.pages()[0].frame, &mut out);
+    out
+}
+
+#[test]
+fn attach_source_parenthesizes_slots_and_multi_atom_bases() {
+    let both = attach(text_node("x"), Some(text_node("i")), Some(text_node("2")));
+    assert_eq!(view_of(both), "$x^(2)_(i)$\n");
+    let only_sub = attach(text_node("x"), Some(MathNode::hole()), None);
+    assert_eq!(view_of(only_sub), "$x_(□)$\n");
+    let grouped = attach(text_node("ab"), None, Some(text_node("2")));
+    assert_eq!(view_of(grouped), "$(a b)^(2)$\n");
+    let nested = attach(
+        attach(text_node("x"), None, Some(text_node("2"))),
+        None,
+        Some(text_node("3")),
+    );
+    assert_eq!(view_of(nested), "$(x^(2))^(3)$\n");
+    let row = leaf(MathBody::Row {
+        children: vec![
+            attach(text_node("x"), None, Some(text_node("2"))),
+            text_node("+y"),
+        ],
+    });
+    assert_eq!(view_of(row), "$x^(2) + y$\n");
+}
+
+#[test]
+fn math_text_is_emitted_per_atom() {
+    assert_eq!(view_of(text_node("x+y = 3.14 <")), "$x + y = 3.14 <$\n");
+    assert_eq!(view_of(text_node("12ab")), "$12 a b$\n");
+    assert_eq!(view_of(text_node("中é")), "$\"中\" \"é\"$\n");
+    assert_eq!(view_of(text_node("e\u{301}")), "$\"e\u{301}\"$\n");
+}
+
+#[test]
+fn attach_preview_compiles_with_real_scripts() {
+    let both = attach(text_node("x"), Some(text_node("i")), Some(text_node("2")));
+    let d = doc(vec![(BlockKind::Paragraph, vec![math(both)])]);
+    let text = rendered_text(&preview(&d));
+    assert!(text.contains('2') && !text.contains('^'), "{text:?}");
+}
+
+#[test]
+fn syntax_characters_in_math_text_stay_literal_in_the_compiled_output() {
+    const HOSTILE: &str = "#$\\\"/^_&@*'`[]()~=";
+    let chars: Vec<char> = HOSTILE.chars().collect();
+    for plain_syntax in ['#', '$', '\\', '"', '/', '^', '_', '&', '@'] {
+        let d = doc(vec![(
+            BlockKind::Paragraph,
+            vec![math(attach(
+                text_node(&format!("a{plain_syntax}b")),
+                Some(text_node(&plain_syntax.to_string())),
+                Some(text_node(&HOSTILE.replace(' ', ""))),
+            ))],
+        )]);
+        let view = generate_source(&d, SourceMode::View).source;
+        let outside = outside_strings(&view);
+        for forbidden in ['#', '\\', '"', '/', '&', '@'] {
+            assert!(!outside.contains(forbidden), "{forbidden:?} leaked: {view}");
+        }
+        assert_eq!(outside.matches('^').count(), 1, "{view}");
+        assert_eq!(outside.matches('_').count(), 1, "{view}");
+        let rendered = rendered_text(&preview(&d));
+        for c in chars.iter().chain(&[plain_syntax]) {
+            assert!(rendered.contains(*c), "{c:?} missing from {rendered:?}");
+        }
+    }
+}
+
+/// Generated source with quoted string contents removed, minus the formula delimiters.
+fn outside_strings(source: &str) -> String {
+    let mut out = String::new();
+    let mut quoted = false;
+    let mut escaped = false;
+    for c in source.trim().trim_matches('$').chars() {
+        match (quoted, escaped, c) {
+            (true, true, _) => escaped = false,
+            (true, false, '\\') => escaped = true,
+            (true, false, '"') => quoted = false,
+            (true, false, _) => {}
+            (false, _, '"') => quoted = true,
+            (false, _, _) => out.push(c),
+        }
+    }
+    out
 }
