@@ -125,6 +125,18 @@ pub enum MathBody {
         /// Denominator content; a Hole preserves an unfilled slot.
         denominator: Box<MathNode>,
     },
+    /// A base with optional subscript and superscript; at least one slot is present.
+    /// Additive to schema v1: older builds reject documents that contain it.
+    Attach {
+        /// Attached-to content; a Hole preserves an unfilled base.
+        base: Box<MathNode>,
+        /// Subscript content, if the slot exists.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        sub: Option<Box<MathNode>>,
+        /// Superscript content, if the slot exists.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        sup: Option<Box<MathNode>>,
+    },
     /// Required unfilled slot. Display hints are not stored characters.
     Hole,
 }

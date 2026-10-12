@@ -239,3 +239,80 @@ fn aggregate_text_and_node_caps_reject_many_individually_valid_leaves() {
     });
     assert_eq!(many.validate(), Err(StructureError::Capacity));
 }
+
+fn text_node(text: &str) -> MathNode {
+    MathNode {
+        node: NodeId::fresh(),
+        body: MathBody::Text { text: text.into() },
+    }
+}
+
+fn attach(base: MathNode, sub: Option<MathNode>, sup: Option<MathNode>) -> MathNode {
+    MathNode {
+        node: NodeId::fresh(),
+        body: MathBody::Attach {
+            base: Box::new(base),
+            sub: sub.map(Box::new),
+            sup: sup.map(Box::new),
+        },
+    }
+}
+
+#[test]
+fn attach_round_trips_with_one_or_both_slots_and_a_stable_tag() {
+    for node in [
+        attach(text_node("x"), None, Some(text_node("2"))),
+        attach(text_node("x"), Some(text_node("i")), None),
+        attach(text_node("x"), Some(text_node("i")), Some(text_node("2"))),
+    ] {
+        let document = native(node);
+        assert_eq!(document.ensure_filled(), Ok(()));
+        let json = serde_json::to_string(&document).expect("attach encodes");
+        assert!(json.contains("\"kind\":\"attach\""));
+        assert_eq!(
+            serde_json::from_str::<StructuredDocument>(&json).expect("attach decodes"),
+            document
+        );
+    }
+    let json = serde_json::to_string(&native(attach(text_node("x"), None, Some(text_node("2")))))
+        .expect("encode");
+    assert!(!json.contains("\"sub\""), "absent slots are not serialized");
+}
+
+#[test]
+fn attach_without_any_slot_is_rejected() {
+    let node = attach(text_node("x"), None, None);
+    let id = node.node;
+    assert_eq!(native(node).validate(), Err(StructureError::Empty(id)));
+}
+
+#[test]
+fn attach_slots_share_identity_namespace_and_report_unfilled_holes() {
+    let base = text_node("x");
+    let id = base.node;
+    let mut sup = text_node("2");
+    sup.node = id;
+    assert_eq!(
+        native(attach(base, None, Some(sup))).validate(),
+        Err(StructureError::Duplicate(id))
+    );
+    let hole = MathNode::hole();
+    let hole_id = hole.node;
+    let document = native(attach(text_node("x"), Some(hole), None));
+    assert_eq!(document.validate(), Ok(()));
+    assert_eq!(
+        document.ensure_filled(),
+        Err(StructureError::Unfilled(hole_id))
+    );
+}
+
+#[test]
+fn attach_counts_toward_the_depth_limit() {
+    let mut root = MathNode::hole();
+    for _ in 0..MAX_MATH_DEPTH {
+        root = attach(root, None, Some(MathNode::hole()));
+    }
+    native(root.clone()).validate().expect("maximum depth");
+    let extra = attach(root, None, Some(MathNode::hole()));
+    assert_eq!(native(extra).validate(), Err(StructureError::Capacity));
+}

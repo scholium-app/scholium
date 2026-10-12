@@ -129,6 +129,15 @@ impl Validator {
                 self.math(numerator, depth + 1)?;
                 self.math(denominator, depth + 1)?;
             }
+            MathBody::Attach { base, sub, sup } => {
+                if sub.is_none() && sup.is_none() {
+                    return Err(StructureError::Empty(node.node));
+                }
+                self.math(base, depth + 1)?;
+                for slot in [sub, sup].into_iter().flatten() {
+                    self.math(slot, depth + 1)?;
+                }
+            }
         }
         Ok(())
     }
@@ -144,6 +153,10 @@ fn filled(node: &MathNode) -> Result<(), StructureError> {
         } => {
             filled(numerator)?;
             filled(denominator)
+        }
+        MathBody::Attach { base, sub, sup } => {
+            filled(base)?;
+            [sub, sup].into_iter().flatten().try_for_each(|s| filled(s))
         }
         _ => Ok(()),
     }
