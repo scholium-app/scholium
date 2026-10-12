@@ -298,22 +298,26 @@ impl EditorSession {
         (top < bottom).then_some(Span { top, bottom })
     }
 
+    /// First or last body Text boundary in logical order; needs no geometry.
+    pub(super) fn document_edge_position(&self, end: bool) -> Option<Position> {
+        let leaves = input::leaves(&self.snapshot);
+        let mut body = leaves.iter().filter(|l| !l.math);
+        let leaf = if end { body.next_back() } else { body.next() }?;
+        Some(Position {
+            leaf: leaf.id,
+            byte: if end { leaf.text.len() } else { 0 },
+            affinity: Affinity::Downstream,
+        })
+    }
+
     /// Ctrl+Home/End: first/last body Text boundary in logical order; no geometry needed.
     pub(super) fn document_edge(&mut self, end: bool, extend: bool, state: &mut WorkspaceState) {
         if extend && !self.body_leaf(self.cursor.leaf) {
             state.edit_error = Some("此批选区只接受正文端点；数学槽位选区尚未接入。".into());
             return;
         }
-        let leaves = input::leaves(&self.snapshot);
-        let mut body = leaves.iter().filter(|l| !l.math);
-        let leaf = if end { body.next_back() } else { body.next() };
-        let Some(leaf) = leaf else {
+        let Some(target) = self.document_edge_position(end) else {
             return;
-        };
-        let target = Position {
-            leaf: leaf.id,
-            byte: if end { leaf.text.len() } else { 0 },
-            affinity: Affinity::Downstream,
         };
         self.move_to(target, extend);
         self.drag = None;

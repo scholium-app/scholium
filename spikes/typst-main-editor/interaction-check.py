@@ -135,6 +135,22 @@ try:
     sel = s["selection"]
     record("04-triple-click-selects-the-block", (sel["start_byte"], sel["end_byte"]) == (0, first["bytes"]), selection=sel)
     shot("04-triple-click-block-selected")
+
+    # 5. A document that ends in a formula: a click far below goes to the Ctrl+End position, the
+    # empty body leaf after the formula, not to the text before it.
+    xdo("key", "ctrl+End")
+    xdo("key", "Return")
+    xdo("type", "--delay", "30", "Second: $x^2")
+    xdo("key", "Right")
+    xdo("type", "--delay", "30", " tail")
+    s = wait(lambda s: s["current"] and json.dumps(s["snapshot"]).count("tail") == 1 and s["cursor_byte"] == 5, "formula tail")
+    end_leaf = body_leaves(s)[-1]
+    anchor = caret(s, body_leaves(s)[-2]["leaf"], 0)
+    time.sleep(0.5)
+    point_at(anchor["x"] + 30, anchor["y"] + 100)
+    xdo("click", 1)
+    s = wait(lambda s: s["cursor_leaf"] == end_leaf["leaf"] and s["cursor_byte"] == 0, "click below formula end")
+    record("05-click-below-a-formula-ending-document-goes-to-ctrl-end", end_leaf["bytes"] == 0, cursor_byte=s["cursor_byte"])
 finally:
     (output / "summary.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")
     if app.poll() is None:

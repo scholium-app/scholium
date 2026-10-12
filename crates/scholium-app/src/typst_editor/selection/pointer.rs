@@ -3,7 +3,7 @@
 //! Coordinates are padded Frame pt. Body hits follow the visual lines the Up/Down keys use
 //! (`vertical`); a formula is entered only when the point lies inside its own bounds.
 use super::*;
-use crate::typst_editor::indicator::quad_bounds;
+use crate::typst_editor::indicator::formula_bounds;
 use crate::typst_editor::vertical::{Span, Stop, nearest_x};
 use scholium_typst::editor::EditorScene;
 use std::collections::HashMap;
@@ -67,14 +67,51 @@ impl EditorSession {
             .iter()
             .map(|l| (l.id, l.math))
             .collect();
+        let edges = Edges {
+            start: self.document_edge_position(false),
+            end: self.document_edge_position(true),
+            exits: self.formula_exits(scene),
+        };
         if !self.inside_formula(scene, point)
-            && let Some(position) = body_line_hit(scene, &known, &self.snapshot, point)
+            && let Some(position) = body_line_hit(scene, &known, &self.snapshot, &edges, point)
         {
             return Some(position);
         }
         let caret = scene.geometry.hit(point)?;
         // Proportional intra-ligature stops are display estimates, not pointer proof.
         (caret.exact && known.contains_key(&caret.position.leaf)).then_some(caret.position)
+    }
+
+    /// Per inline formula: its bounds, the logical index of its first leaf and the body
+    /// position right after it. That position can be an empty leaf with no caret of its own.
+    fn formula_exits(&self, scene: &EditorScene) -> Vec<Exit> {
+        let leaves = input::leaves(&self.snapshot);
+        self.snapshot
+            .blocks
+            .iter()
+            .flat_map(|b| &b.content)
+            .filter_map(|i| {
+                let InlineBody::Math { root } = &i.body else {
+                    return None;
+                };
+                let inside = |l: &input::Leaf<'_>| vertical::contains(root, l.id);
+                let first = leaves.iter().position(inside)?;
+                let last = leaves.iter().rposition(inside)?;
+                let after = leaves[last + 1..]
+                    .iter()
+                    .find(|l| !l.math && l.block == leaves[last].block)?;
+                let bounds = formula_bounds(scene, root)?;
+                Some(Exit {
+                    bounds,
+                    first,
+                    after: Position {
+                        leaf: after.id,
+                        byte: 0,
+                        affinity: Affinity::Downstream,
+                    },
+                })
+            })
+            .collect()
     }
 
     /// True when the point lies inside the bounds of an inline formula.
@@ -84,14 +121,10 @@ impl EditorSession {
             .iter()
             .flat_map(|b| &b.content)
             .filter_map(|i| match &i.body {
-                InlineBody::Math { root } => scene.geometry.selection_node(root.node).ok(),
+                InlineBody::Math { root } => formula_bounds(scene, root),
                 _ => None,
             })
-            .flatten()
-            .any(|quad| {
-                let [x0, y0, x1, y1] = quad_bounds(&quad);
-                (x0..=x1).contains(&point[0]) && (y0..=y1).contains(&point[1])
-            })
+            .any(|[x0, y0, x1, y1]| (x0..=x1).contains(&point[0]) && (y0..=y1).contains(&point[1]))
     }
 
     /// A completed double/triple click at a screen position (the press already placed the caret).
@@ -211,6 +244,19 @@ fn segment_at(text: &str, byte: usize, left: bool) -> Option<std::ops::Range<usi
         .cloned()
 }
 
+struct Exit {
+    bounds: [f64; 4],
+    first: usize,
+    after: Position,
+}
+
+/// Logical document ends and formula exits, none of which need caret geometry.
+struct Edges {
+    start: Option<Position>,
+    end: Option<Position>,
+    exits: Vec<Exit>,
+}
+
 /// Exact body stop for a point: nearest visual line, then nearest stop by x on it.
 ///
 /// Above the first line the target is the document start, below the last line its end.
@@ -218,6 +264,7 @@ fn body_line_hit(
     scene: &EditorScene,
     known: &HashMap<NodeId, bool>,
     doc: &StructuredDocument,
+    edges: &Edges,
     point: [f64; 2],
 ) -> Option<Position> {
     let order: HashMap<NodeId, usize> = input::leaves(doc)
@@ -242,20 +289,41 @@ fn body_line_hit(
     let lines = visual_lines(&stops);
     let (first, last) = (lines.first()?, lines.last()?);
     let [x, y] = point;
-    let pick = if y < first.top {
-        stops.iter().min_by_key(|(key, _)| *key)?.1
-    } else if y > last.bottom {
-        stops.iter().max_by_key(|(key, _)| *key)?.1
-    } else {
+    if y < first.top {
+        return edges.start;
+    }
+    if y > last.bottom {
+        return edges.end;
+    }
+    let (pick, line) = {
         let gap = |line: &&Span| (line.top - y).max(y - line.bottom).max(0.0);
         let line = lines.iter().min_by(|a, b| gap(a).total_cmp(&gap(b)))?;
         let on_line = stops
             .iter()
             .filter(|(_, c)| Span::of(c).overlaps(*line))
             .copied();
-        nearest_x(on_line, x)?
+        (nearest_x(on_line, x)?, *line)
     };
-    Some(pick.position)
+    // Right of a formula that ends the line, the body position after it beats the stops before it.
+    let before = |exit: &&Exit| {
+        order
+            .get(&pick.position.leaf)
+            .is_some_and(|i| *i < exit.first)
+    };
+    let exit = edges
+        .exits
+        .iter()
+        .filter(|e| {
+            e.bounds[2] <= x
+                && Span {
+                    top: e.bounds[1],
+                    bottom: e.bounds[3],
+                }
+                .overlaps(line)
+        })
+        .filter(before)
+        .max_by(|a, b| a.bounds[2].total_cmp(&b.bounds[2]));
+    Some(exit.map_or(pick.position, |e| e.after))
 }
 
 /// Vertical extents of the visual lines, top to bottom: overlapping stop spans merge.

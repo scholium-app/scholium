@@ -94,3 +94,22 @@ fn stale_scene_paints_no_indicator() {
     f.events(vec![text("y")]);
     assert!(f.editor.math_indicator().is_none());
 }
+
+#[test]
+fn indicator_covers_a_row_formula_that_owns_no_frame_bounds_itself() {
+    let mut f = Fixture::new();
+    f.events(vec![
+        text("$"),
+        text("x"),
+        text("^"),
+        text("2"),
+        arrow(egui::Key::ArrowRight),
+        text(" tail"),
+    ]);
+    f.settle();
+    let indicator = f
+        .editor
+        .math_indicator()
+        .expect("indicator for a row formula");
+    assert!(contains(indicator.formula, caret_bounds(&f)));
+}

@@ -294,3 +294,71 @@ fn a_press_outside_the_page_resets_the_click_history() {
     f.editor.pointer_clicks(at, 2, &mut f.state);
     assert_eq!(selection_bytes(&f), None);
 }
+
+const LONG: &str = "long paragraph long paragraph long paragraph long paragraph long paragraph \
+                    long paragraph long paragraph long paragraph long paragraph long paragraph end";
+
+/// Wrapped first paragraph, then `Second: $x^2 tail$` whose formula is the last inline
+/// content, so the block ends in an empty text leaf that shapes no caret of its own.
+fn formula_ends_the_document() -> Fixture {
+    let mut f = Fixture::new();
+    f.events(vec![
+        text(LONG),
+        key(egui::Key::Enter, false),
+        text("Second: "),
+        text("$"),
+        text("x"),
+        text("^"),
+        text("2"),
+        key(egui::Key::ArrowRight, false),
+        text(" tail"),
+    ]);
+    f.settle();
+    f
+}
+
+fn last_body_leaf(f: &Fixture) -> NodeId {
+    leaves(f)
+        .into_iter()
+        .rfind(|(_, _, math)| !math)
+        .expect("body leaf")
+        .0
+}
+
+#[test]
+fn click_below_a_document_ending_in_a_formula_goes_to_the_ctrl_end_position() {
+    let mut f = formula_ends_the_document();
+    let trailing = last_body_leaf(&f);
+    assert_eq!(
+        leaves(&f).last().map(|l| l.0),
+        Some(trailing),
+        "ends in an empty leaf"
+    );
+    let second = leaf_with(&f, "Second");
+    let [x, y] = caret_point(&f, second, 0);
+    click(&mut f, [x + 30.0, y + 400.0]);
+    let clicked = f.editor.cursor;
+    f.editor.document_edge(true, false, &mut f.state);
+    assert_eq!(clicked, f.editor.cursor);
+    assert_eq!(clicked.leaf, trailing);
+}
+
+#[test]
+fn click_above_the_first_line_matches_the_ctrl_home_position() {
+    let mut f = formula_ends_the_document();
+    let [x, y] = caret_point(&f, leaf_with(&f, "long"), 5);
+    click(&mut f, [x, y - 80.0]);
+    let clicked = f.editor.cursor;
+    f.editor.document_edge(false, false, &mut f.state);
+    assert_eq!(clicked, f.editor.cursor);
+}
+
+#[test]
+fn click_right_of_a_line_ending_in_a_formula_goes_after_the_formula() {
+    let mut f = formula_ends_the_document();
+    let second = leaf_with(&f, "Second");
+    let [_, y] = caret_point(&f, second, 0);
+    click(&mut f, [700.0, y]);
+    assert_eq!(f.editor.cursor.leaf, last_body_leaf(&f));
+    assert_eq!(f.editor.cursor.byte, 0);
+}

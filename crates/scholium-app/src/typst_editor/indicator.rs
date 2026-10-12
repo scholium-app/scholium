@@ -50,6 +50,29 @@ pub(super) fn quad_bounds(quad: &scholium_typst::editor::SelectionQuad) -> Bound
     [x0, y0, x1, y1]
 }
 
+/// Whole-formula bounds: the union over every node of the formula. Rows and Attach own no
+/// frame bounds themselves; their atoms, fraction rules and holes do.
+pub(super) fn formula_bounds(
+    scene: &scholium_typst::editor::EditorScene,
+    root: &MathNode,
+) -> Option<Bounds> {
+    fn collect(
+        scene: &scholium_typst::editor::EditorScene,
+        node: &MathNode,
+        out: &mut Vec<Bounds>,
+    ) {
+        if let Ok(quads) = scene.geometry.selection_node(node.node) {
+            out.extend(quads.iter().map(quad_bounds));
+        }
+        for child in input::math_children(node) {
+            collect(scene, child, out);
+        }
+    }
+    let mut all = Vec::new();
+    collect(scene, root, &mut all);
+    union(all.into_iter())
+}
+
 fn union(bounds: impl Iterator<Item = Bounds>) -> Option<Bounds> {
     bounds.reduce(|a, b| {
         [
@@ -87,14 +110,7 @@ impl EditorSession {
         }
         let scene = self.scene.as_ref()?;
         let root = self.formula_root()?;
-        let formula = union(
-            scene
-                .geometry
-                .selection_node(root.node)
-                .ok()?
-                .iter()
-                .map(quad_bounds),
-        )?;
+        let formula = formula_bounds(scene, root)?;
         let slot = slot_of(root, self.cursor.leaf).and_then(|slot| {
             let mut ids = Vec::new();
             leaf_ids(slot, &mut ids);
