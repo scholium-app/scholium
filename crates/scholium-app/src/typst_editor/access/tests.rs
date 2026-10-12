@@ -326,3 +326,70 @@ fn assistive_caret_at_a_soft_wrap_stays_on_the_earlier_line() {
     let caret = tree.body().text_selection().expect("caret");
     assert_eq!(caret.focus.node, tree.children(Role::TextRun)[0].0);
 }
+
+fn text_node(value: &str) -> MathNode {
+    MathNode {
+        node: NodeId::fresh(),
+        body: MathBody::Text { text: value.into() },
+    }
+}
+
+#[test]
+fn speech_names_script_slots_like_fraction_slots() {
+    let sup = MathNode::hole();
+    let sup_id = sup.node;
+    let sub = text_node("i");
+    let sub_id = sub.node;
+    let base = text_node("x");
+    let base_id = base.node;
+    let attach = MathNode {
+        node: NodeId::fresh(),
+        body: MathBody::Attach {
+            base: Box::new(base),
+            sub: Some(Box::new(sub)),
+            sup: Some(Box::new(sup)),
+        },
+    };
+    assert_eq!(
+        speech::describe(&attach),
+        "上下标（底数：x；下标：i；上标：空）"
+    );
+    for (leaf, expected) in [
+        (base_id, "底数：x"),
+        (sub_id, "下标：i"),
+        (sup_id, "上标：空"),
+    ] {
+        assert_eq!(
+            speech::slot_context(&attach, leaf).as_deref(),
+            Some(expected)
+        );
+    }
+    let only_sup = MathNode {
+        node: NodeId::fresh(),
+        body: MathBody::Attach {
+            base: Box::new(text_node("y")),
+            sub: None,
+            sup: Some(Box::new(text_node("2"))),
+        },
+    };
+    assert_eq!(speech::describe(&only_sup), "上下标（底数：y；上标：2）");
+    let nested = MathNode {
+        node: NodeId::fresh(),
+        body: MathBody::Fraction {
+            numerator: Box::new(only_sup),
+            denominator: Box::new(text_node("z")),
+        },
+    };
+    assert!(speech::describe(&nested).starts_with("分数（分子：上下标（"));
+}
+
+#[test]
+fn scripts_in_a_live_formula_are_spoken_in_the_math_object_and_status() {
+    let mut f = Fixture::new();
+    f.events(vec![text("A"), text("$"), text("x"), text("^"), text("2")]);
+    let tree = settled(&mut f);
+    let math = tree.children(Role::Math);
+    assert_eq!(math[0].1.label(), Some("公式：上下标（底数：x；上标：2）"));
+    let status = tree.children(Role::Status);
+    assert_eq!(status[0].1.label(), Some("上标：2"));
+}

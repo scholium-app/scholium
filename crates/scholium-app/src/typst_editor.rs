@@ -1,5 +1,6 @@
 //! The Typst Content editor: one LocalSession authority, derived Typst scenes.
 mod access;
+mod attach;
 mod audit;
 mod deferred;
 mod input;

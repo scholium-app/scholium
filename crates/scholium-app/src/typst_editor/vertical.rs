@@ -123,18 +123,14 @@ fn edge<'a>(stops: &[Stop<'a>], on: Span, end: bool) -> Option<&'a Caret> {
 
 fn contains(node: &MathNode, leaf: NodeId) -> bool {
     node.node == leaf
-        || match &node.body {
-            MathBody::Row { children } => children.iter().any(|c| contains(c, leaf)),
-            MathBody::Fraction {
-                numerator,
-                denominator,
-            } => contains(numerator, leaf) || contains(denominator, leaf),
-            _ => false,
-        }
+        || input::math_children(node)
+            .into_iter()
+            .any(|c| contains(c, leaf))
 }
 
-/// Innermost fraction slot vertically across from `leaf`: numerator → denominator
-/// when moving down, denominator → numerator when moving up.
+/// Innermost slot vertically across from `leaf`: numerator → denominator when moving
+/// down, denominator → numerator when moving up; in scripts, base or superscript → subscript
+/// down and base or subscript → superscript up.
 fn across(node: &MathNode, leaf: NodeId, down: bool) -> Option<&MathNode> {
     match &node.body {
         MathBody::Row { children } => children.iter().find_map(|c| across(c, leaf, down)),
@@ -153,22 +149,25 @@ fn across(node: &MathNode, leaf: NodeId, down: bool) -> Option<&MathNode> {
                 across(to, leaf, down)
             }
         }
+        MathBody::Attach { sub, sup, .. } => {
+            let to = if down { sub } else { sup }.as_deref();
+            let slot = input::math_children(node)
+                .into_iter()
+                .find(|c| contains(c, leaf))?;
+            let inner = across(slot, leaf, down);
+            let in_target = to.is_some_and(|t| contains(t, leaf));
+            inner.or(to.filter(|_| !in_target))
+        }
         _ => None,
     }
 }
 
 fn slot_leaves(node: &MathNode, result: &mut Vec<NodeId>) {
-    match &node.body {
-        MathBody::Text { .. } | MathBody::Hole => result.push(node.node),
-        MathBody::Row { children } => children.iter().for_each(|c| slot_leaves(c, result)),
-        MathBody::Fraction {
-            numerator,
-            denominator,
-        } => {
-            slot_leaves(numerator, result);
-            slot_leaves(denominator, result);
-        }
-        MathBody::Symbol { .. } => {}
+    if matches!(node.body, MathBody::Text { .. } | MathBody::Hole) {
+        result.push(node.node);
+    }
+    for child in input::math_children(node) {
+        slot_leaves(child, result);
     }
 }
 

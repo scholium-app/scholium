@@ -54,8 +54,18 @@ pub(crate) fn sample() -> StructuredDocument {
                         body: MathBody::Fraction {
                             numerator: Box::new(MathNode {
                                 node: NodeId::fresh(),
-                                body: MathBody::Text {
-                                    text: "中文 e\u{301}".into(),
+                                body: MathBody::Attach {
+                                    base: Box::new(MathNode {
+                                        node: NodeId::fresh(),
+                                        body: MathBody::Text {
+                                            text: "中文 e\u{301}".into(),
+                                        },
+                                    }),
+                                    sub: None,
+                                    sup: Some(Box::new(MathNode {
+                                        node: NodeId::fresh(),
+                                        body: MathBody::Text { text: "2".into() },
+                                    })),
                                 },
                             }),
                             denominator: Box::new(MathNode::hole()),
