@@ -60,8 +60,12 @@ egui 控件与自绘区域从同一主题取色；配色变更不修改布局、
 
 编辑器按事件顺序向 `LocalSession<StructuredDocument>` 提交字素文字/结构请求，布局仅持有
 完整不可变投影。输入接受和提交先于页面绘制，后台完成唤醒 UI，不去抖源码求值。界面
-持续显示 backend、正文/画面 revision 与 pending；旧图停用命中/光标/IME，不回显已提交文字。
+持续显示 backend、正文/画面 revision 与 pending；旧图停用命中与光标绘制，不回显已提交文字。
 纹理、caret、命中与 IME 共用一套 Frame-pt 到窗口逻辑像素 placement。
+页面持有焦点期间每帧都发布 IME 区域：旧图或当前叶无 caret 几何时沿用最近一次已证 caret
+位置，因为 egui-winit 在缺少 IME 输出的帧关闭平台输入法，反复开关会让 fcitx5 停止送字。
+同帧 Text 仅在与 IME Commit 文字相同时视为重复丢弃；输入法透传的英文 Text 照常输入。
+Escape 只取消选区、组合与拖动，不释放页面焦点。
 
 Ribbon 的开发命令发结构 intent；文字样式作用于整叶，标题作用于段落，源视图禁用正文
 写按钮。单机 undo/redo 每步保留快照及其完整请求日志，最多 512 步，restore 换 epoch。

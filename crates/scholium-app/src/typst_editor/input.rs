@@ -66,11 +66,22 @@ impl EditorSession {
         events: Vec<egui::Event>,
         state: &mut WorkspaceState,
     ) -> Option<String> {
-        let ime_frame = events.iter().any(|e| matches!(e, egui::Event::Ime(_)));
+        // Platform text that repeats an IME commit of the same frame is not input. Any
+        // other Text stays: an active IME (fcitx in English mode) passes keys through as
+        // Text next to an empty Preedit, and dropping those loses every Latin keystroke.
+        let mut commits: Vec<String> = events
+            .iter()
+            .filter_map(|e| match e {
+                egui::Event::Ime(egui::ImeEvent::Commit(text)) => Some(text.clone()),
+                _ => None,
+            })
+            .collect();
         let mut clipboard = self.drain(state);
         for event in events {
-            // Platform text duplicated by an IME commit in the same frame is not input.
-            if ime_frame && matches!(event, egui::Event::Text(_)) {
+            if let egui::Event::Text(text) = &event
+                && let Some(i) = commits.iter().position(|c| c == text)
+            {
+                commits.swap_remove(i);
                 continue;
             }
             if let Some(text) = self.route(event, state) {
