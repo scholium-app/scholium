@@ -134,7 +134,8 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
                     tab: true,
                     horizontal_arrows: true,
                     vertical_arrows: true,
-                    ..Default::default()
+                    // Escape cancels selection/composition; it must not drop page focus.
+                    escape: true,
                 },
             )
         });
@@ -148,7 +149,37 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
     session.accessibility(ui, response.has_focus(), state);
     // All accepted intents have reached LocalSession and the worker before this pass.
     let text_shapes = body(ui, rect, scale, session, state);
+    keep_ime(ui, rect, response.has_focus(), session);
     session.audit(rect, scale, text_shapes);
+}
+
+/// egui-winit turns the platform IME off on any frame without `output.ime`, and
+/// fcitx5 stops delivering text after such toggles. Every edit leaves the Scene
+/// stale for a few frames, so while the page has focus the IME stays anchored at
+/// the last proven caret until the pending Scene supplies a fresh one.
+fn keep_ime(ui: &egui::Ui, rect: Rect, focused: bool, session: &mut EditorSession) {
+    if !focused {
+        return;
+    }
+    let published = ui
+        .ctx()
+        .output(|o| o.ime.as_ref().map(|ime| ime.cursor_rect));
+    if let Some(cursor) = published {
+        session.ime_anchor = Some(cursor.translate(-rect.min.to_vec2()));
+        return;
+    }
+    let anchor = session
+        .ime_anchor
+        .unwrap_or_else(|| Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(1.0, 16.0)))
+        .translate(rect.min.to_vec2());
+    ui.ctx().output_mut(|output| {
+        output.ime = Some(egui::output::IMEOutput {
+            rect,
+            cursor_rect: anchor,
+            purpose: egui::IMEPurpose::Normal,
+            should_interrupt_composition: false,
+        });
+    });
 }
 
 pub(super) fn body(

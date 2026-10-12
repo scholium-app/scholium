@@ -84,6 +84,9 @@ pub(crate) struct EditorSession {
     source_view: source_view::SourceView,
     deferred: VecDeque<egui::Event>,
     placement: Option<(egui::Rect, f32)>,
+    /// Last proven caret rectangle, relative to the page origin; anchors the IME
+    /// while a fresh Scene is pending so the platform IME is never switched off.
+    ime_anchor: Option<egui::Rect>,
     undo: Vec<HistoryEntry>,
     redo: Vec<HistoryEntry>,
     focus: bool,
@@ -156,6 +159,7 @@ impl EditorSession {
             source_view: Default::default(),
             deferred: VecDeque::new(),
             placement: None,
+            ime_anchor: None,
             scene: None,
             texture: None,
             undo: Vec::new(),

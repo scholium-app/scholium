@@ -225,6 +225,24 @@ fn ime_commit_and_duplicate_text_event_create_one_action_and_one_value() {
 }
 
 #[test]
+fn text_passed_through_by_an_active_ime_is_still_typed() {
+    // fcitx in English mode forwards keys as plain Text, with an empty Preedit in the same frame.
+    let mut f = Fixture::new();
+    let clear = || {
+        egui::Event::Ime(egui::ImeEvent::Preedit {
+            text: String::new(),
+            active_range_chars: None,
+        })
+    };
+    f.events(vec![clear(), text("a")]);
+    f.events(vec![
+        egui::Event::Ime(egui::ImeEvent::Commit("中".into())),
+        text("b"),
+    ]);
+    assert_eq!(input::leaves(&f.editor.snapshot)[0].text, "a中b");
+}
+
+#[test]
 fn rejected_math_multiline_paste_keeps_authority_and_copyable_draft() {
     let mut f = Fixture::new();
     f.events(vec![text("$")]);
