@@ -56,6 +56,29 @@ pub(super) struct Cluster {
     pub stops: Vec<Caret>,
 }
 
+/// Origins at or above this are math-text atoms: `leaf << 64 | start << 32 | end`, where the
+/// byte range is the atom's extent in the leaf. Plain node origins are small counters.
+const ATOM_FLAG: u128 = 1 << 64;
+
+pub(super) fn atom_key(leaf: u128, range: std::ops::Range<usize>) -> u128 {
+    // Leaves are at most MAX_LEAF_BYTES long, far below u32::MAX.
+    leaf << 64 | (range.start as u128) << 32 | range.end as u128
+}
+
+/// Leaf identity and, for an atom, its byte range in that leaf.
+fn resolve(
+    origin: u128,
+    ids: &HashMap<u128, NodeId>,
+) -> Result<(NodeId, Option<std::ops::Range<usize>>), EditorError> {
+    if origin < ATOM_FLAG {
+        return Ok((*ids.get(&origin).ok_or(EditorError::Geometry)?, None));
+    }
+    let leaf = *ids.get(&(origin >> 64)).ok_or(EditorError::Geometry)?;
+    let start = (origin >> 32) as u32 as usize;
+    let end = origin as u32 as usize;
+    Ok((leaf, Some(start..end)))
+}
+
 fn point(point: Point, transform: Transform) -> [f64; 2] {
     let point = point.transform(transform);
     [point.x.to_pt(), point.y.to_pt()]
@@ -101,7 +124,7 @@ impl EditGeometry {
     ) -> Result<(), EditorError> {
         for bounds in frame.edit_bounds() {
             let end = bounds.position + bounds.size.to_point();
-            let node = *ids.get(&bounds.origin.node).ok_or(EditorError::Geometry)?;
+            let (node, _) = resolve(bounds.origin.node, ids)?;
             self.bounds.push((
                 node,
                 SelectionQuad {
@@ -118,7 +141,7 @@ impl EditGeometry {
                 let x = bounds.position.x + bounds.size.x / 2.0;
                 self.carets.push(Caret {
                     position: Position {
-                        leaf: *ids.get(&bounds.origin.node).ok_or(EditorError::Geometry)?,
+                        leaf: node,
                         byte: 0,
                         affinity: Affinity::Downstream,
                     },
@@ -138,14 +161,23 @@ impl EditGeometry {
         ids: &HashMap<u128, NodeId>,
     ) -> Result<(), EditorError> {
         for cluster in frame.edit_clusters() {
+            let (leaf, atom) = resolve(cluster.origin.node, ids)?;
+            // An atom shows its own text, so only its two edges map back to the leaf.
+            let range = atom.clone().unwrap_or_else(|| cluster.range.clone());
+            let leaf_byte = |byte: usize| match &atom {
+                Some(atom) if byte <= cluster.range.start => atom.start,
+                Some(atom) => atom.end,
+                None => byte,
+            };
             let mut stops = Vec::new();
             for stop in &cluster.carets {
                 let top = cluster.position + Point::with_x(stop.offset);
+                let byte = leaf_byte(stop.byte);
                 stops.push(Caret {
                     position: Position {
-                        leaf: *ids.get(&cluster.origin.node).ok_or(EditorError::Geometry)?,
-                        byte: stop.byte,
-                        affinity: if stop.byte == cluster.range.end && !cluster.range.is_empty() {
+                        leaf,
+                        byte,
+                        affinity: if byte == range.end && !range.is_empty() {
                             Affinity::Upstream
                         } else {
                             Affinity::Downstream
@@ -157,11 +189,7 @@ impl EditGeometry {
                 });
             }
             self.carets.extend(stops.iter().cloned());
-            self.clusters.push(Cluster {
-                leaf: *ids.get(&cluster.origin.node).ok_or(EditorError::Geometry)?,
-                range: cluster.range.clone(),
-                stops,
-            });
+            self.clusters.push(Cluster { leaf, range, stops });
         }
         Ok(())
     }
