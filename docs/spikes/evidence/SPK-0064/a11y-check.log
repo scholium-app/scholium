@@ -1,5 +1,5 @@
 
-(process:187483): atspi-WARNING **: 00:20:46.045: AT-SPI: Error in GetItems, sender=:1.1, error=Unknown object '/org/a11y/atspi/cache'
+(process:196635): atspi-WARNING **: 00:35:38.896: AT-SPI: Error in GetItems, sender=:1.1, error=Unknown object '/org/a11y/atspi/cache'
 PASS 01-body-text-object
 PASS 02-typed-text-and-caret
 PASS 03-paragraph-breaks
