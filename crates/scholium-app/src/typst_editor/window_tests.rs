@@ -154,3 +154,99 @@ fn ribbon_intents_queued_in_source_view_never_reach_the_document() {
     assert_eq!(f.editor.snapshot.revision, revision);
     assert!(f.state.edit_error.is_some());
 }
+
+fn painted_text(output: &egui::FullOutput) -> Vec<(egui::Pos2, String)> {
+    output
+        .shapes
+        .iter()
+        .filter_map(|s| match &s.shape {
+            egui::Shape::Text(t) => Some((t.pos, t.galley.text().to_owned())),
+            _ => None,
+        })
+        .collect()
+}
+
+const STATUS_HEIGHT: f32 = 30.0;
+
+fn status_text(output: &egui::FullOutput, height: f32) -> String {
+    painted_text(output)
+        .into_iter()
+        .filter(|(pos, _)| pos.y > height - STATUS_HEIGHT)
+        .map(|(_, text)| text)
+        .collect::<Vec<_>>()
+        .join(" | ")
+}
+
+fn page_top(f: &Fixture) -> f32 {
+    f.editor.placement.expect("page placed").0.min.y
+}
+
+#[test]
+fn no_developer_text_is_painted_above_the_page() {
+    let mut f = window();
+    f.events(vec![tests::text("x")]);
+    f.settle();
+    let size = egui::vec2(1280.0, 900.0);
+    frame(&mut f, size, vec![]);
+    let output = frame(&mut f, size, vec![]);
+    let top = page_top(&f);
+    let stray: Vec<_> = painted_text(&output)
+        .into_iter()
+        .filter(|(pos, _)| pos.y < top && pos.y > top - 24.0)
+        .collect();
+    assert!(stray.is_empty(), "{stray:?}");
+    for (_, text) in painted_text(&output) {
+        assert!(
+            !text.contains("受控单页流") && !text.contains("当前叶"),
+            "{text}"
+        );
+    }
+}
+
+#[test]
+fn page_stays_put_when_an_error_appears_and_the_status_bar_shows_it() {
+    let mut f = window();
+    f.settle();
+    let size = egui::vec2(1280.0, 900.0);
+    frame(&mut f, size, vec![]);
+    let before = page_top(&f);
+    f.state.edit_error = Some("编辑失败：测试".into());
+    frame(&mut f, size, vec![]);
+    let output = frame(&mut f, size, vec![]);
+    assert_eq!(page_top(&f), before);
+    assert!(status_text(&output, size.y).contains("编辑失败：测试"));
+}
+
+#[test]
+fn status_bar_shows_both_revisions_and_marks_a_stale_picture() {
+    let mut f = window();
+    f.settle();
+    let size = egui::vec2(1280.0, 900.0);
+    frame(&mut f, size, vec![]);
+    let output = frame(&mut f, size, vec![]);
+    let line = status_text(&output, size.y);
+    assert!(line.contains("正文 r") && line.contains("画面 r"), "{line}");
+    assert!(
+        !line.contains("待更新") && line.contains("连续视图"),
+        "{line}"
+    );
+    if let Some(view) = &mut f.state.editor {
+        view.pending = true;
+    }
+    let stale = status_text(&frame(&mut f, size, vec![]), size.y);
+    assert!(stale.contains("待更新"), "{stale}");
+}
+
+#[test]
+fn page_is_centered_in_a_wide_viewport() {
+    let mut f = window();
+    f.settle();
+    f.state.fit_width = false;
+    f.state.zoom = 0.5;
+    let size = egui::vec2(1280.0, 900.0);
+    frame(&mut f, size, vec![]);
+    frame(&mut f, size, vec![]);
+    let (rect, _) = f.editor.placement.expect("page placed");
+    let (left, right) = (rect.left(), size.x - rect.right());
+    assert!((left - right).abs() < 20.0, "left {left} right {right}");
+}

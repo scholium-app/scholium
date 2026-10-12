@@ -11,6 +11,7 @@ pub(crate) struct Palette {
     pub(crate) muted: Color32,
     pub(crate) accent: Color32,
     pub(crate) selection: Color32,
+    pub(crate) warning: Color32,
 }
 
 impl Palette {
@@ -22,6 +23,7 @@ impl Palette {
         muted: Color32::from_rgb(147, 157, 173),
         accent: Color32::from_rgb(151, 183, 227),
         selection: Color32::from_rgb(57, 77, 104),
+        warning: Color32::from_rgb(232, 178, 96),
     };
 }
 
