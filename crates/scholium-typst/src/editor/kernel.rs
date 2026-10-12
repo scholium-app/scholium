@@ -14,9 +14,8 @@ use typst::{Library, LibraryExt, World};
 use typst_kit::fonts::FontStore;
 
 pub(crate) const RASTER_PX_PER_PT: f64 = 2.0;
-const PADDING_PT: f64 = 10.0;
-const WIDTH_PT: f64 = 420.0;
-const HEIGHT_PT: f64 = 2000.0;
+/// Content height budget in pt (texture memory bound); the sheet adds the page margins.
+const HEIGHT_PT: f64 = 2400.0;
 
 pub(crate) struct EditWorld {
     pub(crate) library: LazyHash<Library>,
@@ -102,9 +101,12 @@ pub(crate) fn text(value: &str) -> Content {
 pub(crate) fn page(frame: &Frame) -> typst_layout::Page {
     use typst::foundations::Smart;
     use typst::layout::{Point, Sides};
-    let margin = Abs::pt(PADDING_PT);
-    let mut padded = Frame::soft(frame.size() + Size::splat(margin * 2.0));
-    padded.push_frame(Point::splat(margin), frame.clone());
+    let margin = Point::new(
+        Abs::pt(crate::style::margin_x_pt()),
+        Abs::pt(crate::style::margin_y_pt()),
+    );
+    let mut padded = Frame::soft(frame.size() + Size::new(margin.x * 2.0, margin.y * 2.0));
+    padded.push_frame(margin, frame.clone());
     typst_layout::Page {
         frame: padded,
         bleed: Sides::default(),
@@ -119,7 +121,7 @@ pub(crate) fn layout(world: &EditWorld, content: &Content) -> Result<Frame, supe
     layout_in(
         world,
         content,
-        Size::new(Abs::pt(WIDTH_PT), Abs::pt(HEIGHT_PT)),
+        Size::new(Abs::pt(crate::style::text_width_pt()), Abs::pt(HEIGHT_PT)),
     )
 }
 

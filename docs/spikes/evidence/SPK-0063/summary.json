@@ -1,0 +1,19 @@
+{
+  "01-visual-editor": {
+    "pass": true,
+    "kinds": [
+      "Heading1",
+      "Heading2",
+      "Paragraph",
+      "Paragraph"
+    ]
+  },
+  "02-a4-preview": {
+    "pass": true,
+    "preview": {
+      "generation": 1,
+      "pages": 1,
+      "error": null
+    }
+  }
+}
