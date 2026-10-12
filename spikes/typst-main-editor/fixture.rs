@@ -24,6 +24,22 @@ fn frac(top: MathNode, bottom: MathNode) -> MathNode {
         },
     }
 }
+fn attach(base: MathNode, sub: Option<MathNode>, sup: Option<MathNode>) -> MathNode {
+    MathNode {
+        node: NodeId::fresh(),
+        body: MathBody::Attach {
+            base: Box::new(base),
+            sub: sub.map(Box::new),
+            sup: sup.map(Box::new),
+        },
+    }
+}
+fn row(children: Vec<MathNode>) -> MathNode {
+    MathNode {
+        node: NodeId::fresh(),
+        body: MathBody::Row { children },
+    }
+}
 /// Identified input for the formal adapter, with complete math slots.
 pub fn fixture(name: &str) -> StructuredDocument {
     let (kind, content) = match name {
@@ -35,6 +51,25 @@ pub fn fixture(name: &str) -> StructuredDocument {
                     node: NodeId::fresh(),
                     body: InlineBody::Math {
                         root: frac(math("12"), frac(math("3"), math("4"))),
+                    },
+                },
+                text("", TextStyle::Plain),
+            ],
+        ),
+        "scripts" => (
+            BlockKind::Paragraph,
+            vec![
+                text("E = ", TextStyle::Plain),
+                StructuredInline {
+                    node: NodeId::fresh(),
+                    body: InlineBody::Math {
+                        root: row(vec![
+                            attach(math("x"), None, Some(math("2"))),
+                            math("+"),
+                            attach(math("y"), Some(math("i")), None),
+                            math("="),
+                            attach(math("a"), Some(math("n")), Some(math("23"))),
+                        ]),
                     },
                 },
                 text("", TextStyle::Plain),
