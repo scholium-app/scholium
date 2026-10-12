@@ -3,6 +3,7 @@ mod access;
 mod attach;
 mod audit;
 mod deferred;
+mod indicator;
 mod input;
 mod paint;
 pub(crate) mod ribbon;
@@ -54,6 +55,8 @@ pub(crate) struct EditorView {
     pub revision: u64,
     pub dirty: bool,
     pub selected: bool,
+    /// The caret is inside an inline formula (status bar mode segment).
+    pub in_math: bool,
     pub can_undo: bool,
     pub can_redo: bool,
     /// Revision of the Scene on screen; `None` before the first layout.
@@ -109,6 +112,7 @@ pub(crate) struct EditorSession {
     notice: Option<String>,
     last_audit: Option<String>,
     placeholder: Option<attach::Placeholder>,
+    clicks: selection::ClickRun,
 }
 
 fn diagnostics_line(scene: &EditorScene) -> String {
@@ -192,6 +196,7 @@ impl EditorSession {
             notice: None,
             last_audit: None,
             placeholder: None,
+            clicks: selection::ClickRun::default(),
         };
         state.editor = Some(EditorView::default());
         result.metadata(state);
@@ -328,6 +333,7 @@ impl EditorSession {
         let shown = |v: &EditorView| {
             (
                 v.revision,
+                v.in_math,
                 v.shown_revision,
                 v.pending,
                 v.dirty,
@@ -343,6 +349,7 @@ impl EditorSession {
             view.revision = self.snapshot.revision.0;
             view.dirty = self.saved.as_ref() != Some(&self.snapshot);
             view.selected = self.selected();
+            view.in_math = self.in_math();
             view.can_undo = !self.undo.is_empty();
             view.can_redo = !self.redo.is_empty();
             view.shown_revision = self.scene.as_ref().map(|s| s.stamp.revision.0);

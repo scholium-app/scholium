@@ -351,3 +351,44 @@ fn close_with_queued_input_asks_before_discarding_it() {
     output.textures_delta.clear();
     assert!(f.editor.confirm_close);
 }
+
+fn assert_every_boundary_has_caret(f: &Fixture) {
+    use unicode_segmentation::UnicodeSegmentation;
+    let scene = f.editor.scene.as_ref().expect("scene");
+    let leaf = f.editor.cursor.leaf;
+    let value = input::leaves(&f.editor.snapshot)
+        .into_iter()
+        .find(|l| l.id == leaf)
+        .expect("cursor leaf")
+        .text
+        .to_owned();
+    for (byte, _) in value.grapheme_indices(true).chain([(value.len(), "")]) {
+        let caret = scene
+            .geometry
+            .carets
+            .iter()
+            .find(|c| c.position.leaf == leaf && c.position.byte == byte);
+        assert!(
+            caret.is_some_and(|c| c.exact),
+            "styled leaf {value:?} lacks an exact caret at byte {byte}"
+        );
+    }
+    assert!(scene.geometry.caret(f.editor.cursor).is_some());
+}
+
+#[test]
+fn styled_leaf_has_exact_carets_at_every_grapheme_before_and_after_relayout() {
+    for style in [TextStyle::Strong, TextStyle::Emphasis] {
+        let mut f = Fixture::new();
+        f.events(vec![text("héllo 世界 A👩‍🔬Z")]);
+        f.settle();
+        f.editor.command(Command::Style(style), &mut f.state);
+        f.settle();
+        assert_every_boundary_has_caret(&f);
+        assert!(f.editor.warning(&f.state).is_none(), "caret notice shown");
+        f.events(vec![text("!"), key(egui::Key::ArrowLeft, false)]);
+        f.settle();
+        assert_every_boundary_has_caret(&f);
+        assert!(f.editor.warning(&f.state).is_none(), "caret notice shown");
+    }
+}

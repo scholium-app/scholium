@@ -196,17 +196,26 @@ impl EditorSession {
                 pressed: true,
                 modifiers,
             } if rect.contains(*pos) => {
+                self.clicks.press(*pos, std::time::Instant::now());
                 if self.current() && !self.pointer_start(to_frame(*pos), modifiers.shift) {
                     state.edit_error =
                         Some("此位置没有精确的当前命中几何；可使用键盘导航。".into());
                 }
             }
+            egui::Event::PointerButton {
+                button: egui::PointerButton::Primary,
+                pressed: true,
+                ..
+            } => self.clicks.reset(),
             egui::Event::PointerMoved(point) if self.drag.is_some() => {
+                self.clicks.moved(*point);
                 self.pointer_drag(to_frame(*point));
             }
-            egui::Event::PointerButton { pressed: false, .. } | egui::Event::PointerGone => {
+            egui::Event::PointerGone => {
+                self.clicks.reset();
                 self.drag = None
             }
+            egui::Event::PointerButton { pressed: false, .. } => self.drag = None,
             _ => {}
         }
     }
@@ -247,19 +256,6 @@ impl EditorSession {
         }
         self.cursor = target;
         true
-    }
-
-    fn pointer_hit(&self, point: [f64; 2]) -> Option<Position> {
-        if !self.current() {
-            return None;
-        }
-        let caret = self.scene.as_ref()?.geometry.hit(point)?;
-        // Proportional intra-ligature stops are display estimates, not pointer proof.
-        (caret.exact
-            && input::leaves(&self.snapshot)
-                .iter()
-                .any(|l| l.id == caret.position.leaf))
-        .then_some(caret.position)
     }
 
     pub(super) fn selection_quads(&self) -> Result<Vec<SelectionQuad>, SessionError> {
@@ -424,5 +420,9 @@ impl EditorSession {
     }
 }
 
+mod pointer;
+pub(crate) use pointer::ClickRun;
+#[cfg(test)]
+mod pointer_tests;
 #[cfg(test)]
 mod tests;
