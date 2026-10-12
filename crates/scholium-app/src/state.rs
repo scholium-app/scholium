@@ -19,6 +19,8 @@ pub(crate) struct WorkspaceState {
     pub(crate) save_requested: bool,
     /// Return keyboard focus to the page, e.g. after leaving the structure view.
     pub(crate) focus_requested: bool,
+    /// The status bar asked to copy the rejected input draft.
+    pub(crate) status_copy: bool,
     pub(crate) edit_error: Option<String>,
     pub(crate) storage_error: Option<String>,
     /// Active IME preedit; display-only, never document text.
@@ -43,6 +45,7 @@ impl Default for WorkspaceState {
             redo_requested: false,
             save_requested: false,
             focus_requested: false,
+            status_copy: false,
             edit_error: None,
             storage_error: None,
             composition: None,

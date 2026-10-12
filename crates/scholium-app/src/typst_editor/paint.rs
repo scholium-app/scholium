@@ -22,7 +22,6 @@ pub(super) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut 
     egui::CentralPanel::default()
         .frame(egui::Frame::new().fill(theme::colors(ui).canvas))
         .show(ui, |ui| {
-            header(ui, state, session);
             if state.mode == ViewMode::Source {
                 session.drag = None;
                 session.placement = None;
@@ -39,70 +38,6 @@ pub(super) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut 
         });
 }
 
-fn header(ui: &mut egui::Ui, state: &WorkspaceState, session: &EditorSession) {
-    let shown = session.scene.as_ref().map(|s| s.stamp.revision.0);
-    ui.label(format!(
-        "Typst Content · 正文 r{} · 画面 {}{}",
-        session.snapshot.revision.0,
-        shown.map_or("—".into(), |r| format!("r{r}")),
-        if session.current() {
-            ""
-        } else {
-            " · 排版待更新，页面命中暂停"
-        }
-    ));
-    ui.weak("受控单页流 · $ / Ctrl+M 公式 · Ctrl+/ 分数 · Tab 槽位");
-    if session.current()
-        && session
-            .scene
-            .as_ref()
-            .and_then(|s| s.geometry.caret(session.cursor))
-            .is_none()
-    {
-        ui.weak("当前叶没有可证的光标几何；此位置不显示光标或输入法锚点。");
-    }
-    if session.selected() && session.current() {
-        match session.selection_quads() {
-            Err(_) => {
-                ui.weak("选区几何不支持此范围；页面写操作暂停。");
-            }
-            Ok(quads) if quads.iter().any(|q| !q.exact) => {
-                ui.weak("合字内部选区边界为估计；鼠标仅定位精确边界。");
-            }
-            _ => {}
-        }
-    }
-    if let Some(notice) = &session.notice {
-        ui.weak(notice);
-    }
-    for error in [
-        &state.edit_error,
-        &state.storage_error,
-        &session.layout_error,
-    ]
-    .into_iter()
-    .flatten()
-    {
-        ui.colored_label(egui::Color32::DARK_RED, error);
-    }
-    if let Some(draft) = &session.rejected_input {
-        ui.horizontal(|ui| {
-            ui.weak("被拒绝输入已保留");
-            if ui.small_button("复制").clicked() {
-                ui.ctx().copy_text(draft.clone());
-            }
-        });
-    }
-    if state.diagnostics
-        && let Some(scene) = &session.scene
-    {
-        ui.label(format!(
-            "Content 新建 {} / 复用 {} · source reads {} · 布局+栅格 {} ms",
-            scene.stats.built, scene.stats.reused, scene.stats.source_reads, scene.stats.elapsed_ms
-        ));
-    }
-}
-
 fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSession) {
     let size = session.scene.as_ref().map_or([440.0, 40.0], |s| s.size_pt);
     let scale = if state.fit_width {
@@ -116,7 +51,14 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
         size[0] as f32 * scale,
         (size[1] as f32).max(MIN_SHEET_HEIGHT_PT) * scale,
     );
-    let (_, rect) = ui.allocate_space(dimensions);
+    // Centered when the viewport is wider than the page; otherwise the page keeps the
+    // left margin and the scroll area pans horizontally.
+    let flow_width = (dimensions.x + OUTER_MARGIN * 2.0).max(ui.available_width());
+    let (flow, _) = ui.allocate_exact_size(egui::vec2(flow_width, dimensions.y), Sense::hover());
+    let rect = Rect::from_min_size(
+        egui::pos2(flow.left() + (flow_width - dimensions.x) / 2.0, flow.top()),
+        dimensions,
+    );
     let response = ui.interact(rect, id(), Sense::click_and_drag());
     session.placement = Some((rect, scale));
     if session.focus {

@@ -41,16 +41,21 @@ pub(crate) fn home(ui: &mut egui::Ui, state: &mut WorkspaceState) {
                 .send_viewport_cmd(egui::ViewportCommand::RequestPaste);
         }
     });
+    // Two rows per column: three stacked buttons would not fit the shared group height.
     group(ui, "文字", 150.0, |ui| {
-        ui.vertical(|ui| {
-            for (label, style) in [
-                ("正文", TextStyle::Plain),
+        for column in [
+            &[
                 ("B 粗体", TextStyle::Strong),
                 ("I 强调", TextStyle::Emphasis),
-            ] {
-                intent(ui, state, label, Command::Style(style));
-            }
-        });
+            ][..],
+            &[("清除格式", TextStyle::Plain)][..],
+        ] {
+            ui.vertical(|ui| {
+                for (label, style) in column {
+                    intent(ui, state, label, Command::Style(*style));
+                }
+            });
+        }
     });
     group(ui, "段落样式", 250.0, |ui| {
         for (label, kind) in [
@@ -113,11 +118,24 @@ pub(crate) fn insert(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 }
 
 fn math(ui: &mut egui::Ui, state: &mut WorkspaceState) {
-    for (icon, label, command) in [
-        (Icon::Formula, "行内公式", Command::Math),
-        (Icon::Fraction, "分数", Command::Fraction),
+    for (icon, label, command, hint) in [
+        (
+            Icon::Formula,
+            "行内公式",
+            Command::Math,
+            "$ 或 Ctrl+M 进入、离开公式",
+        ),
+        (
+            Icon::Fraction,
+            "分数",
+            Command::Fraction,
+            "Ctrl+/ 插入分数 · Tab 切换槽位",
+        ),
     ] {
-        if large(ui, icon, label, editable(state), false).clicked() {
+        if large(ui, icon, label, editable(state), false)
+            .on_hover_text(hint)
+            .clicked()
+        {
             queue(state, command);
         }
     }
