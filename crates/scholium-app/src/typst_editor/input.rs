@@ -103,6 +103,7 @@ impl EditorSession {
         state: &mut WorkspaceState,
     ) -> Option<String> {
         self.pointer_event(&event, state);
+        let caret = (self.cursor.leaf, self.cursor.byte);
         match event {
             egui::Event::Text(text) if state.composition.is_none() => {
                 self.insert(text, true, state)
@@ -128,6 +129,10 @@ impl EditorSession {
             _ => {}
         }
         self.settle_placeholder(state);
+        // An armed typing style belongs to one caret position with no selection.
+        if (self.cursor.leaf, self.cursor.byte) != caret || self.selected() {
+            self.pending_style = None;
+        }
         None
     }
 
@@ -150,6 +155,9 @@ impl EditorSession {
         }
         let length = text.len();
         let at = self.cursor.byte;
+        let armed = self
+            .pending_style()
+            .filter(|_| self.body_leaf(self.cursor.leaf));
         if self.apply(
             StructuralEdit::ReplaceText {
                 leaf: self.cursor.leaf,
@@ -161,6 +169,10 @@ impl EditorSession {
         ) {
             self.place_after_edit(at + length);
             self.cursor.affinity = Affinity::Upstream;
+            self.pending_style = None;
+            if let Some(style) = armed {
+                self.style_inserted(at, style, state);
+            }
         } else {
             // Rejected pasted/committed input stays copyable outside the document surface.
             self.rejected_input = Some(text);
@@ -169,6 +181,7 @@ impl EditorSession {
 
     fn key(&mut self, key: egui::Key, modifiers: egui::Modifiers, state: &mut WorkspaceState) {
         if key == egui::Key::Escape {
+            self.pending_style = None;
             state.composition = None;
             self.anchor = None;
             self.drag = None;
@@ -186,6 +199,12 @@ impl EditorSession {
             match key {
                 egui::Key::Slash => self.command(Command::Fraction, state),
                 egui::Key::M => self.command(Command::Math, state),
+                egui::Key::B if !modifiers.shift => {
+                    self.command(Command::Style(TextStyle::Strong), state)
+                }
+                egui::Key::I if !modifiers.shift => {
+                    self.command(Command::Style(TextStyle::Emphasis), state)
+                }
                 egui::Key::Home => self.document_edge(false, modifiers.shift, state),
                 egui::Key::End => self.document_edge(true, modifiers.shift, state),
                 _ => {}
@@ -316,8 +335,13 @@ impl EditorSession {
             state.edit_error = Some("结构视图只读；回到编辑面后再执行正文命令。".into());
             return;
         }
+        if let Command::Style(style) = command {
+            self.style_command(style, state);
+            return;
+        }
         if self.selected() {
-            state.edit_error = Some("选区格式与结构命令尚未接入；可输入或删除替换此选区。".into());
+            state.edit_error =
+                Some("选区上的公式与段落命令尚未接入；可输入或删除替换此选区。".into());
             return;
         }
         let Some((block, math)) = leaves(&self.snapshot)
@@ -332,15 +356,7 @@ impl EditorSession {
             Command::Math => self.insert_math(state),
             Command::Fraction if math => self.fraction(state),
             Command::Fraction => state.edit_error = Some("先插入行内公式，再选择数学槽位。".into()),
-            Command::Style(style) => {
-                self.apply(
-                    StructuralEdit::SetTextStyle {
-                        leaf: self.cursor.leaf,
-                        style,
-                    },
-                    state,
-                );
-            }
+            Command::Style(_) => unreachable!("handled above"),
             Command::Kind(kind) => {
                 self.apply(StructuralEdit::SetKind { block, kind }, state);
             }

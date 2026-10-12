@@ -106,10 +106,15 @@ LocalSession 是单人内存段落接入；直接 apply 仅限此临时适配器
 
 `StructuralRequest` 带文档、base revision、唯一请求身份；ReplaceText 使用 leaf NodeId
 和叶内 UTF-8 字素边界，RawMath 不可穿透。InsertMath/InsertMathAt/WrapFraction、SplitBlock/
-MergeWithNext、整叶 SetTextStyle 和 SetKind 先在临时规划副本验证，再一次接受。存活节点
+MergeWithNext、整叶 SetTextStyle、SetRangeStyle 和 SetKind 先在临时规划副本验证，再一次接受。存活节点
 身份不变；新分数 wrapper、新分母 Hole、新拆块/右叶才分配新 ID。删除数学叶最后文字
 恢复同 ID Hole。无效/重复/过期请求和 no-op 不追加动作。临时规划仍复制快照，不能据此
-承诺逐键时延与全文大小无关。局部样式规划由后续适配提供。
+承诺逐键时延与全文大小无关。
+`SetRangeStyle { start, end, style }` 取与 `ReplaceBodyRange` 相同的两个 `BodyTextPosition`：
+在两端拆分正文 Text 叶，给范围内每个 Text 叶设样式（数学/Raw inline 不变，可跨块），再合并紧邻
+受影响片段中样式相同的相邻 Text 叶，合并保留左叶 `NodeId`，拆出的片段获得新 ID。空范围或样式
+已一致为 no-op。`StructuralOutcome.range` 返回同一段文字在新叶划分下的两个端点（`cursor`
+为范围末端），选区由此保持；`range_has_style` 判断范围内全部非空文字是否已有某样式，供切换使用。
 
 `ReplaceBodyRange` 使用两个 `BodyTextPosition`（正文叶 ID、叶内 UTF-8 字素边界），要求
 端点按文档顺序排列。范围内完整 inline/math/Raw 子树可删除；数学槽位、数学叶和 Raw

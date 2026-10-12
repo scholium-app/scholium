@@ -139,7 +139,7 @@ fn tab_actions(ui: &mut egui::Ui, state: &mut WorkspaceState) {
                 "Ctrl+S  保存",
                 "Ctrl+1 / Ctrl+2  切换工作方式",
                 "Ctrl+F1  折叠功能区",
-                "Ctrl+B / Ctrl+J  导航 / 诊断",
+                "Ctrl+Shift+B / Ctrl+J  导航 / 诊断",
             ] {
                 ui.label(tip);
             }

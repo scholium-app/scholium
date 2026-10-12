@@ -4,10 +4,10 @@ use scholium_model::{NodeId, structured::*};
 use unicode_segmentation::UnicodeSegmentation;
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-struct Address {
-    block: usize,
-    inline: usize,
-    byte: usize,
+pub(super) struct Address {
+    pub block: usize,
+    pub inline: usize,
+    pub byte: usize,
 }
 
 pub(super) fn replace(
@@ -71,7 +71,7 @@ fn cursor(leaf: &StructuredInline, wanted: usize) -> BodyTextPosition {
     }
 }
 
-fn locate(doc: &StructuredDocument, at: BodyTextPosition) -> Result<Address, EditError> {
+pub(super) fn locate(doc: &StructuredDocument, at: BodyTextPosition) -> Result<Address, EditError> {
     for (block, owner) in doc.blocks.iter().enumerate() {
         for (inline, value) in owner.content.iter().enumerate() {
             if value.node != at.leaf {

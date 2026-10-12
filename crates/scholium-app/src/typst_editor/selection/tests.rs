@@ -302,7 +302,7 @@ fn rejected_capacity_preserves_selection_and_copyable_paste() {
 }
 
 #[test]
-fn math_shift_and_selection_format_commands_do_not_mutate_authority() {
+fn math_shift_is_rejected_and_selection_styles_only_the_text_around_a_formula() {
     let mut f = Fixture::new();
     f.events(vec![text("A"), text("$"), text("12")]);
     let before = f.editor.snapshot.clone();
@@ -316,7 +316,14 @@ fn math_shift_and_selection_format_commands_do_not_mutate_authority() {
     let before = f.editor.snapshot.clone();
     f.editor
         .command(Command::Style(TextStyle::Strong), &mut f.state);
-    assert_eq!(f.editor.snapshot, before);
+    let content = &f.editor.snapshot.blocks[0].content;
+    assert_eq!(content[1], before.blocks[0].content[1], "formula untouched");
+    for (inline, expected) in [(&content[0], "A"), (&content[2], "Z")] {
+        let InlineBody::Text { text, style } = &inline.body else {
+            panic!("body text around the formula")
+        };
+        assert_eq!((text.as_str(), *style), (expected, TextStyle::Strong));
+    }
     assert!(f.editor.selected());
 }
 
