@@ -88,6 +88,14 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
             }
         }
     }
+    if let Some(pos) = response.interact_pointer_pos() {
+        // The press of the last click already placed the caret; the release picks the unit.
+        if response.triple_clicked() {
+            session.pointer_clicks(pos, 3, state);
+        } else if response.double_clicked() {
+            session.pointer_clicks(pos, 2, state);
+        }
+    }
     session.accessibility(ui, response.has_focus(), state);
     // All accepted intents have reached LocalSession and the worker before this pass.
     let text_shapes = body(ui, rect, scale, session, state);
@@ -149,6 +157,7 @@ pub(super) fn body(
         return 0;
     }
     selection_overlay(&painter, rect, scale, session);
+    math_overlay(ui, &painter, rect, scale, session);
     let Some(caret) = session
         .scene
         .as_ref()
@@ -196,5 +205,44 @@ fn selection_overlay(painter: &egui::Painter, rect: Rect, scale: f32, session: &
             egui::Color32::from_rgba_unmultiplied(40, 105, 210, 55),
             egui::Stroke::NONE,
         ));
+    }
+}
+
+const FORMULA_PADDING_PT: f32 = 1.5;
+const SLOT_PADDING_PT: f32 = 2.0;
+const FORMULA_CORNER: f32 = 3.0;
+
+/// Tinted rounded rectangle behind the formula that holds the caret, plus a fainter
+/// outline for the current Fraction/Attach slot. Shapes only: Typst still draws the text.
+fn math_overlay(
+    ui: &egui::Ui,
+    painter: &egui::Painter,
+    rect: Rect,
+    scale: f32,
+    session: &EditorSession,
+) {
+    let Some(indicator) = session.math_indicator() else {
+        return;
+    };
+    let accent = theme::colors(ui).accent;
+    let map = |b: [f64; 4], pad: f32| {
+        let pad = pad * scale;
+        Rect::from_min_max(
+            rect.min + egui::vec2(b[0] as f32, b[1] as f32) * scale - egui::vec2(pad, pad),
+            rect.min + egui::vec2(b[2] as f32, b[3] as f32) * scale + egui::vec2(pad, pad),
+        )
+    };
+    painter.rect_filled(
+        map(indicator.formula, FORMULA_PADDING_PT),
+        FORMULA_CORNER,
+        accent.gamma_multiply(0.10),
+    );
+    if let Some(slot) = indicator.slot {
+        painter.rect_stroke(
+            map(slot, SLOT_PADDING_PT),
+            FORMULA_CORNER,
+            Stroke::new(1.0, accent.gamma_multiply(0.35)),
+            egui::StrokeKind::Outside,
+        );
     }
 }

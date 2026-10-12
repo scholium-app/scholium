@@ -152,7 +152,7 @@ impl ContentCache {
             return Ok(content);
         }
         let body = match &inline.body {
-            InlineBody::Text { text, style } => style_text(text, *style),
+            InlineBody::Text { text, style } => style_text(text, *style, self.ids[&inline.node]),
             InlineBody::Math { root } => EquationElem::new(self.math(root)?).pack(),
             InlineBody::RawMath { .. } => return Err(EditorError::Raw(inline.node)),
         };
@@ -278,8 +278,16 @@ fn block_is_empty(block: &StructuredBlock) -> bool {
         .all(|inline| matches!(&inline.body, InlineBody::Text { text, .. } if text.is_empty()))
 }
 
-fn style_text(text: &str, style: TextStyle) -> Content {
-    let body = super::kernel::text(text);
+/// The origin sits on the innermost `TextElem`: inline layout only maps carets for a text
+/// element that carries it, and Strong/Emph are realized away before layout, so an origin
+/// on the wrapper alone would leave a styled leaf without any caret geometry.
+fn style_text(text: &str, style: TextStyle, id: u128) -> Content {
+    let origin = EditOrigin {
+        node: id,
+        slot: None,
+        hole: false,
+    };
+    let body = super::kernel::text(text).with_edit_origin(origin);
     match style {
         TextStyle::Plain => body,
         TextStyle::Strong => StrongElem::new(body).pack(),

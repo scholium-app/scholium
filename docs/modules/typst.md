@@ -77,7 +77,8 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 Attach 为 `AttachElem`（t=sup、b=sub），槽编号 base 1、sub 2、sup 3。数学 Text 逐字素成原子：
 每个字素一个 `ClassElem`（Typst 默认数学类）包一个带原子 origin 的 `TextElem`，ASCII 字母用数学
 斜体码位显示；原子 origin 编码 叶/字节范围，几何把原子两端 caret 映回叶内字节，故每个字素边界
-都有精确 caret。`sin` 等多字母词暂按独立斜体字母显示（已知限制）。
+都有精确 caret。正文 Text 的 origin 必须落在最内层 `TextElem`：Strong/Emph 在布局前被 show 规则展开，
+只挂在包装元素上的 origin 会丢失，样式叶就没有任何 caret 几何。`sin` 等多字母词暂按独立斜体字母显示（已知限制）。
 生成源码（`structured_source`）对数学文字同样逐原子输出：ASCII 字母与数字串裸写并以空格分隔，
 白名单运算符裸写，其余为转义引号串；Attach 写为 `base^(sup)_(sub)`，多原子 base 加括号。
 World 的 source/file 均拒绝，today 无环境求值。RawMath 返回明确节点错误，既不改变模型

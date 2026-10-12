@@ -41,13 +41,13 @@ pub(super) struct Goal {
 
 /// Vertical extent of a caret or object in padded Frame pt.
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct Span {
-    top: f64,
-    bottom: f64,
+pub(super) struct Span {
+    pub(super) top: f64,
+    pub(super) bottom: f64,
 }
 
 impl Span {
-    fn of(caret: &Caret) -> Self {
+    pub(super) fn of(caret: &Caret) -> Self {
         let [a, b] = [caret.top[1], caret.bottom[1]];
         Self {
             top: a.min(b),
@@ -55,24 +55,24 @@ impl Span {
         }
     }
 
-    fn center(self) -> f64 {
+    pub(super) fn center(self) -> f64 {
         (self.top + self.bottom) * 0.5
     }
 
-    fn overlaps(self, other: Self) -> bool {
+    pub(super) fn overlaps(self, other: Self) -> bool {
         self.top < other.bottom && other.top < self.bottom
     }
 }
 
-fn x_of(caret: &Caret) -> f64 {
+pub(super) fn x_of(caret: &Caret) -> f64 {
     (caret.top[0] + caret.bottom[0]) * 0.5
 }
 
 /// Logical order (leaf index, UTF-8 byte, Downstream) breaks equal-x ties.
-type Order = (usize, usize, bool);
-type Stop<'a> = (Order, &'a Caret);
+pub(super) type Order = (usize, usize, bool);
+pub(super) type Stop<'a> = (Order, &'a Caret);
 
-fn nearest_x<'a>(stops: impl Iterator<Item = Stop<'a>>, goal: f64) -> Option<&'a Caret> {
+pub(super) fn nearest_x<'a>(stops: impl Iterator<Item = Stop<'a>>, goal: f64) -> Option<&'a Caret> {
     // Equal distance prefers the logically later stop, so a zero-width trailing
     // space at a soft wrap resolves to the visual line end.
     stops
@@ -121,7 +121,7 @@ fn edge<'a>(stops: &[Stop<'a>], on: Span, end: bool) -> Option<&'a Caret> {
     .map(|(_, caret)| *caret)
 }
 
-fn contains(node: &MathNode, leaf: NodeId) -> bool {
+pub(super) fn contains(node: &MathNode, leaf: NodeId) -> bool {
     node.node == leaf
         || input::math_children(node)
             .into_iter()

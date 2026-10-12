@@ -133,6 +133,15 @@ fn status(ui: &mut egui::Ui, state: &mut WorkspaceState) {
                 })
                 .small(),
             );
+            if editor.in_math {
+                ui.label(
+                    RichText::new("公式")
+                        .small()
+                        .strong()
+                        .color(theme::colors(ui).accent),
+                )
+                .on_hover_text("光标在公式内 · 在末尾按 → 或在开头按 ← 离开");
+            }
             let room = (ui.available_width() - ZOOM_WIDTH).max(0.0);
             ui.allocate_ui_with_layout(
                 egui::vec2(room, 22.0),

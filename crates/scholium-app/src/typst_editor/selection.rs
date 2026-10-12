@@ -249,19 +249,6 @@ impl EditorSession {
         true
     }
 
-    fn pointer_hit(&self, point: [f64; 2]) -> Option<Position> {
-        if !self.current() {
-            return None;
-        }
-        let caret = self.scene.as_ref()?.geometry.hit(point)?;
-        // Proportional intra-ligature stops are display estimates, not pointer proof.
-        (caret.exact
-            && input::leaves(&self.snapshot)
-                .iter()
-                .any(|l| l.id == caret.position.leaf))
-        .then_some(caret.position)
-    }
-
     pub(super) fn selection_quads(&self) -> Result<Vec<SelectionQuad>, SessionError> {
         if !self.current() {
             return Ok(Vec::new());
@@ -424,5 +411,8 @@ impl EditorSession {
     }
 }
 
+mod pointer;
+#[cfg(test)]
+mod pointer_tests;
 #[cfg(test)]
 mod tests;
