@@ -18,15 +18,13 @@ mod compiler;
 #[cfg(feature = "editor")]
 pub mod editor;
 mod structured_source;
+mod style;
 pub use compiler::{CompileOutcome, PageOutcome, PagePixels, PreviewCompiler, PreviewEvent};
 pub use structured_source::{GeneratedSource, SourceBlock, SourceMode, generate_source};
-
-/// Paper fonts for the preview: Latin serif plus the classic Chinese thesis
-/// pairing. Taken from system-installed fonts; typst-kit embedded fonts are
-/// the fallback when a family is missing.
-pub const BODY_FONTS: &[&str] = &["Times New Roman", "SimSun"];
-/// Heading pairing: Latin serif with the Chinese heading face.
-pub const HEADING_FONTS: &[&str] = &["Times New Roman", "SimHei"];
+pub use style::{
+    BODY_FONTS, BODY_SIZE_PT, FIRST_LINE_INDENT_EM, HEADING_FONTS, LEADING_EM, MARGIN_X_CM,
+    MARGIN_Y_CM, PAGE_WIDTH_MM, margin_x_pt, margin_y_pt, preamble, text_width_pt,
+};
 
 /// Maximum number of pages accepted by the interactive preview. Exceeding it
 /// reports an error rather than silently hiding the rest of the document.
@@ -52,21 +50,9 @@ pub struct BlockAnchor {
     pub y: f32,
 }
 
-const PREAMBLE: &str = concat!(
-    "#set page(paper: \"a4\", margin: (x: 2.5cm, y: 2.54cm), numbering: \"1\")\n",
-    "#set text(font: (",
-    r#""Times New Roman", "SimSun""#,
-    "), size: 12pt, lang: \"zh\", region: \"cn\")\n",
-    "#show heading: set text(font: (",
-    r#""Times New Roman", "SimHei""#,
-    "), weight: \"bold\")\n",
-    "#set heading(numbering: \"1.1\")\n",
-    "#set par(justify: true, leading: 1em, first-line-indent: (amount: 2em, all: true))",
-);
-
 /// Single-file Typst `World` for the preview, with a swappable main source so
 /// one instance (and its comemo caches) serves every compile.
-struct PreviewWorld {
+pub(crate) struct PreviewWorld {
     library: LazyHash<Library>,
     fonts: FontStore,
     main: FileId,

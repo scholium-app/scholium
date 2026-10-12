@@ -46,7 +46,7 @@ pub struct GeneratedSource {
 pub fn generate_source(doc: &StructuredDocument, mode: SourceMode) -> GeneratedSource {
     let mut out = GeneratedSource::default();
     if mode == SourceMode::Preview {
-        out.source.push_str(crate::PREAMBLE);
+        out.source.push_str(&crate::preamble());
         out.source.push_str("\n\n");
     }
     for (ordinal, block) in doc.blocks.iter().enumerate() {
@@ -54,14 +54,21 @@ pub fn generate_source(doc: &StructuredDocument, mode: SourceMode) -> GeneratedS
             out.source.push_str("\n\n");
         }
         let start = out.source.len();
-        out.source.push_str(match block.kind {
+        let heading_marker = match block.kind {
             BlockKind::Paragraph => "",
             BlockKind::Heading1 => "= ",
             BlockKind::Heading2 => "== ",
-        });
-        if mode == SourceMode::Preview {
-            out.source
-                .push_str(&format!("#metadata({ordinal}) <blkstart{ordinal}>"));
+        };
+        let start_anchor = format!("#metadata({ordinal}) <blkstart{ordinal}>");
+        if mode == SourceMode::Preview && !heading_marker.is_empty() {
+            // An element before the heading text changes the heading's block spacing, so
+            // the heading's start anchor sits on its own line ahead of the marker.
+            out.source.push_str(&start_anchor);
+            out.source.push('\n');
+        }
+        out.source.push_str(heading_marker);
+        if mode == SourceMode::Preview && heading_marker.is_empty() {
+            out.source.push_str(&start_anchor);
         }
         let content_start = out.source.len();
         for inline in &block.content {
@@ -91,8 +98,11 @@ pub fn generate_source(doc: &StructuredDocument, mode: SourceMode) -> GeneratedS
             }
         }
         if mode == SourceMode::Preview {
+            // Headings end their block at the line break, like their start anchor.
             out.source
-                .push_str(&format!(" #metadata({ordinal}) <blk{ordinal}>"));
+                .push(if heading_marker.is_empty() { ' ' } else { '\n' });
+            out.source
+                .push_str(&format!("#metadata({ordinal}) <blk{ordinal}>"));
         }
         out.blocks.push(SourceBlock {
             node: block.node,

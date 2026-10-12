@@ -34,7 +34,8 @@
 普通启动切换为 Typst Content 编辑器见[报告 0059](SPK-0059-typst-default-editor.md)，
 旧编辑器删除见[报告 0060](SPK-0060-remove-legacy-editor.md)，
 主程序编辑面正文无障碍见[报告 0061](SPK-0061-editor-accessibility.md)，
-结构源码工作区与快速预览见[报告 0062](SPK-0062-structured-source-view.md)。
+结构源码工作区与快速预览见[报告 0062](SPK-0062-structured-source-view.md)，
+编辑面与 A4 输出同版式见[报告 0063](SPK-0063-a4-editor-surface.md)。
 这些限定报告不改变上表阶段判定，完整 C 与默认后端替换未验收。
 
 - 条件 1：[egui 原始验收](SPK-0004-native-ui-egui.md)、[ADR 0006](../adr/ADR-0006-native-ui-framework.md)、
