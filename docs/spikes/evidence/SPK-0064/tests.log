@@ -1,0 +1,274 @@
+   Compiling scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/.claude/worktrees/agent-ad5dcc405925f9dac/crates/scholium-storage)
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium/.claude/worktrees/agent-ad5dcc405925f9dac/crates/scholium-typst)
+    Finished `test` profile [unoptimized] target(s) in 0.60s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-a9456754a9e203ed)
+
+running 96 tests
+test commands::tests::view_commands_update_only_view_preferences ... ok
+test commands::tests::zoom_commands_are_bounded ... ok
+test commands::tests::zoom_from_fit_width_starts_at_visible_page_scale ... ok
+test state::tests::default_workspace_starts_in_visual_fit_width_mode_without_a_document ... ok
+test typst_editor::access::tests::speech_reads_nested_fractions_outside_in_and_empty_slots_as_empty ... ok
+test typst_editor::access::tests::speech_names_script_slots_like_fraction_slots ... ok
+test typst_editor::attach::tests::attach_commands_are_ignored_while_composing_or_selecting ... ok
+test typst_editor::attach::tests::left_enters_the_base_end_and_right_leaves_to_just_after_the_attach ... ok
+test typst_editor::attach::tests::caret_at_text_start_attaches_to_an_empty_base ... ok
+test typst_editor::attach::tests::backspace_in_an_empty_slot_removes_it_and_undo_restores_it ... ok
+test typst_editor::attach::tests::removing_the_last_slot_of_mid_text_merges_the_text_back ... ok
+test typst_editor::attach::tests::subscript_then_superscript_is_one_attach_with_both_slots ... ok
+test typst_editor::attach::tests::script_markers_are_literal_in_body_text_and_paste ... ok
+test typst_editor::attach::tests::tab_walks_base_sub_sup_and_then_out_of_the_formula ... ok
+test ribbon::tests::collapsed_ribbon_keeps_its_tab_and_reopens_on_toggle ... ok
+test typst_editor::selection::tests::copy_and_cut_reject_formula_selection_without_mutating_authority ... ok
+test typst_editor::selection::tests::copy_selection_preserves_unicode_and_empty_paragraph_boundaries ... ok
+test ribbon::tests::every_tab_renders_without_an_open_document ... ok
+test typst_editor::access::tests::caret_and_selection_are_published_as_text_positions ... ok
+test typst_editor::access::tests::assistive_selection_against_an_older_publication_is_rejected ... ok
+test typst_editor::access::tests::caret_in_the_empty_leaf_after_a_formula_is_still_published ... ok
+test typst_editor::access::tests::formula_only_paragraph_keeps_a_run_and_a_caret ... ok
+test typst_editor::selection::tests::pending_range_covering_raw_math_is_rejected_without_losing_selection ... ok
+test typst_editor::attach::tests::attach_scene_has_current_geometry_for_every_leaf ... ok
+test typst_editor::access::tests::scripts_in_a_live_formula_are_spoken_in_the_math_object_and_status ... ok
+test typst_editor::attach::tests::typing_caret_two_right_plus_y_builds_an_attach_followed_by_text ... ok
+test typst_editor::access::tests::formula_is_a_math_object_and_slot_context_is_a_live_status ... ok
+test typst_editor::access::tests::wrapped_paragraph_is_split_into_visual_line_runs ... ok
+test typst_editor::attach::tests::up_and_down_move_between_base_subscript_and_superscript ... ok
+test typst_editor::access::tests::pending_scene_keeps_the_current_text_without_stale_geometry ... ok
+test typst_editor::selection::tests::body_shift_crosses_whole_fraction_and_selection_includes_its_rule_extent ... ok
+test typst_editor::source_view::tests::structure_view_shows_the_generated_typst_of_the_snapshot ... ok
+test typst_editor::selection::tests::cut_selection_returns_exact_text_and_undo_restores_original_range ... ok
+test typst_editor::startup::tests::empty_legacy_file_is_not_migrated ... ok
+test typst_editor::startup::tests::existing_target_is_never_replaced_by_migration ... ok
+test typst_editor::startup::tests::failed_probe_of_a_non_legacy_file_names_the_file_and_keeps_it ... ok
+test typst_editor::startup::tests::legacy_head_migrates_once_into_a_new_file_and_keeps_the_original ... ok
+test typst_editor::startup::tests::missing_legacy_file_leaves_the_target_for_a_blank_document ... ok
+test typst_editor::startup::tests::startup_error_page_shows_the_reason_and_recovery_without_an_editor ... ok
+test typst_editor::access::tests::assistive_caret_at_a_soft_wrap_stays_on_the_earlier_line ... ok
+test typst_editor::selection::tests::deletion_and_enter_each_replace_cross_paragraph_selection_as_one_action ... ok
+test typst_editor::tests::deletion_that_joins_regional_indicators_keeps_a_valid_insertion_point ... ok
+test typst_editor::selection::tests::approximate_or_unknown_caret_cannot_become_a_pointer_endpoint ... ok
+test typst_editor::access::tests::mixed_cjk_and_latin_on_one_line_stay_in_one_run ... ok
+test typst_editor::tests::horizontal_arrows_cross_identified_body_and_math_leaves_without_wrapping ... ok
+test typst_editor::tests::ime_commit_and_duplicate_text_event_create_one_action_and_one_value ... ok
+test typst_editor::tests::joining_emoji_graphemes_does_not_strand_following_input_inside_a_cluster ... ok
+test typst_editor::access::tests::assistive_selection_maps_to_semantic_endpoints_and_typing_replaces_it ... ok
+test typst_editor::tests::rejected_math_multiline_paste_keeps_authority_and_copyable_draft ... ok
+test typst_editor::tests::save_reopen_preserves_holes_and_can_continue_after_redo ... ok
+test typst_editor::tests::text_passed_through_by_an_active_ime_is_still_typed ... ok
+test typst_editor::access::tests::body_is_a_named_text_input_whose_runs_read_the_document_in_order ... ok
+test typst_editor::vertical::tests::command_home_and_end_reach_document_body_edges ... ok
+test typst_editor::access::tests::assistive_selection_inside_a_grapheme_is_rejected ... ok
+test typst_editor::selection::tests::drag_rejects_epoch_reuse_and_changed_placement ... ok
+test typst_editor::selection::tests::math_shift_and_selection_format_commands_do_not_mutate_authority ... ok
+test typst_editor::vertical::tests::equal_x_ties_choose_logical_end_for_line_end_and_start_for_line_start ... ok
+test typst_editor::selection::tests::multiline_paste_keeps_empty_paragraphs_and_places_following_input_in_new_leaf ... ok
+test typst_editor::selection::tests::selection_extent_uses_current_cluster_edges_and_pending_hides_it ... ok
+test typst_editor::selection::tests::rejected_capacity_preserves_selection_and_copyable_paste ... ok
+test typst_editor::vertical::tests::layout_failure_drops_the_waiting_geometry_key_and_runs_later_input ... ok
+test typst_editor::vertical::tests::nearest_line_wins_before_horizontal_distance ... ok
+test typst_editor::selection::tests::same_frame_accepted_text_makes_later_pointer_event_stale ... ok
+test typst_editor::selection::tests::reverse_drag_across_paragraphs_replaces_once_and_undo_restores_selection ... ok
+test typst_editor::tests::empty_inline_formula_and_empty_fraction_denominator_have_current_geometry ... ok
+test typst_editor::tests::every_scene_identity_field_gates_adoption_of_failed_results ... ok
+test typst_editor::tests::close_with_queued_input_asks_before_discarding_it ... ok
+test typst_editor::source_view::tests::results_of_an_older_generation_are_never_shown ... ok
+test typst_editor::source_view::tests::clicking_a_preview_block_moves_the_caret_to_that_block ... ok
+test typst_editor::source_view::tests::undo_back_to_an_earlier_revision_still_recompiles ... ok
+test typst_editor::tests::undo_redo_preserves_request_ids_and_rejects_old_scene_at_same_revision ... ok
+test typst_editor::selection::tests::shift_unicode_selection_replaces_once_with_literal_text_and_retains_identity ... ok
+test typst_editor::tests::committed_canvas_contains_no_egui_text_shapes_even_while_pending ... ok
+test typst_editor::source_view::tests::preview_compiles_and_opens_on_the_page_of_the_cursor_block ... ok
+test typst_editor::tests::multi_event_frame_enters_fraction_and_nested_denominator_without_losing_input ... ok
+test typst_editor::vertical::tests::down_and_up_follow_wrapped_lines_with_sticky_goal_and_return_exactly ... ok
+test typst_editor::vertical::tests::empty_paragraph_is_a_vertical_stop ... ok
+test typst_editor::vertical::tests::end_and_home_use_visual_line_edges_at_a_soft_wrap ... ok
+test typst_editor::vertical::tests::first_line_up_and_last_line_down_stop_at_line_edges ... ok
+test typst_editor::vertical::tests::horizontal_moves_discard_the_vertical_goal_even_when_returning_to_the_same_stop ... ok
+test typst_editor::vertical::tests::numerator_down_enters_denominator_then_leaves_the_formula_by_lines ... ok
+test typst_editor::vertical::tests::ime_cancel_and_escape_are_still_queued_at_the_limit ... ok
+test typst_editor::vertical::tests::selection_across_an_empty_leaf_after_a_formula_keeps_geometry_and_replaces ... ok
+test typst_editor::vertical::tests::pointer_press_while_input_is_queued_is_rejected_not_reordered ... ok
+test typst_editor::vertical::tests::shift_vertical_in_math_is_rejected_without_selection ... ok
+test typst_editor::vertical::tests::queued_input_beyond_the_limit_is_rejected_but_kept_copyable ... ok
+test typst_editor::vertical::tests::vertical_key_before_layout_waits_and_later_input_keeps_its_order ... ok
+test typst_editor::vertical::tests::unhandled_key_keeps_the_upstream_wrap_end_for_a_following_shift_up ... ok
+test typst_editor::vertical::tests::shift_down_extends_across_lines_and_typing_replaces_once ... ok
+test typst_editor::window_tests::returning_from_source_view_restores_typing_on_the_page ... ok
+test typst_editor::vertical::tests::undo_and_ribbon_intents_wait_behind_queued_input ... ok
+test typst_editor::window_tests::whole_window_stays_inside_tiled_sizes_in_both_modes ... ok
+test typst_editor::window_tests::view_shortcuts_switch_modes_without_touching_the_document ... ok
+test typst_editor::window_tests::save_shortcut_persists_through_the_editor_and_clears_dirty ... ok
+test typst_editor::window_tests::ribbon_intents_queued_in_source_view_never_reach_the_document ... ok
+test typst_editor::window_tests::ribbon_intents_apply_in_order_through_the_editor_session ... ok
+
+test result: ok. 96 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 24.37s
+
+     Running unittests src/lib.rs (target/debug/deps/scholium_document-cc34015082215e2b)
+
+running 50 tests
+test range_edit::tests::non_boundary_and_reversed_ranges_never_change_the_document ... ok
+test range_edit::tests::cross_block_selection_is_one_atomic_action_and_preserves_outside_nodes ... ok
+test structured_session::attach::tests::attaching_off_a_grapheme_boundary_is_rejected_without_a_change ... ok
+test structured_session::attach::tests::an_existing_slot_only_moves_the_caret_to_its_end ... ok
+test structured_session::attach::tests::attaching_at_text_start_or_in_a_hole_uses_a_new_hole_base ... ok
+test structured_session::attach::tests::removing_a_slot_from_a_hole_base_keeps_the_hole_in_the_row ... ok
+test structured_session::attach::tests::removing_a_trailing_placeholder_hole_returns_to_the_attach ... ok
+test structured_session::attach::tests::removing_a_slot_outside_an_attach_changes_nothing ... ok
+test structured_session::attach::tests::attaching_mid_text_splits_around_the_last_grapheme_into_a_row ... ok
+test structured_session::attach::tests::slot_start_navigation_targets_the_end_of_the_base ... ok
+test structured_session::attach::tests::attaching_at_the_end_of_text_keeps_no_empty_neighbours_and_no_single_row ... ok
+test structured_session::attach::tests::attaching_uses_the_whole_grapheme_cluster_as_base ... ok
+test structured_session::attach::tests::every_attach_edit_is_one_action_and_history_restores_the_exact_snapshot ... ok
+test structured_session::attach::tests::removing_the_last_slot_flattens_to_the_base_and_merges_adjacent_text ... ok
+test structured_session::attach::tests::removing_one_of_two_slots_keeps_the_attach ... ok
+test structured_session::attach::tests::leaving_a_slot_reuses_following_content_and_otherwise_appends_a_hole ... ok
+test structured_session::range::tests::cross_inline_range_removes_whole_math_and_raw_and_retains_both_styles ... ok
+test structured_session::range::tests::cross_block_deletion_keeps_outer_blocks_and_surviving_inline_identities ... ok
+test structured_session::attach::tests::the_other_slot_is_added_to_the_attach_the_caret_just_left ... ok
+test structured_session::attach::tests::leaving_outside_any_slot_changes_nothing ... ok
+test structured_session::range::tests::multiline_paste_at_zero_splits_once_and_preserves_trailing_empty_line ... ok
+test structured_session::range::tests::range_outcome_identifies_the_fresh_multiline_cursor_in_accepted_authority ... ok
+test structured_session::range::tests::no_op_does_not_consume_request_or_increment_revision ... ok
+test structured_session::range::tests::same_leaf_replacement_is_literal_and_preserves_identity_and_style ... ok
+test structured_session::range::tests::invalid_grapheme_order_unknown_and_math_endpoints_reject_atomically ... ok
+test structured_session::range::tests::range_outcome_revalidates_grapheme_join_and_noop_still_returns_valid_cursor ... ok
+test structured_session::range::tests::stale_and_duplicate_requests_reject_and_restore_preserves_the_range_result ... ok
+test structured_session::tests::failed_migration_returns_the_original_session_and_journal ... ok
+test structured_session::range::tests::multiline_cross_block_replacement_retains_right_suffix_style_and_identity ... ok
+test structured_session::attach::tests::the_caret_after_an_attach_adds_its_slot_and_consumes_the_placeholder_hole ... ok
+test structured_session::tests::filling_deleting_and_wrapping_math_preserves_slot_identity ... ok
+test structured_session::tests::inline_math_insertion_splits_a_body_grapheme_atomically_and_retains_style ... ok
+test structured_session::tests::invalid_grapheme_ranges_and_raw_editing_leave_authority_unchanged ... ok
+test structured_session::tests::render_stamps_separate_revision_reuse_requests_and_generations ... ok
+test structured_session::tests::local_fraction_undo_redo_restoration_retains_ids_and_refreshes_epoch ... ok
+test structured_session::tests::splits_and_merges_retain_surviving_inline_ids_and_styles ... ok
+test structured_session::tests::structured_restore_rejects_duplicate_and_mismatched_logs ... ok
+test structured_session::tests::whole_leaf_styles_and_headings_preserve_text_and_ids ... ok
+test structured_session::range::tests::excessive_line_count_is_rejected_before_publication ... ok
+test structured_session::tests::wrong_stale_duplicate_and_noop_requests_do_not_append_actions ... ok
+test tests::boundary_merges_are_wrong_targets_and_empty_merges_remove_blocks ... ok
+test tests::inline_format_pairs_parse_like_math ... ok
+test tests::kind_changes_keep_identity_text_and_append_actions ... ok
+test tests::markup_parsing_keeps_math_first_class ... ok
+test tests::merges_keep_the_absorber_identity_kind_and_order ... ok
+test tests::newline_replacements_split_into_consecutive_blocks ... ok
+test tests::projections_cannot_mutate_the_authority ... ok
+test tests::stale_duplicate_wrong_target_and_capacity_are_atomic ... ok
+test tests::no_op_and_capacity_rejection_leave_revision_unchanged ... ok
+test structured_session::range::tests::capacity_failure_after_prefix_planning_rolls_back_and_request_can_retry ... ok
+
+test result: ok. 50 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/scholium_model-4ba52ffa2a679153)
+
+running 12 tests
+test structured::tests::all_addressed_nodes_share_one_uniqueness_namespace ... ok
+test structured::tests::attach_without_any_slot_is_rejected ... ok
+test structured::tests::attach_slots_share_identity_namespace_and_report_unfilled_holes ... ok
+test structured::tests::attach_counts_toward_the_depth_limit ... ok
+test structured::tests::required_holes_do_not_become_persisted_placeholder_text ... ok
+test structured::tests::invalid_containers_leaves_and_unknown_tags_are_rejected ... ok
+test structured::tests::complete_rows_symbols_and_fixed_slots_round_trip_without_holes ... ok
+test structured::tests::migration_retains_values_and_block_ids_and_reports_raw_formulas ... ok
+test structured::tests::attach_round_trips_with_one_or_both_slots_and_a_stable_tag ... ok
+test structured::tests::over_capacity_input_is_rejected_without_truncation ... ok
+test structured::tests::maximum_depth_round_trips_and_one_more_level_is_rejected ... ok
+test structured::tests::aggregate_text_and_node_caps_reject_many_individually_valid_leaves ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running unittests src/lib.rs (target/debug/deps/scholium_storage-98953c75e88bbf82)
+
+running 24 tests
+test tests::malformed_request_id_is_a_recovery_error ... ok
+test tests::inconsistent_log_cannot_replace_a_committed_session ... ok
+test structured::tests::candidate_open_rejects_legacy_before_writing_or_changing_journal_mode ... ok
+test structured::tests::future_database_versions_are_rejected_before_ddl_or_journal_changes ... ok
+test migration::tests::malformed_legacy_journal_is_not_silently_rebuilt ... ok
+test structured::tests::rejected_structure_and_journal_do_not_change_previous_head ... ok
+test tests::missing_head_snapshot_is_a_recovery_error ... ok
+test tests::resave_shrinks_the_log_and_keeps_latest_snapshot ... ok
+test structured::tests::old_writer_is_rejected_by_sql_constraint_and_its_transaction_rolls_back ... ok
+test structured::tests::identified_ids_fixed_holes_and_requests_survive_save_reopen ... ok
+test structured::tests::maximum_depth_is_readable_inside_the_versioned_envelope ... ok
+test structured::tests::journal_gaps_duplicates_and_malformed_request_bytes_are_rejected ... ok
+test migration::tests::malformed_source_does_not_create_target_or_repair_original ... ok
+test migration::tests::unavailable_destination_and_failed_build_leave_no_output ... ok
+test tests::snapshot_at_reads_history_and_missing_returns_none ... ok
+test migration::tests::dangling_target_symlink_is_not_followed_or_replaced ... ok
+test tests::save_load_round_trip_and_reopen_preserve_everything ... ok
+test structured::tests::mislabeled_legacy_and_future_envelopes_are_rejected ... ok
+test migration::tests::migration_preserves_original_bytes_history_and_head_request_ids ... ok
+test migration::tests::later_candidate_save_retains_immutable_legacy_archive ... ok
+test migration::tests::existing_target_and_same_source_are_never_overwritten ... ok
+test migration::tests::head_probe_is_read_only_and_distinguishes_blank_from_saved_files ... ok
+test migration::tests::unknown_legacy_fields_and_storage_extensions_are_not_dropped ... ok
+test tests::bench_sqlite_append_hundred_thousand_actions_and_read_snapshot ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running unittests src/bin/hammer.rs (target/debug/deps/hammer-dee0873651f54c4f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/recovery.rs (target/debug/deps/recovery-a94c42d79cadfc42)
+
+running 1 test
+test sigkill_mid_write_leaves_a_consistent_store ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/scholium_typst-56af8d5be2c51100)
+
+running 22 tests
+test tests::attach_source_parenthesizes_slots_and_multi_atom_bases ... ok
+test tests::raw_formulas_are_shown_verbatim_but_never_compiled ... ok
+test tests::trailing_anchors_map_page_spanning_text_to_its_block ... ok
+test tests::math_text_is_emitted_per_atom ... ok
+test tests::math_text_is_literal_fractions_group_and_holes_are_counted ... ok
+test tests::view_source_maps_blocks_styles_and_escapes_markup ... ok
+test editor::tests::empty_script_slots_and_hole_bases_are_addressable ... ok
+test tests::anchors_locate_every_block_and_map_clicks ... ok
+test tests::attach_preview_compiles_with_real_scripts ... ok
+test tests::latest_generation_wins_when_requests_overtake_each_other ... ok
+test editor::tests::every_ascii_letter_is_an_italic_variable_with_carets ... ok
+test editor::tests::attach_slots_have_carets_and_scripts_sit_above_and_below_the_base ... ok
+test editor::tests::a_formula_row_around_an_attach_keeps_every_leaf_addressable ... ok
+test tests::clicks_in_the_last_line_of_a_multiline_block_stay_in_that_block ... ok
+test tests::exceeding_the_page_limit_reports_failure_instead_of_truncating ... ok
+test tests::page_after_the_old_eight_page_limit_can_be_rendered_on_demand ... ok
+test editor::tests::every_grapheme_boundary_of_math_text_has_a_caret ... ok
+test tests::in_word_styles_parentheses_list_markers_and_unicode_newlines_stay_literal ... ok
+test tests::preview_worker_wakes_the_host_for_compile_and_page_delivery ... ok
+test tests::compiler_produces_pages_for_a_structured_document ... ok
+test editor::tests::letters_and_operators_are_separate_atoms_with_math_spacing ... ok
+test tests::syntax_characters_in_math_text_stay_literal_in_the_compiled_output ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.27s
+
+   Doc-tests scholium_document
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests scholium_model
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests scholium_storage
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests scholium_typst
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

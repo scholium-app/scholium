@@ -1,0 +1,28 @@
+{
+  "01-typed-scripts-are-nodes": {
+    "pass": true,
+    "shape": [
+      {
+        "base": "x",
+        "sup": "2"
+      },
+      " + ",
+      {
+        "base": "y",
+        "sub": "i"
+      }
+    ]
+  },
+  "02-no-literal-markers": {
+    "pass": true,
+    "note": "no caret or underscore stored in math text"
+  },
+  "05-preview-compiles": {
+    "pass": true,
+    "preview": {
+      "generation": 1,
+      "pages": 1,
+      "error": null
+    }
+  }
+}

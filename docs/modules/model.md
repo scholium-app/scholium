@@ -74,7 +74,9 @@ revision 下的有序范围原子替换，可跨块。请求仍携带文档身�
 
 [ADR 0033](../adr/ADR-0033-structured-local-session-migration.md) 定义 `structured`：
 `StructuredDocument` 的块、inline、MathNode 共享全文唯一 NodeId；数学 Text/Symbol/Row/
-Fraction/Hole 有显式序列化 tag，固定分子/分母由拥有者及槽名识别。必填空槽使用 Hole，
+Fraction/Attach/Hole 有显式序列化 tag，固定分子/分母由拥有者及槽名识别。`Attach` 带 base 与可选
+sub/sup，至少一个槽存在，缺席的槽不序列化；它是 v1 信封内的加性变更，不升版本，旧构建会拒绝含
+`attach` 的文档（[ADR 0039](../adr/ADR-0039-math-attach.md)）。必填空槽使用 Hole，
 不持久化提示文字。`validate` 检查身份/容量/叶/容器，`ensure_filled` 拒绝 Hole，但不能
 证明 RawMath 可以严格编译。树深上限 24，单叶 1 MiB、合计内容 16 MiB、节点 100000。
 

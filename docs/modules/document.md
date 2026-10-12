@@ -130,6 +130,15 @@ MergeWithNext、整叶 SetTextStyle 和 SetKind 先在临时规划副本验证�
 不能据此移动 UI 端点。结果不含 Scene/排版坐标，不写入存储格式或请求日志。
 见 [ADR 0035](../adr/ADR-0035-typst-page-selection.md)。
 
+`Attach { leaf, at, slot }` 在数学 Text/Hole 叶的字素边界创建或进入上/下标槽，一次一个动作：
+Text 内 `at > 0` 时以前一个字素为 base，拆成 左/base/右 并并入已有父 Row（不嵌套 Row，空段不保留）；
+`at == 0` 或 Hole 时 base 为新 Hole（Hole 自身作 base）；光标紧随已有 Attach（槽尾，或其后兄弟叶首）时
+给该 Attach 补缺的槽，槽已存在则只把光标移到槽尾，并吞掉占位 Hole。`LeaveSlot { leaf, at }`
+定位 Attach 之后的光标位置，其后无叶时才追加占位 Hole；`RemoveSlot { leaf }` 在空 Hole 槽内删槽，
+无槽的 Attach 退化为 base 并合并相邻 Text，也可删 Attach 后的占位 Hole。三者的 cursor 都是数学叶
+位置（`BodyTextPosition` 在此不限正文），不适用时无 cursor 且不改文档。`base_before_slot` 给出
+槽首左移的目标（base 末尾）。
+
 `InsertMathAt { leaf, at }` 在正文叶的字素边界一次创建 inline 公式与右文字叶；左叶 ID 和
 两侧文字样式保留，原有后续 inline 不变。公式初始为必填 Hole；内部 Unicode 边界或数学/
 Raw 目标拒绝，不部分拆文字。这是一个动作，不能在 UI 拆成多次写操作。

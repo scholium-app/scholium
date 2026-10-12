@@ -1,0 +1,2 @@
+PASS default launch migrates legacy head and renders through Typst Content
+launch exit 0

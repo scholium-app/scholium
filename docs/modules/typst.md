@@ -73,7 +73,13 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 带 stamp 的结果。队列和结果分别只保留最新一份派生工作；关闭不在 UI join。
 节点/子树未变则保留 Content，变动的祖先重建；传输与快照复制仍有全文成本。
 
-结构直接构造正文/样式、Par、Equation、Frac 与 EditHole；字串不作为 source 执行。
+结构直接构造正文/样式、Par、Equation、Frac、Attach 与 EditHole；字串不作为 source 执行。
+Attach 为 `AttachElem`（t=sup、b=sub），槽编号 base 1、sub 2、sup 3。数学 Text 逐字素成原子：
+每个字素一个 `ClassElem`（Typst 默认数学类）包一个带原子 origin 的 `TextElem`，ASCII 字母用数学
+斜体码位显示；原子 origin 编码 叶/字节范围，几何把原子两端 caret 映回叶内字节，故每个字素边界
+都有精确 caret。`sin` 等多字母词暂按独立斜体字母显示（已知限制）。
+生成源码（`structured_source`）对数学文字同样逐原子输出：ASCII 字母与数字串裸写并以空格分隔，
+白名单运算符裸写，其余为转义引号串；Attach 写为 `base^(sup)_(sub)`，多原子 base 加括号。
 World 的 source/file 均拒绝，today 无环境求值。RawMath 返回明确节点错误，既不改变模型
 也不走旧输入期文字替代。受控 flow 宽 420 pt、高度预算 2000 pt，超过预算拒绝而非截断。
 
