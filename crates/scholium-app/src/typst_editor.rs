@@ -112,6 +112,7 @@ pub(crate) struct EditorSession {
     notice: Option<String>,
     last_audit: Option<String>,
     placeholder: Option<attach::Placeholder>,
+    clicks: selection::ClickRun,
 }
 
 fn diagnostics_line(scene: &EditorScene) -> String {
@@ -195,6 +196,7 @@ impl EditorSession {
             notice: None,
             last_audit: None,
             placeholder: None,
+            clicks: selection::ClickRun::default(),
         };
         state.editor = Some(EditorView::default());
         result.metadata(state);

@@ -18,7 +18,10 @@
    `Response::double_clicked/triple_clicked`，在释放时调用 `pointer_multi`；双击取指针所在叶的 UAX #29
    词段（指针在边界 caret 的哪一侧决定取前一段还是后一段，空白与标点各自成段），三击取该块全部正文 Text
    叶（首叶 0 到末叶末尾），写入既有 anchor/cursor。egui 的三击判定只看最近两次点击的时间，不核对中间一次的位置，
-   所以另一处点击后 0.6 秒内的双击会被报成三击；窗口脚本因此在双击前等待 1 秒。
+   egui 的三击判定只看最近两次点击的时间，不核对位置，会把“另一处点击后紧接的双击”报成三击。
+   `EditorSession` 因此自行记录页面上主键按下的位置与时间（`ClickRun`）：只有间隔小于 300 ms 且相距不超过 6 逻辑像素的
+   连续按下才累计，有效次数取 egui 报告值与该累计值（至多 3）的较小者；页面外按下、指针离开、拖动离开按下点都会清空记录。
+   于是远处单击后紧接的双击仍只选词，两处快速单击不选任何东西。
    数学槽内双击：选区模型只接受正文端点（见 app.md），因此保持光标并提示“数学槽位选区尚未接入”，不另造
    第二套选区。
 3. **样式叶没有光标几何。** 根因在 `scholium-typst` 的 `content.rs`：origin 通过 `keep` 挂在 `StrongElem`/
@@ -44,9 +47,9 @@
 
 | 项 | 结果 |
 | --- | --- |
-| 单元测试 | `selection/pointer_tests.rs`（下/上/右侧/行间/公式内命中、词/空白/标点/CJK、三击与剪切、数学内双击）、`indicator/tests.rs`（公式/分数/Attach 槽/状态元数据/过期 Scene）、`tests.rs::styled_leaf_has_exact_carets_at_every_grapheme_before_and_after_relayout` |
+| 单元测试 | `selection/pointer_tests.rs`（下/上/右侧/行间/公式内命中、词/空白/标点/CJK、三击与剪切、数学内双击）、点击计数（远点击后双击只选词、两处快速单击不选、三次近点击选块、双击选词、页面外按下清空）、`indicator/tests.rs`（公式/分数/Attach 槽/状态元数据/过期 Scene）、`tests.rs::styled_leaf_has_exact_carets_at_every_grapheme_before_and_after_relayout` |
 | 失败在先 | 命中三项（下/上/右侧）在旧命中规则下失败；样式叶测试在旧 `content.rs` 下于 byte 0 失败 |
-| 窗口脚本 | `interaction-check.py` 四项 PASS：公式淡色底仅在公式内出现、下方点击到文档末尾、双击选中 `world`（6..11）、三击选中整段 |
+| 窗口脚本 | `interaction-check.py` 四项 PASS：公式淡色底仅在公式内出现、下方点击到文档末尾、紧接远处单击之后的双击选中 `world`（6..11）、三击选中整段 |
 | 截图 | 公式内 [淡色底与“公式”状态](evidence/SPK-0065/interaction-check/01-caret-in-formula.png)；离开后 [无淡色底](evidence/SPK-0065/interaction-check/02-caret-in-body.png)；[双击选词](evidence/SPK-0065/interaction-check/03-double-click-word-selected.png)；[三击选段](evidence/SPK-0065/interaction-check/04-triple-click-block-selected.png) |
 
 ## 复现

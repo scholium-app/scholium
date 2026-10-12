@@ -9,6 +9,54 @@ use scholium_typst::editor::EditorScene;
 use std::collections::HashMap;
 use unicode_segmentation::UnicodeSegmentation;
 
+/// Largest distance between consecutive presses of one multi-click (egui's own default).
+const MAX_CLICK_DIST: f32 = 6.0;
+/// Largest gap between consecutive presses of one multi-click (egui's double-click window).
+const MAX_CLICK_GAP: std::time::Duration = std::time::Duration::from_millis(300);
+
+/// Consecutive primary presses on the page that each follow the previous one closely.
+///
+/// egui counts double and triple clicks by time alone, so a quick click elsewhere would make a
+/// double click look like a triple one; the real count is the length of this run (at most 3).
+#[derive(Debug, Default)]
+pub(crate) struct ClickRun {
+    presses: Vec<(std::time::Instant, egui::Pos2)>,
+}
+
+impl ClickRun {
+    /// Records a press and returns how many consecutive nearby presses end with it.
+    pub(super) fn press(&mut self, pos: egui::Pos2, now: std::time::Instant) -> u8 {
+        let follows = self.presses.last().is_some_and(|(at, last)| {
+            now.duration_since(*at) < MAX_CLICK_GAP && last.distance(pos) <= MAX_CLICK_DIST
+        });
+        if !follows {
+            self.presses.clear();
+        }
+        self.presses.push((now, pos));
+        self.presses.drain(..self.presses.len().saturating_sub(3));
+        self.count()
+    }
+
+    pub(super) fn count(&self) -> u8 {
+        self.presses.len() as u8
+    }
+
+    pub(super) fn reset(&mut self) {
+        self.presses.clear();
+    }
+
+    /// A drag away from the last press ends the run.
+    pub(super) fn moved(&mut self, pos: egui::Pos2) {
+        if self
+            .presses
+            .last()
+            .is_some_and(|(_, last)| last.distance(pos) > MAX_CLICK_DIST)
+        {
+            self.reset();
+        }
+    }
+}
+
 impl EditorSession {
     pub(super) fn pointer_hit(&self, point: [f64; 2]) -> Option<Position> {
         if !self.current() {
@@ -56,6 +104,11 @@ impl EditorSession {
         let Some((rect, scale)) = self.placement else {
             return;
         };
+        // egui's count ignores where earlier clicks were; only nearby consecutive presses count.
+        let clicks = clicks.min(self.clicks.count());
+        if clicks < 2 {
+            return;
+        }
         let idle = state.composition.is_none() && !self.confirm_new && !self.confirm_close;
         if !idle || !self.deferred.is_empty() || !self.current() || !rect.contains(pos) {
             return;

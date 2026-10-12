@@ -194,10 +194,103 @@ fn double_click_in_math_keeps_the_caret_and_reports_the_unsupported_selection() 
     let before = f.editor.snapshot.clone();
     let rect = egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(880.0, 600.0));
     f.editor.placement = Some((rect, 1.0));
-    f.editor
-        .pointer_clicks(egui::pos2(x as f32, y as f32), 2, &mut f.state);
+    let at_screen = egui::pos2(x as f32, y as f32);
+    press(&mut f, at_screen);
+    press(&mut f, at_screen);
+    f.editor.pointer_clicks(at_screen, 2, &mut f.state);
     assert!(!f.editor.selected());
     assert_eq!(f.editor.cursor, at);
     assert_eq!(f.editor.snapshot, before);
     assert!(f.state.edit_error.is_some());
+}
+
+/// Screen position of a body caret, with the page placed at the origin at scale 1.
+fn screen(f: &mut Fixture, leaf: NodeId, byte: usize, dx: f32) -> egui::Pos2 {
+    let rect = egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(880.0, 600.0));
+    f.editor.placement = Some((rect, 1.0));
+    let [x, y] = caret_point(f, leaf, byte);
+    egui::pos2(x as f32 + dx, y as f32)
+}
+
+fn press(f: &mut Fixture, pos: egui::Pos2) {
+    for pressed in [true, false] {
+        f.editor.pointer_event(
+            &egui::Event::PointerButton {
+                pos,
+                button: egui::PointerButton::Primary,
+                pressed,
+                modifiers: egui::Modifiers::NONE,
+            },
+            &mut f.state,
+        );
+    }
+}
+
+fn selection_bytes(f: &Fixture) -> Option<(usize, usize)> {
+    f.editor
+        .range()
+        .expect("range")
+        .map(|(a, b)| (a.byte, b.byte))
+}
+
+#[test]
+fn double_click_after_a_far_click_selects_only_the_word() {
+    let mut f = single("hello world, again");
+    let leaf = f.editor.cursor.leaf;
+    let far = screen(&mut f, leaf, 0, 0.0) + egui::vec2(0.0, 150.0);
+    let word = screen(&mut f, leaf, 8, 0.0);
+    press(&mut f, far);
+    press(&mut f, word);
+    press(&mut f, word);
+    // egui compares only times for a triple click and reports three here.
+    f.editor.pointer_clicks(word, 3, &mut f.state);
+    assert_eq!(selection_bytes(&f), Some((6, 11)));
+}
+
+#[test]
+fn two_quick_clicks_at_different_places_select_nothing() {
+    let mut f = single("hello world, again");
+    let leaf = f.editor.cursor.leaf;
+    let first = screen(&mut f, leaf, 2, 0.0);
+    let second = screen(&mut f, leaf, 8, 0.0);
+    press(&mut f, first);
+    press(&mut f, second);
+    f.editor.pointer_clicks(second, 2, &mut f.state);
+    assert_eq!(selection_bytes(&f), None);
+    assert_eq!(f.editor.cursor.byte, 8);
+}
+
+#[test]
+fn three_nearby_clicks_select_the_block() {
+    let mut f = single("hello world, again");
+    let leaf = f.editor.cursor.leaf;
+    let at = screen(&mut f, leaf, 8, 0.0);
+    for _ in 0..3 {
+        press(&mut f, at);
+    }
+    f.editor.pointer_clicks(at, 3, &mut f.state);
+    assert_eq!(selection_bytes(&f), Some((0, 18)));
+}
+
+#[test]
+fn two_nearby_clicks_still_select_the_word() {
+    let mut f = single("hello world, again");
+    let leaf = f.editor.cursor.leaf;
+    let at = screen(&mut f, leaf, 8, 0.0);
+    press(&mut f, at);
+    press(&mut f, at + egui::vec2(2.0, 0.0));
+    f.editor.pointer_clicks(at, 2, &mut f.state);
+    assert_eq!(selection_bytes(&f), Some((6, 11)));
+}
+
+#[test]
+fn a_press_outside_the_page_resets_the_click_history() {
+    let mut f = single("hello world, again");
+    let leaf = f.editor.cursor.leaf;
+    let at = screen(&mut f, leaf, 8, 0.0);
+    press(&mut f, at);
+    press(&mut f, egui::pos2(-50.0, -50.0));
+    press(&mut f, at);
+    f.editor.pointer_clicks(at, 2, &mut f.state);
+    assert_eq!(selection_bytes(&f), None);
 }

@@ -118,9 +118,8 @@ try:
 
     # 2. Double click selects the word under the pointer.
     first = leaves[0]
-    # egui counts a triple click from the last two clicks' times without checking that the
-    # middle one was at the same place; keep the earlier click out of that 0.6 s window.
-    time.sleep(1.0)
+    # Immediately after the far click above: egui alone would report this double click as a
+    # triple one; the app counts only nearby consecutive presses, so the word is selected.
     inside_word = caret(s, first["leaf"], 8)
     point_at(inside_word["x"], inside_word["y"])
     xdo("click", "--repeat", 2, "--delay", 80, 1)
