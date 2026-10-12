@@ -210,9 +210,11 @@ fn left_enters_the_base_end_and_right_leaves_to_just_after_the_attach() {
     };
     assert_eq!(caret(&f), (children[1].node, 0));
     assert_eq!(children[1].body, MathBody::Hole);
-    let before_edit = f.editor.snapshot.revision;
     f.events(vec![press(egui::Key::ArrowRight, false)]);
-    assert_eq!(f.editor.snapshot.revision, before_edit, "plain move");
+    assert!(
+        matches!(root(&f).body, MathBody::Attach { .. }),
+        "the placeholder is gone once the caret leaves it"
+    );
 }
 
 #[test]
@@ -287,4 +289,92 @@ fn attach_scene_has_current_geometry_for_every_leaf() {
         };
         assert!(scene.geometry.caret(position).is_some(), "{}", leaf.text);
     }
+}
+
+fn holes(f: &Fixture) -> usize {
+    input::leaves(&f.editor.snapshot)
+        .iter()
+        .filter(|l| l.math && l.text.is_empty())
+        .count()
+}
+
+fn body_leaf(f: &Fixture) -> NodeId {
+    input::leaves(&f.editor.snapshot)
+        .iter()
+        .find(|l| !l.math)
+        .expect("body leaf")
+        .id
+}
+
+/// `$x^2`, Right: the caret sits in a placeholder; returns the state and undo depth before it.
+fn into_placeholder(f: &mut Fixture) -> (StructuredDocument, usize) {
+    f.events(vec![text("$"), text("x"), text("^"), text("2")]);
+    let typed = ((*f.editor.snapshot).clone(), f.editor.undo.len());
+    f.events(vec![press(egui::Key::ArrowRight, false)]);
+    assert!(matches!(root(f).body, MathBody::Row { .. }), "placeholder");
+    typed
+}
+
+fn click_body(f: &mut Fixture) {
+    f.editor.cursor.leaf = body_leaf(f);
+    f.editor.cursor.byte = 0;
+    f.editor.settle_placeholder(&mut f.state);
+}
+
+#[test]
+fn clicking_away_from_an_empty_placeholder_restores_the_state_after_the_script() {
+    let mut f = Fixture::new();
+    let (typed, depth) = into_placeholder(&mut f);
+    click_body(&mut f);
+    assert_eq!(*f.editor.snapshot, typed);
+    assert_eq!(holes(&f), 0);
+    assert_eq!(f.editor.undo.len(), depth, "no extra undo step");
+}
+
+#[test]
+fn leaving_a_placeholder_by_left_or_ctrl_home_end_removes_it() {
+    for leave in [
+        press(egui::Key::ArrowLeft, false),
+        key(egui::Key::End, true),
+        key(egui::Key::Home, true),
+    ] {
+        let mut f = Fixture::new();
+        let (typed, _) = into_placeholder(&mut f);
+        f.events(vec![leave]);
+        assert_eq!(*f.editor.snapshot, typed);
+    }
+}
+
+#[test]
+fn one_undo_after_leaving_a_placeholder_undoes_the_users_last_action() {
+    let mut f = Fixture::new();
+    into_placeholder(&mut f);
+    click_body(&mut f);
+    f.editor.history(false, &mut f.state);
+    let formula = root(&f);
+    assert_eq!(scripts(&formula).2.expect("sup slot").body, MathBody::Hole);
+}
+
+#[test]
+fn right_from_an_empty_placeholder_exits_the_formula() {
+    let mut f = Fixture::new();
+    let (typed, _) = into_placeholder(&mut f);
+    f.events(vec![press(egui::Key::ArrowRight, false)]);
+    assert!(f.editor.body_leaf(f.editor.cursor.leaf), "left the formula");
+    assert_eq!(*f.editor.snapshot, typed);
+}
+
+#[test]
+fn typing_into_a_placeholder_keeps_it_as_content() {
+    let mut f = Fixture::new();
+    into_placeholder(&mut f);
+    f.events(vec![text("+y")]);
+    let typed = (*f.editor.snapshot).clone();
+    click_body(&mut f);
+    assert_eq!(*f.editor.snapshot, typed);
+    let formula = root(&f);
+    let MathBody::Row { children } = &formula.body else {
+        panic!("row kept: {formula:?}");
+    };
+    assert_eq!(literal(&children[1]), "+y");
 }

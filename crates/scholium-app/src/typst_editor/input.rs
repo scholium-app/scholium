@@ -127,6 +127,7 @@ impl EditorSession {
             } => self.key(key, modifiers, state),
             _ => {}
         }
+        self.settle_placeholder(state);
         None
     }
 

@@ -51,6 +51,9 @@ jobs:
       - name: Source workspace shows generated Typst, previews it and locates clicked blocks
         timeout-minutes: 5
         run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/source-view-check.py target/debug/scholium-app /tmp/scholium-source-view
+      - name: Typing ^ and _ builds script nodes that render in the editor and the preview
+        timeout-minutes: 5
+        run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/math-attach-check.py target/debug/scholium-app /tmp/scholium-math-attach
       - name: Plain launch migrates a legacy session into the Typst editor
         run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/default-launch-check.py target/debug/scholium-app target/debug/hammer /tmp/scholium-default-launch
       - uses: actions/upload-artifact@v4
@@ -62,5 +65,6 @@ jobs:
             /tmp/scholium-default-launch
             /tmp/scholium-a11y
             /tmp/scholium-source-view
+            /tmp/scholium-math-attach
             /tmp/typst-fork-source.json
             /tmp/typst-stock-comparison.json

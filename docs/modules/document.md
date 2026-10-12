@@ -135,7 +135,8 @@ Text 内 `at > 0` 时以前一个字素为 base，拆成 左/base/右 并并入�
 `at == 0` 或 Hole 时 base 为新 Hole（Hole 自身作 base）；光标紧随已有 Attach（槽尾，或其后兄弟叶首）时
 给该 Attach 补缺的槽，槽已存在则只把光标移到槽尾，并吞掉占位 Hole。`LeaveSlot { leaf, at }`
 定位 Attach 之后的光标位置，其后无叶时才追加占位 Hole；`RemoveSlot { leaf }` 在空 Hole 槽内删槽，
-无槽的 Attach 退化为 base 并合并相邻 Text，也可删 Attach 后的占位 Hole。三者的 cursor 都是数学叶
+无槽的 Attach 退化为 base 并合并相邻 Text，也可删 Attach 后的占位 Hole。
+占位 Hole 是 `LeaveSlot` 追加的 Row 子节点（非必填槽），文档层不跟踪其生命周期，由应用负责（见 app.md）。三者的 cursor 都是数学叶
 位置（`BodyTextPosition` 在此不限正文），不适用时无 cursor 且不改文档。`base_before_slot` 给出
 槽首左移的目标（base 末尾）。
 

@@ -3,6 +3,15 @@
 use super::*;
 use scholium_document::{AttachSlot, base_before_slot};
 
+/// The empty Hole `LeaveSlot` appended behind an Attach, with the history to restore.
+#[derive(Debug)]
+pub(super) struct Placeholder {
+    leaf: scholium_model::NodeId,
+    before: HistoryEntry,
+    after: scholium_model::Revision,
+    undo_len: usize,
+}
+
 #[cfg(test)]
 mod tests;
 
@@ -44,8 +53,45 @@ impl EditorSession {
             leaf: before.0,
             at: before.1,
         };
+        let revision = self.snapshot.revision;
         self.apply(edit, state);
+        if self.snapshot.revision != revision {
+            // The edit appended a placeholder Hole and pushed its own undo entry.
+            self.placeholder = self.undo.last().map(|entry| Placeholder {
+                leaf: self.cursor.leaf,
+                before: entry.clone(),
+                after: self.snapshot.revision,
+                undo_len: self.undo.len(),
+            });
+        }
         (self.cursor.leaf, self.cursor.byte) != before
+    }
+
+    /// A placeholder Hole exists only while the caret is in it. When the caret has left
+    /// and nothing else was edited, the session returns to its pre-LeaveSlot state and the
+    /// LeaveSlot undo entry is dropped, so no invisible placeholder state is ever undone to.
+    pub(super) fn settle_placeholder(&mut self, state: &mut WorkspaceState) {
+        let Some(held) = &self.placeholder else {
+            return;
+        };
+        if self.cursor.leaf == held.leaf {
+            return;
+        }
+        let Some(held) = self.placeholder.take() else {
+            return;
+        };
+        if self.snapshot.revision != held.after || self.undo.len() != held.undo_len {
+            return;
+        }
+        let entry = held.before;
+        match LocalSession::restore_structured(entry.snapshot, entry.requests) {
+            Ok(session) => {
+                self.undo.pop();
+                self.session = session;
+                self.publish(state);
+            }
+            Err(error) => state.edit_error = Some(error.to_string()),
+        }
     }
 
     /// Left at the start of a script slot goes to the end of the base.
