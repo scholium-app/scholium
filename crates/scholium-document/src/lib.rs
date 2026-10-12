@@ -13,7 +13,7 @@ use scholium_model::layout_identity::{
 };
 pub use structured_session::{
     AttachSlot, BodyTextPosition, MigrationFailure, StructuralEdit, StructuralOutcome,
-    StructuralRequest, base_before_slot,
+    StructuralRequest, base_before_slot, range_has_style,
 };
 
 /// Maximum UTF-8 text bytes accepted per block edit.

@@ -33,7 +33,7 @@ cargo run -p scholium-app
   方向键/Home/End 按视觉行导航，`Ctrl+Z` / `Ctrl+Shift+Z` 撤销重做，`Ctrl+S` 保存到 XDG 数据目录的
   `scholium/document.v1.sqlite`；首次启动一次性迁移同目录旧版会话，原文件保留不再写入。
 - `Ctrl+1` / `Ctrl+2` 切换编辑面和源码工作区（只读生成 Typst + A4 快速预览，点击预览定位到块）；
-  `Ctrl+B` / `Ctrl+J` 开关导航与诊断。
+  `Ctrl+Shift+B` / `Ctrl+J` 开关导航与诊断；`Ctrl+B` / `Ctrl+I` 对选区（或接下来输入的文字）切换粗体与强调。
 - 底部按钮调整页面缩放；`Ctrl+0` 恢复 100%，`Ctrl++` / `Ctrl+-` 放大和缩小。
 
 主题颜色集中在 `crates/scholium-app/src/theme.rs` 的 `Palette`，正文、源码和 egui 控件共享语义颜色。

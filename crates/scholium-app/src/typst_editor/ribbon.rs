@@ -43,19 +43,25 @@ pub(crate) fn home(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     });
     // Two rows per column: three stacked buttons would not fit the shared group height.
     group(ui, "文字", 150.0, |ui| {
-        for column in [
-            &[
-                ("B 粗体", TextStyle::Strong),
-                ("I 强调", TextStyle::Emphasis),
-            ][..],
-            &[("清除格式", TextStyle::Plain)][..],
-        ] {
-            ui.vertical(|ui| {
-                for (label, style) in column {
-                    intent(ui, state, label, Command::Style(*style));
-                }
-            });
-        }
+        let active = state.editor.as_ref().map(|v| v.active).unwrap_or_default();
+        ui.vertical(|ui| {
+            for (label, style, on, hint) in [
+                ("B 粗体", TextStyle::Strong, active.strong, "粗体 · Ctrl+B"),
+                (
+                    "I 强调",
+                    TextStyle::Emphasis,
+                    active.emphasis,
+                    "强调 · Ctrl+I",
+                ),
+            ] {
+                let hint = format!("{hint}\n作用于选区；无选区时作用于接下来输入的文字");
+                style_button(ui, state, label, style, on, &hint);
+            }
+        });
+        ui.vertical(|ui| {
+            let hint = "去掉选区的粗体与强调；无选区时接下来输入普通文字";
+            style_button(ui, state, "清除格式", TextStyle::Plain, false, hint);
+        });
     });
     group(ui, "段落样式", 250.0, |ui| {
         for (label, kind) in [
@@ -147,6 +153,27 @@ fn intent(ui: &mut egui::Ui, state: &mut WorkspaceState, label: &str, command: C
         .clicked()
     {
         queue(state, command);
+    }
+}
+
+fn style_button(
+    ui: &mut egui::Ui,
+    state: &mut WorkspaceState,
+    label: &str,
+    style: TextStyle,
+    active: bool,
+    hint: &str,
+) {
+    let button = egui::Button::new(egui::RichText::new(label).size(12.0))
+        .wrap_mode(egui::TextWrapMode::Extend)
+        .min_size(egui::vec2(62.0, 27.0))
+        .selected(active);
+    if ui
+        .add_enabled(editable(state), button)
+        .on_hover_text(hint)
+        .clicked()
+    {
+        queue(state, Command::Style(style));
     }
 }
 

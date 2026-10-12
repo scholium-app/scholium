@@ -3,6 +3,7 @@
 mod attach;
 mod edit;
 mod range;
+mod style;
 #[cfg(test)]
 mod tests;
 
@@ -19,6 +20,7 @@ pub struct MigrationFailure {
 }
 
 pub use attach::{AttachSlot, base_before_slot};
+pub use style::range_has_style;
 
 /// Stable body-text endpoint, independent of layout and source projection.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -38,6 +40,8 @@ pub struct StructuralOutcome {
     /// math caret an attach/leave/remove edit asks for (even when unchanged). Other edits
     /// return None; no-op body ranges still return a legal cursor.
     pub cursor: Option<BodyTextPosition>,
+    /// Surviving (start, end) of a range style edit, on the same text; None for other edits.
+    pub range: Option<(BodyTextPosition, BodyTextPosition)>,
 }
 
 /// One local identified edit, accepted as a single revision and journal entry.
@@ -127,7 +131,19 @@ pub enum StructuralEdit {
         /// New semantic kind.
         kind: BlockKind,
     },
-    /// Set the style of one whole body text leaf; range styling is a later adapter.
+    /// Set the style of every body Text grapheme in a forward range, across leaves and blocks.
+    /// Leaves split at the endpoints, math/Raw inlines are untouched, and equal-style Text
+    /// neighbours then merge (the left leaf keeps its identity). The outcome returns the
+    /// endpoints of the same text; a style that changes nothing is a no-op.
+    SetRangeStyle {
+        /// Inclusive body-text endpoint in document order.
+        start: BodyTextPosition,
+        /// Exclusive body-text endpoint in document order.
+        end: BodyTextPosition,
+        /// New plain/strong/emphasis style.
+        style: scholium_model::structured::TextStyle,
+    },
+    /// Set the style of one whole body text leaf.
     SetTextStyle {
         /// Body text identity.
         leaf: NodeId,
@@ -238,12 +254,13 @@ impl LocalSession<StructuredDocument> {
     ) -> Result<StructuralOutcome, EditError> {
         self.check_request(&request)?;
         let mut planned = self.snapshot.clone();
-        let cursor = edit::apply(&mut planned, request.edit)?;
+        let (cursor, range) = edit::apply(&mut planned, request.edit)?;
         planned.validate()?;
         if planned == self.snapshot {
             return Ok(StructuralOutcome {
                 changed: false,
                 cursor,
+                range,
             });
         }
         let next = self
@@ -262,6 +279,7 @@ impl LocalSession<StructuredDocument> {
         Ok(StructuralOutcome {
             changed: true,
             cursor,
+            range,
         })
     }
 

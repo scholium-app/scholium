@@ -1,0 +1,103 @@
+{
+  "01-ctrl-b-bolds-only-the-selected-word": {
+    "pass": true,
+    "runs": [
+      [
+        "alpha beta ",
+        "plain"
+      ],
+      [
+        "gamma",
+        "strong"
+      ],
+      [
+        " delta",
+        "plain"
+      ]
+    ],
+    "selection": true
+  },
+  "02-ctrl-i-emphasizes-another-word": {
+    "pass": true,
+    "runs": [
+      [
+        "alpha ",
+        "plain"
+      ],
+      [
+        "beta",
+        "emphasis"
+      ],
+      [
+        " ",
+        "plain"
+      ],
+      [
+        "gamma",
+        "strong"
+      ],
+      [
+        " delta",
+        "plain"
+      ]
+    ]
+  },
+  "04-pending-bold-types-a-strong-leaf": {
+    "pass": true,
+    "runs": [
+      [
+        "alpha ",
+        "plain"
+      ],
+      [
+        "beta",
+        "emphasis"
+      ],
+      [
+        " ",
+        "plain"
+      ],
+      [
+        "gamma",
+        "strong"
+      ],
+      [
+        " delta",
+        "plain"
+      ],
+      [
+        "ab",
+        "strong"
+      ]
+    ]
+  },
+  "06-caret-move-clears-pending-style": {
+    "pass": true,
+    "runs": [
+      [
+        "alpha ",
+        "plain"
+      ],
+      [
+        "beta",
+        "emphasis"
+      ],
+      [
+        " ",
+        "plain"
+      ],
+      [
+        "gamma",
+        "strong"
+      ],
+      [
+        " delta",
+        "plain"
+      ],
+      [
+        "abZ",
+        "strong"
+      ]
+    ]
+  }
+}
