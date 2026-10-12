@@ -64,7 +64,11 @@ pub(crate) fn shortcuts(ctx: &egui::Context, state: &mut WorkspaceState) {
         (Modifiers::COMMAND, Key::S, ViewCommand::Save),
         (Modifiers::COMMAND, Key::Num1, ViewCommand::Visual),
         (Modifiers::COMMAND, Key::Num2, ViewCommand::Source),
-        (Modifiers::COMMAND, Key::B, ViewCommand::Navigation),
+        (
+            Modifiers::COMMAND.plus(Modifiers::SHIFT),
+            Key::B,
+            ViewCommand::Navigation,
+        ),
         (Modifiers::COMMAND, Key::J, ViewCommand::Diagnostics),
         (Modifiers::COMMAND, Key::Num0, ViewCommand::ActualSize),
         (Modifiers::COMMAND, Key::Plus, ViewCommand::ZoomIn),
@@ -126,6 +130,32 @@ mod tests {
         dispatch(&mut state, ViewCommand::FitWidth);
         assert!(state.fit_width);
         assert_eq!(state.zoom, 1.1);
+    }
+
+    fn press_b(modifiers: eframe::egui::Modifiers) -> bool {
+        let mut state = WorkspaceState::default();
+        let ctx = eframe::egui::Context::default();
+        let event = eframe::egui::Event::Key {
+            key: eframe::egui::Key::B,
+            physical_key: None,
+            pressed: true,
+            repeat: false,
+            modifiers,
+        };
+        let input = eframe::egui::RawInput {
+            events: vec![event],
+            ..Default::default()
+        };
+        let mut output = ctx.run_ui(input, |ui| super::shortcuts(ui.ctx(), &mut state));
+        output.textures_delta.clear();
+        state.navigation
+    }
+
+    #[test]
+    fn ctrl_shift_b_toggles_navigation_and_plain_ctrl_b_is_left_to_the_editor() {
+        use eframe::egui::Modifiers;
+        assert!(press_b(Modifiers::COMMAND | Modifiers::SHIFT));
+        assert!(!press_b(Modifiers::COMMAND));
     }
 
     #[test]

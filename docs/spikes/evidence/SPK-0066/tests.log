@@ -1,0 +1,41 @@
+test commands::tests::ctrl_shift_b_toggles_navigation_and_plain_ctrl_b_is_left_to_the_editor ... ok
+test typst_editor::style::tests::caret_moves_clicks_escape_and_selection_clear_the_pending_style ... ok
+test typst_editor::style::tests::ctrl_b_bolds_only_the_selected_word_and_keeps_the_selection ... ok
+test typst_editor::style::tests::ctrl_i_on_bold_text_makes_it_emphasis_and_clear_format_resets_it ... ok
+test typst_editor::style::tests::ime_commit_honours_the_pending_style ... ok
+test typst_editor::style::tests::pending_bold_types_a_new_strong_leaf_at_the_caret ... ok
+test typst_editor::style::tests::pending_style_in_the_middle_splits_the_leaf_and_undoes_in_one_step ... ok
+test typst_editor::style::tests::pending_toggles_off_and_can_type_plain_inside_bold_text ... ok
+test typst_editor::style::tests::ribbon_state_follows_the_caret_leaf_pending_style_and_selection ... ok
+test typst_editor::style::tests::selection_styling_is_one_undo_step_that_restores_the_document_and_selection ... ok
+test typst_editor::style::tests::style_commands_are_rejected_inside_a_formula_without_changing_the_document ... ok
+test typst_editor::selection::tests::math_shift_is_rejected_and_selection_styles_only_the_text_around_a_formula ... ok
+test typst_editor::style::tests::carets_stay_exact_after_a_range_style_split ... ok
+test typst_editor::tests::styled_leaf_has_exact_carets_at_every_grapheme_before_and_after_relayout ... ok
+test result: ok. 144 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 55.90s
+test structured_session::range::tests::cross_inline_range_removes_whole_math_and_raw_and_retains_both_styles ... ok
+test structured_session::range::tests::multiline_cross_block_replacement_retains_right_suffix_style_and_identity ... ok
+test structured_session::range::tests::same_leaf_replacement_is_literal_and_preserves_identity_and_style ... ok
+test structured_session::style::tests::fully_styled_range_toggles_off_and_the_pieces_merge_back ... ok
+test structured_session::style::tests::range_across_blocks_styles_the_tail_the_middle_and_the_head ... ok
+test structured_session::style::tests::applying_the_existing_style_or_an_empty_range_is_a_no_op ... ok
+test structured_session::style::tests::range_across_leaves_leaves_math_between_them_untouched ... ok
+test structured_session::style::tests::untouched_equal_neighbours_far_from_the_range_stay_separate ... ok
+test structured_session::style::tests::range_inside_one_leaf_splits_three_ways_and_keeps_the_left_identity ... ok
+test structured_session::style::tests::rejected_ranges_never_change_the_document ... ok
+test structured_session::tests::inline_math_insertion_splits_a_body_grapheme_atomically_and_retains_style ... ok
+test structured_session::style::tests::restyled_text_merges_with_equal_neighbours_keeping_the_left_leaf ... ok
+test structured_session::tests::splits_and_merges_retain_surviving_inline_ids_and_styles ... ok
+test structured_session::tests::whole_leaf_styles_and_headings_preserve_text_and_ids ... ok
+test result: ok. 58 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test tests::view_source_maps_blocks_styles_and_escapes_markup ... ok
+test tests::in_word_styles_parentheses_list_markers_and_unicode_newlines_stay_literal ... ok
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 54.86s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

@@ -11,6 +11,7 @@ pub(crate) mod ribbon;
 mod selection;
 mod source_view;
 mod startup;
+mod style;
 pub(crate) use startup::show_error as show_startup_error;
 #[cfg(test)]
 mod tests;
@@ -20,7 +21,9 @@ mod window_tests;
 
 use crate::state::WorkspaceState;
 use eframe::egui;
-use scholium_document::{BodyTextPosition, LocalSession, StructuralEdit, StructuralRequest};
+use scholium_document::{
+    BodyTextPosition, LocalSession, StructuralEdit, StructuralOutcome, StructuralRequest,
+};
 use scholium_model::{RequestId, layout_identity::*, structured::*};
 use scholium_storage::SessionStore;
 use scholium_typst::editor::{
@@ -62,6 +65,8 @@ pub(crate) struct EditorView {
     pub selected: bool,
     /// The caret is inside an inline formula (status bar mode segment).
     pub in_math: bool,
+    /// Bold / emphasis state of the caret leaf, pending typing style or whole selection.
+    pub active: style::ActiveStyles,
     pub can_undo: bool,
     pub can_redo: bool,
     /// Revision of the Scene on screen; `None` before the first layout.
@@ -126,6 +131,8 @@ pub(crate) struct EditorSession {
     last_audit: Option<String>,
     placeholder: Option<attach::Placeholder>,
     clicks: selection::ClickRun,
+    /// Style armed for the next typed text at the caret.
+    pending_style: Option<style::Pending>,
 }
 
 fn diagnostics_line(scene: &EditorScene) -> String {
@@ -225,6 +232,7 @@ impl EditorSession {
             last_audit: None,
             placeholder: None,
             clicks: selection::ClickRun::default(),
+            pending_style: None,
         };
         state.editor = Some(EditorView::default());
         result.metadata(state);
@@ -271,6 +279,15 @@ impl EditorSession {
     }
 
     fn apply(&mut self, edit: StructuralEdit, state: &mut WorkspaceState) -> bool {
+        self.apply_outcome(edit, state).is_some()
+    }
+
+    /// Apply one edit; the accepted outcome carries the surviving cursor and range.
+    fn apply_outcome(
+        &mut self,
+        edit: StructuralEdit,
+        state: &mut WorkspaceState,
+    ) -> Option<StructuralOutcome> {
         let before = self.record();
         let request = StructuralRequest {
             request: RequestId::fresh(),
@@ -291,7 +308,7 @@ impl EditorSession {
                 self.anchor = None;
                 self.drag = None;
                 if !outcome.changed {
-                    return true;
+                    return Some(outcome);
                 }
                 if self.undo.len() == HISTORY_LIMIT {
                     self.undo.remove(0);
@@ -299,11 +316,11 @@ impl EditorSession {
                 self.undo.push(before);
                 self.redo.clear();
                 self.publish(state);
-                true
+                Some(outcome)
             }
             Err(error) => {
                 state.edit_error = Some(error.to_string());
-                false
+                None
             }
         }
     }
@@ -359,6 +376,7 @@ impl EditorSession {
             (
                 v.revision,
                 v.in_math,
+                v.active,
                 v.shown_revision,
                 v.pending,
                 v.dirty,
@@ -375,6 +393,7 @@ impl EditorSession {
             view.dirty = self.saved.as_ref() != Some(&self.snapshot);
             view.selected = self.selected();
             view.in_math = self.in_math();
+            view.active = self.active_styles();
             view.can_undo = !self.undo.is_empty();
             view.can_redo = !self.redo.is_empty();
             view.shown_revision = self.scene.as_ref().map(|s| s.stamp.revision.0);
@@ -424,6 +443,7 @@ impl EditorSession {
             return;
         }
         self.placeholder = None;
+        self.pending_style = None;
         let target = if redo {
             self.redo.pop()
         } else {

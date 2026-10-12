@@ -4,18 +4,31 @@ use super::{BodyTextPosition, EditError, StructuralEdit, attach};
 use scholium_model::{NodeId, structured::*};
 use unicode_segmentation::UnicodeSegmentation;
 
+/// Surviving cursor and, for range styling, the surviving selection endpoints.
+pub(super) type Landing = (
+    Option<BodyTextPosition>,
+    Option<(BodyTextPosition, BodyTextPosition)>,
+);
+
 pub(super) fn apply(
     doc: &mut StructuredDocument,
     edit: StructuralEdit,
-) -> Result<Option<BodyTextPosition>, EditError> {
+) -> Result<Landing, EditError> {
+    let cursor = |cursor| (cursor, None);
     match edit {
         StructuralEdit::ReplaceBodyRange { start, end, text } => {
-            super::range::replace(doc, start, end, &text).map(Some)
+            super::range::replace(doc, start, end, &text).map(|c| cursor(Some(c)))
         }
-        StructuralEdit::Attach { leaf, at, slot } => attach::attach(doc, leaf, at, slot).map(Some),
-        StructuralEdit::LeaveSlot { leaf, at } => attach::leave(doc, leaf, at),
-        StructuralEdit::RemoveSlot { leaf } => attach::remove(doc, leaf),
-        edit => apply_single(doc, edit).map(|()| None),
+        StructuralEdit::SetRangeStyle { start, end, style } => {
+            let (from, to) = super::style::set(doc, start, end, style)?;
+            Ok((Some(to), Some((from, to))))
+        }
+        StructuralEdit::Attach { leaf, at, slot } => {
+            attach::attach(doc, leaf, at, slot).map(|c| cursor(Some(c)))
+        }
+        StructuralEdit::LeaveSlot { leaf, at } => attach::leave(doc, leaf, at).map(cursor),
+        StructuralEdit::RemoveSlot { leaf } => attach::remove(doc, leaf).map(cursor),
+        edit => apply_single(doc, edit).map(|()| cursor(None)),
     }
 }
 
@@ -23,6 +36,7 @@ fn apply_single(doc: &mut StructuredDocument, edit: StructuralEdit) -> Result<()
     match edit {
         // The dispatcher handles ranges and attach edits (which return carets) separately.
         StructuralEdit::ReplaceBodyRange { .. }
+        | StructuralEdit::SetRangeStyle { .. }
         | StructuralEdit::Attach { .. }
         | StructuralEdit::LeaveSlot { .. }
         | StructuralEdit::RemoveSlot { .. } => unreachable!("dispatched above"),
