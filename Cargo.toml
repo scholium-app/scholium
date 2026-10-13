@@ -7,7 +7,7 @@ members = ["crates/scholium-app", "crates/scholium-model", "crates/scholium-docu
 version = "0.1.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
-rust-version = "1.96"
+rust-version = "1.99"
 
 [workspace.dependencies]
 eframe = { version = "=0.36.2", default-features = false, features = ["accesskit", "default_fonts", "glow", "wayland", "x11"] }

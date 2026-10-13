@@ -26,7 +26,7 @@ UI 验证顺序为 **Iced → GPUI → C++ EUI-NEO → Slint 或 egui**，已选
 cargo run -p scholium-app
 ```
 
-使用 Rust 1.96.0 和 egui / eframe 0.36.2；Linux 需要可用的 X11 或 Wayland 会话与 OpenGL/EGL 驱动。
+使用 Rust 1.99.0 和 egui / eframe 0.36.2；Linux 需要可用的 X11 或 Wayland 会话与 OpenGL/EGL 驱动。
 中文字体随应用嵌入，无需额外安装。字体来源与许可见 [字体说明](crates/scholium-app/assets/fonts/README.md)。
 
 - 编辑面是 Typst Content（受控不分页流）：`$` / `Ctrl+M` 公式、`Ctrl+/` 分数、Tab 切换槽位，
