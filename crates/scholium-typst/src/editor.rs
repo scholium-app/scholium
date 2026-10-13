@@ -6,16 +6,21 @@ mod geometry;
 mod kernel;
 #[cfg(test)]
 mod parity;
+mod raster;
 mod selection;
 mod style;
 #[cfg(test)]
 mod tests;
 mod worker;
 pub use geometry::{Affinity, Caret, EditGeometry, Position};
+pub use raster::{
+    BASE_MAX_PX_PER_PT, MAX_RASTER_PIXELS, MAX_STRIP_PX, Raster, RasterSpec, RasterStrip,
+    SHARP_STRIP_PX, StripWindow, ViewRange, page_px, strip_count, strip_ranges, strip_rows,
+    strip_window,
+};
 pub use selection::SelectionQuad;
-pub use worker::EditorWorker;
+pub use worker::{EditorWorker, StripUpdate};
 
-use crate::PagePixels;
 use scholium_model::layout_identity::SceneStamp;
 
 /// A single controlled, unpaginated flow and its geometry from the same Frame.
@@ -25,8 +30,11 @@ pub struct EditorScene {
     pub stamp: SceneStamp,
     /// Raster and geometry use this same padded frame, in Typst pt.
     pub size_pt: [f64; 2],
-    /// Typst-rendered committed content, including math rules.
-    pub pixels: PagePixels,
+    /// Whole page at no more than 1 px/pt: the stand-in wherever a sharp strip is missing.
+    pub base: Raster,
+    /// Sharp strips (Typst-rendered committed content, math rules included) at the display
+    /// resolution for the visible part of the page; sparse.
+    pub sharp: Raster,
     /// Typed leaf insertion stops in frame pt, never markup offsets.
     pub geometry: EditGeometry,
     /// Observable adapter work for this result.
@@ -44,6 +52,8 @@ pub struct EditorStats {
     pub source_reads: usize,
     /// Content, flow, geometry and raster elapsed milliseconds.
     pub elapsed_ms: u64,
+    /// Share of `elapsed_ms` spent rasterizing.
+    pub raster_ms: u64,
 }
 
 /// Candidate layout failure keeps authority intact and does not trigger a text fallback.

@@ -69,8 +69,18 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 统一 patch 的锁定 fork 13 个库（[ADR 0036](../adr/ADR-0036-typst-default-editor.md)）。
 `typst-main-fork-check` 示例按同一 fixture 输出 fork 像素，供与独立 stock 参照逐像素比较。
 `EditorWorker::spawn(wake)` 在 CPU 线程驻留 World/字体和 Content cache；
-`submit(Arc<StructuredDocument>, SceneStamp)` 传递完整已接受快照，`poll()` 非阻塞返回
+`submit(Arc<StructuredDocument>, SceneStamp, RasterSpec, ViewRange)` 传递完整已接受快照、栅格分辨率与页面可见范围（pt），`poll()` 非阻塞返回
 带 stamp 的结果。队列和结果分别只保留最新一份派生工作；关闭不在 UI join。
+Scene 有两层：`base` 是整页、倍率不超过 1 px/pt（受页宽 ≤ `max_side` 与 `MAX_RASTER_PIXELS` = 64 MP 限制，仅作缺条带时的底图）；
+`sharp` 是显示分辨率（`RasterSpec.px_per_pt`，由调用方按“页面物理像素宽 / 页宽 pt”给出，只会为页宽 ≤ `max_side` 而压低）下
+固定 `SHARP_STRIP_PX` = 512 行的水平条带，稀疏，只含与可见范围相交的条带，因此逐键成本不随文档长度增长。
+`strip_window(view, px_per_pt, page_height_px)` 给出可见条带与保留窗口（可见范围上下各加一个视口高度，共三个视口）。
+`set_view(RasterSpec, ViewRange)` 对 worker 保留的最新已排版页面补渲染缺失条带（可见的先渲染，再由近及远），不重新排版；
+结果由 `poll_strips()` 以 `StripUpdate`（含 Scene stamp、倍率、整页位图尺寸）逐条返回，只对同 stamp 的 Scene 有效。
+新排版或新 `set_view` 到达时进行中的补渲染立即让路；窗口外的已交付条带从 worker 记录中移除；倍率变化清空记录。
+单条带只渲染一个条带大小的像素图：按条带包围盒裁剪帧项（文字/形状/图片按边界，恒等变换的 Group 递归，带变换的 Group 整体保留），
+再平移到条带位置渲染；与整页渲染对应行逐字节比较，最多相差 1 个最低有效位（实测与独立 stock 整页渲染逐字节相等）。
+未裁剪时条带耗时随页长增长（typst-render 不按边界跳过项目），裁剪后与页长基本无关。`EditorStats.raster_ms` 为底图加可见条带耗时。
 节点/子树未变则保留 Content，变动的祖先重建；传输与快照复制仍有全文成本。
 
 结构直接构造正文/样式、Par、Equation、Frac、Attach 与 EditHole；字串不作为 source 执行。

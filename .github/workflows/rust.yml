@@ -57,6 +57,9 @@ jobs:
       - name: Clicks below the page text, double and triple click selection and the formula tint
         timeout-minutes: 5
         run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/interaction-check.py target/debug/scholium-app /tmp/scholium-interaction
+      - name: Page raster follows the displayed resolution at fractional scale and text edges are sharper
+        timeout-minutes: 5
+        run: xvfb-run -a -s '-screen 0 1920x1400x24' python3 spikes/typst-main-editor/sharp-raster-check.py target/debug/scholium-app /tmp/scholium-sharp-raster
       - name: Ctrl+B and Ctrl+I style selected words and arm a typing style
         timeout-minutes: 5
         run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/inline-style-check.py target/debug/scholium-app /tmp/scholium-inline-style
@@ -73,6 +76,7 @@ jobs:
             /tmp/scholium-source-view
             /tmp/scholium-math-attach
             /tmp/scholium-interaction
+            /tmp/scholium-sharp-raster
             /tmp/scholium-inline-style
             /tmp/typst-fork-source.json
             /tmp/typst-stock-comparison.json

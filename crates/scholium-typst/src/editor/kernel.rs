@@ -13,7 +13,6 @@ use typst::utils::{LazyHash, Protected};
 use typst::{Library, LibraryExt, World};
 use typst_kit::fonts::FontStore;
 
-pub(crate) const RASTER_PX_PER_PT: f64 = 2.0;
 /// Content height budget in pt (texture memory bound); the sheet adds the page margins.
 const HEIGHT_PT: f64 = 2400.0;
 
@@ -99,16 +98,22 @@ pub(crate) fn text(value: &str) -> Content {
 }
 
 pub(crate) fn page(frame: &Frame) -> typst_layout::Page {
-    use typst::foundations::Smart;
-    use typst::layout::{Point, Sides};
+    use typst::layout::Point;
     let margin = Point::new(
         Abs::pt(crate::style::margin_x_pt()),
         Abs::pt(crate::style::margin_y_pt()),
     );
     let mut padded = Frame::soft(frame.size() + Size::new(margin.x * 2.0, margin.y * 2.0));
     padded.push_frame(margin, frame.clone());
+    sheet(padded)
+}
+
+/// A white, unnumbered page around an already padded frame.
+pub(crate) fn sheet(frame: Frame) -> typst_layout::Page {
+    use typst::foundations::Smart;
+    use typst::layout::Sides;
     typst_layout::Page {
-        frame: padded,
+        frame,
         bleed: Sides::default(),
         fill: Smart::Auto,
         numbering: None,
@@ -160,9 +165,9 @@ pub(crate) fn layout_in(
     Ok(frame)
 }
 
-pub(crate) fn render_options() -> typst_render::RenderOptions {
+pub(crate) fn render_options(px_per_pt: f64) -> typst_render::RenderOptions {
     typst_render::RenderOptions {
-        pixel_per_pt: RASTER_PX_PER_PT.into(),
+        pixel_per_pt: px_per_pt.into(),
         ..Default::default()
     }
 }

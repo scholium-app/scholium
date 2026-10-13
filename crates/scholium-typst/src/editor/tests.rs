@@ -214,3 +214,144 @@ fn a_formula_row_around_an_attach_keeps_every_leaf_addressable() {
         );
     }
 }
+
+fn paragraph_doc(words: usize) -> StructuredDocument {
+    let body = "lorem ipsum dolor ".repeat(words);
+    StructuredDocument {
+        document: DocumentId::fresh(),
+        revision: Revision(1),
+        blocks: vec![StructuredBlock {
+            node: NodeId::fresh(),
+            kind: BlockKind::Paragraph,
+            content: vec![scholium_model::structured::StructuredInline {
+                node: NodeId::fresh(),
+                body: InlineBody::Text {
+                    text: body,
+                    style: scholium_model::structured::TextStyle::Plain,
+                },
+            }],
+        }],
+    }
+}
+
+fn stamp_of(doc: &StructuredDocument) -> scholium_model::layout_identity::SceneStamp {
+    use scholium_model::layout_identity::*;
+    SceneStamp {
+        document: doc.document,
+        epoch: LayoutEpoch::fresh(),
+        request: LayoutRequestId::fresh(),
+        revision: doc.revision,
+        profile: ProfileGeneration(0),
+        resources: ResourceGeneration(0),
+    }
+}
+
+fn wait_for<T>(mut poll: impl FnMut() -> Option<T>) -> T {
+    let at = std::time::Instant::now();
+    loop {
+        if let Some(value) = poll() {
+            return value;
+        }
+        assert!(at.elapsed().as_secs() < 30, "worker timeout");
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
+}
+
+#[test]
+fn scene_carries_a_cheap_base_and_only_the_visible_sharp_strips() {
+    use super::{EditorWorker, RasterSpec, ViewRange, strip_count, strip_window};
+    let spec = RasterSpec {
+        px_per_pt: 3.0,
+        max_side: 16384,
+    };
+    let view = ViewRange {
+        top_pt: 0.0,
+        bottom_pt: 300.0,
+    };
+    let worker = EditorWorker::spawn(|| {}).expect("worker");
+    let doc = std::sync::Arc::new(paragraph_doc(1500));
+    let stamp = stamp_of(&doc);
+    worker.submit(doc, stamp, spec, view);
+    let (_, scene) = wait_for(|| worker.poll());
+    let scene = scene.expect("scene");
+    assert!(scene.base.px_per_pt <= 1.0);
+    let base_rows: u32 = scene.base.strips.iter().map(|s| s.height).sum();
+    assert_eq!(base_rows, scene.base.height, "base tiles the whole page");
+    assert_eq!(scene.sharp.px_per_pt, 3.0);
+    let window = strip_window(view, 3.0, scene.sharp.height);
+    let delivered: Vec<u32> = scene
+        .sharp
+        .strips
+        .iter()
+        .map(|s| s.y / super::SHARP_STRIP_PX)
+        .collect();
+    assert_eq!(delivered, window.visible.clone().collect::<Vec<_>>());
+    assert!(delivered.len() < strip_count(scene.sharp.height) as usize);
+
+    // The margin follows as separate updates for the same Scene, never repeating a strip.
+    let mut margin = Vec::new();
+    let want = window.keep.len() - window.visible.len();
+    while margin.len() < want {
+        margin.extend(wait_for(|| {
+            Some(worker.poll_strips()).filter(|v| !v.is_empty())
+        }));
+    }
+    assert!(
+        margin
+            .iter()
+            .all(|u| u.stamp == stamp && u.px_per_pt == 3.0)
+    );
+    let mut indices: Vec<u32> = margin.iter().map(|u| u.strip.y / 512).collect();
+    indices.sort_unstable();
+    indices.dedup();
+    assert_eq!(indices.len(), want);
+    assert!(
+        indices
+            .iter()
+            .all(|i| window.keep.contains(i) && !window.visible.contains(i))
+    );
+}
+
+#[test]
+fn view_and_scale_changes_render_strips_without_a_new_layout() {
+    use super::{EditorWorker, RasterSpec, ViewRange, strip_window};
+    let spec = |px_per_pt| RasterSpec {
+        px_per_pt,
+        max_side: 16384,
+    };
+    let top = ViewRange {
+        top_pt: 0.0,
+        bottom_pt: 100.0,
+    };
+    let worker = EditorWorker::spawn(|| {}).expect("worker");
+    let doc = std::sync::Arc::new(paragraph_doc(1500));
+    let stamp = stamp_of(&doc);
+    worker.submit(doc, stamp, spec(3.0), top);
+    let (_, scene) = wait_for(|| worker.poll());
+    let scene = scene.expect("scene");
+    let (height, page_pt) = (scene.sharp.height, scene.size_pt[1]);
+    // Let the margin fill finish, then scroll far away.
+    std::thread::sleep(std::time::Duration::from_millis(400));
+    worker.poll_strips();
+    let far = ViewRange {
+        top_pt: page_pt * 0.8,
+        bottom_pt: page_pt * 0.8 + 100.0,
+    };
+    worker.set_view(spec(3.0), far);
+    let window = strip_window(far, 3.0, height);
+    let first = wait_for(|| worker.poll_strips().into_iter().next());
+    assert_eq!(first.stamp, stamp);
+    assert!(
+        window.visible.contains(&(first.strip.y / 512)),
+        "visible strip first"
+    );
+    assert!(worker.poll().is_none(), "no layout ran");
+
+    // A new scale discards delivered strips and renders the window at that scale.
+    worker.set_view(spec(2.0), far);
+    std::thread::sleep(std::time::Duration::from_millis(400));
+    let updates = worker.poll_strips();
+    let scaled: Vec<_> = updates.iter().filter(|u| u.px_per_pt == 2.0).collect();
+    assert!(!scaled.is_empty());
+    assert!(scaled.iter().all(|u| u.page_height < height));
+}

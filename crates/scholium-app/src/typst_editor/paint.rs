@@ -40,11 +40,17 @@ pub(super) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut 
 
 fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSession) {
     let size = session.scene.as_ref().map_or([440.0, 40.0], |s| s.size_pt);
-    let scale = if state.fit_width {
-        ((ui.available_width() - OUTER_MARGIN * 2.0) / size[0] as f32).clamp(0.5, 2.0)
-    } else {
-        state.zoom * (96.0 / 72.0)
-    };
+    let ppp = ui.ctx().pixels_per_point();
+    let wanted = raster::wanted_scale(
+        state.fit_width,
+        ui.available_width(),
+        OUTER_MARGIN,
+        size[0],
+        state.zoom,
+    );
+    // The page is a whole number of physical pixels wide, so its raster maps 1:1 onto it.
+    let fit = raster::fit(size[0], wanted, ppp);
+    let scale = fit.scale;
     state.rendered_zoom = scale / (96.0 / 72.0);
     ui.add_space(OUTER_MARGIN);
     let dimensions = egui::vec2(
@@ -55,10 +61,18 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
     // left margin and the scroll area pans horizontally.
     let flow_width = (dimensions.x + OUTER_MARGIN * 2.0).max(ui.available_width());
     let (flow, _) = ui.allocate_exact_size(egui::vec2(flow_width, dimensions.y), Sense::hover());
-    let rect = Rect::from_min_size(
+    // Origin on the physical pixel grid; hit-testing and overlays use this same rect.
+    let origin = raster::snap_pos(
         egui::pos2(flow.left() + (flow_width - dimensions.x) / 2.0, flow.top()),
-        dimensions,
+        ppp,
     );
+    let rect = Rect::from_min_size(origin, dimensions);
+    let visible = ui.clip_rect();
+    let view = scholium_typst::editor::ViewRange {
+        top_pt: f64::from(((visible.top() - rect.top()) / scale).max(0.0)),
+        bottom_pt: f64::from(((visible.bottom() - rect.top()) / scale).max(0.0)),
+    };
+    session.track_raster(ui.ctx(), fit.px_per_pt, view);
     let response = ui.interact(rect, id(), Sense::click_and_drag());
     session.placement = Some((rect, scale));
     if session.focus {
@@ -100,7 +114,7 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
     // All accepted intents have reached LocalSession and the worker before this pass.
     let text_shapes = body(ui, rect, scale, session, state);
     keep_ime(ui, rect, response.has_focus(), session);
-    session.audit(rect, scale, text_shapes);
+    session.audit(rect, scale, text_shapes, ppp);
 }
 
 /// egui-winit turns the platform IME off on any frame without `output.ime`, and
@@ -141,17 +155,8 @@ pub(super) fn body(
 ) -> usize {
     let painter = ui.painter().with_clip_rect(rect.intersect(ui.clip_rect()));
     painter.rect_filled(rect, 0.0, egui::Color32::WHITE);
-    if let (Some(scene), Some(texture)) = (&session.scene, &session.texture) {
-        let image = Rect::from_min_size(
-            rect.min,
-            egui::vec2(scene.size_pt[0] as f32, scene.size_pt[1] as f32) * scale,
-        );
-        painter.image(
-            texture.id(),
-            image,
-            Rect::from_min_max(egui::Pos2::ZERO, egui::pos2(1.0, 1.0)),
-            egui::Color32::WHITE,
-        );
+    if let Some(layers) = &session.texture {
+        layers.paint(&painter, rect.min, scale);
     }
     if !session.current() {
         return 0;

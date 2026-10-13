@@ -2,11 +2,14 @@
 mod access;
 mod attach;
 mod audit;
+mod confirm;
 mod deferred;
 mod indicator;
 mod input;
 mod paint;
+mod raster;
 pub(crate) mod ribbon;
+mod scene;
 mod selection;
 mod source_view;
 mod startup;
@@ -25,10 +28,14 @@ use scholium_document::{
 };
 use scholium_model::{RequestId, layout_identity::*, structured::*};
 use scholium_storage::SessionStore;
-use scholium_typst::editor::{Affinity, EditorScene, EditorWorker, Position};
+use scholium_typst::editor::{
+    Affinity, EditorScene, EditorWorker, Position, RasterSpec, ViewRange,
+};
 use std::{collections::VecDeque, path::PathBuf, sync::Arc};
 
 const HISTORY_LIMIT: usize = 512;
+/// Visible page range assumed until the page has been placed once, in pt.
+const INITIAL_VIEW_PT: f64 = 800.0;
 
 #[derive(Debug, thiserror::Error)]
 pub(crate) enum SessionError {
@@ -94,7 +101,15 @@ pub(crate) struct EditorSession {
     worker: EditorWorker,
     wanted: SceneStamp,
     scene: Option<EditorScene>,
-    texture: Option<egui::TextureHandle>,
+    texture: Option<raster::Layers>,
+    /// Visible part of the page in pt, and what the worker was last told.
+    view: ViewRange,
+    sent: Option<(std::time::Instant, ViewRange)>,
+    /// Raster resolution wanted for 1:1 display; layouts are submitted with it.
+    spec: RasterSpec,
+    settle: raster::Settle,
+    /// Last display scale, for diagnostics.
+    pixels_per_point: f32,
     cursor: Position,
     anchor: Option<Position>,
     drag: Option<selection::Drag>,
@@ -120,13 +135,6 @@ pub(crate) struct EditorSession {
     clicks: selection::ClickRun,
     /// Style armed for the next typed text at the caret.
     pending_style: Option<style::Pending>,
-}
-
-fn diagnostics_line(scene: &EditorScene) -> String {
-    format!(
-        "Content 新建 {} / 复用 {} · source reads {} · 布局+栅格 {} ms",
-        scene.stats.built, scene.stats.reused, scene.stats.source_reads, scene.stats.elapsed_ms
-    )
 }
 
 impl std::fmt::Debug for EditorSession {
@@ -173,7 +181,17 @@ impl EditorSession {
         let wake = ctx.clone();
         let worker = EditorWorker::spawn(move || wake.request_repaint())?;
         let wanted = session.scene_stamp(ProfileGeneration(0), ResourceGeneration(0));
-        worker.submit(snapshot.clone(), wanted);
+        // A guess until the first page is placed; the first re-raster corrects it.
+        let spec = RasterSpec {
+            px_per_pt: raster::forced_px_per_pt()
+                .unwrap_or(f64::from(ctx.pixels_per_point()) * 96.0 / 72.0),
+            max_side: ctx.input(|i| i.max_texture_side) as u32,
+        };
+        let view = ViewRange {
+            top_pt: 0.0,
+            bottom_pt: INITIAL_VIEW_PT,
+        };
+        worker.submit(snapshot.clone(), wanted, spec, view);
         let result = Self {
             session,
             snapshot,
@@ -192,6 +210,11 @@ impl EditorSession {
             ime_anchor: None,
             scene: None,
             texture: None,
+            spec,
+            view,
+            sent: Some((std::time::Instant::now(), view)),
+            settle: raster::Settle::default(),
+            pixels_per_point: 1.0,
             undo: Vec::new(),
             redo: Vec::new(),
             focus: true,
@@ -302,43 +325,12 @@ impl EditorSession {
         self.wanted = self
             .session
             .scene_stamp(ProfileGeneration(0), ResourceGeneration(0));
-        self.worker.submit(self.snapshot.clone(), self.wanted);
+        self.worker
+            .submit(self.snapshot.clone(), self.wanted, self.spec, self.view);
+        self.sent = Some((std::time::Instant::now(), self.view));
         self.layout_error = None;
         state.edit_error = None;
         self.metadata(state);
-    }
-
-    fn poll(&mut self, ctx: &egui::Context) {
-        let Some((stamp, outcome)) = self.worker.poll() else {
-            return;
-        };
-        self.adopt(ctx, stamp, outcome);
-    }
-
-    fn adopt(
-        &mut self,
-        ctx: &egui::Context,
-        stamp: SceneStamp,
-        outcome: Result<EditorScene, scholium_typst::editor::EditorError>,
-    ) {
-        if stamp != self.wanted {
-            return;
-        }
-        match outcome {
-            Ok(scene) => {
-                let image = egui::ColorImage::from_rgba_premultiplied(
-                    [scene.pixels.width as usize, scene.pixels.height as usize],
-                    &scene.pixels.rgba,
-                );
-                self.texture = Some(ctx.load_texture(
-                    "typst-content-scene",
-                    image,
-                    egui::TextureOptions::LINEAR,
-                ));
-                self.scene = Some(scene);
-            }
-            Err(error) => self.layout_error = Some(error.to_string()),
-        }
     }
 
     fn current(&self) -> bool {
@@ -376,7 +368,7 @@ impl EditorSession {
             view.warning = warning;
             view.rejected_input = self.rejected_input.clone();
             view.diagnostics = diagnostics
-                .then(|| self.scene.as_ref().map(diagnostics_line))
+                .then(|| self.scene.as_ref().map(scene::diagnostics_line))
                 .flatten();
         }
         state.editor.as_ref().map(shown) != before
@@ -502,66 +494,6 @@ impl EditorSession {
             }
             Err(error) => state.storage_error = Some(format!("保存失败：{error}")),
         }
-    }
-
-    fn confirm(&mut self, ctx: &egui::Context, state: &mut WorkspaceState) {
-        if !self.confirm_new && !self.confirm_close {
-            return;
-        }
-        egui::Modal::new(egui::Id::new("editor-discard")).show(ctx, |ui| {
-            ui.heading("继续将关闭当前文档");
-            ui.label("未保存的修改将丢弃。新文档再次保存会替换隔离会话文件的当前内容。");
-            ui.horizontal(|ui| {
-                if ui.button("取消").clicked() {
-                    self.confirm_new = false;
-                    self.confirm_close = false;
-                    self.focus = true;
-                }
-                let proceed = ui.button("丢弃并继续");
-                if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
-                    println!("DIALOG {}", serde_json::json!({"proceed": [proceed.rect.center().x, proceed.rect.center().y]}));
-                }
-                if proceed.clicked() {
-                    self.finish_confirm(ctx, state);
-                }
-            });
-        });
-    }
-
-    fn finish_confirm(&mut self, ctx: &egui::Context, state: &mut WorkspaceState) {
-        if self.confirm_close {
-            self.allow_close = true;
-            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-        } else {
-            match blank() {
-                Ok(session) => {
-                    self.session = session;
-                    self.anchor = None;
-                    self.drag = None;
-                    // Queued input addressed the discarded document.
-                    self.deferred.clear();
-                    self.placeholder = None;
-                    self.undo.clear();
-                    self.redo.clear();
-                    self.saved = None;
-                    self.scene = None;
-                    self.texture = None;
-                    self.publish(state);
-                    if let Some(leaf) = input::leaves(&self.snapshot).first() {
-                        self.cursor = Position {
-                            leaf: leaf.id,
-                            byte: 0,
-                            affinity: Affinity::Downstream,
-                        };
-                    }
-                    state.composition = None;
-                    self.focus = true;
-                }
-                Err(error) => state.edit_error = Some(error.to_string()),
-            }
-        }
-        self.confirm_new = false;
-        self.confirm_close = false;
     }
 }
 
