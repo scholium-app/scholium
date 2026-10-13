@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.96.0
+      - uses: dtolnay/rust-toolchain@1.99.0
         with:
           components: rustfmt, clippy
       - name: Install native build dependencies
@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.96.0
+      - uses: dtolnay/rust-toolchain@1.99.0
       - name: Install native build and window dependencies
         timeout-minutes: 6
         run: bash scripts/install-ci-native-deps.sh libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libegl1-mesa-dev xvfb xdotool xclip imagemagick fonts-noto-cjk at-spi2-core dbus python3-gi gir1.2-atspi-2.0
