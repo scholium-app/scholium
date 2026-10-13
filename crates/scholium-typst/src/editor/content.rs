@@ -6,9 +6,10 @@ use scholium_model::{BlockKind, NodeId, structured::*};
 use std::collections::HashMap;
 use typst::editor::{EditHoleElem, EditOrigin};
 use typst::foundations::{Content, NativeElement};
+use typst::layout::Length;
 use typst::math::{AttachElem, ClassElem, EquationElem, FracElem};
 use typst::model::{EmphElem, ParElem, StrongElem};
-use typst::text::TextElem;
+use typst::text::{TextElem, TextSize};
 use unicode_segmentation::UnicodeSegmentation;
 
 #[derive(Clone, PartialEq, Eq)]
@@ -244,12 +245,15 @@ impl ContentCache {
                 let body = TextElem::new(display(grapheme).into())
                     .pack()
                     .with_edit_origin(origin);
+                // A typed space only separates atoms (the preview source drops it), so it
+                // keeps its caret stops but takes no width.
+                let body = if grapheme == " " {
+                    body.styled(TextElem::size.set(TextSize(Length::zero())))
+                } else {
+                    body
+                };
                 // The class wrapper also shields the atom's origin from a parent's.
-                let single = (grapheme.chars().count() == 1).then(|| grapheme.chars().next());
-                let class = single
-                    .flatten()
-                    .and_then(typst::utils::default_math_class)
-                    .or_else(|| typst::utils::default_math_class('x'))
+                let class = typst::utils::default_math_class(class_probe(grapheme))
                     .expect("letters have a math class");
                 ClassElem::new(class, body).pack()
             })
@@ -258,9 +262,22 @@ impl ContentCache {
     }
 }
 
+/// The character whose Typst math class an atom takes: itself when it is a single
+/// character, otherwise a letter. A space has no class of its own and as a letter would
+/// hide the line-break opportunity after the preceding binary or relation operator, so it
+/// is classed Normal (like `/`).
+fn class_probe(grapheme: &str) -> char {
+    let mut chars = grapheme.chars();
+    match (chars.next(), chars.next()) {
+        (Some(' '), None) => '/',
+        (Some(c), None) if typst::utils::default_math_class(c).is_some() => c,
+        _ => 'x',
+    }
+}
+
 /// Shown text of an atom: ASCII letters use the math-italic code points (Typst's own
 /// auto-italic only applies to symbol elements, which carry no cluster geometry).
-fn display(grapheme: &str) -> String {
+pub(super) fn display(grapheme: &str) -> String {
     let mut chars = grapheme.chars();
     let shown = match (chars.next(), chars.next()) {
         (Some('h'), None) => Some('\u{210E}'),

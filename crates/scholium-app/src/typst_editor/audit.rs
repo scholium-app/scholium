@@ -69,6 +69,7 @@ impl EditorSession {
             "body_leaves": body_leaves, "deferred": self.deferred.len(),
             "source_mode": source_mode, "preview": self.source_view.audit(),
             "raster": raster,
+            "formula_overflow": self.formula_overflows(),
 
         })
         .to_string();

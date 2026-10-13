@@ -15,6 +15,17 @@ pub(super) struct Placeholder {
 #[cfg(test)]
 mod tests;
 
+impl Placeholder {
+    pub(super) fn leaf(&self) -> scholium_model::NodeId {
+        self.leaf
+    }
+
+    /// Where the caret stood in the slot before the placeholder was appended.
+    pub(super) fn caret(&self) -> Position {
+        self.before.cursor
+    }
+}
+
 impl EditorSession {
     /// Typed `^` / `_` in math attach a slot instead of inserting a literal character.
     /// Returns whether the key was consumed; body text and paste keep the literal character.

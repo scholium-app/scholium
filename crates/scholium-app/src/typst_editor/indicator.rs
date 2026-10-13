@@ -134,5 +134,19 @@ impl EditorSession {
     }
 }
 
+impl EditorSession {
+    /// Whether the formula under the caret runs past the right edge of the text column.
+    /// Operator-free runs cannot break (in Typst as in TeX); the overflow is reported
+    /// rather than hidden or rewritten.
+    pub(super) fn formula_overflows(&self) -> bool {
+        let right = scholium_typst::margin_x_pt() + scholium_typst::text_width_pt();
+        self.math_indicator()
+            .is_some_and(|indicator| indicator.formula[2] > right + OVERFLOW_TOLERANCE_PT)
+    }
+}
+
+/// Rounding slack so a formula that ends exactly at the margin is not reported.
+const OVERFLOW_TOLERANCE_PT: f64 = 0.5;
+
 #[cfg(test)]
 mod tests;

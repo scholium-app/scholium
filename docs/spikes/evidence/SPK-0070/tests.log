@@ -1,0 +1,25 @@
+test typst_editor::math_enter::tests::enter_at_the_end_of_a_formula_starts_a_block_after_it ... ok
+test typst_editor::math_enter::tests::enter_ends_the_open_typing_group_inside_the_formula ... ok
+test typst_editor::math_enter::tests::one_undo_restores_the_formula_and_the_caret_inside_it ... ok
+test typst_editor::math_enter::tests::shift_enter_in_a_formula_does_the_same ... ok
+test typst_editor::math_enter::tests::enter_in_body_text_still_splits_there ... ok
+test typst_editor::math_enter::tests::enter_in_the_middle_of_a_formula_keeps_it_whole ... ok
+test typst_editor::math_enter::tests::enter_inside_a_superscript_slot_leaves_the_whole_formula ... ok
+test typst_editor::math_enter::tests::enter_in_the_placeholder_removes_it_and_undo_returns_to_the_slot ... ok
+test typst_editor::math_enter::tests::enter_with_text_after_the_formula_carries_it_into_the_new_block ... ok
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 172 filtered out; finished in 0.01s
+test typst_editor::tests::deletion_that_joins_regional_indicators_keeps_a_valid_insertion_point ... ok
+test typst_editor::indicator::tests::stale_scene_paints_no_indicator ... ok
+test typst_editor::indicator::tests::indicator_covers_a_row_formula_that_owns_no_frame_bounds_itself ... ok
+test typst_editor::indicator::tests::indicator_outlines_an_attach_script_slot ... ok
+test typst_editor::indicator::tests::indicator_covers_the_whole_fraction_and_outlines_the_current_slot ... ok
+test typst_editor::indicator::tests::status_metadata_reports_math_mode_and_clears_after_leaving ... ok
+test typst_editor::indicator::tests::indicator_exists_only_while_the_caret_is_inside_a_formula ... ok
+test typst_editor::indicator::tests::an_overlong_superscript_run_warns_too ... ok
+test typst_editor::indicator::tests::a_breakable_long_formula_reports_no_overflow ... ok
+test typst_editor::indicator::tests::an_operator_free_run_past_the_column_warns_while_the_caret_is_inside ... ok
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 171 filtered out; finished in 5.35s
+test editor::parity::editor_and_preview_break_every_block_into_the_same_lines ... ok
+test editor::parity::operator_free_runs_stay_whole_in_both_surfaces ... ok
+test editor::parity::long_operator_formulas_break_after_the_same_operators ... ok
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 21.51s

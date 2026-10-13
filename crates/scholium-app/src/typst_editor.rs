@@ -7,6 +7,7 @@ mod deferred;
 mod history;
 mod indicator;
 mod input;
+mod math_enter;
 mod paint;
 mod raster;
 pub(crate) mod ribbon;
@@ -392,6 +393,9 @@ impl EditorSession {
                 }
                 _ => {}
             }
+        }
+        if self.formula_overflows() {
+            return Some("公式超出行宽".into());
         }
         let caret = self
             .scene
