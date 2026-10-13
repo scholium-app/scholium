@@ -204,3 +204,25 @@ fn reveal_widens_to_the_page_edge_only_for_document_edge_keys() {
         1074.0
     );
 }
+
+#[test]
+fn undo_after_typing_past_the_viewport_removes_the_whole_word_and_follows_the_caret() {
+    let mut f = started();
+    frame(&mut f, vec![text(" one ")]);
+    frame(&mut f, vec![text("t"), text("w"), text("o")]);
+    f.settle();
+    quiesce(&mut f);
+    scroll_away(&mut f);
+    f.state.undo_requested = true;
+    frame(&mut f, vec![]);
+    f.settle();
+    quiesce(&mut f);
+    let cursor = f.editor.cursor.leaf;
+    let last = input::leaves(&f.editor.snapshot)
+        .into_iter()
+        .find(|l| l.id == cursor)
+        .map(|l| l.text.to_owned())
+        .expect("leaf");
+    assert_eq!(last, "Body line number 45 with some words. one ");
+    assert_caret_visible_with_margin(&f);
+}

@@ -5,6 +5,7 @@ mod audit;
 mod confirm;
 mod deferred;
 mod follow;
+mod history;
 mod indicator;
 mod input;
 mod paint;
@@ -24,6 +25,7 @@ mod window_tests;
 
 use crate::state::WorkspaceState;
 use eframe::egui;
+use history::{HistoryEntry, Origin, RunKind};
 use scholium_document::{
     BodyTextPosition, LocalSession, StructuralEdit, StructuralOutcome, StructuralRequest,
 };
@@ -34,7 +36,6 @@ use scholium_typst::editor::{
 };
 use std::{collections::VecDeque, path::PathBuf, sync::Arc};
 
-const HISTORY_LIMIT: usize = 512;
 /// Visible page range assumed until the page has been placed once, in pt.
 const INITIAL_VIEW_PT: f64 = 800.0;
 
@@ -85,14 +86,6 @@ pub(crate) struct EditorView {
     pub commands: Vec<Command>,
 }
 
-#[derive(Debug, Clone)]
-struct HistoryEntry {
-    snapshot: StructuredDocument,
-    requests: Vec<RequestId>,
-    cursor: Position,
-    anchor: Option<Position>,
-}
-
 /// The only editor: owns the authoritative LocalSession and its derived Typst scenes.
 pub(crate) struct EditorSession {
     session: LocalSession<StructuredDocument>,
@@ -124,6 +117,9 @@ pub(crate) struct EditorSession {
     ime_anchor: Option<egui::Rect>,
     undo: Vec<HistoryEntry>,
     redo: Vec<HistoryEntry>,
+    /// The open typing or deletion run sharing the top undo entry.
+    run: Option<history::Run>,
+    clock: history::Clock,
     focus: bool,
     confirm_new: bool,
     confirm_close: bool,
@@ -219,6 +215,8 @@ impl EditorSession {
             pixels_per_point: 1.0,
             undo: Vec::new(),
             redo: Vec::new(),
+            run: None,
+            clock: history::system_clock(),
             focus: true,
             confirm_new: false,
             confirm_close: false,
@@ -267,15 +265,6 @@ impl EditorSession {
         }
     }
 
-    fn record(&self) -> HistoryEntry {
-        HistoryEntry {
-            snapshot: self.session.snapshot(),
-            requests: self.session.actions().iter().map(|a| a.request).collect(),
-            cursor: self.cursor,
-            anchor: self.anchor,
-        }
-    }
-
     fn apply(&mut self, edit: StructuralEdit, state: &mut WorkspaceState) -> bool {
         self.apply_outcome(edit, state).is_some()
     }
@@ -286,7 +275,17 @@ impl EditorSession {
         edit: StructuralEdit,
         state: &mut WorkspaceState,
     ) -> Option<StructuralOutcome> {
-        let before = self.record();
+        self.apply_joined(edit, false, state)
+    }
+
+    /// `join`: the edit continues the open run and adds no undo entry.
+    fn apply_joined(
+        &mut self,
+        edit: StructuralEdit,
+        join: bool,
+        state: &mut WorkspaceState,
+    ) -> Option<StructuralOutcome> {
+        let before = (!join).then(|| self.record());
         let request = StructuralRequest {
             request: RequestId::fresh(),
             document: self.snapshot.document,
@@ -308,11 +307,7 @@ impl EditorSession {
                 if !outcome.changed {
                     return Some(outcome);
                 }
-                if self.undo.len() == HISTORY_LIMIT {
-                    self.undo.remove(0);
-                }
-                self.undo.push(before);
-                self.redo.clear();
+                self.push_undo(before);
                 self.publish(state);
                 Some(outcome)
             }
@@ -406,42 +401,6 @@ impl EditorSession {
             .as_ref()
             .and_then(|s| s.geometry.caret(self.cursor));
         caret.is_none().then(|| "此处暂时无法显示光标".into())
-    }
-
-    fn history(&mut self, redo: bool, state: &mut WorkspaceState) {
-        if state.composition.is_some() {
-            return;
-        }
-        self.placeholder = None;
-        self.pending_style = None;
-        let target = if redo {
-            self.redo.pop()
-        } else {
-            self.undo.pop()
-        };
-        let Some(target) = target else {
-            return;
-        };
-        let current = self.record();
-        match LocalSession::restore_structured(target.snapshot, target.requests) {
-            Ok(session) => {
-                // Restore allocates a fresh epoch even when revision and IDs repeat.
-                self.session = session;
-                self.cursor = target.cursor;
-                self.anchor = target.anchor;
-                self.drag = None;
-                if redo {
-                    self.undo.push(current);
-                } else {
-                    self.redo.push(current);
-                }
-                self.scene = None;
-                self.texture = None;
-                self.focus = true;
-                self.publish(state);
-            }
-            Err(error) => state.edit_error = Some(error.to_string()),
-        }
     }
 
     fn controls(&mut self, ctx: &egui::Context, state: &mut WorkspaceState) {

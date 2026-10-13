@@ -40,6 +40,7 @@ impl EditorSession {
                     self.deferred.clear();
                     self.placeholder = None;
                     self.undo.clear();
+                    self.run = None;
                     self.redo.clear();
                     self.saved = None;
                     self.scene = None;
