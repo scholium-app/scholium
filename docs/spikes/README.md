@@ -15,17 +15,6 @@
 主程序接入的身份/epoch/文件迁移基础见[报告 0053](SPK-0053-structured-session-migration.md)；默认页面仍走 legacy 回显。
 实际主程序的显式 Content 开发入口见[报告 0054](SPK-0054-typst-main-app-candidate.md)；
 候选已提交正文不走 egui 回显，普通启动尚未替换，兼容/分页/性能/安全门禁仍须后续验证。
-字素合并后的插入位置和跨文字/数学叶逻辑导航见[报告 0055](SPK-0055-typst-grapheme-navigation.md)；
-这是 C 的限定输入批次，选区/剪贴板和完整竞态出口仍未通过。
-正文端点跨叶/块的单次原子替换内核见[报告 0056](SPK-0056-structured-body-range.md)。
-候选同源 Frame 拖选/Shift 选区、整公式覆盖和原子多行替换见[报告 0057](SPK-0057-typst-page-selection.md)；
-视觉行上下/Home/End、分子分母切换与几何键有序排队见[报告 0058](SPK-0058-typst-vertical-navigation.md)；
-普通启动改用 Typst Content 编辑器（无 egui 回显）并迁移旧版文档见[报告 0059](SPK-0059-typst-default-editor.md)；
-旧页面编辑器删除与开发构建合并见[报告 0060](SPK-0060-remove-legacy-editor.md)；
-编辑面正文无障碍（AT-SPI Text/选区、数学对象、禁用状态补丁）见[报告 0061](SPK-0061-editor-accessibility.md)；
-结构源码工作区与 A4 快速预览（旧预览栈删除）见[报告 0062](SPK-0062-structured-source-view.md)；
-数学上标/下标节点与逐字素数学文字见[报告 0064](SPK-0064-math-attach.md)；
-完整 C、结构化剪贴板、分页、实机输入法/无障碍和安全门禁仍未关闭。
 
 - 报告按 `SPK-NNNN-short-title.md` 命名，模板见 [SPK-0000-template.md](SPK-0000-template.md)；
   证据文件按报告编号归入 `evidence/SPK-NNNN/`。
@@ -37,6 +26,7 @@
 - 结论需要固化选型时另立 ADR，并在报告和 ADR 之间双向链接。ADR 只记录决策与替换条件，
   原始数据留在本目录。
 - 原生 UI 各候选的报告还必须满足 [原生 UI 验证计划](../plan/NATIVE_UI_VALIDATION.md) 第 5 节的字段要求。
+- 本目录只收阶段 0 否决性验证。第 1 阶段起的产品实现记录写入 [docs/log/](../log/README.md)，不新增报告。
 - 可执行验证代码放在仓库根 `spikes/<name>/`，使用 Rust 或必要原生代码构建。
 
 ## 一键复现

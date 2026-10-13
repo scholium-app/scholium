@@ -1,9 +1,11 @@
-# SPK-0060：删除旧页面编辑器并合并开发构建
+# 删除旧页面编辑器并合并开发构建
 
-- 日期：2026-10-10；结论：**Pass**。
-- 对应：[ADR 0037](../adr/ADR-0037-remove-legacy-editor.md)、[ADR 0036](../adr/ADR-0036-typst-default-editor.md)、
+> 本文是第 1 阶段实现的追溯记录（过去时），不是阶段 0 验证证据，也不作为实现依据；当前规范见 `docs/modules/` 与 `docs/adr/`。
+
+- 日期：2026-10-10。
+- 相关：[ADR 0037](../adr/ADR-0037-remove-legacy-editor.md)、[ADR 0036](../adr/ADR-0036-typst-default-editor.md)、
   [主程序接入计划 E](../plan/TYPST_MAIN_APP_INTEGRATION.md)。
-- 基线：`c48de54`（普通启动改用 Typst Content，报告 0059）；分支 `ation_ciger/refactor/remove-legacy-editor`。
+- 基线：`c48de54`（普通启动改用 Typst Content，[开发日志《普通启动切换为 Typst Content 编辑器》](2026-10-10-typst-default-editor.md)）；分支 `ation_ciger/refactor/remove-legacy-editor`。
 
 ## 改动
 
@@ -50,13 +52,13 @@ xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/default-
 
 | 检查 | 结果与证据 |
 |---|---|
-| 回归 | **142 passed / 0 failed / 0 ignored**（旧编辑面 32 项 opt-in 体验用例随之删除）；[tests.log](evidence/SPK-0060/tests.log) |
+| 回归 | **142 passed / 0 failed / 0 ignored**（旧编辑面 32 项 opt-in 体验用例随之删除）；[tests.log](evidence/remove-legacy-editor/tests.log) |
 | gates | fmt、clippy、rustdoc、文件规模、licenses/bans/sources 通过 |
-| fork 来源 | 上游对象 + 四补丁逐文件重建一致；[fork-source.json](evidence/SPK-0060/fork-source.json) |
-| fork/stock | full/styles/heading 三组逐像素一致；[stock-comparison.json](evidence/SPK-0060/stock-comparison.json) |
-| 实机 | 普通启动 33 步全通过，111 audit frames、47 pending，committed egui Text draw **0**；[summary.json](evidence/SPK-0060/native/summary.json) |
-| 迁移 | `hammer` 旧会话经普通启动迁移，旧文件 sha256 不变；[summary.json](evidence/SPK-0060/default-launch/summary.json) |
-| advisories | **Fail**，仍是与 main 相同的 7 项既有通告；[advisories.log](evidence/SPK-0060/advisories.log) |
+| fork 来源 | 上游对象 + 四补丁逐文件重建一致；[fork-source.json](evidence/remove-legacy-editor/fork-source.json) |
+| fork/stock | full/styles/heading 三组逐像素一致；[stock-comparison.json](evidence/remove-legacy-editor/stock-comparison.json) |
+| 实机 | 普通启动 33 步全通过，111 audit frames、47 pending，committed egui Text draw **0**；[summary.json](evidence/remove-legacy-editor/native/summary.json) |
+| 迁移 | `hammer` 旧会话经普通启动迁移，旧文件 sha256 不变；[summary.json](evidence/remove-legacy-editor/default-launch/summary.json) |
+| advisories | **Fail**，仍是与 main 相同的 7 项既有通告；[advisories.log](evidence/remove-legacy-editor/advisories.log) |
 
 ## 未覆盖
 

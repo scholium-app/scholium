@@ -1,10 +1,12 @@
-# SPK-0056：结构正文范围的单次原子替换
+# 结构正文范围的单次原子替换
 
-- 日期：2026-10-02；结论：**Pass（限定正文端点的原子替换内核）**。
-- 对应：[主程序接入计划 C](../plan/TYPST_MAIN_APP_INTEGRATION.md)、[路线图结构编辑](../plan/ROADMAP.md)。
+> 本文是第 1 阶段实现的追溯记录（过去时），不是阶段 0 验证证据，也不作为实现依据；当前规范见 `docs/modules/` 与 `docs/adr/`。
+
+- 日期：2026-10-02；范围：限定正文端点的原子替换内核。
+- 相关：[主程序接入计划 C](../plan/TYPST_MAIN_APP_INTEGRATION.md)、[路线图结构编辑](../plan/ROADMAP.md)。
 - main 基线：`510551d44947677e73df86e36fa70d73b26aeaaa`，已合入增量 Content 与结构会话基础。
 - 版本：Rust/Cargo 1.96.0、Linux x86_64 / 7.2.7-arch1-1，既有 Cargo.lock；无新增依赖或存储 schema 变更。
-- 指纹及原始日志：[evidence/SPK-0056](evidence/SPK-0056/)。本批独立于未合入的 Typst 主程序候选，不启用 fork。
+- 指纹及原始日志：[evidence/structured-body-range](evidence/structured-body-range/)。本批独立于未合入的 Typst 主程序候选，不启用 fork。
 
 ## 合约与支持范围
 

@@ -159,7 +159,7 @@ anchor/cursor 选区，复制、剪切、输入替换沿用同一路径。点击
 选区、选区格式和结构命令另行接入。复制/剪切只输出纯文本：段落以换行连接，范围含公式或
 原串时拒绝且不改正文。见 [ADR 0035](../adr/ADR-0035-typst-page-selection.md)。
 与其他行内内容相邻的空 Text 叶在 Typst 中不成 cluster、没有可绘范围；选框跳过它，
-语义范围仍包含它。视觉行导航见[报告 0058](../spikes/SPK-0058-typst-vertical-navigation.md)。
+语义范围仍包含它。视觉行导航见[开发日志《Typst 主程序候选的视觉行导航与几何键有序排队》](../log/2026-10-10-typst-vertical-navigation.md)。
 
 一个打开项目对应一个串行 session actor，持有 authority mode、语义/源码共享文档 handles、history facade、
 format/index service、render/build scheduler 和 sync client。所有写命令串行化，长任务只持有不可变 snapshot，完成后按

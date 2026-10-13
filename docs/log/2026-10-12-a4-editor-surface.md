@@ -1,7 +1,9 @@
-# SPK-0063：编辑面与 A4 输出同版式
+# 编辑面与 A4 输出同版式
 
-- 日期：2026-10-12；结论：**Pass**。
-- 对应：[P1 排版工作区规划](../plan/P1_UI.md)的纸面编辑、[报告 0062](SPK-0062-structured-source-view.md)的
+> 本文是第 1 阶段实现的追溯记录（过去时），不是阶段 0 验证证据，也不作为实现依据；当前规范见 `docs/modules/` 与 `docs/adr/`。
+
+- 日期：2026-10-12。
+- 相关：[P1 排版工作区规划](../plan/P1_UI.md)的纸面编辑、[开发日志《结构源码工作区与 A4 快速预览》](2026-10-11-structured-source-view.md)的
   A4 快速预览；所见即所得要求编辑面就是输出的版式。
 - 基线：main `da9a39f`；分支 `ation_ciger/feat/a4-editor-surface`。
 
@@ -63,7 +65,7 @@ xvfb-run -a -s '-screen 0 1280x900x24' \
 | 工作区测试 | 全部通过（含断行一致性测试；插入 caret/命中/选区几何测试无需改期望值） |
 | gates | fmt、clippy `-D warnings`、`check-rust-size.py` |
 | 窗口检查 | native 33 步、a11y 9/9、source-view 5/5、default-launch 均通过 |
-| 实机对照 | 上：Visual 编辑面；下：Ctrl+2 A4 预览；[对照图](evidence/SPK-0063/03-visual-above-preview.png)，单图：[Visual](evidence/SPK-0063/01-visual-editor.png)、[预览](evidence/SPK-0063/02-a4-preview.png)，[summary.json](evidence/SPK-0063/summary.json)；两处断行、缩进与标题层级一致 |
+| 实机对照 | 上：Visual 编辑面；下：Ctrl+2 A4 预览；[对照图](evidence/a4-editor-surface/03-visual-above-preview.png)，单图：[Visual](evidence/a4-editor-surface/01-visual-editor.png)、[预览](evidence/a4-editor-surface/02-a4-preview.png)，[summary.json](evidence/a4-editor-surface/summary.json)；两处断行、缩进与标题层级一致 |
 
 ## 未覆盖
 

@@ -30,6 +30,6 @@
 
 ## 验证与边界
 
-isolated D-Bus 会话里的 AT-SPI 实机验收与单元回归见[报告 0061](../spikes/SPK-0061-editor-accessibility.md)。
+isolated D-Bus 会话里的 AT-SPI 实机验收与单元回归见[开发日志《Typst 编辑面的正文无障碍》](../log/2026-10-11-editor-accessibility.md)。
 本批没有 Orca 语音实测、跨平台（Windows UIA / macOS）验收、RawMath 内部导航、数学槽位的 Text 偏移，
 也不改变 AccessKit 对 TextRun 之外节点的文本模型。

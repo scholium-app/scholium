@@ -1,8 +1,10 @@
-# SPK-0065：编辑面基本交互修复
+# 编辑面基本交互修复
 
-- 日期：2026-10-12；结论：**Pass**（限定范围：下列四项，数学槽内选区仍未接入）。
-- 对应：[P1 排版工作区规划](../plan/P1_UI.md)的页面编辑、[ADR 0035](../adr/ADR-0035-typst-page-selection.md)
-  的同 Frame 选区；阶段 0 条件 2 的编辑面可用性补强，不改变阶段判定。
+> 本文是第 1 阶段实现的追溯记录（过去时），不是阶段 0 验证证据，也不作为实现依据；当前规范见 `docs/modules/` 与 `docs/adr/`。
+
+- 日期：2026-10-12；范围：下列四项，数学槽内选区仍未接入。
+- 相关：[P1 排版工作区规划](../plan/P1_UI.md)的页面编辑、[ADR 0035](../adr/ADR-0035-typst-page-selection.md)
+  的同 Frame 选区。
 - 基线：main `702374d`；分支 `ation_ciger/fix/editor-interaction`。
 
 ## 复现与根因
@@ -50,7 +52,7 @@
 | 单元测试 | `selection/pointer_tests.rs`（下/上/右侧/行间/公式内命中、词/空白/标点/CJK、三击与剪切、数学内双击）、点击计数（远点击后双击只选词、两处快速单击不选、三次近点击选块、双击选词、页面外按下清空）、`indicator/tests.rs`（公式/分数/Attach 槽/状态元数据/过期 Scene）、`tests.rs::styled_leaf_has_exact_carets_at_every_grapheme_before_and_after_relayout` |
 | 失败在先 | 命中三项（下/上/右侧）在旧命中规则下失败；样式叶测试在旧 `content.rs` 下于 byte 0 失败 |
 | 窗口脚本 | `interaction-check.py` 四项 PASS：公式淡色底仅在公式内出现、下方点击到文档末尾、紧接远处单击之后的双击选中 `world`（6..11）、三击选中整段 |
-| 截图 | 公式内 [淡色底与“公式”状态](evidence/SPK-0065/interaction-check/01-caret-in-formula.png)；离开后 [无淡色底](evidence/SPK-0065/interaction-check/02-caret-in-body.png)；[双击选词](evidence/SPK-0065/interaction-check/03-double-click-word-selected.png)；[三击选段](evidence/SPK-0065/interaction-check/04-triple-click-block-selected.png) |
+| 截图 | 公式内 [淡色底与“公式”状态](evidence/editor-interaction/interaction-check/01-caret-in-formula.png)；离开后 [无淡色底](evidence/editor-interaction/interaction-check/02-caret-in-body.png)；[双击选词](evidence/editor-interaction/interaction-check/03-double-click-word-selected.png)；[三击选段](evidence/editor-interaction/interaction-check/04-triple-click-block-selected.png) |
 
 ## 复现
 

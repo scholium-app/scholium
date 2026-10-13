@@ -89,11 +89,11 @@ cargo test -p scholium-app b13_stale -- --include-ignored --test-threads=1
 
 ## 根因证据
 
-1. [`page_editor/input.rs`](../../crates/scholium-app/src/page_editor/input.rs) 的 Enter 路径
+1. `page_editor/input.rs` 的 Enter 路径
    无条件插入 `\n`，没有公式/格式边界判断；删除路径同样只删字符串范围。
 2. [`range_edit.rs`](../../crates/scholium-document/src/range_edit.rs) 先拼接替换字符串、
    再按换行拆段并分别解析；不配对的 `$` 因而变成 Text。解析器不是凭空生成 `$`。
-3. [`page_editor.rs`](../../crates/scholium-app/src/page_editor.rs) 的 `page_cells` 用
+3. `page_editor.rs` 的 `page_cells` 用
    **当前快照**的块长度和 UTF-8 边界解释**旧 revision**的字形偏移，随后再重放全局 shift。
    缩短文本时旧端点会先被过滤；前块增长时后块已经换过基址又被重复平移。
 4. 同文件的 `optimistic_line` 直接把规范 markup 传入 `layout_no_wrap`，
