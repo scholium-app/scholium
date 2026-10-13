@@ -113,14 +113,14 @@ S3 只负责把**结构保护的编辑语义**在命令层落定。
 
 ### S4：几何按 revision 解释（关闭 b06–b08、b13）
 
-依赖 S2。当前 [`page_editor.rs`](../../crates/scholium-app/src/page_editor.rs) 的 `page_cells`
+依赖 S2。当前 `page_editor.rs` 的 `page_cells`
 用**当前**快照的块长度和 UTF-8 边界解释**旧 revision** 的字形偏移，随后再重放全局 shift。
 
 - 几何记录产生它的 revision；旧坐标经该 revision 起的变更链**转换一次**。
 - 映射不可靠（命中的是已被删除的端点、或跨了结构边界）时返回"无法定位"：
   **禁止**落到别的段落继续写入，也禁止用旧坐标驱动编辑请求。
 - b13：同帧点击与键入必须不 panic。当前是长度 10 的字符串被访问到 byte 12
-  （[`input.rs`](../../crates/scholium-app/src/page_editor/input.rs)）。这是**崩溃**，优先级等同 P1。
+  （`input.rs`）。这是**崩溃**，优先级等同 P1。
 - 交付物：`page_editor.rs` 的 `page_cells` 重构为 revision 感知的映射模块（新文件，
   避免 `page_editor.rs` 超 600 行）。
 - 判据：b06/b07/b08/b13 转 ok；b13 另加一条常规（非 opt-in）回归测试，

@@ -1,8 +1,10 @@
-# SPK-0062：结构源码工作区与 A4 快速预览
+# 结构源码工作区与 A4 快速预览
 
-- 日期：2026-10-11；结论：**Pass**。
-- 对应：[ADR 0037](../adr/ADR-0037-remove-legacy-editor.md) 第 4 条（旧模型预览栈随结构源码工作区删除）、
-  [P1 排版工作区规划](../plan/P1_UI.md)的源码与预览分屏、阶段 0 条件 3/4 的源码与后台预览能力在新编辑面重建。
+> 本文是第 1 阶段实现的追溯记录（过去时），不是阶段 0 验证证据，也不作为实现依据；当前规范见 `docs/modules/` 与 `docs/adr/`。
+
+- 日期：2026-10-11。
+- 相关：[ADR 0037](../adr/ADR-0037-remove-legacy-editor.md) 第 4 条（旧模型预览栈随结构源码工作区删除）、
+  [P1 排版工作区规划](../plan/P1_UI.md)的源码与预览分屏。
 - 基线：main `3142b07`；分支 `ation_ciger/feat/structured-source-view`。
 
 ## 改动
@@ -43,11 +45,11 @@ cargo +1.96.0 check --locked --manifest-path spikes/render-latency/Cargo.toml
 
 | 检查 | 结果与证据 |
 |---|---|
-| 回归 | **160 passed / 0 failed**；生成器 7 项（映射与转义、数学字面、原串不执行、词内样式/括号/列表/换行、真实编译、锚点与多行末行点击）与源码工作区 5 项；[tests.log](evidence/SPK-0062/tests.log) |
+| 回归 | **160 passed / 0 failed**；生成器 7 项（映射与转义、数学字面、原串不执行、词内样式/括号/列表/换行、真实编译、锚点与多行末行点击）与源码工作区 5 项；[tests.log](evidence/structured-source-view/tests.log) |
 | gates | fmt、clippy、rustdoc、文件规模、licenses/bans/sources；`render-latency` 以 `--locked` 编译 |
-| 源码工作区实机 | **5/5**：编辑后 Ctrl+2 显示生成源码与 A4 预览（1 页、无错误）、点击预览第二段定位光标、Ctrl+1 后键入落在该段、预览跟随新快照；[summary.json](evidence/SPK-0062/source-view/summary.json)、[截图](evidence/SPK-0062/source-view/02-source-and-preview.png) |
+| 源码工作区实机 | **5/5**：编辑后 Ctrl+2 显示生成源码与 A4 预览（1 页、无错误）、点击预览第二段定位光标、Ctrl+1 后键入落在该段、预览跟随新快照；[summary.json](evidence/structured-source-view/source-view/summary.json)、[截图](evidence/structured-source-view/source-view/02-source-and-preview.png) |
 | 既有窗口流程 | 33 步、迁移检查与 AT-SPI 9/9 仍通过 |
-| advisories | **Fail**，仍是既有 7 项；[advisories.log](evidence/SPK-0062/advisories.log) |
+| advisories | **Fail**，仍是既有 7 项；[advisories.log](evidence/structured-source-view/advisories.log) |
 
 ## 未覆盖
 

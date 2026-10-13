@@ -1,7 +1,9 @@
-# SPK-0070：公式内回车与长行内公式
+# 公式内回车与长行内公式
 
-- 日期：2026-10-13；结论：**Pass**（限定范围：Enter/Shift+Enter 在行内公式内的行为、编辑面与预览的公式断行一致性、超出行宽诊断）。
-- 对应：[app 模块](../modules/app.md)、[typst 模块](../modules/typst.md)；阶段 0 条件 2 的编辑面可用性补强，不改变阶段判定。
+> 本文是第 1 阶段实现的追溯记录（过去时），不是阶段 0 验证证据，也不作为实现依据；当前规范见 `docs/modules/` 与 `docs/adr/`。
+
+- 日期：2026-10-13；范围：Enter/Shift+Enter 在行内公式内的行为、编辑面与预览的公式断行一致性、超出行宽诊断。
+- 相关：[app 模块](../modules/app.md)、[typst 模块](../modules/typst.md)。
 - 基线：main `5b65c5d`；分支 `ation_ciger/fix/math-enter-wrap`。
 
 ## 问题
@@ -69,24 +71,24 @@ xvfb-run -a -s '-screen 0 1280x900x24' \
 
 | 检查 | 结果与证据 |
 |---|---|
-| 应用层 | `math_enter` 9 项：公式末尾、中部、上标槽内回车都在公式之后另起一段且光标在新段开头；公式后已有文字随新段移走；Shift+Enter 相同；一步撤销回到公式内原光标；打字分组被回车打断；占位 Hole 被移除且撤销回到槽内；正文回车不变。`indicator` 新增 3 项：可断长公式不报超出、无运算符串与上标串报“公式超出行宽”且离开公式后清除；[tests.log](evidence/SPK-0070/tests.log) |
+| 应用层 | `math_enter` 9 项：公式末尾、中部、上标槽内回车都在公式之后另起一段且光标在新段开头；公式后已有文字随新段移走；Shift+Enter 相同；一步撤销回到公式内原光标；打字分组被回车打断；占位 Hole 被移除且撤销回到槽内；正文回车不变。`indicator` 新增 3 项：可断长公式不报超出、无运算符串与上标串报“公式超出行宽”且离开公式后清除；[tests.log](evidence/math-enter-wrap/tests.log) |
 | 排版层 | `parity` 新增 2 项：40 项和、带键入空格的和、30 项等式链在编辑面与预览的断行文本逐行相同且断在运算符之后；无运算符串与上标串在两个表面都不被拆开 |
-| 实机 | **7/7**：上标内回车拆段且光标在新段开头、一次 Ctrl+Z 恢复、Shift+Enter 相同、长和式不越界、无运算符串报超出并在离开公式后清除、预览编译通过；[summary.json](evidence/SPK-0070/math-enter/summary.json) |
+| 实机 | **7/7**：上标内回车拆段且光标在新段开头、一次 Ctrl+Z 恢复、Shift+Enter 相同、长和式不越界、无运算符串报超出并在离开公式后清除、预览编译通过；[summary.json](evidence/math-enter-wrap/math-enter/summary.json) |
 | 竞态修复 | `math-attach-check.py` 连续 5 次通过 |
 | 既有窗口流程 | native、AT-SPI、源码工作区、数学上下标、点击/多击交互、sharp raster、行内样式、按词撤销、默认启动迁移与独立 stock Typst 的像素对比（4/4 像素相等）仍通过 |
 
-![公式内回车之后](evidence/SPK-0070/math-enter/02-after-enter.png)
+![公式内回车之后](evidence/math-enter-wrap/math-enter/02-after-enter.png)
 
 上标内回车后公式留在第一段，光标在第二段开头。
 
-![长和式在编辑面断行](evidence/SPK-0070/math-enter/06-long-sum-editor.png)
+![长和式在编辑面断行](evidence/math-enter-wrap/math-enter/06-long-sum-editor.png)
 
 带键入空格的长和式在编辑面断在运算符之后，与预览一致。
 
-![无运算符长串与状态栏诊断](evidence/SPK-0070/math-enter/08-operator-free-run-editor.png)
+![无运算符长串与状态栏诊断](evidence/math-enter-wrap/math-enter/08-operator-free-run-editor.png)
 
 无运算符长串越过版心；状态栏显示“公式超出行宽”。
 
-![预览中的同一批公式](evidence/SPK-0070/math-enter/10-preview-long-formulas.png)
+![预览中的同一批公式](evidence/math-enter-wrap/math-enter/10-preview-long-formulas.png)
 
 预览中和式断行位置与编辑面相同，无运算符串同样越界。

@@ -1,15 +1,17 @@
-# SPK-0061：Typst 编辑面的正文无障碍
+# Typst 编辑面的正文无障碍
 
-- 日期：2026-10-11；结论：**Pass（Linux AT-SPI，isolated 会话）**。
-- 对应：[ADR 0038](../adr/ADR-0038-editor-accessibility.md)、阶段 0 条件 1（[报告 0012](SPK-0012-exit-criteria.md)）的
-  正文 Text/选区与数学读屏能力在主程序重新实现；前序实验见报告 0020、0021、0042。
+> 本文是第 1 阶段实现的追溯记录（过去时），不是阶段 0 验证证据，也不作为实现依据；当前规范见 `docs/modules/` 与 `docs/adr/`。
+
+- 日期：2026-10-11；范围：Linux AT-SPI，isolated 会话。
+- 相关：[ADR 0038](../adr/ADR-0038-editor-accessibility.md)、在主程序重新实现阶段 0 条件 1（[报告 0012](../spikes/SPK-0012-exit-criteria.md)）
+  已在候选中验证过的正文 Text/选区与数学读屏能力；前序实验见报告 0020、0021、0042。
 - 基线：main `ca846ba`；分支 `ation_ciger/feat/editor-accessibility`。
 
 ## 问题
 
 阶段 0 的正文无障碍只在 `spikes/native-ui` 候选里实现，主程序从未接入。删除旧编辑器后，编辑面在
 AT-SPI 里只是一个无名 `unknown` 节点，没有 Text 接口；禁用的“复制”按钮被报为 ENABLED + SENSITIVE。
-见[改动前的对象树](evidence/SPK-0061/before-tree.txt)。
+见[改动前的对象树](evidence/editor-accessibility/before-tree.txt)。
 
 ## 实现
 
@@ -43,11 +45,11 @@ xvfb-run -a -s '-screen 0 1280x900x24' dbus-run-session -- \
 
 | 检查 | 结果与证据 |
 |---|---|
-| 回归 | **155 passed / 0 failed**，新增 13 项无障碍用例（读序、分行与几何、pending 文本、caret/选区编码、辅助选区替换、过期发布拒绝、字素内部拒绝、混排同行、数学对象与槽位、嵌套播报、公式后空叶 caret、纯公式段落、软换行行末）；[tests.log](evidence/SPK-0061/tests.log) |
+| 回归 | **155 passed / 0 failed**，新增 13 项无障碍用例（读序、分行与几何、pending 文本、caret/选区编码、辅助选区替换、过期发布拒绝、字素内部拒绝、混排同行、数学对象与槽位、嵌套播报、公式后空叶 caret、纯公式段落、软换行行末）；[tests.log](evidence/editor-accessibility/tests.log) |
 | gates | fmt、clippy、rustdoc、文件规模、licenses/bans/sources 通过 |
-| AT-SPI 实机 | **9/9**：`entry` + Text 接口且 FOCUSED/EDITABLE/MULTI_LINE；输入文本与 caret 12；段落 `\n`；AT-SPI 设选区 0–5 后键入一次替换；连续输入 91 次读取 0 失败（期间 34 帧 pending）；字符范围在窗口内；公式与槽位名称；禁用“复制”不再 ENABLED/SENSITIVE、“粘贴”仍可用；[summary.json](evidence/SPK-0061/a11y/summary.json)、[日志](evidence/SPK-0061/a11y-check.log) |
-| 既有窗口流程 | 33 步与迁移检查仍通过；[native-check.log](evidence/SPK-0061/native-check.log) |
-| advisories | **Fail**，仍是既有 7 项；[advisories.log](evidence/SPK-0061/advisories.log) |
+| AT-SPI 实机 | **9/9**：`entry` + Text 接口且 FOCUSED/EDITABLE/MULTI_LINE；输入文本与 caret 12；段落 `\n`；AT-SPI 设选区 0–5 后键入一次替换；连续输入 91 次读取 0 失败（期间 34 帧 pending）；字符范围在窗口内；公式与槽位名称；禁用“复制”不再 ENABLED/SENSITIVE、“粘贴”仍可用；[summary.json](evidence/editor-accessibility/a11y/summary.json)、[日志](evidence/editor-accessibility/a11y-check.log) |
+| 既有窗口流程 | 33 步与迁移检查仍通过；[native-check.log](evidence/editor-accessibility/native-check.log) |
+| advisories | **Fail**，仍是既有 7 项；[advisories.log](evidence/editor-accessibility/advisories.log) |
 
 ## 未覆盖
 

@@ -8,7 +8,7 @@
 
 | 检查 | 退出码 | 秒 | 日志 |
 |---|---:|---:|---|
-| usability | 101 | 62.0 | [usability.log](usability.log) |
+| usability | 101 | 62.0 | [baseline-usability.log](baseline-usability.log) |
 
 ## Debug 性能观测（毫秒）
 

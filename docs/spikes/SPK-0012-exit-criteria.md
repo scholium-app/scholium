@@ -28,22 +28,7 @@
 
 ## 证据入口
 
-结构正文跨叶/块的原子替换内核见[报告 0056](SPK-0056-structured-body-range.md)；
-同源 Frame 页面选区与多行替换见[报告 0057](SPK-0057-typst-page-selection.md)；
-视觉行导航与几何键有序排队见[报告 0058](SPK-0058-typst-vertical-navigation.md)；
-普通启动切换为 Typst Content 编辑器见[报告 0059](SPK-0059-typst-default-editor.md)，
-旧编辑器删除见[报告 0060](SPK-0060-remove-legacy-editor.md)，
-主程序编辑面正文无障碍见[报告 0061](SPK-0061-editor-accessibility.md)，
-结构源码工作区与快速预览见[报告 0062](SPK-0062-structured-source-view.md)，
-编辑面与 A4 输出同版式见[报告 0063](SPK-0063-a4-editor-surface.md)，
-数学上标/下标节点与逐字素数学文字见[报告 0064](SPK-0064-math-attach.md)，
-点击命中、双击/三击选择、样式叶 caret 与公式模式提示见[报告 0065](SPK-0065-editor-interaction.md)，
-选区粗体/强调与输入样式见[报告 0066](SPK-0066-inline-styles.md)，
-页面按显示分辨率栅格与像素吸附见[报告 0067](SPK-0067-sharp-raster.md)，
-视图跟随光标见[报告 0068](SPK-0068-caret-follow.md)，
-按词撤销输入见[报告 0069](SPK-0069-undo-grouping.md)，
-公式内回车与长公式断行见[报告 0070](SPK-0070-math-enter-wrap.md)。
-这些限定报告不改变上表阶段判定，完整 C 与默认后端替换未验收。
+第 1 阶段的实现记录在 [docs/log/](../log/README.md)，不改变上表阶段判定。
 
 - 条件 1：[egui 原始验收](SPK-0004-native-ui-egui.md)、[ADR 0006](../adr/ADR-0006-native-ui-framework.md)、
   [新增选区和源码路径](SPK-0016-working-tree-status.md#原生编辑与源码应用)。
@@ -53,7 +38,6 @@
 - 条件 3：[Typst 映射与同步基准](SPK-0005-typst-mapping.md)、[真实后台预览](SPK-0016-working-tree-status.md#后台预览)。
   后续主程序显式 Content 候选见[0054](SPK-0054-typst-main-app-candidate.md)：限定窗口闭环
   与去回显证据，不升级默认后端、全兼容、分页或 K3/K4 判定。
-  输入字素边界与逻辑叶导航补充见[0055](SPK-0055-typst-grapheme-navigation.md)，不代表完整 C 验收。
   本轮 20 页同步单字符路径 p95 20.9 ms、改首段最大 210.6 ms；
   小夹具后台编译/栅格化 580 ms，不与 headless 帧 p95 1.76 ms 混用。
 - 条件 4：[reconcile](SPK-0006-source-reconcile.md)、[新增事务验证](SPK-0016-working-tree-status.md#原生编辑与源码应用)。

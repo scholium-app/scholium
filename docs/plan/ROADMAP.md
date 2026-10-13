@@ -32,14 +32,7 @@
    组合身份、正文插入点与独立原生窗口的限定证据见[报告 0051](../spikes/SPK-0051-typst-caret-native-editor.md)。
    持久 Content、增量段落与原生帧观测的限定证据见[报告 0052](../spikes/SPK-0052-typst-incremental-content.md)。
    主程序接入的稳定身份、代际与本地格式兼容夹具见[报告 0053](../spikes/SPK-0053-structured-session-migration.md)。
-   显式主程序 Content 入口的证据见[报告 0054](../spikes/SPK-0054-typst-main-app-candidate.md)，字素边界与逻辑叶导航夹具见[报告 0055](../spikes/SPK-0055-typst-grapheme-navigation.md)。
-   正文范围原子替换内核的限定证据见[报告 0056](../spikes/SPK-0056-structured-body-range.md)；
-   同源 Frame 页面选区与原子多行替换的限定证据见[报告 0057](../spikes/SPK-0057-typst-page-selection.md)；
-   当前 Scene 视觉行上下/行首末导航与有序输入排队见[报告 0058](../spikes/SPK-0058-typst-vertical-navigation.md)；
-   普通启动切换为 Typst Content 编辑器与旧版文档一次性迁移见[报告 0059](../spikes/SPK-0059-typst-default-editor.md)；
-   旧页面编辑器与回显删除、开发构建合并见[报告 0060](../spikes/SPK-0060-remove-legacy-editor.md)；
-   编辑面正文 AccessKit Text/选区、数学对象与槽位播报的 AT-SPI 证据见[报告 0061](../spikes/SPK-0061-editor-accessibility.md)；
-   结构文档生成 Typst 源码工作区与 A4 快速预览见[报告 0062](../spikes/SPK-0062-structured-source-view.md)。
+   显式主程序 Content 入口的证据见[报告 0054](../spikes/SPK-0054-typst-main-app-candidate.md)。
    编辑画面替换的限定验证与剩余边界见[报告 0028](../spikes/SPK-0028-typst-editor.md)。
    持久编译、局部纹理更新与连续输入验证见[报告 0029](../spikes/SPK-0029-resident-typst-editor.md)。
    常用编辑与 26 页首尾编辑回归见[报告 0030](../spikes/SPK-0030-editing-regression.md)。

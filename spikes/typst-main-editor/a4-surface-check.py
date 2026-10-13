@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Real-window A4 surface check: the Visual editing sheet and the Ctrl+2 A4 preview show the same
-headings and paragraphs; screenshots are taken side by side for SPK-0063.
+headings and paragraphs; screenshots are taken side by side (see docs/log/2026-10-12-a4-editor-surface.md).
 
 Run under Xvfb from the repository root:
   xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/a4-surface-check.py \\

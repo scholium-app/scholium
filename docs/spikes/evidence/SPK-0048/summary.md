@@ -8,13 +8,13 @@
 
 | 检查 | 退出码 | 秒 | 日志 |
 |---|---:|---:|---|
-| format | 0 | 0.165 | [format.log](format.log) |
+| format | 0 | 0.165 | [fmt.log](fmt.log) |
 | size | 0 | 0.032 | [size.log](size.log) |
 | clippy | 0 | 0.264 | [clippy.log](clippy.log) |
 | baseline | 0 | 22.356 | [baseline.log](baseline.log) |
 | rustdoc | 0 | 0.215 | [rustdoc.log](rustdoc.log) |
 | usability | 101 | 16.296 | [usability.log](usability.log) |
-| native-build | 0 | 0.265 | [native-build.log](native-build.log) |
+| native-build | 0 | 0.265 | [native.log](native.log) |
 | native | 0 | 36.352 | [native.log](native.log) |
 
 ## 原生窗口

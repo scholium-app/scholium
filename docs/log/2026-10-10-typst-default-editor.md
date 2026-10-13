@@ -1,11 +1,13 @@
-# SPK-0059：普通启动切换为 Typst Content 编辑器
+# 普通启动切换为 Typst Content 编辑器
 
-- 日期：2026-10-10；结论：**Pass（默认启动切换；旧编辑器删除另批）**。
-- 对应：[主程序接入计划 E](../plan/TYPST_MAIN_APP_INTEGRATION.md)、
-  [ADR 0036](../adr/ADR-0036-typst-default-editor.md)、[阶段 0 Typst 映射](../plan/ROADMAP.md)。
-- 基线：分支 `ation_ciger/feat/typst-vertical-navigation`（报告 0058）之上；分支
+> 本文是第 1 阶段实现的追溯记录（过去时），不是阶段 0 验证证据，也不作为实现依据；当前规范见 `docs/modules/` 与 `docs/adr/`。
+
+- 日期：2026-10-10；范围：默认启动切换；旧编辑器删除另批。
+- 相关：[主程序接入计划 E](../plan/TYPST_MAIN_APP_INTEGRATION.md)、
+  [ADR 0036](../adr/ADR-0036-typst-default-editor.md)。
+- 基线：分支 `ation_ciger/feat/typst-vertical-navigation`（[开发日志《Typst 主程序候选的视觉行导航与几何键有序排队》](2026-10-10-typst-vertical-navigation.md)）之上；分支
   `ation_ciger/feat/typst-default-editor`。源码与二进制指纹见
-  [source-hashes.json](evidence/SPK-0059/source-hashes.json)。
+  [source-hashes.json](evidence/typst-default-editor/source-hashes.json)。
 
 ## 问题
 
@@ -14,7 +16,7 @@ Typst 编译完成后再换成页面像素，已提交正文出现两套绘制�
 只在 `dev/typst-editor` 加 `--typst-editor` 时可用。阻止默认切换的依赖通告在 main 的
 stock 构建中同样存在：同为 7 项（RUSTSEC-2024-0320、2024-0436、2025-0141、2026-0192、
 2026-0194、2026-0195、2026-0206），见
-[main-stock-advisories.log](evidence/SPK-0059/main-stock-advisories.log)。
+[main-stock-advisories.log](evidence/typst-default-editor/main-stock-advisories.log)。
 
 ## 实现
 
@@ -59,13 +61,13 @@ xvfb-run -a -s '-screen 0 1280x900x24' \
 
 | 检查 | 结果与证据 |
 |---|---|
-| 根回归 | **210 passed / 0 failed / 32 ignored**，编辑器测试现属默认构建，新增 6 项启动迁移与 1 项只读探测用例；[root-tests.log](evidence/SPK-0059/root-tests.log) |
-| 开发 manifest | **132 passed / 0 failed / 32 ignored**；[dev-tests.log](evidence/SPK-0059/dev-tests.log) |
+| 根回归 | **210 passed / 0 failed / 32 ignored**，编辑器测试现属默认构建，新增 6 项启动迁移与 1 项只读探测用例；[root-tests.log](evidence/typst-default-editor/root-tests.log) |
+| 开发 manifest | **132 passed / 0 failed / 32 ignored**；[dev-tests.log](evidence/typst-default-editor/dev-tests.log) |
 | gates | 根/开发 fmt、clippy（含根 `--no-default-features`）、build、rustdoc、文件规模；根 licenses/bans/sources 通过（fork 为路径依赖） |
-| 普通启动实机 | 不带参数启动根二进制，原 33 步流程全通过，112 audit frames、48 pending，committed egui Text draw **0**；[summary.json](evidence/SPK-0059/native/summary.json) |
-| 坏旧库 | 随机字节冒充旧会话：窗口显示“无法打开默认文档”、路径与恢复方式，不启动编辑器，旧文件 sha256 不变、未建新库；[截图](evidence/SPK-0059/startup-error/corrupt-legacy.png)、[日志](evidence/SPK-0059/startup-error/corrupt-legacy.log) |
-| 默认路径迁移 | 无环境变量：`--legacy` 新建并保存正文后，普通启动创建 `document.v1.sqlite`，旧文件 sha256 不变，Typst 呈现迁移正文且 egui 文字绘制 0；[summary.json](evidence/SPK-0059/default-launch/summary.json)、[截图](evidence/SPK-0059/default-launch/default.png) |
-| advisories | 根构建 **Fail**，与 main stock 构建编号完全相同的 7 项；[root-advisories.log](evidence/SPK-0059/root-advisories.log) |
+| 普通启动实机 | 不带参数启动根二进制，原 33 步流程全通过，112 audit frames、48 pending，committed egui Text draw **0**；[summary.json](evidence/typst-default-editor/native/summary.json) |
+| 坏旧库 | 随机字节冒充旧会话：窗口显示“无法打开默认文档”、路径与恢复方式，不启动编辑器，旧文件 sha256 不变、未建新库；[截图](evidence/typst-default-editor/startup-error/corrupt-legacy.png)、[日志](evidence/typst-default-editor/startup-error/corrupt-legacy.log) |
+| 默认路径迁移 | 无环境变量：`--legacy` 新建并保存正文后，普通启动创建 `document.v1.sqlite`，旧文件 sha256 不变，Typst 呈现迁移正文且 egui 文字绘制 0；[summary.json](evidence/typst-default-editor/default-launch/summary.json)、[截图](evidence/typst-default-editor/default-launch/default.png) |
+| advisories | 根构建 **Fail**，与 main stock 构建编号完全相同的 7 项；[root-advisories.log](evidence/typst-default-editor/root-advisories.log) |
 
 启动迁移用例覆盖：无旧文件不建库、空旧库不迁移且字节不变、有 head 迁移一次且旧文件字节
 不变、已有 v1 不被覆盖、非旧版 schema 报错并点名文件、错误页显示原因与 `--legacy`；存储层
