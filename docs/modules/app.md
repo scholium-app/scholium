@@ -78,6 +78,11 @@ placement 的 scale 取量化后的值，故命中/caret 与绘制一致。页�
 位置，因为 egui-winit 在缺少 IME 输出的帧关闭平台输入法，反复开关会让 fcitx5 停止送字。
 同帧 Text 仅在与 IME Commit 文字相同时视为重复丢弃；输入法透传的英文 Text 照常输入。
 Escape 只取消选区、组合与拖动，不释放页面焦点。
+视图跟随光标（`typst_editor/follow.rs`）：键入/粘贴/提交、Enter、删除、方向键、Home/End、撤销重做与移动光标的功能区命令
+引起光标移动后，滚动区最小幅度滚动，使光标矩形上下（放宽时左右）各留 2 行正文（`FOLLOW_MARGIN_LINES`）；
+Ctrl+Home/End 另外露出页面顶部（含外边距）与底部。只有输入引起的光标变化才触发；滚轮、滚动条与点击不触发，
+指针按下或滚轮会丢弃尚未执行的跟随。Scene 不是当前版本时保持“待跟随”，等新 Scene 采纳后用其 caret 几何滚动，
+绝不对准旧位置；滚动改变的可见范围照常经 `set_view` 请求新区域条带。AUDIT `follow` 报告 caret 与可见范围（pt）。
 
 Ribbon 的开发命令发结构 intent；标题作用于段落，源视图禁用正文写按钮。
 文字样式：`Ctrl+B` 粗体、`Ctrl+I` 强调（导航面板开关改为 `Ctrl+Shift+B`）。有选区时发一次

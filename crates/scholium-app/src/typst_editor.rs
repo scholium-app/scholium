@@ -4,6 +4,7 @@ mod attach;
 mod audit;
 mod confirm;
 mod deferred;
+mod follow;
 mod indicator;
 mod input;
 mod paint;
@@ -135,6 +136,7 @@ pub(crate) struct EditorSession {
     clicks: selection::ClickRun,
     /// Style armed for the next typed text at the caret.
     pending_style: Option<style::Pending>,
+    follow: follow::Follow,
 }
 
 impl std::fmt::Debug for EditorSession {
@@ -228,6 +230,7 @@ impl EditorSession {
             placeholder: None,
             clicks: selection::ClickRun::default(),
             pending_style: None,
+            follow: Default::default(),
         };
         state.editor = Some(EditorView::default());
         result.metadata(state);
@@ -467,9 +470,11 @@ impl EditorSession {
     fn intents(&mut self, state: &mut WorkspaceState) {
         if std::mem::take(&mut state.undo_requested) {
             self.history(false, state);
+            self.follow.request();
         }
         if std::mem::take(&mut state.redo_requested) {
             self.history(true, state);
+            self.follow.request();
         }
         let intents = state
             .editor
@@ -477,8 +482,13 @@ impl EditorSession {
             .map(|v| std::mem::take(&mut v.commands))
             .unwrap_or_default();
         for intent in intents {
+            let caret = (self.cursor.leaf, self.cursor.byte);
             self.command(intent, state);
             self.focus = true;
+            self.follow.note(
+                follow::Input::Keyed,
+                (self.cursor.leaf, self.cursor.byte) != caret,
+            );
         }
     }
 

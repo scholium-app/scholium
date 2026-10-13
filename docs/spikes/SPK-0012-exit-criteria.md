@@ -39,7 +39,8 @@
 数学上标/下标节点与逐字素数学文字见[报告 0064](SPK-0064-math-attach.md)，
 点击命中、双击/三击选择、样式叶 caret 与公式模式提示见[报告 0065](SPK-0065-editor-interaction.md)，
 选区粗体/强调与输入样式见[报告 0066](SPK-0066-inline-styles.md)，
-页面按显示分辨率栅格与像素吸附见[报告 0067](SPK-0067-sharp-raster.md)。
+页面按显示分辨率栅格与像素吸附见[报告 0067](SPK-0067-sharp-raster.md)，
+视图跟随光标见[报告 0068](SPK-0068-caret-follow.md)。
 这些限定报告不改变上表阶段判定，完整 C 与默认后端替换未验收。
 
 - 条件 1：[egui 原始验收](SPK-0004-native-ui-egui.md)、[ADR 0006](../adr/ADR-0006-native-ui-framework.md)、

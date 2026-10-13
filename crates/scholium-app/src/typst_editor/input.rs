@@ -104,6 +104,7 @@ impl EditorSession {
     ) -> Option<String> {
         self.pointer_event(&event, state);
         let caret = (self.cursor.leaf, self.cursor.byte);
+        let input = follow::Input::of(&event);
         match event {
             egui::Event::Text(text) if state.composition.is_none() => {
                 self.insert(text, true, state)
@@ -129,6 +130,8 @@ impl EditorSession {
             _ => {}
         }
         self.settle_placeholder(state);
+        self.follow
+            .note(input, (self.cursor.leaf, self.cursor.byte) != caret);
         // An armed typing style belongs to one caret position with no selection.
         if (self.cursor.leaf, self.cursor.byte) != caret || self.selected() {
             self.pending_style = None;
