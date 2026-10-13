@@ -378,3 +378,25 @@ fn typing_into_a_placeholder_keeps_it_as_content() {
     };
     assert_eq!(literal(&children[1]), "+y");
 }
+
+#[test]
+fn grouped_typing_into_a_placeholder_keeps_it_and_undoes_in_one_step() {
+    let mut f = Fixture::new();
+    let (_, depth) = into_placeholder(&mut f);
+    let with_placeholder = (*f.editor.snapshot).clone();
+    f.events(vec![text("+")]);
+    f.events(vec![text("y")]);
+    click_body(&mut f);
+    assert_eq!(
+        holes(&f),
+        0,
+        "the typed text keeps the placeholder as content"
+    );
+    assert_eq!(
+        f.editor.undo.len(),
+        depth + 2,
+        "LeaveSlot step plus one typing group"
+    );
+    f.editor.history(false, &mut f.state);
+    assert_eq!(*f.editor.snapshot, with_placeholder);
+}

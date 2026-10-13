@@ -1,0 +1,14 @@
+running 12 tests
+test typst_editor::selection::pointer_tests::a_press_outside_the_page_resets_the_click_history ... ok
+test typst_editor::history::tests::a_click_splits_the_group ... ok
+test typst_editor::history::tests::moving_the_caret_with_an_arrow_splits_the_group ... ok
+test typst_editor::history::tests::typing_undoes_and_redoes_word_by_word ... ok
+test typst_editor::history::tests::a_new_edit_after_undo_clears_redo ... ok
+test typst_editor::history::tests::a_pause_of_one_second_starts_a_new_group ... ok
+test typst_editor::history::tests::typing_in_a_pending_style_forms_one_step_with_the_arming ... ok
+test typst_editor::history::tests::printable_key_events_beside_text_do_not_split_the_group ... ok
+test typst_editor::history::tests::consecutive_backspaces_are_one_step_and_separate_from_typing ... ok
+test typst_editor::history::tests::a_structural_command_ends_the_group ... ok
+test typst_editor::history::tests::the_history_cap_counts_groups ... ok
+test typst_editor::history::tests::ime_commits_join_the_typing_group_but_paste_does_not ... ok
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 157 filtered out; finished in 5.82s

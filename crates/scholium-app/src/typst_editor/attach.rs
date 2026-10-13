@@ -87,6 +87,7 @@ impl EditorSession {
         match LocalSession::restore_structured(entry.snapshot, entry.requests) {
             Ok(session) => {
                 self.undo.pop();
+                self.run = None;
                 self.session = session;
                 self.publish(state);
             }
