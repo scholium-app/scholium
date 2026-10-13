@@ -1,12 +1,14 @@
-# SPK-0057：Typst 主程序候选的同源选区与原子多行替换
+# Typst 主程序候选的同源选区与原子多行替换
 
-- 日期：2026-10-02；结论：**Pass（C2 的限定正文选区批次）**。
-- 对应：[主程序接入计划 C](../plan/TYPST_MAIN_APP_INTEGRATION.md)、
-  [阶段 0 Typst 映射](../plan/ROADMAP.md)、[ADR 0035](../adr/ADR-0035-typst-page-selection.md)。
+> 本文是第 1 阶段实现的追溯记录（过去时），不是阶段 0 验证证据，也不作为实现依据；当前规范见 `docs/modules/` 与 `docs/adr/`。
+
+- 日期：2026-10-02；范围：C2 的限定正文选区批次。
+- 相关：[主程序接入计划 C](../plan/TYPST_MAIN_APP_INTEGRATION.md)、
+  [ADR 0035](../adr/ADR-0035-typst-page-selection.md)。
 - 基线：C1 `8cc23f57d5127d9b1623a063e324a694716b9efd` 合入已发布的范围内核 main
   `ee7c9e5757cabfaa0e94c7b9a5910ff45c8ff152`，本地合并 `7cc8414`（完整指纹见证据）。
 - 分支：`codex/feat/typst-page-selection`；源码与运行二进制指纹见
-  [source-hashes.json](evidence/SPK-0057/source-hashes.json)。无依赖、锁文件或存储 schema 变化。
+  [source-hashes.json](evidence/typst-page-selection/source-hashes.json)。无依赖、锁文件或存储 schema 变化。
 
 ## 判据与实现
 
@@ -63,26 +65,26 @@ cargo deny --manifest-path dev/typst-editor/Cargo.toml --locked --config deny.to
 
 | 检查 | 结果与证据 |
 |---|---|
-| 根回归 | **157 passed / 0 failed / 32 ignored**，包括 12 项范围核心测试；[root-tests.log](evidence/SPK-0057/root-tests.log) |
-| 候选回归 | **103 passed / 0 failed / 32 ignored**，新增 12 项页面选区用例；[dev-tests.log](evidence/SPK-0057/dev-tests.log) |
+| 根回归 | **157 passed / 0 failed / 32 ignored**，包括 12 项范围核心测试；[root-tests.log](evidence/typst-page-selection/root-tests.log) |
+| 候选回归 | **103 passed / 0 failed / 32 ignored**，新增 12 项页面选区用例；[dev-tests.log](evidence/typst-page-selection/dev-tests.log) |
 | gates | 根/候选 fmt、clippy、build、rustdoc、文件规模与 licenses/bans/sources 通过；完整 advisories 单列 Fail |
-| fork 来源 | 上游对象 + 四补丁逐文件重建一致；[fork-source.json](evidence/SPK-0057/fork-source.json) |
-| 独立 stock | full/styles/heading 三组相同大小、逐像素一致；[stock-comparison.json](evidence/SPK-0057/stock-comparison.json) |
-| 实际窗口 | 24 步全通过：既有 Unicode/数学流程，再整公式选择替换、撤销恢复选区、反向拖选、多行粘贴、跨段 Shift 替换及继续输入、撤销重做、保存和重开；[native-check.log](evidence/SPK-0057/native-check.log) |
-| 绘制与竞态 | 74 audit frames，34 pending、9 有选区；全部 committed egui Text draw **0**、source reads **0**，记录的当前 cursor 具有同 Scene caret；[summary.json](evidence/SPK-0057/native/summary.json) |
+| fork 来源 | 上游对象 + 四补丁逐文件重建一致；[fork-source.json](evidence/typst-page-selection/fork-source.json) |
+| 独立 stock | full/styles/heading 三组相同大小、逐像素一致；[stock-comparison.json](evidence/typst-page-selection/stock-comparison.json) |
+| 实际窗口 | 24 步全通过：既有 Unicode/数学流程，再整公式选择替换、撤销恢复选区、反向拖选、多行粘贴、跨段 Shift 替换及继续输入、撤销重做、保存和重开；[native-check.log](evidence/typst-page-selection/native-check.log) |
+| 绘制与竞态 | 74 audit frames，34 pending、9 有选区；全部 committed egui Text draw **0**、source reads **0**，记录的当前 cursor 具有同 Scene caret；[summary.json](evidence/typst-page-selection/native/summary.json) |
 
 选区回归覆盖 Unicode/literal、整分数 bounds、反向跨段、多行/空段落、删除/Enter 单
 动作、新叶继续输入、撤销恢复两端、新 epoch 同 revision、同帧旧指针、placement 变化、
 未知/比例 caret、容量拒绝、pending Raw 保留及当前 cluster 边界/pending 隐藏。
 
-已目检截图：[整公式](evidence/SPK-0057/native/14-whole-formula-selection.png)、
-[反向拖选](evidence/SPK-0057/native/17-reverse-drag.png)、
-[跨段 Shift 选区](evidence/SPK-0057/native/19-cross-paragraph-shift-selection.png)、
-[保存重开](evidence/SPK-0057/native/24-range-reopened.png)。区域指示符字体显示不作为字形
+已目检截图：[整公式](evidence/typst-page-selection/native/14-whole-formula-selection.png)、
+[反向拖选](evidence/typst-page-selection/native/17-reverse-drag.png)、
+[跨段 Shift 选区](evidence/typst-page-selection/native/19-cross-paragraph-shift-selection.png)、
+[保存重开](evidence/typst-page-selection/native/24-range-reopened.png)。区域指示符字体显示不作为字形
 覆盖证明；模型字素与保存前后完整快照由脚本断言。窗口日志仅规整 EOF/行尾空白。
 
 完整 advisories **Fail**，仍是 bincode、paste、quick-xml 两项、rustybuzz、ttf-parser、
-yaml-rust 七项既有错误；[advisories.log](evidence/SPK-0057/advisories.log)。不新增 ignore，
+yaml-rust 七项既有错误；[advisories.log](evidence/typst-page-selection/advisories.log)。不新增 ignore，
 不把许可通过或候选可用当成安全门禁通过，依照 ADR 0034 保留开发入口隔离。
 
 ## 未覆盖与下一步

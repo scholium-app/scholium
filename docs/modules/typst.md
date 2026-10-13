@@ -91,7 +91,7 @@ Attach 为 `AttachElem`（t=sup、b=sub），槽编号 base 1、sub 2、sup 3。
 只挂在包装元素上的 origin 会丢失，样式叶就没有任何 caret 几何。`sin` 等多字母词暂按独立斜体字母显示（已知限制）。
 键入的空格只分隔原子（生成源码丢弃它），故编辑面里空格原子保留 caret 但字号为 0、不占宽，并按 Normal 类
 （默认无类会被当作字母而吃掉二元/关系符后的断点）；这样编辑面与预览在二元/关系运算符之后断行位置一致
-（见[报告 0070](../spikes/SPK-0070-math-enter-wrap.md)）。无运算符的长串（含上标内）在 Typst 与 TeX 中都不可断。
+（见[开发日志《公式内回车与长行内公式》](../log/2026-10-13-math-enter-wrap.md)）。无运算符的长串（含上标内）在 Typst 与 TeX 中都不可断。
 生成源码（`structured_source`）对数学文字同样逐原子输出：ASCII 字母与数字串裸写并以空格分隔，
 白名单运算符裸写，其余为转义引号串；Attach 写为 `base^(sup)_(sub)`，多原子 base 加括号。
 World 的 source/file 均拒绝，today 无环境求值。RawMath 返回明确节点错误，既不改变模型

@@ -1,7 +1,9 @@
-# SPK-0067：编辑面按显示分辨率栅格（正文发虚）
+# 编辑面按显示分辨率栅格（正文发虚）
 
-- 日期：2026-10-12；结论：**Pass**（清晰度、几何一致与逐键/滚动成本均达标；仍随文档长度增长的只有排版本身与 ≤1 px/pt 的底图）。
-- 对应：[P1 排版工作区规划](../plan/P1_UI.md)的页面编辑；不改变阶段 0 判定。
+> 本文是第 1 阶段实现的追溯记录（过去时），不是阶段 0 验证证据，也不作为实现依据；当前规范见 `docs/modules/` 与 `docs/adr/`。
+
+- 日期：2026-10-12；范围：清晰度、几何一致与逐键/滚动成本均达标；仍随文档长度增长的只有排版本身与 ≤1 px/pt 的底图。
+- 相关：[P1 排版工作区规划](../plan/P1_UI.md)的页面编辑。
 - 基线：main `fc31bce`；分支 `ation_ciger/fix/sharp-raster`。
 
 ## 复现与根因
@@ -46,8 +48,8 @@ typst-render **不**按边界跳过项目：对整页帧渲染一个条带大小
 | --- | --- |
 | 单元测试 | `editor/raster/tests.rs`（上限、窗口选择含两端截断与离页、倍率改变的条带索引、渲染顺序、**条带 = 整页对应行 ≤1 LSB**、裁剪丢弃项目且不改变像素）、`editor/tests.rs`（Scene 只带底图与可见条带、边距条带按 stamp 逐条补齐且不重复、`set_view` 不重排版且可见先行、倍率变化重渲染）、`raster/tests.rs`（目标倍率 fit-width/缩放 × ppp 1/1.25/1.5/2、量化、吸附、pt 命中位移 ≤0.5 物理像素、条带边、去抖）、`tests.rs`（会话：去抖后重栅格且键入沿用新倍率、**旧 Scene 条带不被采纳**、滚动加载并清除三个视口之外的条带） |
 | 与独立 stock Typst 逐像素比较 | 4/4 逐字节相等（`fork-check` 钉住 2 px/pt 并取全部条带；未放宽任何阈值） |
-| 实机（`sharp-raster-check.py`，Xvfb 1920x1400，`WINIT_X11_SCALE_FACTOR=1.5`） | 9/9：位图宽 1786 px = 页面显示宽；`px_per_pt` 3.0003（旧 2.0）；原点在物理像素网格；150 行长页面向上/向下滚轮后可见条带齐备且只驻留窗口内条带（4–5 / 15）；文字梯度 38.8 对旧 31.4，**增益 1.24×**（阈值 1.2×）；[summary.json](evidence/SPK-0067/summary.json) |
-| 前后对比（scale 1.5，放大 3×的同一行文字） | 前（固定 2 px/pt）：[crop-fixed-2px-per-pt.png](evidence/SPK-0067/crop-fixed-2px-per-pt.png)；后：[crop-display-resolution.png](evidence/SPK-0067/crop-display-resolution.png) |
+| 实机（`sharp-raster-check.py`，Xvfb 1920x1400，`WINIT_X11_SCALE_FACTOR=1.5`） | 9/9：位图宽 1786 px = 页面显示宽；`px_per_pt` 3.0003（旧 2.0）；原点在物理像素网格；150 行长页面向上/向下滚轮后可见条带齐备且只驻留窗口内条带（4–5 / 15）；文字梯度 38.8 对旧 31.4，**增益 1.24×**（阈值 1.2×）；[summary.json](evidence/sharp-raster/summary.json) |
+| 前后对比（scale 1.5，放大 3×的同一行文字） | 前（固定 2 px/pt）：[crop-fixed-2px-per-pt.png](evidence/sharp-raster/crop-fixed-2px-per-pt.png)；后：[crop-display-resolution.png](evidence/sharp-raster/crop-display-resolution.png) |
 
 窗口检查在 1280x900 的 Xvfb 上只给出约 2.03 px/pt（该屏幕物理宽本身只够 2 px/pt），不能复现问题，
 因此新步骤用 1920x1400 的屏幕，等价于用户的“逻辑宽 1280、scale 1.5”。

@@ -1,12 +1,14 @@
-# SPK-0055：候选输入的字素边界与逻辑叶导航
+# 候选输入的字素边界与逻辑叶导航
 
-- 日期：2026-10-02；结论：**Pass（C 的限定输入批次）**。
+> 本文是第 1 阶段实现的追溯记录（过去时），不是阶段 0 验证证据，也不作为实现依据；当前规范见 `docs/modules/` 与 `docs/adr/`。
+
+- 日期：2026-10-02；范围：C 的限定输入批次。
 - 基线：`e852ffd1f51f4db72d39c879b8a6421fd97ac41e`，其根与候选
   [CI 36894295585](https://github.com/scholium-app/scholium/actions/runs/36894295585) 均通过。
 - 分支：`codex/fix/typst-grapheme-navigation`；本报告同提交的源码与实际二进制指纹见
-  [source-hashes.json](evidence/SPK-0055/source-hashes.json)。
-- 对应[阶段 0 Typst 映射](../plan/ROADMAP.md)、[主程序接入计划 C](../plan/TYPST_MAIN_APP_INTEGRATION.md)、
-  [ADR 0034](../adr/ADR-0034-typst-main-app-candidate.md)；完整阶段判定仍见报告 0012。
+  [source-hashes.json](evidence/typst-grapheme-navigation/source-hashes.json)。
+- 相关：[主程序接入计划 C](../plan/TYPST_MAIN_APP_INTEGRATION.md)、
+  [ADR 0034](../adr/ADR-0034-typst-main-app-candidate.md)；阶段判定仍以[阶段 0 出口条件](../spikes/SPK-0012-exit-criteria.md)为准。
 
 ## 问题与判据
 
@@ -15,7 +17,7 @@
 输入被核心拒绝。候选左右方向键还停在当前叶边缘，无法自然进入邻接正文或数学叶。
 
 先添加三个回归，基线结果为 8 个原用例通过、3 个新用例失败，见
-[before-fix.log](evidence/SPK-0055/before-fix.log)。判据是合并字素后继续输入不被拒绝、
+[before-fix.log](evidence/typst-grapheme-navigation/before-fix.log)。判据是合并字素后继续输入不被拒绝、
 光标保持合法 UTF-8 字素边界、左右键跨文字/数学叶但不首尾循环，导航不追加正文动作。
 
 ## 实现边界
@@ -33,7 +35,7 @@
 ## 环境与复现
 
 Linux x86_64，Rust/Cargo 1.96.0，eframe 0.36.2，锁定 Typst 0.15.1 fork。来源与字体环境
-沿用[报告 0054](SPK-0054-typst-main-app-candidate.md)，没有变更库版本或打包字体。
+沿用[报告 0054](../spikes/SPK-0054-typst-main-app-candidate.md)，没有变更库版本或打包字体。
 验证实际 `scholium-app`，X11/Xvfb 1280×900；窗口脚本使用 xdotool、xclip、ImageMagick。
 
 ```sh
@@ -59,14 +61,14 @@ xvfb-run -a -s '-screen 0 1280x900x24' \
 | 检查 | 结果与证据 |
 |---|---|
 | 回归 | 原 8 + 新 3 个候选用例均通过；导航不改变 revision，两个合并字素场景可继续输入 |
-| 开发 gates | fmt/clippy/build 通过；91 passed、0 failed、32 个旧 ignored；[dev-tests.log](evidence/SPK-0055/dev-tests.log) |
-| 根 gates | fmt/clippy/tests/文件规模通过；145 passed、0 failed、32 个旧 ignored；[root-tests.log](evidence/SPK-0055/root-tests.log) |
-| 实际窗口 | 13 步流程通过，保存重开后的完整 Unicode 快照相同；[native-check.log](evidence/SPK-0055/native-check.log) |
-| 绘制与 caret | 每个记录的 current cursor 有同 Scene caret，全部已提交正文 egui Text 为 0；[summary.json](evidence/SPK-0055/native/summary.json) |
+| 开发 gates | fmt/clippy/build 通过；91 passed、0 failed、32 个旧 ignored；[dev-tests.log](evidence/typst-grapheme-navigation/dev-tests.log) |
+| 根 gates | fmt/clippy/tests/文件规模通过；145 passed、0 failed、32 个旧 ignored；[root-tests.log](evidence/typst-grapheme-navigation/root-tests.log) |
+| 实际窗口 | 13 步流程通过，保存重开后的完整 Unicode 快照相同；[native-check.log](evidence/typst-grapheme-navigation/native-check.log) |
+| 绘制与 caret | 每个记录的 current cursor 有同 Scene caret，全部已提交正文 egui Text 为 0；[summary.json](evidence/typst-grapheme-navigation/native/summary.json) |
 
-截图：[合并 Emoji 后继续输入](evidence/SPK-0055/native/11-joined-emoji.png)、
-[删除后继续输入](evidence/SPK-0055/native/12-joined-regional-indicators.png)、
-[保存重开](evidence/SPK-0055/native/13-unicode-reopened.png)。
+截图：[合并 Emoji 后继续输入](evidence/typst-grapheme-navigation/native/11-joined-emoji.png)、
+[删除后继续输入](evidence/typst-grapheme-navigation/native/12-joined-regional-indicators.png)、
+[保存重开](evidence/typst-grapheme-navigation/native/13-unicode-reopened.png)。
 
 C 下一批应形成结构范围的原子替换合约，再连接拖选与复制剪切；不能用连续单叶请求假装
 选区替换是一次动作。分页/显示时延仍属于 D；七项既有依赖通告未处理，默认替换仍未完成。

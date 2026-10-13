@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real-window caret following at scale 1.5 (SPK-0068).
+"""Real-window caret following at scale 1.5 (docs/log/2026-10-13-caret-follow.md).
 
 Types a first paragraph and 45 more lines, then asserts the caret (AUDIT `follow`) lies inside the
 visible page range with the margin; a wheel scroll back up is not undone while idle; one more typed

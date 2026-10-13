@@ -32,7 +32,7 @@ name = "typst-main-fork-check"
 path = "../../spikes/typst-main-editor/fork-check.rs"
 required-features = ["editor"]
 
-# Per-keystroke layout+raster cost at several raster scales (SPK-0067).
+# Per-keystroke layout+raster cost at several raster scales (docs/log/2026-10-12-sharp-raster.md).
 [[example]]
 name = "typst-main-raster-bench"
 path = "../../spikes/typst-main-editor/raster-bench.rs"

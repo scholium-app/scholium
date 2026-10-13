@@ -15,7 +15,7 @@ release 构建中单段到 80 段文档的 worker 布局为 0–11 ms，输入�
 
 ADR 0034 以依赖通告未处理为由不批准默认替换。核对发现 main 的**普通 registry 构建**同样
 失败于完全相同的 7 项通告（同为 Typst 0.15.1 依赖树；证据
-[main-stock-advisories.log](../spikes/evidence/SPK-0059/main-stock-advisories.log)）。其中
+[main-stock-advisories.log](../log/evidence/typst-default-editor/main-stock-advisories.log)）。其中
 bincode、paste 为“停止维护且无安全升级”，短期不可清零。该门禁并不区分两条路径，不能继续
 作为保留回显路径为默认的理由。
 
@@ -42,4 +42,4 @@ bincode、paste 为“停止维护且无安全升级”，短期不可清零。�
 旧路径独有的能力暂不在默认路径：分页与纸张设置、生成 Typst 源码工作区与最终预览、正文
 无障碍文本、示例文档；旧公式迁移为 RawMath 后在新编辑器中报布局诊断，转换前不可编辑。
 下一步删除旧编辑器与回显代码、合并开发 manifest，并按需移植上述能力；在此之前 `--legacy`
-仍可打开旧数据。验证见[报告 0059](../spikes/SPK-0059-typst-default-editor.md)。
+仍可打开旧数据。验证见[开发日志《普通启动切换为 Typst Content 编辑器》](../log/2026-10-10-typst-default-editor.md)。

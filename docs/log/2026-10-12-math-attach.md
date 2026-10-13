@@ -1,6 +1,8 @@
-# SPK-0064：数学上标/下标节点与逐字素数学文字
+# 数学上标/下标节点与逐字素数学文字
 
-- 日期：2026-10-12；结论：**Pass**。
+> 本文是第 1 阶段实现的追溯记录（过去时），不是阶段 0 验证证据，也不作为实现依据；当前规范见 `docs/modules/` 与 `docs/adr/`。
+
+- 日期：2026-10-12。
 - 对应：[ADR 0039](../adr/ADR-0039-math-attach.md)、[体验原则](../EXPERIENCE.md)“上下标是显式节点，不靠字符串猜当前槽位”。
 - 基线：main（合并 A4 编辑面后）；分支 `ation_ciger/feat/math-attach`。
 
@@ -43,14 +45,14 @@ xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/math-att
 
 | 检查 | 结果与证据 |
 |---|---|
-| 回归 | **217 passed / 0 failed**；[tests.log](evidence/SPK-0064/tests.log)。新增：模型 4（往返、缺槽拒绝、身份/未填、深度）、文档 17（拆分、起始/Hole、补第二槽、重复槽、占位 Hole、删槽拍平并合并 Text、撤销、边界）、源码 4、编辑面几何 6（每个字素边界有 caret、52 个字母均为斜体原子、`x+y` 原子与二元间距、槽位置、空槽/Hole 基、Row 内叶）、应用 16（含占位 Hole 生命周期：点击/Left/Ctrl+Home/End 离开恢复原快照且无多余撤销步、一次撤销撤销用户上一步、空占位 Right 退出公式、在占位中输入则保留）+ 朗读 2 |
+| 回归 | **217 passed / 0 failed**；[tests.log](evidence/math-attach/tests.log)。新增：模型 4（往返、缺槽拒绝、身份/未填、深度）、文档 17（拆分、起始/Hole、补第二槽、重复槽、占位 Hole、删槽拍平并合并 Text、撤销、边界）、源码 4、编辑面几何 6（每个字素边界有 caret、52 个字母均为斜体原子、`x+y` 原子与二元间距、槽位置、空槽/Hole 基、Row 内叶）、应用 16（含占位 Hole 生命周期：点击/Left/Ctrl+Home/End 离开恢复原快照且无多余撤销步、一次撤销撤销用户上一步、空占位 Right 退出公式、在占位中输入则保留）+ 朗读 2 |
 | 输入语义 | `$x^2` → 右键 → `+y` 得 Row[Attach{x, sup 2}, Text "+y"]；`x_i^2` 得单个带两槽的 Attach；正文与粘贴中的 `^`/`_` 保持字面 |
 | 生成源码 | `#$\"/^_&@` 等逐个出现在预览编译输出的文字里、不在引号串之外出现；`x^(2)_(i)`、`(a b)^(2)`、`(x^(2))^(3)` 编译通过 |
-| gates | fmt、clippy（`-D warnings`）、文件规模：[fmt.log](evidence/SPK-0064/fmt.log)、[clippy.log](evidence/SPK-0064/clippy.log)、[size.log](evidence/SPK-0064/size.log) |
-| 窗口检查 | native 33 步、a11y 9/9、source-view 5/5、default-launch 全部通过：[native](evidence/SPK-0064/native-check.log)、[a11y](evidence/SPK-0064/a11y-check.log)、[source](evidence/SPK-0064/source-view-check.log)、[launch](evidence/SPK-0064/default-launch-check.log) |
-| 上下标实机 | `math-attach-check.py`：键入 `$x^2` Right ` + y_i` 得 `[{base x, sup 2}, " + ", {base y, sub i}]`，模型中没有字面 `^`/`_`，Ctrl+2 预览 1 页无错误：[summary.json](evidence/SPK-0064/attach-check/summary.json) |
-| 截图 | Visual 模式 [x² + yᵢ](evidence/SPK-0064/attach-check/03-visual-x2-plus-yi.png)；Ctrl+2 源码 `$x^(2) + y_(i)$` 与预览 [x² + yᵢ](evidence/SPK-0064/attach-check/04-preview-x2-plus-yi.png) |
-| stock 像素对照 | 4 个夹具逐字节相同（`full`、`scripts`、`styles`、`heading`）：[stock-comparison.json](evidence/SPK-0064/stock-comparison.json)；上游 fork 重建通过：[typst-fork-source.json](evidence/SPK-0064/typst-fork-source.json) |
+| gates | fmt、clippy（`-D warnings`）、文件规模：[fmt.log](evidence/math-attach/fmt.log)、[clippy.log](evidence/math-attach/clippy.log)、[size.log](evidence/math-attach/size.log) |
+| 窗口检查 | native 33 步、a11y 9/9、source-view 5/5、default-launch 全部通过：[native](evidence/math-attach/native-check.log)、[a11y](evidence/math-attach/a11y-check.log)、[source](evidence/math-attach/source-view-check.log)、[launch](evidence/math-attach/default-launch-check.log) |
+| 上下标实机 | `math-attach-check.py`：键入 `$x^2` Right ` + y_i` 得 `[{base x, sup 2}, " + ", {base y, sub i}]`，模型中没有字面 `^`/`_`，Ctrl+2 预览 1 页无错误：[summary.json](evidence/math-attach/attach-check/summary.json) |
+| 截图 | Visual 模式 [x² + yᵢ](evidence/math-attach/attach-check/03-visual-x2-plus-yi.png)；Ctrl+2 源码 `$x^(2) + y_(i)$` 与预览 [x² + yᵢ](evidence/math-attach/attach-check/04-preview-x2-plus-yi.png) |
+| stock 像素对照 | 4 个夹具逐字节相同（`full`、`scripts`、`styles`、`heading`）：[stock-comparison.json](evidence/math-attach/stock-comparison.json)；上游 fork 重建通过：[typst-fork-source.json](evidence/math-attach/typst-fork-source.json) |
 
 ## 发现
 

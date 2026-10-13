@@ -1,10 +1,12 @@
-# SPK-0058：Typst 主程序候选的视觉行导航与几何键有序排队
+# Typst 主程序候选的视觉行导航与几何键有序排队
 
-- 日期：2026-10-10；结论：**Pass（C 的限定视觉行导航批次）**。
-- 对应：[主程序接入计划 C](../plan/TYPST_MAIN_APP_INTEGRATION.md)、
-  [阶段 0 Typst 映射](../plan/ROADMAP.md)、[ADR 0035](../adr/ADR-0035-typst-page-selection.md)。
+> 本文是第 1 阶段实现的追溯记录（过去时），不是阶段 0 验证证据，也不作为实现依据；当前规范见 `docs/modules/` 与 `docs/adr/`。
+
+- 日期：2026-10-10；范围：C 的限定视觉行导航批次。
+- 相关：[主程序接入计划 C](../plan/TYPST_MAIN_APP_INTEGRATION.md)、
+  [ADR 0035](../adr/ADR-0035-typst-page-selection.md)。
 - 基线：main `07f6a59`（含 C2 选区与纯文本剪贴板）；分支 `ation_ciger/feat/typst-vertical-navigation`。
-  源码与运行二进制指纹见 [source-hashes.json](evidence/SPK-0058/source-hashes.json)。
+  源码与运行二进制指纹见 [source-hashes.json](evidence/typst-vertical-navigation/source-hashes.json)。
   无依赖、锁文件、fork 补丁或存储 schema 变化。
 
 ## 判据与实现
@@ -49,7 +51,7 @@ Scene 当前后依次执行，遇到下一个需要更新几何的键再等待�
 ## 环境与复现
 
 Linux x86_64 / X11/Xvfb 1280×900，Rust/Cargo 1.96.0，eframe 0.36.2，Typst 0.15.1 fork；
-工具为 xdotool、xclip、ImageMagick。fork 补丁与锁文件未变，来源核对沿用报告 0057，
+工具为 xdotool、xclip、ImageMagick。fork 补丁与锁文件未变，来源核对沿用[开发日志《Typst 主程序候选的同源选区与原子多行替换》](2026-10-02-typst-page-selection.md)，
 由 CI 的 `verify-fork.py` 重跑。
 
 ```sh
@@ -74,11 +76,11 @@ cargo deny --manifest-path dev/typst-editor/Cargo.toml --locked --config deny.to
 
 | 检查 | 结果与证据 |
 |---|---|
-| 根回归 | **157 passed / 0 failed / 32 ignored**（候选 feature 不进根 workspace）；[root-tests.log](evidence/SPK-0058/root-tests.log) |
-| 候选回归 | **126 passed / 0 failed / 32 ignored**，新增 20 项行导航/排队用例；[dev-tests.log](evidence/SPK-0058/dev-tests.log) |
+| 根回归 | **157 passed / 0 failed / 32 ignored**（候选 feature 不进根 workspace）；[root-tests.log](evidence/typst-vertical-navigation/root-tests.log) |
+| 候选回归 | **126 passed / 0 failed / 32 ignored**，新增 20 项行导航/排队用例；[dev-tests.log](evidence/typst-vertical-navigation/dev-tests.log) |
 | gates | 根/候选 fmt、clippy、build、rustdoc、文件规模与 licenses/bans/sources 通过；完整 advisories 单列 Fail |
-| 实际窗口 | **33 步全通过**：既有 24 步，再长段软换行、第二行 Home、Up 回首行并 Down 原位返回、软换行 End、Shift+Up 跨段选区、一次替换、撤销恢复、“k↓m”无等待连按保序、保存重开；[native-check.log](evidence/SPK-0058/native-check.log) |
-| 绘制与竞态 | 121 audit frames，48 pending、1 帧观察到排队输入、12 帧有选区；committed egui Text draw **0**；[summary.json](evidence/SPK-0058/native/summary.json) |
+| 实际窗口 | **33 步全通过**：既有 24 步，再长段软换行、第二行 Home、Up 回首行并 Down 原位返回、软换行 End、Shift+Up 跨段选区、一次替换、撤销恢复、“k↓m”无等待连按保序、保存重开；[native-check.log](evidence/typst-vertical-navigation/native-check.log) |
+| 绘制与竞态 | 121 audit frames，48 pending、1 帧观察到排队输入、12 帧有选区；committed egui Text draw **0**；[summary.json](evidence/typst-vertical-navigation/native/summary.json) |
 
 行导航回归覆盖：最近行优先于水平距离、等 x 逻辑序、长段两行+短行+长段的目标 x 保持与
 原位返回、首行 Up/末行 Down 停在行首/末、空段落停靠、软换行 End/Home 的 affinity 与
@@ -87,13 +89,13 @@ Ctrl+Home/End、pending 几何键后输入保序、队列上限草稿、布局�
 Ribbon 意图等待队列、排队期间鼠标拒绝、未处理键保留 affinity、空叶选框、水平移动清除
 目标 x、上限时 IME 取消仍入队、排队输入关闭确认。
 
-已目检截图：[软换行行末](evidence/SPK-0058/native/28-end-at-soft-wrap.png)、
-[Shift+Up 选区](evidence/SPK-0058/native/29-shift-up-selection.png)、
-[保序输入](evidence/SPK-0058/native/32-type-down-type-order.png)。01–24 步截图与报告 0057
+已目检截图：[软换行行末](evidence/typst-vertical-navigation/native/28-end-at-soft-wrap.png)、
+[Shift+Up 选区](evidence/typst-vertical-navigation/native/29-shift-up-selection.png)、
+[保序输入](evidence/typst-vertical-navigation/native/32-type-down-type-order.png)。01–24 步截图与[开发日志《Typst 主程序候选的同源选区与原子多行替换》](2026-10-02-typst-page-selection.md)
 同一流程，本批只保留新增阶段。
 
 完整 advisories **Fail**，仍是 bincode、paste、quick-xml 两项、rustybuzz、ttf-parser、
-yaml-rust 七项既有错误，与报告 0057 编号一致；[advisories.log](evidence/SPK-0058/advisories.log)。
+yaml-rust 七项既有错误，与[开发日志《Typst 主程序候选的同源选区与原子多行替换》](2026-10-02-typst-page-selection.md)编号一致；[advisories.log](evidence/typst-vertical-navigation/advisories.log)。
 不新增 ignore，依照 ADR 0034 保留开发入口隔离。
 
 ## 未覆盖与下一步

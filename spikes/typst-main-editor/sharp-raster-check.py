@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real-window sharpness at a fractional display scale (SPK-0067).
+"""Real-window sharpness at a fractional display scale (docs/log/2026-10-12-sharp-raster.md).
 
 Runs the app twice at WINIT_X11_SCALE_FACTOR=1.5: once with the display-resolution raster and
 once with the former fixed 2 px/pt forced through SCHOLIUM_RASTER_PX_PER_PT. It types a sentence,

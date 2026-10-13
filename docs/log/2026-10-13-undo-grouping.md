@@ -1,7 +1,9 @@
-# SPK-0069：按词撤销输入
+# 按词撤销输入
 
-- 日期：2026-10-13；结论：**Pass**（限定范围：单机撤销栈的输入/删除分组；协作撤销不在此范围）。
-- 对应：[app 模块](../modules/app.md)的单机 undo/redo；阶段 0 条件 2 的编辑面可用性补强，不改变阶段判定。
+> 本文是第 1 阶段实现的追溯记录（过去时），不是阶段 0 验证证据，也不作为实现依据；当前规范见 `docs/modules/` 与 `docs/adr/`。
+
+- 日期：2026-10-13；范围：单机撤销栈的输入/删除分组；协作撤销不在此范围。
+- 相关：[app 模块](../modules/app.md)的单机 undo/redo。
 - 基线：main `a9df8b1`；分支 `ation_ciger/feat/undo-grouping`。
 
 ## 问题
@@ -43,10 +45,10 @@ xvfb-run -a -s '-screen 0 1280x900x24' \
 
 | 检查 | 结果与证据 |
 |---|---|
-| 应用层 | 新增 13 项：按词撤销与重做、间隔 999 ms 同组而 1000 ms 另起、方向键与点击分组、Backspace×5 一步且不与输入合并、IME 提交并入而粘贴独立、结构命令打断、输入样式组、新编辑清空重做、512 上限按组计、Key+Text 并发不打断、占位内分组键入；[tests.log](evidence/SPK-0069/tests.log) |
-| 实机 | **5/5**：输入 “alpha beta gamma” 后一次 Ctrl+Z 去掉最后一词、再一次去掉上一词、Ctrl+Y 恢复、移动光标后插入的字符单独撤销；[summary.json](evidence/SPK-0069/undo-group/summary.json) |
+| 应用层 | 新增 13 项：按词撤销与重做、间隔 999 ms 同组而 1000 ms 另起、方向键与点击分组、Backspace×5 一步且不与输入合并、IME 提交并入而粘贴独立、结构命令打断、输入样式组、新编辑清空重做、512 上限按组计、Key+Text 并发不打断、占位内分组键入；[tests.log](evidence/undo-grouping/tests.log) |
+| 实机 | **5/5**：输入 “alpha beta gamma” 后一次 Ctrl+Z 去掉最后一词、再一次去掉上一词、Ctrl+Y 恢复、移动光标后插入的字符单独撤销；[summary.json](evidence/undo-grouping/undo-group/summary.json) |
 | 既有窗口流程 | native、AT-SPI、源码工作区、数学上下标、点击/多击交互、sharp raster、行内样式、默认启动迁移与独立 stock Typst 的像素对比仍通过 |
 
-![一次撤销之后](evidence/SPK-0069/undo-group/03-after-one-undo.png)
+![一次撤销之后](evidence/undo-grouping/undo-group/03-after-one-undo.png)
 
 “alpha beta gamma” 一次 Ctrl+Z 后为 “alpha beta ”。

@@ -4,7 +4,7 @@
 
 接受。取代 [ADR 0036](ADR-0036-typst-default-editor.md) 第 1 条中的开发 manifest 与第 2 条的
 `--legacy` 入口；ADR 0036 的依赖、默认文档与迁移决定继续有效。
-第 4 条暂留的旧模型预览栈已随结构源码工作区删除（[报告 0062](../spikes/SPK-0062-structured-source-view.md)）。
+第 4 条暂留的旧模型预览栈已随结构源码工作区删除（[开发日志《结构源码工作区与 A4 快速预览》](../log/2026-10-11-structured-source-view.md)）。
 
 ## 背景
 
@@ -33,4 +33,4 @@ ADR 0036 让 Typst Content 编辑器成为默认启动，旧页面编辑器只�
 ## 代价
 
 上述能力在重新实现前不可用；依赖旧界面的历史 spike 复现脚本（如 `spikes/typst-mapping/review-*.py`）
-不再可运行，其报告只作追溯。验证见[报告 0060](../spikes/SPK-0060-remove-legacy-editor.md)。
+不再可运行，其报告只作追溯。验证见[开发日志《删除旧页面编辑器并合并开发构建》](../log/2026-10-10-remove-legacy-editor.md)。
