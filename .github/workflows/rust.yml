@@ -1,91 +1,111 @@
 name: Rust workspace
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 permissions:
   contents: read
 jobs:
-  check:
+  lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.99.0
         with:
           components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: lint
       - name: Install native build dependencies
         timeout-minutes: 6
         run: bash scripts/install-ci-native-deps.sh libxkbcommon-dev libwayland-dev libegl1-mesa-dev
       - run: cargo fmt --all -- --check
       - run: cargo clippy --locked --workspace --all-targets -- -D warnings
-      - run: cargo test --locked --workspace
       - run: cargo doc --locked --workspace --no-deps
         env:
           RUSTDOCFLAGS: -D warnings
       - run: python3 scripts/check-rust-size.py
-      - uses: EmbarkStudios/cargo-deny-action@v2
-        with:
-          command: check licenses bans sources
-  typst-editor-window:
+      - run: python3 scripts/check-doc-links.py
+  test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.99.0
+      - uses: rui314/setup-mold@v1
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: test
+      - name: Install native build dependencies
+        timeout-minutes: 6
+        run: bash scripts/install-ci-native-deps.sh libxkbcommon-dev libwayland-dev libegl1-mesa-dev
+      - run: cargo test --locked --workspace
+  deny:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check licenses bans sources
+  window:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.99.0
+      - uses: rui314/setup-mold@v1
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: window
       - name: Install native build and window dependencies
         timeout-minutes: 6
         run: bash scripts/install-ci-native-deps.sh libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libegl1-mesa-dev xvfb xdotool xclip imagemagick fonts-noto-cjk at-spi2-core dbus python3-gi gir1.2-atspi-2.0
       - name: Check native X11 runtime libraries
         run: python3 -c 'import ctypes; ctypes.CDLL("libxkbcommon-x11.so.0"); ctypes.CDLL("libX11.so.6")'
+      - run: cargo build --locked -p scholium-app -p scholium-storage --bins
+      - name: Real-window checks (discovered by scripts/window-checks.py)
+        timeout-minutes: 20
+        run: python3 scripts/window-checks.py --out /tmp/scholium-window
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: typst-main-native-evidence
+          path: /tmp/scholium-window
+  stock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.99.0
+      - uses: rui314/setup-mold@v1
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: stock
+          workspaces: |
+            . -> target
+            spikes/typst-main-editor/reference -> target/stock-reference
+      - name: Install native build dependencies
+        timeout-minutes: 6
+        run: bash scripts/install-ci-native-deps.sh libxkbcommon-dev libwayland-dev libegl1-mesa-dev
       - name: Rebuild the pinned fork from upstream objects
         run: |
           git init /tmp/typst-origin
           git -C /tmp/typst-origin fetch --depth 1 https://github.com/typst/typst.git 9dfd3a08500b7896045f907433cf7b4b02434fad
           python3 scripts/verify-typst-fork.py /tmp/typst-origin > /tmp/typst-fork-source.json
-      - run: cargo build --locked -p scholium-app -p scholium-storage --bins
       - name: Compare formal Content adapter with independent stock Typst
         run: |
           cargo run --locked -p scholium-typst --features editor --example typst-main-fork-check -- /tmp/typst-fork-pixels
           cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir target/stock-reference -- /tmp/typst-stock-pixels
           python3 spikes/typst-main-editor/compare.py /tmp/typst-fork-pixels /tmp/typst-stock-pixels > /tmp/typst-stock-comparison.json
-      - run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/native-check.py target/debug/scholium-app /tmp/scholium-native-evidence
-      - name: AT-SPI reads, selects and announces the editor body in an isolated session
-        timeout-minutes: 5
-        run: xvfb-run -a -s '-screen 0 1280x900x24' dbus-run-session -- bash spikes/typst-main-editor/a11y/run.sh target/debug/scholium-app /tmp/scholium-a11y
-      - name: Source workspace shows generated Typst, previews it and locates clicked blocks
-        timeout-minutes: 5
-        run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/source-view-check.py target/debug/scholium-app /tmp/scholium-source-view
-      - name: Typing ^ and _ builds script nodes that render in the editor and the preview
-        timeout-minutes: 5
-        run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/math-attach-check.py target/debug/scholium-app /tmp/scholium-math-attach
-      - name: Clicks below the page text, double and triple click selection and the formula tint
-        timeout-minutes: 5
-        run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/interaction-check.py target/debug/scholium-app /tmp/scholium-interaction
-      - name: Page raster follows the displayed resolution at fractional scale and text edges are sharper
-        timeout-minutes: 5
-        run: xvfb-run -a -s '-screen 0 1920x1400x24' python3 spikes/typst-main-editor/sharp-raster-check.py target/debug/scholium-app /tmp/scholium-sharp-raster
-      - name: Ctrl+B and Ctrl+I style selected words and arm a typing style
-        timeout-minutes: 5
-        run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/inline-style-check.py target/debug/scholium-app /tmp/scholium-inline-style
-      - name: The view follows the caret after typing and leaves wheel scrolling alone
-        timeout-minutes: 5
-        run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/caret-follow-check.py target/debug/scholium-app /tmp/scholium-caret-follow
-      - name: Ctrl+Z undoes typing word by word
-        timeout-minutes: 5
-        run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/undo-group-check.py target/debug/scholium-app /tmp/scholium-undo-group
-      - name: Enter inside a formula splits after it and an overlong formula is flagged
-        timeout-minutes: 5
-        run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/math-enter-check.py target/debug/scholium-app /tmp/scholium-math-enter
-      - name: Plain launch migrates a legacy session into the Typst editor
-        run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/default-launch-check.py target/debug/scholium-app target/debug/hammer /tmp/scholium-default-launch
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: typst-main-native-evidence
+          name: typst-stock-comparison
           path: |
-            /tmp/scholium-native-evidence
-            /tmp/scholium-default-launch
-            /tmp/scholium-a11y
-            /tmp/scholium-source-view
-            /tmp/scholium-math-attach
-            /tmp/scholium-interaction
-            /tmp/scholium-sharp-raster
-            /tmp/scholium-inline-style
             /tmp/typst-fork-source.json
             /tmp/typst-stock-comparison.json

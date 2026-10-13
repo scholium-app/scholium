@@ -103,6 +103,15 @@ Iced → GPUI → C++ EUI-NEO → Slint 或 egui 使用 [同一验收集](plan/N
 每日：完整 fuzz corpus、三端收敛、崩溃矩阵、真实夹具、性能趋势。
 发布前：三平台端到端、安全构建、更新/回滚、长时间离线重连和数据迁移演练。
 
+### 构建与测试速度
+
+- `Cargo.toml` 把依赖（含 Typst）在 dev/test profile 下设为 `opt-level = 2`，工作区自身 crate 保持 0：
+  Typst 排版/光栅化在未优化下很慢，`cargo test --workspace` 暖缓存实测约 95 s → 约 22 s，冷重编一次约 150 s。
+- CI 用 `Swatinem/rust-cache`（lint / test / deny / window / stock 五个并行 job 各自缓存，stock job 同时缓存 `target/stock-reference`，链接型 job 用 mold）；
+  `push` 只在 `main` 触发，PR 只由 `pull_request` 触发，同一 PR 的新推送取消旧运行。
+- 真实窗口检查统一由 `python3 scripts/window-checks.py` 运行（自动发现、顺序执行、不重试、机器级锁），
+  新增检查无需修改 `rust.yml`，见 `spikes/typst-main-editor/README.md`。
+
 ## WASM 与跨宿主验证
 
 按[WASM 计划](plan/WASM.md)对纯逻辑 crate 执行 `wasm32-unknown-unknown` 编译与实际运行测试（例如无 npm 的 wasm-bindgen-test 工具路径，具体版本待 spike 固定）。复用原生解析、编辑动作、序列化、Unicode 锚点与兼容报告语料，并测试原生/浏览器 CRDT 更新互通。浏览器另测中文 IME、导入/导出、配额耗尽、异常关闭、Worker 取消与断线 epoch；不得把编译成功等同运行成功，或以浏览器脚本替代原生 UI 测试。当前没有 WASM 实测结果。
