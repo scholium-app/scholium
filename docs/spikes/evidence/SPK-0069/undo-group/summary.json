@@ -1,0 +1,22 @@
+{
+  "01-sentence-typed": {
+    "pass": true,
+    "text": "alpha beta gamma"
+  },
+  "02-one-undo-removes-the-last-word": {
+    "pass": true,
+    "text": "alpha beta "
+  },
+  "04-second-undo-removes-the-previous-word": {
+    "pass": true,
+    "text": "alpha "
+  },
+  "05-redo-restores-one-word": {
+    "pass": true,
+    "text": "alpha beta "
+  },
+  "06-caret-move-splits-groups": {
+    "pass": true,
+    "text": "alpha beta "
+  }
+}

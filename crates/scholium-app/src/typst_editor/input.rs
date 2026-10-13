@@ -102,14 +102,17 @@ impl EditorSession {
         event: egui::Event,
         state: &mut WorkspaceState,
     ) -> Option<String> {
+        if Self::breaks_run(&event) {
+            self.run = None;
+        }
         self.pointer_event(&event, state);
         let caret = (self.cursor.leaf, self.cursor.byte);
         match event {
             egui::Event::Text(text) if state.composition.is_none() => {
-                self.insert(text, true, state)
+                self.insert(text, Origin::Typed, state)
             }
             egui::Event::Paste(text) if state.composition.is_none() => {
-                self.insert(text, false, state)
+                self.insert(text, Origin::Paste, state)
             }
             egui::Event::Copy if state.composition.is_none() => return self.copy_selection(state),
             egui::Event::Cut if state.composition.is_none() => return self.cut_selection(state),
@@ -118,7 +121,7 @@ impl EditorSession {
             }
             egui::Event::Ime(egui::ImeEvent::Commit(text)) => {
                 state.composition = None;
-                self.insert(text, false, state);
+                self.insert(text, Origin::Commit, state);
             }
             egui::Event::Key {
                 key,
@@ -136,7 +139,7 @@ impl EditorSession {
         None
     }
 
-    fn insert(&mut self, text: String, typed: bool, state: &mut WorkspaceState) {
+    fn insert(&mut self, text: String, origin: Origin, state: &mut WorkspaceState) {
         if text.is_empty() {
             return;
         }
@@ -146,6 +149,7 @@ impl EditorSession {
             }
             return;
         }
+        let typed = origin == Origin::Typed;
         if typed && text == "$" {
             self.command(Command::Math, state);
             return;
@@ -158,24 +162,28 @@ impl EditorSession {
         let armed = self
             .pending_style()
             .filter(|_| self.body_leaf(self.cursor.leaf));
-        if self.apply(
-            StructuralEdit::ReplaceText {
-                leaf: self.cursor.leaf,
-                start: at,
-                end: at,
-                text: text.clone(),
-            },
-            state,
-        ) {
-            self.place_after_edit(at + length);
-            self.cursor.affinity = Affinity::Upstream;
-            self.pending_style = None;
-            if let Some(style) = armed {
-                self.style_inserted(at, style, state);
-            }
-        } else {
+        let closes = history::closes_word(self.char_before_caret(), &text);
+        // Arming a style starts a new step; the styled text then forms its own run.
+        let join = origin != Origin::Paste && armed.is_none() && self.joins(RunKind::Insert);
+        let edit = StructuralEdit::ReplaceText {
+            leaf: self.cursor.leaf,
+            start: at,
+            end: at,
+            text: text.clone(),
+        };
+        let Some(outcome) = self.apply_joined(edit, join, state) else {
             // Rejected pasted/committed input stays copyable outside the document surface.
             self.rejected_input = Some(text);
+            return;
+        };
+        self.place_after_edit(at + length);
+        self.cursor.affinity = Affinity::Upstream;
+        self.pending_style = None;
+        if let Some(style) = armed {
+            self.style_inserted(at, style, state);
+        }
+        if outcome.changed && origin != Origin::Paste {
+            self.note_run(RunKind::Insert, closes);
         }
     }
 
@@ -253,16 +261,18 @@ impl EditorSession {
     }
 
     fn erase(&mut self, start: usize, end: usize, state: &mut WorkspaceState) {
-        if self.apply(
-            StructuralEdit::ReplaceText {
-                leaf: self.cursor.leaf,
-                start,
-                end,
-                text: String::new(),
-            },
-            state,
-        ) {
+        let join = self.joins(RunKind::Delete);
+        let edit = StructuralEdit::ReplaceText {
+            leaf: self.cursor.leaf,
+            start,
+            end,
+            text: String::new(),
+        };
+        if let Some(outcome) = self.apply_joined(edit, join, state) {
             self.place_after_edit(start);
+            if outcome.changed {
+                self.note_run(RunKind::Delete, false);
+            }
         }
     }
 
