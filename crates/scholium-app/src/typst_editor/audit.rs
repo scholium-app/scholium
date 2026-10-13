@@ -68,7 +68,7 @@ impl EditorSession {
             "selection_geometry_error": quads.err().map(|e| e.to_string()),
             "body_leaves": body_leaves, "deferred": self.deferred.len(),
             "source_mode": source_mode, "preview": self.source_view.audit(),
-            "raster": raster,
+            "raster": raster, "follow": self.follow_audit(),
 
         })
         .to_string();

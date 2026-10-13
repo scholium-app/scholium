@@ -110,6 +110,7 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
             session.pointer_clicks(pos, 2, state);
         }
     }
+    session.apply_follow(ui, rect, scale, OUTER_MARGIN);
     session.accessibility(ui, response.has_focus(), state);
     // All accepted intents have reached LocalSession and the worker before this pass.
     let text_shapes = body(ui, rect, scale, session, state);
