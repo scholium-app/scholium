@@ -2,12 +2,14 @@
 mod access;
 mod attach;
 mod audit;
+mod confirm;
 mod deferred;
 mod indicator;
 mod input;
 mod paint;
 mod raster;
 pub(crate) mod ribbon;
+mod scene;
 mod selection;
 mod source_view;
 mod startup;
@@ -133,13 +135,6 @@ pub(crate) struct EditorSession {
     clicks: selection::ClickRun,
     /// Style armed for the next typed text at the caret.
     pending_style: Option<style::Pending>,
-}
-
-fn diagnostics_line(scene: &EditorScene) -> String {
-    format!(
-        "Content 新建 {} / 复用 {} · source reads {} · 布局+栅格 {} ms",
-        scene.stats.built, scene.stats.reused, scene.stats.source_reads, scene.stats.elapsed_ms
-    )
 }
 
 impl std::fmt::Debug for EditorSession {
@@ -338,34 +333,6 @@ impl EditorSession {
         self.metadata(state);
     }
 
-    fn poll(&mut self, ctx: &egui::Context) {
-        if let Some((stamp, outcome)) = self.worker.poll() {
-            self.adopt(ctx, stamp, outcome);
-        }
-        for update in self.worker.poll_strips() {
-            self.adopt_strip(ctx, update);
-        }
-    }
-
-    fn adopt(
-        &mut self,
-        ctx: &egui::Context,
-        stamp: SceneStamp,
-        outcome: Result<EditorScene, scholium_typst::editor::EditorError>,
-    ) {
-        if stamp != self.wanted {
-            return;
-        }
-        match outcome {
-            Ok(mut scene) => {
-                self.settle.arrived();
-                self.texture = Some(raster::Layers::from_scene(ctx, &mut scene));
-                self.scene = Some(scene);
-            }
-            Err(error) => self.layout_error = Some(error.to_string()),
-        }
-    }
-
     fn current(&self) -> bool {
         self.scene.as_ref().is_some_and(|s| s.stamp == self.wanted) && self.layout_error.is_none()
     }
@@ -401,7 +368,7 @@ impl EditorSession {
             view.warning = warning;
             view.rejected_input = self.rejected_input.clone();
             view.diagnostics = diagnostics
-                .then(|| self.scene.as_ref().map(diagnostics_line))
+                .then(|| self.scene.as_ref().map(scene::diagnostics_line))
                 .flatten();
         }
         state.editor.as_ref().map(shown) != before
@@ -527,66 +494,6 @@ impl EditorSession {
             }
             Err(error) => state.storage_error = Some(format!("保存失败：{error}")),
         }
-    }
-
-    fn confirm(&mut self, ctx: &egui::Context, state: &mut WorkspaceState) {
-        if !self.confirm_new && !self.confirm_close {
-            return;
-        }
-        egui::Modal::new(egui::Id::new("editor-discard")).show(ctx, |ui| {
-            ui.heading("继续将关闭当前文档");
-            ui.label("未保存的修改将丢弃。新文档再次保存会替换隔离会话文件的当前内容。");
-            ui.horizontal(|ui| {
-                if ui.button("取消").clicked() {
-                    self.confirm_new = false;
-                    self.confirm_close = false;
-                    self.focus = true;
-                }
-                let proceed = ui.button("丢弃并继续");
-                if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
-                    println!("DIALOG {}", serde_json::json!({"proceed": [proceed.rect.center().x, proceed.rect.center().y]}));
-                }
-                if proceed.clicked() {
-                    self.finish_confirm(ctx, state);
-                }
-            });
-        });
-    }
-
-    fn finish_confirm(&mut self, ctx: &egui::Context, state: &mut WorkspaceState) {
-        if self.confirm_close {
-            self.allow_close = true;
-            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-        } else {
-            match blank() {
-                Ok(session) => {
-                    self.session = session;
-                    self.anchor = None;
-                    self.drag = None;
-                    // Queued input addressed the discarded document.
-                    self.deferred.clear();
-                    self.placeholder = None;
-                    self.undo.clear();
-                    self.redo.clear();
-                    self.saved = None;
-                    self.scene = None;
-                    self.texture = None;
-                    self.publish(state);
-                    if let Some(leaf) = input::leaves(&self.snapshot).first() {
-                        self.cursor = Position {
-                            leaf: leaf.id,
-                            byte: 0,
-                            affinity: Affinity::Downstream,
-                        };
-                    }
-                    state.composition = None;
-                    self.focus = true;
-                }
-                Err(error) => state.edit_error = Some(error.to_string()),
-            }
-        }
-        self.confirm_new = false;
-        self.confirm_close = false;
     }
 }
 
