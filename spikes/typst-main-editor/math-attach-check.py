@@ -91,8 +91,15 @@ try:
     xdo("type", "--delay", "40", "$x^2")
     xdo("key", "Right")
     xdo("type", "--delay", "40", " + y_i")
-    s = wait(lambda s: s["current"] and formula(s) and "sub" in json.dumps(shape(formula(s))), "formula typed")
     expected = [{"base": "x", "sup": "2"}, " + ", {"base": "y", "sub": "i"}]
+    # Keys arrive asynchronously: wait for the complete expected structure (not just the
+    # first appearance of a slot), then assert it below. On timeout the last state is
+    # asserted, so a wrong structure still fails with its actual shape.
+    try:
+        s = wait(lambda s: s["current"] and formula(s) and shape(formula(s)) == expected,
+                 "complete formula typed", timeout=20)
+    except RuntimeError:
+        s = state()
     record("01-typed-scripts-are-nodes", shape(formula(s)) == expected, shape=shape(formula(s)))
     leaves = json.dumps(s["snapshot"])
     record("02-no-literal-markers", "^" not in leaves and '"_"' not in leaves.replace('"kind":"hole"', ""),
