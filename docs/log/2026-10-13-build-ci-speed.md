@@ -9,8 +9,9 @@
 
 ## 改动
 - `Cargo.toml`：`[profile.dev.package."*"]` 与 `[profile.test.package."*"]` 设 `opt-level = 2`。
-- `rust.yml`：`push` 仅 `main`；concurrency 组（仅 PR 取消旧运行）；两个 job 接入 `Swatinem/rust-cache@v2`
-  （窗口 job 同时缓存 `target/stock-reference`）；所有逐检查步骤替换为一步 `scripts/window-checks.py`。
+- `rust.yml`：`push` 仅 `main`；concurrency 组（仅 PR 取消旧运行）；
+  拆成并行 job lint / test / deny / window / stock，各自独立 rust-cache 键，链接型 job 用 mold
+  （stock job 同时缓存 `target/stock-reference`）；所有逐检查步骤替换为一步 `scripts/window-checks.py`。
 - 新增 `scripts/window-checks.py`（自动发现、顺序、不重试、机器级 flock、剥离 DISPLAY/WAYLAND_DISPLAY）。
 - `spikes/typst-main-editor/README.md`、`docs/TESTING.md` 记录用法。
 

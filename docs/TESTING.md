@@ -107,7 +107,7 @@ Iced → GPUI → C++ EUI-NEO → Slint 或 egui 使用 [同一验收集](plan/N
 
 - `Cargo.toml` 把依赖（含 Typst）在 dev/test profile 下设为 `opt-level = 2`，工作区自身 crate 保持 0：
   Typst 排版/光栅化在未优化下很慢，`cargo test --workspace` 暖缓存实测约 95 s → 约 22 s，冷重编一次约 150 s。
-- CI 用 `Swatinem/rust-cache`（两个 job 分别缓存，窗口 job 同时缓存 `target/stock-reference`）；
+- CI 用 `Swatinem/rust-cache`（lint / test / deny / window / stock 五个并行 job 各自缓存，stock job 同时缓存 `target/stock-reference`，链接型 job 用 mold）；
   `push` 只在 `main` 触发，PR 只由 `pull_request` 触发，同一 PR 的新推送取消旧运行。
 - 真实窗口检查统一由 `python3 scripts/window-checks.py` 运行（自动发现、顺序执行、不重试、机器级锁），
   新增检查无需修改 `rust.yml`，见 `spikes/typst-main-editor/README.md`。
