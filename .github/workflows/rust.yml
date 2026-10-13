@@ -69,6 +69,9 @@ jobs:
       - name: Ctrl+Z undoes typing word by word
         timeout-minutes: 5
         run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/undo-group-check.py target/debug/scholium-app /tmp/scholium-undo-group
+      - name: Enter inside a formula splits after it and an overlong formula is flagged
+        timeout-minutes: 5
+        run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/math-enter-check.py target/debug/scholium-app /tmp/scholium-math-enter
       - name: Plain launch migrates a legacy session into the Typst editor
         run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/default-launch-check.py target/debug/scholium-app target/debug/hammer /tmp/scholium-default-launch
       - uses: actions/upload-artifact@v4

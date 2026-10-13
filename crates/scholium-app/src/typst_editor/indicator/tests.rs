@@ -113,3 +113,46 @@ fn indicator_covers_a_row_formula_that_owns_no_frame_bounds_itself() {
         .expect("indicator for a row formula");
     assert!(contains(indicator.formula, caret_bounds(&f)));
 }
+
+fn warning_text(f: &Fixture) -> Option<String> {
+    f.editor.warning(&f.state)
+}
+
+#[test]
+fn a_breakable_long_formula_reports_no_overflow() {
+    let mut f = Fixture::new();
+    let sum = (0..40)
+        .map(|i| char::from(b'a' + (i % 26) as u8).to_string())
+        .collect::<Vec<_>>()
+        .join("+");
+    f.events(vec![text("$"), text(&sum)]);
+    f.settle();
+    assert!(f.editor.in_math());
+    assert!(!f.editor.formula_overflows(), "wrapped at operators");
+    assert_eq!(warning_text(&f), None);
+}
+
+#[test]
+fn an_operator_free_run_past_the_column_warns_while_the_caret_is_inside() {
+    let mut f = Fixture::new();
+    f.events(vec![text("$"), text(&"abcdefghij".repeat(10))]);
+    f.settle();
+    assert!(f.editor.formula_overflows());
+    assert_eq!(warning_text(&f).as_deref(), Some("公式超出行宽"));
+    f.events(vec![arrow(egui::Key::ArrowRight), text("after")]);
+    f.settle();
+    assert_eq!(warning_text(&f), None, "only while the caret is in it");
+}
+
+#[test]
+fn an_overlong_superscript_run_warns_too() {
+    let mut f = Fixture::new();
+    f.events(vec![
+        text("$"),
+        text("x"),
+        text("^"),
+        text(&"abcdefghij".repeat(16)),
+    ]);
+    f.settle();
+    assert_eq!(warning_text(&f).as_deref(), Some("公式超出行宽"));
+}

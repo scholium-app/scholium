@@ -444,7 +444,7 @@ impl EditorSession {
 
     fn split(&mut self, state: &mut WorkspaceState) {
         if !self.body_leaf(self.cursor.leaf) {
-            state.edit_error = Some("数学槽内的换行尚未接入。".into());
+            self.split_after_formula(state);
             return;
         }
         self.replace_range("\n".into(), state);

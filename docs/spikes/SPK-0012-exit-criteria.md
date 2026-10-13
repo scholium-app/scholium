@@ -41,7 +41,8 @@
 选区粗体/强调与输入样式见[报告 0066](SPK-0066-inline-styles.md)，
 页面按显示分辨率栅格与像素吸附见[报告 0067](SPK-0067-sharp-raster.md)，
 视图跟随光标见[报告 0068](SPK-0068-caret-follow.md)，
-按词撤销输入见[报告 0069](SPK-0069-undo-grouping.md)。
+按词撤销输入见[报告 0069](SPK-0069-undo-grouping.md)，
+公式内回车与长公式断行见[报告 0070](SPK-0070-math-enter-wrap.md)。
 这些限定报告不改变上表阶段判定，完整 C 与默认后端替换未验收。
 
 - 条件 1：[egui 原始验收](SPK-0004-native-ui-egui.md)、[ADR 0006](../adr/ADR-0006-native-ui-framework.md)、

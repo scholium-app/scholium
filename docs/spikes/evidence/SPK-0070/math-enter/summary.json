@@ -1,0 +1,33 @@
+{
+  "01-enter-in-math-splits-after-the-formula": {
+    "pass": true,
+    "blocks": 2,
+    "caret": [
+      "NodeId(eca11685-f24b-4bd7-b7ef-83a29b01b691)",
+      0
+    ]
+  },
+  "03-one-undo-restores-the-formula": {
+    "pass": true,
+    "blocks": 1
+  },
+  "04-shift-enter-does-the-same": {
+    "pass": true
+  },
+  "05-operator-formula-wraps-without-overflow": {
+    "pass": true
+  },
+  "07-operator-free-run-reports-overflow": {
+    "pass": true
+  },
+  "09-overflow-flag-clears-after-leaving": {
+    "pass": true
+  },
+  "11-preview-compiles": {
+    "pass": true,
+    "preview": {
+      "pages": 1,
+      "error": null
+    }
+  }
+}
