@@ -37,6 +37,14 @@ debug = 0
 [profile.test]
 debug = 0
 
+# Typst layout and rasterisation dominate test time; optimise dependencies only
+# (workspace crates stay at opt-level 0 for fast incremental compiles).
+[profile.dev.package."*"]
+opt-level = 2
+
+[profile.test.package."*"]
+opt-level = 2
+
 [workspace.lints.clippy]
 too_many_lines = "warn"
 cognitive_complexity = "warn"
