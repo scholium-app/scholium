@@ -63,6 +63,9 @@ jobs:
       - name: Ctrl+B and Ctrl+I style selected words and arm a typing style
         timeout-minutes: 5
         run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/inline-style-check.py target/debug/scholium-app /tmp/scholium-inline-style
+      - name: The view follows the caret after typing and leaves wheel scrolling alone
+        timeout-minutes: 5
+        run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/caret-follow-check.py target/debug/scholium-app /tmp/scholium-caret-follow
       - name: Ctrl+Z undoes typing word by word
         timeout-minutes: 5
         run: xvfb-run -a -s '-screen 0 1280x900x24' python3 spikes/typst-main-editor/undo-group-check.py target/debug/scholium-app /tmp/scholium-undo-group
