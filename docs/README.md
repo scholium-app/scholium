@@ -19,7 +19,7 @@
 10. [测试策略](TESTING.md)：属性测试、夹具、收敛、恢复和兼容性。
 11. [路线图](plan/ROADMAP.md)：阶段、交付物、出口条件和依赖关系。
     [P1 排版工作区规划](plan/P1_UI.md)：桌面布局实施基准、两种模式参考图、允许调整的细节与评审检查。
-    [ArtCraft / PhotoCraft 借鉴计划](plan/ARTCRAFT_REFERENCE.md)：命令注册表、菜单栏与格式栏、设计令牌、无界面编辑核心、分层门禁与控制通道的落地顺序。
+    [ArtCraft / PhotoCraft 借鉴计划](plan/ARTCRAFT_REFERENCE.md)：命令注册表、菜单栏与工具栏、设计令牌、无界面编辑核心、分层门禁与控制通道的落地顺序。
     [界面多语言计划](plan/I18N.md)：界面语言与文档语言的区分、目录与 key、硬编码门禁、zh-Hans/en 首批与分期。
     [渲染与编辑改进计划](plan/RENDER_EDIT_REWORK.md)：预览渲染质量与页面编辑体验的阶段 1 改进顺序与验收判据。
     [Typst 编辑内核改造](plan/TYPST_EDIT_KERNEL.md)：结构 Content 输入、稳定身份、数学空槽、同源几何与增量分页的 fork 验证路线。
