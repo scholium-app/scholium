@@ -90,3 +90,4 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0038](ADR-0038-editor-accessibility.md)：Typst 编辑面的正文 AccessKit Text/选区、数学对象与槽位播报；主程序采用禁用状态 AT-SPI 补丁。
 
 [ADR 0039](ADR-0039-math-attach.md)：数学上标/下标 `Attach` 节点（v1 信封内加性变更）、逐字素数学文字原子与对应的输入、导航、朗读和源码生成。
+[ADR 0040](ADR-0040-ui-string-catalog.md)：界面文字目录采用 Project Fluent（`fluent-bundle`），key 规则、运行时切换与硬编码文字门禁。
