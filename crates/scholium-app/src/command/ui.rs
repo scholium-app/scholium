@@ -21,7 +21,8 @@ pub(crate) fn text(state: &WorkspaceState, key: &str) -> String {
 struct Resolved {
     spec: &'static CommandSpec,
     availability: Availability,
-    checked: bool,
+    /// `None` for commands without a toggle state; they must not be exposed as toggles.
+    checked: Option<bool>,
 }
 
 fn resolve(state: &WorkspaceState, id: &str) -> Option<Resolved> {
@@ -30,7 +31,7 @@ fn resolve(state: &WorkspaceState, id: &str) -> Option<Resolved> {
     Some(Resolved {
         spec,
         availability: (spec.availability)(&context),
-        checked: spec.checked.is_some_and(|checked| checked(&context)),
+        checked: spec.checked.map(|checked| checked(&context)),
     })
 }
 
@@ -91,7 +92,7 @@ pub(crate) fn large(ui: &mut egui::Ui, state: &mut WorkspaceState, id: &str) -> 
         glyph(resolved.spec.icon),
         &title,
         enabled,
-        resolved.checked,
+        resolved.checked.unwrap_or(false),
     );
     let tip = hover(state, &resolved);
     let response = if enabled {
@@ -135,7 +136,7 @@ pub(crate) fn icon_button(ui: &mut egui::Ui, state: &mut WorkspaceState, id: &st
     let enabled = resolved.availability.is_enabled();
     let button = icons::IconButton {
         icon: glyph(resolved.spec.icon),
-        selected: resolved.checked,
+        selected: resolved.checked.unwrap_or(false),
         tooltip: hover(state, &resolved),
     };
     let clicked = ui.add_enabled(enabled, button).clicked();
@@ -157,7 +158,10 @@ pub(crate) fn status_button(
     };
     let label = label.unwrap_or_else(|| text(state, resolved.spec.title));
     let enabled = resolved.availability.is_enabled();
-    let button = egui::Button::new(label).small().selected(resolved.checked);
+    let mut button = egui::Button::new(label).small();
+    if let Some(checked) = resolved.checked {
+        button = button.selected(checked);
+    }
     let response = ui
         .add_enabled(enabled, button)
         .on_hover_text(hover(state, &resolved));
@@ -217,7 +221,10 @@ fn menu_item(ui: &mut egui::Ui, state: &mut WorkspaceState, spec: &'static Comma
     let Some(resolved) = resolve(state, spec.id) else {
         return;
     };
-    let mut button = egui::Button::new(text(state, spec.title)).selected(resolved.checked);
+    let mut button = egui::Button::new(text(state, spec.title));
+    if let Some(checked) = resolved.checked {
+        button = button.selected(checked);
+    }
     if let Some(chord) = spec.shortcuts.first() {
         button = button.shortcut_text(chord.display());
     }

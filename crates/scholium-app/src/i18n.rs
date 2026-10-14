@@ -66,7 +66,8 @@ impl LocaleSetting {
 fn system_locale() -> Locale {
     static SYSTEM: OnceLock<Locale> = OnceLock::new();
     *SYSTEM.get_or_init(|| {
-        let lang = ["LC_ALL", "LC_MESSAGES", "LANG"]
+        // SCHOLIUM_LOCALE pins the language for window checks and bug reports.
+        let lang = ["SCHOLIUM_LOCALE", "LC_ALL", "LC_MESSAGES", "LANG"]
             .iter()
             .find_map(|name| std::env::var(name).ok().filter(|v| !v.is_empty()));
         Locale::from_lang(lang.as_deref())

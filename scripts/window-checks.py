@@ -62,6 +62,8 @@ def run_one(name, binary, out):
     log = out / f"{name}.log"
     env = {k: v for k, v in os.environ.items() if k not in ("DISPLAY", "WAYLAND_DISPLAY")}
     env.pop("XAUTHORITY", None)
+    # Several checks click Ribbon coordinates laid out for the Chinese labels.
+    env["SCHOLIUM_LOCALE"] = "zh-Hans"
     timeout = EXCEPTIONS.get(name, {}).get("timeout", DEFAULT_TIMEOUT)
     start = time.monotonic()
     with open(log, "w") as fh:
