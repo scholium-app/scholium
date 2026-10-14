@@ -106,7 +106,7 @@ try:
            note="no caret or underscore stored in math text")
     shot("03-visual-x2-plus-yi")
 
-    xdo("key", "--clearmodifiers", "ctrl+2")
+    xdo("key", "--clearmodifiers", "ctrl+shift+m")
     s = wait(lambda s: s["source_mode"] and s["preview"]["shown"] and s["preview"]["rect"], "preview shown")
     shot("04-preview-x2-plus-yi")
     record("05-preview-compiles", s["preview"]["error"] is None and s["preview"]["pages"] == 1,
