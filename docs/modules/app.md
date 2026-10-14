@@ -199,8 +199,8 @@ revision 交付。
   （Ctrl+1/2 不再切换工作方式；Ctrl+0 不再是实际大小，实际大小只在菜单与按钮里）；Ctrl+B/I 粗体/斜体、Ctrl+M 公式、
   Ctrl+/ 分数、Ctrl+Z/Ctrl+Shift+Z/Ctrl+Y、Ctrl+S、Ctrl+N、Ctrl+J、Ctrl+Shift+B、Ctrl+F1、Ctrl+加号/等号/减号缩放不变。
 - **文字目录**：命令标题、提示、菜单名与不可用原因经 `i18n` 的 Fluent 目录（`i18n/zh-Hans.ftl`、`en.ftl`，
-  见 [ADR 0040](../adr/ADR-0040-ui-string-catalog.md)）渲染；界面语言 `WorkspaceState.locale`（`auto` 按系统
-  `LANG`，否则英语）可在运行时切换，下一帧生效，不影响文档与历史。其余界面文字仍是硬编码，列在
+  见 [ADR 0040](../adr/ADR-0040-ui-string-catalog.md)）渲染；界面语言 `WorkspaceState.locale`（`auto` 按 `SCHOLIUM_LOCALE`、`LC_ALL`、
+  `LC_MESSAGES`、`LANG` 的第一个非空值，否则英语；窗口检查固定 `SCHOLIUM_LOCALE=zh-Hans`，因为部分检查点击按中文标签排版的坐标）可在运行时切换，下一帧生效，不影响文档与历史。其余界面文字仍是硬编码，列在
   `scripts/ui-strings-allowlist.txt`，由 `scripts/check-ui-strings.py` 保证只减不增。
 - 写命令仍必须经过 session：页面命令作为 intent 排入编辑会话，与键盘输入同序执行；源码视图与组合输入期间由
   可用性判定统一禁用。窗口外壳目前仍用 Ribbon；菜单栏、图标工具栏与焦点工具栏由后续任务从同一注册表生成。

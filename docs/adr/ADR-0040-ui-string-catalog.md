@@ -58,8 +58,8 @@
   `reason.<name>`。映射到 Fluent：消息 id 把点号换成连字符（`menu.file` → `menu-file`）；`command.` key 的末段是属性，
   消息为 `command-<id 的点号换连字符>`（`command.format.bold.title` → `command-format-bold` 的 `.title`）。命令 id 只含
   小写字母、数字、下划线与点，所以映射可逆。
-- 界面语言偏好 `LocaleSetting`（`auto` / `zh-Hans` / `en`）是 `WorkspaceState` 的字段，默认 `auto`：按 `LC_ALL`、
-  `LC_MESSAGES`、`LANG` 的第一个非空值判定，`zh*` 为 zh-Hans，其余与缺省为 en。持久保存与界面控件另行接入。
+- 界面语言偏好 `LocaleSetting`（`auto` / `zh-Hans` / `en`）是 `WorkspaceState` 的字段，默认 `auto`：按 `SCHOLIUM_LOCALE`（窗口检查与问题复现用）、
+  `LC_ALL`、`LC_MESSAGES`、`LANG` 的第一个非空值判定，`zh*` 为 zh-Hans，其余与缺省为 en。持久保存与界面控件另行接入。
 - T12 范围内只有注册表拥有的文字（命令标题与提示、菜单名、不可用原因）走目录；其余硬编码中文进入
   `scripts/ui-strings-allowlist.txt`，由 `scripts/check-ui-strings.py` 在 CI lint 作业里保证只减不增。
 
