@@ -1,0 +1,20 @@
+name: Documentation
+# Lightweight check for documentation changes; the Rust workspace workflow ignores docs-only changes.
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**', '**/*.md', 'scripts/check-doc-links.py']
+  pull_request:
+    paths: ['docs/**', '**/*.md', 'scripts/check-doc-links.py']
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+permissions:
+  contents: read
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/check-doc-links.py
