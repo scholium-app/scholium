@@ -2,6 +2,8 @@
 mod access;
 mod attach;
 mod audit;
+#[cfg(test)]
+mod command_keys_tests;
 mod confirm;
 mod deferred;
 mod follow;

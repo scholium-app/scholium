@@ -1,7 +1,9 @@
 //! Scholium 原生排版工作区：Ribbon 与 Typst Content 编辑面共用一个结构会话。
 
 mod chrome;
+mod command;
 mod commands;
+mod i18n;
 mod icons;
 mod ribbon;
 mod state;
@@ -26,7 +28,7 @@ impl eframe::App for ScholiumApp {
             typst_editor::show_startup_error(ui, error);
             return;
         }
-        commands::shortcuts(ui.ctx(), &mut self.state);
+        command::shortcuts::shortcuts(ui.ctx(), &mut self.state);
         chrome::show(ui, &mut self.state);
         if let Some(editor) = &mut self.editor {
             editor.show(ui, &mut self.state);

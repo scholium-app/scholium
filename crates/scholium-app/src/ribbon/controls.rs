@@ -106,14 +106,21 @@ pub(crate) fn large(
 }
 
 pub(crate) fn small(ui: &mut egui::Ui, title: &str, enabled: bool) -> egui::Response {
+    small_toggle(ui, title, enabled, false)
+}
+
+/// A small button that shows a pressed look while `selected`.
+pub(crate) fn small_toggle(
+    ui: &mut egui::Ui,
+    title: &str,
+    enabled: bool,
+    selected: bool,
+) -> egui::Response {
     ui.add_enabled(
         enabled,
         egui::Button::new(RichText::new(title).size(12.0))
             .wrap_mode(egui::TextWrapMode::Extend)
-            .min_size(egui::vec2(62.0, 27.0)),
+            .min_size(egui::vec2(62.0, 27.0))
+            .selected(selected),
     )
-}
-
-pub(crate) fn unavailable(ui: &mut egui::Ui, icon: Icon, title: &str) {
-    large(ui, icon, title, false, false).on_disabled_hover_text("此功能尚未接入");
 }

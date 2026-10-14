@@ -192,10 +192,7 @@ impl EditorSession {
 
     fn key(&mut self, key: egui::Key, modifiers: egui::Modifiers, state: &mut WorkspaceState) {
         if key == egui::Key::Escape {
-            self.pending_style = None;
-            state.composition = None;
-            self.anchor = None;
-            self.drag = None;
+            self.escape(state);
             return;
         }
         if state.composition.is_some() {
@@ -207,15 +204,14 @@ impl EditorSession {
             self.goal = None;
         }
         if modifiers.command {
+            // Page-routed chords come from the command registry, in keystroke order.
+            if let Some(spec) = crate::command::keys::editor_command(key, modifiers)
+                && let crate::command::spec::Action::Editor(command) = spec.action
+            {
+                self.command(command, state);
+                return;
+            }
             match key {
-                egui::Key::Slash => self.command(Command::Fraction, state),
-                egui::Key::M => self.command(Command::Math, state),
-                egui::Key::B if !modifiers.shift => {
-                    self.command(Command::Style(TextStyle::Strong), state)
-                }
-                egui::Key::I if !modifiers.shift => {
-                    self.command(Command::Style(TextStyle::Emphasis), state)
-                }
                 egui::Key::Home => self.document_edge(false, modifiers.shift, state),
                 egui::Key::End => self.document_edge(true, modifiers.shift, state),
                 _ => {}
@@ -261,6 +257,20 @@ impl EditorSession {
             _ => return,
         }
         self.cursor.affinity = Affinity::Downstream;
+    }
+
+    /// Esc cancels in layers: a selection or IME composition first; with neither, a
+    /// caret inside a formula leaves it (the same place Ctrl+M leaves to). It never
+    /// moves page focus.
+    fn escape(&mut self, state: &mut WorkspaceState) {
+        let cancelled = self.selected() || state.composition.is_some();
+        self.pending_style = None;
+        state.composition = None;
+        self.anchor = None;
+        self.drag = None;
+        if !cancelled && self.in_math() {
+            self.exit_math();
+        }
     }
 
     fn erase(&mut self, start: usize, end: usize, state: &mut WorkspaceState) {
