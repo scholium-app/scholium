@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real-window A4 surface check: the Visual editing sheet and the Ctrl+2 A4 preview show the same
+"""Real-window A4 surface check: the Visual editing sheet and the Ctrl+Shift+M A4 preview show the same
 headings and paragraphs; screenshots are taken side by side (see docs/log/2026-10-12-a4-editor-surface.md).
 
 Run under Xvfb from the repository root:
@@ -96,7 +96,7 @@ try:
     shot("01-visual-editor")
     record("01-visual-editor", True, kinds=[b["kind"] for b in s["snapshot"]["blocks"]])
 
-    xdo("key", "--clearmodifiers", "ctrl+2")
+    xdo("key", "--clearmodifiers", "ctrl+shift+m")
     s = wait(lambda s: s["source_mode"] and s["preview"]["shown"] and s["preview"]["rect"]
              and len(s["preview"]["anchors"] or []) == 4, "preview shown")
     shot("02-a4-preview")

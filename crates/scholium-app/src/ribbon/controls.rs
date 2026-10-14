@@ -106,14 +106,21 @@ pub(crate) fn large(
 }
 
 pub(crate) fn small(ui: &mut egui::Ui, title: &str, enabled: bool) -> egui::Response {
-    ui.add_enabled(
-        enabled,
-        egui::Button::new(RichText::new(title).size(12.0))
-            .wrap_mode(egui::TextWrapMode::Extend)
-            .min_size(egui::vec2(62.0, 27.0)),
-    )
+    small_toggle(ui, title, enabled, None)
 }
 
-pub(crate) fn unavailable(ui: &mut egui::Ui, icon: Icon, title: &str) {
-    large(ui, icon, title, false, false).on_disabled_hover_text("此功能尚未接入");
+/// A small button; `selected: Some(_)` exposes it as a toggle (a plain action must not be).
+pub(crate) fn small_toggle(
+    ui: &mut egui::Ui,
+    title: &str,
+    enabled: bool,
+    selected: Option<bool>,
+) -> egui::Response {
+    let mut button = egui::Button::new(RichText::new(title).size(12.0))
+        .wrap_mode(egui::TextWrapMode::Extend)
+        .min_size(egui::vec2(62.0, 27.0));
+    if let Some(selected) = selected {
+        button = button.selected(selected);
+    }
+    ui.add_enabled(enabled, button)
 }

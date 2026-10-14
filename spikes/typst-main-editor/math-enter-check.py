@@ -119,7 +119,7 @@ try:
     s = wait(settled(lambda s: not s["formula_overflow"]), "flag clears outside the formula")
     record("09-overflow-flag-clears-after-leaving", s["formula_overflow"] is False)
 
-    xdo("key", "--clearmodifiers", "ctrl+2")
+    xdo("key", "--clearmodifiers", "ctrl+shift+m")
     s = wait(lambda s: s["source_mode"] and s["preview"]["shown"] and s["preview"]["rect"], "preview shown")
     shot("10-preview-long-formulas")
     record("11-preview-compiles", s["preview"]["error"] is None, preview={k: s["preview"][k] for k in ("pages", "error")})

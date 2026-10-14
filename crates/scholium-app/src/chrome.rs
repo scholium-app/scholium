@@ -1,10 +1,4 @@
-use crate::{
-    commands::{self, ViewCommand},
-    icons,
-    state::{ViewMode, WorkspaceState},
-    theme,
-    typst_editor::EditorView,
-};
+use crate::{command::ui as command_ui, state::WorkspaceState, theme, typst_editor::EditorView};
 use eframe::egui::{self, Align, Layout, RichText};
 
 pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
@@ -79,30 +73,9 @@ fn tabs(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             },
         );
         ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
-            for (icon, tip, mode, command) in [
-                (
-                    icons::Icon::Code,
-                    "源码与预览 · Ctrl+2",
-                    ViewMode::Source,
-                    ViewCommand::Source,
-                ),
-                (
-                    icons::Icon::Page,
-                    "所见即所得 · Ctrl+1",
-                    ViewMode::Visual,
-                    ViewCommand::Visual,
-                ),
-            ] {
-                if ui
-                    .add(icons::IconButton {
-                        icon,
-                        selected: state.mode == mode,
-                        tooltip: tip.into(),
-                    })
-                    .clicked()
-                {
-                    commands::dispatch(state, command);
-                }
+            // Right-to-left layout: the last control is the leftmost.
+            for id in ["view.mode.source", "view.mode.visual"] {
+                command_ui::icon_button(ui, state, id);
             }
         });
     });
@@ -110,13 +83,7 @@ fn tabs(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 
 fn status(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     ui.horizontal_centered(|ui| {
-        if ui
-            .selectable_label(state.diagnostics, "诊断")
-            .on_hover_text("诊断信息 · Ctrl+J")
-            .clicked()
-        {
-            commands::dispatch(state, ViewCommand::Diagnostics);
-        }
+        command_ui::status_button(ui, state, "view.diagnostics", None);
         ui.separator();
         if let Some(editor) = &state.editor {
             ui.label(RichText::new(revisions(editor)).small());
@@ -190,22 +157,12 @@ fn warning(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 }
 
 fn zoom(ui: &mut egui::Ui, state: &mut WorkspaceState) {
-    if ui.small_button("+").on_hover_text("放大页面").clicked() {
-        commands::dispatch(state, ViewCommand::ZoomIn);
-    }
+    command_ui::status_button(ui, state, "view.zoom.in", Some("+".into()));
     let label = if state.fit_width {
-        "适合宽度".into()
+        command_ui::text(state, "command.view.zoom.fit_width.title")
     } else {
         format!("{:.0}%", state.zoom * 100.0)
     };
-    if ui
-        .small_button(label)
-        .on_hover_text("切换到适合宽度")
-        .clicked()
-    {
-        commands::dispatch(state, ViewCommand::FitWidth);
-    }
-    if ui.small_button("−").on_hover_text("缩小页面").clicked() {
-        commands::dispatch(state, ViewCommand::ZoomOut);
-    }
+    command_ui::status_button(ui, state, "view.zoom.fit_width", Some(label));
+    command_ui::status_button(ui, state, "view.zoom.out", Some("−".into()));
 }

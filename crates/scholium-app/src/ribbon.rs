@@ -4,7 +4,7 @@ mod groups;
 #[cfg(test)]
 mod tests;
 use crate::{
-    commands::{self, ViewCommand},
+    command::{spec::MenuId, ui as command_ui},
     state::WorkspaceState,
     theme,
 };
@@ -74,10 +74,10 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 
 fn tabs(ui: &mut egui::Ui, state: &mut WorkspaceState) {
     ui.horizontal_centered(|ui| {
-        ui.menu_button(
-            RichText::new("文件").color(theme::colors(ui).accent),
-            |ui| file_menu(ui, state),
-        );
+        let file = command_ui::text(state, MenuId::File.key());
+        ui.menu_button(RichText::new(file).color(theme::colors(ui).accent), |ui| {
+            command_ui::menu(ui, state, MenuId::File)
+        });
         ui.add_space(8.0);
         for tab in Tab::ALL {
             tab_button(ui, &mut state.ribbon, tab);
@@ -128,49 +128,25 @@ fn tab_actions(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             .on_hover_text("Ctrl+F1 · 显示或隐藏功能区")
             .clicked()
         {
-            commands::dispatch(state, ViewCommand::ToggleRibbon);
+            command_ui::invoke(ui.ctx(), state, "view.ribbon");
         }
-        ui.menu_button("帮助", |ui| {
+        let help = command_ui::text(state, MenuId::Help.key());
+        ui.menu_button(help, |ui| {
             ui.strong("Scholium / 注疏");
             ui.label("科学写作与排版工作区");
             ui.separator();
             for tip in [
                 "Ctrl+N  新建文档",
                 "Ctrl+S  保存",
-                "Ctrl+1 / Ctrl+2  切换工作方式",
+                "Ctrl+0 / 1 / 2  正文 / 标题 1 / 标题 2",
+                "Ctrl+Shift+M  切换工作方式",
                 "Ctrl+F1  折叠功能区",
                 "Ctrl+Shift+B / Ctrl+J  导航 / 诊断",
             ] {
                 ui.label(tip);
             }
+            ui.separator();
+            command_ui::menu(ui, state, MenuId::Help);
         });
     });
-}
-
-fn file_menu(ui: &mut egui::Ui, state: &mut WorkspaceState) {
-    if ui
-        .add_enabled(
-            state.composition.is_none(),
-            egui::Button::new("新建文档    Ctrl+N"),
-        )
-        .clicked()
-    {
-        commands::dispatch(state, ViewCommand::NewDocument);
-        ui.close();
-    }
-    commands::unavailable(ui, "打开…    Ctrl+O");
-    commands::unavailable(ui, "最近打开");
-    ui.separator();
-    if ui
-        .add_enabled(
-            state.has_document() && state.composition.is_none(),
-            egui::Button::new("保存    Ctrl+S"),
-        )
-        .clicked()
-    {
-        commands::dispatch(state, ViewCommand::Save);
-        ui.close();
-    }
-    commands::unavailable(ui, "另存为…");
-    commands::unavailable(ui, "导出…");
 }

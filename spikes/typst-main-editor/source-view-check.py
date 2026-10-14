@@ -79,7 +79,7 @@ try:
                   "edited document")
     record("01-document-edited", True, texts=texts(edited))
 
-    xdo("key", "--clearmodifiers", "ctrl+2")
+    xdo("key", "--clearmodifiers", "ctrl+shift+m")
     s = wait(lambda s: s["source_mode"] and s["preview"]["shown"] and s["preview"]["rect"]
              and len(s["preview"]["anchors"] or []) == 3, "preview shown")
     shot("02-source-and-preview")
@@ -96,13 +96,13 @@ try:
     record("03-click-locates-block", True, cursor=[s["cursor_leaf"], s["cursor_byte"]])
 
     generation = s["preview"]["generation"]
-    xdo("key", "--clearmodifiers", "ctrl+1")
+    xdo("key", "--clearmodifiers", "ctrl+shift+m")
     wait(lambda s: not s["source_mode"], "back to the editor")
     xdo("type", "X")
     s = wait(lambda s: s["current"] and texts(s)[1] == "X第二段 beta", "typing at the located block")
     record("04-typing-after-return", True, texts=texts(s))
 
-    xdo("key", "--clearmodifiers", "ctrl+2")
+    xdo("key", "--clearmodifiers", "ctrl+shift+m")
     s = wait(lambda s: s["source_mode"] and s["preview"]["shown"]
              and s["preview"]["generation"] > generation, "preview of the new snapshot")
     shot("05-preview-after-edit")

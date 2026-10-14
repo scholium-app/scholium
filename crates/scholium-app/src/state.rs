@@ -26,6 +26,8 @@ pub(crate) struct WorkspaceState {
     /// Active IME preedit; display-only, never document text.
     pub(crate) composition: Option<String>,
     pub(crate) mode: ViewMode,
+    /// Interface language choice; `Auto` follows the system and can change at runtime.
+    pub(crate) locale: crate::i18n::LocaleSetting,
     pub(crate) ribbon: crate::ribbon::RibbonState,
     pub(crate) navigation: bool,
     pub(crate) diagnostics: bool,
@@ -50,6 +52,7 @@ impl Default for WorkspaceState {
             storage_error: None,
             composition: None,
             mode: ViewMode::Visual,
+            locale: Default::default(),
             ribbon: Default::default(),
             navigation: false,
             diagnostics: false,

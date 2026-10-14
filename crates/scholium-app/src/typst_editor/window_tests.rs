@@ -1,6 +1,6 @@
 //! Whole-window frames: shortcuts, chrome, Ribbon and the editor in one egui pass.
 use super::*;
-use crate::{chrome, commands, state::ViewMode, typst_editor::tests::Fixture};
+use crate::{chrome, i18n::LocaleSetting, state::ViewMode, typst_editor::tests::Fixture};
 
 fn frame(f: &mut Fixture, size: egui::Vec2, events: Vec<egui::Event>) -> egui::FullOutput {
     let mut output = f.ctx.run_ui(
@@ -10,7 +10,7 @@ fn frame(f: &mut Fixture, size: egui::Vec2, events: Vec<egui::Event>) -> egui::F
             ..Default::default()
         },
         |ui| {
-            commands::shortcuts(ui.ctx(), &mut f.state);
+            crate::command::shortcuts::shortcuts(ui.ctx(), &mut f.state);
             chrome::show(ui, &mut f.state);
             f.editor.show(ui, &mut f.state);
         },
@@ -32,6 +32,16 @@ fn command(key: egui::Key) -> egui::Event {
         pressed: true,
         repeat: false,
         modifiers: egui::Modifiers::COMMAND,
+    }
+}
+
+fn toggle_mode() -> egui::Event {
+    egui::Event::Key {
+        key: egui::Key::M,
+        physical_key: None,
+        pressed: true,
+        repeat: false,
+        modifiers: egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
     }
 }
 
@@ -73,11 +83,11 @@ fn view_shortcuts_switch_modes_without_touching_the_document() {
     f.settle();
     let before = f.editor.record();
     let size = egui::vec2(1280.0, 900.0);
-    frame(&mut f, size, vec![command(egui::Key::Num2)]);
+    frame(&mut f, size, vec![toggle_mode()]);
     assert_eq!(f.state.mode, ViewMode::Source);
     frame(&mut f, size, vec![command(egui::Key::J)]);
     assert!(f.state.diagnostics);
-    frame(&mut f, size, vec![command(egui::Key::Num1)]);
+    frame(&mut f, size, vec![toggle_mode()]);
     assert_eq!(f.state.mode, ViewMode::Visual);
     frame(&mut f, size, vec![command(egui::Key::F1)]);
     assert!(f.state.ribbon.collapsed);
@@ -131,9 +141,9 @@ fn returning_from_source_view_restores_typing_on_the_page() {
     f.settle();
     let size = egui::vec2(1280.0, 900.0);
     frame(&mut f, size, vec![]);
-    frame(&mut f, size, vec![command(egui::Key::Num2)]);
+    frame(&mut f, size, vec![toggle_mode()]);
     frame(&mut f, size, vec![]);
-    frame(&mut f, size, vec![command(egui::Key::Num1)]);
+    frame(&mut f, size, vec![toggle_mode()]);
     frame(&mut f, size, vec![]);
     frame(&mut f, size, vec![tests::text("k")]);
     assert_eq!(input::leaves(&f.editor.snapshot)[0].text, "k");
@@ -284,4 +294,57 @@ fn metadata_reports_changes_the_status_bar_shows() {
     assert!(!f.editor.metadata(&mut f.state), "unchanged");
     f.state.edit_error = None;
     assert!(f.editor.metadata(&mut f.state), "warning cleared");
+}
+
+#[test]
+fn ctrl_1_and_ctrl_2_no_longer_switch_the_work_mode() {
+    let mut f = window();
+    f.settle();
+    let size = egui::vec2(1280.0, 900.0);
+    frame(&mut f, size, vec![]);
+    frame(&mut f, size, vec![command(egui::Key::Num2)]);
+    assert_eq!(f.state.mode, ViewMode::Visual);
+    f.state.mode = ViewMode::Source;
+    frame(&mut f, size, vec![command(egui::Key::Num1)]);
+    assert_eq!(f.state.mode, ViewMode::Source);
+}
+
+#[test]
+fn escape_never_drops_the_pages_keyboard_focus() {
+    let mut f = window();
+    f.events(vec![tests::text("$"), tests::text("1")]);
+    f.settle();
+    let size = egui::vec2(1280.0, 900.0);
+    frame(&mut f, size, vec![]);
+    frame(&mut f, size, vec![]);
+    assert!(f.ctx.memory(|m| m.has_focus(paint::id())));
+    for _ in 0..2 {
+        frame(&mut f, size, vec![tests::key(egui::Key::Escape, false)]);
+        assert!(f.ctx.memory(|m| m.has_focus(paint::id())));
+    }
+    assert!(!f.editor.in_math(), "the first Esc left the formula");
+}
+
+#[test]
+fn the_interface_language_switches_at_runtime_without_touching_the_document() {
+    let mut f = window();
+    f.settle();
+    let size = egui::vec2(1280.0, 900.0);
+    let before = f.editor.record().snapshot;
+    let mut shown = Vec::new();
+    for locale in [LocaleSetting::En, LocaleSetting::ZhHans, LocaleSetting::En] {
+        f.state.locale = locale;
+        frame(&mut f, size, vec![]);
+        let output = frame(&mut f, size, vec![]);
+        shown.push(
+            painted_text(&output)
+                .into_iter()
+                .map(|(_, t)| t)
+                .collect::<Vec<_>>(),
+        );
+    }
+    assert!(shown[0].iter().any(|t| t == "Bold"));
+    assert!(shown[1].iter().any(|t| t == "粗体") && !shown[1].iter().any(|t| t == "Bold"));
+    assert!(shown[2].iter().any(|t| t == "Bold"));
+    assert_eq!(f.editor.record().snapshot, before);
 }
