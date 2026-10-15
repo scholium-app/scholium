@@ -1,18 +1,22 @@
-//! Scholium 原生排版工作区：Ribbon 与 Typst Content 编辑面共用一个结构会话。
+//! Scholium 原生排版工作区：窗口外壳（菜单栏、工具栏、焦点工具栏、标签栏、状态栏）与
+//! Typst Content 编辑面共用一个结构会话。
 
 mod chrome;
 mod command;
 mod commands;
 mod i18n;
 mod icons;
-mod ribbon;
 mod state;
 mod theme;
 mod typst_editor;
+mod widgets;
 
 use eframe::egui;
 use state::WorkspaceState;
 use typst_editor::EditorSession;
+
+/// Narrowest window: at this width the toolbar already moves its last group into "»".
+const MIN_WINDOW_WIDTH: f32 = 480.0;
 
 #[derive(Default)]
 struct ScholiumApp {
@@ -41,7 +45,7 @@ fn main() -> eframe::Result {
         viewport: egui::ViewportBuilder::default()
             .with_title("Scholium")
             .with_inner_size([1280.0, 900.0])
-            .with_min_inner_size([640.0, 480.0]),
+            .with_min_inner_size([MIN_WINDOW_WIDTH, 480.0]),
         renderer: eframe::Renderer::Glow,
         ..Default::default()
     };
