@@ -4,7 +4,7 @@ use crate::{state::ViewMode, theme};
 use egui::{Rect, Sense, Stroke};
 
 const MIN_SHEET_HEIGHT_PT: f32 = 620.0;
-const OUTER_MARGIN: f32 = 24.0;
+const OUTER_MARGIN: f32 = theme::Tokens::PAGE_TOP;
 
 pub(super) fn id() -> egui::Id {
     egui::Id::new("typst-structural-page")
@@ -12,21 +12,27 @@ pub(super) fn id() -> egui::Id {
 
 pub(super) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSession) {
     if state.navigation && ui.available_width() >= theme::NARROW_WIDTH {
+        let nav = theme::tokens(ui.ctx()).toolbar;
         egui::Panel::left("editor-navigation")
             .default_size(180.0)
+            .frame(
+                egui::Frame::new()
+                    .fill(nav)
+                    .inner_margin(egui::Margin::same(8)),
+            )
             .show(ui, |ui| {
                 ui.label("未命名 · 结构会话");
                 ui.weak("隔离开发文件");
             });
     }
     egui::CentralPanel::default()
-        .frame(egui::Frame::new().fill(theme::colors(ui).canvas))
+        .frame(egui::Frame::new().fill(theme::tokens(ui.ctx()).canvas))
         .show(ui, |ui| {
             if state.mode == ViewMode::Source {
                 session.drag = None;
                 session.placement = None;
                 session.show_source(ui);
-                session.audit_source();
+                session.audit_source(ui.ctx());
                 return;
             }
             egui::ScrollArea::both()
@@ -115,7 +121,7 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
     // All accepted intents have reached LocalSession and the worker before this pass.
     let text_shapes = body(ui, rect, scale, session, state);
     keep_ime(ui, rect, response.has_focus(), session);
-    session.audit(rect, scale, text_shapes, ppp);
+    session.audit(ui.ctx(), rect, scale, text_shapes, ppp);
 }
 
 /// egui-winit turns the platform IME off on any frame without `output.ime`, and
@@ -155,7 +161,7 @@ pub(super) fn body(
     state: &WorkspaceState,
 ) -> usize {
     let painter = ui.painter().with_clip_rect(rect.intersect(ui.clip_rect()));
-    painter.rect_filled(rect, 0.0, egui::Color32::WHITE);
+    painter.rect_filled(rect, 0.0, theme::tokens(ui.ctx()).page);
     if let Some(layers) = &session.texture {
         layers.paint(&painter, rect.min, scale);
     }
@@ -174,7 +180,7 @@ pub(super) fn body(
     let map = |point: [f64; 2]| rect.min + egui::vec2(point[0] as f32, point[1] as f32) * scale;
     let top = map(caret.top);
     let bottom = map(caret.bottom);
-    painter.line_segment([top, bottom], Stroke::new(1.5, theme::colors(ui).accent));
+    painter.line_segment([top, bottom], Stroke::new(1.5, theme::Tokens::PAPER_ACCENT));
     ui.ctx().output_mut(|output| {
         output.ime = Some(egui::output::IMEOutput {
             rect,
@@ -189,7 +195,7 @@ pub(super) fn body(
             egui::Align2::LEFT_TOP,
             preedit,
             egui::FontId::proportional(16.0),
-            egui::Color32::DARK_BLUE,
+            theme::Tokens::PAPER_ACCENT,
         );
         return 1;
     }
@@ -208,12 +214,16 @@ fn selection_overlay(painter: &egui::Painter, rect: Rect, scale: f32, session: &
             .collect();
         painter.add(egui::Shape::convex_polygon(
             points,
-            egui::Color32::from_rgba_unmultiplied(40, 105, 210, 55),
+            theme::Tokens::PAPER_ACCENT.gamma_multiply(SELECTION_ALPHA),
             egui::Stroke::NONE,
         ));
     }
 }
 
+/// Opacity of the selection tint over the white page.
+const SELECTION_ALPHA: f32 = 0.22;
+/// Opacity of the formula tint; over white it reads as the `math_bg` token.
+const FORMULA_ALPHA: f32 = 0.28;
 const FORMULA_PADDING_PT: f32 = 1.5;
 const SLOT_PADDING_PT: f32 = 2.0;
 const FORMULA_CORNER: f32 = 3.0;
@@ -230,7 +240,8 @@ fn math_overlay(
     let Some(indicator) = session.math_indicator() else {
         return;
     };
-    let accent = theme::colors(ui).accent;
+    let t = theme::tokens(ui.ctx());
+    let accent = theme::Tokens::PAPER_ACCENT;
     let map = |b: [f64; 4], pad: f32| {
         let pad = pad * scale;
         Rect::from_min_max(
@@ -238,10 +249,17 @@ fn math_overlay(
             rect.min + egui::vec2(b[2] as f32, b[3] as f32) * scale + egui::vec2(pad, pad),
         )
     };
+    let formula = map(indicator.formula, FORMULA_PADDING_PT);
     painter.rect_filled(
-        map(indicator.formula, FORMULA_PADDING_PT),
+        formula,
         FORMULA_CORNER,
-        accent.gamma_multiply(0.10),
+        t.math_border.gamma_multiply(FORMULA_ALPHA),
+    );
+    painter.rect_stroke(
+        formula,
+        FORMULA_CORNER,
+        Stroke::new(1.0, t.math_border),
+        egui::StrokeKind::Outside,
     );
     if let Some(slot) = indicator.slot {
         painter.rect_stroke(

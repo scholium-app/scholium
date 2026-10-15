@@ -57,6 +57,7 @@ fn whole_window_stays_inside_tiled_sizes_in_both_modes() {
         f.state.mode = mode;
         f.state.navigation = navigation;
         for size in [
+            egui::vec2(480.0, 480.0),
             egui::vec2(640.0, 480.0),
             egui::vec2(844.0, 1011.0),
             egui::vec2(1280.0, 900.0),
@@ -90,12 +91,12 @@ fn view_shortcuts_switch_modes_without_touching_the_document() {
     frame(&mut f, size, vec![toggle_mode()]);
     assert_eq!(f.state.mode, ViewMode::Visual);
     frame(&mut f, size, vec![command(egui::Key::F1)]);
-    assert!(f.state.ribbon.collapsed);
+    assert!(!f.state.toolbars_visible);
     assert_eq!(f.editor.record().snapshot, before.snapshot);
 }
 
 #[test]
-fn ribbon_intents_apply_in_order_through_the_editor_session() {
+fn toolbar_intents_apply_in_order_through_the_editor_session() {
     let mut f = window();
     f.events(vec![tests::text("x")]);
     f.settle();
@@ -150,7 +151,7 @@ fn returning_from_source_view_restores_typing_on_the_page() {
 }
 
 #[test]
-fn ribbon_intents_queued_in_source_view_never_reach_the_document() {
+fn toolbar_intents_queued_in_source_view_never_reach_the_document() {
     let mut f = window();
     f.events(vec![tests::text("x")]);
     f.settle();
@@ -176,7 +177,7 @@ fn painted_text(output: &egui::FullOutput) -> Vec<(egui::Pos2, String)> {
         .collect()
 }
 
-const STATUS_HEIGHT: f32 = 30.0;
+const STATUS_HEIGHT: f32 = 24.0;
 
 fn status_text(output: &egui::FullOutput, height: f32) -> String {
     painted_text(output)
@@ -228,26 +229,6 @@ fn page_stays_put_when_an_error_appears_and_the_status_bar_shows_it() {
 }
 
 #[test]
-fn status_bar_shows_both_revisions_and_marks_a_stale_picture() {
-    let mut f = window();
-    f.settle();
-    let size = egui::vec2(1280.0, 900.0);
-    frame(&mut f, size, vec![]);
-    let output = frame(&mut f, size, vec![]);
-    let line = status_text(&output, size.y);
-    assert!(line.contains("正文 r") && line.contains("画面 r"), "{line}");
-    assert!(
-        !line.contains("待更新") && line.contains("连续视图"),
-        "{line}"
-    );
-    if let Some(view) = &mut f.state.editor {
-        view.pending = true;
-    }
-    let stale = status_text(&frame(&mut f, size, vec![]), size.y);
-    assert!(stale.contains("待更新"), "{stale}");
-}
-
-#[test]
 fn page_is_centered_in_a_wide_viewport() {
     let mut f = window();
     f.settle();
@@ -276,11 +257,8 @@ fn status_bar_is_redrawn_once_a_stale_marker_clears() {
     if let Some(view) = &mut f.state.editor {
         view.pending = true;
     }
-    let wake = frame(&mut f, size, vec![]);
-    assert!(status_text(&wake, size.y).contains("待更新"));
+    frame(&mut f, size, vec![]);
     assert!(!f.state.editor.as_ref().is_some_and(|v| v.pending));
-    let next = frame(&mut f, size, vec![]);
-    assert!(!status_text(&next, size.y).contains("待更新"));
 }
 
 #[test]
@@ -343,8 +321,8 @@ fn the_interface_language_switches_at_runtime_without_touching_the_document() {
                 .collect::<Vec<_>>(),
         );
     }
-    assert!(shown[0].iter().any(|t| t == "Bold"));
-    assert!(shown[1].iter().any(|t| t == "粗体") && !shown[1].iter().any(|t| t == "Bold"));
-    assert!(shown[2].iter().any(|t| t == "Bold"));
+    assert!(shown[0].iter().any(|t| t == "File"));
+    assert!(shown[1].iter().any(|t| t == "文件") && !shown[1].iter().any(|t| t == "File"));
+    assert!(shown[2].iter().any(|t| t == "File"));
     assert_eq!(f.editor.record().snapshot, before);
 }

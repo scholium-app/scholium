@@ -6,16 +6,18 @@ impl EditorSession {
         if !self.confirm_new && !self.confirm_close {
             return;
         }
+        let locale = state.locale.resolve();
+        let text = |key: &str| crate::i18n::text(locale, key);
         egui::Modal::new(egui::Id::new("editor-discard")).show(ctx, |ui| {
-            ui.heading("继续将关闭当前文档");
-            ui.label("未保存的修改将丢弃。新文档再次保存会替换隔离会话文件的当前内容。");
+            ui.heading(text("chrome.dialog.title"));
+            ui.label(text("chrome.dialog.body"));
             ui.horizontal(|ui| {
-                if ui.button("取消").clicked() {
+                if ui.button(text("chrome.dialog.cancel")).clicked() {
                     self.confirm_new = false;
                     self.confirm_close = false;
                     self.focus = true;
                 }
-                let proceed = ui.button("丢弃并继续");
+                let proceed = ui.button(text("chrome.dialog.discard"));
                 if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
                     println!("DIALOG {}", serde_json::json!({"proceed": [proceed.rect.center().x, proceed.rect.center().y]}));
                 }

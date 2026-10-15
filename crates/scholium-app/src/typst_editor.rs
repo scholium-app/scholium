@@ -2,6 +2,7 @@
 mod access;
 mod attach;
 mod audit;
+mod clipboard;
 #[cfg(test)]
 mod command_keys_tests;
 mod confirm;
@@ -13,12 +14,12 @@ mod input;
 mod math_enter;
 mod paint;
 mod raster;
-pub(crate) mod ribbon;
 mod scene;
 mod selection;
 mod source_view;
 mod startup;
 mod style;
+pub(crate) use clipboard::request_clipboard;
 pub(crate) use startup::show_error as show_startup_error;
 #[cfg(test)]
 mod tests;
@@ -87,6 +88,13 @@ pub(crate) struct EditorView {
     /// Layout statistics, filled only while diagnostics are shown.
     pub diagnostics: Option<String>,
     pub commands: Vec<Command>,
+    /// File stem of an explicitly chosen document; `None` for the unnamed default document.
+    pub title: Option<String>,
+    /// Words of the body text at `words_revision`, recounted only when the revision moves.
+    pub words: usize,
+    pub words_revision: Option<u64>,
+    /// Page shown and page count of the source preview, once it has compiled.
+    pub preview_page: Option<(usize, usize)>,
 }
 
 /// The only editor: owns the authoritative LocalSession and its derived Typst scenes.
@@ -136,6 +144,8 @@ pub(crate) struct EditorSession {
     /// Style armed for the next typed text at the caret.
     pending_style: Option<style::Pending>,
     follow: follow::Follow,
+    /// File stem of an explicitly chosen document file (shown as the tab title).
+    title: Option<String>,
 }
 
 impl std::fmt::Debug for EditorSession {
@@ -153,13 +163,20 @@ impl EditorSession {
         state: &mut WorkspaceState,
     ) -> Result<Self, SessionError> {
         // An explicit file (tests, multiple instances) must already be schema v1.
-        let (path, notice) =
+        let (path, notice, named) =
             match std::env::var_os("SCHOLIUM_SESSION_FILE").filter(|p| !p.is_empty()) {
-                Some(path) => (PathBuf::from(path), None),
-                None => startup::default_document()?,
+                Some(path) => (PathBuf::from(path), None, true),
+                None => {
+                    let (path, notice) = startup::default_document()?;
+                    (path, notice, false)
+                }
             };
         let mut session = Self::open_file(ctx, state, &path)?;
         session.notice = notice;
+        session.title = named
+            .then(|| path.file_stem().map(|s| s.to_string_lossy().into_owned()))
+            .flatten();
+        session.metadata(state);
         Ok(session)
     }
 
@@ -232,6 +249,7 @@ impl EditorSession {
             clicks: selection::ClickRun::default(),
             pending_style: None,
             follow: Default::default(),
+            title: None,
         };
         state.editor = Some(EditorView::default());
         result.metadata(state);
@@ -351,13 +369,25 @@ impl EditorSession {
                 v.warning.clone(),
                 v.rejected_input.is_some(),
                 v.diagnostics.clone(),
+                v.words,
+                v.preview_page,
+                v.title.clone(),
             )
         };
         let before = state.editor.as_ref().map(shown);
         let warning = self.warning(state);
         let diagnostics = state.diagnostics;
+        let preview_page = (state.mode == crate::state::ViewMode::Source)
+            .then(|| self.source_view.page_info())
+            .flatten();
         if let Some(view) = &mut state.editor {
             view.revision = self.snapshot.revision.0;
+            if view.words_revision != Some(view.revision) {
+                view.words = self.count_words();
+                view.words_revision = Some(view.revision);
+            }
+            view.preview_page = preview_page;
+            view.title = self.title.clone();
             view.dirty = self.saved.as_ref() != Some(&self.snapshot);
             view.selected = self.selected();
             view.in_math = self.in_math();
@@ -373,6 +403,15 @@ impl EditorSession {
                 .flatten();
         }
         state.editor.as_ref().map(shown) != before
+    }
+
+    /// Words of the body text: formulas are not text.
+    fn count_words(&self) -> usize {
+        input::leaves(&self.snapshot)
+            .iter()
+            .filter(|leaf| !leaf.math)
+            .map(|leaf| crate::chrome::count_words(leaf.text))
+            .sum()
     }
 
     /// The single transient message the status bar shows, in priority order.
@@ -422,13 +461,34 @@ impl EditorSession {
         }
         // Input still waiting for layout is not in the snapshot yet, but is unsaved work.
         let dirty = self.saved.as_ref() != Some(&self.snapshot) || !self.deferred.is_empty();
-        if ctx.input(|i| i.viewport().close_requested()) && dirty && !self.allow_close {
+        // The tab's close button asks like the window's own close button does.
+        let close_asked = std::mem::take(&mut state.close_requested);
+        if (ctx.input(|i| i.viewport().close_requested()) || close_asked)
+            && dirty
+            && !self.allow_close
+        {
             ctx.send_viewport_cmd(egui::ViewportCommand::CancelClose);
             self.confirm_close = true;
+        } else if close_asked {
+            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
         }
-        ctx.send_viewport_cmd(egui::ViewportCommand::Title(format!(
-            "未命名 — Scholium · {}",
-            if dirty { "未保存" } else { "已保存" }
+        let locale = state.locale.resolve();
+        let name = self
+            .title
+            .clone()
+            .unwrap_or_else(|| crate::i18n::text(locale, "chrome.tab.untitled"));
+        let saved = crate::i18n::text(
+            locale,
+            if dirty {
+                "chrome.tab.unsaved"
+            } else {
+                "chrome.tab.saved"
+            },
+        );
+        ctx.send_viewport_cmd(egui::ViewportCommand::Title(crate::i18n::text_with(
+            locale,
+            "chrome.window.title",
+            &[("name", name.into()), ("state", saved.into())],
         )));
     }
 
