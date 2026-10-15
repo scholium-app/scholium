@@ -74,9 +74,13 @@ command-insert-root =
     .title = Radical
     .tooltip = Insert a radical
 
-command-insert-attach =
-    .title = Superscript/Subscript
-    .tooltip = Insert a superscript or subscript
+command-insert-superscript =
+    .title = Superscript
+    .tooltip = Insert a superscript in a formula
+
+command-insert-subscript =
+    .title = Subscript
+    .tooltip = Insert a subscript in a formula
 
 command-insert-delimiter =
     .title = Delimiters

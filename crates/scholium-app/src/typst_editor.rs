@@ -61,6 +61,8 @@ pub(crate) enum SessionError {
 pub(crate) enum Command {
     Math,
     Fraction,
+    /// Attach a superscript or subscript slot, as typing `^` / `_` does.
+    Attach(scholium_document::AttachSlot),
     Style(TextStyle),
     Kind(scholium_model::BlockKind),
 }

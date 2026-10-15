@@ -74,9 +74,13 @@ command-insert-root =
     .title = 根式
     .tooltip = 插入根式
 
-command-insert-attach =
-    .title = 上下标
-    .tooltip = 插入上标或下标
+command-insert-superscript =
+    .title = 上标
+    .tooltip = 在公式中插入上标
+
+command-insert-subscript =
+    .title = 下标
+    .tooltip = 在公式中插入下标
 
 command-insert-delimiter =
     .title = 定界符

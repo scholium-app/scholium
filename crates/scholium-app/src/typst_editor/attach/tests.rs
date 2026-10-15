@@ -400,3 +400,45 @@ fn grouped_typing_into_a_placeholder_keeps_it_and_undoes_in_one_step() {
     f.editor.history(false, &mut f.state);
     assert_eq!(*f.editor.snapshot, with_placeholder);
 }
+
+#[test]
+fn the_script_commands_create_the_same_slots_as_typing_caret_and_underscore() {
+    for (typed, slot) in [("^", AttachSlot::Sup), ("_", AttachSlot::Sub)] {
+        let mut keyed = Fixture::new();
+        keyed.events(vec![text("$"), text("x"), text(typed), text("2")]);
+        let mut commanded = Fixture::new();
+        commanded.events(vec![text("$"), text("x")]);
+        commanded
+            .editor
+            .command(Command::Attach(slot), &mut commanded.state);
+        commanded.events(vec![text("2")]);
+        let (base, sub, sup) = {
+            let formula = root(&commanded);
+            let (b, s, p) = scripts(&formula);
+            (b.clone(), s.cloned(), p.cloned())
+        };
+        assert_eq!(literal(&base), "x");
+        let filled = if slot == AttachSlot::Sup { sup } else { sub };
+        assert_eq!(literal(&filled.expect("the slot")), "2", "{typed}");
+        let typed_formula = root(&keyed);
+        let (_, typed_sub, typed_sup) = scripts(&typed_formula);
+        let typed_filled = if slot == AttachSlot::Sup {
+            typed_sup
+        } else {
+            typed_sub
+        };
+        assert_eq!(literal(typed_filled.expect("typed slot")), "2", "{typed}");
+        assert_eq!(commanded.editor.cursor.byte, keyed.editor.cursor.byte);
+    }
+}
+
+#[test]
+fn a_script_command_in_body_text_changes_nothing() {
+    let mut f = Fixture::new();
+    f.events(vec![text("abc")]);
+    let before = f.editor.snapshot.revision;
+    f.editor
+        .command(Command::Attach(AttachSlot::Sup), &mut f.state);
+    assert_eq!(f.editor.snapshot.revision, before);
+    assert!(f.state.edit_error.is_some());
+}

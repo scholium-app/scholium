@@ -4,6 +4,7 @@ use super::{
     spec::{Action, ChordKey, CommandSpec, FocusKind, IconId, KeyChord, Routing},
 };
 use crate::typst_editor::Command;
+use scholium_document::AttachSlot;
 
 pub(super) fn specs() -> Vec<CommandSpec> {
     let mut specs = math();
@@ -63,17 +64,31 @@ fn math() -> Vec<CommandSpec> {
             availability: avail::unimplemented,
         },
         command! {
-            "insert.attach",
+            "insert.superscript",
             icon: IconId::Attach,
+            shortcuts: keys![KeyChord { ctrl: false, shift: false, key: ChordKey::Caret }],
+            routing: Routing::Platform,
             menu: menu!(Insert, 0, 4),
             focus: Some(FocusKind::Math),
             writes: true,
-            availability: avail::unimplemented,
+            availability: avail::in_formula,
+            action: Action::Editor(Command::Attach(AttachSlot::Sup)),
+        },
+        command! {
+            "insert.subscript",
+            icon: IconId::Subscript,
+            shortcuts: keys![KeyChord { ctrl: false, shift: false, key: ChordKey::Underscore }],
+            routing: Routing::Platform,
+            menu: menu!(Insert, 0, 5),
+            focus: Some(FocusKind::Math),
+            writes: true,
+            availability: avail::in_formula,
+            action: Action::Editor(Command::Attach(AttachSlot::Sub)),
         },
         command! {
             "insert.delimiter",
             icon: IconId::Delimiter,
-            menu: menu!(Insert, 0, 5),
+            menu: menu!(Insert, 0, 6),
             focus: Some(FocusKind::Math),
             writes: true,
             availability: avail::unimplemented,
@@ -81,7 +96,7 @@ fn math() -> Vec<CommandSpec> {
         command! {
             "insert.matrix",
             icon: IconId::Matrix,
-            menu: menu!(Insert, 0, 6),
+            menu: menu!(Insert, 0, 7),
             focus: Some(FocusKind::Math),
             writes: true,
             availability: avail::unimplemented,

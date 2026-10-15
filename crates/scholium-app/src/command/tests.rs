@@ -163,7 +163,8 @@ fn every_p1_menu_lists_its_commands() {
                 "insert.formula",
                 "insert.fraction",
                 "insert.root",
-                "insert.attach",
+                "insert.superscript",
+                "insert.subscript",
                 "insert.delimiter",
             ],
         ),
@@ -481,4 +482,38 @@ fn the_same_registry_title_renders_in_each_language_without_restart() {
     assert_eq!(title(&state), "Source Preview");
     state.locale = LocaleSetting::ZhHans;
     assert_eq!(title(&state), "源码预览");
+}
+
+#[test]
+fn script_commands_need_the_caret_in_a_formula_outside_source_and_composition() {
+    let in_formula = CommandContext {
+        in_math: true,
+        ..editable()
+    };
+    for id in ["insert.superscript", "insert.subscript"] {
+        assert!((spec(id).availability)(&in_formula).is_enabled(), "{id}");
+        assert_eq!(
+            (spec(id).availability)(&editable()),
+            Availability::Disabled("reason.not_in_formula"),
+            "{id}"
+        );
+        let source = CommandContext {
+            mode: ViewMode::Source,
+            ..in_formula
+        };
+        assert_eq!(
+            (spec(id).availability)(&source),
+            Availability::Disabled("reason.source_readonly")
+        );
+        let composing = CommandContext {
+            composing: true,
+            ..in_formula
+        };
+        assert_eq!(
+            (spec(id).availability)(&composing),
+            Availability::Disabled("reason.composing")
+        );
+    }
+    assert_eq!(spec("insert.superscript").shortcuts[0].display(), "^");
+    assert_eq!(spec("insert.subscript").shortcuts[0].display(), "_");
 }

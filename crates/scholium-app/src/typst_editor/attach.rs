@@ -38,6 +38,12 @@ impl EditorSession {
         if self.body_leaf(self.cursor.leaf) {
             return false;
         }
+        self.attach_slot(slot, state);
+        true
+    }
+
+    /// Attach `slot` at the caret in math; the one path typing and the focus bar share.
+    pub(super) fn attach_slot(&mut self, slot: AttachSlot, state: &mut WorkspaceState) {
         let edit = StructuralEdit::Attach {
             leaf: self.cursor.leaf,
             at: self.cursor.byte,
@@ -45,7 +51,6 @@ impl EditorSession {
         };
         self.apply(edit, state);
         self.cursor.affinity = Affinity::Downstream;
-        true
     }
 
     /// Right at the end of a script slot continues just after the Attach.

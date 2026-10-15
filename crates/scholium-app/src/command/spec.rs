@@ -21,6 +21,9 @@ pub(crate) enum ChordKey {
     Equals,
     Minus,
     Slash,
+    /// `^` and `_` are typed characters, not chords; listed only so menus can show them.
+    Caret,
+    Underscore,
 }
 
 /// A key combination; `ctrl` means the platform command key (Ctrl, or Cmd on macOS).
@@ -65,6 +68,8 @@ impl KeyChord {
             ChordKey::Equals => text.push('='),
             ChordKey::Minus => text.push('-'),
             ChordKey::Slash => text.push('/'),
+            ChordKey::Caret => text.push('^'),
+            ChordKey::Underscore => text.push('_'),
         }
         text
     }
@@ -208,6 +213,7 @@ pub(crate) enum IconId {
     Heading1,
     Heading2,
     Attach,
+    Subscript,
     Table,
     Image,
     Link,

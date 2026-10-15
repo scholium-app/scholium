@@ -42,6 +42,7 @@ fn egui_key(key: ChordKey) -> Option<Key> {
         ChordKey::Equals => Some(Key::Equals),
         ChordKey::Minus => Some(Key::Minus),
         ChordKey::Slash => Some(Key::Slash),
+        ChordKey::Caret | ChordKey::Underscore => None,
     }
 }
 
