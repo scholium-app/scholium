@@ -12,6 +12,11 @@ import gi
 gi.require_version("Atspi", "2.0")
 from gi.repository import Atspi  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import chrome_ui  # noqa: E402
+
+locale = os.environ.get("SCHOLIUM_LOCALE", "zh-Hans")
+catalog = chrome_ui.catalog(locale)
 binary = Path(sys.argv[1]).resolve()
 output = Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
@@ -156,13 +161,41 @@ try:
            math.get_name() == "公式：分数（分子：12；分母：空）" and status.get_name() == "分数分母：空",
            math=math.get_name(), status=status.get_name(), status_role=status.get_role_name())
 
+    # Every control exposes its catalog title (in the run's language) as its AT-SPI name.
+    def named(command_id):
+        name = chrome_ui.title(locale, command_id)
+        return find(app_root(), lambda n: n.get_name() == name and n.get_role_name() != "text")
+
     # at-spi2-core renamed "push button" to "button" (2.62 locally, older on CI runners).
-    copy = find(app_root(), lambda n: n.get_name() == "复制" and n.get_role_name() in ("button", "push button"))
-    paste_button = find(app_root(), lambda n: n.get_name() == "粘贴")
+    button_roles = ("button", "push button")
+    toggle_roles = ("check box", "toggle button")
+    strike, bold, undo = named("format.strike"), named("format.bold"), named("edit.undo")
+    redo = named("edit.redo")  # nothing to redo yet: disabled with a reason
     record("09-disabled-controls-are-not-enabled",
-           copy is not None and not states(copy)["ENABLED"] and not states(copy)["SENSITIVE"]
-           and paste_button is not None and states(paste_button)["ENABLED"],
-           copy=states(copy) if copy else None, paste=states(paste_button) if paste_button else None)
+           strike is not None and not states(strike)["ENABLED"] and not states(strike)["SENSITIVE"]
+           and redo is not None and not states(redo)["ENABLED"]
+           and bold is not None and states(bold)["ENABLED"],
+           strike=states(strike) if strike else None, redo=states(redo) if redo else None,
+           bold=states(bold) if bold else None)
+    record("10-only-checkable-commands-are-toggles",
+           bold.get_role_name() in toggle_roles and undo.get_role_name() in button_roles
+           and strike.get_role_name() in button_roles,
+           bold=bold.get_role_name(), undo=undo.get_role_name(), strike=strike.get_role_name())
+    wanted = {
+        "menubar": [catalog[f"menu-{m}"] for m in
+                    ("file", "edit", "insert", "format", "document", "view", "tools", "help")],
+        "toolbar": [chrome_ui.title(locale, c) for c in
+                    ("format.bold", "format.italic", "edit.undo", "insert.formula", "tools.search")],
+        "focus": [chrome_ui.title(locale, c) for c in
+                  ("view.mode.visual", "view.mode.source", "insert.exit_formula")],
+        "tab": [chrome_ui.title(locale, c) for c in ("file.new", "file.close")],
+        "status": [chrome_ui.title(locale, c) for c in ("view.zoom.in", "view.zoom.out", "view.zoom.fit_width")],
+    }
+    missing = {surface: [n for n in names
+                         if find(app_root(), lambda node, n=n: node.get_name() == n) is None]
+               for surface, names in wanted.items()}
+    record("11-every-control-is-named-by-its-catalog-title",
+           not any(missing.values()), locale=locale, missing=missing)
 finally:
     (output / "summary.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")
     if app.poll() is None:

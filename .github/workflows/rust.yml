@@ -59,6 +59,10 @@ jobs:
   window:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        locale: [zh-Hans, en]
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.99.0
@@ -74,11 +78,11 @@ jobs:
       - run: cargo build --locked -p scholium-app -p scholium-storage --bins
       - name: Real-window checks (discovered by scripts/window-checks.py)
         timeout-minutes: 20
-        run: python3 scripts/window-checks.py --out /tmp/scholium-window
+        run: python3 scripts/window-checks.py --locale ${{ matrix.locale }} --out /tmp/scholium-window
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: typst-main-native-evidence
+          name: typst-main-native-evidence-${{ matrix.locale }}
           path: /tmp/scholium-window
   stock:
     runs-on: ubuntu-latest
