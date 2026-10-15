@@ -19,7 +19,9 @@ impl CommandContext {
             diagnostics: state.diagnostics,
             fit_width: state.fit_width,
             actual_size: !state.fit_width && state.zoom == 1.0,
-            ribbon_collapsed: state.ribbon.collapsed,
+            toolbars_visible: state.toolbars_visible,
+            theme: state.theme,
+            locale: state.locale,
         }
     }
 }

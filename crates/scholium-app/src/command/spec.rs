@@ -1,6 +1,9 @@
 //! Command data model. No egui types: this layer moves into the UI-independent editing
 //! core later, and every entry point (menu, toolbar, shortcut, search) reads it.
-use crate::{commands::ViewCommand, state::ViewMode, typst_editor::Command};
+use crate::{
+    commands::ViewCommand, i18n::LocaleSetting, state::ViewMode, theme::ThemeKind,
+    typst_editor::Command,
+};
 
 /// Stable dotted id (`format.bold`, `view.mode.source`); never shown, never translated.
 pub(crate) type CommandId = &'static str;
@@ -90,7 +93,6 @@ pub(crate) enum MenuId {
 }
 
 impl MenuId {
-    #[cfg(test)]
     pub(crate) const ALL: [Self; 8] = [
         Self::File,
         Self::Edit,
@@ -121,6 +123,8 @@ pub(crate) enum Submenu {
     ParagraphStyle,
     WorkMode,
     Zoom,
+    Theme,
+    Language,
 }
 
 impl Submenu {
@@ -129,6 +133,8 @@ impl Submenu {
             Self::ParagraphStyle => "menu.format.paragraph_style",
             Self::WorkMode => "menu.view.work_mode",
             Self::Zoom => "menu.view.zoom",
+            Self::Theme => "menu.view.theme",
+            Self::Language => "menu.view.language",
         }
     }
 }
@@ -150,8 +156,11 @@ pub(crate) enum ToolbarGroup {
     History,
 }
 
-/// Read by the toolbars of the next task; registered and tested already.
-#[allow(dead_code)]
+impl ToolbarGroup {
+    /// Display order; the toolbar separates groups and moves whole groups into overflow.
+    pub(crate) const ALL: [Self; 4] = [Self::Paragraph, Self::Text, Self::Insert, Self::History];
+}
+
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct ToolbarPlacement {
     pub(crate) group: ToolbarGroup,
@@ -165,7 +174,7 @@ pub(crate) enum FocusKind {
     Math,
 }
 
-/// Icon identity; the UI edge maps it to a drawn glyph (not every id has one yet).
+/// Icon identity; the UI edge maps it to a Lucide glyph.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum IconId {
     None,
@@ -194,6 +203,17 @@ pub(crate) enum IconId {
     Diagnostics,
     Zoom,
     Search,
+    DisplayFormula,
+    Paragraph,
+    Heading1,
+    Heading2,
+    Attach,
+    Table,
+    Image,
+    Link,
+    Delimiter,
+    Matrix,
+    ExitFormula,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -242,7 +262,6 @@ pub(crate) struct CommandContext {
     pub(crate) has_document: bool,
     pub(crate) mode: ViewMode,
     pub(crate) composing: bool,
-    #[allow(dead_code)] // availability of formula-only commands, used by the focus toolbar
     pub(crate) in_math: bool,
     pub(crate) selected: bool,
     pub(crate) can_undo: bool,
@@ -253,7 +272,9 @@ pub(crate) struct CommandContext {
     pub(crate) diagnostics: bool,
     pub(crate) fit_width: bool,
     pub(crate) actual_size: bool,
-    pub(crate) ribbon_collapsed: bool,
+    pub(crate) toolbars_visible: bool,
+    pub(crate) theme: ThemeKind,
+    pub(crate) locale: LocaleSetting,
 }
 
 pub(crate) type AvailabilityFn = fn(&CommandContext) -> Availability;
@@ -263,14 +284,13 @@ pub(crate) type CheckedFn = fn(&CommandContext) -> bool;
 pub(crate) struct CommandSpec {
     pub(crate) id: CommandId,
     pub(crate) title: CatalogKey,
+    #[allow(dead_code)] // the longer description; read by the command search (next task)
     pub(crate) tooltip: CatalogKey,
     pub(crate) icon: IconId,
     pub(crate) shortcuts: &'static [KeyChord],
     pub(crate) routing: Routing,
     pub(crate) menu: Option<MenuPlacement>,
-    #[allow(dead_code)] // placements are read by the toolbars of the next task
     pub(crate) toolbar: Option<ToolbarPlacement>,
-    #[allow(dead_code)]
     pub(crate) focus: Option<FocusKind>,
     #[allow(dead_code)] // marks commands the read-only source view must refuse
     pub(crate) writes: bool,

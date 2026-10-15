@@ -1,9 +1,15 @@
-use crate::state::{ViewMode, WorkspaceState};
+use crate::{
+    i18n::LocaleSetting,
+    state::{ViewMode, WorkspaceState},
+    theme::ThemeKind,
+};
 
 #[derive(Clone, Copy, Debug)]
 pub(crate) enum ViewCommand {
     NewDocument,
     Save,
+    /// Close the open document through the window's close and discard flow.
+    CloseDocument,
     Visual,
     Source,
     /// Switch between the two work modes.
@@ -14,7 +20,10 @@ pub(crate) enum ViewCommand {
     ZoomIn,
     ZoomOut,
     ActualSize,
-    ToggleRibbon,
+    /// Show or hide the main and focus toolbars.
+    ToggleToolbars,
+    SetTheme(ThemeKind),
+    SetLocale(LocaleSetting),
 }
 
 pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
@@ -23,6 +32,7 @@ pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
             command,
             ViewCommand::NewDocument
                 | ViewCommand::Save
+                | ViewCommand::CloseDocument
                 | ViewCommand::Source
                 | ViewCommand::Visual
                 | ViewCommand::ToggleMode
@@ -38,7 +48,10 @@ pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
     match command {
         ViewCommand::NewDocument => state.new_requested = true,
         ViewCommand::Save => state.save_requested = true,
-        ViewCommand::ToggleRibbon => state.ribbon.collapsed = !state.ribbon.collapsed,
+        ViewCommand::CloseDocument => state.close_requested = true,
+        ViewCommand::ToggleToolbars => state.toolbars_visible = !state.toolbars_visible,
+        ViewCommand::SetTheme(theme) => state.theme = theme,
+        ViewCommand::SetLocale(locale) => state.locale = locale,
         ViewCommand::Visual => {
             // The page widget was not drawn in Source mode, so egui dropped its focus.
             state.mode = ViewMode::Visual;

@@ -21,13 +21,23 @@ fn math() -> Vec<CommandSpec> {
             routing: Routing::Editor,
             menu: menu!(Insert, 0, 0),
             toolbar: toolbar!(Insert, 0),
-            focus: Some(FocusKind::Math),
             writes: true,
             availability: avail::page_write,
+            checked: Some(avail::in_formula_now),
+            action: Action::Editor(Command::Math),
+        },
+        // Ctrl+M already toggles the formula; this entry is the focus toolbar's way out.
+        command! {
+            "insert.exit_formula",
+            icon: IconId::ExitFormula,
+            focus: Some(FocusKind::Math),
+            writes: true,
+            availability: avail::in_formula,
             action: Action::Editor(Command::Math),
         },
         command! {
             "insert.display_formula",
+            icon: IconId::DisplayFormula,
             menu: menu!(Insert, 0, 1),
             writes: true,
             availability: avail::unimplemented,
@@ -54,6 +64,7 @@ fn math() -> Vec<CommandSpec> {
         },
         command! {
             "insert.attach",
+            icon: IconId::Attach,
             menu: menu!(Insert, 0, 4),
             focus: Some(FocusKind::Math),
             writes: true,
@@ -61,6 +72,7 @@ fn math() -> Vec<CommandSpec> {
         },
         command! {
             "insert.delimiter",
+            icon: IconId::Delimiter,
             menu: menu!(Insert, 0, 5),
             focus: Some(FocusKind::Math),
             writes: true,
@@ -68,6 +80,7 @@ fn math() -> Vec<CommandSpec> {
         },
         command! {
             "insert.matrix",
+            icon: IconId::Matrix,
             menu: menu!(Insert, 0, 6),
             focus: Some(FocusKind::Math),
             writes: true,
@@ -80,6 +93,7 @@ fn objects() -> Vec<CommandSpec> {
     vec![
         command! {
             "insert.table",
+            icon: IconId::Table,
             menu: menu!(Insert, 1, 0),
             toolbar: toolbar!(Insert, 2),
             writes: true,
@@ -87,6 +101,7 @@ fn objects() -> Vec<CommandSpec> {
         },
         command! {
             "insert.image",
+            icon: IconId::Image,
             menu: menu!(Insert, 1, 1),
             toolbar: toolbar!(Insert, 3),
             writes: true,
@@ -94,6 +109,7 @@ fn objects() -> Vec<CommandSpec> {
         },
         command! {
             "insert.link",
+            icon: IconId::Link,
             menu: menu!(Insert, 1, 2),
             toolbar: toolbar!(Insert, 4),
             writes: true,

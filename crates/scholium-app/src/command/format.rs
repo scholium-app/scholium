@@ -74,6 +74,7 @@ fn paragraph() -> Vec<CommandSpec> {
     vec![
         command! {
             "format.paragraph.body",
+            icon: IconId::Paragraph,
             shortcuts: keys![KeyChord::ctrl(ChordKey::Digit(0))],
             routing: Routing::Editor,
             menu: menu!(Format, ParagraphStyle, 2, 0),
@@ -85,6 +86,7 @@ fn paragraph() -> Vec<CommandSpec> {
         },
         command! {
             "format.paragraph.heading1",
+            icon: IconId::Heading1,
             shortcuts: keys![KeyChord::ctrl(ChordKey::Digit(1))],
             routing: Routing::Editor,
             menu: menu!(Format, ParagraphStyle, 2, 1),
@@ -96,6 +98,7 @@ fn paragraph() -> Vec<CommandSpec> {
         },
         command! {
             "format.paragraph.heading2",
+            icon: IconId::Heading2,
             shortcuts: keys![KeyChord::ctrl(ChordKey::Digit(2))],
             routing: Routing::Editor,
             menu: menu!(Format, ParagraphStyle, 2, 2),

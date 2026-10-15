@@ -4,7 +4,7 @@
 //! `reason.source_readonly`). Fluent identifiers cannot contain dots, so a key maps to a
 //! message id by turning dots into hyphens; for `command.` keys the last segment is the
 //! Fluent attribute (`title`, `tooltip`) of the message `command-<id>`.
-use fluent_bundle::{FluentResource, concurrent::FluentBundle};
+use fluent_bundle::{FluentArgs, FluentResource, FluentValue, concurrent::FluentBundle};
 use std::sync::OnceLock;
 
 #[cfg(test)]
@@ -12,7 +12,6 @@ mod tests;
 
 /// The user's choice; `Auto` follows the system locale.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-#[allow(dead_code)] // the language chooser (next task) constructs the explicit choices
 pub(crate) enum LocaleSetting {
     #[default]
     Auto,
@@ -103,7 +102,7 @@ fn message_and_attribute(key: &str) -> (String, Option<&str>) {
     (key.replace('.', "-"), None)
 }
 
-fn lookup(locale: Locale, key: &str) -> Option<String> {
+fn lookup(locale: Locale, key: &str, args: Option<&FluentArgs>) -> Option<String> {
     let bundle = bundle(locale);
     let (id, attribute) = message_and_attribute(key);
     let message = bundle.get_message(&id)?;
@@ -114,7 +113,7 @@ fn lookup(locale: Locale, key: &str) -> Option<String> {
     let mut errors = Vec::new();
     Some(
         bundle
-            .format_pattern(pattern, None, &mut errors)
+            .format_pattern(pattern, args, &mut errors)
             .into_owned(),
     )
 }
@@ -122,13 +121,24 @@ fn lookup(locale: Locale, key: &str) -> Option<String> {
 /// Does `locale` define `key` itself (no fallback)?
 #[cfg(test)]
 pub(crate) fn defines(locale: Locale, key: &str) -> bool {
-    lookup(locale, key).is_some()
+    lookup(locale, key, None).is_some()
 }
 
 /// Text for `key`; a key missing in `locale` falls back to English, then to the key itself
 /// so a gap is visible rather than blank (the catalog tests keep it from shipping).
 pub(crate) fn text(locale: Locale, key: &str) -> String {
-    lookup(locale, key)
-        .or_else(|| lookup(Locale::En, key))
+    lookup(locale, key, None)
+        .or_else(|| lookup(Locale::En, key, None))
+        .unwrap_or_else(|| key.to_owned())
+}
+
+/// Like [`text`] for a message with `{ $name }` placeholders; numbers pick CLDR plurals.
+pub(crate) fn text_with(locale: Locale, key: &str, values: &[(&str, FluentValue<'_>)]) -> String {
+    let mut args = FluentArgs::new();
+    for (name, value) in values {
+        args.set(*name, value.clone());
+    }
+    lookup(locale, key, Some(&args))
+        .or_else(|| lookup(Locale::En, key, Some(&args)))
         .unwrap_or_else(|| key.to_owned())
 }

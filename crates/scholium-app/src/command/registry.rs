@@ -2,7 +2,7 @@
 //! adds one line to `DOMAINS`.
 use super::{
     document, edit, file, format, help, insert,
-    spec::{ChordKey, CommandSpec, KeyChord, MenuId, Routing, Submenu},
+    spec::{ChordKey, CommandSpec, FocusKind, KeyChord, MenuId, Routing, Submenu, ToolbarGroup},
     tools, view,
 };
 use std::sync::OnceLock;
@@ -37,6 +37,32 @@ pub(crate) fn menu_items(menu: MenuId, submenu: Option<Submenu>) -> Vec<&'static
         })
         .collect();
     items.sort_by_key(|spec| spec.menu.map(|m| (m.group, m.order)));
+    items
+}
+
+/// Toolbar commands grouped in display order; each group is separated from the next.
+pub(crate) fn toolbar_groups() -> Vec<(ToolbarGroup, Vec<&'static CommandSpec>)> {
+    ToolbarGroup::ALL
+        .iter()
+        .map(|group| {
+            let mut items: Vec<_> = all()
+                .iter()
+                .filter(|spec| spec.toolbar.is_some_and(|t| t.group == *group))
+                .collect();
+            items.sort_by_key(|spec| spec.toolbar.map(|t| t.order));
+            (*group, items)
+        })
+        .collect()
+}
+
+/// Commands the focus toolbar shows for `kind`, in menu order (commands without a menu
+/// entry come last).
+pub(crate) fn focus_items(kind: FocusKind) -> Vec<&'static CommandSpec> {
+    let mut items: Vec<_> = all()
+        .iter()
+        .filter(|spec| spec.focus == Some(kind))
+        .collect();
+    items.sort_by_key(|spec| spec.menu.map_or((u8::MAX, u8::MAX), |m| (m.group, m.order)));
     items
 }
 

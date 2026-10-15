@@ -58,6 +58,10 @@ command-insert-formula =
     .title = Inline Formula
     .tooltip = Enter or leave a formula
 
+command-insert-exit_formula =
+    .title = Leave Formula
+    .tooltip = Leave the current formula; the caret stays after it
+
 command-insert-display_formula =
     .title = Display Formula
     .tooltip = Insert a formula on its own line
@@ -182,14 +186,6 @@ command-view-split =
     .title = Split View
     .tooltip = Show source and preview side by side
 
-command-view-ribbon =
-    .title = Ribbon
-    .tooltip = Show or hide the Ribbon
-
-command-view-theme =
-    .title = Theme
-    .tooltip = Switch between light and dark
-
 command-view-zoom-fit_width =
     .title = Fit Width
     .tooltip = Fit the page to the window width
@@ -205,6 +201,30 @@ command-view-zoom-in =
 command-view-zoom-out =
     .title = Zoom Out
     .tooltip = Shrink the page
+
+command-view-toolbars =
+    .title = Show Toolbars
+    .tooltip = Show or hide the main and focus toolbars
+
+command-view-theme-light =
+    .title = Light
+    .tooltip = Use the light theme
+
+command-view-theme-dark =
+    .title = Dark
+    .tooltip = Use the dark theme
+
+command-view-language-auto =
+    .title = Follow System
+    .tooltip = The interface language follows the system
+
+command-view-language-zh_hans =
+    .title = 简体中文
+    .tooltip = 使用简体中文界面
+
+command-view-language-en =
+    .title = English
+    .tooltip = Use the English interface
 
 command-tools-search =
     .title = Command Search
@@ -251,6 +271,10 @@ menu-view-work_mode = Work Mode
 
 menu-view-zoom = Zoom
 
+menu-view-theme = Theme
+
+menu-view-language = Language
+
 
 # Availability reasons
 
@@ -266,6 +290,76 @@ reason-nothing_to_undo = Nothing to undo
 
 reason-nothing_to_redo = Nothing to redo
 
+reason-not_in_formula = The caret is not in a formula
+
 reason-unimplemented = This feature is not available yet
 
 reason-final_build = The final build is not available yet
+
+reason-document_properties = Document properties are fixed for now and cannot be edited yet
+
+
+# Window chrome
+
+chrome-overflow = More Tools
+
+chrome-focus-label-style = Style
+
+chrome-focus-label-paper = Paper
+
+chrome-focus-label-language = Language
+
+chrome-focus-label-font = Font
+
+chrome-focus-label-size = Size
+
+chrome-focus-value-style = Thesis
+
+chrome-focus-value-language = Chinese
+
+chrome-focus-math = Formula
+
+chrome-focus-math_hint = The caret is in a formula; press → at its end or ← at its start to leave
+
+chrome-mode-group = Work Mode
+
+chrome-tab-untitled = Untitled
+
+chrome-tab-unsaved = Unsaved changes
+
+chrome-tab-saved = Saved
+
+chrome-tab-list = Document tabs
+
+chrome-status-words = { $count ->
+    [one] { $count } word
+   *[other] { $count } words
+}
+
+chrome-status-page = Page { $page } of { $pages }
+
+chrome-status-context-body = Body
+
+chrome-status-context-math = Formula
+
+chrome-status-context-source = Source · read-only
+
+chrome-status-revisions = Typst Content · body r{ $body } · view { $shown }
+
+chrome-status-pending = updating
+
+chrome-status-copy = Copy
+
+chrome-status-copy_hint = Copy the rejected input
+
+chrome-status-zoom = Zoom
+
+chrome-window-title = { $name } — Scholium · { $state }
+
+chrome-dialog-title = Continuing will close the current document
+
+chrome-dialog-body = Unsaved changes will be discarded. Saving a new document again replaces the current contents of the isolated session file.
+
+chrome-dialog-cancel = Cancel
+
+chrome-dialog-discard = Discard and Continue
