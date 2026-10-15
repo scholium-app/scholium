@@ -26,7 +26,7 @@
 早期规划采用 Office 式 Ribbon。实际实现后，Ribbon 约占 170 逻辑像素，分组空旷、层级混乱，
 与科学排版软件的使用方式不符；[路线图](ROADMAP.md)阶段 1 本就写明“标准菜单与紧凑工具栏”。
 新布局参考 Mogan 的菜单栏、图标栏与随焦点变化的上下文栏三层结构（只借鉴结构，不复用其实现，
-见[开发规范](../../AGENT.md)第 1 条），以及 [ArtCraft / PhotoCraft 借鉴计划](ARTCRAFT_REFERENCE.md)中的设计令牌做法。
+见[开发规范](../../AGENT.md)第 1 条），以及 [ArtCraft / PhotoCraft / WordCraft 借鉴计划](ARTCRAFT_REFERENCE.md)中的设计令牌做法。
 顶部四栏合计 122 逻辑像素，比 Ribbon 节省约 50 像素且每栏职责单一。
 本页的设计稿（2026-10-14 由 Claude Design 按本项目需求生成）替代此前的工作区草图。
 
@@ -243,7 +243,7 @@ P1 仍以原生编辑、Action/undo、保存重开、强杀恢复、最小 Sourc
 
 依据：[产品定义](../PRODUCT.md)、[编辑体验](../EXPERIENCE.md)、[应用模块](../modules/app.md)、
 [Liii STEM 体验调研](../research/LIIISTEM_EXPERIENCE.md)、[路线图](ROADMAP.md)、
-[ArtCraft / PhotoCraft 借鉴计划](ARTCRAFT_REFERENCE.md)、[界面多语言计划](I18N.md)。
+[ArtCraft / PhotoCraft / WordCraft 借鉴计划](ARTCRAFT_REFERENCE.md)、[界面多语言计划](I18N.md)。
 
 所见即所得必须直接在排版后的正文与公式上放置光标、拖选和输入。
 页面外的块输入框或覆盖整段的普通文本编辑器不满足此要求。命中坐标必须来自同一
