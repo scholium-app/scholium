@@ -1,6 +1,6 @@
 //! Shared availability and checked-state rules; every command reads facts, never widgets.
 use super::spec::{Availability, CommandContext};
-use crate::state::ViewMode;
+use crate::{i18n::LocaleSetting, state::ViewMode, theme::ThemeKind};
 
 pub(super) fn always(_: &CommandContext) -> Availability {
     Availability::Enabled
@@ -16,6 +16,14 @@ pub(super) fn page_write(c: &CommandContext) -> Availability {
         Availability::Disabled("reason.composing")
     } else {
         Availability::Enabled
+    }
+}
+
+/// Leaving a formula needs the caret inside one.
+pub(super) fn in_formula(c: &CommandContext) -> Availability {
+    match page_write(c) {
+        Availability::Enabled if !c.in_math => Availability::Disabled("reason.not_in_formula"),
+        other => other,
     }
 }
 
@@ -90,8 +98,32 @@ pub(super) fn actual_size(c: &CommandContext) -> bool {
     c.actual_size
 }
 
-pub(super) fn ribbon_collapsed(c: &CommandContext) -> bool {
-    c.ribbon_collapsed
+pub(super) fn toolbars_visible(c: &CommandContext) -> bool {
+    c.toolbars_visible
+}
+
+pub(super) fn theme_light(c: &CommandContext) -> bool {
+    c.theme == ThemeKind::Light
+}
+
+pub(super) fn theme_dark(c: &CommandContext) -> bool {
+    c.theme == ThemeKind::Dark
+}
+
+pub(super) fn locale_auto(c: &CommandContext) -> bool {
+    c.locale == LocaleSetting::Auto
+}
+
+pub(super) fn locale_zh(c: &CommandContext) -> bool {
+    c.locale == LocaleSetting::ZhHans
+}
+
+pub(super) fn locale_en(c: &CommandContext) -> bool {
+    c.locale == LocaleSetting::En
+}
+
+pub(super) fn in_formula_now(c: &CommandContext) -> bool {
+    c.in_math
 }
 
 pub(super) fn strong(c: &CommandContext) -> bool {

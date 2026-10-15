@@ -1,4 +1,4 @@
-//! View state shared by chrome, Ribbon and the editor; it never owns document content.
+//! View state shared by chrome and the editor; it never owns document content.
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum ViewMode {
@@ -11,12 +11,14 @@ pub(crate) enum ViewMode {
 
 #[derive(Debug)]
 pub(crate) struct WorkspaceState {
-    /// Editor metadata and queued Ribbon intents; `None` before the editor opens.
+    /// Editor metadata and queued toolbar intents; `None` before the editor opens.
     pub(crate) editor: Option<crate::typst_editor::EditorView>,
     pub(crate) new_requested: bool,
     pub(crate) undo_requested: bool,
     pub(crate) redo_requested: bool,
     pub(crate) save_requested: bool,
+    /// A control asked to close the document; the editor runs the discard flow.
+    pub(crate) close_requested: bool,
     /// Return keyboard focus to the page, e.g. after leaving the structure view.
     pub(crate) focus_requested: bool,
     /// The status bar asked to copy the rejected input draft.
@@ -28,7 +30,9 @@ pub(crate) struct WorkspaceState {
     pub(crate) mode: ViewMode,
     /// Interface language choice; `Auto` follows the system and can change at runtime.
     pub(crate) locale: crate::i18n::LocaleSetting,
-    pub(crate) ribbon: crate::ribbon::RibbonState,
+    /// The main and focus toolbars are shown (Ctrl+F1).
+    pub(crate) toolbars_visible: bool,
+    pub(crate) theme: crate::theme::ThemeKind,
     pub(crate) navigation: bool,
     pub(crate) diagnostics: bool,
     /// Page zoom relative to 100% (1 pt = 96/72 logical px).
@@ -46,6 +50,7 @@ impl Default for WorkspaceState {
             undo_requested: false,
             redo_requested: false,
             save_requested: false,
+            close_requested: false,
             focus_requested: false,
             status_copy: false,
             edit_error: None,
@@ -53,7 +58,8 @@ impl Default for WorkspaceState {
             composition: None,
             mode: ViewMode::Visual,
             locale: Default::default(),
-            ribbon: Default::default(),
+            toolbars_visible: true,
+            theme: Default::default(),
             navigation: false,
             diagnostics: false,
             zoom: 1.0,

@@ -3,12 +3,16 @@
 
 Usage (repo root):
     python3 scripts/window-checks.py [--binary target/debug/scholium-app] [--out DIR]
-                                     [--only NAME...] [--list]
+                                     [--only NAME...] [--locale zh-Hans en] [--list]
 
 Checks are discovered: spikes/typst-main-editor/*-check.py (signature
 `<binary> <outdir>`) plus the AT-SPI check a11y/run.sh. Per-check exceptions live
 in EXCEPTIONS below. Checks run sequentially and are never retried. A machine-wide
 lock serialises concurrent runs so parallel tasks never contend for the CPU.
+
+Every check runs once per `--locale` (default zh-Hans; CI runs zh-Hans and en as a matrix)
+with SCHOLIUM_LOCALE set, so chrome is found by command id in either language. With more than
+one locale the evidence goes to `<out>/<locale>/<name>`.
 """
 import argparse
 import fcntl
@@ -56,14 +60,13 @@ def command(name, binary, outdir):
     return ["xvfb-run", "-a", "-s", f"-screen 0 {screen}", *inner]
 
 
-def run_one(name, binary, out):
+def run_one(name, binary, out, locale):
     outdir = out / name
     outdir.mkdir(parents=True, exist_ok=True)
     log = out / f"{name}.log"
     env = {k: v for k, v in os.environ.items() if k not in ("DISPLAY", "WAYLAND_DISPLAY")}
     env.pop("XAUTHORITY", None)
-    # Several checks click Ribbon coordinates laid out for the Chinese labels.
-    env["SCHOLIUM_LOCALE"] = "zh-Hans"
+    env["SCHOLIUM_LOCALE"] = locale
     timeout = EXCEPTIONS.get(name, {}).get("timeout", DEFAULT_TIMEOUT)
     start = time.monotonic()
     with open(log, "w") as fh:
@@ -81,6 +84,8 @@ def main():
     ap.add_argument("--binary", default="target/debug/scholium-app")
     ap.add_argument("--out", help="output directory (default: fresh temp dir)")
     ap.add_argument("--only", nargs="+", metavar="NAME")
+    ap.add_argument("--locale", nargs="+", default=["zh-Hans"], metavar="TAG",
+                    help="interface language(s) to run every check in (zh-Hans, en)")
     ap.add_argument("--list", action="store_true")
     args = ap.parse_args()
 
@@ -111,17 +116,20 @@ def main():
             fcntl.flock(lock, fcntl.LOCK_EX)
         print(f"output: {out}", flush=True)
         rows = []
-        for name in names:
-            reason = EXCEPTIONS.get(name, {}).get("skip")
-            if reason:
-                rows.append((name, f"skip ({reason})", 0.0))
-                continue
-            print(f"running {name} ...", flush=True)
-            result, secs, log = run_one(name, binary, out)
-            rows.append((name, result, secs))
-            if result != "pass":
-                print(f"--- {name} {result}; tail of {log}", flush=True)
-                print("".join(log.read_text(errors="replace").splitlines(True)[-30:]), flush=True)
+        for locale in args.locale:
+            base = out / locale if len(args.locale) > 1 else out
+            for name in names:
+                label = f"{name} [{locale}]"
+                reason = EXCEPTIONS.get(name, {}).get("skip")
+                if reason:
+                    rows.append((label, f"skip ({reason})", 0.0))
+                    continue
+                print(f"running {label} ...", flush=True)
+                result, secs, log = run_one(name, binary, base, locale)
+                rows.append((label, result, secs))
+                if result != "pass":
+                    print(f"--- {label} {result}; tail of {log}", flush=True)
+                    print("".join(log.read_text(errors="replace").splitlines(True)[-30:]), flush=True)
 
     width = max(len(n) for n, _, _ in rows)
     print(f"\n{'check':<{width}}  {'result':<10}  seconds")

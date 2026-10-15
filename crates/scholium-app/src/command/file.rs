@@ -49,7 +49,8 @@ pub(super) fn specs() -> Vec<CommandSpec> {
         command! {
             "file.close",
             menu: menu!(File, 2, 0),
-            availability: avail::unimplemented,
+            availability: avail::save,
+            action: Action::View(ViewCommand::CloseDocument),
         },
     ]
 }

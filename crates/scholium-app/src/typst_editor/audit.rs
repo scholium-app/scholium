@@ -3,18 +3,26 @@ use super::*;
 use serde_json::json;
 
 impl EditorSession {
-    pub(super) fn audit(&mut self, rect: egui::Rect, scale: f32, text_shapes: usize, ppp: f32) {
+    pub(super) fn audit(
+        &mut self,
+        ctx: &egui::Context,
+        rect: egui::Rect,
+        scale: f32,
+        text_shapes: usize,
+        ppp: f32,
+    ) {
         self.pixels_per_point = ppp;
-        self.audit_with(Some((rect, scale)), text_shapes, false);
+        self.audit_with(ctx, Some((rect, scale)), text_shapes, false);
     }
 
     /// Source-workspace frames also report, so window checks can follow the preview.
-    pub(super) fn audit_source(&mut self) {
-        self.audit_with(None, 0, true);
+    pub(super) fn audit_source(&mut self, ctx: &egui::Context) {
+        self.audit_with(ctx, None, 0, true);
     }
 
     fn audit_with(
         &mut self,
+        ctx: &egui::Context,
         placement: Option<(egui::Rect, f32)>,
         text_shapes: usize,
         source_mode: bool,
@@ -70,7 +78,11 @@ impl EditorSession {
             "source_mode": source_mode, "preview": self.source_view.audit(),
             "raster": raster, "follow": self.follow_audit(),
             "formula_overflow": self.formula_overflows(),
-
+            "controls": crate::widgets::audit::controls_json(ctx),
+            "chrome": crate::widgets::audit::facts_json(ctx),
+            "fonts": crate::theme::fonts::chosen().map(|f| json!({
+                "ui": f.ui, "latin": f.latin, "mono": f.mono,
+            })),
         })
         .to_string();
         if self.last_audit.as_ref() != Some(&value) {

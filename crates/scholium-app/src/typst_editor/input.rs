@@ -379,6 +379,10 @@ impl EditorSession {
             Command::Math => self.insert_math(state),
             Command::Fraction if math => self.fraction(state),
             Command::Fraction => state.edit_error = Some("先插入行内公式，再选择数学槽位。".into()),
+            Command::Attach(slot) if math => self.attach_slot(slot, state),
+            Command::Attach(_) => {
+                state.edit_error = Some("先插入行内公式，再选择数学槽位。".into());
+            }
             Command::Style(_) => unreachable!("handled above"),
             Command::Kind(kind) => {
                 self.apply(StructuralEdit::SetKind { block, kind }, state);

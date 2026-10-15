@@ -257,6 +257,15 @@ impl SourceView {
         })
     }
 
+    /// Shown page (1-based) and page count of the current compile, once it is known.
+    pub(super) fn page_info(&self) -> Option<(usize, usize)> {
+        let compiled = self.compiled.as_ref()?;
+        (compiled.revision == self.generation
+            && compiled.error.is_none()
+            && compiled.page_count > 0)
+            .then_some((self.page + 1, compiled.page_count))
+    }
+
     fn status(&self) -> String {
         match &self.compiled {
             None => "预览编译中".into(),
@@ -281,10 +290,22 @@ impl EditorSession {
         let snapshot = self.snapshot.clone();
         self.source_view.sync(ui.ctx(), &snapshot, focus_block);
         let preview_width = ui.available_width() * PREVIEW_SHARE;
+        let t = crate::theme::tokens(ui.ctx());
         egui::Panel::right("source-preview")
             .exact_size(preview_width)
+            .frame(
+                egui::Frame::new()
+                    .fill(t.canvas)
+                    .inner_margin(egui::Margin::same(8)),
+            )
             .show(ui, |ui| self.preview_pane(ui));
-        egui::CentralPanel::default().show(ui, |ui| self.source_pane(ui, focus_block));
+        egui::CentralPanel::default()
+            .frame(
+                egui::Frame::new()
+                    .fill(t.field)
+                    .inner_margin(egui::Margin::same(8)),
+            )
+            .show(ui, |ui| self.source_pane(ui, focus_block));
     }
 
     fn cursor_block(&self) -> Option<NodeId> {
@@ -423,7 +444,7 @@ fn source_job(
     let color = ui.visuals().text_color();
     let plain = egui::TextFormat::simple(font.clone(), color);
     let marked = egui::TextFormat {
-        background: crate::theme::colors(ui).selection,
+        background: crate::theme::tokens(ui.ctx()).active_bg,
         ..egui::TextFormat::simple(font, color)
     };
     let mut job = egui::text::LayoutJob::default();

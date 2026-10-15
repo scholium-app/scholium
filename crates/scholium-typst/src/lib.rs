@@ -22,7 +22,7 @@ mod style;
 pub use compiler::{CompileOutcome, PageOutcome, PagePixels, PreviewCompiler, PreviewEvent};
 pub use structured_source::{GeneratedSource, SourceBlock, SourceMode, generate_source};
 pub use style::{
-    BODY_FONTS, BODY_SIZE_PT, FIRST_LINE_INDENT_EM, HEADING_FONTS, LEADING_EM, MARGIN_X_CM,
+    BODY_FONTS, BODY_SIZE_PT, FIRST_LINE_INDENT_EM, HEADING_FONTS, LANG, LEADING_EM, MARGIN_X_CM,
     MARGIN_Y_CM, PAGE_WIDTH_MM, margin_x_pt, margin_y_pt, preamble, text_width_pt,
 };
 

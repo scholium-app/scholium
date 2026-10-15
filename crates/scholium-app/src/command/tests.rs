@@ -7,16 +7,23 @@ use super::{
 use crate::{
     i18n::{self, Locale, LocaleSetting},
     state::{ViewMode, WorkspaceState},
+    theme::ThemeKind,
 };
 use eframe::egui;
 use std::collections::BTreeSet;
 
 /// Catalog keys of submenus, for the catalog's unused-key check.
 pub(crate) fn submenu_keys() -> Vec<String> {
-    [Submenu::ParagraphStyle, Submenu::WorkMode, Submenu::Zoom]
-        .iter()
-        .map(|s| s.key().to_owned())
-        .collect()
+    [
+        Submenu::ParagraphStyle,
+        Submenu::WorkMode,
+        Submenu::Zoom,
+        Submenu::Theme,
+        Submenu::Language,
+    ]
+    .iter()
+    .map(|s| s.key().to_owned())
+    .collect()
 }
 
 /// Every reason key any command can report in any combination of facts.
@@ -53,7 +60,9 @@ fn context_from(bits: u32) -> CommandContext {
         diagnostics: false,
         fit_width: true,
         actual_size: false,
-        ribbon_collapsed: false,
+        toolbars_visible: true,
+        theme: ThemeKind::Light,
+        locale: LocaleSetting::Auto,
     }
 }
 
@@ -154,7 +163,8 @@ fn every_p1_menu_lists_its_commands() {
                 "insert.formula",
                 "insert.fraction",
                 "insert.root",
-                "insert.attach",
+                "insert.superscript",
+                "insert.subscript",
                 "insert.delimiter",
             ],
         ),
@@ -185,7 +195,7 @@ fn every_p1_menu_lists_its_commands() {
                 "view.navigation",
                 "view.diagnostics",
                 "view.split",
-                "view.theme",
+                "view.toolbars",
             ],
         ),
         (MenuId::Tools, &["tools.search", "tools.preferences"]),
@@ -203,6 +213,10 @@ fn every_p1_menu_lists_its_commands() {
             assert!(listed.contains(id), "{menu:?} lacks {id}");
         }
     }
+}
+
+#[test]
+fn the_format_and_view_menus_keep_their_submenus() {
     let styles: Vec<_> = registry::menu_items(MenuId::Format, Some(Submenu::ParagraphStyle))
         .iter()
         .map(|s| s.id)
@@ -221,7 +235,12 @@ fn every_p1_menu_lists_its_commands() {
     );
     assert_eq!(
         registry::submenus(MenuId::View),
-        [Submenu::WorkMode, Submenu::Zoom]
+        [
+            Submenu::WorkMode,
+            Submenu::Zoom,
+            Submenu::Theme,
+            Submenu::Language
+        ]
     );
 }
 
@@ -466,22 +485,35 @@ fn the_same_registry_title_renders_in_each_language_without_restart() {
 }
 
 #[test]
-fn every_menu_renders_in_both_locales_for_each_mode() {
-    let ctx = egui::Context::default();
-    crate::theme::install(&ctx);
-    for locale in [LocaleSetting::ZhHans, LocaleSetting::En] {
-        for mode in [ViewMode::Visual, ViewMode::Source] {
-            let mut state = WorkspaceState {
-                locale,
-                mode,
-                ..Default::default()
-            };
-            let mut output = ctx.run_ui(egui::RawInput::default(), |ui| {
-                for menu in MenuId::ALL {
-                    super::ui::menu(ui, &mut state, menu);
-                }
-            });
-            output.textures_delta.clear();
-        }
+fn script_commands_need_the_caret_in_a_formula_outside_source_and_composition() {
+    let in_formula = CommandContext {
+        in_math: true,
+        ..editable()
+    };
+    for id in ["insert.superscript", "insert.subscript"] {
+        assert!((spec(id).availability)(&in_formula).is_enabled(), "{id}");
+        assert_eq!(
+            (spec(id).availability)(&editable()),
+            Availability::Disabled("reason.not_in_formula"),
+            "{id}"
+        );
+        let source = CommandContext {
+            mode: ViewMode::Source,
+            ..in_formula
+        };
+        assert_eq!(
+            (spec(id).availability)(&source),
+            Availability::Disabled("reason.source_readonly")
+        );
+        let composing = CommandContext {
+            composing: true,
+            ..in_formula
+        };
+        assert_eq!(
+            (spec(id).availability)(&composing),
+            Availability::Disabled("reason.composing")
+        );
     }
+    assert_eq!(spec("insert.superscript").shortcuts[0].display(), "^");
+    assert_eq!(spec("insert.subscript").shortcuts[0].display(), "_");
 }

@@ -13,6 +13,9 @@ import subprocess
 import sys
 import time
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import chrome_ui  # noqa: E402
+
 binary = Path(sys.argv[1]).resolve()
 output = Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
@@ -23,9 +26,6 @@ env = dict(os.environ, SCHOLIUM_SESSION_FILE=str(output / "doc.sqlite"), SCHOLIU
 env.pop("WAYLAND_DISPLAY", None)
 log_path = output / "app.log"
 results = {}
-# Ribbon buttons (1280x900 window): paragraph styles 标题 1 / 标题 2.
-HEADING_1 = (578, 79)
-HEADING_2 = (646, 79)
 PARAGRAPHS = (
     "第一章 排版与输出\n1.1 Line breaking 与断行\n"
     "所见即所得的排版编辑器必须让编辑面与输出完全一致：字体、字号、行距、缩进与断行都不能因为预览而改变。"
@@ -86,11 +86,13 @@ try:
     paste(PARAGRAPHS)
     wait(lambda s: s["current"] and len(texts(s)) == 4, "four paragraphs pasted")
     xdo("key", "--clearmodifiers", "ctrl+Home")
-    xdo("mousemove", "--window", window, *HEADING_1)
-    xdo("click", 1)
+    # Paragraph styles through the toolbar's dropdown, found by command id in either language.
+    chrome = chrome_ui.Chrome(state, xdo, window)
+    chrome.click("ui.toolbar.paragraph", "toolbar")
+    chrome.click("format.paragraph.heading1", "menu")
     xdo("key", "Down")
-    xdo("mousemove", "--window", window, *HEADING_2)
-    xdo("click", 1)
+    chrome.click("ui.toolbar.paragraph", "toolbar")
+    chrome.click("format.paragraph.heading2", "menu")
     s = wait(lambda s: s["current"] and [b["kind"] for b in s["snapshot"]["blocks"]]
              == ["Heading1", "Heading2", "Paragraph", "Paragraph"], "heading styles applied")
     shot("01-visual-editor")

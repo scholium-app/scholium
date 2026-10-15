@@ -58,6 +58,10 @@ command-insert-formula =
     .title = 行内公式
     .tooltip = 进入或离开公式
 
+command-insert-exit_formula =
+    .title = 离开公式
+    .tooltip = 离开当前公式，光标停在公式之后
+
 command-insert-display_formula =
     .title = 独立公式
     .tooltip = 插入独立成行的公式
@@ -70,9 +74,13 @@ command-insert-root =
     .title = 根式
     .tooltip = 插入根式
 
-command-insert-attach =
-    .title = 上下标
-    .tooltip = 插入上标或下标
+command-insert-superscript =
+    .title = 上标
+    .tooltip = 在公式中插入上标
+
+command-insert-subscript =
+    .title = 下标
+    .tooltip = 在公式中插入下标
 
 command-insert-delimiter =
     .title = 定界符
@@ -182,14 +190,6 @@ command-view-split =
     .title = 分屏
     .tooltip = 源码与预览分屏显示
 
-command-view-ribbon =
-    .title = 功能区
-    .tooltip = 显示或隐藏功能区
-
-command-view-theme =
-    .title = 主题
-    .tooltip = 切换浅色或深色主题
-
 command-view-zoom-fit_width =
     .title = 适合宽度
     .tooltip = 切换到适合宽度
@@ -205,6 +205,30 @@ command-view-zoom-in =
 command-view-zoom-out =
     .title = 缩小
     .tooltip = 缩小页面
+
+command-view-toolbars =
+    .title = 显示工具栏
+    .tooltip = 显示或隐藏主工具栏与焦点工具栏
+
+command-view-theme-light =
+    .title = 浅色
+    .tooltip = 使用浅色主题
+
+command-view-theme-dark =
+    .title = 深色
+    .tooltip = 使用深色主题
+
+command-view-language-auto =
+    .title = 跟随系统
+    .tooltip = 界面语言跟随系统
+
+command-view-language-zh_hans =
+    .title = 简体中文
+    .tooltip = 使用简体中文界面
+
+command-view-language-en =
+    .title = English
+    .tooltip = Use the English interface
 
 command-tools-search =
     .title = 命令搜索
@@ -251,6 +275,10 @@ menu-view-work_mode = 工作方式
 
 menu-view-zoom = 缩放
 
+menu-view-theme = 主题
+
+menu-view-language = 语言
+
 
 # Availability reasons
 
@@ -266,6 +294,73 @@ reason-nothing_to_undo = 没有可撤销的编辑
 
 reason-nothing_to_redo = 没有可重做的编辑
 
+reason-not_in_formula = 光标不在公式内
+
 reason-unimplemented = 此功能尚未接入
 
 reason-final_build = 最终构建尚未接入
+
+reason-document_properties = 文档属性目前是固定样式，尚未开放编辑
+
+
+# Window chrome
+
+chrome-overflow = 更多工具
+
+chrome-focus-label-style = 样式
+
+chrome-focus-label-paper = 纸张
+
+chrome-focus-label-language = 语言
+
+chrome-focus-label-font = 字体
+
+chrome-focus-label-size = 字号
+
+chrome-focus-value-style = 论文
+
+chrome-focus-value-language = 中文
+
+chrome-focus-math = 公式
+
+chrome-focus-math_hint = 光标在公式内 · 在末尾按 → 或在开头按 ← 离开
+
+chrome-mode-group = 工作方式
+
+chrome-tab-untitled = 未命名
+
+chrome-tab-unsaved = 未保存的修改
+
+chrome-tab-saved = 已保存
+
+chrome-tab-list = 文档标签
+
+chrome-status-words = { $count } 字
+
+chrome-status-page = 第 { $page }/{ $pages } 页
+
+chrome-status-context-body = 正文
+
+chrome-status-context-math = 公式
+
+chrome-status-context-source = 源码 · 只读
+
+chrome-status-revisions = Typst Content · 正文 r{ $body } · 画面 { $shown }
+
+chrome-status-pending = 待更新
+
+chrome-status-copy = 复制
+
+chrome-status-copy_hint = 复制被拒绝的输入
+
+chrome-status-zoom = 缩放
+
+chrome-window-title = { $name } — Scholium · { $state }
+
+chrome-dialog-title = 继续将关闭当前文档
+
+chrome-dialog-body = 未保存的修改将丢弃。新文档再次保存会替换隔离会话文件的当前内容。
+
+chrome-dialog-cancel = 取消
+
+chrome-dialog-discard = 丢弃并继续

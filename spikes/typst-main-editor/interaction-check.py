@@ -71,8 +71,10 @@ def point_at(x, y):
 
 
 def tinted_pixels(path):
-    """Pixels with the accent-tint hue (blue above red, light): the formula background."""
-    ppm = subprocess.run(["convert", str(path), "ppm:-"], check=True, capture_output=True).stdout
+    """Pixels with the accent-tint hue (blue above red, light): the formula background, counted on
+    the page area only (the chrome's active_bg segments have the same hue)."""
+    ppm = subprocess.run(["convert", str(path), "-gravity", "North", "-chop", "0x130",
+                          "-gravity", "South", "-chop", "0x30", "ppm:-"], check=True, capture_output=True).stdout
     header, data = ppm.split(b"\n255\n", 1)
     count = 0
     for i in range(0, len(data), 3):

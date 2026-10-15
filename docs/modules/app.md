@@ -27,25 +27,40 @@ Rust 负责权威文档和业务；EUI-NEO 候选由 C++ 实现原生 UI，通�
 
 ## 应用壳与主题边界
 
-应用壳位于 `crates/scholium-app`：`chrome` 负责文档标签、工作方式切换与状态栏，
-`ribbon` 负责文件菜单、功能标签与可折叠的分组命令区，`typst_editor` 是唯一编辑面（结构会话、
-Typst Content 场景、输入、选区、导航与启动迁移），`state` 只持有视图偏好与编辑器元数据，
-`command` 是命令注册表，`commands` 保留视图命令的处理函数。`icons` 以主题描边自绘矢量图标，不引入图标字体；图标按钮必须带
-悬停提示与可访问性标签。未接入的写操作保持禁用，不以本地变量伪造保存、构建或 revision 状态。
+应用壳位于 `crates/scholium-app`，窗口外壳由上到下是菜单栏 28、主工具栏 34、焦点工具栏 30、文档标签栏 30、
+编辑区、状态栏 24（逻辑像素，高度来自令牌；应用不自绘窗口标题与窗口按钮，`with_decorations(true)`）：
 
-`ribbon::RibbonState` 只保存当前功能标签与折叠状态，不保存正文或修改 revision。
-`ribbon/controls` 提供统一高度的分组、矢量图标大按钮与不换行的小按钮；`ribbon/groups` 编排
-开始、插入、布局、视图的命令。窄窗口使用溢出时可见的水平滚动条，不把文字挤成多行或缩小点击区域。
-Ctrl+F1 与收起按钮调用同一 `ToggleRibbon` 命令；点击标签展开，双击标签收起。
+- `chrome/` 排布各栏：`menubar` 由 `registry::menu_items` / `submenus` 生成文件、编辑、插入、格式、文档、视图、工具、帮助
+  及子菜单；`toolbar` 按 `ToolbarPlacement` 分组画图标按钮并以竖分隔线隔开，段落样式组合成一个“¶ ▾”下拉，
+  命令搜索固定在最右（暂时禁用，原因写在悬停提示里），放不下的整组按注册表顺序收进“»”溢出列表
+  （菜单样式列表，图标 + 标题 + 快捷键），菜单栏、模式切换与命令搜索始终可见；`focusbar` 在正文中显示文档属性
+  （样式、纸张、文档语言、字体、字号，取值读自 `scholium_typst` 的样式常量，是禁用的文字下拉框，悬停说明尚未开放编辑），
+  在公式中显示“公式”标记与 `FocusKind::Math` 的命令（分数、根式、上标、下标、定界符、矩阵、离开公式），
+  最右固定是“所见即所得 / 源码”分段切换（Ctrl+Shift+M，左右方向键切换）；`tabbar` 为当前文档显示一个标签
+  （显式选择的文件名或“未命名”、未保存圆点、关闭按钮走既有的关闭与丢弃确认流程）和“+”（既有的新建文档流程），
+  单文档应用，布局已按标签列表排；`statusbar` 见下。`layout` 是不含 egui 的纯宽度决策（溢出分组、焦点栏字段收窄），
+  单元测试覆盖。
+- `widgets/` 是“组件规格”的实现：图标按钮、文字下拉框、分隔线、标签页、模式分段切换、状态栏片段与警告、
+  带右对齐快捷键与勾选的菜单项、“名称 + 快捷键”提示；全部状态（默认、悬停、按下、激活、禁用、键盘焦点环 2px 外扩 1px）
+  由令牌绘制，焦点环只在键盘操作后出现。菜单宽度按最长一行测量，标签不写“（未实现）”；分段切换每段按文字测量且不小于 96。
+  每个控件用 catalog 标题作无障碍名称，只有带 `checked` 的命令才暴露为开关。
+- `icons` 把 Lucide 图标（ISC，许可证在 `assets/icons/LICENSE`）以内嵌 SVG 经 resvg 按设备像素比光栅化并用令牌着色，
+  纹理按（图标、尺寸、线宽、颜色、ppp）缓存；工具栏 18/1.5、菜单与溢出 14/1.25、状态栏与标签 12/1.25、箭头 8/1.25。
+  `IconId` 来自注册表；不引入图标字体或新的光栅库。
+- `typst_editor` 是唯一编辑面（结构会话、Typst Content 场景、输入、选区、导航与启动迁移），`state` 只持有视图偏好
+  （工作方式、面板、缩放、主题、语言、工具栏显示）与编辑器元数据，`command` 是命令注册表，`commands` 保留视图命令的处理函数。
+  未接入的写操作保持禁用，不以本地变量伪造保存、构建或 revision 状态。
 
-开始/插入标签由 `typst_editor::ribbon` 提供：剪贴板按钮经原生 viewport 请求发送
-Copy/Cut/Paste 并先恢复页面焦点；文字样式、段落样式、公式与分数作为结构 intent 排入编辑会话，
-与键盘输入同序执行。结构视图不启用正文写按钮；组合输入期间禁用相关写入。纸张、页边距、
-文档对象等未接入能力只提供禁用入口，不以 Ribbon 布局表示能力交付。
+剪贴板命令经原生 viewport 请求发送 Copy/Cut/Paste 并先恢复页面焦点（`typst_editor/clipboard.rs`）；文字样式、段落样式、
+公式与分数作为结构 intent 排入编辑会话，与键盘输入同序执行。结构视图禁用正文写命令；组合输入期间禁用相关写入。
+Ctrl+F1 与“视图 → 显示工具栏”调用同一命令，同时显示或隐藏主工具栏与焦点工具栏。
 
-主题使用 `theme::Palette` 的语义色槽（工作区、面板、边框、正文、次级文字、强调、选区）。
-egui 控件与自绘区域从同一主题取色；配色变更不修改布局、不影响文档内容。
-主题选择、外部配色文件和偏好持久化可独立接入，不能把主题常量散落到各工作区组件。
+`theme::Tokens` 是仅有的颜色来源：P1_UI 令牌表的全部语义色（浅色、深色两套 HEX）、栏高、控件高、字号与行高、间距刻度、
+圆角与图标尺寸；控件一律读令牌，`theme` 之外没有颜色字面量（测试检查）。浅色是默认主题，“视图 → 主题”在运行时切换浅色/深色
+（偏好暂不持久化）；纸面在两套主题中都是白色，画在纸面上的光标、选区与公式底色因此使用浅色主题的强调色与 `math_bg`。
+配色变更不修改布局、不影响文档内容。界面字体在启动时从系统字体库（fontdb，与 Typst 内核扫描同一来源）按序选择：
+HarmonyOS Sans SC → MiSans → 苹方 → 微软雅黑 UI → 微软雅黑；西文优先 Inter，等宽优先 JetBrains Mono；随程序打包的
+Noto Sans CJK 只作最后回退。所选字体写入 AUDIT 的 `fonts`。
 
 ## ProjectSession
 
@@ -60,8 +75,11 @@ egui 控件与自绘区域从同一主题取色；配色变更不修改布局、
 
 编辑器按事件顺序向 `LocalSession<StructuredDocument>` 提交字素文字/结构请求，布局仅持有
 完整不可变投影。输入接受和提交先于页面绘制，后台完成唤醒 UI，不去抖源码求值。界面
-功能区与页面之间没有任何信息行；状态栏单行持续显示 backend、正文/画面 revision（画面落后时标“待更新”）、
-保存状态与一条截断的瞬时警告（edit/storage/layout 错误、被拒绝输入、缺少光标几何，悬停看全文）。
+工具栏与页面之间没有任何信息行。状态栏左侧是字数（正文里每个 CJK 字符与每个拉丁词各计一，随快照修订更新）、
+页码（只在源码模式且预览已编译时显示，连续的所见即所得视图不显示）与上下文（正文 / 公式 / 源码 · 只读）；
+中间是一条可截断的瞬时警告（edit/storage/layout 错误、被拒绝输入、缺少光标几何，悬停看全文）；右侧是缩放（缩小、百分比、放大、适合宽度）。
+backend、正文/画面 revision（画面落后时标“待更新”）不再常驻状态栏：它们在上下文片段的悬停提示里，
+打开“视图 → 诊断”时布局统计另占一个状态栏片段；保存状态由标签上的未保存圆点与窗口标题表示。
 旧图停用命中与光标绘制，不回显已提交文字。页面在视口内水平居中，视口更窄时从左边距起水平滚动。
 快捷键提示在“行内公式”“分数”按钮的悬停提示中；文字组的“清除格式”恢复纯文本样式，“正文”只指段落样式。
 纹理、caret、命中与 IME 共用一套 Frame-pt 到窗口逻辑像素 placement。
@@ -79,13 +97,13 @@ placement 的 scale 取量化后的值，故命中/caret 与绘制一致。页�
 同帧 Text 仅在与 IME Commit 文字相同时视为重复丢弃；输入法透传的英文 Text 照常输入。
 Escape 分层取消，不释放页面焦点：先取消选区、IME 组合与拖动；三者都没有且光标在行内公式内时，离开该公式，
 光标落在公式之后的正文（与 Ctrl+M 离开同位；空占位槽由占位生命周期移除）；公式外无事可做。
-视图跟随光标（`typst_editor/follow.rs`）：键入/粘贴/提交、Enter、删除、方向键、Home/End、撤销重做与移动光标的功能区命令
+视图跟随光标（`typst_editor/follow.rs`）：键入/粘贴/提交、Enter、删除、方向键、Home/End、撤销重做与移动光标的工具栏命令
 引起光标移动后，滚动区最小幅度滚动，使光标矩形上下（放宽时左右）各留 2 行正文（`FOLLOW_MARGIN_LINES`）；
 Ctrl+Home/End 另外露出页面顶部（含外边距）与底部。只有输入引起的光标变化才触发；滚轮、滚动条与点击不触发，
 指针按下或滚轮会丢弃尚未执行的跟随。Scene 不是当前版本时保持“待跟随”，等新 Scene 采纳后用其 caret 几何滚动，
 绝不对准旧位置；滚动改变的可见范围照常经 `set_view` 请求新区域条带。AUDIT `follow` 报告 caret 与可见范围（pt）。
 
-Ribbon 的开发命令发结构 intent；标题作用于段落，源视图禁用正文写按钮。
+工具栏与菜单的编辑命令发结构 intent；标题作用于段落，源视图禁用正文写命令。
 文字样式：`Ctrl+B` 粗体、`Ctrl+I` 斜体/强调（导航面板开关为 `Ctrl+Shift+B`）。有选区时发一次
 `SetRangeStyle`，选区内所有正文字素已是该样式则恢复普通，否则设为该样式；选区保持在同一段文字上，
 一步可撤销。无选区时只武装一个“输入样式”：下一次输入、粘贴或 IME 提交的文字在光标处另成一个带
@@ -126,7 +144,7 @@ x 的停靠点；连续上下在光标和期望 Scene 都未变时保留目标 x
 数学槽内上下先在最近的分子/分母间切换，否则以整公式 bounds 代表当前行离开公式；
 槽内 Home/End 保持槽内首末。Ctrl+Home/End 按逻辑顺序到正文首末，不需要几何。
 排版未就绪时几何键及其后的输入按到达顺序排队（上限 256，超限文字保留可复制草稿；
-IME 与 Escape 不受上限丢弃），Ribbon/撤销/保存也等队列清空，关闭时排队输入按未保存处理；
+IME 与 Escape 不受上限丢弃），工具栏/菜单/撤销/保存也等队列清空，关闭时排队输入按未保存处理；
 排队期间的鼠标按下被拒绝，布局失败只放弃排队的几何键。目标 x 只在连续上下间保留。
 视觉 bidi 不从逻辑顺序猜几何；仅有公式而无正文 caret 的行不作为上下停靠行。
 
@@ -173,13 +191,14 @@ revision 交付。
 
 ## 命令系统
 
-所有用户动作注册为 command（`crates/scholium-app/src/command/`）。菜单、Ribbon、图标按钮、状态栏按钮、
-快捷键（以及之后的工具栏、焦点工具栏、溢出菜单与命令搜索）读同一份注册表，不得各自维护命令、标题或快捷键。
+所有用户动作注册为 command（`crates/scholium-app/src/command/`）。菜单、主工具栏、焦点工具栏、溢出列表、状态栏按钮、
+快捷键（以及之后的命令搜索）读同一份注册表，不得各自维护命令、标题或快捷键。
 
 - **数据模型不含 egui 类型**（以后可整体移入与界面无关的编辑核心）：`spec.rs` 定义 `CommandSpec`，
   `registry.rs` 汇总，`file.rs`、`edit.rs`、`insert.rs`、`format.rs`、`document.rs`、`view.rs`、`tools.rs`、
   `help.rs` 各出一个 `specs()`；新增命令只改所属领域文件，新增领域只在 `registry::DOMAINS` 加一行。
-  `keys.rs`、`shortcuts.rs`、`ui.rs` 是界面边缘，负责 `KeyChord` 与 egui 按键互转、消费快捷键、绘制按钮与菜单。
+  `keys.rs`、`shortcuts.rs`、`ui.rs` 是界面边缘，负责 `KeyChord` 与 egui 按键互转、消费快捷键，
+  以及把一条命令的标题、提示、可用性与勾选状态解析成控件描述（`ui::Resolved::meta`）；控件本身由 `widgets/` 绘制。
 - **`CommandSpec`**：稳定点号 `id`（`format.bold`、`view.mode.source`）；`title`、`tooltip` 为目录 key
   （`command.<id>.title|tooltip`，由 `command!` 宏从 id 派生）；`icon`（`IconId`，无图像）；默认快捷键
   `KeyChord`；`routing`（`App` 由应用先消费，`Editor` 留在页面事件流里与键入保序执行，`Platform` 是剪贴板事件、
@@ -190,7 +209,8 @@ revision 交付。
   由 `WorkspaceState` 与 `EditorView` 构建。
 - **菜单**：文件、编辑、插入、格式、文档、视图、工具、帮助，内容见 [P1 UI](../plan/P1_UI.md#菜单工具栏与焦点工具栏组织)；
   未交付的命令照样注册，可用性为 `Unimplemented`，菜单与按钮置灰，原因写在悬停提示里。
-  `ui::menu` 按组插分隔线、按子菜单分层生成菜单树。
+  `chrome/menubar` 按组插分隔线、按子菜单分层生成菜单树；“视图”含工作方式、导航与诊断、缩放、显示工具栏，
+  以及“主题”（浅色/深色）与“语言”（跟随系统/简体中文/English）子菜单，后两者同样是注册表里的命令。
 - **快捷键**：`shortcuts::shortcuts` 遍历注册表中 `App` 路由的和弦，带 Shift 的先于不带的；某键存在带 Shift 的孪生和弦时，
   不带 Shift 的和弦在 Shift 按住时让位（Ctrl+Shift+Z 重做不会同时触发撤销）。`Unimplemented` 的命令不消费按键。
   页面路由的和弦（Ctrl+B/I/M、Ctrl+/、Ctrl+0/1/2）由页面按注册表解析，字母、数字、功能键精确匹配，标点另可匹配
@@ -200,15 +220,19 @@ revision 交付。
   Ctrl+/ 分数、Ctrl+Z/Ctrl+Shift+Z/Ctrl+Y、Ctrl+S、Ctrl+N、Ctrl+J、Ctrl+Shift+B、Ctrl+F1、Ctrl+加号/等号/减号缩放不变。
 - **文字目录**：命令标题、提示、菜单名与不可用原因经 `i18n` 的 Fluent 目录（`i18n/zh-Hans.ftl`、`en.ftl`，
   见 [ADR 0040](../adr/ADR-0040-ui-string-catalog.md)）渲染；界面语言 `WorkspaceState.locale`（`auto` 按 `SCHOLIUM_LOCALE`、`LC_ALL`、
-  `LC_MESSAGES`、`LANG` 的第一个非空值，否则英语；窗口检查固定 `SCHOLIUM_LOCALE=zh-Hans`，因为部分检查点击按中文标签排版的坐标）可在运行时切换，下一帧生效，不影响文档与历史。其余界面文字仍是硬编码，列在
+  `LC_MESSAGES`、`LANG` 的第一个非空值，否则英语；窗口检查按 `--locale` 在 zh-Hans 与 en 下各跑一遍，控件按命令 id 经 AUDIT 的 `controls` 映射点击，不依赖标签文字或坐标）可在“视图 → 语言”里运行时切换，下一帧生效，不影响文档与历史。窗口外壳的全部可见文字（菜单、工具栏提示、焦点栏、标签、状态栏、
+  窗口标题、丢弃确认框）都走目录；编辑面的状态消息、无障碍朗读与源码窗格标题仍是硬编码，列在
   `scripts/ui-strings-allowlist.txt`，由 `scripts/check-ui-strings.py` 保证只减不增。
 - 写命令仍必须经过 session：页面命令作为 intent 排入编辑会话，与键盘输入同序执行；源码视图与组合输入期间由
-  可用性判定统一禁用。窗口外壳目前仍用 Ribbon；菜单栏、图标工具栏与焦点工具栏由后续任务从同一注册表生成。
+  可用性判定统一禁用。窗口外壳（菜单栏、图标工具栏、溢出列表、焦点工具栏）全部从同一注册表生成。
+- **窗口审计**：`SCHOLIUM_EDITOR_AUDIT=1` 的 AUDIT JSON 含 `controls`（命令 id 或 `ui.*` 外壳 id 到每个可见控件的窗口像素矩形，
+  菜单展开时含菜单行，同一命令在多处出现则有多项）、`chrome`（语言、主题、溢出分组、状态栏事实）与 `fonts`；
+  窗口检查据此按 id 点击，`spikes/typst-main-editor/chrome_ui.py` 封装点击、悬停与等待矩形稳定。
 
 ## 主要界面
 
 应用壳遵守[体验规范的工作区原则](../EXPERIENCE.md#工作区组织)，实现时参照
-[P1 排版工作区规划与参考图](../plan/P1_UI.md)：带文件菜单的 Ribbon、单一所见即所得编辑面、
+[P1 排版工作区规划与参考图](../plan/P1_UI.md)：菜单栏、主工具栏、焦点工具栏与文档标签栏、单一所见即所得编辑面、
 源码与预览默认约等宽、辅助面板按需展开。下面的能力列表不表示所有面板应同时常驻；
 字体、尺寸、分组和平台控件可以按实际可用性调整，不做像素复刻。
 
@@ -224,7 +248,7 @@ revision 交付。
 
 - `ProjectSession::open(root, policy)` / `close()`；一个项目一个串行 actor，写命令只能经 session 提交。
 - 命令注册表（`command::registry`），`CommandSpec { id, title, tooltip, icon, shortcuts, routing, menu, toolbar, focus, writes, availability, checked, action }`；
-  菜单、Ribbon、命令搜索和快捷键调用同一 `CommandSpec`；能力判定（capability）与参数 schema 随协作命令接入。
+  菜单、工具栏、焦点工具栏、命令搜索和快捷键调用同一 `CommandSpec`；能力判定（capability）与参数 schema 随协作命令接入。
 - UI ↔ core 只使用 [协议设计](../PROTOCOLS.md) 定义的命令/事件 DTO，不导入 core 内部类型。
 - 平台端口 trait（window、clipboard、file dialog、credential store、updater）由 app 实现，core 只依赖端口声明。
 - 交付物是可执行程序 `scholium-app`，不承诺稳定库 API。

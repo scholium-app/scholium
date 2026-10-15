@@ -12,6 +12,9 @@ import subprocess
 import sys
 import time
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import chrome_ui  # noqa: E402
+
 binary = Path(sys.argv[1]).resolve()
 output = Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
@@ -79,7 +82,8 @@ try:
                   "edited document")
     record("01-document-edited", True, texts=texts(edited))
 
-    xdo("key", "--clearmodifiers", "ctrl+shift+m")
+    chrome = chrome_ui.Chrome(state, xdo, window)
+    chrome.click("view.mode.source", "focus")  # the segmented control, found by command id
     s = wait(lambda s: s["source_mode"] and s["preview"]["shown"] and s["preview"]["rect"]
              and len(s["preview"]["anchors"] or []) == 3, "preview shown")
     shot("02-source-and-preview")
@@ -96,7 +100,7 @@ try:
     record("03-click-locates-block", True, cursor=[s["cursor_leaf"], s["cursor_byte"]])
 
     generation = s["preview"]["generation"]
-    xdo("key", "--clearmodifiers", "ctrl+shift+m")
+    chrome.click("view.mode.visual", "focus")
     wait(lambda s: not s["source_mode"], "back to the editor")
     xdo("type", "X")
     s = wait(lambda s: s["current"] and texts(s)[1] == "X第二段 beta", "typing at the located block")

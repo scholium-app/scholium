@@ -3,11 +3,12 @@ use super::{
     avail,
     spec::{Action, ChordKey, CommandSpec, IconId, KeyChord},
 };
-use crate::commands::ViewCommand;
+use crate::{commands::ViewCommand, i18n::LocaleSetting, theme::ThemeKind};
 
 pub(super) fn specs() -> Vec<CommandSpec> {
     let mut specs = workspace();
     specs.extend(zoom());
+    specs.extend(appearance());
     specs
 }
 
@@ -58,16 +59,11 @@ fn workspace() -> Vec<CommandSpec> {
             availability: avail::unimplemented,
         },
         command! {
-            "view.ribbon",
+            "view.toolbars",
             shortcuts: keys![KeyChord::ctrl(ChordKey::Function(1))],
             menu: menu!(View, 3, 0),
-            checked: Some(avail::ribbon_collapsed),
-            action: Action::View(ViewCommand::ToggleRibbon),
-        },
-        command! {
-            "view.theme",
-            menu: menu!(View, 3, 1),
-            availability: avail::unimplemented,
+            checked: Some(avail::toolbars_visible),
+            action: Action::View(ViewCommand::ToggleToolbars),
         },
     ]
 }
@@ -102,6 +98,42 @@ fn zoom() -> Vec<CommandSpec> {
             shortcuts: keys![KeyChord::ctrl(ChordKey::Minus)],
             menu: menu!(View, Zoom, 2, 3),
             action: Action::View(ViewCommand::ZoomOut),
+        },
+    ]
+}
+
+/// 主题 and 语言 submenus: runtime choices that never touch the document.
+fn appearance() -> Vec<CommandSpec> {
+    vec![
+        command! {
+            "view.theme.light",
+            menu: menu!(View, Theme, 3, 1),
+            checked: Some(avail::theme_light),
+            action: Action::View(ViewCommand::SetTheme(ThemeKind::Light)),
+        },
+        command! {
+            "view.theme.dark",
+            menu: menu!(View, Theme, 3, 2),
+            checked: Some(avail::theme_dark),
+            action: Action::View(ViewCommand::SetTheme(ThemeKind::Dark)),
+        },
+        command! {
+            "view.language.auto",
+            menu: menu!(View, Language, 3, 3),
+            checked: Some(avail::locale_auto),
+            action: Action::View(ViewCommand::SetLocale(LocaleSetting::Auto)),
+        },
+        command! {
+            "view.language.zh_hans",
+            menu: menu!(View, Language, 3, 4),
+            checked: Some(avail::locale_zh),
+            action: Action::View(ViewCommand::SetLocale(LocaleSetting::ZhHans)),
+        },
+        command! {
+            "view.language.en",
+            menu: menu!(View, Language, 3, 5),
+            checked: Some(avail::locale_en),
+            action: Action::View(ViewCommand::SetLocale(LocaleSetting::En)),
         },
     ]
 }
