@@ -97,7 +97,7 @@
 默认单一所见即所得编辑面，源码模式约等宽分屏，标准菜单与紧凑工具栏服务科学排版。
 参考图固定交互与空间关系的方向，具体原生控件和尺寸允许迭代，不新增像素一致门槛。
 菜单、格式栏与快捷键来自统一命令注册表，界面文字进入可本地化目录（zh-Hans 与 en），
-次序见 [ArtCraft / PhotoCraft 借鉴计划](ARTCRAFT_REFERENCE.md)与[界面多语言计划](I18N.md)；完整翻译归阶段 6。
+次序见 [ArtCraft / PhotoCraft / WordCraft 借鉴计划](ARTCRAFT_REFERENCE.md)与[界面多语言计划](I18N.md)；完整翻译归阶段 6。
 
 实现 model、document、collab engine adapter、storage WAL 和 app 最小壳。支持段落、heading、粗体/强调、
 行内/独立数学、分数、根式、上下标、定界符；实现 TreeCursor、selection、focus、undo 和 Typst 快速预览。
