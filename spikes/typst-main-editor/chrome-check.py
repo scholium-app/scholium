@@ -231,7 +231,10 @@ try:
     # 10. Status bar: words counted from the snapshot, page info only in source mode.
     focus_page()
     xdo("key", "--clearmodifiers", "ctrl+End")
-    type_text(" 中文 abc")
+    # CJK through the clipboard: xdotool types characters missing from the keymap by remapping a
+    # spare keycode, which races with the app's keymap handling on some X servers (flaky on CI).
+    subprocess.run(["xclip", "-selection", "clipboard"], input=" 中文 abc".encode(), env=env, check=True)
+    xdo("key", "--clearmodifiers", "ctrl+v")
     s = wait(lambda s: "".join(texts(s)).endswith("中文 abc"), "text typed")
     s = wait(lambda s: facts(s)["status"]["words"] == words(texts(s)) and "".join(texts(s)).endswith("中文 abc"),
              "word count updates")

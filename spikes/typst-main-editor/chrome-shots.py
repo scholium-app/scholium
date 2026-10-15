@@ -147,7 +147,7 @@ def new_document(chrome, work, xdo, window, scale):
 
 
 def reset_document(chrome, env, state, xdo, window, scale, work):
-    """The sample paper again: title and section as headings, caret at the end."""
+    """The sample paper again: title and section as headings, caret in the first body paragraph."""
     xdo("key", "Escape")
     xdo("key", "Escape")
     new_document(chrome, work, xdo, window, scale)
@@ -160,7 +160,10 @@ def reset_document(chrome, env, state, xdo, window, scale, work):
     xdo("key", "Down", "Down")
     chrome.click("ui.toolbar.paragraph", "toolbar")
     chrome.click("format.paragraph.heading2", "menu")
-    xdo("key", "--clearmodifiers", "ctrl+End")
+    # Caret in the first body paragraph with the page scrolled to its top, like the design images.
+    xdo("key", "Down")
+    xdo("key", "--clearmodifiers", "ctrl+Home")
+    xdo("key", "Down", "Down", "Down")
     settle(state, 1.0)
 
 
@@ -190,6 +193,7 @@ def capture(chrome, env, state, xdo, window, work, config):
         reset_document(chrome, env, state, xdo, window, scale, work)
         path = out / f"{tag}-{name}.png"
         if name == "math":
+            xdo("key", "End")
             xdo("type", "--delay", "40", " $")
             xdo("type", "--delay", "40", "x")
             xdo("key", "--clearmodifiers", "ctrl+slash")
