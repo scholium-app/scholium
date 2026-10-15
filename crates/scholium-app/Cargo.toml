@@ -12,6 +12,9 @@ unicode-segmentation = "=1.13.3"
 fluent-bundle = "=0.16.0"
 thiserror = "=2.0.20"
 serde_json = "=1.0.151"
+# Icon rasterizer and font database: already in the graph through typst-render / typst-kit.
+resvg = { version = "=0.47.0", default-features = false }
+fontdb = "=0.23.0"
 scholium-model = { path = "../scholium-model", version = "0.1.0" }
 scholium-document = { path = "../scholium-document", version = "0.1.0" }
 scholium-typst = { path = "../scholium-typst", version = "0.1.0", features = ["editor"] }

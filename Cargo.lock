@@ -3663,6 +3663,8 @@ version = "0.1.0"
 dependencies = [
  "eframe",
  "fluent-bundle",
+ "fontdb",
+ "resvg",
  "scholium-document",
  "scholium-model",
  "scholium-storage",
