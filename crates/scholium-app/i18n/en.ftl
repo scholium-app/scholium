@@ -371,3 +371,52 @@ chrome-dialog-body = Unsaved changes will be discarded. Saving a new document ag
 chrome-dialog-cancel = Cancel
 
 chrome-dialog-discard = Discard and Continue
+
+diag-severity-error = Error
+
+diag-severity-warning = Warning
+
+diag-severity-info = Note
+
+diag-count = { $count ->
+    [one] { $count } issue
+   *[other] { $count } issues
+}
+
+diag-count_hint = Show the diagnostics panel
+
+diag-edit = { $detail }
+
+diag-save = Save failed: { $error }
+
+diag-layout_failed = Layout failed: { $error }
+
+diag-notice = { $detail }
+
+diag-rejected = Rejected input was kept
+
+diag-selection-unsupported = The selection geometry does not support this range; page edits are paused.
+
+diag-selection-estimated = Selection boundaries inside a ligature are estimated; the mouse only places exact boundaries.
+
+diag-formula_overflow = Formula is wider than the line
+
+diag-caret_missing = The caret cannot be shown here for now
+
+diag-panel-problems = Problems
+
+diag-panel-empty = No problems
+
+diag-panel-layout = Layout
+
+diag-panel-backend = Backend: { $name }
+
+diag-panel-body = Body r{ $revision }
+
+diag-panel-shown = View { $revision }
+
+diag-panel-content = Content built { $built } / reused { $reused } · source reads { $reads }
+
+diag-panel-timing = Layout + raster { $ms } ms
+
+diag-panel-row = { $severity }: { $message }

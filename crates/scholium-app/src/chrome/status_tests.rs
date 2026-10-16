@@ -1,5 +1,5 @@
 //! Status bar behaviour: revisions on hover, the always-visible backend label.
-use super::tests::{EN, Window, ZH};
+use super::tests::{EN, Window, ZH, overflow};
 use crate::state::ViewMode;
 
 #[test]
@@ -70,4 +70,39 @@ fn the_backend_label_is_always_shown_and_reads_updating_while_stale() {
             assert!(tip.contains("r7") && tip.contains("r6"), "{tip}");
         }
     }
+}
+
+#[test]
+fn the_status_bar_shows_words_context_and_page_info_only_in_source() {
+    let mut w = Window::new(1280.0, ZH);
+    w.editor().words = 1284;
+    w.editor().preview_page = Some((1, 2));
+    w.settle();
+    let texts = w.texts();
+    assert!(texts.contains(&"1,284 字".to_owned()), "{texts:?}");
+    assert!(texts.contains(&"正文".to_owned()));
+    assert!(
+        !texts.iter().any(|t| t.contains("页")),
+        "no page info in the continuous view"
+    );
+    w.editor().in_math = true;
+    w.settle();
+    assert!(w.texts().contains(&"公式".to_owned()));
+    w.state.mode = ViewMode::Source;
+    w.settle();
+    let texts = w.texts();
+    assert!(texts.contains(&"源码 · 只读".to_owned()));
+    assert!(texts.contains(&"第 1/2 页".to_owned()), "{texts:?}");
+}
+
+#[test]
+fn the_warning_segment_is_the_only_message_and_zoom_runs_commands() {
+    let mut w = Window::new(1280.0, ZH);
+    w.editor().problems = vec![overflow()];
+    w.settle();
+    assert!(w.texts().contains(&"公式超出行宽".to_owned()));
+    w.click("view.zoom.in", "status");
+    assert!(!w.state.fit_width);
+    w.click("view.zoom.fit_width", "status");
+    assert!(w.state.fit_width);
 }

@@ -9,6 +9,7 @@ pub(crate) mod audit;
 mod button;
 mod dropdown;
 mod menu;
+mod row;
 mod segmented;
 mod separator;
 mod status;
@@ -22,6 +23,7 @@ pub(crate) use dropdown::{Dropdown, dropdown, natural_width as dropdown_width};
 pub(crate) use menu::{
     BarMenu, MenuItem, bar_menu, button_menu, menu_item, menu_separator, menu_width, submenu_item,
 };
+pub(crate) use row::{Row, row};
 pub(crate) use segmented::{Segment, segment_width, segmented};
 pub(crate) use separator::{group_separator, status_separator};
 pub(crate) use status::{status_button, status_fixed, status_text, warning_segment};
@@ -91,6 +93,8 @@ pub(crate) struct Meta {
     pub(crate) tip: Option<Tip>,
     /// Overrides the role derived from `checked` (a tab is a selectable label).
     pub(crate) kind: Option<WidgetType>,
+    /// Position among controls sharing one id (rows of a list), which keeps their egui ids apart.
+    pub(crate) index: Option<usize>,
 }
 
 impl Meta {
@@ -107,7 +111,13 @@ impl Meta {
             checked: None,
             tip: None,
             kind: None,
+            index: None,
         }
+    }
+
+    pub(crate) fn indexed(mut self, index: usize) -> Self {
+        self.index = Some(index);
+        self
     }
 
     pub(crate) fn enabled(mut self, enabled: bool) -> Self {
@@ -139,7 +149,7 @@ impl Meta {
     }
 
     pub(crate) fn id_for(&self) -> egui::Id {
-        egui::Id::new(("scholium-control", self.surface, &self.id))
+        egui::Id::new(("scholium-control", self.surface, &self.id, self.index))
     }
 
     /// Allocate `size`, make it interactive and describe it.
@@ -168,6 +178,16 @@ impl Meta {
         }
         response
     }
+}
+
+/// A control activated from the keyboard (Enter or Space) keeps that key press to itself. The
+/// control may hand the focus to the page in the same frame, which would otherwise read the
+/// same key as typing.
+pub(crate) fn consume_activation(ctx: &egui::Context) {
+    ctx.input_mut(|i| {
+        i.consume_key(egui::Modifiers::NONE, egui::Key::Enter);
+        i.consume_key(egui::Modifiers::NONE, egui::Key::Space);
+    });
 }
 
 /// Is keyboard navigation in use? The focus ring shows only then, never after a click.

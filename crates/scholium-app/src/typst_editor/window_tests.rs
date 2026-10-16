@@ -326,3 +326,165 @@ fn the_interface_language_switches_at_runtime_without_touching_the_document() {
     assert!(shown[2].iter().any(|t| t == "File"));
     assert_eq!(f.editor.record().snapshot, before);
 }
+
+fn zh_window() -> Fixture {
+    let mut f = window();
+    f.state.locale = LocaleSetting::ZhHans;
+    f.settle();
+    f
+}
+
+#[test]
+fn a_jump_request_moves_the_caret_in_order_and_is_consumed() {
+    let mut f = zh_window();
+    f.events(vec![
+        tests::text("first"),
+        tests::key(egui::Key::Enter, false),
+        tests::text("second"),
+    ]);
+    f.settle();
+    let first = input::leaves(&f.editor.snapshot)[0].id;
+    f.state.jump_request = Some(crate::diagnostics::Target {
+        node: first,
+        byte: 2,
+    });
+    frame(&mut f, egui::vec2(1280.0, 900.0), vec![]);
+    assert_eq!(f.state.jump_request, None);
+    assert_eq!((f.editor.cursor.leaf, f.editor.cursor.byte), (first, 2));
+}
+
+#[test]
+fn ctrl_j_docks_the_panel_and_layout_stats_leave_the_status_bar() {
+    let mut f = zh_window();
+    let size = egui::vec2(1280.0, 900.0);
+    frame(&mut f, size, vec![]);
+    let closed = frame(&mut f, size, vec![]);
+    assert!(!painted_text(&closed).iter().any(|(_, t)| t == "问题"));
+    frame(&mut f, size, vec![command(egui::Key::J)]);
+    frame(&mut f, size, vec![]);
+    let open = frame(&mut f, size, vec![]);
+    assert!(f.state.diagnostics);
+    let texts = painted_text(&open);
+    assert!(texts.iter().any(|(_, t)| t == "问题"), "{texts:?}");
+    assert!(texts.iter().any(|(_, t)| t == "没有问题"), "{texts:?}");
+    let stats = texts
+        .iter()
+        .find(|(_, t)| t.starts_with("Content 新建"))
+        .expect("layout stats in the panel");
+    assert!(stats.0.y < size.y - STATUS_HEIGHT, "above the status bar");
+    assert!(
+        !status_text(&open, size.y).contains("Content 新建"),
+        "{}",
+        status_text(&open, size.y)
+    );
+    frame(&mut f, size, vec![command(egui::Key::J)]);
+    let shut = frame(&mut f, size, vec![]);
+    assert!(!f.state.diagnostics);
+    assert!(!painted_text(&shut).iter().any(|(_, t)| t == "问题"));
+}
+
+fn click_at(f: &mut Fixture, size: egui::Vec2, pos: egui::Pos2) {
+    let button = |pressed| egui::Event::PointerButton {
+        pos,
+        button: egui::PointerButton::Primary,
+        pressed,
+        modifiers: egui::Modifiers::NONE,
+    };
+    frame(f, size, vec![egui::Event::PointerMoved(pos)]);
+    // A real click can deliver the press and the release in one frame.
+    frame(f, size, vec![button(true), button(false)]);
+    frame(f, size, vec![]);
+}
+
+#[test]
+fn clicking_the_status_bar_warning_jumps_without_the_page_taking_the_click() {
+    let mut f = zh_window();
+    f.events(vec![
+        tests::text("$"),
+        tests::text(&"abcdefghij".repeat(10)),
+        tests::key(egui::Key::ArrowRight, false),
+        tests::text(" tail"),
+    ]);
+    f.settle();
+    let size = egui::vec2(1280.0, 900.0);
+    for _ in 0..3 {
+        frame(&mut f, size, vec![]);
+    }
+    let formula = input::leaves(&f.editor.snapshot)
+        .into_iter()
+        .find(|l| l.math)
+        .expect("formula leaf")
+        .id;
+    assert_ne!(f.editor.cursor.leaf, formula);
+    let warning = crate::widgets::audit::entries(&f.ctx)
+        .into_iter()
+        .find(|e| e.id == "ui.status.warning")
+        .expect("the overflow warning is in the status bar");
+    click_at(&mut f, size, warning.rect.center());
+    assert_eq!(
+        f.editor.cursor.leaf, formula,
+        "the caret lands in the formula"
+    );
+    assert_eq!(f.editor.cursor.byte, 0);
+}
+
+#[test]
+fn clicking_a_panel_row_jumps_without_the_page_taking_the_click() {
+    let mut f = zh_window();
+    f.events(vec![
+        tests::text("$"),
+        tests::text(&"abcdefghij".repeat(10)),
+        tests::key(egui::Key::ArrowRight, false),
+        tests::text(" tail"),
+    ]);
+    f.settle();
+    let size = egui::vec2(1280.0, 900.0);
+    f.state.diagnostics = true;
+    for _ in 0..4 {
+        frame(&mut f, size, vec![]);
+    }
+    let formula = input::leaves(&f.editor.snapshot)
+        .into_iter()
+        .find(|l| l.math)
+        .expect("formula leaf")
+        .id;
+    let row = crate::widgets::audit::entries(&f.ctx)
+        .into_iter()
+        .find(|e| e.id == crate::diagnostics::panel::ROW_ID)
+        .expect("a panel row");
+    click_at(&mut f, size, row.rect.center());
+    assert_eq!(f.editor.cursor.leaf, formula);
+}
+
+#[test]
+fn enter_on_a_panel_row_jumps_and_is_not_typed_into_the_page() {
+    let mut f = zh_window();
+    f.events(vec![
+        tests::text("$"),
+        tests::text(&"abcdefghij".repeat(10)),
+        tests::key(egui::Key::ArrowRight, false),
+        tests::text(" tail"),
+    ]);
+    f.settle();
+    let size = egui::vec2(1280.0, 900.0);
+    f.state.diagnostics = true;
+    for _ in 0..4 {
+        frame(&mut f, size, vec![]);
+    }
+    let formula = input::leaves(&f.editor.snapshot)
+        .into_iter()
+        .find(|l| l.math)
+        .expect("formula leaf")
+        .id;
+    let revision = f.editor.snapshot.revision;
+    f.ctx
+        .memory_mut(|m| m.request_focus(crate::diagnostics::panel::row_id(0)));
+    frame(&mut f, size, vec![]);
+    frame(&mut f, size, vec![tests::key(egui::Key::Enter, false)]);
+    frame(&mut f, size, vec![]);
+    assert_eq!(f.editor.cursor.leaf, formula);
+    assert_eq!(
+        f.editor.snapshot.revision, revision,
+        "Enter did not split the paragraph"
+    );
+}

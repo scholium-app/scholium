@@ -102,7 +102,7 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
             )
         });
         if !session.confirm_new && !session.confirm_close {
-            let events = ui.input(|i| i.events.clone());
+            let events = page_events(ui, visible);
             if let Some(text) = session.events(events, state) {
                 ui.ctx().copy_text(text);
             }
@@ -122,6 +122,17 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
     let text_shapes = body(ui, rect, scale, session, state);
     keep_ime(ui, rect, response.has_focus(), session);
     session.audit(ui.ctx(), rect, scale, text_shapes, ppp);
+}
+
+/// This frame's input for the page. The sheet is taller than the viewport, so presses on the
+/// status bar or the diagnostics panel lie inside its rectangle; they belong to those controls
+/// and never place the caret.
+fn page_events(ui: &egui::Ui, visible: Rect) -> Vec<egui::Event> {
+    let mut events = ui.input(|i| i.events.clone());
+    events.retain(|event| {
+        !matches!(event, egui::Event::PointerButton { pressed: true, pos, .. } if !visible.contains(*pos))
+    });
+    events
 }
 
 /// egui-winit turns the platform IME off on any frame without `output.ime`, and

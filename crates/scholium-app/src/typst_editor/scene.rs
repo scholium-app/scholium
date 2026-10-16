@@ -1,11 +1,13 @@
 //! Adoption of finished worker results: Scenes, their texture layers and sharp strips.
 use super::*;
 
-pub(super) fn diagnostics_line(scene: &EditorScene) -> String {
-    format!(
-        "Content 新建 {} / 复用 {} · source reads {} · 布局+栅格 {} ms",
-        scene.stats.built, scene.stats.reused, scene.stats.source_reads, scene.stats.elapsed_ms
-    )
+pub(super) fn layout_stats(scene: &EditorScene) -> crate::diagnostics::LayoutStats {
+    crate::diagnostics::LayoutStats {
+        built: scene.stats.built,
+        reused: scene.stats.reused,
+        source_reads: scene.stats.source_reads,
+        elapsed_ms: scene.stats.elapsed_ms,
+    }
 }
 
 impl EditorSession {
@@ -31,6 +33,7 @@ impl EditorSession {
             Ok(mut scene) => {
                 self.settle.arrived();
                 self.texture = Some(raster::Layers::from_scene(ctx, &mut scene));
+                self.overflows = self.find_overflows(&scene);
                 self.scene = Some(scene);
             }
             Err(error) => self.layout_error = Some(error.to_string()),

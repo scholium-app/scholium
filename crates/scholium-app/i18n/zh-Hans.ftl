@@ -368,3 +368,49 @@ chrome-dialog-body = 未保存的修改将丢弃。新文档再次保存会替�
 chrome-dialog-cancel = 取消
 
 chrome-dialog-discard = 丢弃并继续
+
+diag-severity-error = 错误
+
+diag-severity-warning = 警告
+
+diag-severity-info = 提示
+
+diag-count = 共 { $count } 条
+
+diag-count_hint = 显示诊断面板
+
+diag-edit = { $detail }
+
+diag-save = 保存失败：{ $error }
+
+diag-layout_failed = 排版失败：{ $error }
+
+diag-notice = { $detail }
+
+diag-rejected = 被拒绝输入已保留
+
+diag-selection-unsupported = 选区几何不支持此范围；页面写操作暂停。
+
+diag-selection-estimated = 合字内部选区边界为估计；鼠标仅定位精确边界。
+
+diag-formula_overflow = 公式超出行宽
+
+diag-caret_missing = 此处暂时无法显示光标
+
+diag-panel-problems = 问题
+
+diag-panel-empty = 没有问题
+
+diag-panel-layout = 排版
+
+diag-panel-backend = 后端：{ $name }
+
+diag-panel-body = 正文 r{ $revision }
+
+diag-panel-shown = 画面 { $revision }
+
+diag-panel-content = Content 新建 { $built } / 复用 { $reused } · source reads { $reads }
+
+diag-panel-timing = 布局+栅格 { $ms } ms
+
+diag-panel-row = { $severity }：{ $message }

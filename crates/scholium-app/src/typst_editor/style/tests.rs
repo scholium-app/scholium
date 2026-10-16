@@ -134,7 +134,7 @@ fn carets_stay_exact_after_a_range_style_split() {
     f.settle();
     assert!(runs(&f).len() >= 3);
     assert_every_boundary_has_exact_caret(&f);
-    assert!(f.editor.warning(&f.state).is_none(), "caret notice shown");
+    assert!(f.editor.problems(&f.state).is_empty(), "caret notice shown");
     f.events(vec![key(egui::Key::ArrowRight, false), text("!")]);
     f.settle();
     assert_every_boundary_has_exact_caret(&f);

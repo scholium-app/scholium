@@ -90,6 +90,11 @@ fn the_catalog_has_no_key_that_nothing_uses() {
     used.extend(crate::command::tests::submenu_keys());
     used.extend(crate::command::tests::reason_keys());
     used.extend(crate::chrome::CATALOG_KEYS.iter().map(|k| (*k).to_owned()));
+    used.extend(
+        crate::diagnostics::CATALOG_KEYS
+            .iter()
+            .map(|k| (*k).to_owned()),
+    );
     used.insert("reason.document_properties".to_owned());
     for key in leaves(Locale::En) {
         let key = dotted(&key);

@@ -7,6 +7,7 @@ mod clipboard;
 mod command_keys_tests;
 mod confirm;
 mod deferred;
+mod diagnose;
 mod follow;
 mod history;
 mod indicator;
@@ -83,12 +84,12 @@ pub(crate) struct EditorView {
     pub shown_revision: Option<u64>,
     /// The Scene on screen is not the one wanted for `revision`.
     pub pending: bool,
-    /// One transient warning for the status bar (highest priority first).
-    pub warning: Option<String>,
+    /// Current problems, most serious first; the status bar shows the first.
+    pub problems: Vec<crate::diagnostics::Diagnostic>,
     /// Rejected input kept for copying.
     pub rejected_input: Option<String>,
-    /// Layout statistics, filled only while diagnostics are shown.
-    pub diagnostics: Option<String>,
+    /// Layout statistics, filled only while the diagnostics panel is open.
+    pub layout: Option<crate::diagnostics::LayoutStats>,
     pub commands: Vec<Command>,
     /// File stem of an explicitly chosen document; `None` for the unnamed default document.
     pub title: Option<String>,
@@ -140,6 +141,10 @@ pub(crate) struct EditorSession {
     layout_error: Option<String>,
     rejected_input: Option<String>,
     notice: Option<String>,
+    /// Formulas of the Scene on screen that run past the text column (see `diagnose`).
+    overflows: Vec<crate::diagnostics::Target>,
+    /// The problems last published to the view, for the window audit.
+    shown_problems: Vec<crate::diagnostics::Diagnostic>,
     last_audit: Option<String>,
     placeholder: Option<attach::Placeholder>,
     clicks: selection::ClickRun,
@@ -212,7 +217,7 @@ impl EditorSession {
             bottom_pt: INITIAL_VIEW_PT,
         };
         worker.submit(snapshot.clone(), wanted, spec, view);
-        let result = Self {
+        let mut result = Self {
             session,
             snapshot,
             store,
@@ -246,6 +251,8 @@ impl EditorSession {
             layout_error: None,
             rejected_input: None,
             notice: None,
+            overflows: Vec::new(),
+            shown_problems: Vec::new(),
             last_audit: None,
             placeholder: None,
             clicks: selection::ClickRun::default(),
@@ -350,6 +357,7 @@ impl EditorSession {
             .submit(self.snapshot.clone(), self.wanted, self.spec, self.view);
         self.sent = Some((std::time::Instant::now(), self.view));
         self.layout_error = None;
+        self.overflows.clear();
         state.edit_error = None;
         self.metadata(state);
     }
@@ -359,7 +367,7 @@ impl EditorSession {
     }
 
     /// Publishes view metadata; true when something the status bar shows changed.
-    fn metadata(&self, state: &mut WorkspaceState) -> bool {
+    fn metadata(&mut self, state: &mut WorkspaceState) -> bool {
         let shown = |v: &EditorView| {
             (
                 v.revision,
@@ -368,17 +376,21 @@ impl EditorSession {
                 v.shown_revision,
                 v.pending,
                 v.dirty,
-                v.warning.clone(),
+                v.problems.clone(),
                 v.rejected_input.is_some(),
-                v.diagnostics.clone(),
+                v.layout,
                 v.words,
                 v.preview_page,
                 v.title.clone(),
             )
         };
         let before = state.editor.as_ref().map(shown);
-        let warning = self.warning(state);
-        let diagnostics = state.diagnostics;
+        let problems = self.problems(state);
+        self.shown_problems = problems.clone();
+        let panel_open = state.diagnostics;
+        let layout = panel_open
+            .then(|| self.scene.as_ref().map(scene::layout_stats))
+            .flatten();
         let preview_page = (state.mode == crate::state::ViewMode::Source)
             .then(|| self.source_view.page_info())
             .flatten();
@@ -398,11 +410,9 @@ impl EditorSession {
             view.can_redo = !self.redo.is_empty();
             view.shown_revision = self.scene.as_ref().map(|s| s.stamp.revision.0);
             view.pending = !self.current();
-            view.warning = warning;
+            view.problems = problems;
             view.rejected_input = self.rejected_input.clone();
-            view.diagnostics = diagnostics
-                .then(|| self.scene.as_ref().map(scene::diagnostics_line))
-                .flatten();
+            view.layout = layout;
         }
         state.editor.as_ref().map(shown) != before
     }
@@ -414,40 +424,6 @@ impl EditorSession {
             .filter(|leaf| !leaf.math)
             .map(|leaf| crate::chrome::count_words(leaf.text))
             .sum()
-    }
-
-    /// The single transient message the status bar shows, in priority order.
-    fn warning(&self, state: &WorkspaceState) -> Option<String> {
-        let errors = [&state.edit_error, &state.storage_error, &self.layout_error];
-        if let Some(error) = errors.into_iter().flatten().next() {
-            return Some(error.clone());
-        }
-        if self.rejected_input.is_some() {
-            return Some("被拒绝输入已保留".into());
-        }
-        if let Some(notice) = &self.notice {
-            return Some(notice.clone());
-        }
-        if !self.current() || state.mode == crate::state::ViewMode::Source {
-            return None;
-        }
-        if self.selected() {
-            match self.selection_quads() {
-                Err(_) => return Some("选区几何不支持此范围；页面写操作暂停。".into()),
-                Ok(quads) if quads.iter().any(|q| !q.exact) => {
-                    return Some("合字内部选区边界为估计；鼠标仅定位精确边界。".into());
-                }
-                _ => {}
-            }
-        }
-        if self.formula_overflows() {
-            return Some("公式超出行宽".into());
-        }
-        let caret = self
-            .scene
-            .as_ref()
-            .and_then(|s| s.geometry.caret(self.cursor));
-        caret.is_none().then(|| "此处暂时无法显示光标".into())
     }
 
     fn controls(&mut self, ctx: &egui::Context, state: &mut WorkspaceState) {
@@ -503,6 +479,9 @@ impl EditorSession {
             self.history(true, state);
             self.follow.request();
         }
+        if let Some(target) = state.jump_request.take() {
+            self.jump(target);
+        }
         let intents = state
             .editor
             .as_mut()
@@ -529,7 +508,7 @@ impl EditorSession {
                 self.saved = Some((*self.snapshot).clone());
                 state.storage_error = None;
             }
-            Err(error) => state.storage_error = Some(format!("保存失败：{error}")),
+            Err(error) => state.storage_error = Some(error.to_string()),
         }
     }
 }

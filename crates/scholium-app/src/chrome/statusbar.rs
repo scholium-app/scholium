@@ -1,9 +1,9 @@
 //! Status bar: left word count, page info (only when known) and context; middle the one
-//! warning; right the zoom controls. Backend and revisions live in the context tooltip.
+//! most serious diagnostic with its count; right the zoom controls. Backend and revisions live in the context tooltip.
 use super::stats::grouped;
 use crate::{
     command::ui as command_ui,
-    i18n,
+    diagnostics, i18n,
     icons::Glyph,
     state::{ViewMode, WorkspaceState},
     theme::{self, Tokens},
@@ -16,9 +16,6 @@ use crate::{
 use eframe::egui::{self, Align, FontId, Layout, Ui};
 use fluent_bundle::FluentValue;
 
-/// Longest diagnostics text shown while the 诊断 toggle is on.
-const DIAGNOSTICS_MAX: f32 = 320.0;
-
 /// What the status bar shows, for the window audit.
 pub(super) fn facts(state: &WorkspaceState) -> serde_json::Value {
     let view = state.editor.as_ref();
@@ -26,7 +23,8 @@ pub(super) fn facts(state: &WorkspaceState) -> serde_json::Value {
         "words": view.map(|v| v.words),
         "context": context_key(state),
         "preview_page": view.and_then(|v| v.preview_page),
-        "warning": view.and_then(|v| v.warning.clone()),
+        "warning": view.and_then(|v| v.problems.first()).map(|d| d.text(state.locale.resolve())),
+        "diagnostic_count": view.map(|v| v.problems.len()),
         "backend": view.map(|v| if v.pending { "chrome.status.updating" } else { "chrome.status.backend" }),
     })
 }
@@ -93,12 +91,6 @@ fn left(ui: &mut Ui, state: &mut WorkspaceState) {
     status_text(ui, &command_ui::text(state, context_key(state)), None, None);
     status_separator(ui);
     backend(ui, state, view, &tip);
-    if state.diagnostics
-        && let Some(stats) = &view.diagnostics
-    {
-        status_separator(ui);
-        status_text(ui, stats, None, Some(DIAGNOSTICS_MAX));
-    }
 }
 
 /// Backend, 正文 revision and 画面 revision; a stale 画面 is marked, never hidden.
@@ -132,23 +124,49 @@ fn backend(ui: &mut Ui, state: &WorkspaceState, view: &EditorView, tip: &str) {
     status_fixed(ui, shown, tip, width);
 }
 
+/// The most serious diagnostic, then 「共 N 条」 when there are several, then the draft copy
+/// button. Clicking the message jumps to its location, or opens the panel when it has none;
+/// the count toggles the panel.
 fn warning(ui: &mut Ui, state: &mut WorkspaceState, room: f32) {
     let Some(view) = state.editor.as_ref() else {
         return;
     };
-    let Some(text) = view.warning.clone() else {
+    let Some(top) = view.problems.first().cloned() else {
         return;
     };
+    let locale = state.locale.resolve();
+    let font = theme::font(Tokens::SMALL_TEXT);
+    let text = top.text(locale);
     let draft = view.rejected_input.is_some();
+    let count =
+        (view.problems.len() > 1).then(|| diagnostics::count_text(locale, view.problems.len()));
     let copy = command_ui::text(state, "chrome.status.copy");
-    let copy_room = if draft {
-        text_width(ui, &copy, theme::font(Tokens::SMALL_TEXT)) + 24.0
-    } else {
-        0.0
-    };
+    let button_room = |label: &str| text_width(ui, label, font.clone()) + 24.0;
+    let copy_room = if draft { button_room(&copy) } else { 0.0 };
+    let count_room = count.as_deref().map_or(0.0, button_room);
     let meta = Meta::new("ui.status.warning", "status", text.clone());
-    let response = warning_segment(ui, &text, (room - copy_room).max(0.0), meta);
-    response.on_hover_text(&text);
+    let response = warning_segment(ui, &text, (room - copy_room - count_room).max(0.0), meta);
+    response.clone().on_hover_text(&text);
+    if response.clicked() {
+        if response.has_focus() {
+            crate::widgets::consume_activation(ui.ctx());
+        }
+        match top.target {
+            Some(target) => state.jump_request = Some(target),
+            None => state.diagnostics = true,
+        }
+    }
+    if let Some(count) = count {
+        let hint = locale_text(state, "diag.count_hint", &[]);
+        let meta = Meta::new("ui.status.count", "status", count.clone());
+        let meta = meta.tip(crate::widgets::Tip {
+            title: hint,
+            ..Default::default()
+        });
+        if status_button(ui, None, Some(&count), meta).clicked() {
+            state.diagnostics = !state.diagnostics;
+        }
+    }
     if draft {
         let hint = command_ui::text(state, "chrome.status.copy_hint");
         let meta = Meta::new("ui.status.copy", "status", copy.clone());

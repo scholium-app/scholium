@@ -28,7 +28,7 @@ fn slot_of(node: &MathNode, leaf: NodeId) -> Option<&MathNode> {
     }
 }
 
-fn leaf_ids(node: &MathNode, ids: &mut Vec<NodeId>) {
+pub(super) fn leaf_ids(node: &MathNode, ids: &mut Vec<NodeId>) {
     if matches!(node.body, MathBody::Text { .. } | MathBody::Hole) {
         ids.push(node.node);
     }
@@ -139,10 +139,15 @@ impl EditorSession {
     /// Operator-free runs cannot break (in Typst as in TeX); the overflow is reported
     /// rather than hidden or rewritten.
     pub(super) fn formula_overflows(&self) -> bool {
-        let right = scholium_typst::margin_x_pt() + scholium_typst::text_width_pt();
         self.math_indicator()
-            .is_some_and(|indicator| indicator.formula[2] > right + OVERFLOW_TOLERANCE_PT)
+            .is_some_and(|indicator| past_column(indicator.formula))
     }
+}
+
+/// Does a formula's bounding box run past the right edge of the text column?
+pub(super) fn past_column(formula: Bounds) -> bool {
+    let right = scholium_typst::margin_x_pt() + scholium_typst::text_width_pt();
+    formula[2] > right + OVERFLOW_TOLERANCE_PT
 }
 
 /// Rounding slack so a formula that ends exactly at the margin is not reported.
