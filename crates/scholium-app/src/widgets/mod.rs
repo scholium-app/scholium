@@ -24,7 +24,7 @@ pub(crate) use menu::{
 };
 pub(crate) use segmented::{Segment, segment_width, segmented};
 pub(crate) use separator::{group_separator, status_separator};
-pub(crate) use status::{status_button, status_text, warning_segment};
+pub(crate) use status::{status_button, status_fixed, status_text, warning_segment};
 pub(crate) use tab::{TabSpec, tab};
 pub(crate) use tooltip::Tip;
 

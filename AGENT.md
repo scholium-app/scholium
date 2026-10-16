@@ -15,7 +15,7 @@
    默认 undo 只跟踪当前 actor 的 origin。
 5. **跨格式转换不可静默丢失。** unsupported 结构必须带源位置进入导出报告。
 6. **快速预览不能冒充最终排版。** LaTeX 发布目标可用 Typst 交互预览，但最终结果与兼容性以
-   LaTeX 验证构建为准，UI 必须始终显示当前后端和 revision。
+   LaTeX 验证构建为准，UI 必须始终标明当前后端及排版是否为最新；具体 revision 可在悬停提示或诊断面板查看。
 7. **阶段出口优先。** 阶段 0 的七项否决性验证——原生结构/源码编辑、Typst 映射、源码 reconcile、CRDT 赛马、
    构建与恢复、团队语言协调、混合构建——全部通过前，不搭生产脚手架，不做 AI、CAS、绘图、幻灯片或插件市场。
    清单与出口条件见 `docs/plan/ROADMAP.md`，报告规则见 `docs/spikes/README.md`，

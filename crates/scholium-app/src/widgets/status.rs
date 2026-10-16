@@ -39,6 +39,28 @@ pub(crate) fn status_text(
     }
 }
 
+/// A text segment at least `min_width` wide, so a label that changes between two texts
+/// never moves its neighbours.
+pub(crate) fn status_fixed(ui: &mut Ui, text: &str, tip: &str, min_width: f32) -> Response {
+    let t = theme::tokens(ui.ctx());
+    let galley = single_line(
+        ui,
+        text,
+        theme::font(Tokens::SMALL_TEXT),
+        t.text_dim,
+        f32::INFINITY,
+    );
+    let width = (galley.size().x + SEGMENT_PAD * 2.0).max(min_width);
+    let (rect, response) =
+        ui.allocate_exact_size(egui::vec2(width, Tokens::STATUS_BAR), Sense::hover());
+    ui.painter().galley(
+        text_pos(rect, rect.left() + SEGMENT_PAD, &galley),
+        galley,
+        t.text_dim,
+    );
+    response.on_hover_text(tip)
+}
+
 /// A clickable status control with an icon, or a text label (e.g. the zoom percentage).
 pub(crate) fn status_button(
     ui: &mut Ui,

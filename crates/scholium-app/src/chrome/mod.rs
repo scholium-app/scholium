@@ -5,6 +5,8 @@ mod focusbar;
 mod layout;
 mod menubar;
 mod stats;
+#[cfg(test)]
+mod status_tests;
 mod statusbar;
 mod tabbar;
 #[cfg(test)]
@@ -45,6 +47,8 @@ pub(crate) const CATALOG_KEYS: &[&str] = &[
     "chrome.status.context.math",
     "chrome.status.context.source",
     "chrome.status.revisions",
+    "chrome.status.backend",
+    "chrome.status.updating",
     "chrome.status.pending",
     "chrome.status.copy",
     "chrome.status.copy_hint",

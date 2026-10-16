@@ -350,6 +350,10 @@ chrome-status-context-source = Source · read-only
 
 chrome-status-revisions = Typst Content · body r{ $body } · view { $shown }
 
+chrome-status-backend = Typst preview
+
+chrome-status-updating = Updating
+
 chrome-status-pending = updating
 
 chrome-status-copy = Copy
