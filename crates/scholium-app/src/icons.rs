@@ -42,6 +42,7 @@ glyphs! {
     Check => "check", Close => "x", Plus => "plus", Minus => "minus",
     ChevronDown => "chevron-down", ChevronRight => "chevron-right",
     Overflow => "chevrons-right", Warning => "triangle-alert",
+    Error => "circle-alert", Info => "info",
 }
 
 /// The glyph of a registry icon id; `None` for commands without an icon.

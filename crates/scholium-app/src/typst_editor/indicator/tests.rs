@@ -115,7 +115,8 @@ fn indicator_covers_a_row_formula_that_owns_no_frame_bounds_itself() {
 }
 
 fn warning_text(f: &Fixture) -> Option<String> {
-    f.editor.warning(&f.state)
+    let locale = crate::i18n::Locale::ZhHans;
+    f.editor.problems(&f.state).first().map(|d| d.text(locale))
 }
 
 #[test]
@@ -133,7 +134,7 @@ fn a_breakable_long_formula_reports_no_overflow() {
 }
 
 #[test]
-fn an_operator_free_run_past_the_column_warns_while_the_caret_is_inside() {
+fn an_operator_free_run_past_the_column_warns_wherever_the_caret_is() {
     let mut f = Fixture::new();
     f.events(vec![text("$"), text(&"abcdefghij".repeat(10))]);
     f.settle();
@@ -141,7 +142,15 @@ fn an_operator_free_run_past_the_column_warns_while_the_caret_is_inside() {
     assert_eq!(warning_text(&f).as_deref(), Some("公式超出行宽"));
     f.events(vec![arrow(egui::Key::ArrowRight), text("after")]);
     f.settle();
-    assert_eq!(warning_text(&f), None, "only while the caret is in it");
+    assert!(
+        !f.editor.formula_overflows(),
+        "the caret flag is scoped to the formula"
+    );
+    assert_eq!(
+        warning_text(&f).as_deref(),
+        Some("公式超出行宽"),
+        "the diagnostic stays while the formula overflows"
+    );
 }
 
 #[test]

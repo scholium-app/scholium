@@ -1,6 +1,7 @@
 //! Whole-chrome frames in a headless egui context: controls are found through the same
 //! audit map the real-window checks use, never by coordinates.
 use super::{count_words, show};
+use crate::diagnostics::{Diagnostic, Severity};
 use crate::{
     command::{registry, spec::MenuId, spec::Submenu},
     i18n::LocaleSetting,
@@ -11,16 +12,20 @@ use crate::{
 };
 use eframe::egui;
 
-pub(super) struct Window {
+pub(crate) fn overflow() -> Diagnostic {
+    Diagnostic::new(Severity::Warning, "diag.formula_overflow")
+}
+
+pub(crate) struct Window {
     ctx: egui::Context,
-    pub(super) state: WorkspaceState,
+    pub(crate) state: WorkspaceState,
     size: egui::Vec2,
     time: f64,
     output: egui::FullOutput,
 }
 
 impl Window {
-    pub(super) fn new(width: f32, locale: LocaleSetting) -> Self {
+    pub(crate) fn new(width: f32, locale: LocaleSetting) -> Self {
         let ctx = egui::Context::default();
         theme::install(&ctx);
         let state = WorkspaceState {
@@ -53,7 +58,7 @@ impl Window {
         self.output = output;
     }
 
-    pub(super) fn settle(&mut self) {
+    pub(crate) fn settle(&mut self) {
         for _ in 0..5 {
             self.frame(vec![]);
         }
@@ -77,8 +82,12 @@ impl Window {
         found
     }
 
-    fn ids(&self, surface: &str) -> Vec<String> {
+    pub(crate) fn ids(&self, surface: &str) -> Vec<String> {
         self.on(surface).into_iter().map(|e| e.id).collect()
+    }
+
+    pub(crate) fn rects(&self, surface: &str) -> Vec<egui::Rect> {
+        self.on(surface).into_iter().map(|e| e.rect).collect()
     }
 
     fn find(&self, id: &str, surface: &str) -> Entry {
@@ -94,8 +103,20 @@ impl Window {
         self.settle();
     }
 
-    fn click(&mut self, id: &str, surface: &str) {
-        let pos = self.find(id, surface).rect.center();
+    pub(crate) fn click(&mut self, id: &str, surface: &str) {
+        self.click_nth(id, surface, 0);
+    }
+
+    /// Click the `index`-th control (in audit order) that has this id.
+    pub(crate) fn click_nth(&mut self, id: &str, surface: &str, index: usize) {
+        let pos = self
+            .entries()
+            .into_iter()
+            .filter(|e| e.id == id && e.surface == surface)
+            .nth(index)
+            .unwrap_or_else(|| panic!("no control {id} #{index} on {surface}"))
+            .rect
+            .center();
         let button = |pressed| egui::Event::PointerButton {
             pos,
             button: egui::PointerButton::Primary,
@@ -108,7 +129,48 @@ impl Window {
         self.settle();
     }
 
-    pub(super) fn painted(&self) -> Vec<(egui::Pos2, std::sync::Arc<egui::Galley>)> {
+    /// Give a control keyboard focus without clicking it.
+    pub(crate) fn focus(&mut self, id: &str, surface: &'static str) {
+        let egui_id = crate::widgets::Meta::new(id, surface, "").id_for();
+        self.ctx.memory_mut(|m| m.request_focus(egui_id));
+        self.settle();
+    }
+
+    /// One key event in one frame, then the frames that follow it.
+    pub(crate) fn press(&mut self, event: egui::Event) {
+        self.frame(vec![event]);
+    }
+
+    pub(crate) fn focused_row(&self) -> Option<usize> {
+        (0..16).find(|i| {
+            self.ctx
+                .memory(|m| m.has_focus(crate::diagnostics::panel::row_id(*i)))
+        })
+    }
+
+    pub(crate) fn position_of(&self, text: &str) -> egui::Pos2 {
+        self.painted()
+            .into_iter()
+            .find(|(_, g)| g.text() == text)
+            .map(|(p, _)| p)
+            .unwrap_or_else(|| panic!("{text:?} is not painted"))
+    }
+
+    pub(crate) fn status_top(&self) -> f32 {
+        self.size.y - Tokens::STATUS_BAR
+    }
+
+    /// The panel's rectangle once drawn, `None` while it is closed.
+    pub(crate) fn panel_rect(&self) -> Option<egui::Rect> {
+        let open = self.texts().iter().any(|t| t == "问题" || t == "Problems");
+        let state = egui::containers::panel::PanelState::load(
+            &self.ctx,
+            crate::diagnostics::panel::panel_id(),
+        )?;
+        open.then_some(state.outer_rect)
+    }
+
+    pub(crate) fn painted(&self) -> Vec<(egui::Pos2, std::sync::Arc<egui::Galley>)> {
         self.output
             .shapes
             .iter()
@@ -119,20 +181,20 @@ impl Window {
             .collect()
     }
 
-    pub(super) fn texts(&self) -> Vec<String> {
+    pub(crate) fn texts(&self) -> Vec<String> {
         self.painted()
             .into_iter()
             .map(|(_, g)| g.text().to_owned())
             .collect()
     }
 
-    pub(super) fn editor(&mut self) -> &mut EditorView {
+    pub(crate) fn editor(&mut self) -> &mut EditorView {
         self.state.editor.get_or_insert_with(Default::default)
     }
 }
 
-pub(super) const ZH: LocaleSetting = LocaleSetting::ZhHans;
-pub(super) const EN: LocaleSetting = LocaleSetting::En;
+pub(crate) const ZH: LocaleSetting = LocaleSetting::ZhHans;
+pub(crate) const EN: LocaleSetting = LocaleSetting::En;
 
 #[test]
 fn the_menu_bar_lists_the_eight_menus_left_to_right() {
@@ -405,41 +467,6 @@ fn the_tab_shows_the_title_and_its_buttons_use_the_new_and_close_flows() {
 }
 
 #[test]
-fn the_status_bar_shows_words_context_and_page_info_only_in_source() {
-    let mut w = Window::new(1280.0, ZH);
-    w.editor().words = 1284;
-    w.editor().preview_page = Some((1, 2));
-    w.settle();
-    let texts = w.texts();
-    assert!(texts.contains(&"1,284 字".to_owned()), "{texts:?}");
-    assert!(texts.contains(&"正文".to_owned()));
-    assert!(
-        !texts.iter().any(|t| t.contains("页")),
-        "no page info in the continuous view"
-    );
-    w.editor().in_math = true;
-    w.settle();
-    assert!(w.texts().contains(&"公式".to_owned()));
-    w.state.mode = ViewMode::Source;
-    w.settle();
-    let texts = w.texts();
-    assert!(texts.contains(&"源码 · 只读".to_owned()));
-    assert!(texts.contains(&"第 1/2 页".to_owned()), "{texts:?}");
-}
-
-#[test]
-fn the_warning_segment_is_the_only_message_and_zoom_runs_commands() {
-    let mut w = Window::new(1280.0, ZH);
-    w.editor().warning = Some("公式超出行宽".into());
-    w.settle();
-    assert!(w.texts().contains(&"公式超出行宽".to_owned()));
-    w.click("view.zoom.in", "status");
-    assert!(!w.state.fit_width);
-    w.click("view.zoom.fit_width", "status");
-    assert!(w.state.fit_width);
-}
-
-#[test]
 fn switching_the_language_relabels_every_visible_control_at_runtime() {
     let mut w = Window::new(1280.0, ZH);
     let zh = w.texts();
@@ -502,7 +529,13 @@ fn no_text_wraps_or_overflows_and_no_controls_overlap() {
         for width in [640.0, 1024.0, 1440.0] {
             let mut w = Window::new(width, locale);
             w.editor().words = 12_345;
-            w.editor().warning = Some("公式超出行宽 · 2.1 网格划分，第 1 段，超出 3.2 pt".into());
+            w.editor().problems = vec![
+                Diagnostic::new(Severity::Error, "diag.edit").arg(
+                    "detail",
+                    "公式超出行宽 · 2.1 网格划分，第 1 段，超出 3.2 pt",
+                ),
+                overflow(),
+            ];
             w.settle();
             let screen = egui::Rect::from_min_size(egui::Pos2::ZERO, w.size);
             for (pos, galley) in w.painted() {

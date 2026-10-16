@@ -385,11 +385,11 @@ fn styled_leaf_has_exact_carets_at_every_grapheme_before_and_after_relayout() {
         f.editor.command(Command::Style(style), &mut f.state);
         f.settle();
         assert_every_boundary_has_caret(&f);
-        assert!(f.editor.warning(&f.state).is_none(), "caret notice shown");
+        assert!(f.editor.problems(&f.state).is_empty(), "caret notice shown");
         f.events(vec![text("!"), key(egui::Key::ArrowLeft, false)]);
         f.settle();
         assert_every_boundary_has_caret(&f);
-        assert!(f.editor.warning(&f.state).is_none(), "caret notice shown");
+        assert!(f.editor.problems(&f.state).is_empty(), "caret notice shown");
     }
 }
 

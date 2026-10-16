@@ -78,6 +78,7 @@ impl EditorSession {
             "source_mode": source_mode, "preview": self.source_view.audit(),
             "raster": raster, "follow": self.follow_audit(),
             "formula_overflow": self.formula_overflows(),
+            "diagnostics": self.audit_problems(),
             "controls": crate::widgets::audit::controls_json(ctx),
             "chrome": crate::widgets::audit::facts_json(ctx),
             "fonts": crate::theme::fonts::chosen().map(|f| json!({

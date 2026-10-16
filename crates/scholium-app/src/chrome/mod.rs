@@ -10,7 +10,7 @@ mod status_tests;
 mod statusbar;
 mod tabbar;
 #[cfg(test)]
-mod tests;
+pub(crate) mod tests;
 mod toolbar;
 
 pub(crate) use stats::count_words;
@@ -117,6 +117,7 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         .show_separator_line(false)
         .show(ui, |ui| statusbar::show(ui, state));
     edge(ui, bar.response.rect, true);
+    crate::diagnostics::panel::show(ui, state);
     audit::set_facts(&ctx, facts(state, &overflowed));
 }
 

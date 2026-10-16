@@ -4,6 +4,7 @@
 mod chrome;
 mod command;
 mod commands;
+mod diagnostics;
 mod i18n;
 mod icons;
 mod state;
