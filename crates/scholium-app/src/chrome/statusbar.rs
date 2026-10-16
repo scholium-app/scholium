@@ -8,7 +8,10 @@ use crate::{
     state::{ViewMode, WorkspaceState},
     theme::{self, Tokens},
     typst_editor::EditorView,
-    widgets::{Meta, status_button, status_separator, status_text, text_width, warning_segment},
+    widgets::{
+        Meta, status_button, status_fixed, status_separator, status_text, text_width,
+        warning_segment,
+    },
 };
 use eframe::egui::{self, Align, FontId, Layout, Ui};
 use fluent_bundle::FluentValue;
@@ -24,6 +27,7 @@ pub(super) fn facts(state: &WorkspaceState) -> serde_json::Value {
         "context": context_key(state),
         "preview_page": view.and_then(|v| v.preview_page),
         "warning": view.and_then(|v| v.warning.clone()),
+        "backend": view.map(|v| if v.pending { "chrome.status.updating" } else { "chrome.status.backend" }),
     })
 }
 
@@ -86,12 +90,9 @@ fn left(ui: &mut Ui, state: &mut WorkspaceState) {
     let words = words.replacen(&view.words.to_string(), &grouped(view.words), 1);
     status_text(ui, &words, None, None);
     status_separator(ui);
-    status_text(
-        ui,
-        &command_ui::text(state, context_key(state)),
-        Some(&tip),
-        None,
-    );
+    status_text(ui, &command_ui::text(state, context_key(state)), None, None);
+    status_separator(ui);
+    backend(ui, state, view, &tip);
     if state.diagnostics
         && let Some(stats) = &view.diagnostics
     {
@@ -118,6 +119,17 @@ pub(super) fn revisions(state: &WorkspaceState, view: &EditorView) -> String {
         line.push_str(&command_ui::text(state, "chrome.status.pending"));
     }
     line
+}
+
+/// The always-visible backend label; it reads "updating" while the picture is stale. Both
+/// texts get the wider one's width, so switching never moves the segments beside it.
+fn backend(ui: &mut Ui, state: &WorkspaceState, view: &EditorView, tip: &str) {
+    let font = theme::font(Tokens::SMALL_TEXT);
+    let steady = command_ui::text(state, "chrome.status.backend");
+    let updating = command_ui::text(state, "chrome.status.updating");
+    let width = text_width(ui, &steady, font.clone()).max(text_width(ui, &updating, font)) + 4.0;
+    let shown = if view.pending { &updating } else { &steady };
+    status_fixed(ui, shown, tip, width);
 }
 
 fn warning(ui: &mut Ui, state: &mut WorkspaceState, room: f32) {

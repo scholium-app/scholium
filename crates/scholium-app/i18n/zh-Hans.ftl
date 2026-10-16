@@ -347,6 +347,10 @@ chrome-status-context-source = 源码 · 只读
 
 chrome-status-revisions = Typst Content · 正文 r{ $body } · 画面 { $shown }
 
+chrome-status-backend = Typst 预览
+
+chrome-status-updating = 更新中
+
 chrome-status-pending = 待更新
 
 chrome-status-copy = 复制

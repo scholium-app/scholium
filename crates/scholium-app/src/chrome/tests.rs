@@ -11,16 +11,16 @@ use crate::{
 };
 use eframe::egui;
 
-struct Window {
+pub(super) struct Window {
     ctx: egui::Context,
-    state: WorkspaceState,
+    pub(super) state: WorkspaceState,
     size: egui::Vec2,
     time: f64,
     output: egui::FullOutput,
 }
 
 impl Window {
-    fn new(width: f32, locale: LocaleSetting) -> Self {
+    pub(super) fn new(width: f32, locale: LocaleSetting) -> Self {
         let ctx = egui::Context::default();
         theme::install(&ctx);
         let state = WorkspaceState {
@@ -53,7 +53,7 @@ impl Window {
         self.output = output;
     }
 
-    fn settle(&mut self) {
+    pub(super) fn settle(&mut self) {
         for _ in 0..5 {
             self.frame(vec![]);
         }
@@ -108,7 +108,7 @@ impl Window {
         self.settle();
     }
 
-    fn painted(&self) -> Vec<(egui::Pos2, std::sync::Arc<egui::Galley>)> {
+    pub(super) fn painted(&self) -> Vec<(egui::Pos2, std::sync::Arc<egui::Galley>)> {
         self.output
             .shapes
             .iter()
@@ -119,20 +119,20 @@ impl Window {
             .collect()
     }
 
-    fn texts(&self) -> Vec<String> {
+    pub(super) fn texts(&self) -> Vec<String> {
         self.painted()
             .into_iter()
             .map(|(_, g)| g.text().to_owned())
             .collect()
     }
 
-    fn editor(&mut self) -> &mut EditorView {
+    pub(super) fn editor(&mut self) -> &mut EditorView {
         self.state.editor.get_or_insert_with(Default::default)
     }
 }
 
-const ZH: LocaleSetting = LocaleSetting::ZhHans;
-const EN: LocaleSetting = LocaleSetting::En;
+pub(super) const ZH: LocaleSetting = LocaleSetting::ZhHans;
+pub(super) const EN: LocaleSetting = LocaleSetting::En;
 
 #[test]
 fn the_menu_bar_lists_the_eight_menus_left_to_right() {
@@ -428,18 +428,6 @@ fn the_status_bar_shows_words_context_and_page_info_only_in_source() {
 }
 
 #[test]
-fn developer_revisions_are_not_in_the_status_bar_text() {
-    let mut w = Window::new(1280.0, ZH);
-    w.editor().revision = 7;
-    w.settle();
-    assert!(
-        !w.texts()
-            .iter()
-            .any(|t| t.contains("Typst") || t.contains("r7"))
-    );
-}
-
-#[test]
 fn the_warning_segment_is_the_only_message_and_zoom_runs_commands() {
     let mut w = Window::new(1280.0, ZH);
     w.editor().warning = Some("公式超出行宽".into());
@@ -551,19 +539,4 @@ fn no_text_wraps_or_overflows_and_no_controls_overlap() {
 #[test]
 fn words_count_cjk_characters_and_latin_words() {
     assert_eq!(count_words("中文 English 3"), 4);
-}
-
-#[test]
-fn revisions_and_backend_move_into_the_context_tooltip_and_mark_a_stale_picture() {
-    let mut w = Window::new(1280.0, ZH);
-    w.editor().revision = 7;
-    w.editor().shown_revision = Some(6);
-    let line = super::statusbar::revisions(&w.state, w.state.editor.as_ref().expect("document"));
-    assert_eq!(line, "Typst Content · 正文 r7 · 画面 r6");
-    w.editor().pending = true;
-    let stale = super::statusbar::revisions(&w.state, w.state.editor.as_ref().expect("document"));
-    assert!(stale.ends_with("待更新"), "{stale}");
-    w.state.locale = EN;
-    let en = super::statusbar::revisions(&w.state, w.state.editor.as_ref().expect("document"));
-    assert!(en.contains("body r7") && en.ends_with("updating"), "{en}");
 }
