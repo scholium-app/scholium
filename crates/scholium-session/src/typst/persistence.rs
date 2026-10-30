@@ -30,12 +30,13 @@ impl EditorCore {
             SessionStore::create_structured(path)?
         };
         let persisted = store.load_structured()?;
-        let saved = persisted.as_ref().map(|p| p.snapshot.clone());
+        let has_saved = persisted.is_some();
         let session = match persisted {
             Some(p) => LocalSession::restore_structured(p.snapshot, p.requests)?,
             None => blank()?,
         };
-        let snapshot = Arc::new(session.snapshot());
+        let snapshot = session.shared_snapshot();
+        let saved = has_saved.then(|| snapshot.clone());
         let first = input::leaves(&snapshot)
             .first()
             .map(|l| l.id)
@@ -86,7 +87,7 @@ impl EditorCore {
     pub fn save(&mut self) -> Result<(), SessionError> {
         let requests: Vec<_> = self.session.actions().iter().map(|a| a.request).collect();
         self.store.save_structured(&self.snapshot, &requests)?;
-        self.saved = Some((*self.snapshot).clone());
+        self.saved = Some(self.snapshot.clone());
         Ok(())
     }
 
@@ -98,10 +99,13 @@ impl EditorCore {
     pub fn restore_document(
         &mut self,
         snapshot: StructuredDocument,
-        requests: Vec<RequestId>,
+        requests: impl AsRef<[RequestId]>,
     ) -> Result<(), SessionError> {
-        self.session = ReadAuthority::new(LocalSession::restore_structured(snapshot, requests)?);
-        self.snapshot = Arc::new(self.session.snapshot());
+        self.session = ReadAuthority::new(LocalSession::restore_structured_shared(
+            Arc::new(snapshot),
+            requests.as_ref(),
+        )?);
+        self.snapshot = self.session.shared_snapshot();
         Ok(())
     }
 
@@ -115,7 +119,7 @@ impl EditorCore {
         self.saved = None;
         self.layout_error = None;
         self.overflows.clear();
-        self.snapshot = Arc::new(self.session.snapshot());
+        self.snapshot = self.session.shared_snapshot();
         if let Some(leaf) = input::leaves(&self.snapshot).first() {
             self.cursor = Position {
                 leaf: leaf.id,

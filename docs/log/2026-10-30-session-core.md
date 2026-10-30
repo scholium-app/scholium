@@ -106,3 +106,106 @@ session 总计 0 → 2097 行（含无界面测试）；所有文件均低于 60
 - ADR 草稿没有修订；没有行为/断言/窗口或像素阈值变更。
 - phase 2 另行处理指针/点击、垂直导航/goal、follow 与抽象事件翻译边界；当前未实施这些移动。
 - 推送前重新 fetch 确认 origin/main 仍为上述基线，无需 merge。只开 PR 到 main，不合并、不轮询 CI。
+
+## PR #63 性能评审修复
+
+评审指出 checkpoint 对每次 Text 克隆 undo/redo 时，会递归复制 512 份完整文档和请求日志。
+本轮在同一分支 `a02a104f34adcc9c6936d484f5f674c6964d342e` 上继续修复，开始时工作区干净；
+没有重新从 main 建分支，没有修改既有断言、窗口检查、reference 或任何阈值。
+
+### 共享与回滚
+
+历史条目的 `HistorySnapshot` 内持有 `Arc<StructuredDocument>`，requests 为 `Arc<[RequestId]>`；
+checkpoint 克隆 undo/redo 和 placeholder 只复制指针。包装类型保留与 owned 文档的值比较，
+原有 `record().snapshot` 比较断言原样编译；restore_document 同时接受 Vec 和 Arc 请求切片。
+
+为避免 checkpoint 再复制一份权威文档，LocalSession 的 accepted snapshot 和 action journal
+改为内部 Arc。`shared_snapshot` 让权威、投影、历史与 saved 基线复用同一份已接受文档；
+`rollback_checkpoint` 直接保留已验证的快照和日志，并提前分配恢复用的新 epoch，构造为 O(1)。
+命令执行前不再 restore/validate 全文或重建请求日志。结构编辑仍只在独立规划副本上验证后接受，
+action journal 提交时写时复制；checkpoint 不因此变为另一份持续可写正文。
+回滚直接替换已保留权威，无再次验证、无可失败恢复；未修改权威的拒绝保留原 epoch。
+
+新增指针共享回归测试，填满历史后保留 undo + redo，检查所有条目的文档和请求 Arc、
+checkpoint 权威/投影/saved 的 Arc 身份及 journal 切片地址。修改后 Err/panic 均恢复相同指针与请求、
+更新 epoch，原 retained 文档 revision 不变，redo 仍可工作。既有完整状态/磁盘 saved-head 回滚测试继续通过。
+本轮仅在既有 tests.rs 尾部登记计时子模块，未改原测试主体或断言。
+
+### 修复前后计时
+
+新增显式 ignored 计时测试及 `scripts/benchmark-session-checkpoint.py`，均随本修复提交。
+先只加入计时钩子，在未修复实现上测 before，然后修改共享实现、用同一夹具和步骤测 after。
+钩子仅在 cfg(test) 下，包围真实 `run(Text, ...)` 内的 checkpoint 构造，计时结束后再记录样本；
+不包含命令执行、checkpoint 析构、夹具构建、历史填充或预览编译，也不修改生产路径。
+
+- 合成夹具：286 个 paragraph，每段重复两次固定英文 literal，初始正文 60,060 UTF-8 bytes；
+  用正式 PreviewCompiler / SourceMode::Preview 在计时外实际编译，断言初始 A4 预览为 **26 页**。
+- 用真实 Text 命令形成 512 个独立撤销组，再预热 8 次；采样前逐次断言 undo 深度仍为 512。
+  采样 100 次，nearest-rank p50/p95（排序后第 50/95 个），每次输入一个 x，强制新组以保持满栈。
+- 同机 Intel Core i7-13650HX，Linux x86_64，rustc 1.99.0；两次均为 test profile：
+  workspace opt-level 0，依赖 opt-level 2。不是 release 或跨机器延迟承诺。
+- 包装脚本比较 CLOCK_MONOTONIC 与 CLOCK_BOOTTIME，差值 >1 秒则废弃整轮；
+  两轮差值均远小于 1 秒，无休眠跨越。
+
+| checkpoint（100 次，512 步历史） | 修复前 | 修复后 | 前/后 |
+|---|---:|---:|---:|
+| p50 | 16.071072 ms | 0.020276 ms | 792.6 |
+| p95 | 16.564576 ms | 0.022358 ms | 740.9 |
+
+复现命令（before 对应仅加入相同计时钩子、尚未结构共享的 a02a104 工作树）：
+
+```sh
+python3 scripts/benchmark-session-checkpoint.py --label before --out docs/log/evidence/2026-10-30-session-core/checkpoint-before.json
+python3 scripts/benchmark-session-checkpoint.py --label after --out docs/log/evidence/2026-10-30-session-core/checkpoint-after.json
+```
+
+原始样本与环境/时钟记录：[before](evidence/2026-10-30-session-core/checkpoint-before.json)、
+[after](evidence/2026-10-30-session-core/checkpoint-after.json)。JSON 的 revision 是测量时的 HEAD，
+after 在该 HEAD 的未提交修复工作树上测量；label 区分实现，未将 HEAD 冒充无修改源码。
+这里只证明 checkpoint 的深拷贝回退已消除；结构规划及首次 journal 写时复制仍随当前文档/日志大小增长。
+
+### 本轮范围补充
+
+为让 checkpoint 的权威也共享，必要修改原 T15 ownership 外的 document/src/lib.rs、
+structured_session.rs 及 document 模块规范，保留既有 owned snapshot/restore 调用兼容。
+新增 benchmark 脚本及 JSON 证据；无新依赖、无格式迁移，wt2 文件和共享日志索引未动。
+
+### 本轮门禁
+
+| 命令 | 结果 |
+|---|---|
+| `cargo fmt --all -- --check` | PASS |
+| `cargo clippy --locked --workspace --all-targets -- -D warnings` | PASS |
+| `cargo test --locked --workspace` | PASS，439 passed / 2 ignored；app 302、session 7，新增手动计时另行显式运行 |
+| `RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps` | PASS |
+| `python3 scripts/check-rust-size.py` | PASS |
+| `python3 scripts/check-doc-links.py` | PASS |
+| `python3 scripts/check-ui-strings.py` | PASS，69 项原 allowlist |
+| `python3 scripts/check-layers.py` | PASS |
+| `cargo build --locked -p scholium-app -p scholium-storage --bins` | PASS |
+| `cargo deny --locked check licenses bans sources` | PASS，既有 unused allowance 警告 |
+| `python3 scripts/window-checks.py --locale zh-Hans en --out target/t15-review-window` | PASS, 28/28（zh-Hans 14/14、en 14/14） |
+| `python3 scripts/verify-typst-fork.py target/t15-typst-origin` | PASS，固定上游 9dfd3a08500b7896045f907433cf7b4b02434fad |
+| `cargo run --locked -p scholium-typst --features editor --example typst-main-fork-check -- target/t15-review-fork-pixels` | PASS |
+| `cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir target/stock-reference -- target/t15-review-stock-pixels` | PASS |
+| `python3 spikes/typst-main-editor/compare.py target/t15-review-fork-pixels target/t15-review-stock-pixels` | PASS，full/scripts/styles/heading 4/4 equal_pixels |
+
+完整本地门禁日志在 `target/t15-review-*.log`，窗口证据在 `target/t15-review-window/`。
+未改任何既有断言、窗口检查或 stock 阈值；测试仅新增共享回归和显式计时。
+
+本轮相对 a02a104 的 session 行数变化：
+
+| 模块（src/typst/） | 修复前 | 修复后 |
+|---|---:|---:|
+| `attach.rs` | 135 | 135 |
+| `command.rs` | 247 | 251 |
+| `command/checkpoint.rs` | 115 | 116 |
+| `edit.rs` | 60 | 60 |
+| `history.rs` | 155 | 158 |
+| `persistence.rs` | 158 | 162 |
+| `tests.rs` | 289 | 292 |
+| `checkpoint_bench.rs` | 0 | 90 |
+| `command/checkpoint/tests.rs` | 0 | 68 |
+| `history/snapshot.rs` | 0 | 29 |
+
+`typst.rs` 仍为 114 行；app 的 `typst_editor.rs` 仍为 425 行。所有文件低于 600 行。

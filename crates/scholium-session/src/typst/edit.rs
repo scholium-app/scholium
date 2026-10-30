@@ -52,7 +52,7 @@ impl EditorCore {
         }
     }
     pub(super) fn publish(&mut self, state: &mut EditState) {
-        self.snapshot = Arc::new(self.session.snapshot());
+        self.snapshot = self.session.shared_snapshot();
         self.layout_error = None;
         self.overflows.clear();
         state.edit_error = None;

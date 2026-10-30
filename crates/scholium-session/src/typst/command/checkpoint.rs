@@ -1,5 +1,7 @@
 //! A prevalidated replacement authority makes rollback infallible after unwinding.
 use super::*;
+#[cfg(test)]
+mod tests;
 
 pub(in crate::typst) struct Checkpoint {
     authority: LocalSession<StructuredDocument>,
@@ -12,7 +14,7 @@ pub(in crate::typst) struct Checkpoint {
     clock: history::Clock,
     pending_style: Option<style::Pending>,
     placeholder: Option<attach::Placeholder>,
-    saved: Option<StructuredDocument>,
+    saved: Option<Arc<StructuredDocument>>,
     layout_error: Option<String>,
     rejected_input: Option<String>,
     overflows: Vec<Target>,
@@ -41,9 +43,8 @@ impl std::fmt::Debug for Checkpoint {
 
 impl EditorCore {
     pub(in crate::typst) fn checkpoint(&self) -> Result<Checkpoint, CommandError> {
-        let entry = self.record();
         Ok(Checkpoint {
-            authority: LocalSession::restore_structured(entry.snapshot, entry.requests)?,
+            authority: self.session.rollback_checkpoint(),
             snapshot: self.snapshot.clone(),
             cursor: self.cursor,
             anchor: self.anchor,
@@ -64,7 +65,7 @@ impl EditorCore {
         // Rejections before a mutation preserve the existing layout lifetime. If a
         // partially executed command changed authority, restore renews its epoch so
         // no derived pre-rollback Scene can regain pointer authority.
-        let changed = self.session.snapshot() != before.authority.snapshot()
+        let changed = self.session.shared_snapshot() != before.authority.shared_snapshot()
             || self.session.actions().iter().map(|a| a.request).ne(before
                 .authority
                 .actions()

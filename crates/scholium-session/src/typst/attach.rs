@@ -92,7 +92,7 @@ impl EditorCore {
             return;
         }
         let entry = held.before;
-        match LocalSession::restore_structured(entry.snapshot, entry.requests) {
+        match LocalSession::restore_structured_shared(entry.snapshot.0, &entry.requests) {
             Ok(session) => {
                 self.undo.pop();
                 self.run = None;

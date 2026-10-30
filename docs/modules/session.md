@@ -61,7 +61,11 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
 - 每个 `run` 在执行前保存快照、完整请求身份、光标/anchor、undo/redo、open run 与 clock、pending style、placeholder
   和保存/诊断基线。多次结构编辑（如插入后设置样式）同属一次命令事务。
 - 核心不包含 UI 或存储写入；注入时钟只读单调时间；`AssertUnwindSafe` 只包围可完整恢复的内存执行。存储不在 unwind 边界内。
-- 错误与 panic 恢复 checkpoint；回滚副本提前验证，恢复不再执行可失败校验。失败前没有文档修改时保留 epoch；
+- 历史条目的 `HistorySnapshot` 包装 `Arc<StructuredDocument>`，请求日志为 `Arc<[RequestId]>`；
+  克隆 undo/redo 只做 O(栈长) 的指针复制，占位持有的历史条目同样共享。`HistorySnapshot` 保留与 owned 文档的值比较。
+  checkpoint 的权威直接保留 LocalSession 已验证的共享快照和 action journal，投影与 saved 基线也复用 Arc，
+  不逐命令复制全文或重建/验证请求日志。接受结构编辑仍在独立规划副本上验证，提交时 action journal 写时复制。
+- 错误与 panic 恢复 checkpoint；已接受权威的回滚副本无需再次验证，恢复不执行可失败校验。失败前没有文档修改时保留 epoch；
   已部分修改的 authority 用 restore 换新 epoch，app 重新请求 Scene，旧几何不得恢复命中权限。
 - 正文/数学位置是稳定叶 ID、叶内 UTF-8 字素边界与 affinity。插入/删除后按已接受内容重新验证字素边界。
 - 本地历史最多 512 个分组；同叶、连续位置、间隔 <1 秒的键入与 IME 提交按词合并（含词尾空白）；
@@ -85,3 +89,7 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
 输入分组与 undo/redo、保存重开，以及参数拒绝和修改后的 Err/panic 完整回滚（含磁盘 saved head）。
 既有 app 单元测试、双语言真实窗口和独立 stock Typst 像素对照保持原断言/阈值。
 工作区 fmt、clippy、test、rustdoc、规模/链接/UI 字串门禁与 layer gate 共同验收；layer gate 有真实 egui 负对照。
+共享回归测试检查满历史、redo、保存基线与权威的 Arc 身份，以及修改后 Err/panic 的隔离和 epoch 语义。
+`python3 scripts/benchmark-session-checkpoint.py --label <name> --out <json>` 运行显式 ignored 计时测试：
+Typst 确认的 26 页夹具、512 步历史、8 次预热、100 次实际 Text 中的 checkpoint 采样，输出原始纳秒和 p50/p95。
+此计时不包含命令执行或 checkpoint 析构；检测到机器休眠则废弃本轮，不设置依赖机器速度的测试阈值。

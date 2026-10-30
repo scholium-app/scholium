@@ -1,6 +1,8 @@
 //! Single-user authority for legacy blocks or an identified local candidate.
 //! No shared SDG, actor undo, storage I/O or compiler is implemented here.
 
+use std::sync::Arc;
+
 use scholium_model::{
     Block, BlockEdit, BlockKind, DocumentId, DocumentRequest, DocumentSnapshot, Inline, NodeId,
     RequestId, Revision,
@@ -59,15 +61,15 @@ pub enum EditError {
 /// Owns the sole document state for one local native session.
 #[derive(Debug)]
 pub struct LocalSession<S = DocumentSnapshot> {
-    snapshot: S,
-    actions: Vec<Action>,
+    snapshot: Arc<S>,
+    actions: Arc<Vec<Action>>,
     epoch: LayoutEpoch,
 }
 
 impl Default for LocalSession {
     fn default() -> Self {
         Self {
-            snapshot: DocumentSnapshot {
+            snapshot: Arc::new(DocumentSnapshot {
                 document: DocumentId::fresh(),
                 revision: Revision::default(),
                 blocks: vec![Block {
@@ -75,8 +77,8 @@ impl Default for LocalSession {
                     kind: BlockKind::Paragraph,
                     content: Vec::new(),
                 }],
-            },
-            actions: Vec::new(),
+            }),
+            actions: Arc::new(Vec::new()),
             epoch: LayoutEpoch::fresh(),
         }
     }
@@ -85,7 +87,24 @@ impl Default for LocalSession {
 impl<S: Clone> LocalSession<S> {
     /// Return an owned UI projection, not a mutable handle to the authority.
     pub fn snapshot(&self) -> S {
+        (*self.snapshot).clone()
+    }
+
+    /// Share the immutable accepted snapshot without copying document content.
+    pub fn shared_snapshot(&self) -> Arc<S> {
         self.snapshot.clone()
+    }
+
+    /// Retain an already validated authority for infallible command rollback.
+    /// Snapshot and journal are shared; subsequent commits use copy-on-write.
+    /// The replacement has a fresh layout lifetime so pre-rollback scenes stay stale.
+    #[must_use]
+    pub fn rollback_checkpoint(&self) -> Self {
+        Self {
+            snapshot: self.snapshot.clone(),
+            actions: self.actions.clone(),
+            epoch: LayoutEpoch::fresh(),
+        }
     }
 
     /// Accepted actions in append-only order, for diagnostics only.
@@ -120,8 +139,8 @@ impl LocalSession {
             })
             .collect();
         Self {
-            snapshot,
-            actions,
+            snapshot: Arc::new(snapshot),
+            actions: Arc::new(actions),
             epoch: LayoutEpoch::fresh(),
         }
     }
@@ -239,9 +258,10 @@ impl LocalSession {
         mutate: impl FnOnce(&mut DocumentSnapshot),
     ) {
         let next = Revision(base.0 + 1);
-        mutate(&mut self.snapshot);
-        self.snapshot.revision = next;
-        self.actions.push(Action {
+        let snapshot = Arc::make_mut(&mut self.snapshot);
+        mutate(snapshot);
+        snapshot.revision = next;
+        Arc::make_mut(&mut self.actions).push(Action {
             request,
             before: base,
             after: next,

@@ -287,3 +287,6 @@ fn script_slot(core: &EditorCore, slot: scholium_document::AttachSlot) -> &MathN
         _ => panic!("attach"),
     }
 }
+
+#[path = "checkpoint_bench.rs"]
+pub(super) mod checkpoint_bench;

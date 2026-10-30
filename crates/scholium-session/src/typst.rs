@@ -44,7 +44,7 @@ pub struct EditorCore {
     /// Read-only accepted document projection; never an independent authority.
     pub snapshot: Arc<StructuredDocument>,
     store: SessionStore,
-    saved: Option<StructuredDocument>,
+    saved: Option<Arc<StructuredDocument>>,
     /// Caret in leaf-local UTF-8 bytes; navigation remains in app during phase 1.
     pub cursor: Position,
     /// Semantic selection anchor.

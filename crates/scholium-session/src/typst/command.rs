@@ -128,7 +128,11 @@ impl EditorCore {
     /// Rejects mismatched arguments, unsupported intents, document validation failures and
     /// caught panics. Every checkpoint field is restored before the error is returned.
     pub fn run(&mut self, id: CommandId, args: CommandArgs) -> Result<Outcome, CommandError> {
+        #[cfg(test)]
+        let checkpoint_start = std::time::Instant::now();
         let checkpoint = self.checkpoint()?;
+        #[cfg(test)]
+        super::tests::checkpoint_bench::sample(checkpoint_start.elapsed());
         let draft = match (&id, &args) {
             (CommandId::Text | CommandId::ReplaceRange, CommandArgs::Text(text, _)) => {
                 Some(text.clone())

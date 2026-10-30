@@ -4,6 +4,9 @@ use super::*;
 use scholium_model::NodeId;
 use std::time::{Duration, Instant};
 
+mod snapshot;
+pub use snapshot::HistorySnapshot;
+
 /// Maximum number of local undo groups.
 pub const HISTORY_LIMIT: usize = 512;
 /// A pause this long between keystrokes ends the current run.
@@ -20,9 +23,9 @@ pub(super) fn system_clock() -> Clock {
 #[derive(Debug, Clone)]
 pub struct HistoryEntry {
     /// Accepted document before the edit.
-    pub snapshot: StructuredDocument,
+    pub snapshot: HistorySnapshot,
     /// Accepted request journal at that point.
-    pub requests: Vec<RequestId>,
+    pub requests: Arc<[RequestId]>,
     /// Caret to restore.
     pub cursor: Position,
     /// Selection anchor to restore.
@@ -69,7 +72,7 @@ impl EditorCore {
     /// Read the current local history position without mutating the authority.
     pub fn record(&self) -> HistoryEntry {
         HistoryEntry {
-            snapshot: self.session.snapshot(),
+            snapshot: HistorySnapshot(self.session.shared_snapshot()),
             requests: self.session.actions().iter().map(|a| a.request).collect(),
             cursor: self.cursor,
             anchor: self.anchor,
@@ -133,7 +136,7 @@ impl EditorCore {
             return;
         };
         let current = self.record();
-        match LocalSession::restore_structured(target.snapshot, target.requests) {
+        match LocalSession::restore_structured_shared(target.snapshot.0, &target.requests) {
             Ok(session) => {
                 // Restore allocates a fresh epoch even when revision and IDs repeat.
                 self.session = ReadAuthority::new(session);

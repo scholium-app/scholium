@@ -100,7 +100,10 @@ LocalSession 是单人内存段落接入；直接 apply 仅限此临时适配器
 `LocalSession<S = DocumentSnapshot>` 保留 legacy 默认调用；候选使用
 `LocalSession<StructuredDocument>`。`into_structured` 验证后消费旧会话并保留请求身份，
 失败返回原 session 和 typed error，不存在两份持续可写正文。恢复检查结构与请求日志。
-公共调用只提供 owned snapshot，不提供可变权威引用；储存和 Typst 属于外部适配器。
+公共调用提供 owned snapshot 或不可变 `shared_snapshot() -> Arc<S>`，不提供可变权威引用；储存和 Typst 属于外部适配器。
+LocalSession 内部共享 accepted snapshot 与 action journal；`rollback_checkpoint()` 以 O(1) 指针复制保留
+已验证状态并分配新 epoch，作为命令失败后的不可失败替换权威。后续写入与保留副本隔离，action journal 写时复制；
+结构规划仍复制一次当前文档。`restore_structured_shared` 复用 Arc 文档，但和 owned 恢复入口一样验证结构与请求日志。
 
 `StructuralRequest` 带文档、base revision、唯一请求身份；ReplaceText 使用 leaf NodeId
 和叶内 UTF-8 字素边界，RawMath 不可穿透。InsertMath/InsertMathAt/WrapFraction、SplitBlock/
