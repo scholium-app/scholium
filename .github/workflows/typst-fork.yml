@@ -1,0 +1,54 @@
+name: Typst fork parity
+# Rebuilds the pinned fork from upstream objects and compares its pixels with stock Typst.
+# Only the fork, its adapter, the reference or the toolchain can change the result.
+on:
+  push:
+    branches: [main]
+    paths: &fork-paths
+      - 'vendor/**'
+      - 'crates/scholium-typst/**'
+      - 'spikes/typst-main-editor/reference/**'
+      - 'spikes/typst-main-editor/fork-check.rs'
+      - 'spikes/typst-main-editor/compare.py'
+      - 'scripts/verify-typst-fork.py'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'rust-toolchain.toml'
+      - '.github/workflows/typst-fork.yml'
+      - '.github/actions/setup/**'
+  pull_request:
+    paths: *fork-paths
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+permissions:
+  contents: read
+jobs:
+  stock:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+        with:
+          cache-key: stock
+          cache-workspaces: |
+            . -> target
+            spikes/typst-main-editor/reference -> target/stock-reference
+      - name: Rebuild the pinned fork from upstream objects
+        run: |
+          git init /tmp/typst-origin
+          git -C /tmp/typst-origin fetch --depth 1 https://github.com/typst/typst.git 9dfd3a08500b7896045f907433cf7b4b02434fad
+          python3 scripts/verify-typst-fork.py /tmp/typst-origin > /tmp/typst-fork-source.json
+      - name: Compare formal Content adapter with independent stock Typst
+        run: |
+          cargo run --locked -p scholium-typst --features editor --example typst-main-fork-check -- /tmp/typst-fork-pixels
+          cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir target/stock-reference -- /tmp/typst-stock-pixels
+          python3 spikes/typst-main-editor/compare.py /tmp/typst-fork-pixels /tmp/typst-stock-pixels > /tmp/typst-stock-comparison.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: typst-stock-comparison
+          path: |
+            /tmp/typst-fork-source.json
+            /tmp/typst-stock-comparison.json
