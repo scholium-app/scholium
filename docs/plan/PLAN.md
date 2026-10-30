@@ -1,7 +1,7 @@
 # Scholium 项目总览
 
 Scholium 是面向研究写作的本地优先协作工作区，以即时排版的结构化编辑为默认体验，同时直接编辑
-LaTeX、Typst、Markdown 和 BibTeX，提供非线性历史、多人协作、双后端预览、格式转换和“复制为”。
+LaTeX、Typst、Markdown 和 BibTeX，提供非线性历史、多人协作、同引擎预览、格式转换和“复制为”。
 
 本文件只回答“做什么”和“从哪里开始”。详细设计见 [设计文档索引](../README.md)。
 
@@ -9,7 +9,7 @@ LaTeX、Typst、Markdown 和 BibTeX，提供非线性历史、多人协作、双
 
 - 一个项目只有一个权威模型：原生项目以语义文档图为真，源码项目以源文件为真。
 - 可视化编辑、源码编辑和命令输入统一生成语义 Action。
-- Typst 负责低延迟预览；选择 LaTeX 发布时，最终结果以 LaTeX 验证构建为准。
+- 预览与最终输出同一引擎：Typst 项目用 Typst，LaTeX 项目用 LaTeX（LuaLaTeX 实时段落重排或后台整编）。
 - 打开和保存原生格式不得吞掉注释、空白、自定义宏或未知语法。
 - CRDT 收敛、用户动作和版本 DAG 是不同层次，不允许混成一个历史栈。
 - 撤销和 revert 都生成新的补偿变更，不倒退或重写共享历史。
@@ -17,9 +17,9 @@ LaTeX、Typst、Markdown 和 BibTeX，提供非线性历史、多人协作、双
 - 跨格式转换允许明确降级，不允许静默丢失。
 - 不搬运废弃原型、Mogan 或 TeXmacs 的实现。
 
-源码编辑语言、正文权威、排版宿主、导出目标独立。团队在同一共享分支只同时编辑一种源码语言；
-两种编译器可并行。混用覆盖正文、数学、图表、宏、模板和跨片段引用，两种格式均可打开保存和输出。
-共享分支断网后的源码修改进入草稿/fork，重连后显式合入。
+项目语言（Typst 或 LaTeX）在创建或导入时固定，由两个独立编辑内核承担，共享窗口、存储、历史、协作与构建沙箱；
+不在项目内混用，跨语言只经带报告的转换/导出（[ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)）。
+两种格式均可打开、保存和输出；LaTeX 内核按 [LaTeX 工作区计划](LATEX_WORKSPACE.md) 推进。
 
 ## 原生 UI 验证
 
@@ -39,9 +39,9 @@ render、build、app 和 sync-server 组成。职责与 API 见 [模块索引](.
 命令注册表、菜单栏与格式栏、设计令牌、与界面无关的编辑核心等的外部参考与落地顺序见
 [ArtCraft / PhotoCraft / WordCraft 借鉴计划](ARTCRAFT_REFERENCE.md)；界面多语言的基础设施与分期见[界面多语言计划](I18N.md)。
 
-先验证结构编辑、源码 reconcile、团队语言切换、完整范围的混合构建、CRDT 与安全恢复，再建立最小编辑/
-文件交换闭环；随后扩展结构输入、混用覆盖、历史、协作和产品化。源码打开保存与双目标输出不推迟到最后。
-每个阶段必须通过出口条件，详见 [路线图](ROADMAP.md) 与 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md)。
+阶段 0 已验证结构编辑、源码 reconcile、CRDT 与安全恢复；先建立 Typst 内核的最小编辑/文件交换闭环，LaTeX 工作区评估并行，
+随后扩展结构输入、LaTeX 工作区与跨格式转换、历史、协作和产品化。源码打开保存不推迟到最后。
+每个阶段必须通过出口条件，详见 [路线图](ROADMAP.md) 与 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md)。
 
 ## 废弃原型处理
 
@@ -53,6 +53,6 @@ render、build、app 和 sync-server 组成。职责与 API 见 [模块索引](.
 按[全栈候选](TECH_STACK.md)验证 UI 以外的解析、编译、协作、存储、渲染和服务端；候选不等于最终依赖。优先支持[WASM 核心与浏览器适配](WASM.md)，保持原生桌面路线及已指定 GUI 顺序；完整浏览器发行范围待验证。LaTeX 参考[Mogan 转换分层与模板适配](../research/MOGAN_LATEX.md)，独立 Rust 实现。
 
 
-AI、MCP 和插件是核心编辑闭环稳定后的扩展路线：AI 通过 Pi agent 产生可审计 proposal，MCP 以受控工具让其他 agent 调用 Scholium，WASM 插件以 WIT Component Model 提供跨平台、跨语言 ABI。三者都只能提交普通 Action，不能绕过权限、源码语言 epoch、协作写集或恢复机制。详细计划见 [AI 与 MCP 扩展设计](AI_MCP.md) 与 [WASM 插件与 WIT 组件计划](WASM_PLUGINS.md)。
+AI、MCP 和插件是核心编辑闭环稳定后的扩展路线：AI 通过 Pi agent 产生可审计 proposal，MCP 以受控工具让其他 agent 调用 Scholium，WASM 插件以 WIT Component Model 提供跨平台、跨语言 ABI。三者都只能提交普通 Action，不能绕过权限、协作写集或恢复机制。详细计划见 [AI 与 MCP 扩展设计](AI_MCP.md) 与 [WASM 插件与 WIT 组件计划](WASM_PLUGINS.md)。
 
 模块提取按 [会话与扩展组织计划](EXTENSION_ORGANIZATION.md)实施：先建立独立于 UI 的 session，再按实际需要接入 Pi/MCP 与插件 SDK、host、runtime；不预建空 crate。

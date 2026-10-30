@@ -14,15 +14,12 @@
 - `CheckpointId`：命名版本节点。
 - `RevisionId`：资源当前状态的短生命周期版本，用于拒绝过期派生结果。
 
-协作、许可、构建与导出任务同样使用类型包装标识符，不用裸字符串或自增整数：
+协作、构建与导出任务同样使用类型包装标识符，不用裸字符串或自增整数：
 
 - `BranchId`：命名分支引用；共享编辑范围 = `ProjectId + BranchId`。
 - `UserId` / `DeviceId`：账号身份与设备身份；`ActorId` 绑定设备身份，不跨设备克隆。
 - `DraftId`：未提交源码草稿。
-- `PermitId`：源码写许可，绑定 scope、actor、dialect、epoch 与有效期。
-- `SwitchId`：一次团队语言切换流程。
 - `GenerationId`：一次生成源码基线；reconcile 只在同一 generation 内有效。
-- `ComponentId` / `ScopeId`：ForeignSource 组件及其模板/宏作用域。
 - `PlanId`：plan/confirm 两阶段命令的计划标识，confirm 必须回带。
 - `ConflictId`：冲突预览与合并决议。
 - `BuildId` / `ExportId`：一次构建或导出任务。
@@ -36,13 +33,15 @@
 struct Project {
     id: ProjectId,
     root: ProjectRoot,
+    language: ProjectLanguage,
     authority: AuthorityMode,
     resources: ResourceCatalog,
     entrypoints: Vec<EntryPoint>,
     build_profiles: Vec<BuildProfile>,
     layout_profiles: Vec<LayoutProfile>,
-    foreign_components: ForeignComponentCatalog,
 }
+
+enum ProjectLanguage { Typst, LaTeX }
 
 enum AuthorityMode {
     Structured { document: DocumentId },
@@ -58,25 +57,21 @@ struct Resource {
 }
 ```
 
-AuthorityMode 只决定权威内容；Source 的 dialect 是主入口语言，其他语言存在于显式绑定的组件资源中。
-默认排版后端/模板在 LayoutProfile；输出目标在 ExportRequest；团队允许写入的语言由以下控制记录独立管理。
+ProjectLanguage 在项目创建/导入时固定，项目内只有一种排版语言。Typst 可选 Structured 或 .typ Source；
+LaTeX 只采用 .tex SourceAuthority。Markdown/BibTeX 是资源，不改变项目语言。
+AuthorityMode 只决定该语言的权威形态；SDG 属于 Typst 内核，LaTeX 不共享其文档模型。
+LayoutProfile 描述本引擎的排版/模板，ExportRequest 描述单次导出目标，不改变项目语言。
 以下为领域合约草案，序列化和持久化版本待 ADR 验证：
 
 ```text
-SourceEditControl { scope: ProjectId + BranchId, active_dialect, edit_epoch, phase }
-SourceWritePermit { scope, actor_id, dialect, edit_epoch, permit_id, expires_at }
-SourceWriteSet { resources/bindings, dialects, base_revisions }
 SourceDraft { draft_id, actor_id, binding_id, dialect, base_generation,
-              base_revisions, edit_epoch?, source_resource, durability, visibility }
-ForeignSource { component_id, dialect, source_resource, entrypoint, placement, effect,
-                scope_id, dependencies, imported_symbols, exported_symbols,
-                layout_contract, fallback, provenance }
+              base_revisions, source_resource, durability, visibility }
 ExportRequest { input_snapshot, target_format, layout_profile, packaging, draft_policy }
 ```
 
-控制记录由协调者顺序提交，不是正文 CRDT 属性；undo/merge 不回滚 epoch。许可绑定设备/会话，不进入公开项目包。
-ForeignSource 原文只存于一个权威 ResourceId，其他结构保存引用；草稿持久化与语义提交状态分离。
-作用域、离线及宏/模板/引用合约见 [混合源码与团队编辑](MIXED_SOURCE_EDITING.md)。
+草稿持久化与语义提交状态分离，不因重新生成或重连而丢失原输入。跨语言转换创建独立项目并提供逐节点报告。
+混合组件与团队语言切换已推迟，见 [项目语言、跨格式转换与文件操作](MIXED_SOURCE_EDITING.md)
+与 [ADR 0041](adr/ADR-0041-separate-latex-typst-kernels.md)。
 
 首发文本统一在内存中使用 UTF-8。打开其他编码时记录原编码；未编辑可原样复制，编辑后是否转为
 UTF-8 必须由项目策略决定并提示。行尾风格按文件保存。
@@ -86,26 +81,25 @@ UTF-8 必须由项目策略决定并提示。行尾风格按文件保存。
 
 ## 3. 语义文档图
 
-原生项目使用稳定 NodeId 的有序树/图：文档块形成树，label、citation、资源和注释形成引用边。
+Typst 原生项目使用稳定 NodeId 的有序树/图：文档块形成树，label、citation、资源和注释形成引用边。
 
 ```text
 Document
   FrontMatter
   Block*: Heading | Paragraph | List | Quote | Code | MathBlock
-          | Figure | Table | Theorem | Proof | RawBlock | ForeignSource
+          | Figure | Table | Theorem | Proof | RawBlock
 Inline*: Text | Emphasis | Strong | Code | Math | Link | Citation
-         | Reference | Footnote | RawInline | ForeignSource(placement=inline)
+         | Reference | Footnote | RawInline
 Math: Row | Symbol | Fraction | Attach(base, sub?, sup?) | Root | Delimited | Matrix
-      | Cases | Aligned | Operator | Accent | RawMath | ForeignSource(placement=inline)
+      | Cases | Aligned | Operator | Accent | RawMath
 ```
 
 文本叶子与 children sequence 使用 CRDT；节点属性使用带冲突保留的共享 map。删除节点形成 tombstone，
 只在所有保留 checkpoint 和活跃设备均不再引用时压缩。
 
-每个节点声明 target capabilities：LaTeX/Typst 的 Exact/Equivalent/Raw/Degraded/Dropped，以及 visual-edit、
+每个节点声明 target capabilities：LaTeX/Typst 的 Exact/Equivalent/RawPreserved/Degraded/Dropped，以及 visual-edit、
 source-lens、focus-toolbar、cycle、unwrap、search-pattern 等交互能力。
-ForeignSource 的 definitions/template 作用域通过组件目录和 LayoutProfile 绑定，不必伪装成可见正文块。
-正文、行内和章节 placement 均校验插入槽与布局合约；数学外语组件另外校验基线与字体契约。
+Raw 节点在同方言输出时无损保留，跨方言降级或阻止导出，不以保留原文宣称成功转换。
 
 ## 4. 文本与树位置
 
@@ -131,7 +125,7 @@ ForeignSource 的 definitions/template 作用域通过组件目录和 LayoutProf
 
 `SourceBinding` 记录 dialect、authority、generation id、CST revision 和 NodeId ↔ SourceRange 多值映射。
 StructuredAuthority 的生成源码可进入 Dirty 状态，但未 reconcile 前不能覆盖语义图。
-共享可写草稿受活动语言门禁约束，私有离线草稿不能成为共享 generation。草稿独立落盘，重启保留原基线并
+共享草稿遵守项目权限，私有离线草稿不能直接成为共享 generation。草稿独立落盘，重启保留原基线并
 重新检测冲突，不能以最新生成文本覆盖用户输入。
 
 ## 6. 转换 IR
@@ -142,16 +136,17 @@ StructuredAuthority 的生成源码可进入 Dirty 状态，但未 reconcile 前
 Document
   metadata
   blocks: Heading | Paragraph | List | Quote | Code | Math
-          | Figure | Table | Theorem | RawBlock | ForeignSource
+          | Figure | Table | Theorem | RawBlock
 Inline
   Text | Emphasis | Strong | Code | Math | Link | Citation
-  | Footnote | Reference | RawInline | ForeignSource
+  | Footnote | Reference | RawInline
 ```
 
 每个节点包含 `provenance`、可选 `SourceRange`、属性和 capability flags。无法规范化的内容进入
-`RawBlock/RawInline { source_format, source }`，导回原格式时无损；导向其他格式时产生降级项。
+`RawBlock/RawInline { source_format, source }`，导回原格式时无损；导向其他格式时降级或阻止导出。
 
-IR 可携带 ForeignSource 的不可变原文/依赖快照和桥接合约，来源标识只用于报告，不形成第二权威副本。
+跨语言仅经转换 IR 与目标生成器，逐节点报告 Exact/Equivalent/RawPreserved/Degraded/Dropped，
+包含未投影原文与依赖；原文来源标识只用于报告，不形成第二权威副本。
 IR 不包含排版引擎对象、CRDT item id、长期 NodeId 或 UI 状态。
 
 ## 7. 诊断与能力
@@ -190,7 +185,7 @@ precondition，失败则重算或进入冲突预览。
 
 ## 9. 项目元数据
 
-`.scholium/project.toml` 只保存可共享的声明式配置：入口、格式、构建 profile、忽略规则和资源映射。
+`.scholium/project.toml` 只保存可共享的声明式配置：固定项目语言、入口、格式、构建 profile、忽略规则和资源映射。
 本机路径、令牌、设备 ID、窗口布局和未发布协作密钥进入用户配置目录，不得提交到项目。
 
 StructuredAuthority 项目还保存版本化语义正文；SourceAuthority 项目正文仍在标准源文件。

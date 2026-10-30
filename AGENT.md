@@ -14,15 +14,20 @@
 4. **共享历史只追加。** undo/revert/merge 都生成新变更，不原地回退共享状态；
    默认 undo 只跟踪当前 actor 的 origin。
 5. **跨格式转换不可静默丢失。** unsupported 结构必须带源位置进入导出报告。
-6. **快速预览不能冒充最终排版。** LaTeX 发布目标可用 Typst 交互预览，但最终结果与兼容性以
-   LaTeX 验证构建为准，UI 必须始终标明当前后端及排版是否为最新；具体 revision 可在悬停提示或诊断面板查看。
+6. **预览与最终输出同一引擎。** 项目的预览只由其项目语言的引擎产生：Typst 项目用 Typst，LaTeX 项目用
+   LaTeX（LuaLaTeX 实时段落重排或后台整编），不得用另一种语言的引擎代替预览。局部实时结果与整编不一致时
+   以整编为准。UI 必须始终标明当前后端、实时/整编来源及排版是否为最新；具体 revision 可在悬停提示或诊断面板查看。
 7. **阶段出口优先。** 阶段 0 的七项否决性验证——原生结构/源码编辑、Typst 映射、源码 reconcile、CRDT 赛马、
    构建与恢复、团队语言协调、混合构建——全部通过前，不搭生产脚手架，不做 AI、CAS、绘图、幻灯片或插件市场。
    清单与出口条件见 `docs/plan/ROADMAP.md`，报告规则见 `docs/spikes/README.md`，
    **当前逐条判定见 `docs/spikes/SPK-0012-exit-criteria.md`（阶段状态的唯一来源）**。
 
-8. **团队只能同时编辑一种源码语言。** 同一共享项目分支的 LaTeX/Typst 写入受活动语言与 epoch 门禁约束；同语言可多人编辑，编译可并行，不能仅在本机 UI 实现。
-9. **混用是完整产品要求。** 正文、公式、图表、宏、模板、跨片段引用都要有验证路径。Raw 保留不等于支持执行；正式输出不得包含 unresolved 占位。见 `docs/MIXED_SOURCE_EDITING.md`。
+8. **一个项目只有一种项目语言。** 项目在创建或导入时固定为 Typst 或 LaTeX，由对应的独立编辑内核承担；两个内核共享
+   底座但不互相调用、不共享文档模型。团队成员编辑同一语言，同语言可多人编辑。改换语言是带兼容报告的「转换为…」迁移，
+   生成新项目，不在原项目内切换。见 [ADR 0041](docs/adr/ADR-0041-separate-latex-typst-kernels.md)。
+9. **不在项目内混用 LaTeX 与 Typst。** ForeignSource 混合组件、跨引擎桥接、团队语言切换已按 ADR 0041 推迟，不是当前产品要求，
+   重新引入须新立 ADR。跨语言只经带逐节点报告的转换/导出；Raw 保留不等于支持执行；正式输出不得包含 unresolved 占位。
+   见 `docs/MIXED_SOURCE_EDITING.md`。
 
 10. **原生技术栈。** 应用 UI、核心与服务端优先 Rust；必要时引入 C/C++/Zig。禁止 npm/Node.js、JavaScript/TypeScript 编辑器、WebView/Electron/Tauri 作为应用 UI 或验证依赖。HTML 导出是文件能力，不是 UI 实现。可选浏览器 WASM 允许必要的工具生成加载/绑定胶水，不允许 JS/TS 业务编辑器或 npm/Node.js；见 `docs/plan/WASM.md`。
     Pi agent 接入允许用户自行安装的可选外部运行时（含其需要的 Node.js）及独立 Pi 集成验证；不得成为原生应用、核心或常规测试依赖，不允许据此引入 JS/TS UI。见 [扩展边界提案](docs/adr/ADR-0025-extension-boundaries.md)。
@@ -31,8 +36,8 @@
 
 ## 设计文档纪律
 
-- `docs/plan/PLAN.md` 只是总览；产品、体验、架构、数据模型、排版转换、混合源码与团队编辑、协议、历史、格式、
-  安全、测试、原生 UI 验证、全栈候选、WASM 和路线图各自维护。
+- `docs/plan/PLAN.md` 只是总览；产品、体验、架构、数据模型、排版转换、项目语言与跨格式转换、协议、历史、格式、
+  安全、测试、原生 UI 验证、全栈候选、WASM、LaTeX 工作区和路线图各自维护。
 - **文档按体裁分处不同目录，新增文档一律按体裁归位**：规范在 `docs/` 顶层与 `docs/modules/`，
   计划在 `docs/plan/`，开发日志在 `docs/log/`（只追加、只作追溯，**不得作为实现依据**），
   验证证据在 `docs/spikes/`，裁决在 `docs/adr/`。**不得把进度或状态写进规范与计划**；

@@ -1,6 +1,6 @@
 # ADR 0001：团队单一源码语言与 LaTeX/Typst 混合项目
 
-- 状态：Proposed
+- 状态：Superseded（由 [ADR 0041](ADR-0041-separate-latex-typst-kernels.md) 取代，2026-10-30）
 - 日期：2026-09-14
 - 决策者：产品要求由用户确认；实现方案待技术验证
 - 影响模块：model、document、format、latex、typst、build、render、storage、collab、history、app、sync-server

@@ -56,7 +56,7 @@ StructuredAuthority 使用共享节点 map、children sequence 和文本 leaves�
 - update decoder 遇到超限、递归过深或畸形输入时拒绝本次更新，且不改变当前文档。
 - 重复 update 返回 `AlreadyKnown`；乱序、分片和重放按幂等应用。
 - anchor 无法重定位时返回 `Detached`，由调用方决定提示、近似定位或取消。
-- 未取得当前语言许可的 `apply_text` 或含源码写集的 `apply_semantic` 在进入共享 CRDT 前被拒绝。
+- 未通过当前项目权限与 patch 前置条件校验的写入在进入共享 CRDT 前被拒绝。
 - 远端未经协调者接受的更新不应用；engine 类型不得越过 crate 边界。
 
 ## 测试门禁
@@ -64,24 +64,17 @@ StructuredAuthority 使用共享节点 map、children sequence 和文本 leaves�
 双端/三端随机收敛、乱序/重复/分片 update、删除区 anchor、emoji/组合字符、快照往返、恶意 decoder、
 大文档延迟和内存。属性测试失败种子长期保留。
 
-## 团队源码语言与混合项目合约
+## 项目语言合约
 
-正文 CRDT 外增加协调接口的适配：scope = ProjectId + BranchId，持久 active_dialect/epoch 与许可隔离。
-同语言多 actor 可写，不能使用单人排他锁代替；语言选择不能用 CRDT LWW 或 presence 解决。
-apply_text、包含源码写集的 apply_semantic 和共享生成草稿都先经许可门禁；远端只应用协调者已接受的更新。
-服务端使用受限结构校验接口核对实际写集与资源/绑定，避免 opaque updates 夹带异语言源码；无需解析语言语义。
-该接口的最小可信实现须通过阶段 0 验证后才确定 CRDT 选型。离线无许可的源码变化停留草稿/fork。
-新增 drain 屏障、旧 epoch、同语言并发、恶意结构写集、重连和已确认重复包的模型测试。
+文本与树 CRDT 属于共享底座，为创建/导入时语言固定的项目提供同语言多人协作。
+Typst 结构项目同步语义树，源码项目同步权威文本；离线输入、幂等更新与权限撤销仍按现有规则处理。
+跨语言只经转换建立新项目；混合组件与团队语言切换已推迟。
+共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。
 
-阶段 0 原生窗口适配限定见 [ADR 0016](../adr/ADR-0016-team-window-gate-spike.md)：
-复用严格协调器，窗口私有候选全部校验后发布；只验证控制面模拟，不作为 CRDT/网络实现。
-
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
-
-源码权威双副本实验边界见 [ADR 0020](../adr/ADR-0020-native-source-replicas.md)：
-草稿只作未提交输入，已接受状态从 CRDT 投影；更新经语言门禁后交付，本地撤销必须产生新更新。
-脏草稿遇到远端变更不得整份覆盖；语言屏障完成前排空已接受消息并等待输入法结束。
+源码权威双副本实验的已接受文本投影、未提交草稿与追加撤销约束见
+[ADR 0020](../adr/ADR-0020-native-source-replicas.md)；其中语言协调部分已按 ADR 0041 推迟。
+脏草稿遇到远端变更不得整份覆盖，IME 输入仍由原编辑器完成。
 
 ## WASM 互通
 
-浏览器与原生共享 schema、相对锚点语义和版本化更新协议，验证双端快照/增量互通、撤销与重连 epoch；引擎 WASM 支持必须实际编译运行。具体候选见[全栈清单](../plan/TECH_STACK.md)。
+浏览器与原生共享 schema、相对锚点语义和版本化更新协议，验证双端快照/增量互通、撤销与权限撤销后的重连；引擎 WASM 支持必须实际编译运行。具体候选见[全栈清单](../plan/TECH_STACK.md)。

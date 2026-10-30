@@ -10,8 +10,8 @@
 2. [编辑体验](EXPERIENCE.md)：视觉编辑、模式、焦点、数学输入和 Source Studio。
 3. [总体架构](ARCHITECTURE.md)：进程、分层、依赖和关键数据流。
 4. [数据模型](DATA_MODEL.md)：项目、资源、语义图、位置、诊断和标识符。
-5. [排版与转换](RENDERING_CONVERSION.md)：Typst 快速预览、LaTeX 最终构建和双向转换。
-   [混合源码与团队编辑](MIXED_SOURCE_EDITING.md)：团队语言互斥、完整混用范围、文件操作与两种目标输出。
+5. [排版与转换](RENDERING_CONVERSION.md)：Typst 与 LaTeX 两条同引擎排版路径和一次性跨格式转换。
+   [项目语言、跨格式转换与文件操作](MIXED_SOURCE_EDITING.md)：项目语言固定、团队同语言协作、文件操作与转换报告。
 6. [协议设计](PROTOCOLS.md)：UI/core 命令事件、同步帧、版本与错误。
 7. [历史与协作](HISTORY_COLLABORATION.md)：CRDT、动作、撤销、分支、同步。
 8. [格式系统](FORMATS.md)：LaTeX、Typst、Markdown、BibTeX、导入导出和复制。
@@ -24,6 +24,7 @@
     [渲染与编辑改进计划](plan/RENDER_EDIT_REWORK.md)：预览渲染质量与页面编辑体验的阶段 1 改进顺序与验收判据。
     [Typst 编辑内核改造](plan/TYPST_EDIT_KERNEL.md)：结构 Content 输入、稳定身份、数学空槽、同源几何与增量分页的 fork 验证路线。
     [Typst 内核接入主程序](plan/TYPST_MAIN_APP_INTEGRATION.md)：稳定结构/旧会话迁移、主程序候选闭环、日常编辑与默认替换门禁。
+    [LaTeX 工作区计划](plan/LATEX_WORKSPACE.md)：LaTeX 内核的范围、rtex 实时预览评估项与 L1–L3 出口。
 12. [模块索引](modules/README.md)：每个 crate、应用和服务的内部设计。
 13. [ADR 索引](adr/README.md)：经过验证的技术选择与替代方案。
     [原生依赖登记](NATIVE_DEPENDENCIES.md)：C/C++/Zig 与需编译本地代码的依赖（ABI / 所有权 / 线程 / 销毁顺序）。
@@ -53,13 +54,12 @@
 
 - 默认体验是即时排版的结构编辑；源码模式是完整、可写的第一等工作台。
 - 原生结构项目以语义文档图为真；外部源码项目以 lossless CST/source 为真。
-- Typst 提供快速交互预览，LaTeX 可作为最终发布与验证后端。
+- 项目语言（Typst 或 LaTeX）固定，两个编辑内核分离；预览与最终输出使用项目语言的同一引擎（[ADR 0041](adr/ADR-0041-separate-latex-typst-kernels.md)）。
 - 桌面 UI、核心与服务端优先 Rust，必要时使用 C/C++/Zig；采用原生窗口/文本/绘制，不采用 npm 或 WebView。
 - UI 按 [原生 UI 验证计划](plan/NATIVE_UI_VALIDATION.md) 的顺序验证后**已选定 egui / eframe 0.36.2**（[ADR 0006](adr/ADR-0006-native-ui-framework.md)）：Iced 缺可访问性、GPUI 缺文本输入控件、EUI-NEO 无无障碍不投入、Slint 被许可证政策阻断。
 - 标准源文件可脱离 Scholium 使用；协作历史是增强层，不是文件可读性的前提。
 
-- 同一共享项目分支在团队范围内只允许一种 LaTeX/Typst 源码语言写入，编译器不受此限制。
-- 混合项目保留两种原文；标准目标包与双工具链重建包分别验证可移植性，不能把混合源码当成标准单文件。
+- 不在项目内混用 LaTeX 与 Typst；跨语言只经带逐节点报告的转换/导出，混合组件与团队语言切换已推迟。
 
 如果产品方向改变，应先修改 `PRODUCT.md`，再检查架构和所有模块文档，不允许只改 UI。
 

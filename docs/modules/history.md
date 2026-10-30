@@ -56,18 +56,16 @@ recipe 使用 RelativeAnchor 和上下文 hash，不保存可执行闭包或第�
 - branch ref CAS 失败返回冲突，由客户端重新获取 head，不静默覆盖。
 - merge 出现语义冲突时建立临时 merge session；只有无冲突才创建双父 checkpoint。
 - 中部日志损坏时停止自动恢复并生成恢复报告，保留损坏副本；只允许截断尾部半写记录。
-- 重复 revert 与重复 update 幂等；涉及源码的历史操作无当前许可时拒绝或转为可恢复步骤。
+- 重复 revert 与重复 update 幂等；涉及源码的历史操作复核当前权限与 patch 前置条件。
 
 ## 测试门禁
 
 DAG 属性、无环、共同祖先、多分支 ref CAS、远端穿插 undo、删除后重定位、不可撤动作、重复 revert、
 cherry-pick precondition、merge 重启复现。用模型测试与简化参考实现对照随机动作序列。
 
-## 团队源码语言与混合项目合约
+## 项目语言合约
 
-记录 ForeignSource/模板/宏写集、原文恢复信息和接受时 epoch，但不把活动语言控制状态放入可回退正文历史。
-undo/revert/cherry-pick/merge 若修改源码，按当前活动语言取得新许可；不能复用旧 Action 许可。
-两语言组合计划经可恢复步骤和团队切换执行；独立分支可各用一种语言，合并不得覆盖目标分支控制状态。
-未合入草稿独立恢复，不冒充共享 Action。新增 epoch 不回退、双语言合并、源码 inverse 与混合引用冲突测试。
-
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
+Action、checkpoint 与补偿规划属于共享底座，记录固定项目语言下的语义或源码动作。
+同语言分支的 undo/revert/cherry-pick/merge 复核当前权限、锚点与前置条件，未合入草稿独立恢复。
+跨语言只经转换建立新项目及报告；混合历史与团队语言切换已推迟。
+共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。
