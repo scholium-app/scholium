@@ -1,0 +1,21 @@
+% Original evaluation fixture, MIT OR Apache-2.0 (repository license).
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section{A reference target}\label{sec:target}
+Scholium evaluates a live paragraph with English prose and inline math $a^2+b^2=c^2$.
+
+The stable reference is Section~\ref{sec:target}. Display math follows:
+\[\int_0^1 x^2\,dx=\frac13.\]
+
+\begin{figure}[ht]
+\centering
+\setlength{\unitlength}{1mm}
+\begin{picture}(50,15)
+\put(0,0){\framebox(50,15){Evaluation figure}}
+\end{picture}
+\caption{An original vector figure}\label{fig:box}
+\end{figure}
+
+Figure~\ref{fig:box} is generated without external assets.
+\end{document}

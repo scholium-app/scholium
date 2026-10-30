@@ -1,0 +1,62 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "command": [
+        "/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/target/release/rtex",
+        "doctor"
+      ],
+      "cwd": "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke",
+      "exit_status": 0,
+      "elapsed_seconds": 0.004,
+      "log": "smoke-doctor.log"
+    },
+    {
+      "command": [
+        "/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/target/release/rtex",
+        "gen-book",
+        "--pages",
+        "10",
+        "--out",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke/book-10"
+      ],
+      "cwd": "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke",
+      "exit_status": 0,
+      "elapsed_seconds": 0.004,
+      "log": "smoke-gen-book.log"
+    },
+    {
+      "command": [
+        "/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/target/release/rtex",
+        "edit",
+        "--project",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke/book-10",
+        "--find",
+        "The",
+        "--text",
+        " edited"
+      ],
+      "cwd": "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke",
+      "exit_status": 0,
+      "elapsed_seconds": 2.519,
+      "log": "smoke-edit.log",
+      "paragraph_update": true
+    },
+    {
+      "command": [
+        "/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/target/release/rtex",
+        "verify",
+        "--project",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke/book-10",
+        "--build",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke/verify",
+        "--json-out",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt2/docs/log/evidence/rtex-evaluation/verify-result.json"
+      ],
+      "cwd": "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke",
+      "exit_status": 0,
+      "elapsed_seconds": 5.976,
+      "log": "smoke-verify.log"
+    }
+  ]
+}

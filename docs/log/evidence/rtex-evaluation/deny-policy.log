@@ -1,0 +1,87 @@
+$ cargo deny --manifest-path /home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/Cargo.toml --config /home/ation_ciger/Projects/Mogan/scholium-wt2/deny.toml check --show-stats licenses bans sources
+cargo-deny: cargo-deny 0.20.2
+date: 2026-10-30T08:57:34-07:00
+
+error[wildcard]: found 3 wildcard dependencies for crate 'rtex-cli'. allow-wildcard-paths is enabled, but does not apply to public crates as crates.io disallows path dependencies.
+   ┌─ /home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/crates/rtex-cli/Cargo.toml:14:13
+   │
+14 │ rtex-core = { path = "../rtex-core" }
+   │             ━━━━━━━━━━━━━━━━━━━━━━━━━ wildcard dependency
+15 │ rtex-dl = { path = "../rtex-dl" }
+   │           ━━━━━━━━━━━━━━━━━━━━━━━ wildcard dependency
+16 │ rtex-verify = { path = "../rtex-verify" }
+   │               ━━━━━━━━━━━━━━━━━━━━━━━━━━━ wildcard dependency
+   │
+   ├ rtex-cli v0.0.5
+
+error[wildcard]: found 1 wildcard dependency for crate 'rtex-core'. allow-wildcard-paths is enabled, but does not apply to public crates as crates.io disallows path dependencies.
+   ┌─ /home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/crates/rtex-core/Cargo.toml:13:11
+   │
+13 │ rtex-dl = { path = "../rtex-dl" }
+   │           ━━━━━━━━━━━━━━━━━━━━━━━ wildcard dependency
+   │
+   ├ rtex-core v0.0.5
+     └── rtex-cli v0.0.5
+
+error[wildcard]: found 1 wildcard dependency for crate 'rtex-verify'. allow-wildcard-paths is enabled, but does not apply to public crates as crates.io disallows path dependencies.
+   ┌─ /home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/crates/rtex-verify/Cargo.toml:10:11
+   │
+10 │ rtex-dl = { path = "../rtex-dl" }
+   │           ━━━━━━━━━━━━━━━━━━━━━━━ wildcard dependency
+   │
+   ├ rtex-verify v0.0.5
+     └── rtex-cli v0.0.5
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt2/deny.toml:17:6
+   │
+17 │     "Apache-2.0 WITH LLVM-exception",
+   │      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt2/deny.toml:21:6
+   │
+21 │     "BSL-1.0",
+   │      ━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt2/deny.toml:27:6
+   │
+27 │     "CC0-1.0",
+   │      ━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt2/deny.toml:22:6
+   │
+22 │     "ISC",
+   │      ━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt2/deny.toml:30:6
+   │
+30 │     "MPL-2.0",
+   │      ━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt2/deny.toml:32:6
+   │
+32 │     "OFL-1.1",
+   │      ━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt2/deny.toml:33:6
+   │
+33 │     "Ubuntu-font-1.0",
+   │      ━━━━━━━━━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt2/deny.toml:25:6
+   │
+25 │     "Unicode-DFS-2016",
+   │      ━━━━━━━━━━━━━━━━ unmatched license allowance
+
+ bans FAILED: 3 errors, 0 warnings, 0 notes
+ licenses ok: 0 errors, 8 warnings, 123 notes
+  sources ok: 0 errors, 0 warnings, 0 notes
+
+exit_status: 2

@@ -1,0 +1,13 @@
+$ /home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/target/release/rtex verify --project /home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke/book-10 --build /home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke/verify --json-out /home/ation_ciger/Projects/Mogan/scholium-wt2/docs/log/evidence/rtex-evaluation/verify-result.json
+cwd: /home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke
+RTEX_TEXLIVE_BIN=/usr/bin
+RTEX_TEXDIR=/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/tex
+== verify /home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke/book-10 (main.tex)
+capture: 54 paragraphs, 10 pages (1.3s, 2 passes); clean build 1.1s (2 passes)
+T3 (instrumented PDF == clean PDF): true
+server ready in 0.73s
+layer 1 (fast vs extractor): 54 eligible of 54 units; 54 compiled; 23142/23142 glyphs identical; 0 units with differences
+  par                54 units,   0 with differences, round trip median 4.563 ms, max 17.640 ms
+layer 2 (pages vs PDF content stream): 10 pages, 10 exact, 0 degraded (PDF fallback), pass=true; worst anchored dx 0.00051 bp, worst interior dx 0.01054 bp
+
+exit_status: 0

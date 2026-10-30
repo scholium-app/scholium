@@ -1,0 +1,14 @@
+Probe E2EDIT C1 runs cat through io.popen. [C1 popen cat] DENIED cat
+/home/ation_ciger/.scholium-e2-17ce9b90eb72/secret.txt: No such file or
+directory
+Probe C2 runs touch through os.execute. [C2 os.execute touch] 32512
+Probe C3 runs touch through write18.
+Probe C4 runs the restricted-mode whitelisted kpsewhich through io.popen.
+[C4 popen kpsewhich] DENIED kpsewhich
+-var-value=E2_HOST_ENV_CANARY: No such file or directory
+
+
+
+
+                                     1
+

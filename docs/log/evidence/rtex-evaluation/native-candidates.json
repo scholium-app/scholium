@@ -1,0 +1,266 @@
+[
+  {
+    "name": "anyhow",
+    "version": "1.0.104",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/anyhow-1.0.104/build.rs"
+    ]
+  },
+  {
+    "name": "cc",
+    "version": "1.6.0",
+    "links": null,
+    "build_scripts": []
+  },
+  {
+    "name": "core-foundation-sys",
+    "version": "0.8.7",
+    "links": null,
+    "build_scripts": []
+  },
+  {
+    "name": "crc32fast",
+    "version": "1.5.2",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/crc32fast-1.5.2/build.rs"
+    ]
+  },
+  {
+    "name": "crossbeam-deque",
+    "version": "0.8.8",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/crossbeam-deque-0.8.8/build.rs"
+    ]
+  },
+  {
+    "name": "crossbeam-epoch",
+    "version": "0.9.21",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/crossbeam-epoch-0.9.21/build.rs"
+    ]
+  },
+  {
+    "name": "crossbeam-utils",
+    "version": "0.8.23",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/crossbeam-utils-0.8.23/build.rs"
+    ]
+  },
+  {
+    "name": "defmt",
+    "version": "1.1.1",
+    "links": "defmt",
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/defmt-1.1.1/build.rs"
+    ]
+  },
+  {
+    "name": "defmt-macros",
+    "version": "1.1.1",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/defmt-macros-1.1.1/build.rs"
+    ]
+  },
+  {
+    "name": "encoding_rs",
+    "version": "0.8.42",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/encoding_rs-0.8.42/build.rs"
+    ]
+  },
+  {
+    "name": "generic-array",
+    "version": "0.14.7",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/generic-array-0.14.7/build.rs"
+    ]
+  },
+  {
+    "name": "getrandom",
+    "version": "0.3.4",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/getrandom-0.3.4/build.rs"
+    ]
+  },
+  {
+    "name": "iana-time-zone-haiku",
+    "version": "0.1.2",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/iana-time-zone-haiku-0.1.2/build.rs"
+    ]
+  },
+  {
+    "name": "js-sys",
+    "version": "0.3.106",
+    "links": null,
+    "build_scripts": []
+  },
+  {
+    "name": "libc",
+    "version": "0.2.190",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/libc-0.2.190/build.rs"
+    ]
+  },
+  {
+    "name": "nix",
+    "version": "0.29.0",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/nix-0.29.0/build.rs"
+    ]
+  },
+  {
+    "name": "num-traits",
+    "version": "0.2.19",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/num-traits-0.2.19/build.rs"
+    ]
+  },
+  {
+    "name": "parking_lot_core",
+    "version": "0.9.12",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/parking_lot_core-0.9.12/build.rs"
+    ]
+  },
+  {
+    "name": "portable-atomic",
+    "version": "1.15.0",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/portable-atomic-1.15.0/build.rs"
+    ]
+  },
+  {
+    "name": "portable-atomic-util",
+    "version": "0.2.8",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/portable-atomic-util-0.2.8/build.rs"
+    ]
+  },
+  {
+    "name": "proc-macro2",
+    "version": "1.0.107",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/proc-macro2-1.0.107/build.rs"
+    ]
+  },
+  {
+    "name": "quote",
+    "version": "1.0.47",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/quote-1.0.47/build.rs"
+    ]
+  },
+  {
+    "name": "rayon-core",
+    "version": "1.13.0",
+    "links": "rayon-core",
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/rayon-core-1.13.0/build.rs"
+    ]
+  },
+  {
+    "name": "rustversion",
+    "version": "1.0.23",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/rustversion-1.0.23/build/build.rs"
+    ]
+  },
+  {
+    "name": "serde",
+    "version": "1.0.229",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde-1.0.229/build.rs"
+    ]
+  },
+  {
+    "name": "serde_core",
+    "version": "1.0.229",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde_core-1.0.229/build.rs"
+    ]
+  },
+  {
+    "name": "serde_json",
+    "version": "1.0.151",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/serde_json-1.0.151/build.rs"
+    ]
+  },
+  {
+    "name": "thiserror",
+    "version": "2.0.21",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/thiserror-2.0.21/build.rs"
+    ]
+  },
+  {
+    "name": "wasm-bindgen",
+    "version": "0.2.129",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/wasm-bindgen-0.2.129/build.rs"
+    ]
+  },
+  {
+    "name": "wasm-bindgen-shared",
+    "version": "0.2.129",
+    "links": "wasm_bindgen",
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/wasm-bindgen-shared-0.2.129/build.rs"
+    ]
+  },
+  {
+    "name": "windows-sys",
+    "version": "0.61.2",
+    "links": null,
+    "build_scripts": []
+  },
+  {
+    "name": "wit-bindgen",
+    "version": "0.57.1",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/wit-bindgen-0.57.1/build.rs"
+    ]
+  },
+  {
+    "name": "zerocopy",
+    "version": "0.8.61",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/zerocopy-0.8.61/build.rs"
+    ]
+  },
+  {
+    "name": "zmij",
+    "version": "1.0.23",
+    "links": null,
+    "build_scripts": [
+      "/home/ation_ciger/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/zmij-1.0.23/build.rs"
+    ]
+  }
+]

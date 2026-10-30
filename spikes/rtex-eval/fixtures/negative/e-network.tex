@@ -1,0 +1,2 @@
+Probe E1 connects to a harness listener on the host loopback through LuaSocket.
+\directlua{local ok, socket = pcall(require, "socket") if not ok then e2.say("E1 socket", "DENIED " .. tostring(socket)) else local c = socket.tcp() c:settimeout(3) local ok2, err = c:connect("127.0.0.1", @PORT@) e2.say("E1 socket", ok2 and ("CONNECTED " .. tostring(c:receive("*l"))) or ("DENIED " .. tostring(err))) c:close() end}

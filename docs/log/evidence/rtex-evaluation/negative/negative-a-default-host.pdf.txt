@@ -1,0 +1,12 @@
+Probe E2EDIT A1 reads the system password file from Lua. [A1 passwd]
+root:x:0:0::/root:/usr/bin/bash
+Probe A2 reads a canary planted under the home directory. [A2 home canary]
+E2FILE-54978672-54479241
+Probe A3 reads a canary from the host environment. [A3 host env]
+E2ENV-24174951-76175279
+
+
+
+
+                                    1
+

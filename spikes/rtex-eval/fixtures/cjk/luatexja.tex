@@ -1,0 +1,17 @@
+% Original evaluation fixture, MIT OR Apache-2.0 (repository license).
+% T16 E3: plain luatexja without ctex (Arch: texlive-langjapanese). The Japanese default
+% fonts lack many simplified Chinese glyphs, so the Fandol font from TeX Live is selected.
+\documentclass{article}
+\usepackage{luatexja-fontspec}
+\setmainjfont{FandolSong-Regular.otf}[BoldFont=FandolSong-Bold.otf]
+\usepackage{amsmath}
+\begin{document}
+\section{Chinese text with luatexja}\label{sec:ja}
+这是一个中文段落，其中包含 English words 和行内公式 $E=mc^2$。实时预览需要逐段更新，编辑一个段落时其余段落保持不变。
+
+第二段引用第~\ref{sec:ja}~节，并给出显示公式：
+\[ \int_0^1 x^2\,dx = \frac{1}{3}. \]
+公式之后的文字仍属于同一段落。
+
+Mixed paragraph: 中英文混排 with inline math $\alpha+\beta=\gamma$，标点“引号”与（括号）也要正确处理。
+\end{document}

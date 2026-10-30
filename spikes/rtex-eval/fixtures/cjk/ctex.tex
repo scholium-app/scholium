@@ -1,0 +1,15 @@
+% Original evaluation fixture, MIT OR Apache-2.0 (repository license).
+% T16 E3: ctex on LuaLaTeX. ctex loads luatexja under LuaLaTeX (Arch: texlive-langchinese
+% and texlive-langjapanese); its default Linux fontset is Fandol from TeX Live.
+\documentclass{ctexart}
+\usepackage{amsmath}
+\begin{document}
+\section{中文与公式}\label{sec:cjk}
+这是一个中文段落，其中包含 English words 和行内公式 $E=mc^2$。实时预览需要逐段更新，编辑一个段落时其余段落保持不变。
+
+第二段引用第~\ref{sec:cjk}~节，并给出显示公式：
+\[ \sum_{k=1}^{n} k = \frac{n(n+1)}{2}. \]
+公式之后的文字仍属于同一段落。
+
+Mixed paragraph: 中英文混排 with inline math $\alpha+\beta=\gamma$，标点“引号”与（括号）也要正确处理。
+\end{document}

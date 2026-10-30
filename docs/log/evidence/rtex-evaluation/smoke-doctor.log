@@ -1,0 +1,9 @@
+$ /home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/target/release/rtex doctor
+cwd: /home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke
+RTEX_TEXLIVE_BIN=/usr/bin
+RTEX_TEXDIR=/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/tex
+rtex 0.0.5
+support files: /home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/tex
+lualatex: /usr/bin/lualatex (This is LuaHBTeX, Version 1.24.0 (TeX Live 2026/Arch Linux))
+
+exit_status: 0

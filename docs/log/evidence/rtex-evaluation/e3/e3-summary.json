@@ -1,0 +1,31 @@
+{
+  "kpsewhich": {
+    "luatexja.sty": "/usr/share/texmf-dist/tex/luatex/luatexja/luatexja.sty",
+    "ctex.sty": "/usr/share/texmf-dist/tex/latex/ctex/ctex.sty",
+    "ctexart.cls": "/usr/share/texmf-dist/tex/latex/ctex/ctexart.cls",
+    "FandolSong-Regular.otf": "/usr/share/texmf-dist/fonts/opentype/public/fandol/FandolSong-Regular.otf"
+  },
+  "owners": {
+    "luatexja.sty": "/usr/share/texmf-dist/tex/luatex/luatexja/luatexja.sty is owned by texlive-langjapanese 2026.1-1",
+    "ctex.sty": "/usr/share/texmf-dist/tex/latex/ctex/ctex.sty is owned by texlive-langchinese 2026.1-1",
+    "ctexart.cls": "/usr/share/texmf-dist/tex/latex/ctex/ctexart.cls is owned by texlive-langchinese 2026.1-1",
+    "FandolSong-Regular.otf": "/usr/share/texmf-dist/fonts/opentype/public/fandol/FandolSong-Regular.otf is owned by texlive-langchinese 2026.1-1"
+  },
+  "available": true,
+  "fixtures": [
+    {
+      "fixture": "ctex",
+      "lualatex_exit": 0,
+      "missing_characters": 0,
+      "cjk_in_pdf_text": true,
+      "rtex_verify_exit": 0
+    },
+    {
+      "fixture": "luatexja",
+      "lualatex_exit": 0,
+      "missing_characters": 0,
+      "cjk_in_pdf_text": true,
+      "rtex_verify_exit": 0
+    }
+  ]
+}

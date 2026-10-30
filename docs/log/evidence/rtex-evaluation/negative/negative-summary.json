@@ -1,0 +1,971 @@
+[
+  {
+    "verdict": {
+      "control": "a",
+      "config": "default",
+      "result": "Pass",
+      "host_effective": true,
+      "sandbox_effective": false
+    },
+    "runs": [
+      {
+        "name": "negative-a-default-host",
+        "control": "a",
+        "config": "default",
+        "mode": "host",
+        "elapsed_seconds": 2.5,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        },
+        "probe_output": [
+          "[A1 passwd] root:x:0:0::/root:/usr/bin/bash",
+          "[A2 home canary] E2FILE-54978672-54479241",
+          "[A3 host env] E2ENV-24174951-76175279"
+        ],
+        "leaks": {
+          "passwd": [
+            "pdf_text",
+            "build_files"
+          ],
+          "home_file": [
+            "pdf_text",
+            "build_files"
+          ],
+          "env": [
+            "pdf_text",
+            "build_files"
+          ]
+        },
+        "files_outside_build": [],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": true
+      },
+      {
+        "name": "negative-a-default-sandbox",
+        "control": "a",
+        "config": "default",
+        "mode": "sandbox",
+        "elapsed_seconds": 12.0,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        },
+        "probe_output": [
+          "[A1 passwd] DENIED nil",
+          "[A2 home canary] DENIED nil",
+          "[A3 host env] DENIED unset"
+        ],
+        "leaks": {},
+        "files_outside_build": [],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": false
+      }
+    ]
+  },
+  {
+    "verdict": {
+      "control": "b",
+      "config": "default",
+      "result": "Pass",
+      "host_effective": true,
+      "sandbox_effective": false
+    },
+    "runs": [
+      {
+        "name": "negative-b-default-host",
+        "control": "b",
+        "config": "default",
+        "mode": "host",
+        "elapsed_seconds": 2.4,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        },
+        "probe_output": [
+          "[B1 home input] E2INPUT-46651824-94931411"
+        ],
+        "leaks": {
+          "input_file": [
+            "pdf_text",
+            "build_files"
+          ]
+        },
+        "files_outside_build": [],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": true
+      },
+      {
+        "name": "negative-b-default-sandbox",
+        "control": "b",
+        "config": "default",
+        "mode": "sandbox",
+        "elapsed_seconds": 12.1,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Failed"
+            },
+            "pages_total": 0
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "BackgroundScheduled",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Failed"
+            },
+            "converged": false
+          }
+        },
+        "probe_output": [],
+        "leaks": {},
+        "files_outside_build": [],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": false
+      }
+    ]
+  },
+  {
+    "verdict": {
+      "control": "c",
+      "config": "default",
+      "result": "Pass",
+      "host_effective": true,
+      "sandbox_effective": false
+    },
+    "runs": [
+      {
+        "name": "negative-c-default-host",
+        "control": "c",
+        "config": "default",
+        "mode": "host",
+        "elapsed_seconds": 2.4,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        },
+        "probe_output": [
+          "[C1 popen cat] DENIED specific command execution disabled",
+          "[C2 os.execute touch] nil",
+          "[C4 popen kpsewhich] E2ENV-24174951-76175279"
+        ],
+        "leaks": {
+          "env": [
+            "pdf_text",
+            "build_files"
+          ]
+        },
+        "files_outside_build": [],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": true
+      },
+      {
+        "name": "negative-c-default-sandbox",
+        "control": "c",
+        "config": "default",
+        "mode": "sandbox",
+        "elapsed_seconds": 12.3,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        },
+        "probe_output": [
+          "[C1 popen cat] DENIED specific command execution disabled",
+          "[C2 os.execute touch] nil",
+          "[C4 popen kpsewhich] DENIED kpsewhich \u2019-var-value=E2_HOST_ENV_CANARY\u2019: No such file or directory"
+        ],
+        "leaks": {},
+        "files_outside_build": [],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": false
+      }
+    ]
+  },
+  {
+    "verdict": {
+      "control": "c",
+      "config": "lifted",
+      "result": "Pass",
+      "host_effective": true,
+      "sandbox_effective": false
+    },
+    "runs": [
+      {
+        "name": "negative-c-lifted-host",
+        "control": "c",
+        "config": "lifted",
+        "mode": "host",
+        "elapsed_seconds": 2.4,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        },
+        "probe_output": [
+          "[C1 popen cat] E2FILE-54978672-54479241",
+          "[C2 os.execute touch] 0",
+          "[C4 popen kpsewhich] E2ENV-24174951-76175279"
+        ],
+        "leaks": {
+          "home_file": [
+            "pdf_text",
+            "build_files"
+          ],
+          "env": [
+            "pdf_text",
+            "build_files"
+          ]
+        },
+        "files_outside_build": [
+          "written-by-execute.txt",
+          "written-by-write18.txt"
+        ],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": true
+      },
+      {
+        "name": "negative-c-lifted-sandbox",
+        "control": "c",
+        "config": "lifted",
+        "mode": "sandbox",
+        "elapsed_seconds": 12.0,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        },
+        "probe_output": [
+          "[C1 popen cat] DENIED cat /home/ation_ciger/.scholium-e2-17ce9b90eb72/secret.txt: No such file or directory",
+          "[C2 os.execute touch] 32512",
+          "[C4 popen kpsewhich] DENIED kpsewhich -var-value=E2_HOST_ENV_CANARY: No such file or directory"
+        ],
+        "leaks": {},
+        "files_outside_build": [],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": false
+      }
+    ]
+  },
+  {
+    "verdict": {
+      "control": "d-lua",
+      "config": "default",
+      "result": "Pass",
+      "host_effective": true,
+      "sandbox_effective": false
+    },
+    "runs": [
+      {
+        "name": "negative-d-lua-default-host",
+        "control": "d-lua",
+        "config": "default",
+        "mode": "host",
+        "elapsed_seconds": 2.4,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        },
+        "probe_output": [
+          "[D1 Lua write home] OPENED",
+          "[D2 Lua write project sandbox path] DENIED nil",
+          "[D2 Lua write project host path] OPENED"
+        ],
+        "leaks": {},
+        "files_outside_build": [
+          "written-by-lua.txt",
+          "project/written-into-project.txt"
+        ],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": true
+      },
+      {
+        "name": "negative-d-lua-default-sandbox",
+        "control": "d-lua",
+        "config": "default",
+        "mode": "sandbox",
+        "elapsed_seconds": 12.6,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        },
+        "probe_output": [
+          "[D1 Lua write home] DENIED nil",
+          "[D2 Lua write project host path] DENIED nil",
+          "[D2 Lua write project sandbox path] DENIED nil"
+        ],
+        "leaks": {},
+        "files_outside_build": [],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": false
+      }
+    ]
+  },
+  {
+    "verdict": {
+      "control": "d-openout",
+      "config": "default",
+      "result": "Pass",
+      "host_effective": true,
+      "sandbox_effective": false
+    },
+    "runs": [
+      {
+        "name": "negative-d-openout-default-host",
+        "control": "d-openout",
+        "config": "default",
+        "mode": "host",
+        "elapsed_seconds": 2.2,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        },
+        "probe_output": [],
+        "leaks": {},
+        "files_outside_build": [
+          "written-by-openout.tex"
+        ],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": true
+      },
+      {
+        "name": "negative-d-openout-default-sandbox",
+        "control": "d-openout",
+        "config": "default",
+        "mode": "sandbox",
+        "elapsed_seconds": 11.7,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Failed"
+            },
+            "pages_total": 0
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "BackgroundScheduled",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Failed"
+            },
+            "converged": false
+          }
+        },
+        "probe_output": [],
+        "leaks": {},
+        "files_outside_build": [],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": false
+      }
+    ]
+  },
+  {
+    "verdict": {
+      "control": "e",
+      "config": "default",
+      "result": "Inconclusive (probe blocked unsandboxed)",
+      "host_effective": false,
+      "sandbox_effective": false
+    },
+    "runs": [
+      {
+        "name": "negative-e-default-host",
+        "control": "e",
+        "config": "default",
+        "mode": "host",
+        "elapsed_seconds": 2.6,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        },
+        "probe_output": [
+          "[E1 socket] DENIED module \u2019socket\u2019 not found: \ufffdno field package.preload[\u2019socket\u2019] \ufffd[kpse lua searcher] file not found: \u2019socket\u2019"
+        ],
+        "leaks": {},
+        "files_outside_build": [],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": false
+      },
+      {
+        "name": "negative-e-default-sandbox",
+        "control": "e",
+        "config": "default",
+        "mode": "sandbox",
+        "elapsed_seconds": 10.9,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        },
+        "probe_output": [
+          "[E1 socket] DENIED module \u2019socket\u2019 not found: \ufffdno field package.preload[\u2019socket\u2019] \ufffd[kpse lua searcher] file not found: \u2019socket\u2019"
+        ],
+        "leaks": {},
+        "files_outside_build": [],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": false
+      }
+    ]
+  },
+  {
+    "verdict": {
+      "control": "e",
+      "config": "lifted",
+      "result": "Pass",
+      "host_effective": true,
+      "sandbox_effective": false
+    },
+    "runs": [
+      {
+        "name": "negative-e-lifted-host",
+        "control": "e",
+        "config": "lifted",
+        "mode": "host",
+        "elapsed_seconds": 2.2,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        },
+        "probe_output": [
+          "[E1 socket] CONNECTED E2NET-24341321-48002774"
+        ],
+        "leaks": {
+          "network": [
+            "pdf_text",
+            "build_files"
+          ]
+        },
+        "files_outside_build": [],
+        "listener_connections": 6,
+        "stray_processes": [],
+        "attack_effective": true
+      },
+      {
+        "name": "negative-e-lifted-sandbox",
+        "control": "e",
+        "config": "lifted",
+        "mode": "sandbox",
+        "elapsed_seconds": 10.9,
+        "steps": {
+          "layout": {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          "edit": {
+            "reply": "edit"
+          },
+          "after_edit": {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 1
+          },
+          "export": {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        },
+        "probe_output": [
+          "[E1 socket] DENIED connection refused"
+        ],
+        "leaks": {},
+        "files_outside_build": [],
+        "listener_connections": 0,
+        "stray_processes": [],
+        "attack_effective": false
+      }
+    ]
+  },
+  {
+    "verdict": {
+      "control": "f",
+      "config": "default",
+      "result": "Pass",
+      "host_effective": true,
+      "sandbox_effective": false
+    },
+    "runs": [
+      {
+        "name": "negative-f-default-host",
+        "control": "f",
+        "config": "default",
+        "mode": "host",
+        "timeline": [
+          {
+            "t": 0.4,
+            "label": "initial layout",
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          {
+            "t": 0.4,
+            "label": "edit reply",
+            "reply": "edit"
+          },
+          {
+            "t": 5.5,
+            "label": "live unit cut",
+            "event": "EngineState",
+            "state": "Restarting",
+            "reason": "engine watchdog: no response within 5s; server killed"
+          },
+          {
+            "t": 5.5,
+            "label": "background scheduled",
+            "event": "BackgroundScheduled",
+            "edit_id": 1
+          },
+          {
+            "t": 10.5,
+            "label": "edit reply",
+            "reply": "edit"
+          },
+          {
+            "t": 10.5,
+            "label": "edit reply",
+            "reply": "edit"
+          },
+          {
+            "t": 10.5,
+            "label": "follow-up paragraph",
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 3
+          },
+          {
+            "t": 160.5,
+            "label": "layout after fix",
+            "harness_wait": "no matching worker message within 150s"
+          },
+          {
+            "t": 220.5,
+            "label": "export",
+            "harness_wait": "no matching worker message within 60s"
+          }
+        ],
+        "processes_before_export": [
+          {
+            "pid": 631490,
+            "comm": "lualatex",
+            "cpu_seconds": 0.26
+          },
+          {
+            "pid": 631486,
+            "comm": "lualatex",
+            "cpu_seconds": 0.26
+          },
+          {
+            "pid": 631429,
+            "comm": "lualatex",
+            "cpu_seconds": 154.78
+          }
+        ],
+        "stray_processes": [],
+        "followup_ok": true,
+        "layout_recovered": false,
+        "export_ok": false,
+        "max_tex_cpu_seconds": 154.78,
+        "attack_effective": true
+      },
+      {
+        "name": "negative-f-default-sandbox",
+        "control": "f",
+        "config": "default",
+        "mode": "sandbox",
+        "timeline": [
+          {
+            "t": 8.6,
+            "label": "initial layout",
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          {
+            "t": 8.6,
+            "label": "edit reply",
+            "reply": "edit"
+          },
+          {
+            "t": 13.8,
+            "label": "live unit cut",
+            "event": "EngineState",
+            "state": "Restarting",
+            "reason": "engine watchdog: no response within 5s; server killed"
+          },
+          {
+            "t": 13.8,
+            "label": "background scheduled",
+            "event": "BackgroundScheduled",
+            "edit_id": 1
+          },
+          {
+            "t": 18.8,
+            "label": "edit reply",
+            "reply": "edit"
+          },
+          {
+            "t": 18.8,
+            "label": "edit reply",
+            "reply": "edit"
+          },
+          {
+            "t": 18.8,
+            "label": "follow-up paragraph",
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 3
+          },
+          {
+            "t": 38.7,
+            "label": "layout after fix",
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          {
+            "t": 69.1,
+            "label": "export",
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        ],
+        "processes_before_export": [
+          {
+            "pid": 632781,
+            "comm": "bwrap",
+            "cpu_seconds": 0.0
+          },
+          {
+            "pid": 632782,
+            "comm": "bwrap",
+            "cpu_seconds": 0.0
+          },
+          {
+            "pid": 632783,
+            "comm": "rtex",
+            "cpu_seconds": 0.03
+          },
+          {
+            "pid": 633062,
+            "comm": "lualatex",
+            "cpu_seconds": 0.01
+          },
+          {
+            "pid": 632904,
+            "comm": "lualatex",
+            "cpu_seconds": 0.27
+          },
+          {
+            "pid": 632874,
+            "comm": "lualatex",
+            "cpu_seconds": 0.29
+          }
+        ],
+        "stray_processes": [],
+        "followup_ok": true,
+        "layout_recovered": true,
+        "export_ok": true,
+        "max_tex_cpu_seconds": 0.29,
+        "attack_effective": false
+      }
+    ]
+  }
+]

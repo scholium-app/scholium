@@ -1,0 +1,24 @@
+1    A reference target
+Scholium EVALCHANGE evaluates a live paragraph with English prose and
+inline math a2 + b2 = c2 .
+    The stable reference is Section 1. Display math follows:
+                                 Z 1
+                                                 1
+                                       x2 dx =     .
+                                  0              3
+
+
+
+                               Evaluation figure
+
+
+
+                      Figure 1: An original vector figure
+
+    Figure 1 is generated without external assets.
+
+
+
+
+                                         1
+

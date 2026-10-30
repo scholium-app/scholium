@@ -1,0 +1,11 @@
+Probe C1 runs cat through io.popen.
+\directlua{local p, err = io.popen("cat @CANARY_DIR@/secret.txt") e2.say("C1 popen cat", p and p:read("a") or ("DENIED " .. tostring(err)))}
+
+Probe C2 runs touch through os.execute.
+\directlua{e2.say("C2 os.execute touch", tostring(os.execute("touch @CANARY_DIR@/written-by-execute.txt")))}
+
+Probe C3 runs touch through write18.
+\immediate\write18{touch @CANARY_DIR@/written-by-write18.txt}
+
+Probe C4 runs the restricted-mode whitelisted kpsewhich through io.popen.
+\directlua{local p, err = io.popen("kpsewhich -var-value=E2_HOST_ENV_CANARY") e2.say("C4 popen kpsewhich", p and p:read("a") or ("DENIED " .. tostring(err)))}

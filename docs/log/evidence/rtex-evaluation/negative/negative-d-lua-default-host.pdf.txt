@@ -1,0 +1,10 @@
+Probe E2EDIT D1 writes a file under the home directory from Lua. [D1 Lua
+write home] OPENED
+Probe D2 writes into the project input directory from Lua. [D2 Lua write
+project sandbox path] DENIED nil[D2 Lua write project host path] OPENED
+
+
+
+
+                                   1
+
