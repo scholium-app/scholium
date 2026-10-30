@@ -24,7 +24,7 @@ src/
 ├── projection.rs    CST → IR orchestration
 ├── generate.rs      IR → target orchestration
 ├── reconcile.rs     generated source → SemanticPatch plan
-├── report.rs        Exact/Equivalent/Degraded/Dropped
+├── report.rs        Exact/Equivalent/RawPreserved/Degraded/Dropped
 └── clipboard.rs     multi-MIME Copy As payload
 ```
 
@@ -56,7 +56,7 @@ src/
 
 - adapter panic 被隔离为内部错误，不终止 project session。
 - 未投影节点、依赖或 Raw 未进入报告时视为门禁失败，不允许导出继续。
-- 出现 `Dropped` 且用户 policy 未降级时导出失败；`Unresolved` 组件阻止正式输出。
+- 出现 `Dropped` 且用户 policy 未降级时导出失败；无法处理的 Raw 跨方言输出必须降级报告或阻止导出。
 - 资源访问超出 `ParseInput` 声明、registry 冲突或 revision 过期时拒绝并返回诊断。
 - Copy As 的临时资源必须在返回前清理或由生命周期对象持有。
 - 跨格式另存为失败时保留原项目与上次成功产物，不产生半成品目标项目。
@@ -66,11 +66,9 @@ src/
 fake adapters 验证取消、过期结果、registry 冲突、依赖失效、report 完整性、多 MIME 一致性。具体格式
 golden 由各 adapter crate 提供，format 负责跨格式组合测试。
 
-## 团队源码语言与混合项目合约
+## 项目语言合约
 
-解析、生成和转换同时支持 ForeignSource 绑定与不可变组件快照。纯格式适配器输出组件/资源/符号桥接计划，
-不调用编译器。conversion report 覆盖原始输入以及宏、模板、依赖，不能只统计成功进入 IR 的节点。
-Raw 保留和 ForeignRendered 执行分开；另报目标编辑性、工具链依赖及 unresolved。普通保存不跨格式生成，
-跨格式另存为和导出调用 generate，但不改变团队活动语言。新增双目标混合包和丢失覆盖率测试。
-
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
+格式适配与转换合约供两个内核使用，项目语言在创建/导入时固定；转换 IR 不作为共享文档模型。
+跨语言只经一次性转换或导出，逐节点报告 Exact/Equivalent/RawPreserved/Degraded/Dropped。
+Raw 同方言无损保留，跨方言降级或阻止导出；混合组件、跨引擎桥接与团队语言切换已推迟。
+共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。

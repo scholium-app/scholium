@@ -26,12 +26,12 @@
 | 文本 shaping/layout | 先复用 GUI 文本能力，缺口再比较 [cosmic-text](https://github.com/pop-os/cosmic-text) / [Parley](https://github.com/linebender/parley) | CJK、组合字符、双向文本、字体 fallback、光标命中；文本排版库不等于数学编辑器 |
 | Typst 解析与排版 | [官方 Rust 引擎及 syntax](https://github.com/typst/typst) | 固定版本、增量编译、SourceMap、字体/包资源；浏览器编译另测 |
 | LaTeX 语法与转换 | Rust 容错解析器；[Rowan](https://github.com/rust-analyzer/rowan) 候选 CST；[Tree-sitter](https://tree-sitter.github.io/tree-sitter/using-parsers/) 可选高亮/导航 | Rowan 不是解析器；Tree-sitter 不提供完整宏语义。无损原文、局部 patch、动态语法保守降级 |
-| LaTeX 构建 | **[TeX Live](https://tug.org/texlive/) 工具链 → [Tectonic](https://tectonic-typesetting.github.io/en-US/)** | 先测 pdfLaTeX/XeLaTeX/LuaLaTeX 所需兼容基线，再测 Tectonic 的模板/宏包差异、离线包与部署；不能视为完全等价替换 |
+| LaTeX 构建与预览 | **[TeX Live](https://tug.org/texlive/) 工具链 → [Tectonic](https://tectonic-typesetting.github.io/en-US/)**；**LuaLaTeX + [rtex](https://github.com/HenryXiaoYang/realtime-tex)**（实时预览，待评估） | 预览与最终输出同一引擎，见 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)；先测 pdfLaTeX/XeLaTeX/LuaLaTeX 兼容基线，再测 Tectonic 模板/宏包差异、离线包与部署；不能视为完全等价替换 |
 | 矢量与 PDF 预览 | GUI 绘制优先；SVG 用 [resvg](https://github.com/linebender/resvg) 候选；PDF 用 [pdfium-render](https://github.com/ajrcarey/pdfium-render) 候选；[Vello](https://github.com/linebender/vello) 仅在绘制瓶颈时评估 | PDFium 是 C++ 依赖；不引入 Chromium UI。检查文字选择、命中映射、内存、跨平台与 WASM 构建 |
-| 协作 CRDT | **[Loro](https://github.com/loro-dev/loro) → [Yrs](https://github.com/y-crdt/y-crdt) → [Automerge](https://github.com/automerge/automerge)** | 树移动、相对锚点、actor undo、乱序恢复、写集校验与语言 epoch；桌面/浏览器协议互通 |
+| 协作 CRDT | **[Loro](https://github.com/loro-dev/loro) → [Yrs](https://github.com/y-crdt/y-crdt) → [Automerge](https://github.com/automerge/automerge)** | 树移动、相对锚点、actor undo、乱序恢复；桌面/浏览器协议互通 |
 | 产品历史 | 自研 Rust Action/checkpoint DAG，适配选定 CRDT | 撤销保留远端变更、可审计 revert/merge；不把引擎更新直接展示为版本史 |
 | 本地存储 | **SQLite / [rusqlite](https://github.com/rusqlite/rusqlite) → [redb](https://github.com/cberner/redb)** | SQLite 含 C；redb 为 Rust 候选。断电恢复、迁移、跨文件物化、数据库与导出包边界；浏览器使用独立存储适配 |
-| 调度与服务端 | 原生 Tokio；[Axum](https://github.com/tokio-rs/axum) + WebSocket 候选 | 会话串行提交、CPU 排版不阻塞异步执行器；重连、背压、身份/权限与 epoch。服务端数据库/blob 另选 |
+| 调度与服务端 | 原生 Tokio；[Axum](https://github.com/tokio-rs/axum) + WebSocket 候选 | 会话串行提交、CPU 排版不阻塞异步执行器；重连、背压、身份与权限 epoch。服务端数据库/blob 另选 |
 | 原生互操作 | 纯 Rust 优先；C ABI 或 [CXX](https://cxx.rs/) 接 C/C++；Zig 按 C ABI 接入 | 生命周期、错误、取消、线程归属清晰；每个 WASM 原生依赖单独验证 |
 | 隔离与发布 | Rust 编排，原生操作系统隔离，Cargo 构建 | 无 shell 拼接；资源限额、断网与取消进程树；发行格式待目标 OS 明确后验证 |
 | 验证工具 | Rust 单元/属性/fuzz、恢复故障注入、原生 GUI 脚本与 WASM smoke | 同一语料验证跨端语义；无 npm/Node.js 依赖，具体测试工具按需要锁定 |
@@ -42,7 +42,7 @@
 
 SQLite/redb 用于项目持久化候选，不改变 `.tex` / `.typ` 源码项目的权威归属。数据库提交与源文件物化通过可恢复的 revision/manifest 协调；不能同时保留两个独立提交、互不协调的数据库 WAL 和自研权威 WAL。最终持久化格式须由恢复试验决定，当前 storage 布局仅是逻辑草案。
 
-打开、保存两种标准源文件不依赖协作服务。混用原文包、标准目标包和 PDF 等最终产物是不同交付物；不因某候选能生成 PDF 就宣称支持双向源码转换。
+打开、保存两种标准源文件不依赖协作服务。目标源码包和 PDF 等最终产物是不同交付物；不因某候选能生成 PDF 就宣称支持双向源码转换。
 
 ## WASM 与实现参考
 

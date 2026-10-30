@@ -24,7 +24,7 @@ plugin-host 另依赖 plugin-runtime；plugin-api 面向 guest，仅依赖生成
 生成的 WIT 类型和 MCP/Pi schema 在适配层转换，不进入 model；session 不依赖外部协议和 egui。
 运行时如需调用宿主，由宿主实现回调端口，避免 runtime 与 host 相互依赖。
 
-session 统一处理项目/actor、revision、权限、源码 epoch、幂等、Action 与持久化确认。
+session 统一处理项目/actor、revision、权限、幂等、Action 与持久化确认。
 UI、Pi、MCP 和插件提供的身份与许可不能直接信任；适配层建立调用身份，session 复核授权。
 桌面关闭弹窗、选择范围和 proposal 展示留在 app。无界面调用使用显式策略或返回待确认状态，不能依赖 egui 弹窗才能完成。
 
@@ -52,4 +52,4 @@ UI、Pi、MCP 和插件提供的身份与许可不能直接信任；适配层建
 参考 [Pumpkin 固定提交](https://github.com/Pumpkin-MC/Pumpkin/tree/43bcd7b108abfe2d10fda28002efa87d48babda3)：
 `pumpkin-plugin-wit/v0.1` 作为共享契约，`pumpkin-plugin-api` 使用 wit-bindgen，
 `pumpkin-host-bindings` 使用 Wasmtime bindgen，`pumpkin-plugin-runtime` 分离执行与生命周期。
-借鉴这些职责边界；Scholium 的文档事务、协作语言门禁和浏览器支持必须独立设计与验证。
+借鉴这些职责边界；Scholium 的文档事务、协作权限和浏览器支持必须独立设计与验证。

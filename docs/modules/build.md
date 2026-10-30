@@ -3,7 +3,7 @@
 ## 职责
 
 根据入口和 profile 规划 Typst/LaTeX/转换构建、准备隔离工作目录、执行受控工具链、取消/超时、收集
-artifact、解析日志、缓存结果并为快速/最终预览提供 revision 对应关系。
+artifact、解析日志、缓存结果并为预览/最终输出提供 revision 对应关系。
 
 ## 非职责
 
@@ -52,14 +52,14 @@ key 包含入口内容、依赖内容 hash、profile、工具链版本和安全�
 - `BuildProfile { entry, toolchain_id, target, allowed_inputs, env_allowlist, network, timeout, memory, output_limit, diagnostic_parser }`，
   不接受任意 shell 字符串。
 - `artifact(build_id) -> Option<ArtifactRef>`，与输入 revision 绑定并放入内容寻址缓存。
-- `observe() -> BuildChanged`；`map_diagnostics(tool_output) -> Vec<Diagnostic>`，经 SourceMap 映射回节点或组件源位置。
+- `observe() -> BuildChanged`；`map_diagnostics(tool_output) -> Vec<Diagnostic>`，经 SourceMap 映射回节点或源码位置。
 - 后台构建只消费不可变快照，不持有可变文档句柄。
 
 ## 不变量
 
 - 不经 shell 解释 argv。
 - 默认无网络、无 shell escape、无项目根外读取。
-- 旧 revision 构建不能替换当前预览；Typst 快速和 LaTeX 最终 artifact 状态分开。
+- 旧 revision 构建不能替换当前预览；预览与最终输出使用项目语言的同一引擎，分别记录 artifact 状态。
 - 日志截断必须显式标识，不能悄悄丢尾部。
 - 持久编译会话必须同时限制单请求等待与会话累计资源，监督进程随应用退出；
   超时/进程退出清空会话派生缓存，不发布半成品，不在 UI 进程内重试编译。
@@ -75,42 +75,34 @@ key 包含入口内容、依赖内容 hash、profile、工具链版本和安全�
 - 未授权根外路径、网络访问或 shell escape 请求直接拒绝构建，并给出安全诊断。
 - 输入 revision 已过期时结果标记 stale，不替换当前预览。
 - 日志被截断必须显式标识；日志行无法映射时保留原位置。
-- 缺组件、模板冲突或引用不收敛阻止正式输出，并保留上次成功产物。
+- 缺资源、模板错误或引用不收敛阻止正式输出，并保留上次成功产物。
 
 ## 测试门禁
 
 安全 LaTeX/Markdown 构建、shell escape、路径逃逸、超时、内存/输出炸弹、取消进程树、stale result、缓存
 失效、日志位置、恶意 HTML/PDF。平台隔离能力不足时该平台不得宣称安全执行不可信项目。
 
-## 团队源码语言与混合项目合约
+## 项目语言合约
 
-增加 mixed planner、component worker、symbol bridge 与有界多轮宿主排版。计划包含完整组件/模板/字体/资源
-快照和工具链版本；独立 Typst/LaTeX 任务可并行，活动编辑语言不限制编译器调度。
-模板页面策略由宿主决定；正文/跨页表格、脚注和双向引用通过布局/符号合约处理。最终页码与链接从宿主或装配
-结果验证，引用不收敛、缺组件、作用域/模板冲突阻止正式输出。缓存键包含桥接版本与每轮实际输入。
-输出标准目标工具链包或双工具链重建包，分别进行干净环境测试。外语原文保留不代替可构建/可编辑验证。
-新增混合全范围夹具、轮数/组件总预算、沙箱桥接、半成品发布失败和两后端并行测试。
-
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
+构建沙箱属于共享底座，按固定项目语言运行对应内核的预览与最终构建，二者使用同一引擎。
+跨语言只经一次性转换或导出，在不可变快照上由目标工具链验证；失败保留原项目与上次成功产物。
+混合构建、跨引擎桥接与团队语言切换已推迟；取消、资源预算、缓存与产物验证要求保留。
+共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。
 
 ## 工具链候选与宿主
 
-混排载体合约见 [ADR 0018](../adr/ADR-0018-vector-fidelity-bridge.md)：`Convert` 显式转换已有语义 IR，
-`Vector` 保留源引擎排版。行内载体携带 PDF bp 单位的宽高/下沉量；注释覆盖层与绘制内容使用同一变换。
-PDF 解析必须位于受限 worker，不能在协调器/UI 解析；不支持的注释/动作/目的地必须阻止发布。
-生成的覆盖层属于标准包重建输入，不允许仅最终 PDF 有效而标准包丢失链接。
+混排载体与跨引擎装配已按 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md) 推迟；
+[ADR 0018](../adr/ADR-0018-vector-fidelity-bridge.md) 及相关阶段 0 报告只作追溯记录。
+PDF 解析仍须位于受限 worker，不能在协调器/UI 解析；产物中的注释、动作与链接须验证。
 
 LaTeX 按 TeX Live 所需引擎（pdfLaTeX/XeLaTeX/LuaLaTeX）→ Tectonic 验证，实际兼容矩阵决定后端，不能假定 Tectonic 完全替换全部引擎。参考[Mogan 工具探测](../research/MOGAN_LATEX.md)报告路径、版本及能力。原生流程使用受控进程；浏览器不能调用本机进程，Typst Worker 与本地 LaTeX WASM 分别验证。远程构建需用户显式选择，缺少后端返回能力诊断而非伪造最终产物。见[WASM](../plan/WASM.md)。
 
-## 阶段 0 实验进展
+## 阶段 0 隔离证据边界
 
-[报告 0017](../spikes/SPK-0017-mixed-build-isolation.md) 验证普通混合构建与包重建的 LaTeX 共用沙箱入口，
-输入只读、输出分离，失败不保留当前入口旧 PDF。它是独立 spike，不是本模块的生产实现；
-该轮尚未覆盖的 Typst worker 与运行时挂载已由报告 0018 补充；完整资源树和产物探针隔离仍待实现。
-
-当前 mixed-build spike 的 Typst 编译、内省和 PDF/SVG 导出已进入独立沙箱 worker，
-见[报告 0018](../spikes/SPK-0018-typst-worker-isolation.md)与[ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。
-每次新进程不保留增量缓存；临时 JSON 不是正式存储或网络协议。
+混合构建相关阶段 0 报告只作追溯记录，不恢复已推迟的产品要求。
+LaTeX 与 Typst 的隔离证据见 [报告 0017](../spikes/SPK-0017-mixed-build-isolation.md)、
+[报告 0018](../spikes/SPK-0018-typst-worker-isolation.md) 与 [ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。
+独立 worker 的临时 JSON 不是正式存储或网络协议。
 
 PDF 产物检查使用受信调用方固定选择的 `pdf-probe` 清单，见
 [ADR 0017](../adr/ADR-0017-pdf-probe-runtime.md)：四个 Poppler 工具与字体资源在同一 OS 隔离/预算下执行，
@@ -121,6 +113,6 @@ PDF 产物检查使用受信调用方固定选择的 `pdf-probe` 清单，见
 Linux 进程树和临时目录资源护栏见 [ADR 0022](../adr/ADR-0022-process-tree-resource-limits.md)：
 缺用户 cgroup 管理能力即拒绝启动，嵌套 worker 继承上层总预算；/work 的接收检查不代替运行时磁盘配额。
 
-同语言源码 include 与宿主共享引擎原生标签空间，编号/页码从宿主最终编译获取，不能套用矢量
-组件锚点。行内 include 仅接受已声明支持的行内内容，块级/未验证内容显式拒绝；
-双宿主取证与边界见[报告 0034](../spikes/SPK-0034-native-include-fidelity.md)。
+同语言源码 include 使用本引擎的原生标签空间，编号/页码从最终整编获取；
+块级与行内 include 按各引擎已验证的能力处理，未支持内容明确诊断。
+阶段 0 双宿主取证与边界见[报告 0034](../spikes/SPK-0034-native-include-fidelity.md)。

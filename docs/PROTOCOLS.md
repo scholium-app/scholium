@@ -32,11 +32,10 @@ Envelope {
 ```text
 ApplySourceEdits {
   resource_id, base_revision,
-  editor_edits[], intent, action_boundary,
-  scope, dialect, edit_epoch, permit_id, source_write_set
+  editor_edits[], intent, action_boundary
 }
 ApplySemanticEdit { document_id, base_revision, tree_selection, edit }
-OpenSourceLens { document_id, node_id, dialect }
+OpenSourceLens { document_id, node_id } // Typst 原生项目
 PlanSourceReconcile { generation_id, edited_source }
 ConfirmSourceReconcile { plan_id, expected_revision, resolutions }
 ApplyWorkspacePatch { revisions_by_resource, patch }
@@ -49,11 +48,9 @@ PlanRevert / ConfirmRevert
 PlanCherryPick / ConfirmCherryPick
 PlanMerge / ApplyMergeResolution
 StartBuild / CancelBuild
-RequestSourceDialectSwitch { scope, expected_epoch, target_dialect }
-DrainSourceWrites { scope, edit_epoch, accepted_sequences, durable_drafts }
-ResolveSourceSwitch { switch_id, expected_epoch, resolution }
 SaveSourceDraft / PlanDraftIntegration / ConfirmDraftIntegration
 SaveProject / PlanSaveAs / ConfirmSaveAs
+PlanConvertProject / ConfirmConvertProject { plan_id, target_language, resolutions }
 PlanExport / ConfirmExport { plan_id, input_snapshot, target, packaging, draft_policy }
 ConnectSync / DisconnectSync
 ```
@@ -61,25 +58,27 @@ ConnectSync / DisconnectSync
 所有 plan/confirm 两阶段命令的 confirm 必须携带 plan id、基线 heads/revisions 和用户选定 resolution；状态变化
 后返回 PlanStale，不在旧计划上盲目执行。
 
-ApplySemanticEdit/ApplyWorkspacePatch 若写入源码、ForeignSource、宏或模板，同样携带实际写集及许可。
-不同语言的组合写集不能一次绕过语言门禁；按可恢复步骤执行并经过团队切换。普通纯语义写入无需源码许可。
+项目语言在创建/导入时固定，写命令路由到对应内核并校验权限、revision 和前置条件。
+跨语言只经转换建立新项目并返回兼容报告，不覆盖原项目；混合与团队语言切换已按
+[ADR 0041](adr/ADR-0041-separate-latex-typst-kernels.md) 推迟。文件操作见
+[项目语言、跨格式转换与文件操作](MIXED_SOURCE_EDITING.md)。
 
 ## 4. core → UI 事件
 
 ```text
+ProjectOpened { project_id, project_language, authority, capabilities }
 ResourceOpened { resource, revision, text, capabilities }
 SourceChanged { resource_id, from_revision, to_revision, editor_edits, action }
 DocumentChanged { document_id, from_revision, to_revision, semantic_delta, action }
 FocusChanged { document_id, revision, tree_cursor, ancestors, capabilities }
 GenerationChanged { binding_id, generation_id, dialect, state, source_map }
-SourceEditControlChanged { scope, active_dialect, edit_epoch, phase, pending_members }
-SourcePermitChanged { scope, actor_id, dialect, edit_epoch, permit_id, expires_at }
 DraftDurabilityChanged { draft_id, state, base_generation, integration_required }
 ExportChanged { export_id, input_snapshot, target, state, report, artifacts? }
 DurabilityChanged { action_id, state }
 DiagnosticsChanged { resource_id, revision, diagnostics }
 SymbolsChanged { index_revision, affected_resources }
 BuildChanged { build_id, input_revisions, state, diagnostics, artifact? }
+LatexPreviewChanged { input_revision, engine, paragraph_update/page_update/location/diagnostic }
 HistoryChanged { branch_id, head, actions/checkpoints delta }
 BranchChanged { branch_id, work_head, resources }
 PresenceChanged { actor_id, resource_id, anchor/selection?, ttl }
@@ -87,6 +86,8 @@ ConflictRaised { conflict_id, plan }
 SyncChanged { connection, queued_bytes, acked_sequence }
 ```
 
+LaTeX 实时适配层只暴露段落更新、页面更新、定位与诊断事件，rtex 等第三方类型不进入公共协议。
+预览与最终输出使用同一引擎，整编来源与延迟可查询。
 事件 delta 必须携带 from/to revision。前端缺少 from revision 时请求 snapshot，不猜测补丁仍可应用。
 
 ## 5. 乐观编辑与 rebase
@@ -103,29 +104,22 @@ SyncChanged { connection, queued_bytes, acked_sequence }
 
 ```text
 ClientHello { versions, project, branch, actor, permission_epoch, state_vector, capabilities }
-ServerHello { version, role, epoch, limits, snapshot_offer?, missing_ranges }
+ServerHello { version, role, permission_epoch, limits, snapshot_offer?, missing_ranges }
 UpdateBatch { first_sequence, updates[], batch_hash }
 UpdateAck { through_sequence, durable_at }
 RequestRange { actor, sequence_range }
 SnapshotOffer/Upload/Accepted
 MoveBranchRef { ref, expected_old, new_head }
 Presence { counter, resource, anchors, display }
-GetSourceEditControl / SourceEditControl
-RequestDialectSwitch / SourceSwitchDraining / SourceSwitchCommitted
-AcquireSourceWritePermit / SourceWritePermit / SourceWriteFenced
-SourceWriteBatch { scope, actor, dialect, edit_epoch, permit_id, source_write_set, updates }
-SourceDrainAck { switch_id, actor, accepted_sequences, durable_drafts }
 Error { code, retry, details }
 ```
 
 内容帧可靠且可重试；presence 可丢弃。压缩在协商后启用，解压后大小仍受限。服务器对同一 actor 的序号
 空洞请求补包，序号回退且 hash 不同视为身份冲突。
 
-涉及源码的更新必须经 SourceWriteBatch 或等价受门禁通道。服务器按资源/绑定与结构级写集验证真实写入范围，
-不能允许普通 UpdateBatch 夹带 ForeignSource 改写。先查已接受包的幂等回执，再对新包验证当前 epoch、许可、
-phase 与权限；校验和内容持久化原子完成。切换控制消息可靠且持久化，不能放到 presence 通道。
-离线/旧 epoch 的新源码包返回 SourceEpochStale 或 SourcePermitRequired，客户端保留草稿/fork，不能直接重放。
-协议方案和最小可信校验由阶段 0 验证；未支持此能力的旧客户端不能写入受保护共享分支。
+语义树与源码文本均通过 UpdateBatch 同步，服务端校验当前身份、项目/分支权限、权限 epoch、
+大小与序号，再原子持久化并 ACK；已接受的重复包返回原回执。撤权后的离线修改保留为本地 fork，
+不能重放到已撤权分支。presence 不承载可靠内容或权限状态。
 
 ## 7. 错误模型
 
@@ -133,9 +127,8 @@ phase 与权限；校验和内容持久化原子完成。切换控制消息可�
 不进入跨网络错误。主要类别：InvalidInput、StaleRevision、Conflict、PermissionDenied、QuotaExceeded、
 Unavailable、CorruptData、Unsupported、Internal。
 
-新增稳定错误：SourceEpochStale、SourceDialectMismatch、SourcePermitRequired、SourceSwitchInProgress、
-SourceWriteSetMismatch、DraftIntegrationRequired、ForeignDependencyMissing、MixedLayoutConflict、
-ReferenceBridgeNonConvergent、ExportUnresolved。返回可重试/需合入/需修复信息，不丢弃原输入。
+草稿合入与导出另有 DraftIntegrationRequired、ExportUnresolved 等稳定错误，
+返回可重试/需合入/需修复信息，不丢弃原输入。
 
 ## 8. 版本兼容
 

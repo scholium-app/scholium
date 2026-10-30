@@ -2,9 +2,10 @@
 
 > 本文件定义**交付与出口条件**（计划）；**进度与出口条件的当前判定见[报告 0012](../spikes/SPK-0012-exit-criteria.md)**，
 > 各阶段的时点状态叙述见 [log/stage0-progress.md](../log/stage0-progress.md)。
-路线按产品风险推进。首先验证结构编辑、源码 reconcile、团队单一源码语言和全范围混合构建，随后尽早完成
-打开—编辑—保存—重开—双目标输出闭环。团队语言限制不是编译限制，混用范围不能缩减为公式/图像。
-产品要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md)，实现方案仍待验证。
+路线按产品风险推进。阶段 0 已验证结构编辑、源码 reconcile、CRDT、构建恢复等否决性风险；此后 Typst 内核
+先完成打开—编辑—保存—重开—输出闭环，LaTeX 内核按 [LaTeX 工作区计划](LATEX_WORKSPACE.md) 评估后并行推进。
+依据 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)，项目语言固定、不在项目内混用；
+要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md)。
 
 ## 阶段 0：七项否决性验证（工期由验证范围重估）
 
@@ -87,6 +88,8 @@
 - 标准目标包与混合重建包在声明的干净环境可构建，无法支持的组合被准确阻断。
 
 > **以上共 10 条。** 当前逐条判定和最新复测只见[报告 0012](../spikes/SPK-0012-exit-criteria.md)。
+> 按 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)，交付第 6、7 项（团队语言协调、混合构建）及其对应的
+> 语言互斥、混用夹具、跨宿主引用与混合包 4 条出口条件，证据保留为追溯记录，不再约束后续阶段。
 > 自动门禁修复历史见[报告 0015](../spikes/SPK-0015-verification-review.md)；历史通过数不替代当前出口判定。
 
 任何一项失败都先改架构，不得用空 crate 宣称阶段完成。每项产出 ADR、可复现命令和失败数据。
@@ -109,33 +112,31 @@ shared SDG adapter 验证树身份、结构并发与 actor undo。面向不可�
 
 出口：用户不打开源码即可完成一页含中英文和公式的笔记；点击预览定位、光标、IME、保存、强杀恢复
 全部通过；所有共享正文写入均产生 Action，未提交源码草稿也有独立持久化记录。
-同时提供最小 Source Studio：`.tex/.typ` 打开、同格式保存、语法错误保存、外部冲突、单机语言控制及
-受支持子集的两种源码/PDF 输出。暂不要求完整模板混用覆盖；这一阶段不能宣称全范围混用已交付。
+同时提供 Typst 内核的最小 Source Studio：`.typ` 打开、同格式保存、语法错误保存、外部冲突及 PDF 输出。
+LaTeX 工作区的 L0 评估可与本阶段并行，不进入本阶段出口。
 
 ## 阶段 2：Liii 式高效输入与文档结构
 
 实现文本/数学/命令模式、焦点工具栏、`\` 命令补全、Tab 槽位与符号循环、乐高符号、结构变体、
 结构导航/搜索；加入列表、定理、证明、矩阵、多行公式、表格、图片、题注、label/ref/cite、脚注和代码块。
 
-出口：完成 `EXPERIENCE.md` 中结构输入与导航的验收脚本；源码混用和团队脚本归后续阶段。
-不用源码写出含定理、矩阵、图表、交叉引用和文献的短论文；每个工具栏操作都可撤销且有两种目标能力状态。
+出口：完成 `EXPERIENCE.md` 中结构输入与导航的验收脚本；源码与团队脚本归后续阶段。
+不用源码写出含定理、矩阵、图表、交叉引用和文献的短论文；每个工具栏操作都可撤销。
 
-## 阶段 3：完整 Source Studio、混合项目与双目标输出
+## 阶段 3：LaTeX 工作区、完整 Source Studio 与跨格式转换
 
-完善 format、latex、typst、markdown、bib adapters 和 Source Studio；实现 source lens、reconcile、持久草稿、
-Raw/ForeignSource、宏/模板作用域、跨组件引用与有界多轮构建。完成混合项目保存重开、双格式另存为、
-标准目标包/混合重建包以及两种后端的最终 PDF，不把核心格式交换推迟到产品化阶段。
+完成 [LaTeX 工作区计划](LATEX_WORKSPACE.md) 的 L1–L2：LaTeX 内核的打开—编辑—同引擎预览—导出闭环、定位与诊断。
+完善 Typst 内核的 Source Studio：source lens、reconcile、持久草稿与 Raw。完善 format、latex、typst、markdown、
+bib adapters，实现 LaTeX ↔ Typst 一次性转换与跨格式另存为，不把核心格式交换推迟到产品化阶段。
 
 出口：
 
-- 原生项目可在 LaTeX/Typst source lens 修改支持子集并回到视觉视图。
-- 现有 `.tex/.typ` 项目可原地源码编辑；可逆区域能在视觉视图修改且未触及字节不变。
-- LaTeX ↔ Typst 转换逐节点报告 Exact/Equivalent/Raw/Degraded/Dropped。
-- 选择 LaTeX 发布时快速预览与最终预览后端标识清楚，不冒充一致；两种引擎可按依赖并行。
-- 正文、跨页表格、宏、模板、双向引用分别有通过两种宿主的真实项目；保存重开保住原文/依赖/草稿。
-- 另存为创建独立目标项目，导出不改变编辑语言；同一快照的两种目标报告编辑性、依赖和保真度。
-- 缺组件、模板冲突、引用不收敛阻止正式输出；标准包与混合包按声明在干净环境验证。
-- 未覆盖的语言/模板组合有兼容矩阵和错误，不以 Raw 原文保留宣称支持。
+- 原生项目可在 Typst source lens 修改支持子集并回到视觉视图。
+- 现有 `.typ` 项目可原地源码编辑；可逆区域能在视觉视图修改且未触及字节不变。
+- 现有 `.tex` 项目可原地源码编辑，预览由项目自身引擎产生并与命令行构建一致；完成 LaTeX 工作区 L1–L2 出口。
+- LaTeX ↔ Typst 转换逐节点报告 Exact/Equivalent/RawPreserved/Degraded/Dropped，目标工具链构建通过。
+- 另存为创建独立目标项目，导出不改变当前项目及其语言；不可转换内容被准确降级或阻止导出。
+- 未覆盖的宏/模板组合有兼容矩阵和错误，不以 Raw 原文保留宣称支持。
 
 ## 阶段 4：非线性历史
 
@@ -143,18 +144,16 @@ Raw/ForeignSource、宏/模板作用域、跨组件引用与有界多轮构建�
 结构 diff 与语义冲突检测。视觉动作和源码动作在同一时间线展示。
 
 出口：远端动作穿插模拟下只撤本人操作；从历史分叉、视觉/源码分别修改、合并后可重启复现同一结果；
-无法可靠 revert 的动作明确标记 non-revertible。语言 epoch 不随 undo/merge 回退；涉及源码的历史操作重新
-取得当前语言许可，两种语言的组合变更按可恢复步骤处理。
+无法可靠 revert 的动作明确标记 non-revertible。两个内核共用同一历史模型，LaTeX 项目的源码动作同样可回退。
 
-## 阶段 5：团队协作与语言切换产品化
+## 阶段 5：团队协作产品化
 
 实现 sync-server、鉴权、角色、邀请、共享树/文本 update、快照、presence、断线队列和撤权后的本地 fork。
-实现阶段 0 已验证的语言协调、写集校验、持久控制记录、许可、drain/隔离及草稿恢复交互。
-协作者可同时查看视觉与两种源码视图，但同一共享项目分支只能有一种源码语言可写。
+同时覆盖两个内核：Typst 原生项目共享树与文本，源码项目（`.typ`/`.tex`）共享文本。项目语言固定，没有语言切换协议。
 
 出口：三端在线/离线交替编辑最终收敛；视觉与源码协作产生 Raw 时双方收到诊断；服务器重启、重复/乱序
-消息不丢不重；viewer 无法写。两位同语言源码编辑者和视觉编辑者可协作；竞争切换、掉线、旧 epoch、
-外部修改、混合语义写集、服务重启都无法绕过语言限制。离线源码进入草稿/fork，重连合入流程不丢输入。
+消息不丢不重；viewer 无法写。两位源码编辑者和视觉编辑者可协作；LaTeX 项目多人编辑时各自预览跟随本地
+revision。离线修改重连后不丢输入。
 
 ## 阶段 6：扩展导出与产品化
 
@@ -166,15 +165,15 @@ Raw/ForeignSource、宏/模板作用域、跨组件引用与有界多轮构建�
 
 ## 阶段 6a：Pi agent 与 MCP
 
-依赖阶段 3 的源码合约、阶段 4 的历史及阶段 5 的权限与语言门禁；按 [组织计划](EXTENSION_ORGANIZATION.md)提取无 UI 依赖的 session。随后通过可选外部进程适配器直接接入 Pi agent，验证会话映射、流式事件、工具桥接、取消、预算和统一错误；不将 Pi 误作 provider 接口。AI 输出只能先形成带 snapshot revision 的 proposal，经预览确认或用户显式配置的项目授权策略，并通过 session 的 Action 校验后写入。
+依赖阶段 3 的源码合约、阶段 4 的历史及阶段 5 的权限；按 [组织计划](EXTENSION_ORGANIZATION.md)提取无 UI 依赖的 session。随后通过可选外部进程适配器直接接入 Pi agent，验证会话映射、流式事件、工具桥接、取消、预算和统一错误；不将 Pi 误作 provider 接口。AI 输出只能先形成带 snapshot revision 的 proposal，经预览确认或用户显式配置的项目授权策略，并通过 session 的 Action 校验后写入。
 
-提供可选 MCP server，让其他 agent 通过只读资源和显式 mutation tools 调用 Scholium；stdio 与 Streamable HTTP 都经过同一认证、能力、超时、幂等、审计和 epoch 门禁。MCP/AI 不能获得原始文件、shell、CRDT 或 WAL 权限。交付物、夹具和出口见 [AI 与 MCP 扩展设计](AI_MCP.md)。
+提供可选 MCP server，让其他 agent 通过只读资源和显式 mutation tools 调用 Scholium；stdio 与 Streamable HTTP 都经过同一认证、能力、超时、幂等、审计和权限门禁。MCP/AI 不能获得原始文件、shell、CRDT 或 WAL 权限。交付物、夹具和出口见 [AI 与 MCP 扩展设计](AI_MCP.md)。
 
 ## 阶段 6b：WIT/WASM 组件插件
 
 依赖阶段 3–5 的源码、历史与权限合约。以 WebAssembly Component Model + WIT 建立跨平台、跨语言插件 ABI，先支持格式/诊断/转换等无副作用组件，再支持受限任务和 Action proposal。插件通过稳定 snapshot/proposal/task/resource world 与宿主交互，默认拒绝文件、网络和写入能力；桌面宿主优先验证 WASI 能力、资源隔离、fuel/内存/时间上限、取消、崩溃恢复和版本兼容。浏览器组件运行时及 Worker 路径单独探索，不作为桌面首版插件出口。
 
-插件包须携带签名、WIT world hash、权限声明和迁移信息，返回值经过与 AI/MCP 相同的 revision、写集、语言 epoch 和语义校验。完整市场、远程下载、自动更新和任意网络不属于首个插件出口。设计与验证顺序见 [WASM 插件与 WIT 组件计划](WASM_PLUGINS.md)。
+插件包须携带签名、WIT world hash、权限声明和迁移信息，返回值经过与 AI/MCP 相同的 revision、写集和语义校验。完整市场、远程下载、自动更新和任意网络不属于首个插件出口。设计与验证顺序见 [WASM 插件与 WIT 组件计划](WASM_PLUGINS.md)。
 
 ## 依赖关系
 
@@ -182,16 +181,18 @@ Raw/ForeignSource、宏/模板作用域、跨组件引用与有界多轮构建�
 否决性验证
   └─ 最小编辑、保存与格式交换闭环
        └─ 高效输入与文档结构
-            ├─ Source Studio 与混合输出 ── 扩展导出与产品化 ── AI/MCP 与 WIT/WASM 插件
-            └─ 非线性历史 ─────────── 团队协作与语言切换
+            ├─ LaTeX 工作区、Source Studio 与跨格式转换 ── 扩展导出与产品化 ── AI/MCP 与 WIT/WASM 插件
+            └─ 非线性历史 ─────────── 团队协作
+
+LaTeX 工作区 L0 评估（与阶段 1 并行）──┘ 进入阶段 3
 ```
 
-团队协作还依赖 Source Studio 与混合输出的源码写集/草稿/组件合约；最终产品化依赖两条路径全部验收。
+团队协作还依赖阶段 3 的源码草稿合约；最终产品化依赖两条路径全部验收。
 
-旧的 28–37 周总估算不再适用。团队语言协调与完整范围混用增加了关键路径；阶段 0 后根据团队配置、
-模板/桥接矩阵和性能数据分别估算各阶段，当前不承诺新日期。阶段 1 交付最小可保存/交换版本，阶段 3
-交付完整混合项目与双目标输出，阶段 5 交付团队协作。CAS、独立绘图工具仍在范围外。AI 与插件执行不进入阶段 0 的否决性验证，必须在核心编辑、历史、协作和安全边界稳定后按独立 spike 引入；
-已有 LaTeX/Typst 绘图代码作为混合内容受支持，与新增绘图工具不是同一要求。
+旧的 28–37 周总估算不再适用。ADR 0041 移除了团队语言协调与混合构建两条关键路径，新增 LaTeX 内核；
+阶段 0 后根据 LaTeX 评估与性能数据分别估算各阶段，当前不承诺新日期。阶段 1 交付 Typst 内核的最小可保存版本，
+阶段 3 交付 LaTeX 工作区与跨格式转换，阶段 5 交付团队协作。CAS、独立绘图工具仍在范围外。AI 与插件执行不进入阶段 0 的否决性验证，必须在核心编辑、历史、协作和安全边界稳定后按独立 spike 引入；
+已有 LaTeX/Typst 绘图代码在其所属语言的项目内受支持，与新增绘图工具不是同一要求。
 
 ## 每阶段完成定义
 
@@ -205,6 +206,6 @@ Raw/ForeignSource、宏/模板作用域、跨组件引用与有界多轮构建�
 
 ## 全栈与 WASM 验证补充
 
-阶段 0 的相应 spike 按[全栈候选](TECH_STACK.md)增加 CRDT Loro → Yrs → Automerge、本地存储 SQLite/rusqlite → redb、LaTeX TeX Live → Tectonic 比较，并采用[Mogan 调研](../research/MOGAN_LATEX.md)中的独立转换/模板夹具。GUI 顺序不变。
+阶段 0 的相应 spike 按[全栈候选](TECH_STACK.md)增加 CRDT Loro → Yrs → Automerge、本地存储 SQLite/rusqlite → redb、LaTeX TeX Live → Tectonic 比较（LaTeX 实时预览另按 [LaTeX 工作区计划](LATEX_WORKSPACE.md) 评估 rtex），并采用[Mogan 调研](../research/MOGAN_LATEX.md)中的独立转换/模板夹具。GUI 顺序不变。
 
 尽早运行原生与 WASM 共享核心测试；浏览器 smoke、Typst Worker、持久化/预览适配按[WASM 计划](WASM.md)逐项报告。选型前必须披露 WASM 阻塞依赖；完整浏览器发行与 LaTeX 本地 WASM 后端仍为待验证范围，不能将网页演示作为原生编辑器验收。

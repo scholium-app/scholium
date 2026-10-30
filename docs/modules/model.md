@@ -49,14 +49,12 @@ src/
 Unicode byte/UTF-16 转换边界、路径逃逸、patch overlap、IR raw 保留、schema 向前读取、所有 public
 enum round-trip。该 crate 目标行覆盖率不低于 90%。
 
-## 团队源码语言与混合项目合约
+## 项目语言合约
 
-新增 SourceEditControl、SourceWritePermit、SourceWriteSet、SourceDraft、ForeignSource、LayoutProfile 和
-ExportRequest 的领域 DTO；具体字段见 [数据模型](../DATA_MODEL.md)。AuthorityMode 不再携带 publish_target。
-控制 epoch 不进入正文 CRDT/可回退历史；组件原文引用唯一资源。纯语义与源码写集必须可区分，不能信任 UI 标签。
-能力报告分别描述保真度、执行途径、编辑性、可移植性及 unresolved 原因。新增写集/schema/引用合约测试。
-
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
+本模块为共享身份、项目元数据与诊断提供稳定 DTO；SDG 类型属于 Typst 内核，两个内核不共享文档模型。
+ProjectLanguage 在创建/导入时固定为 Typst 或 LaTeX，AuthorityMode 描述该语言允许的权威形态。
+跨语言只经转换 IR、目标生成与逐节点报告；混合组件与团队语言切换已推迟，字段见 [数据模型](../DATA_MODEL.md)。
+共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。
 
 ## 基础段落接入边界
 

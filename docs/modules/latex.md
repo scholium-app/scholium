@@ -2,8 +2,8 @@
 
 ## 职责
 
-提供容错、无损 LaTeX token/CST，项目 include graph，符号与引用索引，常用论文子集到 SDG/IR 的投影，
-SDG 稳定生成、生成源码 reconcile、语义编辑降级为最小源码 patch，以及 TeX 日志位置解析。
+提供容错、无损 LaTeX token/CST，项目 include graph，符号与引用索引，常用论文子集到转换 IR 的投影、
+IR 到 LaTeX 的导出生成、语义编辑降级为最小源码 patch、TeX 日志位置解析与实时预览适配。
 
 ## 非职责
 
@@ -21,8 +21,8 @@ src/
 ├── symbols.rs      label/ref/cite/command/environment 定义与使用
 ├── semantics.rs    常见命令/环境 capability
 ├── projection.rs   CST → IR + coverage
-├── generate.rs     SDG/IR → LaTeX + package requirements
-├── reconcile.rs    generated CST diff → SemanticPatch
+├── generate.rs     转换 IR → LaTeX + package requirements
+├── preview.rs      实时引擎适配与事件转换
 ├── edit.rs         rename/insert/wrap/math patch
 └── log.rs          TeX log → Diagnostic
 ```
@@ -58,7 +58,7 @@ lexer 不展开 catcode；首发假定常见 LaTeX catcode 语义。遇到可能
 - `project(cst, selection) -> Projection { ir, coverage, diagnostics }`。
 - `generate(ir, profile) -> GeneratedArtifact + PackageRequirements`。
 - `lower_edit(cst, SemanticEdit) -> PatchResult`；每个 patch 携带 precondition hash。
-- `reconcile(generation, edited_source) -> ReconcilePlan`；`parse_log(text) -> Vec<Diagnostic>`。
+- `parse_log(text) -> Vec<Diagnostic>`；预览适配层输出段落更新、页面更新、定位与诊断事件。
 
 ## 不变量
 
@@ -82,14 +82,13 @@ lexer 不展开 catcode；首发假定常见 LaTeX catcode 语义。遇到可能
 真实论文夹具、嵌套组、注释吞换行、escaped percent、数学 delimiter、verbatim、自定义环境、损坏输入、
 catcode 警告、include 循环、动态路径、label rename 和 log 映射。fuzz 要求不 panic 且 token 全覆盖。
 
-## 团队源码语言与混合项目合约
+## 项目语言合约
 
-新增 ForeignSource 的 LaTeX 组件入口、宏/模板作用域、依赖闭包与符号导入/导出描述；编译由 build 执行。
-LaTeX 主入口引用 Typst 组件需显式绑定与生成资源，不能直接拼入 Typst 语法。原文持久保存，动态路径 unresolved。
-支持的跨引擎宏/参数桥接输出声明式合约，不运行任意宏推断参数。模板全局副作用只能在声明宿主/章节范围生效。
-新增混合正文、跨页表格、自定义宏、模板、双向引用及标准工具链包的真实夹具，未支持组合给明确诊断。
-
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
+本模块属于 LaTeX 内核，创建/导入时固定项目语言，以 .tex 源码为权威；预览与最终输出使用同一 LaTeX 引擎。
+实时预览适配层以 LuaLaTeX + rtex 为候选（待评估），对上只暴露段落更新/页面更新/定位/诊断事件；pdfLaTeX/XeLaTeX 标明整编预览。
+引擎与常驻管道须经 build 的 OS 沙箱、运行时白名单及资源预算约束，未隔离不得接入。
+跨语言只经转换或导出及逐节点报告；混合组件、跨引擎桥接与团队语言切换已推迟。
+共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。
 
 ## 候选与参考实现
 

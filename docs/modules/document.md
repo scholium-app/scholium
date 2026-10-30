@@ -2,7 +2,7 @@
 
 ## 职责
 
-维护原生项目的 Semantic Document Graph，定义结构节点、固定槽位、TreeCursor/Selection、焦点与 capability，
+维护 Typst 原生项目的 Semantic Document Graph，定义结构节点、固定槽位、TreeCursor/Selection、焦点与 capability，
 验证并应用 SemanticEdit，管理 StructuredAuthority/SourceAuthority 绑定和源码 reconcile。
 
 ## 非职责
@@ -32,7 +32,7 @@ denominator，Script 固定 base/sub/sup，Figure 固定 body/caption，Theorem 
 sequence slot，禁止调用方按裸 child index 猜语义。
 
 文本存在 Text leaf；结构边存在 CRDT sequence；引用以目标 label/resource 的稳定关系表达。Raw 节点保存方言、
-原源码、作用域和 fallback，不允许视觉操作穿透未知语义；可运行混合组件另用 ForeignSource 与显式作用域合约。
+原源码、作用域和 fallback，不允许视觉操作穿透未知语义；同方言无损保留，跨方言导出降级或阻止输出。
 
 ## 公共接口
 
@@ -40,7 +40,7 @@ sequence slot，禁止调用方按裸 child index 猜语义。
 - `plan_edit(revision, selection, SemanticEdit) -> DocumentPatch`。
 - `apply_patch` 只由 collab transaction adapter 调用。
 - `navigate(cursor, Direction/StructuralDirection) -> TreeCursor`。
-- `source_lens(node, dialect) -> GeneratedFragment + SourceMap`。
+- `source_lens(node) -> GeneratedFragment + SourceMap`（Typst 方言）。
 - `plan_reconcile(binding, edited_source) -> ReconcilePlan`。
 - `validate(graph) -> Vec<InvariantViolation>`，发布构建前不得有 fatal violation。
 
@@ -67,14 +67,12 @@ sequence slot，禁止调用方按裸 child index 猜语义。
 每种节点 schema、结构导航、空槽、嵌套选区、焦点能力、wrap/unwrap、variant cycle、矩阵行列、Raw 边界、
 source lens 与 reconcile。随机 SemanticEdit 后 graph invariant 始终成立。
 
-## 团队源码语言与混合项目合约
+## 项目语言合约
 
-管理 ForeignSource 的内容/宏定义/模板作用域、原文资源引用与导入/导出符号，不负责运行组件。
-plan_edit/plan_reconcile 返回实际源码写集；修改原文、宏、模板的视觉操作也需团队许可，纯语义正文不受语言门禁。
-共享生成草稿只有活动语言可写；私有草稿独立持久化并带原基线。切换后重建 generation，旧草稿不能覆盖新正文。
-新增组件 scope、交叉引用、语义命令绕过门禁、草稿重定位和模板冲突测试。
-
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
+本模块属于 Typst 内核，维护原生 SDG 权威内容及 Typst 源码绑定；项目语言在创建/导入时固定。
+Raw 同方言保留，跨方言导出降级或阻止输出；跨语言只经转换 IR 与逐节点报告建立新项目。
+混合组件与团队语言切换已推迟；保留源码草稿、reconcile 与同语言协作约束。
+共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。
 
 ## 阶段 0 验证核心的选区合约
 

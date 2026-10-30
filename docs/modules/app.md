@@ -2,7 +2,7 @@
 
 ## 职责
 
-提供桌面壳、页面式结构编辑器、Source Studio、焦点/模式工具栏、双后端预览、项目树、大纲、引用面板、
+提供桌面壳、页面式结构编辑器、Source Studio、焦点/模式工具栏、项目引擎预览、项目树、大纲、引用面板、
 历史时间线、冲突解决、协作 presence、命令系统、设置和 core session 编排。
 
 ## 非职责
@@ -260,7 +260,7 @@ revision 交付。
 - Workspace：文件树、搜索、依赖与资源状态。
 - Visual Editor：即时排版树、文本/数学模式、槽位、焦点工具栏、远端光标。
 - Source Studio：LaTeX/Typst/Markdown/BibTeX 源码、生成状态、诊断和 reconcile preview。
-- Preview：Typst 快速预览、LaTeX/Typst 最终预览、源映射、后端与 stale 标志。
+- Preview：项目语言对应引擎的预览与最终结果、源映射、实时/整编来源与 stale 标志。
 - Outline/Citations：符号导航、引用插入、跨文件重命名。
 - Timeline：Action、checkpoint、branch、diff、revert/cherry-pick。
 - Merge/Recovery：三方内容、语义诊断、逐冲突决议、恢复报告。
@@ -285,7 +285,7 @@ revision 交付。
   槽位上下文通过独立 polite live 节点变化通知，保持正文 Text 偏移与编辑操作不受播报文本影响。
 - 每个写命令包含 base revision 和 request id。
 - 过期事件可识别并丢弃；不能用到达顺序推断新旧。
-- 源码组合输入未结束时不得提交或重建草稿、切换草稿所属成员/语言；结束事件先交还原编辑器，
+- 源码组合输入未结束时不得提交或重建草稿、切换草稿所属成员/项目；结束事件先交还原编辑器，
   同帧不能改变归属。UI 禁用之外，提交入口也必须拒绝预编辑内容。
 - viewer 在前端只读，同时 core 也拒绝写命令。
 - 关闭窗口前确认 WAL durable；无需等待慢构建。
@@ -294,7 +294,7 @@ revision 交付。
 
 - core 返回 `Rebased`/`Rejected` 时，UI 必须应用 authoritative range/snapshot，不能清空全部 pending 或自行猜测补丁。
 - `PlanStale` 或 precondition 失败时重新规划；冲突进入冲突预览，不静默选一侧。
-- 许可失效、离线或无写权限的源码输入转本地草稿/fork，并明确提示未上传的数据量。
+- 离线或无写权限的源码输入转本地草稿/fork，并明确提示未上传的数据量。
 - 构建或导出失败保留原项目与上次成功产物；编辑不被阻塞，失败原因可定位。
 - 会话崩溃或强杀后走 storage 的恢复计划，不自动"修复"正文。
 - 前端不得重试写命令绕过 session；viewer 的写命令在 UI 与 core 两侧都被拒绝。
@@ -304,15 +304,12 @@ revision 交付。
 命令路由、乐观编辑 rebase、IME、多光标、10 万行、窗口重载、stale diagnostics、只读权限、时间线与
 冲突流程。端到端覆盖编辑—WAL—文件、构建预览和两客户端同步。
 
-## 团队源码语言与混合项目合约
+## 项目语言合约
 
-ProjectSession 持有活动语言控制投影、许可、草稿与切换状态。源码可写性由 core/协调者验证，UI 只反映状态。
-RequestSourceDialectSwitch 展示待冲刷成员、超时隔离和草稿处置；编辑异语言组件、宏、模板时走同一入口。
-源码语言、排版 profile、单次导出目标是独立控件；导出不切换语言。保存/另存为/导出区别见专项合约。
-离线源码输入标明草稿/fork，重连请求合入；语法错误照常保存。导出明确草稿政策和标准/混合包依赖。
-新增三人同语言/视觉协作、切换期间 IME、模板冲突、异语言只读与双目标输出端到端测试。
-
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
+窗口壳、命令注册表、i18n 与诊断面板属于共享底座，按创建/导入时固定的项目语言装配内核。
+保存权威正文与草稿；跨语言只经「转换为…」建立新项目并展示兼容报告，导出生成副本。
+混合编辑与团队语言切换已推迟；源码错误、离线草稿和同语言多人协作沿用现有恢复与权限规则。
+共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。
 
 ## 已删除的旧页面编辑器
 

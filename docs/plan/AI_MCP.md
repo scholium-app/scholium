@@ -1,10 +1,10 @@
 # AI 与 MCP 扩展设计（计划）
 
-本文定义 Scholium 接入 Pi agent 以及 MCP 的边界。它属于阶段 6a，依赖阶段 3 的源码合约、阶段 4 的历史及阶段 5 的权限与语言门禁，不改变阶段 0 的出口条件；在进入实现前必须以 ADR 固化协议、凭据存储和审计策略。
+本文定义 Scholium 接入 Pi agent 以及 MCP 的边界。它属于阶段 6a，依赖阶段 3 的源码合约、阶段 4 的历史及阶段 5 的权限合约，不改变阶段 0 的出口条件；在进入实现前必须以 ADR 固化协议、凭据存储和审计策略。
 
 ## 目标与边界
 
-Scholium 允许用户选择本地或远程 AI 服务，也允许其他 agent 通过 MCP 调用受控的 Scholium 能力。AI 只能通过公开的 agent/tool 合约读取项目或提交语义 Action；它不能直接改写 CRDT、WAL、源码文件或绕过团队源码语言 epoch。默认不上传文档，网络、模型和数据范围由用户逐次或按项目策略授权。
+Scholium 允许用户选择本地或远程 AI 服务，也允许其他 agent 通过 MCP 调用受控的 Scholium 能力。AI 只能通过公开的 agent/tool 合约读取项目或提交语义 Action；它不能直接改写 CRDT、WAL、源码文件或绕过项目权限。默认不上传文档，网络、模型和数据范围由用户逐次或按项目策略授权。
 
 Pi 指用户直接接入的 Pi agent，不是 Provider Interface。第一版优先通过可选的外部进程适配器接入 Pi；具体发行来源、版本、启动命令、RPC/事件协议和许可证必须在 spike 中核实并锁定，不假定它原生支持 MCP。模型选择及对模型服务的调用由 Pi 管理，Scholium 负责上下文范围、工具权限、会话映射、取消、超时和结果校验。
 
@@ -33,7 +33,7 @@ AI 返回的编辑建议先作为 proposal，带 snapshot revision、来源、�
 
 Scholium 提供一个可选的 MCP server。第一版只暴露只读资源和显式 mutation tools：读取当前选择/诊断/格式能力、渲染或构建预览、提出结构编辑、提交已确认的 Action、查询任务状态。工具名称、输入输出 schema、错误码和版本号由 Scholium 维护；MCP session 不获得文件系统、shell、任意网络或原始数据库权限。
 
-mutation tool 默认 `preview`，必须携带项目 ID、base revision 和幂等 key；actor 由认证会话绑定，源码写入另需有效语言 epoch 与许可；提交时再次检查 revision、权限、写集和冲突。长任务使用 task handle、进度事件和取消，不让 MCP 请求阻塞 UI。远程 MCP client 通过明确配置的 HTTP 监听地址、认证和来源白名单接入；本地 stdio 也必须经过同一授权层。
+mutation tool 默认 `preview`，必须携带项目 ID、base revision 和幂等 key；actor 由认证会话绑定，提交时再次检查 revision、权限、写集和冲突。长任务使用 task handle、进度事件和取消，不让 MCP 请求阻塞 UI。远程 MCP client 通过明确配置的 HTTP 监听地址、认证和来源白名单接入；本地 stdio 也必须经过同一授权层。
 
 首个 MCP 交付方向是 Scholium 作为 server，供其他 agent 调用。Scholium 作为通用 MCP client 不列入首个出口。Pi 接入通过其经验证的工具协议桥接 session；是否经由 MCP 取决于锁定版本实际能力，不增加强制依赖。
 
@@ -51,7 +51,7 @@ MCP 传输采用 stdio 优先，远程使用经验证的 Streamable HTTP；不�
 
 1. **Pi integration spike**：锁定 Pi 发行来源、版本和协议，验证真实进程的启动、会话映射、流式事件、工具桥接、取消、崩溃和重新连接。用协议录制/替身覆盖离线回归，但替身不能替代真实 Pi 验收；验证默认工具和配置无法绕过授权。
 2. **AI proposal spike**：对结构编辑、源码诊断和引用建议验证 snapshot/revision、预览、接受/拒绝、撤销和敏感内容遮蔽。
-3. **MCP loopback spike**：stdio 与本地 Streamable HTTP 各跑一套 schema/认证/超时/取消/幂等/epoch 冲突夹具；验证只读与 mutation 的权限隔离。
+3. **MCP loopback spike**：stdio 与本地 Streamable HTTP 各跑一套 schema/认证/超时/取消/幂等/权限冲突夹具；验证只读与 mutation 的权限隔离。
 4. **多 agent 并发与远程模型**：再验证并发调用、断线恢复、预算、速率限制、审计留痕和用户可见授权；通过后才进入产品化 UI。
 
-出口要求：任何 AI/MCP 写入都可追溯到普通 Action；旧 revision、错误 epoch、无权限 actor 和超出 context 的请求均被拒绝；离线时核心编辑和已有源码工作流仍可用。
+出口要求：任何 AI/MCP 写入都可追溯到普通 Action；旧 revision、无权限 actor 和超出 context 的请求均被拒绝；离线时核心编辑和已有源码工作流仍可用。

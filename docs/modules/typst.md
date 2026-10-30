@@ -142,22 +142,20 @@ SceneStats 记录 built/reused/source_reads/elapsed，不能作为物理刷新�
 所有 SDG 节点生成、数学/中文/字体、SourceMap、生成源码局部编辑 reconcile、Raw 动态代码、编译诊断、
 缓存失效和旧 revision 淘汰。与锁定 Typst 版本的 golden 结果分开保存。
 
-## 团队源码语言与混合项目合约
+## 项目语言合约
 
-新增 Typst ForeignSource 的作用域、参数/结果、模板及符号桥接描述。动态代码可在受控 Typst 组件中执行，
-执行结果不反推可逆语义图；跨到 LaTeX 由 build 选择已验证载体与装配策略。
-Typst 主入口引用 LaTeX 组件使用显式绑定/预生成资源，不把 preamble 当 Typst 代码。编译 API 由 build 的沙箱
-worker 调用，不能在 core 中绕过取消、内存和网络策略。新增正文/模板/引用及载体能力兼容测试。
-
-共同要求见 [混合源码与团队编辑](../MIXED_SOURCE_EDITING.md) 与 [ADR 0001](../adr/ADR-0001-mixed-source-team-editing.md)。
+本模块属于 Typst 内核，支持 SDG 权威的原生结构项目与 .typ 源码项目；项目语言在创建/导入时固定。
+Typst 同时负责预览与最终输出，动态代码保留 RawTypst，受控编译不反推可逆语义。
+跨语言只经转换或导出及逐节点报告；混合组件、跨引擎桥接与团队语言切换已推迟。
+共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。
 
 ## WASM 验证边界
 
 官方 Rust syntax 与编译引擎作为候选；纯语法和投影优先移植。浏览器编译另测 Worker、版本 features、字体、包资源、缓存、内存与取消；World 通过宿主注入声明资源，不能直接依赖本机文件系统，也不能因为引擎使用 Rust 就宣称 WASM 已可用。见[全栈候选](../plan/TECH_STACK.md)及[WASM](../plan/WASM.md)。
 
-当前 mixed-build spike 的 Typst 编译、内省和 PDF/SVG 导出已进入独立沙箱 worker，
-见[报告 0018](../spikes/SPK-0018-typst-worker-isolation.md)与[ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。
-每次新进程不保留增量缓存；临时 JSON 不是正式存储或网络协议。
+阶段 0 独立沙箱 worker 的编译、内省与导出证据见
+[报告 0018](../spikes/SPK-0018-typst-worker-isolation.md)与[ADR 0012](../adr/ADR-0012-typst-worker-isolation.md)。
+其中混合构建只作追溯，已按 ADR 0041 推迟；临时 JSON 不是正式存储或网络协议。
 
 `spawn_with_wake` 的回调在编译/页面事件入队后通知宿主重绘，不能阻塞工作线程。
 输入队列通过通道唤醒线程，无输入时阻塞等待；丢弃句柄关闭通道，不在 UI 线程 join。
