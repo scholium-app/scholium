@@ -8,6 +8,10 @@ use crate::{
 use scholium_model::NodeId;
 
 impl EditorSession {
+    fn excerpt_near(&self, leaf: NodeId) -> Option<String> {
+        diagnostics::excerpt(&self.core.paragraph_text(leaf)?)
+    }
+
     /// Every current problem, most serious first. Locations are leaf identities, so a
     /// diagnostic keeps pointing at its text while the picture is re-laid out.
     pub(super) fn problems(&self, state: &WorkspaceState) -> Vec<Diagnostic> {
@@ -53,7 +57,11 @@ impl EditorSession {
         }
         for target in &self.overflows {
             let found = Diagnostic::new(Severity::Warning, "diag.formula_overflow");
-            list.push(found.at(*target, self.excerpt_near(target.node)));
+            let at = Target {
+                node: target.node,
+                byte: target.byte,
+            };
+            list.push(found.at(at, self.excerpt_near(target.node)));
         }
         let caret = self
             .scene
@@ -67,45 +75,6 @@ impl EditorSession {
             let found = Diagnostic::new(Severity::Warning, "diag.caret_missing");
             list.push(found.at(at, self.excerpt_near(at.node)));
         }
-    }
-
-    /// Start of the paragraph holding `leaf`, for the panel's rows.
-    fn excerpt_near(&self, leaf: NodeId) -> Option<String> {
-        let leaves = input::leaves(&self.snapshot);
-        let block = leaves.iter().find(|l| l.id == leaf)?.block;
-        let of_block = || leaves.iter().filter(move |l| l.block == block);
-        let body: String = of_block().filter(|l| !l.math).map(|l| l.text).collect();
-        let text = if body.trim().is_empty() {
-            of_block().map(|l| l.text).collect()
-        } else {
-            body
-        };
-        diagnostics::excerpt(&text)
-    }
-
-    /// Formulas of the Scene just adopted whose width runs past the text column, each
-    /// located at its first leaf. Called with the Scene that matches the snapshot.
-    pub(super) fn find_overflows(&self, scene: &EditorScene) -> Vec<Target> {
-        self.snapshot
-            .blocks
-            .iter()
-            .flat_map(|b| &b.content)
-            .filter_map(|inline| match &inline.body {
-                InlineBody::Math { root } => Some(root),
-                _ => None,
-            })
-            .filter(|root| {
-                indicator::formula_bounds(scene, root).is_some_and(indicator::past_column)
-            })
-            .filter_map(|root| {
-                let mut leaves = Vec::new();
-                indicator::leaf_ids(root, &mut leaves);
-                leaves.first().map(|node| Target {
-                    node: *node,
-                    byte: 0,
-                })
-            })
-            .collect()
     }
 
     /// Move the caret to a diagnostic's location and let caret-follow bring it into view.

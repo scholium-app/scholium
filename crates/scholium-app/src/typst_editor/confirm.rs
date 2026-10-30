@@ -33,32 +33,14 @@ impl EditorSession {
             self.allow_close = true;
             ctx.send_viewport_cmd(egui::ViewportCommand::Close);
         } else {
-            match blank() {
-                Ok(session) => {
-                    self.session = session;
-                    self.anchor = None;
-                    self.drag = None;
-                    // Queued input addressed the discarded document.
-                    self.deferred.clear();
-                    self.placeholder = None;
-                    self.undo.clear();
-                    self.run = None;
-                    self.redo.clear();
-                    self.saved = None;
-                    self.scene = None;
-                    self.texture = None;
-                    self.publish(state);
-                    if let Some(leaf) = input::leaves(&self.snapshot).first() {
-                        self.cursor = Position {
-                            leaf: leaf.id,
-                            byte: 0,
-                            affinity: Affinity::Downstream,
-                        };
-                    }
-                    state.composition = None;
-                    self.focus = true;
-                }
-                Err(error) => state.edit_error = Some(error.to_string()),
+            if self
+                .run_core(Command::New, CommandArgs::None, state)
+                .is_some()
+            {
+                self.drag = None;
+                self.deferred.clear();
+                state.composition = None;
+                self.focus = true;
             }
         }
         self.confirm_new = false;

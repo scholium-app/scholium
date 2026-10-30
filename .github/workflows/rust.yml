@@ -33,6 +33,7 @@ jobs:
       - run: cargo doc --locked --workspace --no-deps
         env:
           RUSTDOCFLAGS: -D warnings
+      - run: python3 scripts/check-layers.py
       - run: python3 scripts/check-rust-size.py
       - run: python3 scripts/check-ui-strings.py
       - run: python3 scripts/check-doc-links.py

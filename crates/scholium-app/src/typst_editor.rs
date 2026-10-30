@@ -6,6 +6,7 @@ mod clipboard;
 #[cfg(test)]
 mod command_keys_tests;
 mod confirm;
+mod core_adapter;
 mod deferred;
 mod diagnose;
 mod follow;
@@ -30,11 +31,12 @@ mod window_tests;
 
 use crate::state::WorkspaceState;
 use eframe::egui;
-use history::{HistoryEntry, Origin, RunKind};
-use scholium_document::{
-    BodyTextPosition, LocalSession, StructuralEdit, StructuralOutcome, StructuralRequest,
-};
-use scholium_model::{RequestId, layout_identity::*, structured::*};
+#[cfg(test)]
+use scholium_model::RequestId;
+use scholium_model::{layout_identity::*, structured::*};
+pub(crate) use scholium_session::typst::CommandId as Command;
+use scholium_session::typst::{CommandArgs, CommandError, EditorCore, Origin};
+#[cfg(test)]
 use scholium_storage::SessionStore;
 use scholium_typst::editor::{
     Affinity, EditorScene, EditorWorker, Position, RasterSpec, ViewRange,
@@ -46,6 +48,8 @@ const INITIAL_VIEW_PT: f64 = 800.0;
 
 #[derive(Debug, thiserror::Error)]
 pub(crate) enum SessionError {
+    #[error(transparent)]
+    Core(#[from] scholium_session::typst::SessionError),
     #[error("启动失败：{0}")]
     Startup(String),
     #[error(transparent)]
@@ -56,16 +60,6 @@ pub(crate) enum SessionError {
     Layout(#[from] scholium_typst::editor::EditorError),
     #[error(transparent)]
     Io(#[from] std::io::Error),
-}
-
-#[derive(Debug, Clone, Copy)]
-pub(crate) enum Command {
-    Math,
-    Fraction,
-    /// Attach a superscript or subscript slot, as typing `^` / `_` does.
-    Attach(scholium_document::AttachSlot),
-    Style(TextStyle),
-    Kind(scholium_model::BlockKind),
 }
 
 /// UI metadata and outgoing intents only; contains no writable document.
@@ -100,12 +94,9 @@ pub(crate) struct EditorView {
     pub preview_page: Option<(usize, usize)>,
 }
 
-/// The only editor: owns the authoritative LocalSession and its derived Typst scenes.
+/// UI client of EditorCore; owns derived scenes, event translation and platform state.
 pub(crate) struct EditorSession {
-    session: LocalSession<StructuredDocument>,
-    snapshot: Arc<StructuredDocument>,
-    store: SessionStore,
-    saved: Option<StructuredDocument>,
+    core: EditorCore,
     worker: EditorWorker,
     wanted: SceneStamp,
     scene: Option<EditorScene>,
@@ -118,8 +109,6 @@ pub(crate) struct EditorSession {
     settle: raster::Settle,
     /// Last display scale, for diagnostics.
     pixels_per_point: f32,
-    cursor: Position,
-    anchor: Option<Position>,
     drag: Option<selection::Drag>,
     goal: Option<vertical::Goal>,
     published: Option<access::Published>,
@@ -129,27 +118,15 @@ pub(crate) struct EditorSession {
     /// Last proven caret rectangle, relative to the page origin; anchors the IME
     /// while a fresh Scene is pending so the platform IME is never switched off.
     ime_anchor: Option<egui::Rect>,
-    undo: Vec<HistoryEntry>,
-    redo: Vec<HistoryEntry>,
-    /// The open typing or deletion run sharing the top undo entry.
-    run: Option<history::Run>,
-    clock: history::Clock,
     focus: bool,
     confirm_new: bool,
     confirm_close: bool,
     allow_close: bool,
-    layout_error: Option<String>,
-    rejected_input: Option<String>,
     notice: Option<String>,
-    /// Formulas of the Scene on screen that run past the text column (see `diagnose`).
-    overflows: Vec<crate::diagnostics::Target>,
     /// The problems last published to the view, for the window audit.
     shown_problems: Vec<crate::diagnostics::Diagnostic>,
     last_audit: Option<String>,
-    placeholder: Option<attach::Placeholder>,
     clicks: selection::ClickRun,
-    /// Style armed for the next typed text at the caret.
-    pending_style: Option<style::Pending>,
     follow: follow::Follow,
     /// File stem of an explicitly chosen document file (shown as the tab title).
     title: Option<String>,
@@ -192,20 +169,15 @@ impl EditorSession {
         state: &mut WorkspaceState,
         path: &std::path::Path,
     ) -> Result<Self, SessionError> {
-        let (store, saved, session) = restore(path)?;
-        let snapshot = Arc::new(session.snapshot());
-        let first = input::leaves(&snapshot)
-            .first()
-            .map(|l| l.id)
-            .ok_or_else(|| SessionError::Startup("no supported text or math input leaf".into()))?;
-        let cursor = Position {
-            leaf: first,
-            byte: 0,
-            affinity: Affinity::Downstream,
-        };
+        let core = EditorCore::open(path).map_err(|error| match error {
+            scholium_session::typst::SessionError::NoInputLeaf => {
+                SessionError::Startup(error.to_string())
+            }
+            _ => error.into(),
+        })?;
         let wake = ctx.clone();
         let worker = EditorWorker::spawn(move || wake.request_repaint())?;
-        let wanted = session.scene_stamp(ProfileGeneration(0), ResourceGeneration(0));
+        let wanted = core.scene_stamp();
         // A guess until the first page is placed; the first re-raster corrects it.
         let spec = RasterSpec {
             px_per_pt: raster::forced_px_per_pt()
@@ -216,16 +188,11 @@ impl EditorSession {
             top_pt: 0.0,
             bottom_pt: INITIAL_VIEW_PT,
         };
-        worker.submit(snapshot.clone(), wanted, spec, view);
+        worker.submit(core.snapshot.clone(), wanted, spec, view);
         let mut result = Self {
-            session,
-            snapshot,
-            store,
-            saved,
+            core,
             worker,
             wanted,
-            cursor,
-            anchor: None,
             drag: None,
             goal: None,
             published: None,
@@ -240,23 +207,14 @@ impl EditorSession {
             sent: Some((std::time::Instant::now(), view)),
             settle: raster::Settle::default(),
             pixels_per_point: 1.0,
-            undo: Vec::new(),
-            redo: Vec::new(),
-            run: None,
-            clock: history::system_clock(),
             focus: true,
             confirm_new: false,
             confirm_close: false,
             allow_close: false,
-            layout_error: None,
-            rejected_input: None,
             notice: None,
-            overflows: Vec::new(),
             shown_problems: Vec::new(),
             last_audit: None,
-            placeholder: None,
             clicks: selection::ClickRun::default(),
-            pending_style: None,
             follow: Default::default(),
             title: None,
         };
@@ -295,69 +253,12 @@ impl EditorSession {
         }
     }
 
-    fn apply(&mut self, edit: StructuralEdit, state: &mut WorkspaceState) -> bool {
-        self.apply_outcome(edit, state).is_some()
-    }
-
-    /// Apply one edit; the accepted outcome carries the surviving cursor and range.
-    fn apply_outcome(
-        &mut self,
-        edit: StructuralEdit,
-        state: &mut WorkspaceState,
-    ) -> Option<StructuralOutcome> {
-        self.apply_joined(edit, false, state)
-    }
-
-    /// `join`: the edit continues the open run and adds no undo entry.
-    fn apply_joined(
-        &mut self,
-        edit: StructuralEdit,
-        join: bool,
-        state: &mut WorkspaceState,
-    ) -> Option<StructuralOutcome> {
-        let before = (!join).then(|| self.record());
-        let request = StructuralRequest {
-            request: RequestId::fresh(),
-            document: self.snapshot.document,
-            base: self.snapshot.revision,
-            edit,
-        };
-        match self.session.apply_structural_outcome(request) {
-            Ok(outcome) => {
-                state.edit_error = None;
-                if let Some(cursor) = outcome.cursor {
-                    self.cursor = Position {
-                        leaf: cursor.leaf,
-                        byte: cursor.byte,
-                        affinity: Affinity::Upstream,
-                    };
-                }
-                self.anchor = None;
-                self.drag = None;
-                if !outcome.changed {
-                    return Some(outcome);
-                }
-                self.push_undo(before);
-                self.publish(state);
-                Some(outcome)
-            }
-            Err(error) => {
-                state.edit_error = Some(error.to_string());
-                None
-            }
-        }
-    }
-
+    /// Submit the accepted core snapshot to the app-owned worker.
     fn publish(&mut self, state: &mut WorkspaceState) {
-        self.snapshot = Arc::new(self.session.snapshot());
-        self.wanted = self
-            .session
-            .scene_stamp(ProfileGeneration(0), ResourceGeneration(0));
+        self.wanted = self.core.scene_stamp();
         self.worker
             .submit(self.snapshot.clone(), self.wanted, self.spec, self.view);
         self.sent = Some((std::time::Instant::now(), self.view));
-        self.layout_error = None;
-        self.overflows.clear();
         state.edit_error = None;
         self.metadata(state);
     }
@@ -402,7 +303,7 @@ impl EditorSession {
             }
             view.preview_page = preview_page;
             view.title = self.title.clone();
-            view.dirty = self.saved.as_ref() != Some(&self.snapshot);
+            view.dirty = self.core.dirty();
             view.selected = self.selected();
             view.in_math = self.in_math();
             view.active = self.active_styles();
@@ -438,7 +339,7 @@ impl EditorSession {
             self.focus = true;
         }
         // Input still waiting for layout is not in the snapshot yet, but is unsaved work.
-        let dirty = self.saved.as_ref() != Some(&self.snapshot) || !self.deferred.is_empty();
+        let dirty = self.core.dirty() || !self.deferred.is_empty();
         // The tab's close button asks like the window's own close button does.
         let close_asked = std::mem::take(&mut state.close_requested);
         if (ctx.input(|i| i.viewport().close_requested()) || close_asked)
@@ -502,42 +403,23 @@ impl EditorSession {
         if state.composition.is_some() {
             return;
         }
-        let requests: Vec<_> = self.session.actions().iter().map(|a| a.request).collect();
-        match self.store.save_structured(&self.snapshot, &requests) {
-            Ok(()) => {
-                self.saved = Some((*self.snapshot).clone());
-                state.storage_error = None;
-            }
+        match self.core.save() {
+            Ok(()) => state.storage_error = None,
             Err(error) => state.storage_error = Some(error.to_string()),
         }
     }
 }
 
-type Restored = (
-    SessionStore,
-    Option<StructuredDocument>,
-    LocalSession<StructuredDocument>,
-);
-
-/// Open or create the isolated store; the saved snapshot seeds dirty tracking.
-fn restore(path: &std::path::Path) -> Result<Restored, SessionError> {
-    let store = if path.try_exists()? {
-        SessionStore::open_structured(path)?
-    } else {
-        SessionStore::create_structured(path)?
-    };
-    let persisted = store.load_structured()?;
-    let saved = persisted.as_ref().map(|p| p.snapshot.clone());
-    let session = match persisted {
-        Some(p) => LocalSession::restore_structured(p.snapshot, p.requests)?,
-        None => blank()?,
-    };
-    Ok((store, saved, session))
+// Phase-2 navigation still operates on core-owned cursor/anchor. This keeps the
+// existing UI helpers and tests addressing those fields without a second state copy.
+impl std::ops::Deref for EditorSession {
+    type Target = EditorCore;
+    fn deref(&self) -> &Self::Target {
+        &self.core
+    }
 }
-
-fn blank() -> Result<LocalSession<StructuredDocument>, SessionError> {
-    LocalSession::default()
-        .into_structured()
-        .map(|(s, _)| s)
-        .map_err(|e| SessionError::Startup(e.error.to_string()))
+impl std::ops::DerefMut for EditorSession {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.core
+    }
 }

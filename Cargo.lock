@@ -3667,6 +3667,7 @@ dependencies = [
  "resvg",
  "scholium-document",
  "scholium-model",
+ "scholium-session",
  "scholium-storage",
  "scholium-typst",
  "serde_json",
@@ -3691,6 +3692,18 @@ dependencies = [
  "serde_json",
  "thiserror 2.0.20",
  "uuid",
+]
+
+[[package]]
+name = "scholium-session"
+version = "0.1.0"
+dependencies = [
+ "scholium-document",
+ "scholium-model",
+ "scholium-storage",
+ "scholium-typst",
+ "thiserror 2.0.20",
+ "unicode-segmentation",
 ]
 
 [[package]]

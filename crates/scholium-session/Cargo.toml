@@ -1,0 +1,18 @@
+[package]
+name = "scholium-session"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+scholium-model = { path = "../scholium-model", version = "0.1.0" }
+scholium-document = { path = "../scholium-document", version = "0.1.0" }
+scholium-storage = { path = "../scholium-storage", version = "0.1.0" }
+scholium-typst = { path = "../scholium-typst", version = "0.1.0", features = ["editor"] }
+thiserror = "=2.0.20"
+unicode-segmentation = "=1.13.3"
+
+[lints]
+workspace = true

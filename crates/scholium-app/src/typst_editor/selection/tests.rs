@@ -353,14 +353,16 @@ fn selection_extent_uses_current_cluster_edges_and_pending_hides_it() {
 fn pending_range_covering_raw_math_is_rejected_without_losing_selection() {
     let mut f = Fixture::new();
     f.events(vec![egui::Event::Paste("left\nright".into())]);
-    let mut snapshot = f.editor.session.snapshot();
+    let mut snapshot = f.editor.core.session().snapshot();
     snapshot.blocks[0].content.push(StructuredInline {
         node: NodeId::fresh(),
         body: InlineBody::RawMath {
             source: "unknown(x)".into(),
         },
     });
-    f.editor.session = LocalSession::restore_structured(snapshot, f.editor.record().requests)
+    f.editor
+        .core
+        .restore_document(snapshot, f.editor.record().requests)
         .expect("valid Raw preservation fixture");
     f.editor.publish(&mut f.state);
     let positions = body_positions(&f);

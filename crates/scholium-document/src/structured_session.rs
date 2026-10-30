@@ -191,7 +191,7 @@ impl LocalSession {
         };
         Ok((
             LocalSession {
-                snapshot: migration.document,
+                snapshot: Arc::new(migration.document),
                 actions: self.actions,
                 epoch: LayoutEpoch::fresh(),
             },
@@ -209,6 +209,17 @@ impl LocalSession<StructuredDocument> {
         snapshot: StructuredDocument,
         requests: Vec<RequestId>,
     ) -> Result<Self, EditError> {
+        Self::restore_structured_shared(Arc::new(snapshot), &requests)
+    }
+
+    /// Restore a shared immutable snapshot, validating structure and request identities.
+    ///
+    /// # Errors
+    /// Rejects malformed structure, journal length mismatch or duplicate request IDs.
+    pub fn restore_structured_shared(
+        snapshot: Arc<StructuredDocument>,
+        requests: &[RequestId],
+    ) -> Result<Self, EditError> {
         snapshot.validate()?;
         if requests.len() as u64 != snapshot.revision.0 || requests.len() > MAX_ACTIONS {
             return Err(EditError::Capacity);
@@ -218,7 +229,8 @@ impl LocalSession<StructuredDocument> {
             return Err(EditError::DuplicateRequest);
         }
         let actions = requests
-            .into_iter()
+            .iter()
+            .copied()
             .enumerate()
             .map(|(i, request)| Action {
                 request,
@@ -228,7 +240,7 @@ impl LocalSession<StructuredDocument> {
             .collect();
         Ok(Self {
             snapshot,
-            actions,
+            actions: Arc::new(actions),
             epoch: LayoutEpoch::fresh(),
         })
     }
@@ -253,10 +265,10 @@ impl LocalSession<StructuredDocument> {
         request: StructuralRequest,
     ) -> Result<StructuralOutcome, EditError> {
         self.check_request(&request)?;
-        let mut planned = self.snapshot.clone();
+        let mut planned = (*self.snapshot).clone();
         let (cursor, range) = edit::apply(&mut planned, request.edit)?;
         planned.validate()?;
-        if planned == self.snapshot {
+        if planned == *self.snapshot {
             return Ok(StructuralOutcome {
                 changed: false,
                 cursor,
@@ -270,8 +282,8 @@ impl LocalSession<StructuredDocument> {
             .checked_add(1)
             .ok_or(EditError::Capacity)?;
         planned.revision = Revision(next);
-        self.snapshot = planned;
-        self.actions.push(Action {
+        self.snapshot = Arc::new(planned);
+        Arc::make_mut(&mut self.actions).push(Action {
             request: request.request,
             before: request.base,
             after: Revision(next),

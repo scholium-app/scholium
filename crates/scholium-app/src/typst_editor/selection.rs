@@ -11,6 +11,14 @@ pub(super) struct Drag {
 }
 
 impl EditorSession {
+    pub(super) fn replacement_proven(&self, state: &mut WorkspaceState) -> bool {
+        if self.selected() && self.current() && self.selection_quads().is_err() {
+            state.edit_error = Some("此选区没有完整的当前场景几何；未应用替换。".into());
+            return false;
+        }
+        true
+    }
+
     pub(super) fn copy_selection(&self, state: &mut WorkspaceState) -> Option<String> {
         match self.selection_text() {
             Ok(text) => {
@@ -18,7 +26,7 @@ impl EditorSession {
                 text
             }
             Err(message) => {
-                state.edit_error = Some(message.into());
+                state.edit_error = Some(copy_message(message).into());
                 None
             }
         }
@@ -33,145 +41,12 @@ impl EditorSession {
         }
     }
 
-    fn selection_text(&self) -> Result<Option<String>, &'static str> {
-        let Some((start, end)) = self.range().map_err(|_| "选区端点无效；未复制。")?
-        else {
-            return Ok(None);
-        };
-        let mut selected = Vec::new();
-        let mut active = false;
-        for block in &self.snapshot.blocks {
-            let mut block_part = String::new();
-            for inline in &block.content {
-                if inline.node == start.leaf {
-                    active = true;
-                }
-                if !active {
-                    continue;
-                }
-                match &inline.body {
-                    InlineBody::Text { text, .. } => {
-                        let from = if inline.node == start.leaf {
-                            start.byte
-                        } else {
-                            0
-                        };
-                        let to = if inline.node == end.leaf {
-                            end.byte
-                        } else {
-                            text.len()
-                        };
-                        block_part.push_str(text.get(from..to).ok_or("选区端点无效；未复制。")?);
-                    }
-                    InlineBody::Math { .. } | InlineBody::RawMath { .. } => {
-                        return Err("选区含公式或原串，纯文本剪贴板不能无损表示；未复制。");
-                    }
-                }
-                if inline.node == end.leaf {
-                    selected.push(block_part);
-                    return Ok(Some(selected.join("\n")));
-                }
-            }
-            if active {
-                selected.push(block_part);
-            }
-        }
-        Err("选区端点无效；未复制。")
-    }
-
-    pub(super) fn range(&self) -> Result<Option<(BodyTextPosition, BodyTextPosition)>, EditError> {
-        let Some(anchor) = self.anchor else {
-            return Ok(None);
-        };
-        if anchor.leaf == self.cursor.leaf && anchor.byte == self.cursor.byte {
-            return Ok(None);
-        }
-        let body: Vec<_> = input::leaves(&self.snapshot)
-            .into_iter()
-            .filter(|l| !l.math)
-            .collect();
-        let a = body
-            .iter()
-            .position(|l| l.id == anchor.leaf)
-            .ok_or(EditError::WrongTarget)?;
-        let b = body
-            .iter()
-            .position(|l| l.id == self.cursor.leaf)
-            .ok_or(EditError::WrongTarget)?;
-        let anchor = BodyTextPosition {
-            leaf: anchor.leaf,
-            byte: anchor.byte,
-        };
-        let focus = BodyTextPosition {
-            leaf: self.cursor.leaf,
-            byte: self.cursor.byte,
-        };
-        Ok(Some(if (a, anchor.byte) <= (b, focus.byte) {
-            (anchor, focus)
-        } else {
-            (focus, anchor)
-        }))
-    }
-
-    pub(super) fn selected(&self) -> bool {
-        self.anchor
-            .is_some_and(|a| a.leaf != self.cursor.leaf || a.byte != self.cursor.byte)
-    }
-
-    pub(super) fn body_leaf(&self, id: NodeId) -> bool {
-        input::leaves(&self.snapshot)
-            .iter()
-            .any(|l| l.id == id && !l.math)
-    }
-
-    pub(super) fn replace_range(&mut self, text: String, state: &mut WorkspaceState) -> bool {
-        let range = match self.range() {
-            Ok(Some(range)) => range,
-            Ok(None) => {
-                let at = BodyTextPosition {
-                    leaf: self.cursor.leaf,
-                    byte: self.cursor.byte,
-                };
-                (at, at)
-            }
-            Err(error) => {
-                state.edit_error = Some(error.to_string());
-                return false;
-            }
-        };
-        if self.raw_between(range.0.leaf, range.1.leaf) {
-            state.edit_error = Some("此选区包含尚未接入的原串公式；未应用替换。".into());
-            return false;
-        }
-        if self.selected() && self.current() && self.selection_quads().is_err() {
-            state.edit_error = Some("此选区没有完整的当前场景几何；未应用替换。".into());
-            return false;
-        }
-        self.apply(
-            StructuralEdit::ReplaceBodyRange {
-                start: range.0,
-                end: range.1,
-                text,
-            },
-            state,
-        )
-    }
-
-    fn raw_between(&self, start: NodeId, end: NodeId) -> bool {
-        self.snapshot
-            .blocks
-            .iter()
-            .flat_map(|b| &b.content)
-            .skip_while(|i| i.node != start)
-            .take_while(|i| i.node != end)
-            .any(|i| matches!(i.body, InlineBody::RawMath { .. }))
-    }
-
     pub(super) fn move_to(&mut self, target: Position, extend: bool) {
         // Vertical motion re-sets the goal after moving; every other caller drops it.
         self.goal = None;
         if extend {
-            self.anchor.get_or_insert(self.cursor);
+            let cursor = self.cursor;
+            self.anchor.get_or_insert(cursor);
         } else {
             self.anchor = None;
         }
@@ -426,3 +301,16 @@ pub(crate) use pointer::ClickRun;
 mod pointer_tests;
 #[cfg(test)]
 mod tests;
+
+pub(super) fn raw_message() -> &'static str {
+    "此选区包含尚未接入的原串公式；未应用替换。"
+}
+
+pub(super) fn copy_message(reason: scholium_session::typst::Rejection) -> &'static str {
+    match reason {
+        scholium_session::typst::Rejection::CopyNonText => {
+            "选区含公式或原串，纯文本剪贴板不能无损表示；未复制。"
+        }
+        _ => "选区端点无效；未复制。",
+    }
+}

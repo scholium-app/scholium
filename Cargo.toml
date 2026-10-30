@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 exclude = ["vendor/typst-edit", "vendor/accesskit_atspi_common"]
-members = ["crates/scholium-app", "crates/scholium-model", "crates/scholium-document", "crates/scholium-typst", "crates/scholium-storage"]
+members = ["crates/scholium-session", "crates/scholium-app", "crates/scholium-model", "crates/scholium-document", "crates/scholium-typst", "crates/scholium-storage"]
 
 [workspace.package]
 version = "0.1.0"

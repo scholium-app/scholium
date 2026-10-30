@@ -3,7 +3,7 @@
 ## 职责
 
 提供桌面壳、页面式结构编辑器、Source Studio、焦点/模式工具栏、项目引擎预览、项目树、大纲、引用面板、
-历史时间线、冲突解决、协作 presence、命令系统、设置和 core session 编排。
+历史时间线、冲突解决、协作 presence、命令系统、设置和 core session 的 UI 适配。
 
 ## 非职责
 
@@ -14,7 +14,7 @@
 ```text
 app-shell
 ├── native_ui/      原生 editor、panels、preview、state projections
-├── core/           ProjectSession actors、command handlers
+├── typst_editor/   EditorCore 适配、事件翻译、Scene/worker、导航/绘制与平台交互
 ├── bridge/         Rust 消息通道、平台坐标转换、可选原生 FFI
 └── platform/       window、clipboard、file dialog、keychain、updates
 ```
@@ -47,7 +47,7 @@ Rust 负责权威文档和业务；EUI-NEO 候选由 C++ 实现原生 UI，通�
 - `icons` 把 Lucide 图标（ISC，许可证在 `assets/icons/LICENSE`）以内嵌 SVG 经 resvg 按设备像素比光栅化并用令牌着色，
   纹理按（图标、尺寸、线宽、颜色、ppp）缓存；工具栏 18/1.5、菜单与溢出 14/1.25、状态栏与标签 12/1.25、箭头 8/1.25。
   `IconId` 来自注册表；不引入图标字体或新的光栅库。
-- `typst_editor` 是唯一编辑面（结构会话、Typst Content 场景、输入、选区、导航与启动迁移），`state` 只持有视图偏好
+- `typst_editor` 是唯一编辑面（持有 session 的 EditorCore、Typst Content 场景、事件翻译、导航与迁移提示），`state` 只持有视图偏好
   （工作方式、面板、缩放、主题、语言、工具栏显示）与编辑器元数据，`command` 是命令注册表，`commands` 保留视图命令的处理函数。
   未接入的写操作保持禁用，不以本地变量伪造保存、构建或 revision 状态。
 
@@ -67,7 +67,7 @@ Noto Sans CJK 只作最后回退。所选字体写入 AUDIT 的 `fonts`。
 `diagnostics/` 持有诊断列表的数据模型与面板，不持有文档内容。一条诊断是 `{ 严重度 (Error | Warning | Info)、catalog key 与参数、
 可选位置、可选段落摘录 }`；文字在绘制时按界面语言经 Fluent catalog 渲染，所以切换语言立即生效。位置是文本/数学叶的
 稳定 `NodeId` 加字节偏移，不含屏幕坐标。列表按严重度排序（同级保持收集顺序）：错误（编辑、保存、排版失败，无位置）→ 警告（被拒绝输入、
-选区几何、公式超出行宽、缺少光标几何；超出与缺光标带位置）→ 提示（启动迁移说明）。`typst_editor/diagnose.rs` 产生列表：
+选区几何、公式超出行宽、缺少光标几何；超出与缺光标带位置）→ 提示（启动迁移说明）。session 提供布局错误、被拒输入、段落文字与溢出目标，`typst_editor/diagnose.rs` 负责呈现列表：
 公式超出在采纳 Scene 时按快照一次算出（几何只在 Scene 当前时可信），其余随元数据逐帧收集；`EditorView.problems` 把结果交给状态栏与面板。
 
 跳转：诊断（或面板行）写 `WorkspaceState.jump_request`，编辑会话在无排队输入时按顺序执行：把光标移到目标叶的字节处、清除选区/拖动/输入样式、
@@ -80,7 +80,7 @@ Noto Sans CJK 只作最后回退。所选字体写入 AUDIT 的 `fonts`。
 上下键在行间移动，Esc 把焦点还给页面；Enter/空格激活后按键被控件消费，不会再被页面当作输入。行是普通控件，
 无障碍名称为“严重度：消息”。AUDIT 的 `diagnostics` 列出诊断及位置，`controls` 里 `ui.diagnostics.row` 按序给出各行矩形。
 
-## ProjectSession
+## Session 的 UI 适配
 
 ### Typst Content 编辑入口
 
@@ -91,7 +91,7 @@ Noto Sans CJK 只作最后回退。所选字体写入 AUDIT 的 `fonts`。
 文件不被迁移覆盖；显式 `SCHOLIUM_SESSION_FILE` 必须是 v1。没有可写副本对拷。旧文件只读探测；
 迁移或打开失败时窗口只显示原因与恢复方式，不运行编辑器。迁移只发生一次，此后不再读取旧文件。
 
-编辑器按事件顺序向 `LocalSession<StructuredDocument>` 提交字素文字/结构请求，布局仅持有
+编辑器持有 [session](session.md) 的 `EditorCore`，按事件顺序经唯一 `run` 入口提交文字与命令，布局仅持有
 完整不可变投影。输入接受和提交先于页面绘制，后台完成唤醒 UI，不去抖源码求值。界面
 工具栏与页面之间没有任何信息行。状态栏左侧是字数（正文里每个 CJK 字符与每个拉丁词各计一，随快照修订更新）、
 页码（只在源码模式且预览已编译时显示，连续的所见即所得视图不显示）与上下文（正文 / 公式 / 源码 · 只读）；
@@ -123,20 +123,10 @@ Ctrl+Home/End 另外露出页面顶部（含外边距）与底部。只有输入
 指针按下或滚轮会丢弃尚未执行的跟随。Scene 不是当前版本时保持“待跟随”，等新 Scene 采纳后用其 caret 几何滚动，
 绝不对准旧位置；滚动改变的可见范围照常经 `set_view` 请求新区域条带。AUDIT `follow` 报告 caret 与可见范围（pt）。
 
-工具栏与菜单的编辑命令发结构 intent；标题作用于段落，源视图禁用正文写命令。
-文字样式：`Ctrl+B` 粗体、`Ctrl+I` 斜体/强调（导航面板开关为 `Ctrl+Shift+B`）。有选区时发一次
-`SetRangeStyle`，选区内所有正文字素已是该样式则恢复普通，否则设为该样式；选区保持在同一段文字上，
-一步可撤销。无选区时只武装一个“输入样式”：下一次输入、粘贴或 IME 提交的文字在光标处另成一个带
-该样式的叶（必要时拆分原叶），与插入同属一步撤销。输入样式绑定武装时的光标位置，光标移动、点击、
-Esc、产生选区或撤销都会解除。粗体/强调按钮在光标叶、整个选区或输入样式带该样式时显示选中态；
-“清除格式”设为普通。模型每叶只有一种样式，粗体与强调不能叠加：对粗体文字用强调会变成强调，
-这是已知限制。公式内不支持文字样式。单机 undo/redo 每步保留快照及其完整请求日志，最多 512 步（按撤销组计），restore 换 epoch。
-连续输入按词撤销：同一叶、光标连续位置上的键入与 IME 提交共用一个撤销项（含结尾空白，撤销一次去掉“词+空格”），
-遇到空白收尾、间隔 ≥ 1 秒、光标键/点击移动、任何非插入编辑（删除、回车、粘贴、样式/结构命令、公式进出）
-或撤销/重做即另起一组；保存不打断。连续的 Backspace/Delete 同样合并，但不与插入合并；粘贴和结构命令各占一步。
-输入样式武装后的首次输入另起一组，之后在该叶内继续键入并入同组。时钟可注入，间隔判断由测试驱动。
-保存读取唯一 LocalSession 投影，dirty 比较完整保存内容。RawMath/容量/布局错误显示诊断，
-被拒绝文字保留可复制草稿；不能在同一编辑面自动回到旧回显。
+工具栏、菜单、Typed/Paste/IME Commit、删除/拆段与 undo/redo 都经 `EditorCore::run` 执行；
+app 保留组合输入、只读模式和当前选区几何的前置检查，按 Outcome 清除拖选、提交新 Scene 或刷新元数据。
+唯一 LocalSession、store/保存基线、撤销分组与时钟、输入样式和占位生命周期属于 session（[规则](session.md)）。
+app 不直接应用 StructuralRequest，也不持有第二份可写文档。确认框决定是否丢弃，然后发送 New 命令。
 
 编辑面是连续的 A4 版心纸面（宽 210 mm、页边距同 A4 预览、不分页），字体、字号、行距、缩进与标题
 样式与预览同源（见 [typst.md](typst.md)）。
@@ -146,16 +136,10 @@ A4 快速预览，首次进入才启动预览 worker，快照变化即以新 gen
 编译后翻到光标块所在页；点击预览把光标移到该块开头。空槽数与原串公式数在源码上方说明。
 这是只读派生视图：不 reconcile、不写回，也不代替最终 LaTeX/Typst 构建。
 
-文字插入/删除接受后，编辑器必须在新叶内容中重新校验光标的 UTF-8 字素边界。ZWJ、区域
-指示符或组合字符可能把原先独立的邻接字素合并；此时光标移动到原目标 byte 之后的首个
-合法边界，不能把下一次输入提交到字素内部。正文与数学 Text/Hole 的左右方向键在文档
-逻辑叶顺序中跨边界移动，文档首尾停止，不循环；导航不产生语义动作。Tab 仍用于显式
-槽位切换。数学内键入 `^`/`_` 创建上/下标槽而不插入字面字符（粘贴仍是字面）；槽尾右键离开到
-Attach 之后（其后无叶时追加占位 Hole），槽首左键回到 base 末尾，Tab 沿 base→sub→sup→出，空槽退格删槽，上下键在 base、
-sub、sup 间切换（同分子/分母），占位 Hole 只在光标位于其中时存在：光标以任何方式离开（方向键、Ctrl+Home/End、点击、Tab）且其间没有其他编辑时，
-会话回到 LeaveSlot 之前的快照并丢弃该撤销项（无多余撤销步、无空 Hole、无单子 Row）；已在其中输入则保留为内容；
-撤销/重做按快照恢复。
-朗读为 `上下标（底数：…；下标：…；上标：…）`，槽路径名为 底数/下标/上标。
+左右方向键与 Tab 的事件翻译、逻辑导航仍在 app；语义光标与 anchor 存在 core 中。
+app 的导航、点击、Esc 与选区变化解除待输入样式，并在导航后通过命令结算 Attach 占位；
+占位创建、撤销及字素重锚由 session 执行。数学朗读为 `上下标（底数：…；下标：…；上标：…）`，
+槽路径名为 底数/下标/上标。
 
 上下方向键与 Home/End 只读当前 Scene 的精确正文 caret（padded Frame pt）推出视觉行：
 行内公式的槽位与正文行纵向重叠，不参与划行。上下键取纵向最近的相邻行、再取最接近目标
@@ -185,25 +169,20 @@ anchor/cursor 选区，复制、剪切、输入替换沿用同一路径。点击
 
 光标在行内公式内时，页面在公式整体 bounds 后画淡色圆角矩形、在当前 Fraction/Attach 槽外画更淡的描边
 （均为形状，不画文字，几何取自当前 Scene），状态栏显示“公式”。Esc 在无选区、无组合时离开公式；末尾右键/开头左键同样可以离开。
-公式内按 Enter（或 Shift+Enter；行内公式没有内部换行）离开整个公式并在其后拆段：光标移到公式所属行内之后的
-正文叶，再走普通 `ReplaceBodyRange("\n")`，新段从公式后开始；整个动作是一步撤销，撤销回到按键时的公式内光标，
-并打断打字分组。未被编辑的占位 Hole 先按其生命周期移除。无运算符的长串无法断行，会越过版心右缘；此时不改写内容，
-该公式成为一条带位置的诊断“公式超出行宽”（公式 bounds 的右端超出版心右缘；每个超出的公式各一条，无论光标在哪里，
-位置是公式首个叶子）。AUDIT 的 `formula_overflow` 仍只表示光标所在公式。
+公式内 Enter 的语义拆段由 session 执行。无运算符长串的溢出由 session 按当前 Scene 推导目标，
+app 显示每个公式的“公式超出行宽”诊断，不改写内容。AUDIT 的 `formula_overflow` 只表示光标所在公式。
 
 选框来自同一 Frame 的 cluster stops 和数学根 bounds，绘制非打印多边形，不画已提交
 文字。缺几何的当前选区拒绝替换；pending 时可按有效语义端点继续键盘编辑，禁止使用旧
 几何判断位置。范围内 RawMath 明确拒绝，失败保留正文、端点和可复制输入草稿。
-输入、Backspace/Delete、Enter 和多行 Paste 通过一个 ReplaceBodyRange 提交；核心返回
-存活叶和合法字素位置，UI 不猜拆段后的新 ID。撤销恢复两端并换 epoch。数学内部槽位
-选区、选区格式和结构命令另行接入。复制/剪切只输出纯文本：段落以换行连接，范围含公式或
-原串时拒绝且不改正文。见 [ADR 0035](../adr/ADR-0035-typst-page-selection.md)。
+范围替换、存活叶/字素位置、撤销端点与纯文本复制/剪切的拒绝规则由 [session](session.md) 定义；
+app 只检查当前选区几何和交付原生剪贴板。数学内部槽位选区与选区结构命令尚未接入。
+见 [ADR 0035](../adr/ADR-0035-typst-page-selection.md)。
 与其他行内内容相邻的空 Text 叶在 Typst 中不成 cluster、没有可绘范围；选框跳过它，
 语义范围仍包含它。视觉行导航见[开发日志《Typst 主程序候选的视觉行导航与几何键有序排队》](../log/2026-10-10-typst-vertical-navigation.md)。
 
-一个打开项目对应一个串行 session actor，持有 authority mode、语义/源码共享文档 handles、history facade、
-format/index service、render/build scheduler 和 sync client。所有写命令串行化，长任务只持有不可变 snapshot，完成后按
-revision 交付。
+第一期 core 提取不移动 worker、Scene 采纳、垂直目标、点击序列、视图跟随与 egui 队列。
+这些 app 职责的后续边界见 [ADR 0042](../adr/ADR-0042-session-editing-core.md)；不宣称已有项目级 actor。
 
 ## UI 状态
 
@@ -267,7 +246,7 @@ revision 交付。
 
 ## 公共接口
 
-- `ProjectSession::open(root, policy)` / `close()`；一个项目一个串行 actor，写命令只能经 session 提交。
+- `EditorSession` 持有 `EditorCore`，负责 `open` 的路径/窗口策略、show、事件顺序与命令结果的 Scene 发布。
 - 命令注册表（`command::registry`），`CommandSpec { id, title, tooltip, icon, shortcuts, routing, menu, toolbar, focus, writes, availability, checked, action }`；
   菜单、工具栏、焦点工具栏、命令搜索和快捷键调用同一 `CommandSpec`；能力判定（capability）与参数 schema 随协作命令接入。
 - UI ↔ core 只使用 [协议设计](../PROTOCOLS.md) 定义的命令/事件 DTO，不导入 core 内部类型。
