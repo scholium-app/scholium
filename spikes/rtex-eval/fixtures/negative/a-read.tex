@@ -1,0 +1,8 @@
+Probe A1 reads the system password file from Lua.
+\directlua{local f, err = io.open("/etc/passwd", "r") e2.say("A1 passwd", f and f:read("l") or ("DENIED " .. tostring(err)))}
+
+Probe A2 reads a canary planted under the home directory.
+\directlua{local f, err = io.open("@CANARY_DIR@/secret.txt", "r") e2.say("A2 home canary", f and f:read("l") or ("DENIED " .. tostring(err)))}
+
+Probe A3 reads a canary from the host environment.
+\directlua{e2.say("A3 host env", os.getenv("E2_HOST_ENV_CANARY") or "DENIED unset")}

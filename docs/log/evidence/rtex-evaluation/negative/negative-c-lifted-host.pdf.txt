@@ -1,0 +1,12 @@
+Probe E2EDIT C1 runs cat through io.popen. [C1 popen cat]
+E2FILE-54978672-54479241
+Probe C2 runs touch through os.execute. [C2 os.execute touch] 0
+Probe C3 runs touch through write18.
+Probe C4 runs the restricted-mode whitelisted kpsewhich through io.popen.
+[C4 popen kpsewhich] E2ENV-24174951-76175279
+
+
+
+
+                                     1
+

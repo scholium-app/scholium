@@ -1,0 +1,9 @@
+Probe E2EDIT E1 connects to a harness listener on the host loopback through
+LuaSocket. [E1 socket] DENIED module ’socket’ not found: �no field
+package.preload[’socket’] �[kpse lua searcher] file not found: ’socket’
+
+
+
+
+                                    1
+

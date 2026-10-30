@@ -1,0 +1,10 @@
+$ /home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/target/release/rtex edit --project /home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke/book-10 --find The --text ' edited'
+cwd: /home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke
+RTEX_TEXLIVE_BIN=/usr/bin
+RTEX_TEXDIR=/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/tex
+layout v1 (10 pages, 54 eligible paragraphs, Converged) in 2402 ms
+edit 1 rev 2 routed fast []
+paragraph ParaId(15) ok in 5.068 ms (tex 4.484, traverse 0.380, pack 0.000); 9 lines, 562 glyphs, 1 fragments, pagination_stale=false context_stale=false host wall 49.666 ms
+  fragment page 2 lines 1..9 x=9979166 baselines=[24915785, 25807075, 26698365, 27589655]
+
+exit_status: 0

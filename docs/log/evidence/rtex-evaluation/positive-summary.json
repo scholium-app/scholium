@@ -1,0 +1,430 @@
+[
+  {
+    "fixture": "book",
+    "passed": true,
+    "runs": [
+      {
+        "name": "positive-book-host",
+        "initial_pages": 10,
+        "routing": "fast",
+        "paragraph_status": "ok",
+        "export": {
+          "event": "PdfExported",
+          "job_id": 2,
+          "path": "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/positive-final/positive-book-host/export.pdf",
+          "status": {
+            "state": "Ok"
+          },
+          "converged": true,
+          "passes": 2
+        },
+        "pdf": {
+          "pages": 10,
+          "text_sha256": "721fdac556f0d5abe8910ccb49ea47f51829b142f2795c5d693317f953d9f9dd",
+          "has_edit": true,
+          "unresolved_reference": false
+        },
+        "passed": true,
+        "events": [
+          {
+            "event": "EngineState",
+            "state": "Starting",
+            "reason": null
+          },
+          {
+            "event": "EngineState",
+            "state": "Ready",
+            "reason": null
+          },
+          {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 10,
+            "versions": {
+              "source_revision": 1,
+              "context_revision": 1,
+              "engine_generation": 0,
+              "layout_version": 1
+            }
+          },
+          {
+            "reply": "edit",
+            "result": {
+              "edit_id": 1,
+              "host_us": [
+                16,
+                11,
+                8
+              ],
+              "outcome": {
+                "added": [],
+                "preamble_changed": false,
+                "removed": [],
+                "touched": [
+                  2
+                ]
+              },
+              "reasons": [],
+              "routed": "fast",
+              "source_revision": 2
+            }
+          },
+          {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "versions": {
+              "source_revision": 2,
+              "context_revision": 1,
+              "engine_generation": 0,
+              "layout_version": 1
+            }
+          },
+          {
+            "reply": "export_pdf"
+          },
+          {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            }
+          }
+        ]
+      },
+      {
+        "name": "positive-book-sandbox",
+        "initial_pages": 10,
+        "routing": "fast",
+        "paragraph_status": "ok",
+        "export": {
+          "event": "PdfExported",
+          "job_id": 2,
+          "path": "/work/export.pdf",
+          "status": {
+            "state": "Ok"
+          },
+          "converged": true,
+          "passes": 2
+        },
+        "pdf": {
+          "pages": 10,
+          "text_sha256": "721fdac556f0d5abe8910ccb49ea47f51829b142f2795c5d693317f953d9f9dd",
+          "has_edit": true,
+          "unresolved_reference": false
+        },
+        "passed": true,
+        "events": [
+          {
+            "event": "EngineState",
+            "state": "Starting",
+            "reason": null
+          },
+          {
+            "event": "EngineState",
+            "state": "Ready",
+            "reason": null
+          },
+          {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 10,
+            "versions": {
+              "source_revision": 1,
+              "context_revision": 1,
+              "engine_generation": 0,
+              "layout_version": 1
+            }
+          },
+          {
+            "reply": "edit",
+            "result": {
+              "edit_id": 1,
+              "host_us": [
+                15,
+                12,
+                8
+              ],
+              "outcome": {
+                "added": [],
+                "preamble_changed": false,
+                "removed": [],
+                "touched": [
+                  2
+                ]
+              },
+              "reasons": [],
+              "routed": "fast",
+              "source_revision": 2
+            }
+          },
+          {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "versions": {
+              "source_revision": 2,
+              "context_revision": 1,
+              "engine_generation": 0,
+              "layout_version": 1
+            }
+          },
+          {
+            "reply": "export_pdf"
+          },
+          {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 10,
+            "versions": {
+              "source_revision": 2,
+              "context_revision": 2,
+              "engine_generation": 0,
+              "layout_version": 2
+            }
+          },
+          {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "fixture": "article",
+    "passed": true,
+    "runs": [
+      {
+        "name": "positive-article-host",
+        "initial_pages": 1,
+        "routing": "fast",
+        "paragraph_status": "ok",
+        "export": {
+          "event": "PdfExported",
+          "job_id": 2,
+          "path": "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/positive-final/positive-article-host/export.pdf",
+          "status": {
+            "state": "Ok"
+          },
+          "converged": true,
+          "passes": 2
+        },
+        "pdf": {
+          "pages": 1,
+          "text_sha256": "8e71b7796c13901dc191ecfe7f3d179c5fb89fbbaa72dffa294e637373e2e386",
+          "has_edit": true,
+          "unresolved_reference": false
+        },
+        "passed": true,
+        "events": [
+          {
+            "event": "EngineState",
+            "state": "Starting",
+            "reason": null
+          },
+          {
+            "event": "EngineState",
+            "state": "Ready",
+            "reason": null
+          },
+          {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1,
+            "versions": {
+              "source_revision": 1,
+              "context_revision": 1,
+              "engine_generation": 0,
+              "layout_version": 1
+            }
+          },
+          {
+            "reply": "edit",
+            "result": {
+              "edit_id": 1,
+              "host_us": [
+                7,
+                8,
+                0
+              ],
+              "outcome": {
+                "added": [],
+                "preamble_changed": false,
+                "removed": [],
+                "touched": [
+                  3
+                ]
+              },
+              "reasons": [],
+              "routed": "fast",
+              "source_revision": 2
+            }
+          },
+          {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "versions": {
+              "source_revision": 2,
+              "context_revision": 1,
+              "engine_generation": 0,
+              "layout_version": 1
+            }
+          },
+          {
+            "reply": "export_pdf"
+          },
+          {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            }
+          }
+        ]
+      },
+      {
+        "name": "positive-article-sandbox",
+        "initial_pages": 1,
+        "routing": "fast",
+        "paragraph_status": "ok",
+        "export": {
+          "event": "PdfExported",
+          "job_id": 2,
+          "path": "/work/export.pdf",
+          "status": {
+            "state": "Ok"
+          },
+          "converged": true,
+          "passes": 2
+        },
+        "pdf": {
+          "pages": 1,
+          "text_sha256": "8e71b7796c13901dc191ecfe7f3d179c5fb89fbbaa72dffa294e637373e2e386",
+          "has_edit": true,
+          "unresolved_reference": false
+        },
+        "passed": true,
+        "events": [
+          {
+            "event": "EngineState",
+            "state": "Starting",
+            "reason": null
+          },
+          {
+            "event": "EngineState",
+            "state": "Ready",
+            "reason": null
+          },
+          {
+            "event": "Diagnostics",
+            "items": [
+              {
+                "severity": "warning",
+                "file": null,
+                "line": null,
+                "message": "Reference `sec:target' on page 1 undefined on input line 8.",
+                "context": null
+              },
+              {
+                "severity": "warning",
+                "file": null,
+                "line": null,
+                "message": "Reference `fig:box' on page 1 undefined on input line 20.",
+                "context": null
+              },
+              {
+                "severity": "warning",
+                "file": null,
+                "line": null,
+                "message": "There were undefined references.",
+                "context": null
+              },
+              {
+                "severity": "warning",
+                "file": null,
+                "line": null,
+                "message": "Label(s) may have changed. Rerun to get cross-references right.",
+                "context": null
+              }
+            ],
+            "source": "background"
+          },
+          {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1,
+            "versions": {
+              "source_revision": 1,
+              "context_revision": 1,
+              "engine_generation": 0,
+              "layout_version": 1
+            }
+          },
+          {
+            "reply": "edit",
+            "result": {
+              "edit_id": 1,
+              "host_us": [
+                6,
+                6,
+                0
+              ],
+              "outcome": {
+                "added": [],
+                "preamble_changed": false,
+                "removed": [],
+                "touched": [
+                  3
+                ]
+              },
+              "reasons": [],
+              "routed": "fast",
+              "source_revision": 2
+            }
+          },
+          {
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1,
+            "versions": {
+              "source_revision": 2,
+              "context_revision": 2,
+              "engine_generation": 0,
+              "layout_version": 2
+            }
+          },
+          {
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "versions": {
+              "source_revision": 2,
+              "context_revision": 1,
+              "engine_generation": 0,
+              "layout_version": 1
+            }
+          },
+          {
+            "reply": "export_pdf"
+          },
+          {
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

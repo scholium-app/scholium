@@ -34,7 +34,35 @@ mount_libraries() {
 }
 # Profiles are selected by trusted callers, never by document content.
 # The editor helper needs fonts and its own libraries, not the TeX runtime.
+runtime_env=()
+texinputs=/project:
 case "${SCHOLIUM_SANDBOX_PROFILE:-full}" in
+  rtex)
+    # Evaluation-only paths come from the trusted harness, never the project.
+    rtex_bin="$(realpath -e "${SCHOLIUM_RTEX_BIN:?expected trusted rtex binary}")"
+    rtex_texdir="$(realpath -e "${SCHOLIUM_RTEX_TEXDIR:?expected trusted TeX support directory}")"
+    [ -x "$rtex_bin" ] && [ -f "$rtex_texdir/rtex-dl.lua" ] || exit 2
+    mounts+=(--ro-bind "$rtex_bin" /rtex/bin/rtex --ro-bind "$rtex_texdir" /rtex/tex)
+    mount_libraries "$rtex_bin"
+    rtex_texlive_bin=/usr/bin
+    # Evaluation-only negative controls: a trusted launcher directory whose lualatex
+    # lifts TeX's own shell-escape restriction, so the probe meets this sandbox instead.
+    if [ -n "${SCHOLIUM_RTEX_EVAL_TEXBIN:-}" ]; then
+      eval_texbin="$(realpath -e "$SCHOLIUM_RTEX_EVAL_TEXBIN")"
+      [ -x "$eval_texbin/lualatex" ] || exit 2
+      mounts+=(--ro-bind "$eval_texbin" /rtex/texbin)
+      mount_libraries "$eval_texbin/lualatex"
+      rtex_texlive_bin=/rtex/texbin
+    fi
+    runtime_tools=(prlimit lualatex luahbtex kpsewhich)
+    runtime_paths=(/usr/lib/locale /usr/share/fonts /usr/share/fontconfig /etc/fonts
+      /usr/share/texmf-dist /usr/share/texmf /etc/texmf /var/lib/texmf
+      /var/cache/fontconfig)
+    # rtex compiles a body-only snapshot after loading its saved preamble.
+    # Resolve that snapshot before the immutable original with the same filename.
+    texinputs=.:/project:
+    runtime_env=(--setenv RTEX_TEXLIVE_BIN "$rtex_texlive_bin" --setenv RTEX_TEXDIR /rtex/tex)
+    ;;
   full|recovery)
     runtime_tools=(bash sh xelatex xetex xdvipdfmx kpsewhich paper paperconf prlimit
       bwrap timeout realpath ldd awk cp mv cat touch readlink sleep dd
@@ -89,7 +117,8 @@ exec "${resource_scope[@]}" /usr/bin/timeout --kill-after=2s "${seconds}s" \
   --clearenv --setenv PATH /usr/bin --setenv HOME /tmp \
   --setenv LANG C.UTF-8 --setenv TEXMFVAR /tmp/texmf-var \
   --setenv TEXMFCONFIG /tmp/texmf-config --setenv TEXMFHOME /tmp/texmf-home \
-  --setenv TEXINPUTS /project: --setenv TEXPICTS /project: \
+  --setenv TEXINPUTS "$texinputs" --setenv TEXPICTS /project: \
+  "${runtime_env[@]}" \
   "${mounts[@]}" --proc /proc --dev /dev --size 268435456 --tmpfs /tmp \
   --ro-bind "$input" /project --bind "$output" /work --chdir /work \
   /usr/bin/prlimit --as=4294967296 --fsize=67108864 --cpu=30 --nofile=128 -- "$@"

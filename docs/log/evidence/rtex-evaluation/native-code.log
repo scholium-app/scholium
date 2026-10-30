@@ -1,0 +1,49 @@
+# rtex v0.0.5 (e0ad11765ec016846b6e07619081f0528621636b) native-code inventory, 2026-10-30T08:58:05-07:00
+
+$ cargo tree --locked --offline -e normal,build --target all -i cc
+cc v1.6.0
+[build-dependencies]
+└── iana-time-zone-haiku v0.1.2
+    └── iana-time-zone v0.1.65
+        └── chrono v0.4.45
+            └── lopdf v0.36.0
+                ├── rtex-core v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/crates/rtex-core)
+                │   └── rtex-cli v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/crates/rtex-cli)
+                └── rtex-verify v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/crates/rtex-verify)
+                    └── rtex-cli v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/crates/rtex-cli)
+
+$ cargo tree --locked --offline -e normal,build --target x86_64-unknown-linux-gnu -i cc
+warning: nothing to print.
+
+To find dependencies that require specific target platforms, try to use option `--target all` first, and then narrow your search scope accordingly.
+
+$ cargo tree --locked --offline -e normal,build --target all --prefix none | grep -E -- "-sys v" | sort -u
+core-foundation-sys v0.8.7
+js-sys v0.3.106
+windows-sys v0.61.2
+windows-sys v0.61.2 (*)
+
+$ cargo tree --locked --offline -e normal,build --target x86_64-unknown-linux-gnu --prefix none | grep -E -- "-sys v" | sort -u
+(none)
+
+# release build scripts on Linux that emitted rustc-link-lib/-search or produced .a/.o files:
+count: 0 of 44 build directories
+
+$ ldd target/release/rtex
+	linux-vdso.so.1
+	libgcc_s.so.1 => /usr/lib/libgcc_s.so.1
+	libm.so.6 => /usr/lib/libm.so.6
+	libc.so.6 => /usr/lib/libc.so.6
+	/lib64/ld-linux-x86-64.so.2 => /usr/lib64/ld-linux-x86-64.so.2
+
+$ cargo tree --locked --offline -e normal --target x86_64-unknown-linux-gnu -i lopdf
+lopdf v0.36.0
+├── rtex-core v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/crates/rtex-core)
+│   └── rtex-cli v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/crates/rtex-cli)
+└── rtex-verify v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/crates/rtex-verify)
+    └── rtex-cli v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/crates/rtex-cli)
+
+$ cargo tree --locked --offline -e normal --target x86_64-unknown-linux-gnu -i ttf-parser
+ttf-parser v0.25.1
+└── rtex-verify v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/crates/rtex-verify)
+    └── rtex-cli v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/crates/rtex-cli)

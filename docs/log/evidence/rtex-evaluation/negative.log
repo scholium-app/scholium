@@ -1,0 +1,9 @@
+{"control": "a", "config": "default", "result": "Pass", "host_effective": true, "sandbox_effective": false}
+{"control": "b", "config": "default", "result": "Pass", "host_effective": true, "sandbox_effective": false}
+{"control": "c", "config": "default", "result": "Pass", "host_effective": true, "sandbox_effective": false}
+{"control": "c", "config": "lifted", "result": "Pass", "host_effective": true, "sandbox_effective": false}
+{"control": "d-lua", "config": "default", "result": "Pass", "host_effective": true, "sandbox_effective": false}
+{"control": "d-openout", "config": "default", "result": "Pass", "host_effective": true, "sandbox_effective": false}
+{"control": "e", "config": "default", "result": "Inconclusive (probe blocked unsandboxed)", "host_effective": false, "sandbox_effective": false}
+{"control": "e", "config": "lifted", "result": "Pass", "host_effective": true, "sandbox_effective": false}
+{"control": "f", "config": "default", "result": "Pass", "host_effective": true, "sandbox_effective": false}

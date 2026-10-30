@@ -1,0 +1,4 @@
+Probe D3 writes a file under the home directory with openout.
+\immediate\openout\ewrite=@CANARY_DIR@/written-by-openout.tex
+\immediate\write\ewrite{E2 written by openout}
+\immediate\closeout\ewrite

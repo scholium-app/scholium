@@ -1,0 +1,12 @@
+Probe E2EDIT A1 reads the system password file from Lua. [A1 passwd]
+DENIED nil
+Probe A2 reads a canary planted under the home directory. [A2 home canary]
+DENIED nil
+Probe A3 reads a canary from the host environment. [A3 host env] DENIED
+unset
+
+
+
+
+                                    1
+

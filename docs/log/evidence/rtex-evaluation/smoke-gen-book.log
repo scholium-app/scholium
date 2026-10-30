@@ -1,0 +1,7 @@
+$ /home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/target/release/rtex gen-book --pages 10 --out /home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke/book-10
+cwd: /home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke
+RTEX_TEXLIVE_BIN=/usr/bin
+RTEX_TEXDIR=/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.5/tex
+wrote /home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/.work/smoke/book-10
+
+exit_status: 0

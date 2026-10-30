@@ -1,0 +1,17 @@
+% Original evaluation fixture, MIT OR Apache-2.0 (repository license).
+% T16 E2 negative controls: negative.py prepends this preamble to one body file and fills
+% the @NAME@ placeholders with harness-owned canary paths. Each probe prints "[label] result".
+\documentclass{article}
+\hyphenpenalty=10000 \exhyphenpenalty=10000
+\newwrite\ewrite
+% LuaTeX has no \write18 primitive; shellesc restores it (the documented LuaLaTeX route).
+\usepackage{shellesc}
+\directlua{
+  e2 = {}
+  function e2.say(label, value)
+    local text = tostring(value):gsub(string.char(10), " "):gsub(string.char(13), " ")
+    tex.print(-2, "[" .. label .. "] " .. text:sub(1, 160))
+  end
+}
+\begin{document}
+\raggedright

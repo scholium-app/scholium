@@ -1,0 +1,6 @@
+Probe D1 writes a file under the home directory from Lua.
+\directlua{local f, err = io.open("@CANARY_DIR@/written-by-lua.txt", "w") if f then f:write("E2 written by Lua") f:close() end e2.say("D1 Lua write home", f and "OPENED" or ("DENIED " .. tostring(err)))}
+
+Probe D2 writes into the project input directory from Lua.
+\directlua{for label, path in pairs({["host path"] = "@PROJECT_DIR@/written-into-project.txt", ["sandbox path"] = "/project/written-into-project.txt"}) do local f, err = io.open(path, "w") if f then f:write("E2 written into project") f:close() end e2.say("D2 Lua write project " .. label, f and "OPENED" or ("DENIED " .. tostring(err))) end}
+

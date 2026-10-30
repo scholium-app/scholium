@@ -1,0 +1,49 @@
+本次日志：/tmp/scholium-stage0.bXg0uA
+
+=== 出口条件 安全（不受信源码隔离） ===
+  FAIL  untrusted-input
+        error: no matching package named `typst` found
+        location searched: `rsproxy-sparse` index (which is replacing registry `crates-io`)
+        required by package `scholium-spike-untrusted v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/untrusted-input)`
+        note: offline mode (via `--offline`) can sometimes cause surprising resolution failures
+        help: if this error is too confusing you may wish to retry without `--offline`
+        完整日志：/tmp/scholium-stage0.bXg0uA/1.log
+  FAIL  mixed-build compiler isolation
+        error: no matching package named `lopdf` found
+        location searched: `rsproxy-sparse` index (which is replacing registry `crates-io`)
+        required by package `scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/mixed-build)`
+        note: offline mode (via `--offline`) can sometimes cause surprising resolution failures
+        help: if this error is too confusing you may wish to retry without `--offline`
+        完整日志：/tmp/scholium-stage0.bXg0uA/2.log
+  FAIL  Typst worker isolation
+        error: no matching package named `lopdf` found
+        location searched: `rsproxy-sparse` index (which is replacing registry `crates-io`)
+        required by package `scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/mixed-build)`
+        note: offline mode (via `--offline`) can sometimes cause surprising resolution failures
+        help: if this error is too confusing you may wish to retry without `--offline`
+        完整日志：/tmp/scholium-stage0.bXg0uA/3.log
+  FAIL  PDF artifact probe isolation
+        error: no matching package named `lopdf` found
+        location searched: `rsproxy-sparse` index (which is replacing registry `crates-io`)
+        required by package `scholium-spike-mixed-build v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/mixed-build)`
+        note: offline mode (via `--offline`) can sometimes cause surprising resolution failures
+        help: if this error is too confusing you may wish to retry without `--offline`
+        完整日志：/tmp/scholium-stage0.bXg0uA/4.log
+  PASS  runtime mount allowlist
+  PASS  process tree resource limits
+  FAIL  recovery compiler isolation
+        error: no matching package named `crc32fast` found
+        location searched: `rsproxy-sparse` index (which is replacing registry `crates-io`)
+        required by package `scholium-spike-recovery v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/recovery)`
+        note: offline mode (via `--offline`) can sometimes cause surprising resolution failures
+        help: if this error is too confusing you may wish to retry without `--offline`
+        完整日志：/tmp/scholium-stage0.bXg0uA/7.log
+
+=== 汇总 ===
+  通过 2 项，失败 5 项
+  失败项：
+    - untrusted-input
+    - mixed-build compiler isolation
+    - Typst worker isolation
+    - PDF artifact probe isolation
+    - recovery compiler isolation
