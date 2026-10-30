@@ -93,3 +93,4 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0040](ADR-0040-ui-string-catalog.md)：界面文字目录采用 Project Fluent（`fluent-bundle`），key 规则、运行时切换与硬编码文字门禁。
 
 [ADR 0041](ADR-0041-separate-latex-typst-kernels.md)：LaTeX 与 Typst 分为两个编辑内核，项目语言固定、预览同引擎；取代 ADR 0001，混用与团队语言切换推迟，LaTeX 实时预览引擎（rtex）待评估。
+[ADR 0042](ADR-0042-session-editing-core.md)：编辑交互核心提取为不依赖 UI 的 scholium-session，原子命令与分层门禁。

@@ -1,6 +1,7 @@
 # 会话与扩展代码组织计划
 
-本计划定义后续拆分方向，不声明以下 crate 已实现。边界提案见 [ADR 0025](../adr/ADR-0025-extension-boundaries.md)。
+本计划定义后续拆分方向；`scholium-session` 已存在，按 [ADR 0042](../adr/ADR-0042-session-editing-core.md)
+提供 `typst` 编辑核心模块，其余候选目录不声明已实现。边界提案见 [ADR 0025](../adr/ADR-0025-extension-boundaries.md)。
 
 ## 组织与依赖
 
@@ -8,7 +9,7 @@
 crates/
   scholium-model/             稳定领域身份、位置、诊断；不放外部协议
   scholium-document/          文档结构与编辑校验
-  scholium-session/           项目命令、权限与事务编排（按需提取）
+  scholium-session/           typst 编辑核心；项目命令、权限与事务编排按需扩展
   scholium-app/               原生 UI、投影和平台交互
   scholium-agent-pi/          Pi 外部进程、协议映射与任务策略
   scholium-mcp/               MCP server、schema 和传输适配

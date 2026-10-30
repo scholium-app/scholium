@@ -10,22 +10,13 @@ pub(super) fn prepare(
     target: &Path,
     legacy: &Path,
 ) -> Result<Option<scholium_storage::FileMigrationReport>, SessionError> {
-    if target.try_exists()? || !legacy.try_exists()? {
-        return Ok(None);
-    }
-    let migrated = scholium_storage::legacy_has_head(legacy).and_then(|head| {
-        head.then(|| scholium_storage::migrate_legacy_file(legacy, target))
-            .transpose()
-    });
-    match migrated {
-        Ok(report) => Ok(report),
-        // Another instance published the target first; its migration is authoritative.
-        Err(_) if target.try_exists()? => Ok(None),
-        Err(error) => Err(SessionError::Startup(format!(
+    scholium_session::typst::prepare(target, legacy).map_err(|error| match error {
+        scholium_session::typst::SessionError::Io(error) => SessionError::Io(error),
+        _ => SessionError::Startup(format!(
             "旧版会话 {} 无法迁移：{error}。旧文件未改动",
             legacy.display()
-        ))),
-    }
+        )),
+    })
 }
 
 /// Shown instead of any editor when the default document cannot be opened.

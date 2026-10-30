@@ -68,7 +68,7 @@ impl EditorSession {
             "shown": self.scene.as_ref().map(|s| format!("{:?}", s.stamp)),
             "cursor_leaf": format!("{:?}", self.cursor.leaf), "cursor_byte": self.cursor.byte,
             "cursor_affinity": format!("{:?}", self.cursor.affinity),
-            "saved": self.saved.as_ref() == Some(&self.snapshot),
+            "saved": !self.core.dirty(),
             "snapshot": self.snapshot.as_ref(), "carets": carets, "page_text_draws": text_shapes,
             "source_reads": self.scene.as_ref().map(|s| s.stats.source_reads),
             "layout_error": self.layout_error,

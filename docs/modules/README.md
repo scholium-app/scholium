@@ -17,7 +17,8 @@
 | `scholium-bib` | [bib.md](bib.md) | BibTeX CST、文献索引与 CSL |
 | `scholium-build` | [build.md](build.md) | 安全构建、预览、产物与日志映射 |
 | `scholium-render` | [render.md](render.md) | 按项目引擎预览、SourceMap 与实时/整编状态 |
-| `scholium-app` | [app.md](app.md) | 桌面 UI、项目 session 和模块编排 |
+| `scholium-session` | [session.md](session.md) | 无 UI 的本地编辑会话、原子命令、历史与保存 |
+| `scholium-app` | [app.md](app.md) | 桌面 UI、session 适配和模块编排 |
 | `scholium-sync-server` | [sync-server.md](sync-server.md) | 鉴权、中继、快照、presence 与权限撤销 |
 
 模块间只能通过公共 DTO、trait 或事件交互。若两个模块需要互相依赖，应把共享概念下沉到 model，
@@ -30,4 +31,18 @@ Typst 内核包含 model 中的 SDG 类型、document 与 typst；LaTeX 内核�
 
 ## 后续扩展模块
 
-候选 session、Pi adapter、MCP server、插件 SDK/host/runtime 的职责和提取顺序见 [组织计划](../plan/EXTENSION_ORGANIZATION.md)。这些尚非实现模块；正式提取时补齐七节模块规范。WIT、MCP、Pi 协议类型留在适配层，不进入 model。
+候选 Pi adapter、MCP server、插件 SDK/host/runtime 的职责和提取顺序见 [组织计划](../plan/EXTENSION_ORGANIZATION.md)。这些尚非实现模块；正式提取时补齐七节模块规范。session 已有 Typst 本地编辑核心，见 ADR 0042。WIT、MCP、Pi 协议类型留在适配层，不进入 model。
+
+## 已实现 crate 分层
+
+| 层 | crate | 允许的 workspace 依赖 |
+|---|---|---|
+| 0 | scholium-model | 无 |
+| 1 | scholium-document | model |
+| 2 | scholium-typst | model、document |
+| 2 | scholium-storage | model、document |
+| 3 | scholium-session | model、document、typst、storage |
+| 4 | scholium-app | 所有下层 |
+
+`scripts/check-layers.py` 解析锁定 metadata 的完整依赖图：未登记 crate、向上依赖和 app 以下
+直接/传递依赖 egui、eframe、winit、accesskit 均失败（包括开发与构建依赖）。候选模块不计入已实现表。

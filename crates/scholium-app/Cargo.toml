@@ -7,6 +7,7 @@ rust-version.workspace = true
 publish = false
 
 [dependencies]
+scholium-session = { path = "../scholium-session", version = "0.1.0" }
 eframe.workspace = true
 unicode-segmentation = "=1.13.3"
 fluent-bundle = "=0.16.0"
