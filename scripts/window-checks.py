@@ -10,7 +10,7 @@ Checks are discovered: spikes/typst-main-editor/*-check.py (signature
 in EXCEPTIONS below. Checks run sequentially and are never retried. A machine-wide
 lock serialises concurrent runs so parallel tasks never contend for the CPU.
 
-Every check runs once per `--locale` (default zh-Hans; CI runs zh-Hans and en as a matrix)
+Every check runs once per `--locale` (default zh-Hans; CI runs zh-Hans and en in one job after one build)
 with SCHOLIUM_LOCALE set, so chrome is found by command id in either language. With more than
 one locale the evidence goes to `<out>/<locale>/<name>`.
 """

@@ -1,0 +1,31 @@
+name: Rust setup
+description: Pinned toolchain, mold, a cargo cache saved only from main, and Ubuntu packages.
+inputs:
+  components:
+    description: Extra rustup components, comma separated.
+    default: ''
+  cache-key:
+    description: Swatinem/rust-cache shared key.
+    required: true
+  cache-workspaces:
+    description: Swatinem/rust-cache workspaces.
+    default: '. -> target'
+  packages:
+    description: Ubuntu packages to install.
+    default: libxkbcommon-dev libwayland-dev libegl1-mesa-dev
+runs:
+  using: composite
+  steps:
+    - uses: dtolnay/rust-toolchain@1.99.0
+      with:
+        components: ${{ inputs.components }}
+    - uses: rui314/setup-mold@v1
+    # Pull requests restore main's cache but never upload their own, so they cannot evict it.
+    - uses: Swatinem/rust-cache@v2
+      with:
+        shared-key: ${{ inputs.cache-key }}
+        workspaces: ${{ inputs.cache-workspaces }}
+        save-if: ${{ github.ref == 'refs/heads/main' }}
+    - name: Install Ubuntu packages
+      shell: bash
+      run: bash scripts/install-ci-native-deps.sh ${{ inputs.packages }}
