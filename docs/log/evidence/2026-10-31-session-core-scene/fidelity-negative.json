@@ -1,0 +1,248 @@
+{
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": ""
+              }
+            },
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "kind": "fraction",
+                    "numerator": {
+                      "body": {
+                        "kind": "text",
+                        "text": "12"
+                      }
+                    },
+                    "denominator": {
+                      "body": {
+                        "kind": "attach",
+                        "base": {
+                          "body": {
+                            "kind": "text",
+                            "text": "3"
+                          }
+                        },
+                        "sup": {
+                          "body": {
+                            "kind": "text",
+                            "text": "9"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/2",
+      "byte": 1,
+      "affinity": "Upstream"
+    },
+    "anchor": null,
+    "undo_depth": 7
+  },
+  "actual": {
+    "anchor": null,
+    "cursor": {
+      "affinity": "Upstream",
+      "byte": 1,
+      "path": "blocks/0/content/2"
+    },
+    "snapshot": {
+      "blocks": [
+        {
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": ""
+              }
+            },
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "denominator": {
+                      "body": {
+                        "base": {
+                          "body": {
+                            "kind": "text",
+                            "text": "3"
+                          }
+                        },
+                        "kind": "attach",
+                        "sup": {
+                          "body": {
+                            "kind": "text",
+                            "text": "2"
+                          }
+                        }
+                      }
+                    },
+                    "kind": "fraction",
+                    "numerator": {
+                      "body": {
+                        "kind": "text",
+                        "text": "12"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "."
+              }
+            }
+          ],
+          "kind": "Paragraph"
+        }
+      ]
+    },
+    "undo_depth": 7
+  },
+  "diff": {
+    "snapshot": {
+      "expected": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "12"
+                        }
+                      },
+                      "denominator": {
+                        "body": {
+                          "kind": "attach",
+                          "base": {
+                            "body": {
+                              "kind": "text",
+                              "text": "3"
+                            }
+                          },
+                          "sup": {
+                            "body": {
+                              "kind": "text",
+                              "text": "9"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "actual": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "base": {
+                            "body": {
+                              "kind": "text",
+                              "text": "3"
+                            }
+                          },
+                          "kind": "attach",
+                          "sup": {
+                            "body": {
+                              "kind": "text",
+                              "text": "2"
+                            }
+                          }
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "12"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "."
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    }
+  }
+}

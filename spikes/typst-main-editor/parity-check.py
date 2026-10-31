@@ -168,19 +168,55 @@ class Replay:
         return self.ready()
 
 
+def cursor_caret(state):
+    candidates = [c for c in state["carets"] if identity(c["leaf"]) == identity(state["cursor_leaf"])
+                  and c["byte"] == state["cursor_byte"]]
+    return next((c for c in candidates if c["affinity"] == state["cursor_affinity"]), next(iter(candidates), None))
+
+
+def check_step(event, state, states):
+    actual = projection(state)
+    expected = event.get("expected", {})
+    diff = {k: {"expected": v, "actual": actual.get(k)} for k, v in expected.items() if actual.get(k) != v}
+    if diff:
+        raise AssertionError(json.dumps(diff, ensure_ascii=False, indent=2))
+    if "vertical" not in event:
+        return
+    check = event["vertical"]
+    goal = cursor_caret(states[check["goal_step"] - 1])["x"]
+    previous = cursor_caret(states[check["previous_step"] - 1])
+    caret = cursor_caret(state)
+    dy = caret["y"] - previous["y"]
+    if not (dy > 0 if check["direction"] == "down" else dy < 0):
+        raise AssertionError(f"must cross a soft wrap: previous={previous}, actual={caret}")
+    stops = [c for c in state["carets"] if c["exact"] and c["leaf"] == caret["leaf"]]
+    if any(min(caret["y"], previous["y"]) < c["y"] < max(caret["y"], previous["y"]) for c in stops):
+        raise AssertionError("must move to the adjacent visual line")
+    nearest = min(abs(c["x"] - goal) for c in stops if abs(c["y"] - caret["y"]) < 1e-4)
+    if abs(abs(caret["x"] - goal) - nearest) >= 1e-4:
+        raise AssertionError(f"lost original column goal {goal}: caret={caret}, nearest distance={nearest}")
+    if check.get("distinguish_previous_x"):
+        prior_nearest = min(abs(c["x"] - previous["x"]) for c in stops if abs(c["y"] - caret["y"]) < 1e-4)
+        if abs(caret["x"] - previous["x"]) <= prior_nearest + 1e-4:
+            raise AssertionError("fixture must distinguish original goal from previous line's caret x")
+
+
 def scenario(binary, path, output):
     value = json.loads(path.read_text())
     output.mkdir(parents=True, exist_ok=False)
     replay = Replay(binary, output)
     step = "startup"
     rows = []
+    states = []
     try:
         state = replay.focus()
         for index, event in enumerate(value["inputs"]):
             step = f"input {index + 1}: {event}"
             state = replay.input(event, state)
-            rows.append({"step": step, "actual": projection(state)})
+            rows.append({"step": step, "actual": projection(state), "caret": cursor_caret(state)})
             (output / "steps.json").write_text(json.dumps(rows, ensure_ascii=False, indent=2) + "\n")
+            check_step(event, state, states)
+            states.append(state)
         actual = projection(replay.ready())
         diff = differences(value["expected"], actual)
         (output / "result.json").write_text(json.dumps({"expected": value["expected"], "actual": actual,

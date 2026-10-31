@@ -2,13 +2,107 @@
   "name": "vertical-goal",
   "inputs": [
     {
-      "text": "a long soft-wrapped paragraph that crosses a visual line"
+      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
     },
     {
-      "key": "ArrowUp"
+      "key": "Home",
+      "mods": {
+        "command": true
+      }
     },
     {
-      "key": "ArrowDown"
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 12,
+          "affinity": "Downstream"
+        },
+        "anchor": null,
+        "undo_depth": 1
+      }
+    },
+    {
+      "key": "ArrowDown",
+      "vertical": {
+        "goal_step": 14,
+        "previous_step": 14,
+        "direction": "down"
+      },
+      "expected": {
+        "undo_depth": 1,
+        "anchor": null
+      }
+    },
+    {
+      "key": "ArrowDown",
+      "vertical": {
+        "goal_step": 14,
+        "previous_step": 15,
+        "direction": "down",
+        "distinguish_previous_x": true
+      },
+      "expected": {
+        "undo_depth": 1,
+        "anchor": null
+      }
+    },
+    {
+      "key": "ArrowUp",
+      "vertical": {
+        "goal_step": 14,
+        "previous_step": 16,
+        "direction": "up"
+      },
+      "expected": {
+        "undo_depth": 1,
+        "anchor": null
+      }
+    },
+    {
+      "key": "ArrowUp",
+      "vertical": {
+        "goal_step": 14,
+        "previous_step": 17,
+        "direction": "up"
+      },
+      "expected": {
+        "undo_depth": 1,
+        "anchor": null
+      }
     }
   ],
   "expected": {
@@ -21,7 +115,7 @@
               "body": {
                 "kind": "text",
                 "style": "plain",
-                "text": "a long soft-wrapped paragraph that crosses a visual line"
+                "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
               }
             }
           ]
@@ -30,8 +124,8 @@
     },
     "cursor": {
       "path": "blocks/0/content/0",
-      "byte": 56,
-      "affinity": "Upstream"
+      "byte": 12,
+      "affinity": "Downstream"
     },
     "anchor": null,
     "undo_depth": 1

@@ -1,0 +1,4418 @@
+[
+  {
+    "locale": "zh-Hans",
+    "name": "double-click-bold",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "strong",
+                  "text": "bold"
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": " word"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 4,
+        "affinity": "Upstream"
+      },
+      "anchor": {
+        "path": "blocks/0/content/0",
+        "byte": 0,
+        "affinity": "Downstream"
+      },
+      "undo_depth": 2
+    },
+    "actual": {
+      "anchor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/0"
+      },
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 4,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "strong",
+                  "text": "bold"
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": " word"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 2
+    },
+    "diff": {},
+    "steps": [
+      {
+        "step": "input 1: {'text': 'bold word'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 9,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "bold word"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 9,
+          "exact": true,
+          "leaf": "NodeId(2b6860a5-87e8-4ad0-a9ac-d00d11c65a3f)",
+          "x": 332.8329162597656,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 2: {'pointer': {'target': 'word 0', 'kind': 'Press', 'clicks': 2}, 'expected': {'cursor': {'path': 'blocks/0/content/0', 'byte': 4, 'affinity': 'Upstream'}, 'anchor': {'path': 'blocks/0/content/0', 'byte': 0, 'affinity': 'Downstream'}, 'undo_depth': 1}}",
+        "actual": {
+          "anchor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/0"
+          },
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "bold word"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 4,
+          "exact": true,
+          "leaf": "NodeId(2b6860a5-87e8-4ad0-a9ac-d00d11c65a3f)",
+          "x": 277.48785400390625,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 3: {'command': 'Bold'}",
+        "actual": {
+          "anchor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/0"
+          },
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "strong",
+                      "text": "bold"
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": " word"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 2
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 4,
+          "exact": true,
+          "leaf": "NodeId(2b6860a5-87e8-4ad0-a9ac-d00d11c65a3f)",
+          "x": 280.1842041015625,
+          "y": 298.5711669921875
+        }
+      }
+    ]
+  },
+  {
+    "locale": "zh-Hans",
+    "name": "formula-fraction-superscript",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "12"
+                        }
+                      },
+                      "denominator": {
+                        "body": {
+                          "kind": "attach",
+                          "base": {
+                            "body": {
+                              "kind": "text",
+                              "text": "3"
+                            }
+                          },
+                          "sup": {
+                            "body": {
+                              "kind": "text",
+                              "text": "2"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/2",
+        "byte": 1,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 7
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 1,
+        "path": "blocks/0/content/2"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "base": {
+                            "body": {
+                              "kind": "text",
+                              "text": "3"
+                            }
+                          },
+                          "kind": "attach",
+                          "sup": {
+                            "body": {
+                              "kind": "text",
+                              "text": "2"
+                            }
+                          }
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "12"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "."
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 7
+    },
+    "diff": {},
+    "steps": [
+      {
+        "step": "input 1: {'text': '$', 'expected': {'undo_depth': 1}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/1/body/root"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 0,
+          "exact": true,
+          "leaf": "NodeId(22a24b14-3ffc-4455-b154-a39806f8814f)",
+          "x": 238.78929138183594,
+          "y": 299.35443115234375
+        }
+      },
+      {
+        "step": "input 2: {'text': '12', 'expected': {'undo_depth': 2}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 2,
+            "path": "blocks/0/content/1/body/root"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "kind": "text",
+                          "text": "12"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 2
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 2,
+          "exact": true,
+          "leaf": "NodeId(22a24b14-3ffc-4455-b154-a39806f8814f)",
+          "x": 258.8128662109375,
+          "y": 298.7061767578125
+        }
+      },
+      {
+        "step": "input 3: {'key': 'Slash', 'mods': {'command': True}, 'expected': {'undo_depth': 3}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/1/body/root/body/denominator"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "denominator": {
+                            "body": {
+                              "kind": "hole"
+                            }
+                          },
+                          "kind": "fraction",
+                          "numerator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "12"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 3
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 0,
+          "exact": true,
+          "leaf": "NodeId(6e5f9fa1-d854-431e-ae9e-ade51ab854d7)",
+          "x": 246.7675018310547,
+          "y": 310.83074951171875
+        }
+      },
+      {
+        "step": "input 4: {'text': '3', 'expected': {'undo_depth': 4}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 1,
+            "path": "blocks/0/content/1/body/root/body/denominator"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "denominator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "3"
+                            }
+                          },
+                          "kind": "fraction",
+                          "numerator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "12"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 4
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 1,
+          "exact": true,
+          "leaf": "NodeId(6e5f9fa1-d854-431e-ae9e-ade51ab854d7)",
+          "x": 251.5489044189453,
+          "y": 309.5726623535156
+        }
+      },
+      {
+        "step": "input 5: {'key': 'Character', 'value': '^', 'expected': {'undo_depth': 5}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/1/body/root/body/denominator/body/sup"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "denominator": {
+                            "body": {
+                              "base": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "3"
+                                }
+                              },
+                              "kind": "attach",
+                              "sup": {
+                                "body": {
+                                  "kind": "hole"
+                                }
+                              }
+                            }
+                          },
+                          "kind": "fraction",
+                          "numerator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "12"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 5
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 0,
+          "exact": true,
+          "leaf": "NodeId(da46448d-4444-4cef-ac54-db48c30e61ed)",
+          "x": 251.07833862304688,
+          "y": 308.4298095703125
+        }
+      },
+      {
+        "step": "input 6: {'text': '2', 'expected': {'undo_depth': 6, 'snapshot': {'blocks': [{'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': ''}}, {'body': {'kind': 'math', 'root': {'body': {'kind': 'fraction', 'numerator': {'body': {'kind': 'text', 'text': '12'}}, 'denominator': {'body': {'kind': 'attach', 'base': {'body': {'kind': 'text', 'text': '3'}}, 'sup': {'body': {'kind': 'text', 'text': '2'}}}}}}}}, {'body': {'kind': 'text', 'style': 'plain', 'text': ''}}]}]}, 'cursor': {'path': 'blocks/0/content/1/body/root/body/denominator/body/sup', 'byte': 1, 'affinity': 'Upstream'}, 'anchor': None}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 1,
+            "path": "blocks/0/content/1/body/root/body/denominator/body/sup"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "denominator": {
+                            "body": {
+                              "base": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "3"
+                                }
+                              },
+                              "kind": "attach",
+                              "sup": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "2"
+                                }
+                              }
+                            }
+                          },
+                          "kind": "fraction",
+                          "numerator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "12"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 6
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 1,
+          "exact": true,
+          "leaf": "NodeId(da46448d-4444-4cef-ac54-db48c30e61ed)",
+          "x": 255.16587829589844,
+          "y": 306.4250793457031
+        }
+      },
+      {
+        "step": "input 7: {'key': 'Character', 'value': 'm', 'mods': {'command': True}, 'expected': {'undo_depth': 6}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/2"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "denominator": {
+                            "body": {
+                              "base": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "3"
+                                }
+                              },
+                              "kind": "attach",
+                              "sup": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "2"
+                                }
+                              }
+                            }
+                          },
+                          "kind": "fraction",
+                          "numerator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "12"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 6
+        },
+        "caret": null
+      },
+      {
+        "step": "input 8: {'text': '.', 'expected': {'undo_depth': 7}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 1,
+            "path": "blocks/0/content/2"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "denominator": {
+                            "body": {
+                              "base": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "3"
+                                }
+                              },
+                              "kind": "attach",
+                              "sup": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "2"
+                                }
+                              }
+                            }
+                          },
+                          "kind": "fraction",
+                          "numerator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "12"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "."
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 7
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 1,
+          "exact": true,
+          "leaf": "NodeId(a3631bb5-6d30-4c41-9dc6-98d5f33583df)",
+          "x": 264.73345947265625,
+          "y": 298.37774658203125
+        }
+      }
+    ]
+  },
+  {
+    "locale": "zh-Hans",
+    "name": "mixed-cjk-english",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "中文 English paragraph"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 24,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 1
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 24,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "中文 English paragraph"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 1
+    },
+    "diff": {},
+    "steps": [
+      {
+        "step": "input 1: {'text': '中文 English paragraph'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 24,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "中文 English paragraph"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 24,
+          "exact": true,
+          "leaf": "NodeId(63033296-044a-4cbf-a0bd-96ef546f16be)",
+          "x": 464.16754150390625,
+          "y": 298.37774658203125
+        }
+      }
+    ]
+  },
+  {
+    "locale": "zh-Hans",
+    "name": "shift-selection-replace",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "select Xe"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 8,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 2
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 8,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "select Xe"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 2
+    },
+    "diff": {},
+    "steps": [
+      {
+        "step": "input 1: {'text': 'select me'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 9,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "select me"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 9,
+          "exact": true,
+          "leaf": "NodeId(a9f2c401-497e-4be0-bf2a-7f7f072d6af4)",
+          "x": 324.79083251953125,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 2: {'key': 'ArrowLeft'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 8,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "select me"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 8,
+          "exact": true,
+          "leaf": "NodeId(a9f2c401-497e-4be0-bf2a-7f7f072d6af4)",
+          "x": 314.13446044921875,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 3: {'key': 'ArrowLeft', 'mods': {'shift': True}, 'expected': {'cursor': {'path': 'blocks/0/content/0', 'byte': 7, 'affinity': 'Downstream'}, 'anchor': {'path': 'blocks/0/content/0', 'byte': 8, 'affinity': 'Downstream'}, 'undo_depth': 1}}",
+        "actual": {
+          "anchor": {
+            "affinity": "Downstream",
+            "byte": 8,
+            "path": "blocks/0/content/0"
+          },
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 7,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "select me"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 7,
+          "exact": true,
+          "leaf": "NodeId(a9f2c401-497e-4be0-bf2a-7f7f072d6af4)",
+          "x": 295.45947265625,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 4: {'text': 'X'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 8,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "select Xe"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 2
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 8,
+          "exact": true,
+          "leaf": "NodeId(a9f2c401-497e-4be0-bf2a-7f7f072d6af4)",
+          "x": 312.7980041503906,
+          "y": 298.37774658203125
+        }
+      }
+    ]
+  },
+  {
+    "locale": "zh-Hans",
+    "name": "triple-click-delete",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 0,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 2
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 0,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 2
+    },
+    "diff": {},
+    "steps": [
+      {
+        "step": "input 1: {'text': 'paragraph to delete'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 19,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "paragraph to delete"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 19,
+          "exact": true,
+          "leaf": "NodeId(38cb14f0-34e9-4a9f-b10b-52c4a65653e4)",
+          "x": 418.77545166015625,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 2: {'pointer': {'target': 'end of leaf 0', 'kind': 'Release', 'clicks': 3}, 'expected': {'cursor': {'path': 'blocks/0/content/0', 'byte': 19, 'affinity': 'Upstream'}, 'anchor': {'path': 'blocks/0/content/0', 'byte': 0, 'affinity': 'Downstream'}, 'undo_depth': 1}}",
+        "actual": {
+          "anchor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/0"
+          },
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 19,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "paragraph to delete"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 19,
+          "exact": true,
+          "leaf": "NodeId(38cb14f0-34e9-4a9f-b10b-52c4a65653e4)",
+          "x": 418.77545166015625,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 3: {'key': 'Delete'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 0,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 2
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 0,
+          "exact": true,
+          "leaf": "NodeId(38cb14f0-34e9-4a9f-b10b-52c4a65653e4)",
+          "x": 186.78570556640625,
+          "y": 298.37774658203125
+        }
+      }
+    ]
+  },
+  {
+    "locale": "zh-Hans",
+    "name": "undo-redo",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "history"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 7,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 1
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 7,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "history"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 1
+    },
+    "diff": {},
+    "steps": [
+      {
+        "step": "input 1: {'text': 'history'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 7,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "history"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 7,
+          "exact": true,
+          "leaf": "NodeId(3f9be86b-d3f0-4dc5-8d36-de5fd8b00a6a)",
+          "x": 301.49688720703125,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 2: {'key': 'Character', 'value': 'z', 'mods': {'command': True}, 'expected': {'snapshot': {'blocks': [{'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': ''}}]}]}, 'cursor': {'path': 'blocks/0/content/0', 'byte': 0, 'affinity': 'Downstream'}, 'anchor': None, 'undo_depth': 0}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 0
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 0,
+          "exact": true,
+          "leaf": "NodeId(3f9be86b-d3f0-4dc5-8d36-de5fd8b00a6a)",
+          "x": 186.78570556640625,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 3: {'key': 'Character', 'value': 'z', 'mods': {'command': True, 'shift': True}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 7,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "history"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 7,
+          "exact": true,
+          "leaf": "NodeId(3f9be86b-d3f0-4dc5-8d36-de5fd8b00a6a)",
+          "x": 301.49688720703125,
+          "y": 298.37774658203125
+        }
+      }
+    ]
+  },
+  {
+    "locale": "zh-Hans",
+    "name": "vertical-goal",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 12,
+        "affinity": "Downstream"
+      },
+      "anchor": null,
+      "undo_depth": 1
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 12,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 1
+    },
+    "diff": {},
+    "steps": [
+      {
+        "step": "input 1: {'text': 'Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. '}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 373,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 373,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 1094.2142333984375,
+          "y": 420.3455505371094
+        }
+      },
+      {
+        "step": "input 2: {'key': 'Home', 'mods': {'command': True}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 0,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 234.80380249023438,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 3: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 1,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 1,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 256.9840393066406,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 4: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 2,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 2,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 263.17388916015625,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 5: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 3,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 3,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 275.17840576171875,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 6: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 4,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 285.8347473144531,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 7: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 5,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 5,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 293.93096923828125,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 8: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 6,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 6,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 311.26953125,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 9: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 7,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 7,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 323.2740478515625,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 10: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 8,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 8,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 331.2692565917969,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 11: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 9,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 9,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 343.2737731933594,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 12: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 10,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 10,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 352.61712646484375,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 13: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 11,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 11,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 360.41290283203125,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 14: {'key': 'ArrowRight', 'expected': {'cursor': {'path': 'blocks/0/content/0', 'byte': 12, 'affinity': 'Downstream'}, 'anchor': None, 'undo_depth': 1}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 12,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 12,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 382.86279296875,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 15: {'key': 'ArrowDown', 'vertical': {'goal_step': 14, 'previous_step': 14, 'direction': 'down'}, 'expected': {'undo_depth': 1, 'anchor': None}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 108,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 108,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 384.906494140625,
+          "y": 339.03369140625
+        }
+      },
+      {
+        "step": "input 16: {'key': 'ArrowDown', 'vertical': {'goal_step': 14, 'previous_step': 15, 'direction': 'down', 'distinguish_previous_x': True}, 'expected': {'undo_depth': 1, 'anchor': None}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 203,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 203,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 378.9819030761719,
+          "y": 379.68963623046875
+        }
+      },
+      {
+        "step": "input 17: {'key': 'ArrowUp', 'vertical': {'goal_step': 14, 'previous_step': 16, 'direction': 'up'}, 'expected': {'undo_depth': 1, 'anchor': None}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 108,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 108,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 384.906494140625,
+          "y": 339.03369140625
+        }
+      },
+      {
+        "step": "input 18: {'key': 'ArrowUp', 'vertical': {'goal_step': 14, 'previous_step': 17, 'direction': 'up'}, 'expected': {'undo_depth': 1, 'anchor': None}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 12,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 12,
+          "exact": true,
+          "leaf": "NodeId(772d7e6e-924e-4984-b09d-660f7a94ce60)",
+          "x": 382.86279296875,
+          "y": 298.37774658203125
+        }
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "name": "double-click-bold",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "strong",
+                  "text": "bold"
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": " word"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 4,
+        "affinity": "Upstream"
+      },
+      "anchor": {
+        "path": "blocks/0/content/0",
+        "byte": 0,
+        "affinity": "Downstream"
+      },
+      "undo_depth": 2
+    },
+    "actual": {
+      "anchor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/0"
+      },
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 4,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "strong",
+                  "text": "bold"
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": " word"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 2
+    },
+    "diff": {},
+    "steps": [
+      {
+        "step": "input 1: {'text': 'bold word'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 9,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "bold word"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 9,
+          "exact": true,
+          "leaf": "NodeId(ba9bbb3c-9476-4477-a83f-a96fc346c7a9)",
+          "x": 332.8329162597656,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 2: {'pointer': {'target': 'word 0', 'kind': 'Press', 'clicks': 2}, 'expected': {'cursor': {'path': 'blocks/0/content/0', 'byte': 4, 'affinity': 'Upstream'}, 'anchor': {'path': 'blocks/0/content/0', 'byte': 0, 'affinity': 'Downstream'}, 'undo_depth': 1}}",
+        "actual": {
+          "anchor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/0"
+          },
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "bold word"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 4,
+          "exact": true,
+          "leaf": "NodeId(ba9bbb3c-9476-4477-a83f-a96fc346c7a9)",
+          "x": 277.48785400390625,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 3: {'command': 'Bold'}",
+        "actual": {
+          "anchor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/0"
+          },
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "strong",
+                      "text": "bold"
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": " word"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 2
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 4,
+          "exact": true,
+          "leaf": "NodeId(ba9bbb3c-9476-4477-a83f-a96fc346c7a9)",
+          "x": 280.1842041015625,
+          "y": 298.5711669921875
+        }
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "name": "formula-fraction-superscript",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "12"
+                        }
+                      },
+                      "denominator": {
+                        "body": {
+                          "kind": "attach",
+                          "base": {
+                            "body": {
+                              "kind": "text",
+                              "text": "3"
+                            }
+                          },
+                          "sup": {
+                            "body": {
+                              "kind": "text",
+                              "text": "2"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/2",
+        "byte": 1,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 7
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 1,
+        "path": "blocks/0/content/2"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "base": {
+                            "body": {
+                              "kind": "text",
+                              "text": "3"
+                            }
+                          },
+                          "kind": "attach",
+                          "sup": {
+                            "body": {
+                              "kind": "text",
+                              "text": "2"
+                            }
+                          }
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "12"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "."
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 7
+    },
+    "diff": {},
+    "steps": [
+      {
+        "step": "input 1: {'text': '$', 'expected': {'undo_depth': 1}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/1/body/root"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 0,
+          "exact": true,
+          "leaf": "NodeId(f7db3277-4ffe-478c-84e0-49cfeada8381)",
+          "x": 238.78929138183594,
+          "y": 299.35443115234375
+        }
+      },
+      {
+        "step": "input 2: {'text': '12', 'expected': {'undo_depth': 2}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 2,
+            "path": "blocks/0/content/1/body/root"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "kind": "text",
+                          "text": "12"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 2
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 2,
+          "exact": true,
+          "leaf": "NodeId(f7db3277-4ffe-478c-84e0-49cfeada8381)",
+          "x": 258.8128662109375,
+          "y": 298.7061767578125
+        }
+      },
+      {
+        "step": "input 3: {'key': 'Slash', 'mods': {'command': True}, 'expected': {'undo_depth': 3}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/1/body/root/body/denominator"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "denominator": {
+                            "body": {
+                              "kind": "hole"
+                            }
+                          },
+                          "kind": "fraction",
+                          "numerator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "12"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 3
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 0,
+          "exact": true,
+          "leaf": "NodeId(09723504-933c-45be-bb60-daba372bb5a8)",
+          "x": 246.7675018310547,
+          "y": 310.83074951171875
+        }
+      },
+      {
+        "step": "input 4: {'text': '3', 'expected': {'undo_depth': 4}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 1,
+            "path": "blocks/0/content/1/body/root/body/denominator"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "denominator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "3"
+                            }
+                          },
+                          "kind": "fraction",
+                          "numerator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "12"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 4
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 1,
+          "exact": true,
+          "leaf": "NodeId(09723504-933c-45be-bb60-daba372bb5a8)",
+          "x": 251.5489044189453,
+          "y": 309.5726623535156
+        }
+      },
+      {
+        "step": "input 5: {'key': 'Character', 'value': '^', 'expected': {'undo_depth': 5}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/1/body/root/body/denominator/body/sup"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "denominator": {
+                            "body": {
+                              "base": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "3"
+                                }
+                              },
+                              "kind": "attach",
+                              "sup": {
+                                "body": {
+                                  "kind": "hole"
+                                }
+                              }
+                            }
+                          },
+                          "kind": "fraction",
+                          "numerator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "12"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 5
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 0,
+          "exact": true,
+          "leaf": "NodeId(0f13e530-398c-4972-923f-698ddaf9b5b5)",
+          "x": 251.07833862304688,
+          "y": 308.4298095703125
+        }
+      },
+      {
+        "step": "input 6: {'text': '2', 'expected': {'undo_depth': 6, 'snapshot': {'blocks': [{'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': ''}}, {'body': {'kind': 'math', 'root': {'body': {'kind': 'fraction', 'numerator': {'body': {'kind': 'text', 'text': '12'}}, 'denominator': {'body': {'kind': 'attach', 'base': {'body': {'kind': 'text', 'text': '3'}}, 'sup': {'body': {'kind': 'text', 'text': '2'}}}}}}}}, {'body': {'kind': 'text', 'style': 'plain', 'text': ''}}]}]}, 'cursor': {'path': 'blocks/0/content/1/body/root/body/denominator/body/sup', 'byte': 1, 'affinity': 'Upstream'}, 'anchor': None}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 1,
+            "path": "blocks/0/content/1/body/root/body/denominator/body/sup"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "denominator": {
+                            "body": {
+                              "base": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "3"
+                                }
+                              },
+                              "kind": "attach",
+                              "sup": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "2"
+                                }
+                              }
+                            }
+                          },
+                          "kind": "fraction",
+                          "numerator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "12"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 6
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 1,
+          "exact": true,
+          "leaf": "NodeId(0f13e530-398c-4972-923f-698ddaf9b5b5)",
+          "x": 255.16587829589844,
+          "y": 306.4250793457031
+        }
+      },
+      {
+        "step": "input 7: {'key': 'Character', 'value': 'm', 'mods': {'command': True}, 'expected': {'undo_depth': 6}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/2"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "denominator": {
+                            "body": {
+                              "base": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "3"
+                                }
+                              },
+                              "kind": "attach",
+                              "sup": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "2"
+                                }
+                              }
+                            }
+                          },
+                          "kind": "fraction",
+                          "numerator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "12"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 6
+        },
+        "caret": null
+      },
+      {
+        "step": "input 8: {'text': '.', 'expected': {'undo_depth': 7}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 1,
+            "path": "blocks/0/content/2"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "math",
+                      "root": {
+                        "body": {
+                          "denominator": {
+                            "body": {
+                              "base": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "3"
+                                }
+                              },
+                              "kind": "attach",
+                              "sup": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "2"
+                                }
+                              }
+                            }
+                          },
+                          "kind": "fraction",
+                          "numerator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "12"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "."
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 7
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 1,
+          "exact": true,
+          "leaf": "NodeId(6f997403-ffd7-40f0-8683-78ed94da3454)",
+          "x": 264.73345947265625,
+          "y": 298.37774658203125
+        }
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "name": "mixed-cjk-english",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "中文 English paragraph"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 24,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 1
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 24,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "中文 English paragraph"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 1
+    },
+    "diff": {},
+    "steps": [
+      {
+        "step": "input 1: {'text': '中文 English paragraph'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 24,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "中文 English paragraph"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 24,
+          "exact": true,
+          "leaf": "NodeId(e741d336-4bde-41f2-abd9-38504d7d2543)",
+          "x": 464.16754150390625,
+          "y": 298.37774658203125
+        }
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "name": "shift-selection-replace",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "select Xe"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 8,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 2
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 8,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "select Xe"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 2
+    },
+    "diff": {},
+    "steps": [
+      {
+        "step": "input 1: {'text': 'select me'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 9,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "select me"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 9,
+          "exact": true,
+          "leaf": "NodeId(d7d82f97-f005-424f-8384-bdcd856dddf0)",
+          "x": 324.79083251953125,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 2: {'key': 'ArrowLeft'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 8,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "select me"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 8,
+          "exact": true,
+          "leaf": "NodeId(d7d82f97-f005-424f-8384-bdcd856dddf0)",
+          "x": 314.13446044921875,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 3: {'key': 'ArrowLeft', 'mods': {'shift': True}, 'expected': {'cursor': {'path': 'blocks/0/content/0', 'byte': 7, 'affinity': 'Downstream'}, 'anchor': {'path': 'blocks/0/content/0', 'byte': 8, 'affinity': 'Downstream'}, 'undo_depth': 1}}",
+        "actual": {
+          "anchor": {
+            "affinity": "Downstream",
+            "byte": 8,
+            "path": "blocks/0/content/0"
+          },
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 7,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "select me"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 7,
+          "exact": true,
+          "leaf": "NodeId(d7d82f97-f005-424f-8384-bdcd856dddf0)",
+          "x": 295.45947265625,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 4: {'text': 'X'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 8,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "select Xe"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 2
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 8,
+          "exact": true,
+          "leaf": "NodeId(d7d82f97-f005-424f-8384-bdcd856dddf0)",
+          "x": 312.7980041503906,
+          "y": 298.37774658203125
+        }
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "name": "triple-click-delete",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 0,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 2
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 0,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 2
+    },
+    "diff": {},
+    "steps": [
+      {
+        "step": "input 1: {'text': 'paragraph to delete'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 19,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "paragraph to delete"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 19,
+          "exact": true,
+          "leaf": "NodeId(dd968514-2555-48cd-a9a5-8d61c4433d1c)",
+          "x": 418.77545166015625,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 2: {'pointer': {'target': 'end of leaf 0', 'kind': 'Release', 'clicks': 3}, 'expected': {'cursor': {'path': 'blocks/0/content/0', 'byte': 19, 'affinity': 'Upstream'}, 'anchor': {'path': 'blocks/0/content/0', 'byte': 0, 'affinity': 'Downstream'}, 'undo_depth': 1}}",
+        "actual": {
+          "anchor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/0"
+          },
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 19,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "paragraph to delete"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 19,
+          "exact": true,
+          "leaf": "NodeId(dd968514-2555-48cd-a9a5-8d61c4433d1c)",
+          "x": 418.77545166015625,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 3: {'key': 'Delete'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 0,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 2
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 0,
+          "exact": true,
+          "leaf": "NodeId(dd968514-2555-48cd-a9a5-8d61c4433d1c)",
+          "x": 186.78570556640625,
+          "y": 298.37774658203125
+        }
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "name": "undo-redo",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "history"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 7,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 1
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 7,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "history"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 1
+    },
+    "diff": {},
+    "steps": [
+      {
+        "step": "input 1: {'text': 'history'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 7,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "history"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 7,
+          "exact": true,
+          "leaf": "NodeId(93525949-1b9c-49d2-a5b4-23989dab39b7)",
+          "x": 301.49688720703125,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 2: {'key': 'Character', 'value': 'z', 'mods': {'command': True}, 'expected': {'snapshot': {'blocks': [{'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': ''}}]}]}, 'cursor': {'path': 'blocks/0/content/0', 'byte': 0, 'affinity': 'Downstream'}, 'anchor': None, 'undo_depth': 0}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 0
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 0,
+          "exact": true,
+          "leaf": "NodeId(93525949-1b9c-49d2-a5b4-23989dab39b7)",
+          "x": 186.78570556640625,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 3: {'key': 'Character', 'value': 'z', 'mods': {'command': True, 'shift': True}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 7,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "history"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 7,
+          "exact": true,
+          "leaf": "NodeId(93525949-1b9c-49d2-a5b4-23989dab39b7)",
+          "x": 301.49688720703125,
+          "y": 298.37774658203125
+        }
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "name": "vertical-goal",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 12,
+        "affinity": "Downstream"
+      },
+      "anchor": null,
+      "undo_depth": 1
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 12,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 1
+    },
+    "diff": {},
+    "steps": [
+      {
+        "step": "input 1: {'text': 'Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. '}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 373,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Upstream",
+          "byte": 373,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 1094.2142333984375,
+          "y": 420.3455505371094
+        }
+      },
+      {
+        "step": "input 2: {'key': 'Home', 'mods': {'command': True}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 0,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 234.80380249023438,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 3: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 1,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 1,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 256.9840393066406,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 4: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 2,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 2,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 263.17388916015625,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 5: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 3,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 3,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 275.17840576171875,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 6: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 4,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 285.8347473144531,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 7: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 5,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 5,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 293.93096923828125,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 8: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 6,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 6,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 311.26953125,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 9: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 7,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 7,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 323.2740478515625,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 10: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 8,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 8,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 331.2692565917969,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 11: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 9,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 9,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 343.2737731933594,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 12: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 10,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 10,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 352.61712646484375,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 13: {'key': 'ArrowRight'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 11,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 11,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 360.41290283203125,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 14: {'key': 'ArrowRight', 'expected': {'cursor': {'path': 'blocks/0/content/0', 'byte': 12, 'affinity': 'Downstream'}, 'anchor': None, 'undo_depth': 1}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 12,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 12,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 382.86279296875,
+          "y": 298.37774658203125
+        }
+      },
+      {
+        "step": "input 15: {'key': 'ArrowDown', 'vertical': {'goal_step': 14, 'previous_step': 14, 'direction': 'down'}, 'expected': {'undo_depth': 1, 'anchor': None}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 108,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 108,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 384.906494140625,
+          "y": 339.03369140625
+        }
+      },
+      {
+        "step": "input 16: {'key': 'ArrowDown', 'vertical': {'goal_step': 14, 'previous_step': 15, 'direction': 'down', 'distinguish_previous_x': True}, 'expected': {'undo_depth': 1, 'anchor': None}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 203,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 203,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 378.9819030761719,
+          "y": 379.68963623046875
+        }
+      },
+      {
+        "step": "input 17: {'key': 'ArrowUp', 'vertical': {'goal_step': 14, 'previous_step': 16, 'direction': 'up'}, 'expected': {'undo_depth': 1, 'anchor': None}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 108,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 108,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 384.906494140625,
+          "y": 339.03369140625
+        }
+      },
+      {
+        "step": "input 18: {'key': 'ArrowUp', 'vertical': {'goal_step': 14, 'previous_step': 17, 'direction': 'up'}, 'expected': {'undo_depth': 1, 'anchor': None}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 12,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        },
+        "caret": {
+          "affinity": "Downstream",
+          "byte": 12,
+          "exact": true,
+          "leaf": "NodeId(cef879fe-d2eb-42d1-ad2f-ae6dce3a0f56)",
+          "x": 382.86279296875,
+          "y": 298.37774658203125
+        }
+      }
+    ]
+  }
+]

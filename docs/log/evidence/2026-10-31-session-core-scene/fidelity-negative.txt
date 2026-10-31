@@ -1,0 +1,234 @@
+Exit code: 1
+Only final expected.sup changed from 2 to 9 in a temporary fixture.
+FAIL formula-fraction-superscript at input 8: {'text': '.', 'expected': {'undo_depth': 7}}: {
+  "snapshot": {
+    "expected": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": ""
+              }
+            },
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "kind": "fraction",
+                    "numerator": {
+                      "body": {
+                        "kind": "text",
+                        "text": "12"
+                      }
+                    },
+                    "denominator": {
+                      "body": {
+                        "kind": "attach",
+                        "base": {
+                          "body": {
+                            "kind": "text",
+                            "text": "3"
+                          }
+                        },
+                        "sup": {
+                          "body": {
+                            "kind": "text",
+                            "text": "9"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "actual": {
+      "blocks": [
+        {
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": ""
+              }
+            },
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "denominator": {
+                      "body": {
+                        "base": {
+                          "body": {
+                            "kind": "text",
+                            "text": "3"
+                          }
+                        },
+                        "kind": "attach",
+                        "sup": {
+                          "body": {
+                            "kind": "text",
+                            "text": "2"
+                          }
+                        }
+                      }
+                    },
+                    "kind": "fraction",
+                    "numerator": {
+                      "body": {
+                        "kind": "text",
+                        "text": "12"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "."
+              }
+            }
+          ],
+          "kind": "Paragraph"
+        }
+      ]
+    }
+  }
+}
+parity-check failed: {
+  "snapshot": {
+    "expected": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": ""
+              }
+            },
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "kind": "fraction",
+                    "numerator": {
+                      "body": {
+                        "kind": "text",
+                        "text": "12"
+                      }
+                    },
+                    "denominator": {
+                      "body": {
+                        "kind": "attach",
+                        "base": {
+                          "body": {
+                            "kind": "text",
+                            "text": "3"
+                          }
+                        },
+                        "sup": {
+                          "body": {
+                            "kind": "text",
+                            "text": "9"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "actual": {
+      "blocks": [
+        {
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": ""
+              }
+            },
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "denominator": {
+                      "body": {
+                        "base": {
+                          "body": {
+                            "kind": "text",
+                            "text": "3"
+                          }
+                        },
+                        "kind": "attach",
+                        "sup": {
+                          "body": {
+                            "kind": "text",
+                            "text": "2"
+                          }
+                        }
+                      }
+                    },
+                    "kind": "fraction",
+                    "numerator": {
+                      "body": {
+                        "kind": "text",
+                        "text": "12"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "."
+              }
+            }
+          ],
+          "kind": "Paragraph"
+        }
+      ]
+    }
+  }
+}

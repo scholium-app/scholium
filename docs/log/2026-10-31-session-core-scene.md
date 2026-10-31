@@ -322,3 +322,109 @@ parity-check 逐项重放全部 inputs：CJK/整段文字经剪贴板，短 ASCI
 本轮修订没有修改七个场景的 inputs、既有 app 测试断言、其他窗口脚本、workflow、stock reference 或阈值。
 仅按本次评审授权修订 parity 入口、补齐 expected，并将有逐步规则依据的公式 undo 7→5。
 T20 及本轮四项评审要求已完成；没有遗留迁移或 parity 待办。不合并、不轮询 CI。
+
+
+## PR #73 场景真实性修订（替代上一轮公式场景结论）
+
+上一节保留名称却接受正文 `^2` 的决定不能证明上标一致性，本轮明确撤回该覆盖声明。
+先按撤销规则推算再执行：删除分母 `3` 后的 ArrowRight，在分母内输入 `^`、`2`，
+最后 Ctrl+M 从上标直接退出到现有后置正文空叶；不经 LeaveSlot，不生成临时 Hole。
+第 6 步 expected 手工设为 Fraction(num=Text12, den=Attach(base=Text3, sup=Text2))，正文后置叶为空。
+数学 Attach.sup 必须出现在摘要中。退出后输入句号，末光标 `blocks/0/content/2` byte=1 Upstream，anchor=null。
+
+| 步 | 修正输入 | 规则推算（运行前） | 新增撤销项 | 累计 |
+| --- | --- | --- | ---: | ---: |
+| 1 | Text `$` | 分隔符建立 Math 结构 | 1 | 1 |
+| 2 | Text `12` | 首次在数学叶键入，开始插入组 | 1 | 2 |
+| 3 | Ctrl+/ | WrapFraction 结构命令打断键入，进入分母 Hole | 1 | 3 |
+| 4 | Text `3` | 分母叶首次输入，开始新组 | 1 | 4 |
+| 5 | Character `^` | 此时仍在分母；Attach(Sup) 结构命令创建上标 Hole，打断键入 | 1 | 5 |
+| 6 | Text `2` | 上标新叶首次输入，开始新组 | 1 | 6 |
+| 7 | Ctrl+M | 从上标直接退出到已有正文叶；只移动光标，无文档修改 | 0 | 6 |
+| 8 | Text `.` | 公式后输入句号，正文新叶首次插入，独立一组 | 1 | 7 |
+
+两端每一步都检查同一份 fixture 的 expected.undo_depth `[1,2,3,4,5,6,6,7]`；
+第 6 步另检查整个含 Attach.sup 的快照和数学上标光标，第 8 步检查退出后的全部四字段。
+若实际深度与表不符，停止，不按实际反填期望。原错误序列的 undo=5 推算仍是旧序列的追溯记录。
+
+首次定向回放中前 6 步的深度与推算完全一致。第 7 步已退出公式，空后置正文没有独立 caret，
+新增中间轨迹记录器最初要求每步都有 caret 而报错，尚未执行最终几何断言。
+为保持既有最终 caret 必须存在的断言，运行前推算并加入第 8 步正文句号（+1，累计 7）。
+中间记录允许空叶无 caret；垂直导航步骤与最终既有几何断言仍必须有 caret，没有修改既有断言。
+
+### 七个名称的真实性审计
+
+| 场景名称所述行为 | 快照/端点中可见证据（headless 与窗口使用同一 expected） | 输入修订 |
+| --- | --- | --- |
+| formula-fraction-superscript：分数与公式内上标 | 第 6 步快照为 Fraction(numerator=Text12, denominator=Attach(base=Text3, sup=Text2))，cursor 在 denominator/body/sup byte=1；末快照保留该节点，正文只有空前叶和后置句号，无字面 `^`；最终 undo=7 | 上标移到退出分母之前，Ctrl+M 退出，再输入正文句号 |
+| vertical-goal：跨软换行保留列目标 | 快照为一个 373-byte Paragraph/Text，无换行符；从 byte12 下移到108、203，再上移到108、12；三条视觉行 y=76.16015625、96.48046875、116.80078125 pt；每步 cursor 必须落在相邻行距原始 x 最近的 exact caret，最终 byte12/Downstream，anchor=null、undo=1 | 原 56-byte 短句不能证明软换行；改为长的比例字体段落，Ctrl+Home 后 Right×12 定位，再 Down×2、Up×2 |
+| double-click-bold：双击选词再加粗 | 第 2 步同叶 anchor=0/Downstream、cursor=4/Upstream，确实只选 `bold`；最终快照强样式 `bold` + 普通 ` word`，undo=2 | 输入不变，增加选词中间端点断言 |
+| mixed-cjk-english：中英混排提交 | 单一 Text 精确保留 `中文 English paragraph`，cursor UTF-8 byte=24/Upstream，anchor=null、undo=1 | 输入与最终 expected 不变 |
+| shift-selection-replace：Shift 选区替换 | 第 3 步 anchor=8、cursor=7（均 Downstream），选中字母 `m`；最终 `select Xe`、cursor byte8/Upstream、anchor=null、undo=2 | 去掉从未执行为重复次数的 `repeat:true` 标记，仍然只发送一次 ArrowLeft；增加替换前端点断言 |
+| triple-click-delete：三击选段再删除 | 第 2 步 anchor=0/Downstream、cursor=19/Upstream，完整选中 `paragraph to delete`；末快照 Text 为空、cursor=0/Upstream、anchor=null、undo=2 | 输入不变，增加全段选区中间断言 |
+| undo-redo：撤销再重做 | Ctrl+Z 后快照为空 Text、cursor=0/Downstream、anchor=null、undo=0；重做后恢复 `history`、cursor=7/Upstream、undo=1 | 输入不变，增加撤销后的完整摘要断言 |
+
+垂直移动的目标 x=168.86773252383406 pt。四次移动实际 x 分别为
+169.8892065888098、166.92801888533464、169.8892065888098、168.86773252383406 pt。
+第 16 步另要求该 caret **不是**按上一行实际 x 最近的候选，确保输入能区分保留目标与重置目标。
+这一步若误用上一行 x=169.8892065888098 pt 会选另一个字符；两端同一 fixture 的
+`distinguish_previous_x` 检查拒绝这种空覆盖。新增 1e-4 只用于浮点坐标比较误差（窗口坐标经 f32 缩放）；
+快照、端点、撤销均精确相等，不改已有任何窗口检查/stock 阈值。
+
+回放器现在逐输入读取可选 expected（所列字段精确相等）；最终 expected 仍必须包含整个快照、
+cursor、anchor、undo_depth 并全部精确相等。垂直步骤还读取真实 worker/current Scene 或 AUDIT carets，
+检查相邻行、原始列目标和反漂移见证，headless/window 都会失败退出。
+生产编辑实现没有变化；所有修订属于共享场景与验收器，不另建编辑路径。
+
+
+负对照仍保留前轮 undo=999 的原始证据，本轮又仅在临时副本把**最终数学上标 expected 从 2 改为 9**，
+输入和第 6 步期望保持正确；真实窗口在最后一步报告 snapshot 差异，退出码 **1**。
+actual Attach.sup 为 Text2，cursor/anchor/undo_depth 均与期望一致，证明错误数学节点不能通过。
+[新负对照日志](evidence/2026-10-31-session-core-scene/fidelity-negative.txt)、
+[完整差异](evidence/2026-10-31-session-core-scene/fidelity-negative.json)。
+[七场景 headless 逐步轨迹](evidence/2026-10-31-session-core-scene/fidelity-headless.json)保留快照、端点、深度及页面 pt 光标。
+
+本次文件行数相对 `0f68c05`：app typst_editor* 每个文件均未变化，总计 **8212 → 8212**；
+session 仅 scenario_tests.rs **150 → 241**（增加共享中间断言/几何检验并拆分回放助手），
+其余文件不变，总计 **4550 → 4641**。相对 T20 基线 `6fa1469`，app **8355 → 8212（-143）**，
+session **3853 → 4641（+788）**。
+[逐文件三列核对](evidence/2026-10-31-session-core-scene/fidelity-line-counts.json)列出全部文件；生产 app 没有增加编辑逻辑。
+
+
+### 修正场景后的最终门禁
+
+所有门禁针对修正后的共享场景重跑通过。ADR 0042 在这次双语言完整验收通过后保持 Fully implemented。
+原日志中的“输入不变、公式正文 ^2、undo=5”仅描述前一轮，已被本节的真实分数/上标场景替代。
+
+| 命令 | 本轮结果 |
+| --- | --- |
+| `cargo fmt --all -- --check` | PASS |
+| `cargo clippy --locked --workspace --all-targets -- -D warnings` | PASS |
+| `cargo test --locked --workspace` | PASS，444 passed / 2 ignored |
+| `RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps` | PASS |
+| `python3 scripts/check-rust-size.py` | PASS |
+| `python3 scripts/check-doc-links.py` | PASS |
+| `python3 scripts/check-ui-strings.py` | PASS，原白名单 63 条，未扩充 |
+| `python3 scripts/check-layers.py` | PASS |
+| `cargo deny --locked check licenses bans sources` | PASS，既有 unused allowance 提示 |
+| `cargo build --locked -p scholium-app -p scholium-storage --bins` | PASS |
+| `python3 scripts/window-checks.py --locale zh-Hans en --out target/t20-fidelity-final-window` | PASS，30/30，含两种语言各七个共享场景 |
+| `python3 scripts/verify-typst-fork.py target/t20-typst-origin` | PASS，上游固定 9dfd3a08500b7896045f907433cf7b4b02434fad |
+| `cargo run --locked -p scholium-typst --features editor --example typst-main-fork-check -- target/t20-fidelity-fork-pixels` | PASS |
+| `cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir target/stock-reference -- target/t20-fidelity-stock-pixels` | PASS |
+| `python3 spikes/typst-main-editor/compare.py target/t20-fidelity-fork-pixels target/t20-fidelity-stock-pixels` | PASS，4/4 equal_pixels |
+
+[窗口完整摘要](evidence/2026-10-31-session-core-scene/fidelity-window-summary.txt)、
+[14 份窗口最终结果与逐步快照/端点](evidence/2026-10-31-session-core-scene/fidelity-parity.json)、
+[stock 四项对照](evidence/2026-10-31-session-core-scene/fidelity-stock.json)、
+[前后输入及 expected 变更核对](evidence/2026-10-31-session-core-scene/fidelity-contract.json)。
+
+公式两端实际深度均为预先推算的 `[1,2,3,4,5,6,6,7]`，未出现推算与实际不符。
+除明确授权的公式和 vertical-goal 场景外，其他五个场景的最终 expected 完全未变；
+仅增加中间状态检查，并移除 shift 场景没有被执行的 repeat 标记。
+首次 Clippy 指出回放测试函数超过 100 行，随后按输入翻译/按键解析/中间断言拆分助手，未改生产编辑实现。
+既有最终 Scene、source_reads=0、caret 几何断言全部保留；其他窗口脚本、既有断言、stock reference 和阈值未改。
+命令原始输出在 `target/t20-fidelity-*.log`；窗口 AUDIT、截图及逐步原生结果在 `target/t20-fidelity-final-window/`。
+验证继续使用 slot 内 TMPDIR，fork 核验加 Git ceiling，窗口使用私有 Xvfb 与机器级锁。
+fetch 确认 origin/main 仍为 3bfc176，已是当前分支祖先；没有需要追加的 main 合并。
+本轮要求均已完成，无遗留项；不合并、不轮询 CI。

@@ -9,6 +9,19 @@
         "target": "word 0",
         "kind": "Press",
         "clicks": 2
+      },
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 4,
+          "affinity": "Upstream"
+        },
+        "anchor": {
+          "path": "blocks/0/content/0",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 1
       }
     },
     {

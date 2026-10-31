@@ -5,13 +5,25 @@
       "text": "select me"
     },
     {
-      "key": "ArrowLeft",
-      "repeat": true
+      "key": "ArrowLeft"
     },
     {
       "key": "ArrowLeft",
       "mods": {
         "shift": true
+      },
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 7,
+          "affinity": "Downstream"
+        },
+        "anchor": {
+          "path": "blocks/0/content/0",
+          "byte": 8,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 1
       }
     },
     {

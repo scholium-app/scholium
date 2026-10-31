@@ -9,6 +9,19 @@
         "target": "end of leaf 0",
         "kind": "Release",
         "clicks": 3
+      },
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 19,
+          "affinity": "Upstream"
+        },
+        "anchor": {
+          "path": "blocks/0/content/0",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 1
       }
     },
     {

@@ -9,6 +9,31 @@
       "value": "z",
       "mods": {
         "command": true
+      },
+      "expected": {
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": ""
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "anchor": null,
+        "undo_depth": 0
       }
     },
     {
