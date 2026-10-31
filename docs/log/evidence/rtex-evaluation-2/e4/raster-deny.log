@@ -1,0 +1,18 @@
+$ cargo deny --manifest-path spikes/rtex-eval/raster/Cargo.toml --config "$PWD/deny.toml" check --show-stats licenses bans sources advisories
+ advisories ok: 0 errors, 0 warnings, 0 notes
+       bans ok: 0 errors, 0 warnings, 0 notes
+   licenses ok: 0 errors, 8 warnings, 86 notes
+    sources ok: 0 errors, 0 warnings, 0 notes
+
+$ cargo tree -e normal --depth 1
+rtex-eval-raster v0.0.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/rtex-eval/raster)
+├── hayro v0.8.0
+├── serde v1.0.229
+├── serde_json v1.0.154
+├── skrifa v0.46.0
+└── tiny-skia v0.12.0
+
+$ cargo tree -e normal --prefix none | sort -u | wc -l
+98
+$ native/-sys crates in graph
+none

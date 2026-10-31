@@ -1,14 +1,18 @@
-# rtex 评估驱动（L0：E1 / E2 / E3 准备）
+# rtex 评估驱动（L0：E1–E8）
 
-对应 [LaTeX 工作区规划](../../docs/plan/LATEX_WORKSPACE.md) 的 L0 评估项 E1–E3。结果与判定写在开发记录
-[2026-10-30 rtex 评估](../../docs/log/2026-10-30-rtex-evaluation.md)，原始证据在
-`docs/log/evidence/rtex-evaluation/`。这里只有评估用的驱动与夹具，不是产品代码，不进入根 workspace。
+对应 [LaTeX 工作区规划](../../docs/plan/LATEX_WORKSPACE.md) 的 L0 评估项 E1–E8。结果与判定写在开发记录
+[第一轮（E1、E2、E3 准备）](../../docs/log/2026-10-30-rtex-evaluation.md) 与
+[第二轮（E3–E8）](../../docs/log/2026-10-30-rtex-evaluation-2.md)，原始证据在
+`docs/log/evidence/rtex-evaluation/` 与 `docs/log/evidence/rtex-evaluation-2/`。这里只有评估用的驱动、夹具与
+栅格化原型，不是产品代码，不进入根 workspace（`raster/` 有自己的 `[workspace]`）。
 
 ## 前提
 
 - 上游 rtex 视为不受信下载代码：只在仓库外克隆、构建，绝不复制进仓库，也不运行它的 `scripts/install-texlive.sh`。
 - 系统 TeX Live（Arch，`/usr/bin/lualatex`）；`bwrap`、`systemd-run --user`、`pdftotext`/`pdfinfo`、`cc`、Python 3（只用标准库）。
-- E3 夹具需要 `texlive-langchinese`（ctex、Fandol 字体）与 `texlive-langjapanese`（luatexja）。
+- E3 夹具需要 `texlive-langchinese`（ctex、Fandol 字体）与 `texlive-langjapanese`（luatexja）；E4 的 TikZ 夹具需要 pgf。
+- 第二轮另需 `pdftoppm`/`pdftocairo`（poppler，只作参考栅格器）、ImageMagick `magick`（PNG→PGM 与证据缩略图）、
+  `xelatex`/`pdftex`（E7），以及先构建栅格化原型：`cargo build --release --locked --manifest-path spikes/rtex-eval/raster/Cargo.toml`。
 
 ```bash
 mkdir -p ~/.cache/scholium-eval
@@ -38,6 +42,32 @@ cargo deny --manifest-path $CLONE/Cargo.toml --config "$PWD/deny.toml" check --s
 cargo deny --manifest-path $CLONE/Cargo.toml --config "$PWD/deny.toml" check --show-stats advisories
 ```
 
+第二轮（E3–E8，全部在 `rtex` 沙箱配置内；E7 用 `full` 配置）：
+
+```bash
+EV2=docs/log/evidence/rtex-evaluation-2
+cargo build --release --locked --manifest-path spikes/rtex-eval/raster/Cargo.toml
+cargo deny --manifest-path spikes/rtex-eval/raster/Cargo.toml --config "$PWD/deny.toml" check licenses bans sources advisories
+# E3：三份中文夹具的实时单元占比、120 次击键 p50/p95、沙箱内 rtex verify、字体缓存矩阵（约 12 分钟）
+python3 spikes/rtex-eval/e3_cjk.py --evidence $EV2/e3 --run-id e3
+python3 spikes/rtex-eval/e3_cjk.py --evidence $EV2/e3 --run-id e3-followup --followup        # luatexja 复测与缓存矩阵
+python3 spikes/rtex-eval/e3_cjk.py --evidence $EV2/e3 --run-id e3-warmed --warmed-luatexja   # 先预热缓存再跑 luatexja
+# E4：display list 栅格 vs poppler（splash 与 cairo）与 hayro，150/300 dpi；TikZ 页走 hayro 回退
+python3 spikes/rtex-eval/e4_draw.py --evidence $EV2/e4 --run-id e4
+# E5：标记词为基准的 页面点击→源码字节 与 源码光标→页面位置
+python3 spikes/rtex-eval/e5_locate.py --evidence $EV2/e5 --run-id e5
+# E6：10/100 页书，击键 → ParagraphUpdate → 原型栅格化该单元（稳定输入与突发输入两种节奏）
+python3 spikes/rtex-eval/e6_latency.py --evidence $EV2/e6 --run-id e6
+# E7：XeLaTeX（ctex）与 pdfLaTeX 夹具 1/10/50 页在 full 配置内的冷/热整编时间
+python3 spikes/rtex-eval/e7_fallback.py --evidence $EV2/e7 --run-id e7
+# E8：实时引擎被杀、实时/后台挂起（有无宿主看门狗）、导言区错误、畸形命令、rtex serve 被杀
+python3 spikes/rtex-eval/e8_faults.py --evidence $EV2/e8 --run-id e8
+```
+
+`spikes/toolchain-sandbox.sh` 的 `rtex` 配置新增仅供可信驱动使用的 `SCHOLIUM_RTEX_FONT_CACHE=<目录>`：把该目录可写挂到
+`/rtex/texmf-var` 并设为 `TEXMFVAR`（luaotfload 字体缓存跨会话保留）；不设置时行为不变（每会话 tmpfs）。E4–E6 与 E8 的会话
+先用 `measure.warm_font_cache` 在沙箱里跑一次普通 LuaLaTeX 预热该目录，再开会话。
+
 ## 文件
 
 | 文件 | 作用 |
@@ -53,5 +83,12 @@ cargo deny --manifest-path $CLONE/Cargo.toml --config "$PWD/deny.toml" check --s
 | `fixtures/article.tex` | 正对照文章（英文、公式、`\ref`、图） |
 | `fixtures/negative/` | 负对照共用导言区与每项一个正文；`@CANARY_DIR@`、`@PROJECT_DIR@`、`@PORT@` 由驱动填入 |
 | `fixtures/cjk/` | E3 夹具：ctex（LuaLaTeX）与纯 luatexja |
+| `gen_fixtures.py` | 第二轮的确定性原创夹具：中英混排 ctex 文章（E3/E5/E7）、英文 pdfLaTeX 文章（E7）、TikZ 文章（E4）；每段一个唯一标记词 `QZxx` 供 E5 作基准 |
+| `measure.py` | 分位数、脚本化击键（插入/删除交替）、栅格化工作进程、单次沙箱命令、字体缓存预热 |
+| `e3_cjk.py` … `e8_faults.py` | 第二轮各评估项驱动，见上方命令 |
+| `faults.py` | E8：从主机 `/proc` 找实时引擎、后台 pass 与 rtex 进程；宿主侧单次 pass 墙钟看门狗原型；带时间戳的事件收集 |
+| `raster/` | E4/E6 原型（独立 Cargo 清单）：skrifa 取字形轮廓（OpenType/CFF，TFM 字体经 `pdftex.map` 找 Type 1），tiny-skia 填充；hayro 渲染 PDF 回退；与上游 `rtex verify --raster` 同口径的墨迹比较（1 像素容差）|
 
 `lift/lualatex.c` 只通过可信驱动设置的 `SCHOLIUM_RTEX_EVAL_TEXBIN` 进入沙箱，文档内容无法选择它；产品代码不得设置该变量。
+E7 的 pdfLaTeX 同理：`full` 配置不挂载 pdflatex，驱动把系统 pdfTeX 复制进可信的 `SCHOLIUM_SPIKE_TOOLS` 目录，并用一个只设置
+`TEXMFCNF`/`TEXMFROOT` 的包装脚本启动（kpathsea 按二进制所在目录找配置）。

@@ -1,0 +1,224 @@
+[
+  {
+    "fixture": "book10",
+    "font_cache_warmup": {
+      "project": "book10",
+      "exit": 0,
+      "wall_s": 9.353
+    },
+    "pages": 10,
+    "converged_after_s": 2.164,
+    "converged_layout_wall_ms": 2027,
+    "passes": 2,
+    "warmup_two_pages_ms": 34.564,
+    "steady": {
+      "edits": 120,
+      "routed": {
+        "fast": 120,
+        "background": 0,
+        "preamble": 0
+      },
+      "paragraph_ok": 120,
+      "statuses": [
+        "ok"
+      ],
+      "update_ms": {
+        "n": 120,
+        "p50": 6.707,
+        "p95": 18.734,
+        "min": 1.124,
+        "max": 32.487
+      },
+      "reply_ms": {
+        "n": 120,
+        "p50": 0.543,
+        "p95": 1.863,
+        "min": 0.251,
+        "max": 4.909
+      },
+      "rtex_total_ms": {
+        "n": 120,
+        "p50": 5.484,
+        "p95": 17.572,
+        "min": 0.555,
+        "max": 29.925
+      },
+      "raster_ms": {
+        "n": 120,
+        "p50": 12.453,
+        "p95": 35.177,
+        "min": 1.971,
+        "max": 56.304
+      },
+      "raster_only_ms": {
+        "n": 120,
+        "p50": 4.441,
+        "p95": 13.122,
+        "min": 0.259,
+        "max": 23.5
+      }
+    },
+    "bursts": {
+      "edits": 120,
+      "routed": {
+        "fast": 120,
+        "background": 0,
+        "preamble": 0
+      },
+      "paragraph_ok": 120,
+      "statuses": [
+        "ok"
+      ],
+      "update_ms": {
+        "n": 120,
+        "p50": 8.844,
+        "p95": 26.395,
+        "min": 1.821,
+        "max": 33.044
+      },
+      "reply_ms": {
+        "n": 120,
+        "p50": 0.688,
+        "p95": 0.878,
+        "min": 0.338,
+        "max": 3.11
+      },
+      "rtex_total_ms": {
+        "n": 120,
+        "p50": 7.663,
+        "p95": 25.066,
+        "min": 1.232,
+        "max": 30.134
+      },
+      "raster_ms": {
+        "n": 120,
+        "p50": 18.525,
+        "p95": 47.275,
+        "min": 3.439,
+        "max": 57.081
+      },
+      "raster_only_ms": {
+        "n": 120,
+        "p50": 6.015,
+        "p95": 16.921,
+        "min": 0.668,
+        "max": 24.727
+      }
+    },
+    "layouts_during_steady": 15,
+    "layouts_during_bursts": 3,
+    "sandbox_exit": 0,
+    "memory_peak_mib": 623.5
+  },
+  {
+    "fixture": "book100",
+    "font_cache_warmup": {
+      "project": "book100",
+      "exit": 0,
+      "wall_s": 3.533
+    },
+    "pages": 100,
+    "converged_after_s": 9.549,
+    "converged_layout_wall_ms": 9392,
+    "passes": 2,
+    "warmup_two_pages_ms": 38.007,
+    "steady": {
+      "edits": 120,
+      "routed": {
+        "fast": 120,
+        "background": 0,
+        "preamble": 0
+      },
+      "paragraph_ok": 120,
+      "statuses": [
+        "ok"
+      ],
+      "update_ms": {
+        "n": 120,
+        "p50": 10.558,
+        "p95": 30.92,
+        "min": 1.071,
+        "max": 124.736
+      },
+      "reply_ms": {
+        "n": 120,
+        "p50": 0.719,
+        "p95": 0.976,
+        "min": 0.345,
+        "max": 92.652
+      },
+      "rtex_total_ms": {
+        "n": 120,
+        "p50": 8.47,
+        "p95": 29.263,
+        "min": 0.697,
+        "max": 45.769
+      },
+      "raster_ms": {
+        "n": 120,
+        "p50": 19.398,
+        "p95": 52.096,
+        "min": 1.965,
+        "max": 132.915
+      },
+      "raster_only_ms": {
+        "n": 120,
+        "p50": 6.722,
+        "p95": 19.2,
+        "min": 0.315,
+        "max": 26.763
+      }
+    },
+    "bursts": {
+      "edits": 120,
+      "routed": {
+        "fast": 120,
+        "background": 0,
+        "preamble": 0
+      },
+      "paragraph_ok": 120,
+      "statuses": [
+        "ok"
+      ],
+      "update_ms": {
+        "n": 120,
+        "p50": 8.436,
+        "p95": 22.814,
+        "min": 1.86,
+        "max": 109.779
+      },
+      "reply_ms": {
+        "n": 120,
+        "p50": 0.541,
+        "p95": 1.711,
+        "min": 0.307,
+        "max": 95.736
+      },
+      "rtex_total_ms": {
+        "n": 120,
+        "p50": 7.345,
+        "p95": 18.159,
+        "min": 1.255,
+        "max": 26.145
+      },
+      "raster_ms": {
+        "n": 120,
+        "p50": 16.684,
+        "p95": 41.841,
+        "min": 3.624,
+        "max": 113.946
+      },
+      "raster_only_ms": {
+        "n": 120,
+        "p50": 5.681,
+        "p95": 15.255,
+        "min": 0.72,
+        "max": 19.878
+      }
+    },
+    "layouts_during_steady": 1,
+    "layouts_during_bursts": 3,
+    "sandbox_exit": 0,
+    "memory_peak_mib": 1041.1
+  }
+]

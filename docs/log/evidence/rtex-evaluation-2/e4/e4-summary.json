@@ -1,0 +1,4690 @@
+[
+ {
+  "fixture": "book10",
+  "pages": 10,
+  "pdf_fallback": null,
+  "font_cache_warmup": {
+   "project": "book10",
+   "exit": 0,
+   "wall_s": 13.066
+  },
+  "compile": "Ok",
+  "by_dpi": {
+   "150": {
+    "pages": [
+     {
+      "page": 1,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2103,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 26.849,
+      "dl_warm_ms": 22.776,
+      "pdftoppm_process_ms": 46.2,
+      "hayro_load_ms": 0.278,
+      "hayro_render_ms": 11.619,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0134,
+       "ink": [
+        109980,
+        107084
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        109980,
+        107601
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        109980,
+        108063
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1649
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        108063,
+        107084
+       ],
+       "size": [
+        [
+         1275,
+         1649
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0079,
+       "ink": [
+        107084,
+        107601
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 2,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2290,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 35.781,
+      "dl_warm_ms": 24.919,
+      "pdftoppm_process_ms": 38.0,
+      "hayro_load_ms": 0.574,
+      "hayro_render_ms": 34.206,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0159,
+       "ink": [
+        118162,
+        115005
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        118162,
+        115665
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0013,
+       "ink": [
+        118162,
+        116262
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1649
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0035,
+       "ink": [
+        116262,
+        115005
+       ],
+       "size": [
+        [
+         1275,
+         1649
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0095,
+       "ink": [
+        115005,
+        115665
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 3,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2254,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 25.414,
+      "dl_warm_ms": 41.286,
+      "pdftoppm_process_ms": 82.8,
+      "hayro_load_ms": 0.267,
+      "hayro_render_ms": 12.789,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0189,
+       "ink": [
+        117834,
+        114544
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        117834,
+        115384
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0013,
+       "ink": [
+        117834,
+        115819
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1649
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.003,
+       "ink": [
+        115819,
+        114544
+       ],
+       "size": [
+        [
+         1275,
+         1649
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0087,
+       "ink": [
+        114544,
+        115384
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 4,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2431,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 25.999,
+      "dl_warm_ms": 64.482,
+      "pdftoppm_process_ms": 33.8,
+      "hayro_load_ms": 0.253,
+      "hayro_render_ms": 16.17,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.011,
+       "ink": [
+        124924,
+        121000
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        124924,
+        122099
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        124924,
+        122713
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1649
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0029,
+       "ink": [
+        122713,
+        121000
+       ],
+       "size": [
+        [
+         1275,
+         1649
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.014,
+       "ink": [
+        121000,
+        122099
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 5,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2400,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 25.722,
+      "dl_warm_ms": 30.019,
+      "pdftoppm_process_ms": 32.2,
+      "hayro_load_ms": 0.213,
+      "hayro_render_ms": 12.23,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0145,
+       "ink": [
+        125620,
+        122024
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0008,
+       "ink": [
+        125620,
+        123005
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0004,
+       "ink": [
+        125620,
+        123516
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1649
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0053,
+       "ink": [
+        123516,
+        122024
+       ],
+       "size": [
+        [
+         1275,
+         1649
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0122,
+       "ink": [
+        122024,
+        123005
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 6,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2407,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 26.263,
+      "dl_warm_ms": 50.103,
+      "pdftoppm_process_ms": 38.9,
+      "hayro_load_ms": 0.204,
+      "hayro_render_ms": 12.921,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0121,
+       "ink": [
+        125848,
+        122158
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0008,
+       "ink": [
+        125848,
+        123053
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        125848,
+        123762
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1649
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0033,
+       "ink": [
+        123762,
+        122158
+       ],
+       "size": [
+        [
+         1275,
+         1649
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0086,
+       "ink": [
+        122158,
+        123053
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 7,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2363,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 24.262,
+      "dl_warm_ms": 69.277,
+      "pdftoppm_process_ms": 33.9,
+      "hayro_load_ms": 0.475,
+      "hayro_render_ms": 31.526,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0189,
+       "ink": [
+        123330,
+        119805
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0004,
+       "ink": [
+        123330,
+        120794
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0004,
+       "ink": [
+        123330,
+        120991
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1649
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0012,
+       "ink": [
+        120991,
+        119805
+       ],
+       "size": [
+        [
+         1275,
+         1649
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0116,
+       "ink": [
+        119805,
+        120794
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 8,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2331,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 25.275,
+      "dl_warm_ms": 33.722,
+      "pdftoppm_process_ms": 76.5,
+      "hayro_load_ms": 0.518,
+      "hayro_render_ms": 29.084,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0181,
+       "ink": [
+        120471,
+        116932
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0004,
+       "ink": [
+        120471,
+        117631
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0013,
+       "ink": [
+        120471,
+        118208
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1649
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.003,
+       "ink": [
+        118208,
+        116932
+       ],
+       "size": [
+        [
+         1275,
+         1649
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0107,
+       "ink": [
+        116932,
+        117631
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 9,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2262,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 25.116,
+      "dl_warm_ms": 24.924,
+      "pdftoppm_process_ms": 55.7,
+      "hayro_load_ms": 0.197,
+      "hayro_render_ms": 13.193,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0239,
+       "ink": [
+        118568,
+        115409
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        118568,
+        116144
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0009,
+       "ink": [
+        118568,
+        116613
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1649
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0052,
+       "ink": [
+        116613,
+        115409
+       ],
+       "size": [
+        [
+         1275,
+         1649
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.016,
+       "ink": [
+        115409,
+        116144
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 10,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2312,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 25.025,
+      "dl_warm_ms": 26.795,
+      "pdftoppm_process_ms": 90.6,
+      "hayro_load_ms": 1.74,
+      "hayro_render_ms": 30.005,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0152,
+       "ink": [
+        120259,
+        116449
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0004,
+       "ink": [
+        120259,
+        117427
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0021,
+       "ink": [
+        120259,
+        118113
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1649
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.003,
+       "ink": [
+        118113,
+        116449
+       ],
+       "size": [
+        [
+         1275,
+         1649
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0115,
+       "ink": [
+        116449,
+        117427
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     }
+    ],
+    "pass": true,
+    "worst_dl_vs_splash": 0.0239,
+    "worst_dl_vs_cairo": 0.0008,
+    "worst_splash_vs_cairo": 0.016,
+    "dl_warm_ms": {
+     "n": 10,
+     "p50": 30.019,
+     "p95": 69.277,
+     "min": 22.776,
+     "max": 69.277
+    },
+    "dl_cold_first_page_ms": 26.849,
+    "hayro_render_ms": {
+     "n": 10,
+     "p50": 13.193,
+     "p95": 34.206,
+     "min": 11.619,
+     "max": 34.206
+    },
+    "pdftoppm_process_ms": {
+     "n": 10,
+     "p50": 38.9,
+     "p95": 90.6,
+     "min": 32.2,
+     "max": 90.6
+    }
+   },
+   "300": {
+    "pages": [
+     {
+      "page": 1,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2103,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 62.526,
+      "dl_warm_ms": 108.468,
+      "pdftoppm_process_ms": 94.8,
+      "hayro_load_ms": 0.278,
+      "hayro_render_ms": 23.791,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0026,
+       "ink": [
+        408251,
+        402930
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        408251,
+        404551
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        408251,
+        406269
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3299
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0025,
+       "ink": [
+        406269,
+        402930
+       ],
+       "size": [
+        [
+         2550,
+         3299
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0024,
+       "ink": [
+        402930,
+        404551
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 2,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2290,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 78.288,
+      "dl_warm_ms": 118.358,
+      "pdftoppm_process_ms": 131.8,
+      "hayro_load_ms": 0.581,
+      "hayro_render_ms": 59.526,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0091,
+       "ink": [
+        437657,
+        432731
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        437657,
+        433301
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        437657,
+        435316
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3299
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0032,
+       "ink": [
+        435316,
+        432731
+       ],
+       "size": [
+        [
+         2550,
+         3299
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0038,
+       "ink": [
+        432731,
+        433301
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 3,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2254,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 75.929,
+      "dl_warm_ms": 43.207,
+      "pdftoppm_process_ms": 118.8,
+      "hayro_load_ms": 0.279,
+      "hayro_render_ms": 36.617,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0034,
+       "ink": [
+        437572,
+        432433
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        437572,
+        433332
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        437572,
+        435219
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3299
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0028,
+       "ink": [
+        435219,
+        432433
+       ],
+       "size": [
+        [
+         2550,
+         3299
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0072,
+       "ink": [
+        432433,
+        433332
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 4,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2431,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 124.249,
+      "dl_warm_ms": 44.541,
+      "pdftoppm_process_ms": 99.4,
+      "hayro_load_ms": 0.271,
+      "hayro_render_ms": 47.789,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0068,
+       "ink": [
+        463335,
+        457456
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        463335,
+        458719
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        463335,
+        460617
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3299
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0039,
+       "ink": [
+        460617,
+        457456
+       ],
+       "size": [
+        [
+         2550,
+         3299
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0111,
+       "ink": [
+        457456,
+        458719
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 5,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2400,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 138.26,
+      "dl_warm_ms": 51.168,
+      "pdftoppm_process_ms": 92.5,
+      "hayro_load_ms": 0.276,
+      "hayro_render_ms": 29.303,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0077,
+       "ink": [
+        466454,
+        461267
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        466454,
+        461849
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        466454,
+        463986
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3299
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0028,
+       "ink": [
+        463986,
+        461267
+       ],
+       "size": [
+        [
+         2550,
+         3299
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0083,
+       "ink": [
+        461267,
+        461849
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 6,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2407,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 91.017,
+      "dl_warm_ms": 50.956,
+      "pdftoppm_process_ms": 74.5,
+      "hayro_load_ms": 0.315,
+      "hayro_render_ms": 29.873,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0063,
+       "ink": [
+        466818,
+        460944
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        466818,
+        462347
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        466818,
+        464502
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3299
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0021,
+       "ink": [
+        464502,
+        460944
+       ],
+       "size": [
+        [
+         2550,
+         3299
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0082,
+       "ink": [
+        460944,
+        462347
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 7,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2363,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 47.967,
+      "dl_warm_ms": 47.018,
+      "pdftoppm_process_ms": 84.6,
+      "hayro_load_ms": 0.423,
+      "hayro_render_ms": 40.466,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0023,
+       "ink": [
+        457364,
+        451688
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        457364,
+        452805
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        457364,
+        455228
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3299
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0031,
+       "ink": [
+        455228,
+        451688
+       ],
+       "size": [
+        [
+         2550,
+         3299
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0046,
+       "ink": [
+        451688,
+        452805
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 8,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2331,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 72.98,
+      "dl_warm_ms": 48.19,
+      "pdftoppm_process_ms": 122.5,
+      "hayro_load_ms": 0.446,
+      "hayro_render_ms": 52.548,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0078,
+       "ink": [
+        448296,
+        441390
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        448296,
+        443021
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        448296,
+        445557
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3299
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.006,
+       "ink": [
+        445557,
+        441390
+       ],
+       "size": [
+        [
+         2550,
+         3299
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0059,
+       "ink": [
+        441390,
+        443021
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 9,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2262,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 103.14,
+      "dl_warm_ms": 71.46,
+      "pdftoppm_process_ms": 123.5,
+      "hayro_load_ms": 0.642,
+      "hayro_render_ms": 52.631,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0081,
+       "ink": [
+        440623,
+        434466
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        440623,
+        436420
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        440623,
+        438512
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3299
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0038,
+       "ink": [
+        438512,
+        434466
+       ],
+       "size": [
+        [
+         2550,
+         3299
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0037,
+       "ink": [
+        434466,
+        436420
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 10,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2312,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 127.756,
+      "dl_warm_ms": 98.946,
+      "pdftoppm_process_ms": 41.4,
+      "hayro_load_ms": 0.433,
+      "hayro_render_ms": 23.174,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0052,
+       "ink": [
+        446624,
+        440801
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        446624,
+        442202
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        446624,
+        444264
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3299
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0044,
+       "ink": [
+        444264,
+        440801
+       ],
+       "size": [
+        [
+         2550,
+         3299
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0039,
+       "ink": [
+        440801,
+        442202
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     }
+    ],
+    "pass": true,
+    "worst_dl_vs_splash": 0.0091,
+    "worst_dl_vs_cairo": 0.0,
+    "worst_splash_vs_cairo": 0.0111,
+    "dl_warm_ms": {
+     "n": 10,
+     "p50": 50.956,
+     "p95": 118.358,
+     "min": 43.207,
+     "max": 118.358
+    },
+    "dl_cold_first_page_ms": 62.526,
+    "hayro_render_ms": {
+     "n": 10,
+     "p50": 36.617,
+     "p95": 59.526,
+     "min": 23.174,
+     "max": 59.526
+    },
+    "pdftoppm_process_ms": {
+     "n": 10,
+     "p50": 94.8,
+     "p95": 131.8,
+     "min": 41.4,
+     "max": 131.8
+    }
+   }
+  }
+ },
+ {
+  "fixture": "mixed",
+  "pages": 6,
+  "pdf_fallback": null,
+  "font_cache_warmup": {
+   "project": "mixed",
+   "exit": 0,
+   "wall_s": 7.492
+  },
+  "compile": "Ok",
+  "by_dpi": {
+   "150": {
+    "pages": [
+     {
+      "page": 1,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 1057,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 962.838,
+      "dl_warm_ms": 22.281,
+      "pdftoppm_process_ms": 35.1,
+      "hayro_load_ms": 0.48,
+      "hayro_render_ms": 12.337,
+      "dl_vs_splash": {
+       "unmatched_pct": 1.5005,
+       "ink": [
+        83637,
+        81770
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.456,
+       "ink": [
+        83637,
+        81292
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0339,
+       "ink": [
+        83637,
+        81760
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1240,
+         1753
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 1.4713,
+       "ink": [
+        81760,
+        81770
+       ],
+       "size": [
+        [
+         1240,
+         1753
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 1.5534,
+       "ink": [
+        81770,
+        81292
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": false
+     },
+     {
+      "page": 2,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 983,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 61.577,
+      "dl_warm_ms": 19.034,
+      "pdftoppm_process_ms": 80.3,
+      "hayro_load_ms": 0.531,
+      "hayro_render_ms": 19.649,
+      "dl_vs_splash": {
+       "unmatched_pct": 1.2455,
+       "ink": [
+        70434,
+        69113
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.3728,
+       "ink": [
+        70434,
+        68533
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0597,
+       "ink": [
+        70434,
+        68653
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1240,
+         1753
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 1.2035,
+       "ink": [
+        68653,
+        69113
+       ],
+       "size": [
+        [
+         1240,
+         1753
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 1.2547,
+       "ink": [
+        69113,
+        68533
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": false
+     },
+     {
+      "page": 3,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 980,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 50.13,
+      "dl_warm_ms": 18.503,
+      "pdftoppm_process_ms": 67.6,
+      "hayro_load_ms": 0.554,
+      "hayro_render_ms": 21.001,
+      "dl_vs_splash": {
+       "unmatched_pct": 1.4015,
+       "ink": [
+        72713,
+        71777
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.517,
+       "ink": [
+        72713,
+        70804
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0598,
+       "ink": [
+        72713,
+        70981
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1240,
+         1753
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 1.3561,
+       "ink": [
+        70981,
+        71777
+       ],
+       "size": [
+        [
+         1240,
+         1753
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 1.4006,
+       "ink": [
+        71777,
+        70804
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": false
+     },
+     {
+      "page": 4,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 1013,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 25.183,
+      "dl_warm_ms": 20.165,
+      "pdftoppm_process_ms": 58.0,
+      "hayro_load_ms": 0.563,
+      "hayro_render_ms": 30.718,
+      "dl_vs_splash": {
+       "unmatched_pct": 1.0961,
+       "ink": [
+        75165,
+        73818
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.403,
+       "ink": [
+        75165,
+        73210
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0579,
+       "ink": [
+        75165,
+        73424
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1240,
+         1753
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 1.0595,
+       "ink": [
+        73424,
+        73818
+       ],
+       "size": [
+        [
+         1240,
+         1753
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 1.0964,
+       "ink": [
+        73818,
+        73210
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": false
+     },
+     {
+      "page": 5,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 1213,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 21.816,
+      "dl_warm_ms": 23.489,
+      "pdftoppm_process_ms": 54.1,
+      "hayro_load_ms": 0.461,
+      "hayro_render_ms": 23.284,
+      "dl_vs_splash": {
+       "unmatched_pct": 1.0906,
+       "ink": [
+        83118,
+        81108
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.4016,
+       "ink": [
+        83118,
+        80741
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0341,
+       "ink": [
+        83118,
+        80951
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1240,
+         1753
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 1.0626,
+       "ink": [
+        80951,
+        81108
+       ],
+       "size": [
+        [
+         1240,
+         1753
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 1.1183,
+       "ink": [
+        81108,
+        80741
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": false
+     },
+     {
+      "page": 6,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 300,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 8.123,
+      "dl_warm_ms": 8.208,
+      "pdftoppm_process_ms": 44.2,
+      "hayro_load_ms": 0.302,
+      "hayro_render_ms": 6.926,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.6527,
+       "ink": [
+        23059,
+        22289
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.3168,
+       "ink": [
+        23059,
+        22391
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0308,
+       "ink": [
+        23059,
+        22453
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1240,
+         1753
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.6258,
+       "ink": [
+        22453,
+        22289
+       ],
+       "size": [
+        [
+         1240,
+         1753
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.6916,
+       "ink": [
+        22289,
+        22391
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     }
+    ],
+    "pass": false,
+    "worst_dl_vs_splash": 1.5005,
+    "worst_dl_vs_cairo": 0.517,
+    "worst_splash_vs_cairo": 1.5534,
+    "dl_warm_ms": {
+     "n": 6,
+     "p50": 19.034,
+     "p95": 23.489,
+     "min": 8.208,
+     "max": 23.489
+    },
+    "dl_cold_first_page_ms": 962.838,
+    "hayro_render_ms": {
+     "n": 6,
+     "p50": 19.649,
+     "p95": 30.718,
+     "min": 6.926,
+     "max": 30.718
+    },
+    "pdftoppm_process_ms": {
+     "n": 6,
+     "p50": 54.1,
+     "p95": 80.3,
+     "min": 35.1,
+     "max": 80.3
+    }
+   },
+   "300": {
+    "pages": [
+     {
+      "page": 1,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 1057,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 665.486,
+      "dl_warm_ms": 27.798,
+      "pdftoppm_process_ms": 73.5,
+      "hayro_load_ms": 0.643,
+      "hayro_render_ms": 30.526,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0083,
+       "ink": [
+        301478,
+        298845
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        301478,
+        296851
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        301478,
+        298031
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2480,
+         3507
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0101,
+       "ink": [
+        298031,
+        298845
+       ],
+       "size": [
+        [
+         2480,
+         3507
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0139,
+       "ink": [
+        298845,
+        296851
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 2,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 983,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 72.323,
+      "dl_warm_ms": 25.837,
+      "pdftoppm_process_ms": 132.5,
+      "hayro_load_ms": 0.533,
+      "hayro_render_ms": 23.216,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0102,
+       "ink": [
+        256457,
+        254345
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0004,
+       "ink": [
+        256457,
+        252267
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0004,
+       "ink": [
+        256457,
+        253031
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2480,
+         3507
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0102,
+       "ink": [
+        253031,
+        254345
+       ],
+       "size": [
+        [
+         2480,
+         3507
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0134,
+       "ink": [
+        254345,
+        252267
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 3,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 980,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 51.097,
+      "dl_warm_ms": 25.489,
+      "pdftoppm_process_ms": 86.9,
+      "hayro_load_ms": 0.519,
+      "hayro_render_ms": 33.489,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0059,
+       "ink": [
+        264655,
+        261462
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        264655,
+        260510
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        264655,
+        261545
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2480,
+         3507
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0044,
+       "ink": [
+        261545,
+        261462
+       ],
+       "size": [
+        [
+         2480,
+         3507
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0042,
+       "ink": [
+        261462,
+        260510
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 4,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 1013,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 28.813,
+      "dl_warm_ms": 27.274,
+      "pdftoppm_process_ms": 99.0,
+      "hayro_load_ms": 0.672,
+      "hayro_render_ms": 42.311,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0105,
+       "ink": [
+        272159,
+        270284
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0002,
+       "ink": [
+        272159,
+        267971
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0004,
+       "ink": [
+        272159,
+        268583
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2480,
+         3507
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0113,
+       "ink": [
+        268583,
+        270284
+       ],
+       "size": [
+        [
+         2480,
+         3507
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0108,
+       "ink": [
+        270284,
+        267971
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 5,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 1213,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 30.287,
+      "dl_warm_ms": 29.8,
+      "pdftoppm_process_ms": 99.8,
+      "hayro_load_ms": 0.459,
+      "hayro_render_ms": 26.769,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0062,
+       "ink": [
+        299321,
+        296407
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        299321,
+        294582
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        299321,
+        295235
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2480,
+         3507
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0079,
+       "ink": [
+        295235,
+        296407
+       ],
+       "size": [
+        [
+         2480,
+         3507
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0052,
+       "ink": [
+        296407,
+        294582
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     },
+     {
+      "page": 6,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 300,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 11.286,
+      "dl_warm_ms": 11.343,
+      "pdftoppm_process_ms": 41.7,
+      "hayro_load_ms": 0.498,
+      "hayro_render_ms": 14.328,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0138,
+       "ink": [
+        83321,
+        82755
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0012,
+       "ink": [
+        83321,
+        81818
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0006,
+       "ink": [
+        83321,
+        82190
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2480,
+         3507
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0133,
+       "ink": [
+        82190,
+        82755
+       ],
+       "size": [
+        [
+         2480,
+         3507
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0201,
+       "ink": [
+        82755,
+        81818
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     }
+    ],
+    "pass": true,
+    "worst_dl_vs_splash": 0.0138,
+    "worst_dl_vs_cairo": 0.0012,
+    "worst_splash_vs_cairo": 0.0201,
+    "dl_warm_ms": {
+     "n": 6,
+     "p50": 25.837,
+     "p95": 29.8,
+     "min": 11.343,
+     "max": 29.8
+    },
+    "dl_cold_first_page_ms": 665.486,
+    "hayro_render_ms": {
+     "n": 6,
+     "p50": 26.769,
+     "p95": 42.311,
+     "min": 14.328,
+     "max": 42.311
+    },
+    "pdftoppm_process_ms": {
+     "n": 6,
+     "p50": 86.9,
+     "p95": 132.5,
+     "min": 41.7,
+     "max": 132.5
+    }
+   }
+  }
+ },
+ {
+  "fixture": "ctex",
+  "pages": 1,
+  "pdf_fallback": null,
+  "font_cache_warmup": {
+   "project": "ctex",
+   "exit": 0,
+   "wall_s": 1.774
+  },
+  "compile": "Ok",
+  "by_dpi": {
+   "150": {
+    "pages": [
+     {
+      "page": 1,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 181,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 405.651,
+      "dl_warm_ms": 4.039,
+      "pdftoppm_process_ms": 20.7,
+      "hayro_load_ms": 0.207,
+      "hayro_render_ms": 5.543,
+      "dl_vs_splash": {
+       "unmatched_pct": 1.5392,
+       "ink": [
+        13816,
+        13600
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.6251,
+       "ink": [
+        13816,
+        13379
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0731,
+       "ink": [
+        13816,
+        13535
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1240,
+         1753
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 1.5073,
+       "ink": [
+        13535,
+        13600
+       ],
+       "size": [
+        [
+         1240,
+         1753
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 1.6606,
+       "ink": [
+        13600,
+        13379
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": false
+     }
+    ],
+    "pass": false,
+    "worst_dl_vs_splash": 1.5392,
+    "worst_dl_vs_cairo": 0.6251,
+    "worst_splash_vs_cairo": 1.6606,
+    "dl_warm_ms": {
+     "n": 1,
+     "p50": 4.039,
+     "p95": 4.039,
+     "min": 4.039,
+     "max": 4.039
+    },
+    "dl_cold_first_page_ms": 405.651,
+    "hayro_render_ms": {
+     "n": 1,
+     "p50": 5.543,
+     "p95": 5.543,
+     "min": 5.543,
+     "max": 5.543
+    },
+    "pdftoppm_process_ms": {
+     "n": 1,
+     "p50": 20.7,
+     "p95": 20.7,
+     "min": 20.7,
+     "max": 20.7
+    }
+   },
+   "300": {
+    "pages": [
+     {
+      "page": 1,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 181,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 376.688,
+      "dl_warm_ms": 6.802,
+      "pdftoppm_process_ms": 22.2,
+      "hayro_load_ms": 0.44,
+      "hayro_render_ms": 20.372,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.009,
+       "ink": [
+        50364,
+        49557
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        50364,
+        49439
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        50364,
+        49796
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2480,
+         3507
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.006,
+       "ink": [
+        49796,
+        49557
+       ],
+       "size": [
+        [
+         2480,
+         3507
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0354,
+       "ink": [
+        49557,
+        49439
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     }
+    ],
+    "pass": true,
+    "worst_dl_vs_splash": 0.009,
+    "worst_dl_vs_cairo": 0.0,
+    "worst_splash_vs_cairo": 0.0354,
+    "dl_warm_ms": {
+     "n": 1,
+     "p50": 6.802,
+     "p95": 6.802,
+     "min": 6.802,
+     "max": 6.802
+    },
+    "dl_cold_first_page_ms": 376.688,
+    "hayro_render_ms": {
+     "n": 1,
+     "p50": 20.372,
+     "p95": 20.372,
+     "min": 20.372,
+     "max": 20.372
+    },
+    "pdftoppm_process_ms": {
+     "n": 1,
+     "p50": 22.2,
+     "p95": 22.2,
+     "min": 22.2,
+     "max": 22.2
+    }
+   }
+  }
+ },
+ {
+  "fixture": "luatexja",
+  "pages": 1,
+  "pdf_fallback": null,
+  "font_cache_warmup": {
+   "project": "luatexja",
+   "exit": 0,
+   "wall_s": 5.163
+  },
+  "compile": "Ok",
+  "by_dpi": {
+   "150": {
+    "pages": [
+     {
+      "page": 1,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 189,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 477.616,
+      "dl_warm_ms": 6.418,
+      "pdftoppm_process_ms": 40.8,
+      "hayro_load_ms": 0.222,
+      "hayro_render_ms": 7.438,
+      "dl_vs_splash": {
+       "unmatched_pct": 1.3438,
+       "ink": [
+        12268,
+        12140
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.6827,
+       "ink": [
+        12268,
+        12194
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.2659,
+       "ink": [
+        12268,
+        12180
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1240,
+         1753
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 1.2007,
+       "ink": [
+        12180,
+        12140
+       ],
+       "size": [
+        [
+         1240,
+         1753
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 1.2698,
+       "ink": [
+        12140,
+        12194
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": false
+     }
+    ],
+    "pass": false,
+    "worst_dl_vs_splash": 1.3438,
+    "worst_dl_vs_cairo": 0.6827,
+    "worst_splash_vs_cairo": 1.2698,
+    "dl_warm_ms": {
+     "n": 1,
+     "p50": 6.418,
+     "p95": 6.418,
+     "min": 6.418,
+     "max": 6.418
+    },
+    "dl_cold_first_page_ms": 477.616,
+    "hayro_render_ms": {
+     "n": 1,
+     "p50": 7.438,
+     "p95": 7.438,
+     "min": 7.438,
+     "max": 7.438
+    },
+    "pdftoppm_process_ms": {
+     "n": 1,
+     "p50": 40.8,
+     "p95": 40.8,
+     "min": 40.8,
+     "max": 40.8
+    }
+   },
+   "300": {
+    "pages": [
+     {
+      "page": 1,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 189,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 506.279,
+      "dl_warm_ms": 9.638,
+      "pdftoppm_process_ms": 38.4,
+      "hayro_load_ms": 0.154,
+      "hayro_render_ms": 9.895,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0099,
+       "ink": [
+        45740,
+        45056
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        45740,
+        45058
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        45740,
+        45206
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2480,
+         3507
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0066,
+       "ink": [
+        45206,
+        45056
+       ],
+       "size": [
+        [
+         2480,
+         3507
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0122,
+       "ink": [
+        45056,
+        45058
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     }
+    ],
+    "pass": true,
+    "worst_dl_vs_splash": 0.0099,
+    "worst_dl_vs_cairo": 0.0,
+    "worst_splash_vs_cairo": 0.0122,
+    "dl_warm_ms": {
+     "n": 1,
+     "p50": 9.638,
+     "p95": 9.638,
+     "min": 9.638,
+     "max": 9.638
+    },
+    "dl_cold_first_page_ms": 506.279,
+    "hayro_render_ms": {
+     "n": 1,
+     "p50": 9.895,
+     "p95": 9.895,
+     "min": 9.895,
+     "max": 9.895
+    },
+    "pdftoppm_process_ms": {
+     "n": 1,
+     "p50": 38.4,
+     "p95": 38.4,
+     "min": 38.4,
+     "max": 38.4
+    }
+   }
+  }
+ },
+ {
+  "fixture": "article",
+  "pages": 1,
+  "pdf_fallback": null,
+  "font_cache_warmup": {
+   "project": "article",
+   "exit": 0,
+   "wall_s": 0.958
+  },
+  "compile": "Ok",
+  "by_dpi": {
+   "150": {
+    "pages": [
+     {
+      "page": 1,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 230,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 614.082,
+      "dl_warm_ms": 9.159,
+      "pdftoppm_process_ms": 45.7,
+      "hayro_load_ms": 0.439,
+      "hayro_render_ms": 9.217,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.2592,
+       "ink": [
+        9857,
+        9434
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.1122,
+       "ink": [
+        9857,
+        9758
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.1267,
+       "ink": [
+        9857,
+        9874
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1240,
+         1753
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.3574,
+       "ink": [
+        9874,
+        9434
+       ],
+       "size": [
+        [
+         1240,
+         1753
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.3543,
+       "ink": [
+        9434,
+        9758
+       ],
+       "size": [
+        [
+         1241,
+         1754
+        ],
+        [
+         1241,
+         1754
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     }
+    ],
+    "pass": true,
+    "worst_dl_vs_splash": 0.2592,
+    "worst_dl_vs_cairo": 0.1122,
+    "worst_splash_vs_cairo": 0.3543,
+    "dl_warm_ms": {
+     "n": 1,
+     "p50": 9.159,
+     "p95": 9.159,
+     "min": 9.159,
+     "max": 9.159
+    },
+    "dl_cold_first_page_ms": 614.082,
+    "hayro_render_ms": {
+     "n": 1,
+     "p50": 9.217,
+     "p95": 9.217,
+     "min": 9.217,
+     "max": 9.217
+    },
+    "pdftoppm_process_ms": {
+     "n": 1,
+     "p50": 45.7,
+     "p95": 45.7,
+     "min": 45.7,
+     "max": 45.7
+    }
+   },
+   "300": {
+    "pages": [
+     {
+      "page": 1,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 230,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [],
+      "dl_cold_ms": 585.323,
+      "dl_warm_ms": 7.143,
+      "pdftoppm_process_ms": 56.2,
+      "hayro_load_ms": 0.173,
+      "hayro_render_ms": 10.572,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        36195,
+        35635
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        36195,
+        35905
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0,
+       "ink": [
+        36195,
+        35745
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2480,
+         3507
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0028,
+       "ink": [
+        35745,
+        35635
+       ],
+       "size": [
+        [
+         2480,
+         3507
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0028,
+       "ink": [
+        35635,
+        35905
+       ],
+       "size": [
+        [
+         2481,
+         3508
+        ],
+        [
+         2481,
+         3508
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": true
+     }
+    ],
+    "pass": true,
+    "worst_dl_vs_splash": 0.0,
+    "worst_dl_vs_cairo": 0.0,
+    "worst_splash_vs_cairo": 0.0028,
+    "dl_warm_ms": {
+     "n": 1,
+     "p50": 7.143,
+     "p95": 7.143,
+     "min": 7.143,
+     "max": 7.143
+    },
+    "dl_cold_first_page_ms": 585.323,
+    "hayro_render_ms": {
+     "n": 1,
+     "p50": 10.572,
+     "p95": 10.572,
+     "min": 10.572,
+     "max": 10.572
+    },
+    "pdftoppm_process_ms": {
+     "n": 1,
+     "p50": 56.2,
+     "p95": 56.2,
+     "min": 56.2,
+     "max": 56.2
+    }
+   }
+  }
+ },
+ {
+  "fixture": "tikz",
+  "pages": 2,
+  "pdf_fallback": "/work/build/bg/layout-1.pdf",
+  "font_cache_warmup": {
+   "project": "tikz",
+   "exit": 0,
+   "wall_s": 0.997
+  },
+  "compile": "Ok",
+  "by_dpi": {
+   "150": {
+    "pages": [
+     {
+      "page": 1,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2661,
+      "skipped": 1,
+      "images_skipped": 0,
+      "missing_fonts": [
+       "tfm:"
+      ],
+      "dl_cold_ms": 652.779,
+      "dl_warm_ms": 39.336,
+      "pdftoppm_process_ms": 57.4,
+      "hayro_load_ms": 0.28,
+      "hayro_render_ms": 19.7,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.4483,
+       "ink": [
+        95082,
+        88962
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.1712,
+       "ink": [
+        95082,
+        92413
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.1468,
+       "ink": [
+        95082,
+        91600
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1649
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.4425,
+       "ink": [
+        91600,
+        88962
+       ],
+       "size": [
+        [
+         1275,
+         1649
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.4444,
+       "ink": [
+        88962,
+        92413
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": false
+     },
+     {
+      "page": 2,
+      "exact": false,
+      "degraded": true,
+      "glyphs": 39,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [
+       "tfm:"
+      ],
+      "dl_cold_ms": 2.315,
+      "dl_warm_ms": 2.039,
+      "pdftoppm_process_ms": 37.3,
+      "hayro_load_ms": 0.548,
+      "hayro_render_ms": 6.194,
+      "dl_vs_splash": {
+       "unmatched_pct": 57.9522,
+       "ink": [
+        1361,
+        4870
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 58.0251,
+       "ink": [
+        1361,
+        5019
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 59.4472,
+       "ink": [
+        1361,
+        5260
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1649
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.6811,
+       "ink": [
+        5260,
+        4870
+       ],
+       "size": [
+        [
+         1275,
+         1649
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.5056,
+       "ink": [
+        4870,
+        5019
+       ],
+       "size": [
+        [
+         1275,
+         1650
+        ],
+        [
+         1275,
+         1650
+        ]
+       ]
+      },
+      "path": "pdf-fallback(hayro)",
+      "pass": true
+     }
+    ],
+    "pass": false,
+    "worst_dl_vs_splash": 0.4483,
+    "worst_dl_vs_cairo": 0.1712,
+    "worst_splash_vs_cairo": 0.5056,
+    "dl_warm_ms": {
+     "n": 2,
+     "p50": 2.039,
+     "p95": 39.336,
+     "min": 2.039,
+     "max": 39.336
+    },
+    "dl_cold_first_page_ms": 652.779,
+    "hayro_render_ms": {
+     "n": 2,
+     "p50": 6.194,
+     "p95": 19.7,
+     "min": 6.194,
+     "max": 19.7
+    },
+    "pdftoppm_process_ms": {
+     "n": 2,
+     "p50": 37.3,
+     "p95": 57.4,
+     "min": 37.3,
+     "max": 57.4
+    }
+   },
+   "300": {
+    "pages": [
+     {
+      "page": 1,
+      "exact": true,
+      "degraded": false,
+      "glyphs": 2661,
+      "skipped": 1,
+      "images_skipped": 0,
+      "missing_fonts": [
+       "tfm:"
+      ],
+      "dl_cold_ms": 835.913,
+      "dl_warm_ms": 100.641,
+      "pdftoppm_process_ms": 97.1,
+      "hayro_load_ms": 0.274,
+      "hayro_render_ms": 28.901,
+      "dl_vs_splash": {
+       "unmatched_pct": 0.0719,
+       "ink": [
+        344002,
+        344228
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 0.0476,
+       "ink": [
+        344002,
+        342377
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 0.0458,
+       "ink": [
+        344002,
+        339675
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3299
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0072,
+       "ink": [
+        339675,
+        344228
+       ],
+       "size": [
+        [
+         2550,
+         3299
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0192,
+       "ink": [
+        344228,
+        342377
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "path": "display-list",
+      "pass": false
+     },
+     {
+      "page": 2,
+      "exact": false,
+      "degraded": true,
+      "glyphs": 39,
+      "skipped": 0,
+      "images_skipped": 0,
+      "missing_fonts": [
+       "tfm:"
+      ],
+      "dl_cold_ms": 8.69,
+      "dl_warm_ms": 9.645,
+      "pdftoppm_process_ms": 83.6,
+      "hayro_load_ms": 0.415,
+      "hayro_render_ms": 14.85,
+      "dl_vs_splash": {
+       "unmatched_pct": 58.8347,
+       "ink": [
+        5092,
+        19555
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_cairo": {
+       "unmatched_pct": 57.8913,
+       "ink": [
+        5092,
+        19074
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "dl_vs_hayro": {
+       "unmatched_pct": 57.7217,
+       "ink": [
+        5092,
+        18821
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3299
+        ]
+       ]
+      },
+      "hayro_vs_splash": {
+       "unmatched_pct": 0.0104,
+       "ink": [
+        18821,
+        19555
+       ],
+       "size": [
+        [
+         2550,
+         3299
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "splash_vs_cairo": {
+       "unmatched_pct": 0.0052,
+       "ink": [
+        19555,
+        19074
+       ],
+       "size": [
+        [
+         2550,
+         3300
+        ],
+        [
+         2550,
+         3300
+        ]
+       ]
+      },
+      "path": "pdf-fallback(hayro)",
+      "pass": true
+     }
+    ],
+    "pass": false,
+    "worst_dl_vs_splash": 0.0719,
+    "worst_dl_vs_cairo": 0.0476,
+    "worst_splash_vs_cairo": 0.0192,
+    "dl_warm_ms": {
+     "n": 2,
+     "p50": 9.645,
+     "p95": 100.641,
+     "min": 9.645,
+     "max": 100.641
+    },
+    "dl_cold_first_page_ms": 835.913,
+    "hayro_render_ms": {
+     "n": 2,
+     "p50": 14.85,
+     "p95": 28.901,
+     "min": 14.85,
+     "max": 28.901
+    },
+    "pdftoppm_process_ms": {
+     "n": 2,
+     "p50": 83.6,
+     "p95": 97.1,
+     "min": 83.6,
+     "max": 97.1
+    }
+   }
+  }
+ }
+]

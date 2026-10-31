@@ -1,0 +1,122 @@
+[
+  {
+    "fixture": "book10",
+    "pages": 11,
+    "spans": 56,
+    "rows_vs_placements": {
+      "rows": 394,
+      "in_placements": 394
+    },
+    "alignment_coverage": {
+      "text_glyphs": 23337,
+      "text_matched": 22821,
+      "tfm_glyphs": 0,
+      "tfm_matched": 0,
+      "text_share": 0.9779,
+      "tfm_share": 0.0
+    },
+    "markers": 48,
+    "markers_not_found": [],
+    "samples": 192,
+    "click_unit_hit_rate": 1.0,
+    "unit_span_bytes": {
+      "n": 192,
+      "p50": 460,
+      "p95": 1189,
+      "min": 30,
+      "max": 1583
+    },
+    "click_row_guess_err_bytes": {
+      "n": 192,
+      "p50": 28,
+      "p95": 34,
+      "min": 3,
+      "max": 37
+    },
+    "click_glyph_exact_rate": 1.0,
+    "click_glyph_err_bytes": {
+      "n": 192,
+      "p50": 0,
+      "p95": 0,
+      "min": 0,
+      "max": 0
+    },
+    "caret_unit_rect_hit_rate": 1.0,
+    "caret_row_guess_same_row_rate": 1.0,
+    "caret_row_guess_err_pt": {
+      "n": 192,
+      "p50": 0.0,
+      "p95": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    },
+    "caret_glyph_exact_rate": 1.0,
+    "caret_glyph_err_pt": {
+      "n": 192,
+      "p50": 0.0,
+      "p95": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    }
+  },
+  {
+    "fixture": "mixed",
+    "pages": 6,
+    "spans": 32,
+    "rows_vs_placements": {
+      "rows": 164,
+      "in_placements": 164
+    },
+    "alignment_coverage": {
+      "text_glyphs": 5220,
+      "text_matched": 5172,
+      "tfm_glyphs": 290,
+      "tfm_matched": 0,
+      "text_share": 0.9908,
+      "tfm_share": 0.0
+    },
+    "markers": 24,
+    "markers_not_found": [],
+    "samples": 96,
+    "click_unit_hit_rate": 1.0,
+    "unit_span_bytes": {
+      "n": 96,
+      "p50": 528,
+      "p95": 680,
+      "min": 368,
+      "max": 688
+    },
+    "click_row_guess_err_bytes": {
+      "n": 96,
+      "p50": 16,
+      "p95": 50,
+      "min": 0,
+      "max": 60
+    },
+    "click_glyph_exact_rate": 1.0,
+    "click_glyph_err_bytes": {
+      "n": 96,
+      "p50": 0,
+      "p95": 0,
+      "min": 0,
+      "max": 0
+    },
+    "caret_unit_rect_hit_rate": 1.0,
+    "caret_row_guess_same_row_rate": 0.802,
+    "caret_row_guess_err_pt": {
+      "n": 96,
+      "p50": 0.0,
+      "p95": 16.441,
+      "min": 0.0,
+      "max": 16.441
+    },
+    "caret_glyph_exact_rate": 1.0,
+    "caret_glyph_err_pt": {
+      "n": 96,
+      "p50": 0.0,
+      "p95": 0.0,
+      "min": 0.0,
+      "max": 0.0
+    }
+  }
+]

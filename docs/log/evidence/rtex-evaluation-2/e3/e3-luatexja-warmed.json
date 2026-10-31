@@ -1,0 +1,62 @@
+{
+  "fixture": "luatexja",
+  "mode": "sandbox-warmed-copy",
+  "first_layout_s": 1.688,
+  "first_layout_wall_ms": 1593,
+  "pages": 1,
+  "convergence": "Converged",
+  "units": 4,
+  "units_by_kind": {
+    "Body": 3,
+    "Heading": 1
+  },
+  "eligible": 4,
+  "eligible_share": 1.0,
+  "edit_targets": 3,
+  "keystrokes": {
+    "edits": 120,
+    "routed": {
+      "fast": 120,
+      "background": 0,
+      "preamble": 0
+    },
+    "paragraph_ok": 120,
+    "statuses": [
+      "ok"
+    ],
+    "update_ms": {
+      "n": 120,
+      "p50": 2.949,
+      "p95": 4.451,
+      "min": 1.703,
+      "max": 358.184
+    },
+    "reply_ms": {
+      "n": 120,
+      "p50": 0.514,
+      "p95": 0.755,
+      "min": 0.232,
+      "max": 3.111
+    },
+    "rtex_total_ms": {
+      "n": 120,
+      "p50": 2.288,
+      "p95": 3.504,
+      "min": 1.227,
+      "max": 3.902
+    },
+    "raster_ms": null,
+    "raster_only_ms": null
+  },
+  "background_units": [],
+  "background_reasons": [],
+  "exit": 0,
+  "memory_peak_mib": 910.1,
+  "warmup": {
+    "project": "luatexja",
+    "exit": 0,
+    "wall_s": 18.338
+  },
+  "copy_ms": 73.9,
+  "cache_bytes": 21659306
+}

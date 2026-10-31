@@ -1,0 +1,318 @@
+{
+  "latency": [
+    {
+      "fixture": "ctex",
+      "mode": "sandbox",
+      "first_layout_s": 13.061,
+      "first_layout_wall_ms": 12900,
+      "pages": 1,
+      "convergence": "Converged",
+      "units": 4,
+      "units_by_kind": {
+        "Body": 3,
+        "Heading": 1
+      },
+      "eligible": 4,
+      "eligible_share": 1.0,
+      "edit_targets": 4,
+      "keystrokes": {
+        "edits": 120,
+        "routed": {
+          "fast": 120,
+          "background": 0,
+          "preamble": 0
+        },
+        "paragraph_ok": 120,
+        "statuses": [
+          "ok"
+        ],
+        "update_ms": {
+          "n": 120,
+          "p50": 3.719,
+          "p95": 5.301,
+          "min": 1.451,
+          "max": 11.783
+        },
+        "reply_ms": {
+          "n": 120,
+          "p50": 0.488,
+          "p95": 0.777,
+          "min": 0.202,
+          "max": 2.192
+        },
+        "rtex_total_ms": {
+          "n": 120,
+          "p50": 3.114,
+          "p95": 4.659,
+          "min": 0.992,
+          "max": 5.104
+        },
+        "raster_ms": null,
+        "raster_only_ms": null
+      },
+      "background_units": [],
+      "background_reasons": []
+    },
+    {
+      "fixture": "luatexja",
+      "mode": "sandbox",
+      "error": "RuntimeError(\"{'harness_eof': True}\")"
+    },
+    {
+      "fixture": "mixed",
+      "mode": "sandbox",
+      "first_layout_s": 13.058,
+      "first_layout_wall_ms": 12923,
+      "pages": 6,
+      "convergence": "Converged",
+      "units": 30,
+      "units_by_kind": {
+        "Body": 18,
+        "Env": 9,
+        "Heading": 3
+      },
+      "eligible": 30,
+      "eligible_share": 1.0,
+      "edit_targets": 27,
+      "keystrokes": {
+        "edits": 120,
+        "routed": {
+          "fast": 120,
+          "background": 0,
+          "preamble": 0
+        },
+        "paragraph_ok": 120,
+        "statuses": [
+          "ok"
+        ],
+        "update_ms": {
+          "n": 120,
+          "p50": 5.477,
+          "p95": 9.776,
+          "min": 1.489,
+          "max": 11.45
+        },
+        "reply_ms": {
+          "n": 120,
+          "p50": 0.532,
+          "p95": 1.015,
+          "min": 0.263,
+          "max": 3.728
+        },
+        "rtex_total_ms": {
+          "n": 120,
+          "p50": 4.226,
+          "p95": 8.33,
+          "min": 0.958,
+          "max": 9.308
+        },
+        "raster_ms": null,
+        "raster_only_ms": null
+      },
+      "background_units": [],
+      "background_reasons": []
+    },
+    {
+      "fixture": "mixed",
+      "mode": "host",
+      "first_layout_s": 1.48,
+      "first_layout_wall_ms": 1472,
+      "pages": 6,
+      "convergence": "Converged",
+      "units": 30,
+      "units_by_kind": {
+        "Body": 18,
+        "Env": 9,
+        "Heading": 3
+      },
+      "eligible": 30,
+      "eligible_share": 1.0,
+      "edit_targets": 27,
+      "keystrokes": {
+        "edits": 120,
+        "routed": {
+          "fast": 120,
+          "background": 0,
+          "preamble": 0
+        },
+        "paragraph_ok": 120,
+        "statuses": [
+          "ok"
+        ],
+        "update_ms": {
+          "n": 120,
+          "p50": 4.797,
+          "p95": 10.004,
+          "min": 1.79,
+          "max": 97.394
+        },
+        "reply_ms": {
+          "n": 120,
+          "p50": 0.5,
+          "p95": 0.917,
+          "min": 0.26,
+          "max": 4.085
+        },
+        "rtex_total_ms": {
+          "n": 120,
+          "p50": 3.907,
+          "p95": 8.215,
+          "min": 1.055,
+          "max": 9.703
+        },
+        "raster_ms": null,
+        "raster_only_ms": null
+      },
+      "background_units": [],
+      "background_reasons": []
+    }
+  ],
+  "verify": {
+    "ctex": {
+      "sandbox": {
+        "exit": 0,
+        "wall_s": 18.594,
+        "units_total": 4,
+        "units_eligible": 4,
+        "glyphs_total": 174,
+        "glyphs_identical": 174,
+        "pages": 1,
+        "pages_exact": 1,
+        "layer1_pass": true,
+        "layer2_pass": true,
+        "capture_pdf_equals_clean": true,
+        "ineligible_reasons": {}
+      }
+    },
+    "luatexja": {
+      "sandbox": {
+        "exit": 0,
+        "wall_s": 17.567,
+        "units_total": 4,
+        "units_eligible": 4,
+        "glyphs_total": 188,
+        "glyphs_identical": 188,
+        "pages": 1,
+        "pages_exact": 1,
+        "layer1_pass": true,
+        "layer2_pass": true,
+        "capture_pdf_equals_clean": true,
+        "ineligible_reasons": {}
+      }
+    },
+    "mixed": {
+      "sandbox": {
+        "exit": 0,
+        "wall_s": 15.99,
+        "units_total": 30,
+        "units_eligible": 30,
+        "glyphs_total": 5510,
+        "glyphs_identical": 5510,
+        "pages": 6,
+        "pages_exact": 6,
+        "layer1_pass": true,
+        "layer2_pass": true,
+        "capture_pdf_equals_clean": true,
+        "ineligible_reasons": {}
+      }
+    }
+  },
+  "font_cache": [
+    {
+      "fixture": "ctex",
+      "cache_bytes_after_cold": 15032017,
+      "runs": [
+        {
+          "run": "e3-cache-ctex-tmpfs-1",
+          "first_layout_s": 13.508,
+          "wall_ms": 13341,
+          "compile": "Ok",
+          "pages": 1
+        },
+        {
+          "run": "e3-cache-ctex-tmpfs-2",
+          "first_layout_s": 13.544,
+          "wall_ms": 13412,
+          "compile": "Ok",
+          "pages": 1
+        },
+        {
+          "run": "e3-cache-ctex-rw-cold",
+          "first_layout_s": 13.847,
+          "wall_ms": 13691,
+          "compile": "Ok",
+          "pages": 1
+        },
+        {
+          "run": "e3-cache-ctex-rw-warm",
+          "first_layout_s": 1.36,
+          "wall_ms": 1237,
+          "compile": "Ok",
+          "pages": 1
+        },
+        {
+          "run": "e3-cache-ctex-ro-warm",
+          "first_layout_s": 30.268,
+          "wall_ms": 30126,
+          "compile": "Failed",
+          "pages": 0
+        },
+        {
+          "run": "e3-cache-ctex-host",
+          "first_layout_s": 1.218,
+          "wall_ms": 1214,
+          "compile": "Ok",
+          "pages": 1
+        }
+      ]
+    },
+    {
+      "fixture": "mixed",
+      "cache_bytes_after_cold": 15401758,
+      "runs": [
+        {
+          "run": "e3-cache-mixed-tmpfs-1",
+          "first_layout_s": 12.882,
+          "wall_ms": 12757,
+          "compile": "Ok",
+          "pages": 6
+        },
+        {
+          "run": "e3-cache-mixed-tmpfs-2",
+          "first_layout_s": 13.035,
+          "wall_ms": 12924,
+          "compile": "Ok",
+          "pages": 6
+        },
+        {
+          "run": "e3-cache-mixed-rw-cold",
+          "first_layout_s": 13.342,
+          "wall_ms": 13206,
+          "compile": "Ok",
+          "pages": 6
+        },
+        {
+          "run": "e3-cache-mixed-rw-warm",
+          "first_layout_s": 1.673,
+          "wall_ms": 1510,
+          "compile": "Ok",
+          "pages": 6
+        },
+        {
+          "run": "e3-cache-mixed-ro-warm",
+          "first_layout_s": 28.854,
+          "wall_ms": 28735,
+          "compile": "Failed",
+          "pages": 0
+        },
+        {
+          "run": "e3-cache-mixed-host",
+          "first_layout_s": 1.514,
+          "wall_ms": 1509,
+          "compile": "Ok",
+          "pages": 6
+        }
+      ]
+    }
+  ]
+}
