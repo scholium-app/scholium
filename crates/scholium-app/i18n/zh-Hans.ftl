@@ -166,9 +166,9 @@ command-document-final_check =
     .title = 最终排版检查
     .tooltip = 运行最终构建并检查排版
 
-command-view-mode-visual =
-    .title = 所见即所得
-    .tooltip = 所见即所得 · Ctrl+Shift+M 切换
+command-view-mode-page =
+    .title = 页面编辑
+    .tooltip = 在页面上直接编辑 · Ctrl+Shift+M 切换
 
 command-view-mode-source =
     .title = 源码预览
@@ -176,7 +176,7 @@ command-view-mode-source =
 
 command-view-mode-toggle =
     .title = 切换工作方式
-    .tooltip = 在所见即所得与源码之间切换
+    .tooltip = 在页面编辑与源码预览之间切换
 
 command-view-navigation =
     .title = 文件导航
@@ -284,7 +284,7 @@ menu-view-language = 语言
 
 reason-no_document = 没有打开的文档
 
-reason-source_readonly = 源码预览为只读；回到所见即所得后再执行
+reason-source_readonly = 源码预览为只读；回到页面编辑后再执行
 
 reason-composing = 输入法组合中，完成输入后再执行
 

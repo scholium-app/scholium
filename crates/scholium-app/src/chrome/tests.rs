@@ -267,7 +267,7 @@ fn only_checkable_commands_are_exposed_as_toggles() {
     let w = Window::new(1280.0, ZH);
     assert!(w.find("format.bold", "toolbar").checked.is_some());
     assert!(w.find("edit.undo", "toolbar").checked.is_none());
-    assert!(w.find("view.mode.visual", "focus").checked == Some(true));
+    assert!(w.find("view.mode.page", "focus").checked == Some(true));
     assert!(w.find("view.mode.source", "focus").checked == Some(false));
 }
 
@@ -339,7 +339,7 @@ fn a_narrow_window_moves_whole_trailing_groups_into_overflow_in_order() {
         .collect();
     assert_eq!(listed, hidden);
     assert!(
-        w.find("view.mode.visual", "focus").enabled,
+        w.find("view.mode.page", "focus").enabled,
         "the mode switch stays visible"
     );
 }
@@ -371,7 +371,7 @@ fn the_focus_bar_shows_document_properties_in_text_and_formula_commands_in_math(
     for id in [
         "insert.fraction",
         "insert.exit_formula",
-        "view.mode.visual",
+        "view.mode.page",
         "view.mode.source",
     ] {
         assert!(math.contains(&id.to_owned()), "{id} in {math:?}");
@@ -393,13 +393,13 @@ fn the_focus_bar_leaves_formulas_alone_in_the_source_view() {
 fn mode_segments_are_at_least_96_wide_and_the_switch_is_rightmost() {
     for locale in [ZH, EN] {
         let w = Window::new(1024.0, locale);
-        let visual = w.find("view.mode.visual", "focus");
+        let page = w.find("view.mode.page", "focus");
         let source = w.find("view.mode.source", "focus");
         assert!(
-            visual.rect.width() >= 96.0 && source.rect.width() >= 96.0,
+            page.rect.width() >= 96.0 && source.rect.width() >= 96.0,
             "{locale:?}"
         );
-        assert_eq!(visual.rect.height(), Tokens::FIELD);
+        assert_eq!(page.rect.height(), Tokens::FIELD);
         assert!(
             source.rect.right() > 1024.0 - 16.0,
             "right-aligned: {:?}",
@@ -470,12 +470,12 @@ fn the_tab_shows_the_title_and_its_buttons_use_the_new_and_close_flows() {
 fn switching_the_language_relabels_every_visible_control_at_runtime() {
     let mut w = Window::new(1280.0, ZH);
     let zh = w.texts();
-    assert!(zh.contains(&"文件".to_owned()) && zh.contains(&"所见即所得".to_owned()));
+    assert!(zh.contains(&"文件".to_owned()) && zh.contains(&"页面编辑".to_owned()));
     w.state.locale = EN;
     w.settle();
     let en = w.texts();
     assert!(
-        en.contains(&"File".to_owned()) && en.contains(&"WYSIWYG".to_owned()),
+        en.contains(&"File".to_owned()) && en.contains(&"Page Editing".to_owned()),
         "{en:?}"
     );
     assert!(

@@ -186,8 +186,19 @@ fn the_keyboard_focus_ring_shows_after_tab_and_never_after_a_click() {
 fn a_segment_is_as_wide_as_its_text_but_never_under_96() {
     let c = ctx();
     run(&c, None, false, vec![], |ui| {
-        assert_eq!(segment_width(ui, "源码"), 96.0);
-        assert_eq!(segment_width(ui, "WYSIWYG"), 96.0);
+        for label in ["页面编辑", "源码预览", "Page Editing", "Source Preview"] {
+            let width = segment_width(ui, label);
+            assert!(width >= 96.0, "{label}");
+            let galley = super::single_line(
+                ui,
+                label,
+                theme::font(Tokens::SMALL_TEXT),
+                egui::Color32::BLACK,
+                width - 12.0,
+            );
+            assert_eq!(galley.rows.len(), 1, "{label}");
+            assert!(!galley.elided, "{label}");
+        }
         assert!(segment_width(ui, "A very long mode label in another language") > 96.0);
     });
 }

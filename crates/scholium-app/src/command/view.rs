@@ -15,12 +15,12 @@ pub(super) fn specs() -> Vec<CommandSpec> {
 fn workspace() -> Vec<CommandSpec> {
     vec![
         command! {
-            "view.mode.visual",
+            "view.mode.page",
             icon: IconId::Page,
             menu: menu!(View, WorkMode, 0, 0),
             availability: avail::not_composing,
-            checked: Some(avail::visual),
-            action: Action::View(ViewCommand::Visual),
+            checked: Some(avail::page),
+            action: Action::View(ViewCommand::Page),
         },
         command! {
             "view.mode.source",

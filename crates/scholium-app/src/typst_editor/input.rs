@@ -113,7 +113,7 @@ impl EditorSession {
 
     pub(super) fn submit(&mut self, input: Input, state: &mut WorkspaceState) {
         self.sync_geometry();
-        if state.mode != crate::state::ViewMode::Visual {
+        if state.mode != crate::state::ViewMode::Page {
             state.edit_error = Some(read_only_message(state.locale.resolve()));
             return;
         }
