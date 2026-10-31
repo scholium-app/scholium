@@ -1,0 +1,69 @@
+# GNU patch 2.x dry application of the tracked series onto typst/typst main 84cca406aafe (2026-10-28)
+# (sequential, real apply, rejects shown); offsets are harmless, fuzz/FAILED need review
+== 0001-structural-math-origin-and-holes.patch
+patching file crates/typst-layout/Cargo.toml
+patching file crates/typst-layout/src/math/fragment/glyph.rs
+Hunk #2 succeeded at 100 (offset 1 line).
+Hunk #3 succeeded at 181 (offset 2 lines).
+Hunk #4 succeeded at 267 (offset 3 lines).
+patching file crates/typst-layout/src/math/fragment/mod.rs
+Hunk #1 succeeded at 238 (offset 8 lines).
+patching file crates/typst-layout/src/math/mod.rs
+patching file crates/typst-library/Cargo.toml
+patching file crates/typst-library/src/editor.rs
+patching file crates/typst-library/src/foundations/content/mod.rs
+Hunk #1 succeeded at 85 (offset 1 line).
+patching file crates/typst-library/src/foundations/content/raw.rs
+patching file crates/typst-library/src/layout/frame.rs
+patching file crates/typst-library/src/lib.rs
+Hunk #1 succeeded at 13 with fuzz 2.
+Hunk #2 FAILED at 182.
+Hunk #3 FAILED at 232.
+2 out of 3 hunks FAILED
+patching file crates/typst-library/src/math/ir/item.rs
+patching file crates/typst-library/src/math/ir/resolve.rs
+Hunk #2 succeeded at 162 with fuzz 1.
+== 0002-composite-slots-and-fraction-rule-owners.patch
+patching file crates/typst-layout/src/math/fraction.rs
+patching file crates/typst-layout/src/math/fragment/glyph.rs
+Hunk #2 succeeded at 105 (offset 1 line).
+Hunk #3 succeeded at 186 (offset 2 lines).
+Hunk #4 succeeded at 276 (offset 3 lines).
+patching file crates/typst-layout/src/math/fragment/mod.rs
+Hunk #1 succeeded at 244 (offset 8 lines).
+patching file crates/typst-layout/src/math/mod.rs
+patching file crates/typst-library/src/editor.rs
+patching file crates/typst-library/src/foundations/content/mod.rs
+Hunk #1 succeeded at 98 (offset 1 line).
+patching file crates/typst-library/src/foundations/content/raw.rs
+patching file crates/typst-library/src/layout/frame.rs
+patching file crates/typst-library/src/math/ir/item.rs
+patching file crates/typst-library/src/math/ir/resolve.rs
+== 0003-shaped-text-caret-geometry.patch
+patching file crates/typst-layout/src/inline/collect.rs
+Hunk #1 succeeded at 256 with fuzz 1 (offset 12 lines).
+Hunk #2 succeeded at 330 (offset 12 lines).
+Hunk #3 succeeded at 344 (offset 12 lines).
+Hunk #4 succeeded at 365 (offset 12 lines).
+patching file crates/typst-layout/src/inline/editor.rs
+patching file crates/typst-layout/src/inline/line.rs
+Hunk #1 succeeded at 30 (offset 1 line).
+Hunk #2 succeeded at 47 (offset 1 line).
+Hunk #3 succeeded at 136 (offset 1 line).
+Hunk #4 succeeded at 200 (offset 4 lines).
+patching file crates/typst-layout/src/inline/mod.rs
+patching file crates/typst-layout/src/inline/shaping.rs
+Hunk #1 succeeded at 435 (offset 1 line).
+patching file crates/typst-layout/src/math/fragment/glyph.rs
+Hunk #2 succeeded at 192 (offset 2 lines).
+Hunk #3 succeeded at 272 (offset 3 lines).
+patching file crates/typst-layout/src/math/text.rs
+patching file crates/typst-library/src/editor.rs
+patching file crates/typst-library/src/layout/frame.rs
+patching file crates/typst-library/src/math/ir/item.rs
+patching file crates/typst-library/src/math/ir/resolve.rs
+== 0004-editor-paragraph-computation-counters.patch
+patching file crates/typst-layout/src/editor_metrics.rs
+patching file crates/typst-layout/src/inline/mod.rs
+Hunk #1 succeeded at 82 (offset -3 lines).
+patching file crates/typst-layout/src/lib.rs

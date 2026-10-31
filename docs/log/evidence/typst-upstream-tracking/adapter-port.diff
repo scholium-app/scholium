@@ -1,0 +1,94 @@
+# Scratch-only adapter port used to reach the pixel and test results; NOT applied to Scholium.
+# Library::default() -> Library::new([typst_render::FORMAT]) (upstream c0b6245e4, #8496);
+# RenderOptions.pixel_per_pt -> RenderOptions<Complete>.format.ppi = px_per_pt * 72 (upstream c0b6245e4 #8496, fddf6e1fb #8903).
+diff --git a/crates/scholium-typst/src/compiler.rs b/crates/scholium-typst/src/compiler.rs
+index 9618cfa..7fe4676 100644
+--- a/crates/scholium-typst/src/compiler.rs
++++ b/crates/scholium-typst/src/compiler.rs
+@@ -245,10 +245,12 @@ fn raster(page: &typst_layout::Page, pixel_per_pt: f32) -> PagePixels {
+     let scale = pixel_per_pt.clamp(0.25, 8.0);
+     let pixmap = typst_render::render(
+         page,
+-        &typst_render::RenderOptions {
+-            pixel_per_pt: f64::from(scale).into(),
+-            render_bleed: false,
++        &typst_render::RenderOptions::<typst::format::Complete> {
++        render_bleed: false,
++        format: typst_render::PngFormatOptions {
++            ppi: typst::format::SpannedValue::detached(typst::utils::Scalar::new(f64::from(scale) * 72.0)),
+         },
++    },
+     );
+     PagePixels {
+         width: pixmap.width(),
+diff --git a/crates/scholium-typst/src/editor/kernel.rs b/crates/scholium-typst/src/editor/kernel.rs
+index 7659e9b..eb3d913 100644
+--- a/crates/scholium-typst/src/editor/kernel.rs
++++ b/crates/scholium-typst/src/editor/kernel.rs
+@@ -42,7 +42,7 @@ impl EditWorld {
+         let mut fonts = FontStore::new();
+         fonts.extend(typst_kit::fonts::embedded());
+         fonts.extend(typst_kit::fonts::system());
+-        let mut library = Library::default();
++        let mut library = Library::new([typst_render::FORMAT]);
+         library.editing = true;
+         let main = RootedPath::new(
+             VirtualRoot::Project,
+@@ -165,9 +165,11 @@ pub(crate) fn layout_in(
+     Ok(frame)
+ }
+ 
+-pub(crate) fn render_options(px_per_pt: f64) -> typst_render::RenderOptions {
+-    typst_render::RenderOptions {
+-        pixel_per_pt: px_per_pt.into(),
+-        ..Default::default()
++pub(crate) fn render_options(px_per_pt: f64) -> typst_render::RenderOptions<typst::format::Complete> {
++    typst_render::RenderOptions::<typst::format::Complete> {
++        render_bleed: false,
++        format: typst_render::PngFormatOptions {
++            ppi: typst::format::SpannedValue::detached(typst::utils::Scalar::new(px_per_pt * 72.0)),
++        },
+     }
+ }
+diff --git a/crates/scholium-typst/src/lib.rs b/crates/scholium-typst/src/lib.rs
+index a1bf055..5ae572e 100644
+--- a/crates/scholium-typst/src/lib.rs
++++ b/crates/scholium-typst/src/lib.rs
+@@ -70,7 +70,7 @@ impl PreviewWorld {
+         );
+         let main = path.intern();
+         Self {
+-            library: LazyHash::new(Library::default()),
++            library: LazyHash::new(Library::new([typst_render::FORMAT])),
+             fonts,
+             main,
+             source: Mutex::new(Source::new(main, String::new())),
+diff --git a/spikes/typst-edit-session/src/kernel.rs b/spikes/typst-edit-session/src/kernel.rs
+index 472691c..aab28d9 100644
+--- a/spikes/typst-edit-session/src/kernel.rs
++++ b/spikes/typst-edit-session/src/kernel.rs
+@@ -36,7 +36,7 @@ impl ProbeWorld {
+         )
+         .intern();
+         Self {
+-            library: LazyHash::new(Library::default()),
++            library: LazyHash::new(Library::new([typst_render::FORMAT])),
+             fonts,
+             main,
+             source_reads: AtomicUsize::new(0),
+@@ -143,9 +143,11 @@ pub(crate) fn layout_in(
+     Ok(frame)
+ }
+ 
+-pub(crate) fn render_options() -> typst_render::RenderOptions {
+-    typst_render::RenderOptions {
+-        pixel_per_pt: RASTER_PX_PER_PT.into(),
+-        ..Default::default()
++pub(crate) fn render_options() -> typst_render::RenderOptions<typst::format::Complete> {
++    typst_render::RenderOptions::<typst::format::Complete> {
++        render_bleed: false,
++        format: typst_render::PngFormatOptions {
++            ppi: typst::format::SpannedValue::detached(typst::utils::Scalar::new(RASTER_PX_PER_PT * 72.0)),
++        },
+     }
+ }
