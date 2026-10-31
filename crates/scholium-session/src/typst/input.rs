@@ -153,9 +153,7 @@ impl EditorCore {
                 mods,
             } => {
                 self.pointer = Some(PointerState { at, clicks });
-                if matches!(kind, PointerKind::Release) && clicks >= 2 && !mods.shift {
-                    self.select_word_at_pointer(clicks);
-                }
+                let _ = (kind, mods);
                 Ok(Outcome::default())
             }
             Input::Key { key, mods } => self.key_input(key, mods),
@@ -313,29 +311,6 @@ impl EditorCore {
         self.run(CommandId::Delete, CommandArgs::Range(self.cursor.byte, end))
     }
 
-    fn select_word_at_pointer(&mut self, clicks: u8) {
-        if clicks < 2 {
-            return;
-        }
-        let Some(leaf) = leaves(&self.snapshot).into_iter().find(|leaf| !leaf.math) else {
-            return;
-        };
-        let end = leaf
-            .text
-            .split_word_bound_indices()
-            .next()
-            .map_or(0, |(_, value)| value.len());
-        self.anchor = Some(Position {
-            leaf: leaf.id,
-            byte: 0,
-            affinity: Affinity::Downstream,
-        });
-        self.cursor = Position {
-            leaf: leaf.id,
-            byte: if clicks >= 3 { leaf.text.len() } else { end },
-            affinity: Affinity::Upstream,
-        };
-    }
     pub(super) fn insert(&mut self, text: String, origin: Origin, state: &mut EditState) {
         if text.is_empty() {
             return;

@@ -64,6 +64,22 @@ impl EditorSession {
             let point = (point - rect.min) / scale;
             [point.x as f64, point.y as f64]
         };
+        let abstract_pointer = |session: &mut EditorSession,
+                                kind: scholium_session::typst::PointerKind,
+                                point: [f64; 2],
+                                clicks: u8,
+                                modifiers: egui::Modifiers| {
+            let _ = session.core.input(scholium_session::typst::Input::Pointer {
+                kind,
+                at: point,
+                clicks,
+                mods: scholium_session::typst::Modifiers {
+                    command: modifiers.command,
+                    shift: modifiers.shift,
+                    alt: modifiers.alt,
+                },
+            });
+        };
         match event {
             egui::Event::PointerButton {
                 pos,
@@ -72,6 +88,13 @@ impl EditorSession {
                 modifiers,
             } if rect.contains(*pos) => {
                 self.clicks.press(*pos, std::time::Instant::now());
+                abstract_pointer(
+                    self,
+                    scholium_session::typst::PointerKind::Press,
+                    to_frame(*pos),
+                    self.clicks.count(),
+                    *modifiers,
+                );
                 if self.current() && !self.pointer_start(to_frame(*pos), modifiers.shift) {
                     state.edit_error =
                         Some("此位置没有精确的当前命中几何；可使用键盘导航。".into());
@@ -84,11 +107,33 @@ impl EditorSession {
             } => self.clicks.reset(),
             egui::Event::PointerMoved(point) if self.drag.is_some() => {
                 self.clicks.moved(*point);
+                abstract_pointer(
+                    self,
+                    scholium_session::typst::PointerKind::Move,
+                    to_frame(*point),
+                    self.clicks.count(),
+                    egui::Modifiers::NONE,
+                );
                 self.pointer_drag(to_frame(*point));
             }
             egui::Event::PointerGone => {
                 self.clicks.reset();
                 self.drag = None
+            }
+            egui::Event::PointerButton {
+                pos,
+                modifiers,
+                pressed: false,
+                ..
+            } if rect.contains(*pos) => {
+                abstract_pointer(
+                    self,
+                    scholium_session::typst::PointerKind::Release,
+                    to_frame(*pos),
+                    self.clicks.count(),
+                    *modifiers,
+                );
+                self.drag = None;
             }
             egui::Event::PointerButton { pressed: false, .. } => self.drag = None,
             _ => {}

@@ -209,6 +209,10 @@ impl EditorSession {
             max_side: ctx.input(|i| i.max_texture_side) as u32,
         };
         self.view = view;
+        let _ = self.core.input(scholium_session::typst::Input::Viewport {
+            visible: view,
+            raster: self.spec,
+        });
         let (Some(scene), Some(layers)) = (&self.scene, &mut self.texture) else {
             return;
         };
