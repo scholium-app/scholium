@@ -82,6 +82,8 @@ pub enum Rejection {
     RawSelection,
     /// Formula has no following body leaf for a split.
     MissingBody,
+    /// A selection endpoint inside a formula is not a body-text selection.
+    MathSelection,
 }
 
 /// A failed command is fully rolled back and never writes storage.
@@ -134,7 +136,10 @@ pub struct Outcome {
 #[allow(missing_docs)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct FollowIntent {
+    /// Caret rectangle in page points; the host adds its viewport margin policy.
     pub rect_pt: [f64; 4],
+    /// Optional document-edge widening requested by Ctrl+Home/End.
+    pub edge: Option<FollowEdge>,
 }
 
 /// Non-rendering overlay state published with an input result.
@@ -177,14 +182,23 @@ impl EditorCore {
             Err(_) => Err(CommandError::Panicked),
         };
         match result {
-            Ok(applied) => Ok(Outcome {
-                changed: !Arc::ptr_eq(&checkpoint.snapshot, &self.snapshot),
-                applied,
-                cleared_error: state.cleared_error,
-                reset_drag: state.reset_drag,
-                invalidate_scene: matches!(id, CommandId::Undo | CommandId::Redo | CommandId::New),
-                ..Outcome::default()
-            }),
+            Ok(applied) => {
+                if matches!(id, CommandId::Undo | CommandId::Redo) {
+                    self.follow.pending = true;
+                    self.follow.edge = None;
+                }
+                Ok(Outcome {
+                    changed: !Arc::ptr_eq(&checkpoint.snapshot, &self.snapshot),
+                    applied,
+                    cleared_error: state.cleared_error,
+                    reset_drag: state.reset_drag,
+                    invalidate_scene: matches!(
+                        id,
+                        CommandId::Undo | CommandId::Redo | CommandId::New
+                    ),
+                    ..Outcome::default()
+                })
+            }
             Err(error) => {
                 self.rollback(checkpoint);
                 if let Some(text) = draft {

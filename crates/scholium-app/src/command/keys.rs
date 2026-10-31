@@ -1,8 +1,5 @@
 //! Toolkit edge: `KeyChord` to and from egui keys and modifiers.
-use super::{
-    registry,
-    spec::{Action, ChordKey, CommandSpec, KeyChord},
-};
+use super::spec::{ChordKey, KeyChord};
 use eframe::egui::{Key, KeyboardShortcut, Modifiers};
 
 const DIGITS: [Key; 10] = [
@@ -46,27 +43,6 @@ fn egui_key(key: ChordKey) -> Option<Key> {
     }
 }
 
-fn chord_key(key: Key) -> Option<ChordKey> {
-    if let Some(d) = DIGITS.iter().position(|k| *k == key) {
-        return u8::try_from(d).ok().map(ChordKey::Digit);
-    }
-    if let Some(n) = FUNCTION.iter().position(|k| *k == key) {
-        return u8::try_from(n + 1).ok().map(ChordKey::Function);
-    }
-    match key {
-        Key::Plus => Some(ChordKey::Plus),
-        Key::Equals => Some(ChordKey::Equals),
-        Key::Minus => Some(ChordKey::Minus),
-        Key::Slash => Some(ChordKey::Slash),
-        _ => {
-            let name = key.name();
-            let mut chars = name.chars();
-            let letter = chars.next().filter(char::is_ascii_uppercase)?;
-            chars.next().is_none().then_some(ChordKey::Letter(letter))
-        }
-    }
-}
-
 pub(super) fn shortcut(chord: KeyChord) -> Option<KeyboardShortcut> {
     let mut modifiers = Modifiers::NONE;
     if chord.ctrl {
@@ -76,14 +52,4 @@ pub(super) fn shortcut(chord: KeyChord) -> Option<KeyboardShortcut> {
         modifiers |= Modifiers::SHIFT;
     }
     Some(KeyboardShortcut::new(modifiers, egui_key(chord.key)?))
-}
-
-/// The page-routed command bound to a key press, if any.
-pub(crate) fn editor_command(key: Key, modifiers: Modifiers) -> Option<&'static CommandSpec> {
-    let chord = KeyChord {
-        ctrl: modifiers.command,
-        shift: modifiers.shift,
-        key: chord_key(key)?,
-    };
-    registry::editor_command(chord).filter(|spec| matches!(spec.action, Action::Editor(_)))
 }

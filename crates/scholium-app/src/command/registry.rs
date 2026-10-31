@@ -1,8 +1,10 @@
 //! The one command list. Adding a command edits only its domain module; adding a domain
 //! adds one line to `DOMAINS`.
+#[cfg(test)]
+use super::spec::ChordKey;
 use super::{
     document, edit, file, format, help, insert,
-    spec::{ChordKey, CommandSpec, FocusKind, KeyChord, MenuId, Routing, Submenu, ToolbarGroup},
+    spec::{CommandSpec, FocusKind, KeyChord, MenuId, Routing, Submenu, ToolbarGroup},
     tools, view,
 };
 use std::sync::OnceLock;
@@ -110,6 +112,7 @@ pub(crate) fn has_shifted_variant(chord: KeyChord) -> bool {
 /// The page-routed command bound to a key event. Letters, digits and function keys match
 /// exactly (Ctrl+Shift+M is a mode switch, not a formula toggle). Punctuation also matches
 /// its unshifted binding, because `/` needs Shift on some layouts.
+#[cfg(test)]
 pub(crate) fn editor_command(chord: KeyChord) -> Option<&'static CommandSpec> {
     let find = |wanted: KeyChord| {
         all()

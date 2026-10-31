@@ -2,7 +2,7 @@
 use super::*;
 #[cfg(test)]
 use scholium_session::typst::indicator::Bounds;
-pub(super) use scholium_session::typst::indicator::{formula_bounds, past_column};
+pub(super) use scholium_session::typst::indicator::past_column;
 impl EditorSession {
     pub(super) fn math_indicator(
         &self,

@@ -70,6 +70,11 @@ impl EditorCore {
                 max_side: 4096,
             },
             pointer: None,
+            geometry: None,
+            geometry_stamp: None,
+            goal: None,
+            follow: FollowState::default(),
+            pointer_drag: false,
             #[cfg(test)]
             fail_next_input: false,
         })

@@ -4,20 +4,24 @@ mod command;
 mod diagnose;
 mod edit;
 mod events;
+mod follow;
 pub mod history;
 pub mod indicator;
 pub mod input;
+mod key;
 mod math_enter;
 mod persistence;
+pub mod pointer;
 mod selection;
 pub mod style;
 #[cfg(test)]
 mod tests;
+pub mod vertical;
 
 pub use command::{
     CommandArgs, CommandError, CommandId, FollowIntent, Outcome, OverlayData, Rejection,
 };
-pub use events::{Input, Key, Modifiers, PointerKind, PointerState};
+pub use events::{FollowEdge, FollowState, Input, Key, Modifiers, PointerKind, PointerState};
 pub use history::Origin;
 use history::{HistoryEntry, RunKind};
 pub use persistence::{SessionError, prepare};
@@ -26,7 +30,9 @@ use scholium_document::{
 };
 use scholium_model::{RequestId, layout_identity::*, structured::*};
 use scholium_storage::SessionStore;
-use scholium_typst::editor::{Affinity, EditorScene, Position, RasterSpec, ViewRange};
+use scholium_typst::editor::{
+    Affinity, EditGeometry, EditorScene, Position, RasterSpec, ViewRange,
+};
 #[cfg(test)]
 use std::path::PathBuf;
 use std::{path::Path, sync::Arc};
@@ -49,7 +55,7 @@ pub struct EditorCore {
     pub snapshot: Arc<StructuredDocument>,
     store: SessionStore,
     saved: Option<Arc<StructuredDocument>>,
-    /// Caret in leaf-local UTF-8 bytes; navigation remains in app during phase 1.
+    /// Caret in leaf-local UTF-8 bytes.
     pub cursor: Position,
     /// Semantic selection anchor.
     pub anchor: Option<Position>,
@@ -77,6 +83,16 @@ pub struct EditorCore {
     pub raster: RasterSpec,
     /// Last abstract pointer event, for drag continuity.
     pub pointer: Option<PointerState>,
+    /// Current Scene geometry supplied by the host adapter for semantic input.
+    pub geometry: Option<EditGeometry>,
+    /// Scene identity associated with `geometry`.
+    pub geometry_stamp: Option<SceneStamp>,
+    /// Preferred visual column for consecutive vertical navigation.
+    pub(crate) goal: Option<vertical::Goal>,
+    /// Pending caret-follow intent owned by the editing core.
+    pub follow: FollowState,
+    /// Whether a pointer drag has an active semantic anchor.
+    pub pointer_drag: bool,
     #[cfg(test)]
     #[allow(missing_docs)]
     pub fail_next_input: bool,
@@ -106,6 +122,56 @@ fn math_contains(node: &MathNode, leaf: scholium_model::NodeId) -> bool {
         || input::math_children(node)
             .into_iter()
             .any(|c| math_contains(c, leaf))
+}
+
+impl EditorCore {
+    /// Supply the latest current Scene geometry for semantic pointer and line input.
+    ///
+    /// The worker and Scene remain host-owned in this phase; only immutable geometry crosses
+    /// the boundary until the worker migration is completed.
+    pub fn set_geometry(&mut self, geometry: Option<EditGeometry>, stamp: Option<SceneStamp>) {
+        self.geometry = geometry;
+        self.geometry_stamp = stamp;
+    }
+
+    /// Move the semantic caret and optionally extend the selection.
+    pub fn move_to(&mut self, target: Position, extend: bool) {
+        self.goal = None;
+        if extend {
+            let cursor = self.cursor;
+            self.anchor.get_or_insert(cursor);
+        } else {
+            self.anchor = None;
+        }
+        self.cursor = target;
+    }
+
+    /// Move to a validated diagnostic location and request caret follow.
+    pub fn jump_to(&mut self, target: Target) -> bool {
+        let Some(leaf) = input::leaves(&self.snapshot)
+            .into_iter()
+            .find(|leaf| leaf.id == target.node)
+        else {
+            return false;
+        };
+        self.cursor = Position {
+            leaf: target.node,
+            byte: if target.byte <= leaf.text.len() && leaf.text.is_char_boundary(target.byte) {
+                target.byte
+            } else {
+                0
+            },
+            affinity: Affinity::Downstream,
+        };
+        self.anchor = None;
+        self.goal = None;
+        self.run = None;
+        self.pending_style = None;
+        self.follow.pending = true;
+        self.follow.edge = None;
+        self.pointer_drag = false;
+        true
+    }
 }
 
 /// Read-only authority view for phase-1 app adapters. It deliberately has no `DerefMut`;

@@ -34,6 +34,8 @@ impl EditorSession {
                 self.settle.arrived();
                 self.texture = Some(raster::Layers::from_scene(ctx, &mut scene));
                 self.overflows = self.find_overflows(&scene);
+                self.core
+                    .set_geometry(Some(scene.geometry.clone()), Some(stamp));
                 self.scene = Some(scene);
             }
             Err(error) => self.layout_error = Some(error.to_string()),

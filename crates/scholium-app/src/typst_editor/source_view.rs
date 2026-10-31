@@ -423,9 +423,10 @@ impl EditorSession {
         let Some(leaf) = in_block().find(|l| !l.math).or_else(|| in_block().next()) else {
             return;
         };
+        let leaf = (leaf.id, leaf.block);
         self.move_to(
             Position {
-                leaf: leaf.id,
+                leaf: leaf.0,
                 byte: 0,
                 affinity: Affinity::Downstream,
             },

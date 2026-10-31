@@ -84,6 +84,15 @@ impl EditorCore {
     /// event is rejected or panics.
     pub fn input(&mut self, input: Input) -> Result<Outcome, CommandError> {
         let checkpoint = self.checkpoint()?;
+        let before = self.cursor;
+        let draft = match &input {
+            Input::Text(text) => Some(text.clone()),
+            Input::Command(
+                CommandId::Text | CommandId::ReplaceRange,
+                CommandArgs::Text(text, _),
+            ) => Some(text.clone()),
+            _ => None,
+        };
         #[cfg(test)]
         let inject = std::mem::take(&mut self.fail_next_input);
         #[cfg(not(test))]
@@ -91,7 +100,12 @@ impl EditorCore {
         let result =
             std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| self.apply_input(input)));
         match result {
-            Ok(Ok(outcome)) if !inject => Ok(self.decorate(outcome)),
+            Ok(Ok(outcome)) if !inject => {
+                if self.cursor != before || self.selected() {
+                    self.pending_style = None;
+                }
+                Ok(self.decorate(outcome))
+            }
             Ok(Ok(_)) => {
                 #[cfg(test)]
                 {
@@ -103,10 +117,16 @@ impl EditorCore {
             }
             Ok(Err(error)) => {
                 self.rollback(checkpoint);
+                if let Some(text) = draft {
+                    self.rejected_input = Some(text);
+                }
                 Err(error)
             }
             Err(_) => {
                 self.rollback(checkpoint);
+                if let Some(text) = draft {
+                    self.rejected_input = Some(text);
+                }
                 Err(CommandError::Panicked)
             }
         }
@@ -139,8 +159,23 @@ impl EditorCore {
 
     fn apply_input(&mut self, input: Input) -> Result<Outcome, CommandError> {
         match input {
-            Input::Text(text) => self.run(CommandId::Text, CommandArgs::Text(text, Origin::Typed)),
-            Input::Command(id, args) => self.run(id, args),
+            Input::Text(text) => {
+                let before = self.cursor;
+                let old_follow = self.follow;
+                let outcome = self.run(CommandId::Text, CommandArgs::Text(text, Origin::Typed))?;
+                Ok(self.follow_after_text(before, old_follow, outcome))
+            }
+            Input::Command(id, args) => {
+                let track_follow = matches!(id, CommandId::Text | CommandId::ReplaceRange);
+                let before = self.cursor;
+                let old_follow = self.follow;
+                let outcome = self.run(id, args)?;
+                Ok(if track_follow {
+                    self.follow_after_text(before, old_follow, outcome)
+                } else {
+                    outcome
+                })
+            }
             Input::Viewport { visible, raster } => {
                 self.visible = visible;
                 self.raster = raster;
@@ -151,48 +186,83 @@ impl EditorCore {
                 at,
                 clicks,
                 mods,
-            } => {
-                self.pointer = Some(PointerState { at, clicks });
-                let _ = (kind, mods);
-                Ok(Outcome::default())
-            }
+            } => self.pointer_input(kind, at, clicks, mods),
             Input::Key { key, mods } => self.key_input(key, mods),
         }
     }
 
-    fn key_input(&mut self, key: Key, mods: Modifiers) -> Result<Outcome, CommandError> {
-        if mods.command {
-            let command = match key {
-                Key::Character('a') | Key::Character('A') => Some(CommandId::SelectAll),
-                Key::Character('z') | Key::Character('Z') if mods.shift => Some(CommandId::Redo),
-                Key::Character('z') | Key::Character('Z') => Some(CommandId::Undo),
-                Key::Character('y') | Key::Character('Y') => Some(CommandId::Redo),
-                Key::Home => {
-                    self.move_document_edge(false, mods.shift);
-                    None
-                }
-                Key::End => {
-                    self.move_document_edge(true, mods.shift);
-                    None
-                }
-                _ => None,
-            };
-            return command.map_or_else(
-                || Ok(Outcome::default()),
-                |id| self.run(id, CommandArgs::None),
-            );
+    pub(super) fn extend_horizontal(&mut self, right: bool) -> Result<(), CommandError> {
+        let body: Vec<_> = leaves(&self.snapshot)
+            .into_iter()
+            .filter(|leaf| !leaf.math)
+            .collect();
+        let Some(index) = body.iter().position(|leaf| leaf.id == self.cursor.leaf) else {
+            return Ok(());
+        };
+        let value = body[index].text;
+        let mut target = self.cursor;
+        if right && target.byte < value.len() {
+            target.byte = value
+                .grapheme_indices(true)
+                .map(|(at, _)| at)
+                .find(|at| *at > target.byte)
+                .unwrap_or(value.len());
+        } else if !right && target.byte > 0 {
+            target.byte = value
+                .grapheme_indices(true)
+                .map(|(at, _)| at)
+                .rfind(|at| *at < target.byte)
+                .unwrap_or(0);
+        } else if right && index + 1 < body.len() {
+            target.leaf = body[index + 1].id;
+            target.byte = 0;
+        } else if !right && index > 0 {
+            target.leaf = body[index - 1].id;
+            target.byte = body[index - 1].text.len();
         }
+        self.move_to(target, true);
+        Ok(())
+    }
+
+    pub(super) fn next_leaf(&mut self, previous: bool) {
+        let all = leaves(&self.snapshot);
+        if all.is_empty() {
+            return;
+        }
+        let at = all
+            .iter()
+            .position(|leaf| leaf.id == self.cursor.leaf)
+            .unwrap_or(0);
+        let next = if previous { at + all.len() - 1 } else { at + 1 } % all.len();
+        self.cursor = Position {
+            leaf: all[next].id,
+            byte: 0,
+            affinity: Affinity::Downstream,
+        };
+    }
+
+    fn pointer_input(
+        &mut self,
+        kind: PointerKind,
+        at: [f64; 2],
+        clicks: u8,
+        mods: Modifiers,
+    ) -> Result<Outcome, CommandError> {
+        self.pointer = Some(PointerState { at, clicks });
         let before = self.cursor;
-        match key {
-            Key::ArrowLeft => self.move_horizontal(false, mods.shift),
-            Key::ArrowRight => self.move_horizontal(true, mods.shift),
-            Key::Home => self.move_line_edge(false, mods.shift),
-            Key::End => self.move_line_edge(true, mods.shift),
-            Key::Backspace => return self.delete_before(),
-            Key::Delete => return self.delete_after(),
-            Key::Enter => return self.run(CommandId::Split, CommandArgs::None),
-            Key::Escape => self.anchor = None,
-            Key::ArrowUp | Key::ArrowDown | Key::Tab | Key::Character(_) => {}
+        match kind {
+            PointerKind::Press => {
+                self.pointer_start(at, mods.shift);
+                if clicks >= 2 {
+                    self.pointer_multi(at, clicks);
+                }
+                self.follow = FollowState::default();
+            }
+            PointerKind::Move if self.pointer_drag => {
+                self.pointer_drag_to(at);
+            }
+            PointerKind::Move => {}
+            PointerKind::Release => self.pointer_drag = false,
         }
         Ok(Outcome {
             applied: self.cursor != before || self.anchor.is_some(),
@@ -200,7 +270,7 @@ impl EditorCore {
         })
     }
 
-    fn move_horizontal(&mut self, right: bool, extend: bool) {
+    pub(super) fn move_horizontal(&mut self, right: bool, extend: bool) {
         let all = leaves(&self.snapshot);
         let Some(index) = all.iter().position(|leaf| leaf.id == self.cursor.leaf) else {
             return;
@@ -243,40 +313,7 @@ impl EditorCore {
         }
     }
 
-    fn move_line_edge(&mut self, end: bool, extend: bool) {
-        if let Some(leaf) = leaves(&self.snapshot)
-            .into_iter()
-            .find(|leaf| leaf.id == self.cursor.leaf)
-        {
-            self.cursor.byte = if end { leaf.text.len() } else { 0 };
-        }
-        if extend {
-            self.anchor.get_or_insert(self.cursor);
-        } else {
-            self.anchor = None;
-        }
-    }
-
-    fn move_document_edge(&mut self, end: bool, extend: bool) {
-        let all = leaves(&self.snapshot)
-            .into_iter()
-            .filter(|leaf| !leaf.math)
-            .collect::<Vec<_>>();
-        if let Some(leaf) = if end { all.last() } else { all.first() } {
-            self.cursor = Position {
-                leaf: leaf.id,
-                byte: if end { leaf.text.len() } else { 0 },
-                affinity: Affinity::Downstream,
-            };
-        }
-        if extend {
-            self.anchor.get_or_insert(self.cursor);
-        } else {
-            self.anchor = None;
-        }
-    }
-
-    fn delete_before(&mut self) -> Result<Outcome, CommandError> {
+    pub(super) fn delete_before(&mut self) -> Result<Outcome, CommandError> {
         let Some(leaf) = leaves(&self.snapshot)
             .into_iter()
             .find(|leaf| leaf.id == self.cursor.leaf)
@@ -295,7 +332,7 @@ impl EditorCore {
         )
     }
 
-    fn delete_after(&mut self) -> Result<Outcome, CommandError> {
+    pub(super) fn delete_after(&mut self) -> Result<Outcome, CommandError> {
         let Some(leaf) = leaves(&self.snapshot)
             .into_iter()
             .find(|leaf| leaf.id == self.cursor.leaf)

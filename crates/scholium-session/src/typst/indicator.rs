@@ -58,20 +58,28 @@ pub fn formula_bounds(
     scene: &scholium_typst::editor::EditorScene,
     root: &MathNode,
 ) -> Option<Bounds> {
+    formula_bounds_in(&scene.geometry, root)
+}
+
+/// Whole-formula bounds from supplied current-Scene geometry.
+pub fn formula_bounds_in(
+    geometry: &scholium_typst::editor::EditGeometry,
+    root: &MathNode,
+) -> Option<Bounds> {
     fn collect(
-        scene: &scholium_typst::editor::EditorScene,
+        geometry: &scholium_typst::editor::EditGeometry,
         node: &MathNode,
         out: &mut Vec<Bounds>,
     ) {
-        if let Ok(quads) = scene.geometry.selection_node(node.node) {
+        if let Ok(quads) = geometry.selection_node(node.node) {
             out.extend(quads.iter().map(quad_bounds));
         }
         for child in input::math_children(node) {
-            collect(scene, child, out);
+            collect(geometry, child, out);
         }
     }
     let mut all = Vec::new();
-    collect(scene, root, &mut all);
+    collect(geometry, root, &mut all);
     union(all.into_iter())
 }
 

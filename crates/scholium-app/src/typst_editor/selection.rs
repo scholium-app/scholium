@@ -1,16 +1,36 @@
-//! View endpoints address the single authority; pointer endpoints need current proof.
+//! egui coordinate and clipboard adapters; selection decisions live in session.
 use super::*;
 use scholium_document::EditError;
-use scholium_model::NodeId;
+#[cfg(test)]
+pub(crate) use scholium_model::NodeId;
 use scholium_typst::editor::SelectionQuad;
 
 #[derive(Debug, Clone, Copy)]
+#[allow(dead_code)]
 pub(super) struct Drag {
     stamp: SceneStamp,
     placement: Option<(egui::Rect, f32)>,
 }
 
 impl EditorSession {
+    pub(super) fn move_to(&mut self, target: Position, extend: bool) {
+        self.core.move_to(target, extend);
+    }
+
+    pub(super) fn sync_geometry(&mut self) {
+        let geometry = self
+            .scene
+            .as_ref()
+            .filter(|scene| scene.stamp == self.wanted)
+            .map(|scene| scene.geometry.clone());
+        self.core.set_geometry(
+            geometry,
+            self.scene
+                .as_ref()
+                .filter(|scene| scene.stamp == self.wanted)
+                .map(|scene| scene.stamp),
+        );
+    }
     pub(super) fn replacement_proven(&self, state: &mut WorkspaceState) -> bool {
         if self.selected() && self.current() && self.selection_quads().is_err() {
             state.edit_error = Some("此选区没有完整的当前场景几何；未应用替换。".into());
@@ -20,7 +40,7 @@ impl EditorSession {
     }
 
     pub(super) fn copy_selection(&self, state: &mut WorkspaceState) -> Option<String> {
-        match self.selection_text() {
+        match self.core.selection_text() {
             Ok(text) => {
                 state.edit_error = None;
                 text
@@ -34,53 +54,30 @@ impl EditorSession {
 
     pub(super) fn cut_selection(&mut self, state: &mut WorkspaceState) -> Option<String> {
         let text = self.copy_selection(state)?;
-        if self.replace_range(String::new(), state) {
-            Some(text)
-        } else {
-            None
-        }
-    }
-
-    pub(super) fn move_to(&mut self, target: Position, extend: bool) {
-        // Vertical motion re-sets the goal after moving; every other caller drops it.
-        self.goal = None;
-        if extend {
-            let cursor = self.cursor;
-            self.anchor.get_or_insert(cursor);
-        } else {
-            self.anchor = None;
-        }
-        self.cursor = target;
+        self.submit(
+            scholium_session::typst::Input::Command(
+                Command::ReplaceRange,
+                CommandArgs::Text(String::new(), Origin::Paste),
+            ),
+            state,
+        );
+        Some(text)
     }
 
     pub(super) fn pointer_event(&mut self, event: &egui::Event, state: &mut WorkspaceState) {
+        self.sync_geometry();
         let Some((rect, scale)) = self.placement else {
             return;
         };
         if state.composition.is_some() || self.confirm_new || self.confirm_close {
             return;
         }
-        let to_frame = |point: egui::Pos2| {
-            let point = (point - rect.min) / scale;
-            [point.x as f64, point.y as f64]
+        let at = |pos: egui::Pos2| {
+            let point = (pos - rect.min) / scale;
+            [f64::from(point.x), f64::from(point.y)]
         };
-        let abstract_pointer = |session: &mut EditorSession,
-                                kind: scholium_session::typst::PointerKind,
-                                point: [f64; 2],
-                                clicks: u8,
-                                modifiers: egui::Modifiers| {
-            let _ = session.core.input(scholium_session::typst::Input::Pointer {
-                kind,
-                at: point,
-                clicks,
-                mods: scholium_session::typst::Modifiers {
-                    command: modifiers.command,
-                    shift: modifiers.shift,
-                    alt: modifiers.alt,
-                },
-            });
-        };
-        match event {
+        use scholium_session::typst::{Input, Modifiers, PointerKind};
+        let input = match event {
             egui::Event::PointerButton {
                 pos,
                 button: egui::PointerButton::Primary,
@@ -88,37 +85,56 @@ impl EditorSession {
                 modifiers,
             } if rect.contains(*pos) => {
                 self.clicks.press(*pos, std::time::Instant::now());
-                abstract_pointer(
-                    self,
-                    scholium_session::typst::PointerKind::Press,
-                    to_frame(*pos),
-                    self.clicks.count(),
-                    *modifiers,
-                );
-                if self.current() && !self.pointer_start(to_frame(*pos), modifiers.shift) {
-                    state.edit_error =
-                        Some("此位置没有精确的当前命中几何；可使用键盘导航。".into());
+                self.drag = self.core.pointer_hit(at(*pos)).map(|_| Drag {
+                    stamp: self.wanted,
+                    placement: self.placement,
+                });
+                Input::Pointer {
+                    kind: PointerKind::Press,
+                    at: at(*pos),
+                    clicks: self.clicks.count(),
+                    mods: Modifiers {
+                        command: modifiers.command,
+                        shift: modifiers.shift,
+                        alt: modifiers.alt,
+                    },
                 }
             }
             egui::Event::PointerButton {
                 button: egui::PointerButton::Primary,
                 pressed: true,
                 ..
-            } => self.clicks.reset(),
-            egui::Event::PointerMoved(point) if self.drag.is_some() => {
-                self.clicks.moved(*point);
-                abstract_pointer(
-                    self,
-                    scholium_session::typst::PointerKind::Move,
-                    to_frame(*point),
-                    self.clicks.count(),
-                    egui::Modifiers::NONE,
-                );
-                self.pointer_drag(to_frame(*point));
+            } => {
+                self.clicks.reset();
+                return;
+            }
+            egui::Event::PointerMoved(pos)
+                if self.drag.is_some_and(|drag| {
+                    drag.stamp == self.wanted && drag.placement == self.placement
+                }) =>
+            {
+                self.clicks.moved(*pos);
+                Input::Pointer {
+                    kind: PointerKind::Move,
+                    at: at(*pos),
+                    clicks: self.clicks.count(),
+                    mods: Modifiers::default(),
+                }
+            }
+            egui::Event::PointerMoved(_) => {
+                self.drag = None;
+                return;
             }
             egui::Event::PointerGone => {
                 self.clicks.reset();
-                self.drag = None
+                self.drag = None;
+                let last = self.pointer.map_or([0.0, 0.0], |pointer| pointer.at);
+                Input::Pointer {
+                    kind: PointerKind::Release,
+                    at: last,
+                    clicks: 0,
+                    mods: Modifiers::default(),
+                }
             }
             egui::Event::PointerButton {
                 pos,
@@ -126,56 +142,92 @@ impl EditorSession {
                 pressed: false,
                 ..
             } if rect.contains(*pos) => {
-                abstract_pointer(
-                    self,
-                    scholium_session::typst::PointerKind::Release,
-                    to_frame(*pos),
-                    self.clicks.count(),
-                    *modifiers,
-                );
                 self.drag = None;
+                Input::Pointer {
+                    kind: PointerKind::Release,
+                    at: at(*pos),
+                    clicks: self.clicks.count(),
+                    mods: Modifiers {
+                        command: modifiers.command,
+                        shift: modifiers.shift,
+                        alt: modifiers.alt,
+                    },
+                }
             }
-            egui::Event::PointerButton { pressed: false, .. } => self.drag = None,
-            _ => {}
-        }
+            egui::Event::PointerButton { pressed: false, .. } => {
+                self.drag = None;
+                return;
+            }
+            _ => return,
+        };
+        self.submit(input, state);
     }
 
-    pub(super) fn pointer_start(&mut self, point: [f64; 2], shift: bool) -> bool {
-        self.drag = None;
-        let Some(target) = self.pointer_hit(point) else {
-            return false;
-        };
-        if shift && (!self.body_leaf(target.leaf) || !self.body_leaf(self.cursor.leaf)) {
+    #[cfg(test)]
+    pub(super) fn pointer_drag(&mut self, point: [f64; 2]) -> bool {
+        if !self
+            .drag
+            .is_some_and(|drag| drag.stamp == self.wanted && drag.placement == self.placement)
+        {
+            self.drag = None;
             return false;
         }
-        self.move_to(target, shift);
-        if self.body_leaf(target.leaf) {
-            self.anchor.get_or_insert(target);
+        self.sync_geometry();
+        self.core.pointer_drag_to(point)
+    }
+
+    #[cfg(test)]
+    pub(super) fn pointer_start(&mut self, point: [f64; 2], shift: bool) -> bool {
+        self.sync_geometry();
+        self.drag = None;
+        let applied = self.core.pointer_start(point, shift);
+        if applied && self.body_leaf(self.cursor.leaf) {
             self.drag = Some(Drag {
                 stamp: self.wanted,
                 placement: self.placement,
             });
         }
-        true
+        applied
     }
 
-    pub(super) fn pointer_drag(&mut self, point: [f64; 2]) -> bool {
-        if !self
-            .drag
-            .is_some_and(|d| d.stamp == self.wanted && d.placement == self.placement)
-            || !self.current()
-        {
-            self.drag = None;
-            return false;
-        }
-        let Some(target) = self.pointer_hit(point) else {
-            return false;
+    #[cfg(test)]
+    pub(super) fn pointer_multi(&mut self, point: [f64; 2], clicks: u8) -> bool {
+        self.sync_geometry();
+        self.drag = None;
+        self.core.pointer_multi(point, clicks)
+    }
+
+    pub(super) fn pointer_clicks(
+        &mut self,
+        pos: egui::Pos2,
+        clicks: u8,
+        state: &mut WorkspaceState,
+    ) {
+        let Some((rect, scale)) = self.placement else {
+            return;
         };
-        if !self.body_leaf(target.leaf) {
-            return false;
+        if !rect.contains(pos) || !self.current() || !self.deferred.is_empty() {
+            return;
         }
-        self.cursor = target;
-        true
+        let point = (pos - rect.min) / scale;
+        let result = self.core.input(scholium_session::typst::Input::Pointer {
+            kind: scholium_session::typst::PointerKind::Press,
+            at: [f64::from(point.x), f64::from(point.y)],
+            clicks: clicks.min(self.clicks.count().max(1)),
+            mods: scholium_session::typst::Modifiers::default(),
+        });
+        match result {
+            Ok(outcome) if !outcome.applied => {
+                state.edit_error = Some("此位置没有精确的当前命中几何；可使用键盘导航。".into())
+            }
+            Err(error) => state.edit_error = Some(error.to_string()),
+            _ => {}
+        }
+    }
+
+    #[cfg(test)]
+    pub(super) fn document_edge(&mut self, end: bool, extend: bool, _state: &mut WorkspaceState) {
+        self.core.document_edge(end, extend);
     }
 
     pub(super) fn selection_quads(&self) -> Result<Vec<SelectionQuad>, SessionError> {
@@ -190,15 +242,15 @@ impl EditorSession {
             .snapshot
             .blocks
             .iter()
-            .flat_map(|b| &b.content)
+            .flat_map(|block| &block.content)
             .collect();
         let a = inlines
             .iter()
-            .position(|i| i.node == start.leaf)
+            .position(|inline| inline.node == start.leaf)
             .ok_or(EditError::WrongTarget)?;
         let b = inlines
             .iter()
-            .position(|i| i.node == end.leaf)
+            .position(|inline| inline.node == end.leaf)
             .ok_or(EditError::WrongTarget)?;
         let mut quads = Vec::new();
         for (index, inline) in inlines.iter().enumerate().take(b + 1).skip(a) {
@@ -211,10 +263,8 @@ impl EditorSession {
                             .geometry
                             .carets
                             .iter()
-                            .any(|c| c.position.leaf == inline.node)
+                            .any(|caret| caret.position.leaf == inline.node)
                     {
-                        // An empty leaf beside other inline content shapes no Typst cluster:
-                        // it has no extent to draw, yet stays inside the semantic range.
                         continue;
                     }
                     if from < to || (index > a && index < b) {
@@ -238,108 +288,6 @@ impl EditorSession {
     }
 }
 
-impl EditorSession {
-    pub(super) fn selection_key(
-        &mut self,
-        key: egui::Key,
-        shift: bool,
-        state: &mut WorkspaceState,
-    ) -> bool {
-        if self.selected() {
-            match key {
-                egui::Key::Backspace | egui::Key::Delete => {
-                    self.replace_range(String::new(), state);
-                    return true;
-                }
-                egui::Key::Enter => {
-                    self.replace_range("\n".into(), state);
-                    return true;
-                }
-                egui::Key::ArrowLeft | egui::Key::ArrowRight if !shift => {
-                    if let Ok(Some((start, end))) = self.range() {
-                        let at = if key == egui::Key::ArrowLeft {
-                            start
-                        } else {
-                            end
-                        };
-                        self.move_to(
-                            Position {
-                                leaf: at.leaf,
-                                byte: at.byte,
-                                affinity: Affinity::Downstream,
-                            },
-                            false,
-                        );
-                    }
-                    return true;
-                }
-                _ => {}
-            }
-        }
-        let navigation = matches!(
-            key,
-            egui::Key::ArrowLeft
-                | egui::Key::ArrowRight
-                | egui::Key::ArrowUp
-                | egui::Key::ArrowDown
-                | egui::Key::Home
-                | egui::Key::End
-        );
-        if shift && navigation {
-            match vertical::Motion::of(key) {
-                Some(motion) => self.line_motion(motion, true, state),
-                None => self.extend_keyboard(key, state),
-            }
-            return true;
-        }
-        if navigation || key == egui::Key::Tab {
-            self.anchor = None;
-            self.drag = None;
-        }
-        false
-    }
-
-    fn extend_keyboard(&mut self, key: egui::Key, state: &mut WorkspaceState) {
-        use unicode_segmentation::UnicodeSegmentation;
-        let body: Vec<_> = input::leaves(&self.snapshot)
-            .into_iter()
-            .filter(|l| !l.math)
-            .collect();
-        let Some(at) = body.iter().position(|l| l.id == self.cursor.leaf) else {
-            state.edit_error = Some("此批选区只接受正文端点；数学槽位选区尚未接入。".into());
-            return;
-        };
-        let mut target = self.cursor;
-        let value = body[at].text;
-        match key {
-            egui::Key::ArrowLeft if target.byte > 0 => {
-                target.byte = value
-                    .grapheme_indices(true)
-                    .map(|(i, _)| i)
-                    .rfind(|i| *i < target.byte)
-                    .unwrap_or(0);
-            }
-            egui::Key::ArrowRight if target.byte < value.len() => {
-                target.byte = value
-                    .grapheme_indices(true)
-                    .map(|(i, _)| i)
-                    .find(|i| *i > target.byte)
-                    .unwrap_or(value.len());
-            }
-            egui::Key::ArrowLeft if at > 0 => {
-                target.leaf = body[at - 1].id;
-                target.byte = body[at - 1].text.len();
-            }
-            egui::Key::ArrowRight if at + 1 < body.len() => {
-                target.leaf = body[at + 1].id;
-                target.byte = 0;
-            }
-            _ => {}
-        }
-        self.move_to(target, true);
-    }
-}
-
 mod pointer;
 pub(crate) use pointer::ClickRun;
 #[cfg(test)]
@@ -350,7 +298,6 @@ mod tests;
 pub(super) fn raw_message() -> &'static str {
     "此选区包含尚未接入的原串公式；未应用替换。"
 }
-
 pub(super) fn copy_message(reason: scholium_session::typst::Rejection) -> &'static str {
     match reason {
         scholium_session::typst::Rejection::CopyNonText => {

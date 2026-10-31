@@ -1,6 +1,22 @@
 //! Toolkit-independent input vocabulary used by the session core.
 use super::*;
 
+/// Document edge used by a follow request.
+#[allow(missing_docs)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FollowEdge {
+    Top,
+    Bottom,
+}
+
+/// Follow state retained until a current Scene can provide the caret rectangle.
+#[allow(missing_docs)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+pub struct FollowState {
+    pub pending: bool,
+    pub edge: Option<FollowEdge>,
+}
+
 /// Keys understood by the UI-free editing core.
 #[allow(missing_docs)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -16,6 +32,8 @@ pub enum Key {
     Enter,
     Tab,
     Escape,
+    Slash,
+    Num(u8),
     Character(char),
 }
 

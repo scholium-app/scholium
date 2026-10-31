@@ -12,9 +12,8 @@ Typst 模块持有唯一 `LocalSession<StructuredDocument>`、不可变 `Arc` �
 
 不处理 egui 事件、IME 预编辑、屏幕 placement、IME 锚点、绘制和 AccessKit；这些仍由 app 翻译或呈现。
 抽象 `Input` 处理提交文字、工具包无关的按键、页面 pt 指针事件、视口/栅格请求，并以 `Outcome` 发布语义光标、
-选区、跟随意图与 overlay 数据。指针状态和延迟输入属于同一事务边界，失败时与文档、历史一并回滚。
-排版 worker、Scene 采纳、栅格纹理仍由 app 持有，核心只记录可见 pt 范围与 RasterSpec。
-早期适配器中的视觉上下导航与目标 x、点击序列、
+选区、跟随意图与 overlay 数据。指针状态、视觉上下导航（含目标 x）和点击序列属于核心事务状态，失败时与文档、历史一并回滚。
+排版 worker、Scene 采纳、栅格纹理和 deferred-input 队列仍由 app 持有，核心只记录可见 pt 范围与 RasterSpec；这些边界列入下一 PR。
 延迟事件队列、排版 worker、Scene 采纳、栅格纹理、绘制、屏幕 placement、IME 锚点、AccessKit、
 源码视图、确认框、Fluent 诊断呈现和 AUDIT 打印。这些仍由 [app](app.md) 持有。
 不实现协作 undo、项目权限协议、Pi/MCP/插件协议或 LaTeX 公共内核 trait。
@@ -28,8 +27,11 @@ src/typst/command/checkpoint.rs  执行前 checkpoint、错误/panic 回滚
 src/typst/edit.rs             StructuralRequest、存活光标、历史与投影发布
 src/typst/persistence.rs      open/restore/save、空白文档、只读旧 head 迁移
 src/typst/history.rs          本地撤销/重做、输入/删除分组、可注入单调时钟
-src/typst/input.rs            抽象输入、按键映射、指针状态，以及字面文字、公式进出、分数、删除与拆段
+src/typst/input.rs            抽象输入分发，以及字面文字、公式进出、分数、删除与拆段
 src/typst/events.rs           工具包无关的 Input、Key、Pointer 词汇与原子分发测试
+src/typst/key.rs              工具包无关的按键映射与 caret-follow 意图
+src/typst/pointer.rs          页面 pt 命中、点击选区与拖选
+src/typst/vertical.rs         视觉上下导航、Home/End 与目标 x
 src/typst/selection.rs        正文端点顺序、纯文本复制、范围替换
 src/typst/style.rs            待输入样式与选区样式、active styles
 src/typst/attach.rs           上下标、槽位出口和临时 Hole 生命周期
@@ -55,8 +57,8 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
   app 在 IME 组合和排队输入结束后才请求保存。
 - `session` 是不提供 `DerefMut` 和构造器的只读 authority 视图；`session()` 提供同一不可变引用。
   app 不能从此调用可变 document 方法。`restore_document` 在验证后恢复本地文档，供恢复入口和 fixture 使用。
-- 第一期间 app 的导航适配器直接更新 core 的光标/anchor、输入分组与输入样式；这些字段和历史记录是内部契约，
-  不是外部 ABI。`record`、`range`、`selected`、`active_styles`、`in_math` 读取同一权威投影。
+- phase 2a 中 app 只把 egui 文字、按键和页面指针翻译成 `Input`；光标/anchor、输入分组、输入样式、视觉导航、点击选区和
+  follow 意图均由 core 更新。`record`、`range`、`selected`、`active_styles`、`in_math` 读取同一权威投影。
 - `math_indicator(scene)`、`find_overflows(scene)` 要求调用方先证明 Scene 当前；返回 padded Frame pt 或叶 ID，
   不持有 worker/Scene。layout error、rejected input 与 overflow targets 是纯数据，语言目录和状态栏在 app。
 
