@@ -1,0 +1,2882 @@
+[
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 0,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 3,
+      "reply_ms": 0.218,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.984,
+      "status": "ok",
+      "timing": {
+        "total_us": 1748,
+        "tex_us": 1136,
+        "traverse_us": 461,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.09136900189332664,
+    "total_to_raster_ms": 2.7423569990787655,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 23,
+      "pixels": 60270,
+      "raster_us": 283,
+      "seq": 3,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 1,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 4,
+      "reply_ms": 0.238,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.2,
+      "status": "ok",
+      "timing": {
+        "total_us": 999,
+        "tex_us": 572,
+        "traverse_us": 294,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.06384999869624153,
+    "total_to_raster_ms": 1.8444589950377122,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 23,
+      "pixels": 60270,
+      "raster_us": 219,
+      "seq": 4,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 11,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 2,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 5,
+      "reply_ms": 0.185,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.133,
+      "status": "ok",
+      "timing": {
+        "total_us": 969,
+        "tex_us": 603,
+        "traverse_us": 296,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.0872370001161471,
+    "total_to_raster_ms": 1.7761849958333187,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 27,
+      "pixels": 60270,
+      "raster_us": 205,
+      "seq": 5,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 3,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 6,
+      "reply_ms": 0.14,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.03,
+      "status": "ok",
+      "timing": {
+        "total_us": 876,
+        "tex_us": 518,
+        "traverse_us": 257,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.06267799471970648,
+    "total_to_raster_ms": 1.6588229991612025,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 37,
+      "pixels": 60270,
+      "raster_us": 182,
+      "seq": 6,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 11,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 4,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 7,
+      "reply_ms": 0.139,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.145,
+      "status": "ok",
+      "timing": {
+        "total_us": 985,
+        "tex_us": 590,
+        "traverse_us": 263,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.0607759939157404,
+    "total_to_raster_ms": 1.8202219944214448,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 54,
+      "pixels": 60270,
+      "raster_us": 205,
+      "seq": 7,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 5,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 8,
+      "reply_ms": 0.125,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.51,
+      "status": "ok",
+      "timing": {
+        "total_us": 1317,
+        "tex_us": 842,
+        "traverse_us": 343,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.0624210006208159,
+    "total_to_raster_ms": 2.0811159993172623,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 21,
+      "pixels": 60270,
+      "raster_us": 186,
+      "seq": 8,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 11,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 6,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 9,
+      "reply_ms": 0.206,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.818,
+      "status": "ok",
+      "timing": {
+        "total_us": 1577,
+        "tex_us": 1025,
+        "traverse_us": 454,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.09162700007436797,
+    "total_to_raster_ms": 2.4884550002752803,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 22,
+      "pixels": 60270,
+      "raster_us": 265,
+      "seq": 9,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 7,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 10,
+      "reply_ms": 0.197,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.172,
+      "status": "ok",
+      "timing": {
+        "total_us": 1007,
+        "tex_us": 609,
+        "traverse_us": 285,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.05425899871625006,
+    "total_to_raster_ms": 1.653469997108914,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 21,
+      "pixels": 60270,
+      "raster_us": 217,
+      "seq": 10,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 11,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 8,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 11,
+      "reply_ms": 0.13,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.093,
+      "status": "ok",
+      "timing": {
+        "total_us": 955,
+        "tex_us": 574,
+        "traverse_us": 277,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.060995997046120465,
+    "total_to_raster_ms": 1.6297649999614805,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 30,
+      "pixels": 60270,
+      "raster_us": 230,
+      "seq": 11,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 9,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 12,
+      "reply_ms": 0.21,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.083,
+      "status": "ok",
+      "timing": {
+        "total_us": 886,
+        "tex_us": 533,
+        "traverse_us": 275,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.0527340016560629,
+    "total_to_raster_ms": 1.5371080007753335,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 24,
+      "pixels": 60270,
+      "raster_us": 179,
+      "seq": 12,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 11,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 10,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 13,
+      "reply_ms": 0.192,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.098,
+      "status": "ok",
+      "timing": {
+        "total_us": 894,
+        "tex_us": 564,
+        "traverse_us": 269,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.06153799768071622,
+    "total_to_raster_ms": 1.6748769994592294,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 21,
+      "pixels": 60270,
+      "raster_us": 262,
+      "seq": 13,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 11,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 14,
+      "reply_ms": 0.178,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.054,
+      "status": "ok",
+      "timing": {
+        "total_us": 849,
+        "tex_us": 521,
+        "traverse_us": 261,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.06055599806131795,
+    "total_to_raster_ms": 1.5764290001243353,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 19,
+      "pixels": 60270,
+      "raster_us": 187,
+      "seq": 14,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 11,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 12,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 15,
+      "reply_ms": 0.116,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.127,
+      "status": "ok",
+      "timing": {
+        "total_us": 976,
+        "tex_us": 593,
+        "traverse_us": 270,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.06122799823060632,
+    "total_to_raster_ms": 1.6776389966253191,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 20,
+      "pixels": 60270,
+      "raster_us": 210,
+      "seq": 15,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 13,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 16,
+      "reply_ms": 0.118,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.087,
+      "status": "ok",
+      "timing": {
+        "total_us": 959,
+        "tex_us": 588,
+        "traverse_us": 284,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.06735199713148177,
+    "total_to_raster_ms": 1.5843959990888834,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 19,
+      "pixels": 60270,
+      "raster_us": 195,
+      "seq": 16,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 11,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 14,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 17,
+      "reply_ms": 0.124,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.116,
+      "status": "ok",
+      "timing": {
+        "total_us": 996,
+        "tex_us": 578,
+        "traverse_us": 303,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.0590880008530803,
+    "total_to_raster_ms": 1.6542820012546144,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 38,
+      "pixels": 60270,
+      "raster_us": 189,
+      "seq": 17,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 15,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 18,
+      "reply_ms": 0.11,
+      "update": "ParagraphUpdate",
+      "update_ms": 0.989,
+      "status": "ok",
+      "timing": {
+        "total_us": 869,
+        "tex_us": 518,
+        "traverse_us": 271,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.0781499984441325,
+    "total_to_raster_ms": 1.4911149992258288,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 18,
+      "pixels": 60270,
+      "raster_us": 163,
+      "seq": 18,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 11,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 16,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 19,
+      "reply_ms": 0.159,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.129,
+      "status": "ok",
+      "timing": {
+        "total_us": 939,
+        "tex_us": 571,
+        "traverse_us": 283,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.061704995459876955,
+    "total_to_raster_ms": 1.7529350006952882,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 31,
+      "pixels": 60270,
+      "raster_us": 288,
+      "seq": 19,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 17,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 20,
+      "reply_ms": 0.096,
+      "update": "ParagraphUpdate",
+      "update_ms": 0.977,
+      "status": "ok",
+      "timing": {
+        "total_us": 864,
+        "tex_us": 497,
+        "traverse_us": 248,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.049307993322145194,
+    "total_to_raster_ms": 1.374464998662006,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 17,
+      "pixels": 60270,
+      "raster_us": 159,
+      "seq": 20,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 11,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 18,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 21,
+      "reply_ms": 0.122,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.166,
+      "status": "ok",
+      "timing": {
+        "total_us": 1014,
+        "tex_us": 632,
+        "traverse_us": 295,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.054789001296740025,
+    "total_to_raster_ms": 1.7156289977720007,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 27,
+      "pixels": 60270,
+      "raster_us": 208,
+      "seq": 21,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "inline",
+    "i": 19,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 22,
+      "reply_ms": 0.197,
+      "update": "ParagraphUpdate",
+      "update_ms": 0.959,
+      "status": "ok",
+      "timing": {
+        "total_us": 838,
+        "tex_us": 507,
+        "traverse_us": 267,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.04766399797517806,
+    "total_to_raster_ms": 1.3646439983858727,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 19,
+      "pixels": 60270,
+      "raster_us": 159,
+      "seq": 22,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 11,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 0,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 25,
+      "reply_ms": 0.226,
+      "update": "ParagraphUpdate",
+      "update_ms": 4.614,
+      "status": "ok",
+      "timing": {
+        "total_us": 4400,
+        "tex_us": 3783,
+        "traverse_us": 416,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.14817000192124397,
+    "total_to_raster_ms": 5.735290003940463,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 58,
+      "pixels": 310305,
+      "raster_us": 483,
+      "seq": 25,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 15,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 1,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 26,
+      "reply_ms": 0.208,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.488,
+      "status": "ok",
+      "timing": {
+        "total_us": 3203,
+        "tex_us": 2519,
+        "traverse_us": 381,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.1121179957408458,
+    "total_to_raster_ms": 4.704425999079831,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 48,
+      "pixels": 316345,
+      "raster_us": 511,
+      "seq": 26,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 2,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 27,
+      "reply_ms": 0.184,
+      "update": "ParagraphUpdate",
+      "update_ms": 5.023,
+      "status": "ok",
+      "timing": {
+        "total_us": 4744,
+        "tex_us": 3872,
+        "traverse_us": 597,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.21862799621885642,
+    "total_to_raster_ms": 6.268710996664595,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 42,
+      "pixels": 310305,
+      "raster_us": 467,
+      "seq": 27,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 15,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 3,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 28,
+      "reply_ms": 0.16,
+      "update": "ParagraphUpdate",
+      "update_ms": 4.576,
+      "status": "ok",
+      "timing": {
+        "total_us": 4327,
+        "tex_us": 3533,
+        "traverse_us": 519,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.1726810005493462,
+    "total_to_raster_ms": 5.713733000447974,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 41,
+      "pixels": 316345,
+      "raster_us": 411,
+      "seq": 28,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 4,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 29,
+      "reply_ms": 0.19,
+      "update": "ParagraphUpdate",
+      "update_ms": 4.813,
+      "status": "ok",
+      "timing": {
+        "total_us": 4528,
+        "tex_us": 3688,
+        "traverse_us": 587,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.21500300499610603,
+    "total_to_raster_ms": 5.991566999000497,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 40,
+      "pixels": 310305,
+      "raster_us": 435,
+      "seq": 29,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 15,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 5,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 30,
+      "reply_ms": 0.239,
+      "update": "ParagraphUpdate",
+      "update_ms": 4.153,
+      "status": "ok",
+      "timing": {
+        "total_us": 3854,
+        "tex_us": 3227,
+        "traverse_us": 349,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.27944699832005426,
+    "total_to_raster_ms": 5.306304999976419,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 31,
+      "pixels": 316345,
+      "raster_us": 280,
+      "seq": 30,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 6,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 31,
+      "reply_ms": 0.261,
+      "update": "ParagraphUpdate",
+      "update_ms": 2.875,
+      "status": "ok",
+      "timing": {
+        "total_us": 2559,
+        "tex_us": 2052,
+        "traverse_us": 369,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.12313400657149032,
+    "total_to_raster_ms": 3.789264002989512,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 41,
+      "pixels": 310305,
+      "raster_us": 286,
+      "seq": 31,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 15,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 7,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 32,
+      "reply_ms": 0.181,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.48,
+      "status": "ok",
+      "timing": {
+        "total_us": 3208,
+        "tex_us": 2317,
+        "traverse_us": 646,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.14204699982656166,
+    "total_to_raster_ms": 4.356445999292191,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 33,
+      "pixels": 316345,
+      "raster_us": 278,
+      "seq": 32,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 8,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 33,
+      "reply_ms": 0.183,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.415,
+      "status": "ok",
+      "timing": {
+        "total_us": 3170,
+        "tex_us": 2461,
+        "traverse_us": 413,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.13419199967756867,
+    "total_to_raster_ms": 4.230803999234922,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 38,
+      "pixels": 310305,
+      "raster_us": 268,
+      "seq": 33,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 15,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 9,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 34,
+      "reply_ms": 0.192,
+      "update": "ParagraphUpdate",
+      "update_ms": 2.724,
+      "status": "ok",
+      "timing": {
+        "total_us": 2468,
+        "tex_us": 1986,
+        "traverse_us": 360,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.10135799675481394,
+    "total_to_raster_ms": 3.491511000902392,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 52,
+      "pixels": 316345,
+      "raster_us": 254,
+      "seq": 34,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 10,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 35,
+      "reply_ms": 0.278,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.652,
+      "status": "ok",
+      "timing": {
+        "total_us": 3245,
+        "tex_us": 2612,
+        "traverse_us": 381,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.1010249980026856,
+    "total_to_raster_ms": 4.508480997174047,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 46,
+      "pixels": 310305,
+      "raster_us": 290,
+      "seq": 35,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 15,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 11,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 36,
+      "reply_ms": 0.22,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.22,
+      "status": "ok",
+      "timing": {
+        "total_us": 3016,
+        "tex_us": 2345,
+        "traverse_us": 375,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.10255799861624837,
+    "total_to_raster_ms": 4.336548001447227,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 49,
+      "pixels": 316345,
+      "raster_us": 292,
+      "seq": 36,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 12,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 37,
+      "reply_ms": 0.319,
+      "update": "ParagraphUpdate",
+      "update_ms": 4.017,
+      "status": "ok",
+      "timing": {
+        "total_us": 3570,
+        "tex_us": 2793,
+        "traverse_us": 479,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.138253002660349,
+    "total_to_raster_ms": 5.351140003767796,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 45,
+      "pixels": 310305,
+      "raster_us": 490,
+      "seq": 37,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 15,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 13,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 38,
+      "reply_ms": 0.171,
+      "update": "ParagraphUpdate",
+      "update_ms": 4.819,
+      "status": "ok",
+      "timing": {
+        "total_us": 4567,
+        "tex_us": 3695,
+        "traverse_us": 565,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.19360900478204712,
+    "total_to_raster_ms": 6.1386960005620494,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 47,
+      "pixels": 316345,
+      "raster_us": 479,
+      "seq": 38,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 14,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 39,
+      "reply_ms": 0.235,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.5,
+      "status": "ok",
+      "timing": {
+        "total_us": 3182,
+        "tex_us": 2501,
+        "traverse_us": 426,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.2037049998762086,
+    "total_to_raster_ms": 4.543447998003103,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 34,
+      "pixels": 310305,
+      "raster_us": 344,
+      "seq": 39,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 15,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 15,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 40,
+      "reply_ms": 0.294,
+      "update": "ParagraphUpdate",
+      "update_ms": 4.969,
+      "status": "ok",
+      "timing": {
+        "total_us": 4648,
+        "tex_us": 3851,
+        "traverse_us": 579,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.20841600053245202,
+    "total_to_raster_ms": 6.244832002266776,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 48,
+      "pixels": 316345,
+      "raster_us": 504,
+      "seq": 40,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 16,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 41,
+      "reply_ms": 0.283,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.348,
+      "status": "ok",
+      "timing": {
+        "total_us": 3091,
+        "tex_us": 2472,
+        "traverse_us": 422,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.2052449999609962,
+    "total_to_raster_ms": 4.523126997810323,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 39,
+      "pixels": 310305,
+      "raster_us": 426,
+      "seq": 41,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 15,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 17,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 42,
+      "reply_ms": 0.284,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.222,
+      "status": "ok",
+      "timing": {
+        "total_us": 2977,
+        "tex_us": 2419,
+        "traverse_us": 429,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.1697710031294264,
+    "total_to_raster_ms": 4.392205999465659,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 43,
+      "pixels": 316345,
+      "raster_us": 468,
+      "seq": 42,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 18,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 43,
+      "reply_ms": 0.773,
+      "update": "ParagraphUpdate",
+      "update_ms": 4.617,
+      "status": "ok",
+      "timing": {
+        "total_us": 3736,
+        "tex_us": 3012,
+        "traverse_us": 496,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.21018300321884453,
+    "total_to_raster_ms": 5.81043100100942,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 41,
+      "pixels": 310305,
+      "raster_us": 464,
+      "seq": 43,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 15,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "display",
+    "i": 19,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 44,
+      "reply_ms": 0.248,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.473,
+      "status": "ok",
+      "timing": {
+        "total_us": 3183,
+        "tex_us": 2666,
+        "traverse_us": 375,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.18584800272947177,
+    "total_to_raster_ms": 4.4438910044846125,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 40,
+      "pixels": 316345,
+      "raster_us": 377,
+      "seq": 44,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 13,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 0,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 47,
+      "reply_ms": 0.176,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.293,
+      "status": "ok",
+      "timing": {
+        "total_us": 2968,
+        "tex_us": 2376,
+        "traverse_us": 465,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.14769100380362943,
+    "total_to_raster_ms": 4.401409001729917,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 46,
+      "pixels": 179375,
+      "raster_us": 474,
+      "seq": 47,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 22,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 1,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 48,
+      "reply_ms": 0.186,
+      "update": "ParagraphUpdate",
+      "update_ms": 2.833,
+      "status": "ok",
+      "timing": {
+        "total_us": 2644,
+        "tex_us": 2097,
+        "traverse_us": 436,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.14950300101190805,
+    "total_to_raster_ms": 4.072905001521576,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 47,
+      "pixels": 179375,
+      "raster_us": 494,
+      "seq": 48,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 20,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 2,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 49,
+      "reply_ms": 0.311,
+      "update": "ParagraphUpdate",
+      "update_ms": 4.995,
+      "status": "ok",
+      "timing": {
+        "total_us": 4689,
+        "tex_us": 3862,
+        "traverse_us": 630,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.2109179986291565,
+    "total_to_raster_ms": 6.326461996650323,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 49,
+      "pixels": 179375,
+      "raster_us": 502,
+      "seq": 49,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 22,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 3,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 50,
+      "reply_ms": 0.142,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.574,
+      "status": "ok",
+      "timing": {
+        "total_us": 3411,
+        "tex_us": 2723,
+        "traverse_us": 477,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.20285099890315905,
+    "total_to_raster_ms": 4.9201439978787675,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 45,
+      "pixels": 179375,
+      "raster_us": 561,
+      "seq": 50,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 20,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 4,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 51,
+      "reply_ms": 0.267,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.146,
+      "status": "ok",
+      "timing": {
+        "total_us": 2918,
+        "tex_us": 2305,
+        "traverse_us": 441,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.15495099796680734,
+    "total_to_raster_ms": 4.093493000254966,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 44,
+      "pixels": 179375,
+      "raster_us": 357,
+      "seq": 51,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 22,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 5,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 52,
+      "reply_ms": 0.142,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.057,
+      "status": "ok",
+      "timing": {
+        "total_us": 2897,
+        "tex_us": 2261,
+        "traverse_us": 430,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.14131699572317302,
+    "total_to_raster_ms": 4.016717997728847,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 43,
+      "pixels": 179375,
+      "raster_us": 311,
+      "seq": 52,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 20,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 6,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 53,
+      "reply_ms": 0.217,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.092,
+      "status": "ok",
+      "timing": {
+        "total_us": 2891,
+        "tex_us": 2278,
+        "traverse_us": 455,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.13766199845122173,
+    "total_to_raster_ms": 4.324672001530416,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 45,
+      "pixels": 179375,
+      "raster_us": 470,
+      "seq": 53,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 22,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 7,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 54,
+      "reply_ms": 0.2,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.506,
+      "status": "ok",
+      "timing": {
+        "total_us": 3342,
+        "tex_us": 2754,
+        "traverse_us": 412,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.5843419930897653,
+    "total_to_raster_ms": 5.066653997346293,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 44,
+      "pixels": 179375,
+      "raster_us": 440,
+      "seq": 54,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 20,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 8,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 55,
+      "reply_ms": 0.179,
+      "update": "ParagraphUpdate",
+      "update_ms": 4.003,
+      "status": "ok",
+      "timing": {
+        "total_us": 3740,
+        "tex_us": 2996,
+        "traverse_us": 457,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.21321100211935118,
+    "total_to_raster_ms": 5.290009998134337,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 48,
+      "pixels": 179375,
+      "raster_us": 490,
+      "seq": 55,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 22,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 9,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 56,
+      "reply_ms": 0.187,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.589,
+      "status": "ok",
+      "timing": {
+        "total_us": 3302,
+        "tex_us": 2650,
+        "traverse_us": 426,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.20627900084946305,
+    "total_to_raster_ms": 4.695634997915477,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 42,
+      "pixels": 179375,
+      "raster_us": 384,
+      "seq": 56,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 20,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 10,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 57,
+      "reply_ms": 0.243,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.718,
+      "status": "ok",
+      "timing": {
+        "total_us": 3390,
+        "tex_us": 2669,
+        "traverse_us": 476,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.2346720066270791,
+    "total_to_raster_ms": 5.02914100070484,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 53,
+      "pixels": 179375,
+      "raster_us": 483,
+      "seq": 57,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 22,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 11,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 58,
+      "reply_ms": 0.223,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.033,
+      "status": "ok",
+      "timing": {
+        "total_us": 2781,
+        "tex_us": 2098,
+        "traverse_us": 429,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.22850000095786527,
+    "total_to_raster_ms": 4.367478999483865,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 47,
+      "pixels": 179375,
+      "raster_us": 460,
+      "seq": 58,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 20,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 12,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 59,
+      "reply_ms": 0.229,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.601,
+      "status": "ok",
+      "timing": {
+        "total_us": 3243,
+        "tex_us": 2494,
+        "traverse_us": 458,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.22547600383404642,
+    "total_to_raster_ms": 4.983717000868637,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 47,
+      "pixels": 179375,
+      "raster_us": 494,
+      "seq": 59,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 22,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 13,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 60,
+      "reply_ms": 0.226,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.878,
+      "status": "ok",
+      "timing": {
+        "total_us": 3589,
+        "tex_us": 2968,
+        "traverse_us": 434,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.20307399972807616,
+    "total_to_raster_ms": 4.915129997243639,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 35,
+      "pixels": 179375,
+      "raster_us": 327,
+      "seq": 60,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 20,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 14,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 61,
+      "reply_ms": 0.303,
+      "update": "ParagraphUpdate",
+      "update_ms": 5.544,
+      "status": "ok",
+      "timing": {
+        "total_us": 5205,
+        "tex_us": 4143,
+        "traverse_us": 725,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.1872509965323843,
+    "total_to_raster_ms": 6.687478999083396,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 45,
+      "pixels": 179375,
+      "raster_us": 360,
+      "seq": 61,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 22,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 15,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 62,
+      "reply_ms": 0.183,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.178,
+      "status": "ok",
+      "timing": {
+        "total_us": 2955,
+        "tex_us": 2271,
+        "traverse_us": 461,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.15521600289503112,
+    "total_to_raster_ms": 4.492410997045226,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 56,
+      "pixels": 179375,
+      "raster_us": 481,
+      "seq": 62,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 20,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 16,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 63,
+      "reply_ms": 0.203,
+      "update": "ParagraphUpdate",
+      "update_ms": 5.15,
+      "status": "ok",
+      "timing": {
+        "total_us": 4802,
+        "tex_us": 3784,
+        "traverse_us": 673,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.22028700186638162,
+    "total_to_raster_ms": 6.408767003449611,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 47,
+      "pixels": 179375,
+      "raster_us": 370,
+      "seq": 63,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 22,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 17,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 64,
+      "reply_ms": 0.222,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.212,
+      "status": "ok",
+      "timing": {
+        "total_us": 2840,
+        "tex_us": 2180,
+        "traverse_us": 459,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.1568890002090484,
+    "total_to_raster_ms": 4.1960030066547915,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 38,
+      "pixels": 179375,
+      "raster_us": 334,
+      "seq": 64,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 20,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 18,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 65,
+      "reply_ms": 0.293,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.919,
+      "status": "ok",
+      "timing": {
+        "total_us": 3527,
+        "tex_us": 2658,
+        "traverse_us": 470,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.15954500122461468,
+    "total_to_raster_ms": 5.235001000983175,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 50,
+      "pixels": 179375,
+      "raster_us": 507,
+      "seq": 65,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 22,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "equation",
+    "i": 19,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 66,
+      "reply_ms": 0.381,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.767,
+      "status": "ok",
+      "timing": {
+        "total_us": 3481,
+        "tex_us": 2702,
+        "traverse_us": 433,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.2203210024163127,
+    "total_to_raster_ms": 5.06033100100467,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 43,
+      "pixels": 179375,
+      "raster_us": 447,
+      "seq": 66,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 20,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 0,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 69,
+      "reply_ms": 0.331,
+      "update": "ParagraphUpdate",
+      "update_ms": 8.919,
+      "status": "ok",
+      "timing": {
+        "total_us": 8491,
+        "tex_us": 7556,
+        "traverse_us": 558,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.21864299924345687,
+    "total_to_raster_ms": 10.566634002316277,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 55,
+      "pixels": 363055,
+      "raster_us": 699,
+      "seq": 69,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 25,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 1,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 70,
+      "reply_ms": 0.206,
+      "update": "ParagraphUpdate",
+      "update_ms": 11.089,
+      "status": "ok",
+      "timing": {
+        "total_us": 10653,
+        "tex_us": 9732,
+        "traverse_us": 566,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.19424999481998384,
+    "total_to_raster_ms": 12.781498997355811,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 61,
+      "pixels": 363055,
+      "raster_us": 689,
+      "seq": 70,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 23,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 2,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 71,
+      "reply_ms": 0.222,
+      "update": "ParagraphUpdate",
+      "update_ms": 9.52,
+      "status": "ok",
+      "timing": {
+        "total_us": 9151,
+        "tex_us": 8267,
+        "traverse_us": 563,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.216074004129041,
+    "total_to_raster_ms": 11.065908998716623,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 67,
+      "pixels": 363055,
+      "raster_us": 508,
+      "seq": 71,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 25,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 3,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 72,
+      "reply_ms": 0.18,
+      "update": "ParagraphUpdate",
+      "update_ms": 9.255,
+      "status": "ok",
+      "timing": {
+        "total_us": 8974,
+        "tex_us": 8102,
+        "traverse_us": 590,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.14273299893829972,
+    "total_to_raster_ms": 10.525642996071838,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 48,
+      "pixels": 363055,
+      "raster_us": 495,
+      "seq": 72,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 23,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 4,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 73,
+      "reply_ms": 0.316,
+      "update": "ParagraphUpdate",
+      "update_ms": 10.697,
+      "status": "ok",
+      "timing": {
+        "total_us": 10341,
+        "tex_us": 9332,
+        "traverse_us": 632,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.14887900033500046,
+    "total_to_raster_ms": 12.157695004134439,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 52,
+      "pixels": 363055,
+      "raster_us": 521,
+      "seq": 73,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 25,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 5,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 74,
+      "reply_ms": 0.331,
+      "update": "ParagraphUpdate",
+      "update_ms": 10.234,
+      "status": "ok",
+      "timing": {
+        "total_us": 9773,
+        "tex_us": 8838,
+        "traverse_us": 609,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.1535139963380061,
+    "total_to_raster_ms": 11.72790599957807,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 51,
+      "pixels": 363055,
+      "raster_us": 528,
+      "seq": 74,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 23,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 6,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 75,
+      "reply_ms": 0.273,
+      "update": "ParagraphUpdate",
+      "update_ms": 10.207,
+      "status": "ok",
+      "timing": {
+        "total_us": 9923,
+        "tex_us": 8995,
+        "traverse_us": 611,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.1633020001463592,
+    "total_to_raster_ms": 11.97812699683709,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 72,
+      "pixels": 363055,
+      "raster_us": 815,
+      "seq": 75,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 25,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 7,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 76,
+      "reply_ms": 0.224,
+      "update": "ParagraphUpdate",
+      "update_ms": 12.533,
+      "status": "ok",
+      "timing": {
+        "total_us": 12049,
+        "tex_us": 11179,
+        "traverse_us": 606,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.23306200455408543,
+    "total_to_raster_ms": 14.30922500003362,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 64,
+      "pixels": 363055,
+      "raster_us": 740,
+      "seq": 76,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 23,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 8,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 77,
+      "reply_ms": 0.265,
+      "update": "ParagraphUpdate",
+      "update_ms": 12.046,
+      "status": "ok",
+      "timing": {
+        "total_us": 11610,
+        "tex_us": 10772,
+        "traverse_us": 601,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.22664199786959216,
+    "total_to_raster_ms": 13.90192800317891,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 66,
+      "pixels": 363055,
+      "raster_us": 760,
+      "seq": 77,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 25,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 9,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 78,
+      "reply_ms": 0.272,
+      "update": "ParagraphUpdate",
+      "update_ms": 10.561,
+      "status": "ok",
+      "timing": {
+        "total_us": 10201,
+        "tex_us": 9274,
+        "traverse_us": 571,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.21297499915817752,
+    "total_to_raster_ms": 12.319872999796644,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 62,
+      "pixels": 363055,
+      "raster_us": 729,
+      "seq": 78,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 23,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 10,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 79,
+      "reply_ms": 0.215,
+      "update": "ParagraphUpdate",
+      "update_ms": 9.969,
+      "status": "ok",
+      "timing": {
+        "total_us": 9566,
+        "tex_us": 8718,
+        "traverse_us": 619,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.22547700064023957,
+    "total_to_raster_ms": 11.831340998469386,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 64,
+      "pixels": 363055,
+      "raster_us": 837,
+      "seq": 79,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 25,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 11,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 80,
+      "reply_ms": 0.317,
+      "update": "ParagraphUpdate",
+      "update_ms": 10.176,
+      "status": "ok",
+      "timing": {
+        "total_us": 9785,
+        "tex_us": 8732,
+        "traverse_us": 843,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.22421800531446934,
+    "total_to_raster_ms": 11.763492002501152,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 48,
+      "pixels": 363055,
+      "raster_us": 521,
+      "seq": 80,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 23,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 12,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 81,
+      "reply_ms": 0.239,
+      "update": "ParagraphUpdate",
+      "update_ms": 9.095,
+      "status": "ok",
+      "timing": {
+        "total_us": 8766,
+        "tex_us": 7970,
+        "traverse_us": 617,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.1560990058351308,
+    "total_to_raster_ms": 10.625415001413785,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 63,
+      "pixels": 363055,
+      "raster_us": 544,
+      "seq": 81,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 25,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 13,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 82,
+      "reply_ms": 0.249,
+      "update": "ParagraphUpdate",
+      "update_ms": 9.424,
+      "status": "ok",
+      "timing": {
+        "total_us": 9104,
+        "tex_us": 8195,
+        "traverse_us": 625,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.14433400065172464,
+    "total_to_raster_ms": 10.863140996661969,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 50,
+      "pixels": 363055,
+      "raster_us": 531,
+      "seq": 82,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 23,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 14,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 83,
+      "reply_ms": 0.176,
+      "update": "ParagraphUpdate",
+      "update_ms": 9.626,
+      "status": "ok",
+      "timing": {
+        "total_us": 9269,
+        "tex_us": 8359,
+        "traverse_us": 702,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.15603799693053588,
+    "total_to_raster_ms": 11.230113996134605,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 72,
+      "pixels": 363055,
+      "raster_us": 602,
+      "seq": 83,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 25,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 15,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 84,
+      "reply_ms": 0.229,
+      "update": "ParagraphUpdate",
+      "update_ms": 9.749,
+      "status": "ok",
+      "timing": {
+        "total_us": 9407,
+        "tex_us": 8561,
+        "traverse_us": 631,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.15865699970163405,
+    "total_to_raster_ms": 11.249946997850202,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 51,
+      "pixels": 363055,
+      "raster_us": 536,
+      "seq": 84,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 23,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 16,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 85,
+      "reply_ms": 0.208,
+      "update": "ParagraphUpdate",
+      "update_ms": 9.271,
+      "status": "ok",
+      "timing": {
+        "total_us": 8996,
+        "tex_us": 8173,
+        "traverse_us": 639,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.16373299877159297,
+    "total_to_raster_ms": 11.081801996624563,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 75,
+      "pixels": 363055,
+      "raster_us": 808,
+      "seq": 85,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 25,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 17,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 86,
+      "reply_ms": 0.262,
+      "update": "ParagraphUpdate",
+      "update_ms": 12.442,
+      "status": "ok",
+      "timing": {
+        "total_us": 12049,
+        "tex_us": 11115,
+        "traverse_us": 604,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.2307579998159781,
+    "total_to_raster_ms": 14.265709003666416,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 67,
+      "pixels": 363055,
+      "raster_us": 762,
+      "seq": 86,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 23,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 18,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 87,
+      "reply_ms": 0.243,
+      "update": "ParagraphUpdate",
+      "update_ms": 10.066,
+      "status": "ok",
+      "timing": {
+        "total_us": 9777,
+        "tex_us": 8897,
+        "traverse_us": 607,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.23706399952061474,
+    "total_to_raster_ms": 11.900907004019246,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 68,
+      "pixels": 363055,
+      "raster_us": 806,
+      "seq": 87,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 25,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  },
+  {
+    "font": "unicode",
+    "mode": "align",
+    "i": 19,
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 88,
+      "reply_ms": 0.27,
+      "update": "ParagraphUpdate",
+      "update_ms": 10.456,
+      "status": "ok",
+      "timing": {
+        "total_us": 10027,
+        "tex_us": 9162,
+        "traverse_us": 533,
+        "pack_us": 0
+      }
+    },
+    "retag_ms": 0.2267340023536235,
+    "total_to_raster_ms": 11.983053998847026,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 46,
+      "pixels": 363055,
+      "raster_us": 485,
+      "seq": 88,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 23,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    }
+  }
+]

@@ -1,0 +1,262 @@
+{
+  "registry_in_preamble": true,
+  "replacement_is_untagged": true,
+  "bbox_inputs": "glyph only; see patch 0001 glyph() with parent union",
+  "display_gate_in_round1": "absent",
+  "counterexamples": {
+    "cm": {
+      "edit": {
+        "routed": "fast",
+        "reasons": [],
+        "edit_id": 1,
+        "reply_ms": 0.312,
+        "update": "ParagraphUpdate",
+        "update_ms": 84.426,
+        "status": "ok",
+        "timing": {
+          "total_us": 1605,
+          "tex_us": 856,
+          "traverse_us": 519,
+          "pack_us": 0
+        }
+      },
+      "expected_caret": 94,
+      "actual_caret": 85,
+      "passed": false,
+      "denominator_glyph": {
+        "bbox": [
+          5289310,
+          406555,
+          5519778,
+          725132
+        ],
+        "char": 98,
+        "font": 29,
+        "source_id": 2
+      },
+      "new_num_den_slots": [],
+      "restore": {
+        "routed": "fast",
+        "reasons": [],
+        "edit_id": 2,
+        "reply_ms": 0.26,
+        "update": "ParagraphUpdate",
+        "update_ms": 1.825,
+        "status": "ok",
+        "timing": {
+          "total_us": 1364,
+          "tex_us": 757,
+          "traverse_us": 456,
+          "pack_us": 0
+        }
+      },
+      "restored_export": {
+        "event": {
+          "event": "PdfExported",
+          "job_id": 3,
+          "path": "/work/restored.pdf",
+          "status": {
+            "state": "Ok"
+          },
+          "converged": true,
+          "passes": 2
+        },
+        "source_equals_expected": true
+      }
+    },
+    "unicode": {
+      "edit": {
+        "routed": "fast",
+        "reasons": [],
+        "edit_id": 1,
+        "reply_ms": 0.606,
+        "update": "ParagraphUpdate",
+        "update_ms": 76.255,
+        "status": "ok",
+        "timing": {
+          "total_us": 1711,
+          "tex_us": 988,
+          "traverse_us": 534,
+          "pack_us": 0
+        }
+      },
+      "expected_caret": 151,
+      "actual_caret": 142,
+      "passed": false,
+      "denominator_glyph": {
+        "bbox": [
+          5290935,
+          389697,
+          5533650,
+          730078
+        ],
+        "char": 119887,
+        "font": 31,
+        "source_id": 2
+      },
+      "new_num_den_slots": [],
+      "restore": {
+        "routed": "fast",
+        "reasons": [],
+        "edit_id": 2,
+        "reply_ms": 0.161,
+        "update": "ParagraphUpdate",
+        "update_ms": 1.542,
+        "status": "ok",
+        "timing": {
+          "total_us": 1355,
+          "tex_us": 734,
+          "traverse_us": 469,
+          "pack_us": 0
+        }
+      },
+      "restored_export": {
+        "event": {
+          "event": "PdfExported",
+          "job_id": 3,
+          "path": "/work/restored.pdf",
+          "status": {
+            "state": "Ok"
+          },
+          "converged": true,
+          "passes": 2
+        },
+        "source_equals_expected": true
+      }
+    }
+  },
+  "empty_missing": {
+    "cm": [
+      {
+        "id": 94,
+        "kind": "formula",
+        "start": 495,
+        "stop": 504,
+        "parent": null,
+        "char": null
+      },
+      {
+        "id": 95,
+        "kind": "frac",
+        "start": 495,
+        "stop": 504,
+        "parent": 94,
+        "char": null
+      },
+      {
+        "id": 96,
+        "kind": "num",
+        "start": 501,
+        "stop": 501,
+        "parent": 95,
+        "char": null
+      },
+      {
+        "id": 97,
+        "kind": "den",
+        "start": 503,
+        "stop": 503,
+        "parent": 95,
+        "char": null
+      },
+      {
+        "id": 100,
+        "kind": "sup",
+        "start": 531,
+        "stop": 531,
+        "parent": 99,
+        "char": null
+      },
+      {
+        "id": 103,
+        "kind": "sub",
+        "start": 536,
+        "stop": 536,
+        "parent": 102,
+        "char": null
+      },
+      {
+        "id": 120,
+        "kind": "cell",
+        "start": 614,
+        "stop": 614,
+        "parent": 117,
+        "char": null
+      },
+      {
+        "id": 121,
+        "kind": "cell",
+        "start": 616,
+        "stop": 616,
+        "parent": 117,
+        "char": null
+      }
+    ],
+    "unicode": [
+      {
+        "id": 94,
+        "kind": "formula",
+        "start": 552,
+        "stop": 561,
+        "parent": null,
+        "char": null
+      },
+      {
+        "id": 95,
+        "kind": "frac",
+        "start": 552,
+        "stop": 561,
+        "parent": 94,
+        "char": null
+      },
+      {
+        "id": 96,
+        "kind": "num",
+        "start": 558,
+        "stop": 558,
+        "parent": 95,
+        "char": null
+      },
+      {
+        "id": 97,
+        "kind": "den",
+        "start": 560,
+        "stop": 560,
+        "parent": 95,
+        "char": null
+      },
+      {
+        "id": 100,
+        "kind": "sup",
+        "start": 588,
+        "stop": 588,
+        "parent": 99,
+        "char": null
+      },
+      {
+        "id": 103,
+        "kind": "sub",
+        "start": 593,
+        "stop": 593,
+        "parent": 102,
+        "char": null
+      },
+      {
+        "id": 120,
+        "kind": "cell",
+        "start": 671,
+        "stop": 671,
+        "parent": 117,
+        "char": null
+      },
+      {
+        "id": 121,
+        "kind": "cell",
+        "start": 673,
+        "stop": 673,
+        "parent": 117,
+        "char": null
+      }
+    ]
+  }
+}

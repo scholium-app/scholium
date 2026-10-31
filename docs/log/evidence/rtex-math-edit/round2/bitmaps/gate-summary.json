@@ -1,0 +1,18 @@
+{
+  "cm": {
+    "trials": 4,
+    "retained": 4,
+    "recovered": 4,
+    "q_exports": 4,
+    "stale_rejected": 4,
+    "diagnostics_trials": 4
+  },
+  "unicode": {
+    "trials": 4,
+    "retained": 4,
+    "recovered": 4,
+    "q_exports": 4,
+    "stale_rejected": 4,
+    "diagnostics_trials": 4
+  }
+}
