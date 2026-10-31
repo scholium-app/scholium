@@ -1,105 +1,140 @@
-# Scholium /「注疏」
+<div align="center">
 
-本地优先、可协作、同时支持即时结构编辑与源码编辑的科学写作工作区。
+# Scholium
 
-> scholium：古典手稿页边的注疏。欧几里得《几何原本》的 scholia
-> 是希腊数学史最重要的传世材料之一。
+**A native editor for scientific writing. You type on the typeset page, mathematics included.**
 
-## 状态
+[![CI](https://github.com/scholium-app/scholium/actions/workflows/rust.yml/badge.svg)](https://github.com/scholium-app/scholium/actions/workflows/rust.yml)
+[![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
+[![Rust 1.99](https://img.shields.io/badge/rust-1.99-orange.svg)](rust-toolchain.toml)
+![Status: pre-alpha](https://img.shields.io/badge/status-pre--alpha-lightgrey.svg)
 
-阶段判定以 [阶段出口报告](docs/spikes/SPK-0012-exit-criteria.md) 为准。
-根 workspace 提供 egui 应用壳，启动即进入 Typst Content 结构编辑：输入直接经 Typst 排版呈现，不经 egui 文字回显（[ADR 0036](docs/adr/ADR-0036-typst-default-editor.md)、[ADR 0037](docs/adr/ADR-0037-remove-legacy-editor.md)）。旧版回显编辑器已删除。
-废弃实现已经删除，旧实验结果仍可在归档文档和 Git 历史中查阅。
+[What works](#what-works-today) · [Getting started](#getting-started) · [Roadmap](#roadmap) · [How it works](#how-it-works) · [中文](README.zh-CN.md)
 
-新方案聚焦 Liii STEM 式结构编辑体验、LaTeX/Typst 源码模式、双后端预览、非线性历史、
-local-first 多人协作和可解释格式转换。从 [设计文档索引](docs/README.md) 开始阅读。
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/editor-dark.png">
+  <img alt="Scholium editing a short paper: title, abstract and two sections with inline formulas, laid out by Typst as you type" src="docs/assets/readme/editor-light.png" width="900">
+</picture>
 
-## 原生技术栈
+<sub>The real application. The paper above was typed into it by a script: the text was pasted and every formula was entered key by key.</sub>
 
-应用 UI、核心与服务端优先 Rust，必要时混用 C/C++/Zig；构建以 Cargo 为主，原生依赖可使用 CMake 等工具。
-UI 验证顺序为 **Iced → GPUI → C++ EUI-NEO → Slint 或 egui**，已选定 egui / eframe 0.36.2（[ADR 0006](docs/adr/ADR-0006-native-ui-framework.md)）；不采用 npm/JavaScript/WebView 编辑器。
-具体验收与 FFI 边界见 [原生 UI 验证计划](docs/plan/NATIVE_UI_VALIDATION.md)。
+</div>
 
-## 运行基础 UI
+## Why Scholium
+
+LaTeX and Typst produce beautiful documents, but you write code and look at the result somewhere else.
+Word processors put you on the page, but mathematics comes out as an afterthought.
+
+Scholium puts you on the typeset page. Every keystroke goes into a structured document, and
+[Typst](https://typst.app) lays it out immediately. There is no approximate on-screen copy that is later replaced
+by the real layout: what you edit is the typeset result. Formulas are trees with real slots for numerators,
+superscripts and subscripts, not strings of markup. The document stays exportable to plain Typst source at all
+times.
+
+> A *scholium* is a note written in the margin of a classical manuscript. The scholia to Euclid's *Elements* are
+> among the most important sources we have for the history of Greek mathematics.
+
+## What works today
+
+- **Editing on the typeset page.** Paragraphs, two heading levels, bold and emphasis, selection across
+  paragraphs, cut, copy and paste.
+- **Mathematics as structure.** `$` opens an inline formula, `^` and `_` open superscript and subscript slots,
+  `Ctrl+/` turns what you typed into a numerator, the arrow keys move between slots, and `Esc` leaves the formula.
+- **One renderer.** Typst draws everything you have committed, through a fork that reports caret positions and
+  formula slots. The fork's patches are rebuilt and checked against upstream Typst in CI, pixel for pixel.
+- **Chinese and English.** IME input, mixed-script line breaking and CJK punctuation; the interface is available
+  in English and Simplified Chinese.
+- **Source next to the page.** `Ctrl+Shift+M` shows the generated Typst source beside an A4 preview; click the
+  preview to jump to the block.
+- **Undo that matches how you type.** A typing run undoes as one step, and so does a formula operation.
+- **Saved locally.** `Ctrl+S` writes the document and its edit journal to SQLite and restores both on the next
+  start.
+- **A native desktop app.** Written in Rust with egui, with no web view; light and dark themes; screen-reader
+  access to body text and formulas through AT-SPI on Linux.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/source-dark.png">
+    <img alt="Source view: the generated Typst source on the left, the A4 preview with fractions on the right" src="docs/assets/readme/source-light.png" width="900">
+  </picture>
+</p>
+
+## Getting started
+
+Scholium is pre-alpha. It is fine for trying out the editing model, but it is not ready for documents you care
+about.
+
+You need Linux with X11 or Wayland and working OpenGL/EGL drivers. On Debian or Ubuntu:
 
 ```bash
+sudo apt install libxkbcommon-dev libwayland-dev libegl1-mesa-dev
+git clone https://github.com/scholium-app/scholium.git
+cd scholium
 cargo run -p scholium-app
 ```
 
-使用 Rust 1.99.0 和 egui / eframe 0.36.2；Linux 需要可用的 X11 或 Wayland 会话与 OpenGL/EGL 驱动。
-中文字体随应用嵌入，无需额外安装。字体来源与许可见 [字体说明](crates/scholium-app/assets/fonts/README.md)。
+With [rustup](https://rustup.rs) installed, the pinned toolchain (`rust-toolchain.toml`, Rust 1.99) is fetched on the first build. The first build compiles Typst
+and takes a few minutes. Fonts, including CJK fonts, are bundled.
 
-- 编辑面是 Typst Content（受控不分页流）：`$` / `Ctrl+M` 公式、`Ctrl+/` 分数、Tab 切换槽位，
-  方向键/Home/End 按视觉行导航，`Ctrl+Z` / `Ctrl+Shift+Z` 撤销重做，`Ctrl+S` 保存到 XDG 数据目录的
-  `scholium/document.v1.sqlite`；首次启动一次性迁移同目录旧版会话，原文件保留不再写入。
-- `Ctrl+1` / `Ctrl+2` 切换编辑面和源码工作区（只读生成 Typst + A4 快速预览，点击预览定位到块）；
-  `Ctrl+Shift+B` / `Ctrl+J` 开关导航与诊断；`Ctrl+B` / `Ctrl+I` 对选区（或接下来输入的文字）切换粗体与强调。
-- 底部按钮调整页面缩放；`Ctrl+0` 恢复 100%，`Ctrl++` / `Ctrl+-` 放大和缩小。
+| Keys | Action |
+| --- | --- |
+| `$` or `Ctrl+M` | Start an inline formula; `Ctrl+M` or `Esc` leaves it |
+| `^` / `_` | Superscript / subscript slot |
+| `Ctrl+/` | Fraction |
+| `Ctrl+B` / `Ctrl+I` | Bold / emphasis, on the selection or on what you type next |
+| `Ctrl+0` / `Ctrl+1` / `Ctrl+2` | Body text / heading 1 / heading 2 |
+| `Ctrl+Z` / `Ctrl+Shift+Z` | Undo / redo |
+| `Ctrl+Shift+M` | Switch between the page and the source view |
+| `Ctrl+J` / `Ctrl+Shift+B` | Diagnostics panel / navigation |
+| `Ctrl+F1` | Show or hide the toolbars |
+| `Ctrl++` / `Ctrl+-` | Zoom |
+| `Ctrl+S` | Save |
 
-主题颜色集中在 `crates/scholium-app/src/theme.rs` 的 `Palette`，正文、源码和 egui 控件共享语义颜色。
-目前只提供默认深色主题；主题选择器、主题文件及偏好持久化留待后续接入。
+## Roadmap
 
-基础 UI 的检查范围和原生窗口截图见 [应用壳验收记录](docs/log/ui-shell-review.md)。
+Each project is either a Typst project or a LaTeX project, and two separate editing kernels share one
+application ([ADR 0041](docs/adr/ADR-0041-separate-latex-typst-kernels.md)).
 
-基础检查：
+| Area | Status |
+| --- | --- |
+| Typst kernel: structured editing on the typeset page | **Working**, see above |
+| Typst kernel: pagination, editable source, PDF export | Next |
+| LaTeX kernel: `.tex` projects with a live preview produced by LuaLaTeX itself, sandboxed | Evaluated and decided ([ADR 0043](docs/adr/ADR-0043-rtex-live-preview.md)); implementation next |
+| LaTeX ↔ Typst conversion with a per-node fidelity report | Planned |
+| History: checkpoints, branches, undo that only reverts your own edits | Planned |
+| Local-first collaboration over CRDTs ([Loro](https://loro.dev)) | Validated in prototypes; planned |
 
-```bash
-cargo fmt --all -- --check
-cargo clippy --workspace --all-targets -- -D warnings
-cargo test --workspace
-RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps
-python3 scripts/check-rust-size.py
-cargo deny check licenses bans sources
+The full plan, with exit criteria for each stage, is in [docs/plan/ROADMAP.md](docs/plan/ROADMAP.md).
+
+## How it works
+
+```mermaid
+flowchart LR
+    UI["scholium-app<br/>egui shell, IME, drawing"] -->|abstract input| S["scholium-session<br/>editing core, no UI dependencies"]
+    S --> D["scholium-document<br/>structured document, edits"]
+    S --> T["scholium-typst<br/>forked Typst layout, caret geometry"]
+    S --> St["scholium-storage<br/>SQLite"]
+    D --> M["scholium-model<br/>identities, schema"]
+    T --> M
 ```
 
-真实窗口验收（Xvfb；需要 `xdotool`、`xclip`、ImageMagick，会话均为隔离夹具）：
+- **One authoritative model.** A native project's truth is its structured document; a source project's truth
+  is its source files. Nothing keeps two writable copies in sync.
+- **Typst draws what you commit.** The UI never fakes typed text; it shows Typst's layout of the current
+  revision, and stale layouts are never shown as current.
+- **The editing core has no UI.** Keys, text and pointer events become abstract input to `scholium-session`, so
+  editing behaviour is tested without a window; real-window checks drive the actual app under Xvfb.
+- **Decisions are written down.** Architecture decisions live in [docs/adr](docs/adr/README.md); the design starts
+  at [docs/README.md](docs/README.md).
 
-```bash
-cargo build -p scholium-app -p scholium-storage --bins
-xvfb-run -a -s '-screen 0 1280x900x24' \
-  python3 spikes/typst-main-editor/native-check.py target/debug/scholium-app /tmp/scholium-native
-xvfb-run -a -s '-screen 0 1280x900x24' \
-  python3 spikes/typst-main-editor/default-launch-check.py target/debug/scholium-app target/debug/hammer /tmp/scholium-default
-```
+## Contributing
 
-Typst fork 来源校验与 stock 像素对照见 [vendor 说明](vendor/README.md)。
+Issues and pull requests are welcome. Most project documents are written in Chinese. Before you start:
 
-## 基础接入（开发中）
+- Read [AGENT.md](AGENT.md) for the hard constraints, the size limits and the checks that CI runs.
+- Sign off every commit (`git commit -s`, [DCO](DCO)).
+- New dependencies must pass `cargo deny` under the licence policy in AGENT.md.
 
-启动即打开结构文档，支持中英文段落、一二级标题、粗体/强调、行内公式与分数结构，以及跨段选区、
-纯文本复制剪切和单机撤销重做。所有输入先经本地结构会话接受，再异步交给 Typst 排版；
-已提交内容只由 Typst 绘制。Ctrl+S 将快照与请求日志保存到 SQLite，重启时恢复；文件无法打开时
-窗口只显示原因与恢复方式，不覆盖。新建或关闭窗口会确认是否丢弃未保存内容。
-**编辑面分页、可编辑源码、原串公式转换和最终 PDF 构建尚未接入；源码工作区是只读生成视图与快速预览。**
-详见 [ADR 0036](docs/adr/ADR-0036-typst-default-editor.md)。
+## License
 
-## 设计目标
-
-- **双工作形态。** 原生项目以语义图为真，外部 LaTeX/Typst/Markdown 项目以源码为真。
-- **视觉与源码都是一等入口。** 默认即时结构编辑，Source Studio 可直接编辑 LaTeX 或 Typst。
-- **双后端。** Typst 提供快速预览，LaTeX 提供兼容性验证和最终构建。
-- **历史不是一条栈。** 撤销产生新的补偿变更，并支持 checkpoint、分支、合并、
-  revert 和 cherry-pick。
-- **本地优先协作。** 离线可编辑、保存和导出；联网后通过 CRDT 增量收敛。
-- **转换必须可解释。** 保存原生格式无损；跨格式导出若有降级，必须提供报告。
-
-## 已确认的兼容行为
-
-- 同一共享项目分支在团队范围内只允许一种源码语言正在被编辑，同语言支持多人协作；两种编译器可并行。
-- LaTeX/Typst 混用目标覆盖正文、公式、图表、宏、模板和跨片段引用；两种格式可打开保存、另存为与输出。
-- 混合项目保留两种原文，标准目标包与双工具链重建包分别说明依赖和可编辑性。
-- 共享分支的离线源码修改进入本地草稿/fork，重连后按团队活动语言显式合入。
-
-具体规则及待验证边界见 [混合源码与团队编辑](docs/MIXED_SOURCE_EDITING.md)。
-
-## 许可证
-
-本项目以 **MIT OR Apache-2.0** 双许可发布，使用者可任选其一：[LICENSE-MIT](LICENSE-MIT) 或
-[LICENSE-APACHE](LICENSE-APACHE)。决策依据见 [ADR 0004](docs/adr/ADR-0004-project-license.md)。
-
-正式实现不移植 TeXmacs/Mogan 或废弃原型实现；新增依赖必须通过 `cargo deny` 许可证检查，
-允许与禁止的许可类别见 [AGENT.md](AGENT.md) 的许可证政策一节。
-
-## 全栈与 WASM
-
-[全栈候选](docs/plan/TECH_STACK.md)记录编辑核心、解析/编译、渲染、协作、存储及服务端的验证方向；[WASM 计划](docs/plan/WASM.md)优先保证 Rust 核心可移植。[Mogan LaTeX 调研](docs/research/MOGAN_LATEX.md)记录源码依据与可借鉴边界。已验证的选型与仍待验证的范围见 [spike 状态索引](docs/spikes/README.md)。
+Dual-licensed under [MIT](LICENSE-MIT) or [Apache-2.0](LICENSE-APACHE), at your option.
