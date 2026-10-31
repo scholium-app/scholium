@@ -38,17 +38,16 @@ times.
 
 - **Editing on the typeset page.** Paragraphs, two heading levels, bold and emphasis, selection across
   paragraphs, cut, copy and paste.
-- **Mathematics as structure.** `$` opens an inline formula, `^` and `_` open superscript and subscript slots,
-  `Ctrl+/` turns what you typed into a numerator, the arrow keys move between slots, and `Esc` leaves the formula.
+- **Mathematics as structure.** Inline formulas with fractions, superscripts and subscripts are entered from the
+  keyboard as you write, and the caret moves through their slots.
 - **One renderer.** Typst draws everything you have committed, through a fork that reports caret positions and
   formula slots. The fork's patches are rebuilt and checked against upstream Typst in CI, pixel for pixel.
 - **Chinese and English.** IME input, mixed-script line breaking and CJK punctuation; the interface is available
   in English and Simplified Chinese.
-- **Source next to the page.** `Ctrl+Shift+M` shows the generated Typst source beside an A4 preview; click the
+- **Source next to the page.** A source view shows the generated Typst source beside an A4 preview; click the
   preview to jump to the block.
 - **Undo that matches how you type.** A typing run undoes as one step, and so does a formula operation.
-- **Saved locally.** `Ctrl+S` writes the document and its edit journal to SQLite and restores both on the next
-  start.
+- **Saved locally.** The document and its edit journal are saved to SQLite and restored on the next start.
 - **A native desktop app.** Written in Rust with egui, with no web view; light and dark themes; screen-reader
   access to body text and formulas through AT-SPI on Linux.
 
@@ -75,20 +74,6 @@ cargo run -p scholium-app
 
 With [rustup](https://rustup.rs) installed, the pinned toolchain (`rust-toolchain.toml`, Rust 1.99) is fetched on the first build. The first build compiles Typst
 and takes a few minutes. Fonts, including CJK fonts, are bundled.
-
-| Keys | Action |
-| --- | --- |
-| `$` or `Ctrl+M` | Start an inline formula; `Ctrl+M` or `Esc` leaves it |
-| `^` / `_` | Superscript / subscript slot |
-| `Ctrl+/` | Fraction |
-| `Ctrl+B` / `Ctrl+I` | Bold / emphasis, on the selection or on what you type next |
-| `Ctrl+0` / `Ctrl+1` / `Ctrl+2` | Body text / heading 1 / heading 2 |
-| `Ctrl+Z` / `Ctrl+Shift+Z` | Undo / redo |
-| `Ctrl+Shift+M` | Switch between the page and the source view |
-| `Ctrl+J` / `Ctrl+Shift+B` | Diagnostics panel / navigation |
-| `Ctrl+F1` | Show or hide the toolbars |
-| `Ctrl++` / `Ctrl+-` | Zoom |
-| `Ctrl+S` | Save |
 
 ## Roadmap
 
