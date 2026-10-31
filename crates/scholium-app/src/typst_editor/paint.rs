@@ -45,7 +45,7 @@ pub(super) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut 
 }
 
 fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSession) {
-    let size = session.scene.as_ref().map_or([440.0, 40.0], |s| s.size_pt);
+    let size = session.scene().map_or([440.0, 40.0], |s| s.size_pt);
     let ppp = ui.ctx().pixels_per_point();
     let wanted = raster::wanted_scale(
         state.fit_width,
@@ -182,8 +182,7 @@ pub(super) fn body(
     selection_overlay(&painter, rect, scale, session);
     math_overlay(ui, &painter, rect, scale, session);
     let Some(caret) = session
-        .scene
-        .as_ref()
+        .scene()
         .and_then(|s| s.geometry.caret(session.cursor))
     else {
         return 0;

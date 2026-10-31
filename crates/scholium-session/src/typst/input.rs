@@ -84,6 +84,7 @@ impl EditorCore {
     /// event is rejected or panics.
     pub fn input(&mut self, input: Input) -> Result<Outcome, CommandError> {
         let checkpoint = self.checkpoint()?;
+        let epoch = self.session.layout_epoch();
         let before = self.cursor;
         let draft = match &input {
             Input::Text(text) => Some(text.clone()),
@@ -104,12 +105,22 @@ impl EditorCore {
                 if self.cursor != before || self.selected() {
                     self.pending_style = None;
                 }
-                Ok(self.decorate(outcome))
+                let outcome = self.decorate(outcome);
+                if outcome.changed || outcome.invalidate_scene {
+                    if outcome.invalidate_scene {
+                        self.clear_scene();
+                    }
+                    self.submit_layout();
+                }
+                Ok(outcome)
             }
             Ok(Ok(_)) => {
                 #[cfg(test)]
                 {
                     self.rollback(checkpoint);
+                    if self.session.layout_epoch() != epoch {
+                        self.submit_layout();
+                    }
                     Err(CommandError::Injected)
                 }
                 #[cfg(not(test))]
@@ -117,6 +128,9 @@ impl EditorCore {
             }
             Ok(Err(error)) => {
                 self.rollback(checkpoint);
+                if self.session.layout_epoch() != epoch {
+                    self.submit_layout();
+                }
                 if let Some(text) = draft {
                     self.rejected_input = Some(text);
                 }
@@ -124,6 +138,9 @@ impl EditorCore {
             }
             Err(_) => {
                 self.rollback(checkpoint);
+                if self.session.layout_epoch() != epoch {
+                    self.submit_layout();
+                }
                 if let Some(text) = draft {
                     self.rejected_input = Some(text);
                 }
@@ -177,9 +194,12 @@ impl EditorCore {
                 })
             }
             Input::Viewport { visible, raster } => {
-                self.visible = visible;
+                self.view = visible;
                 self.raster = raster;
-                Ok(Outcome::default())
+                Ok(Outcome {
+                    repaint_after: self.viewport_changed(),
+                    ..Outcome::default()
+                })
             }
             Input::Pointer {
                 kind,

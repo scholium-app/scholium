@@ -4,11 +4,13 @@
 //! Everything here is pure arithmetic over logical px, physical px and Typst pt except
 //! [`Layers`], which owns the uploaded textures.
 use eframe::egui::{self, Pos2, Rect};
+#[cfg(test)]
 use std::time::{Duration, Instant};
 
 /// A re-raster waits until the wanted resolution has been unchanged this long, so resize
 /// drags, zoom steps and scale-factor changes do not rasterize every intermediate size.
-pub(super) const DEBOUNCE: Duration = Duration::from_millis(120);
+#[cfg(test)]
+pub(super) use scholium_session::typst::raster::DEBOUNCE;
 
 /// Test-only escape hatch: `SCHOLIUM_RASTER_PX_PER_PT=2` forces the former fixed raster
 /// scale so window checks can compare sharpness against the old behaviour.
@@ -92,58 +94,7 @@ pub(super) fn strip_rects(
         .collect()
 }
 
-fn same(a: f64, b: f64) -> bool {
-    (a - b).abs() <= 1e-6 * a.abs().max(b.abs())
-}
-
-/// What to do about the difference between the resolution shown and the one wanted.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum Step {
-    /// Nothing to do: shown, or already requested.
-    Idle,
-    /// Wanted resolution is still moving; look again after this long.
-    Wait(Duration),
-    /// Wanted resolution has been stable; ask the worker for it now.
-    Request,
-}
-
-/// Debounce for re-raster requests.
-#[derive(Debug, Default)]
-pub(super) struct Settle {
-    wanted: Option<f64>,
-    since: Option<Instant>,
-    requested: Option<f64>,
-}
-
-impl Settle {
-    pub(super) fn step(&mut self, now: Instant, wanted: f64, shown: Option<f64>) -> Step {
-        if !self.wanted.is_some_and(|w| same(w, wanted)) {
-            self.wanted = Some(wanted);
-            self.since = Some(now);
-        }
-        let in_flight = self.requested.is_some_and(|r| same(r, wanted));
-        if in_flight || shown.is_some_and(|s| same(s, wanted)) {
-            return Step::Idle;
-        }
-        let stable = now.saturating_duration_since(self.since.unwrap_or(now));
-        if stable >= DEBOUNCE {
-            self.requested = Some(wanted);
-            Step::Request
-        } else {
-            Step::Wait(DEBOUNCE - stable)
-        }
-    }
-
-    /// A raster arrived (or the request was superseded): the next mismatch may ask again.
-    pub(super) fn arrived(&mut self) {
-        self.requested = None;
-    }
-
-    /// A request was sent outside [`Self::step`] (layout submit, page change).
-    pub(super) fn requested(&mut self, wanted: f64) {
-        self.requested = Some(wanted);
-    }
-}
+pub(super) use scholium_session::typst::raster::{Settle, Step};
 
 mod layers;
 pub(super) use layers::Layers;

@@ -12,33 +12,27 @@ pub(super) fn layout_stats(scene: &EditorScene) -> crate::diagnostics::LayoutSta
 
 impl EditorSession {
     pub(super) fn poll(&mut self, ctx: &egui::Context) {
-        if let Some((stamp, outcome)) = self.worker.poll() {
-            self.adopt(ctx, stamp, outcome);
+        if self.core.poll_layout()
+            && let Some((base, sharp)) = self.core.take_scene_rasters()
+        {
+            self.texture = Some(raster::Layers::from_rasters(ctx, base, sharp));
         }
-        for update in self.worker.poll_strips() {
+        for update in self.core.poll_strips() {
             self.adopt_strip(ctx, update);
         }
     }
 
+    #[cfg(test)]
     pub(super) fn adopt(
         &mut self,
         ctx: &egui::Context,
         stamp: SceneStamp,
         outcome: Result<EditorScene, scholium_typst::editor::EditorError>,
     ) {
-        if stamp != self.wanted {
-            return;
-        }
-        match outcome {
-            Ok(mut scene) => {
-                self.settle.arrived();
-                self.texture = Some(raster::Layers::from_scene(ctx, &mut scene));
-                self.overflows = self.find_overflows(&scene);
-                self.core
-                    .set_geometry(Some(scene.geometry.clone()), Some(stamp));
-                self.scene = Some(scene);
-            }
-            Err(error) => self.layout_error = Some(error.to_string()),
+        if self.core.adopt_scene(stamp, outcome)
+            && let Some((base, sharp)) = self.core.take_scene_rasters()
+        {
+            self.texture = Some(raster::Layers::from_rasters(ctx, base, sharp));
         }
     }
 }

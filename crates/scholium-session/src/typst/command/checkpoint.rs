@@ -18,7 +18,7 @@ pub(in crate::typst) struct Checkpoint {
     layout_error: Option<String>,
     rejected_input: Option<String>,
     overflows: Vec<Target>,
-    visible: ViewRange,
+    view: ViewRange,
     raster: RasterSpec,
     pointer: Option<PointerState>,
     goal: Option<vertical::Goal>,
@@ -69,7 +69,7 @@ impl EditorCore {
             layout_error: self.layout_error.clone(),
             rejected_input: self.rejected_input.clone(),
             overflows: self.overflows.clone(),
-            visible: self.visible,
+            view: self.view,
             raster: self.raster,
             pointer: self.pointer,
             goal: self.goal,
@@ -106,7 +106,7 @@ impl EditorCore {
         self.layout_error = before.layout_error;
         self.rejected_input = before.rejected_input;
         self.overflows = before.overflows;
-        self.visible = before.visible;
+        self.view = before.view;
         self.raster = before.raster;
         self.pointer = before.pointer;
         self.goal = before.goal;

@@ -14,7 +14,7 @@
 ```text
 app-shell
 ├── native_ui/      原生 editor、panels、preview、state projections
-├── typst_editor/   EditorCore 适配、事件翻译、Scene/worker、导航/绘制与平台交互
+├── typst_editor/   EditorCore 适配、事件翻译、纹理/绘制与平台交互
 ├── bridge/         Rust 消息通道、平台坐标转换、可选原生 FFI
 └── platform/       window、clipboard、file dialog、keychain、updates
 ```
@@ -107,7 +107,7 @@ Noto Sans CJK 只作最后回退。所选字体写入 AUDIT 的 `fonts`。
 页面栅格分辨率跟随显示：页宽量化为整数物理像素（`typst_editor/raster.rs`），页面原点吸附到物理像素网格，
 placement 的 scale 取量化后的值，故命中/caret 与绘制一致。页面是两层纹理（`raster/layers.rs`）：整页底图
 （≤ 1 px/pt，拉伸、LINEAR）与其上 1:1 的显示分辨率条带（512 行，只覆盖可见范围，边吸附后相接无缝）。
-应用把可见范围（pt）随排版提交，并在滚动或窗口变化时以约 40 ms 节流通过 `set_view` 告知 worker；
+应用把可见范围（pt）和 RasterSpec 翻译为 `Input::Viewport`；session core 持有 worker/Scene，以约 40 ms 节流请求滚动后的条带；
 条带按 Scene stamp 归属，采纳新 Scene 即整体替换，旧 Scene 的条带不会画在新底图上；窗口外（三个视口）的条带纹理被释放。
 缩放、窗口拖拽或缩放因子变化只改目标分辨率：旧条带拉伸显示，目标稳定约 120 ms 后 worker 以新倍率补渲染可见条带，
 新倍率的条带覆盖可见范围后才替换旧集合；键入提交的排版直接按当前目标倍率渲染底图和可见条带，不等待。
@@ -156,7 +156,7 @@ IME 与 Escape 不受上限丢弃），工具栏/菜单/撤销/保存也等队�
 选区用正文 Text 叶的稳定身份、UTF-8 字素边界保存 anchor/focus。Shift 左右键按正文
 逻辑顺序跨叶/块，完整覆盖的结构公式作为对象选中；Shift 上下/Home/End 按视觉行扩展。
 普通左右键折叠已有选区。鼠标按输入事件顺序命中同一当前 Scene 的精确 caret；拖选绑定
-完整 SceneStamp 和 placement，epoch、布局请求或页面位置/缩放改变即停止旧拖选。
+core 的不透明 Scene generation 和 placement，布局请求或页面位置/缩放改变即停止旧拖选。
 比例合字内部 caret 不作鼠标端点；未知身份和 pending Scene 不能恢复命中能力。
 
 页面点击的命中规则：点在某个行内公式的 bounds 内才进入公式（取最近精确 caret）；其余位置只在正文
@@ -182,8 +182,11 @@ app 只检查当前选区几何和交付原生剪贴板。数学内部槽位选�
 与其他行内内容相邻的空 Text 叶在 Typst 中不成 cluster、没有可绘范围；选框跳过它，
 语义范围仍包含它。视觉行导航见[开发日志《Typst 主程序候选的视觉行导航与几何键有序排队》](../log/2026-10-10-typst-vertical-navigation.md)。
 
-phase 2a 已迁移按键、文字、页面指针、垂直目标、点击序列与 follow 意图；app 仍持有排版 worker/Scene 所有权和 deferred-input
-队列。这两项列入下一 PR 的待办，见 [ADR 0042](../adr/ADR-0042-session-editing-core.md)。
+worker、wanted SceneStamp、已采纳 Scene、viewport/raster 请求策略和 deferred-input 语义均由 session core 持有。
+app 只保留匹配的 egui 事件队列：事件分类后交 core 决定执行、入队、等待或拒绝；不自行判断几何等待、上限或布局失败。
+core 交付已采纳 Scene 的位图与已验证身份的条带，app 上传为纹理；几何、统计与 AUDIT identity 只读取 core 投影。
+源码视图的 A4 派生预览及其纹理是只读展示适配，不承担正文编辑输入。
+见 [ADR 0042](../adr/ADR-0042-session-editing-core.md)。
 
 ## UI 状态
 

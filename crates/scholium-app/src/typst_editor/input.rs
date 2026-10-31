@@ -166,13 +166,13 @@ impl EditorSession {
             self.drag = None;
         }
         if outcome.invalidate_scene {
-            self.scene = None;
             self.texture = None;
             self.focus = true;
         }
         self.rejected_input = self.core.rejected_input.clone();
         if outcome.changed || outcome.invalidate_scene {
-            self.publish(state);
+            state.edit_error = None;
+            self.metadata(state);
         }
         self.follow.sync_from_outcome(&outcome, &self.core.follow);
     }

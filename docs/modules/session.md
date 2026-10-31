@@ -6,16 +6,19 @@
 Typst 模块持有唯一 `LocalSession<StructuredDocument>`、不可变 `Arc` 投影、`SessionStore`、保存基线、
 光标/选区、撤销/重做与输入分组时钟、待输入样式、Attach 占位生命周期，以及纯数据诊断来源。
 默认文件的旧 head 迁移调用和显式文件的 restore/open/save 都在此层执行。
-边界及两期目标见 [ADR 0042](../adr/ADR-0042-session-editing-core.md)。
+边界见 [ADR 0042](../adr/ADR-0042-session-editing-core.md)。
 
 ## 非职责
 
 不处理 egui 事件、IME 预编辑、屏幕 placement、IME 锚点、绘制和 AccessKit；这些仍由 app 翻译或呈现。
 抽象 `Input` 处理提交文字、工具包无关的按键、页面 pt 指针事件、视口/栅格请求，并以 `Outcome` 发布语义光标、
 选区、跟随意图与 overlay 数据。指针状态、视觉上下导航（含目标 x）和点击序列属于核心事务状态，失败时与文档、历史一并回滚。
-排版 worker、Scene 采纳、栅格纹理和 deferred-input 队列仍由 app 持有，核心只记录可见 pt 范围与 RasterSpec；这些边界列入下一 PR。
-延迟事件队列、排版 worker、Scene 采纳、栅格纹理、绘制、屏幕 placement、IME 锚点、AccessKit、
-源码视图、确认框、Fluent 诊断呈现和 AUDIT 打印。这些仍由 [app](app.md) 持有。
+排版 worker、完整 wanted SceneStamp、已采纳 EditorScene、可见 ViewRange 与 RasterSpec 由 core 持有。
+`Input::Viewport` 更新可见 pt 范围与栅格请求；core 按 40 ms 节流和 120 ms 稳定延迟请求条带。
+Scene 只在完整 stamp 与 wanted 相等时采纳；旧 Scene 可继续显示，但不提供指针或视觉行导航权限。
+抽象 deferred 记录由 core 持有并决定顺序、上限、指针拒绝和布局失败处理；匹配的 egui 事件 payload 队列仍在 app，
+只按 core 的 Execute/Queue/Wait/拒绝结果存取。IME 预编辑、栅格纹理、绘制、屏幕 placement、IME 锚点、AccessKit、
+源码视图、确认框、Fluent 诊断呈现和 AUDIT 打印由 [app](app.md) 持有。
 不实现协作 undo、项目权限协议、Pi/MCP/插件协议或 LaTeX 公共内核 trait。
 
 ## 内部结构
@@ -30,6 +33,9 @@ src/typst/history.rs          本地撤销/重做、输入/删除分组、可注
 src/typst/input.rs            抽象输入分发，以及字面文字、公式进出、分数、删除与拆段
 src/typst/events.rs           工具包无关的 Input、Key、Pointer 词汇与原子分发测试
 src/typst/key.rs              工具包无关的按键映射与 caret-follow 意图
+src/typst/runtime.rs          worker、完整 Scene identity 采纳与 raster/strip 交付
+src/typst/deferred.rs         抽象事件的等待、顺序、拒绝与上限
+src/typst/raster.rs           编辑与预览适配共用的栅格稳定策略
 src/typst/pointer.rs          页面 pt 命中、点击选区与拖选
 src/typst/vertical.rs         视觉上下导航、Home/End 与目标 x
 src/typst/selection.rs        正文端点顺序、纯文本复制、范围替换
@@ -57,10 +63,17 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
   app 在 IME 组合和排队输入结束后才请求保存。
 - `session` 是不提供 `DerefMut` 和构造器的只读 authority 视图；`session()` 提供同一不可变引用。
   app 不能从此调用可变 document 方法。`restore_document` 在验证后恢复本地文档，供恢复入口和 fixture 使用。
-- phase 2a 中 app 只把 egui 文字、按键和页面指针翻译成 `Input`；光标/anchor、输入分组、输入样式、视觉导航、点击选区和
+- app 只把 egui 文字、按键和页面指针翻译成 `Input`；光标/anchor、输入分组、输入样式、视觉导航、点击选区和
   follow 意图均由 core 更新。`record`、`range`、`selected`、`active_styles`、`in_math` 读取同一权威投影。
 - `math_indicator(scene)`、`find_overflows(scene)` 要求调用方先证明 Scene 当前；返回 padded Frame pt 或叶 ID，
-  不持有 worker/Scene。layout error、rejected input 与 overflow targets 是纯数据，语言目录和状态栏在 app。
+  worker/Scene 由 core 持有。layout error、rejected input 与 overflow targets 是纯数据，语言目录和状态栏在 app。
+
+- `open_with_wake(path, wake)` 创建真实 worker；`submit_layout` 启动首次/显式重排，成功编辑输入自动提交当前投影。
+  `poll_layout` 经 `adopt_scene` 比较完整 stamp 后更新当前 Scene、几何和溢出目标；`take_scene_rasters` 仅移动位图条带，
+  Scene 几何与身份仍归 core。`poll_strips` 过滤其他 Scene 的结果，app 只上传纹理。
+- `admit(DeferredEvent)` 与 `next_deferred()` 决定 egui 事件的匹配记录何时执行；`deferred_len` 是待处理输入的权威计数。
+  文字/粘贴/普通键最多等待 256 条，IME 生命周期和 Escape 取消不受此上限；被拒文字保留为可复制草稿。
+  布局失败只跳过依赖视觉行几何的键，后续文字仍依次执行。`clear_deferred` 用于用户确认丢弃后清空输入。
 
 ## 不变量
 
@@ -73,7 +86,7 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
   checkpoint 的权威直接保留 LocalSession 已验证的共享快照和 action journal，投影与 saved 基线也复用 Arc，
   不逐命令复制全文或重建/验证请求日志。接受结构编辑仍在独立规划副本上验证，提交时 action journal 写时复制。
 - 错误与 panic 恢复 checkpoint；已接受权威的回滚副本无需再次验证，恢复不执行可失败校验。失败前没有文档修改时保留 epoch；
-  已部分修改的 authority 用 restore 换新 epoch，app 重新请求 Scene，旧几何不得恢复命中权限。
+  已部分修改的 authority 用 restore 换新 epoch，再请求 Scene，旧几何不得恢复命中权限。
 - 正文/数学位置是稳定叶 ID、叶内 UTF-8 字素边界与 affinity。插入/删除后按已接受内容重新验证字素边界。
 - 本地历史最多 512 个分组；同叶、连续位置、间隔 <1 秒的键入与 IME 提交按词合并（含词尾空白）；
   连续删除单独合并，粘贴单独一步，保存不打断分组。app 将导航和命令键的分组中断传给 core。

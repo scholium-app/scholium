@@ -8,8 +8,9 @@ impl EditorSession {
         args: CommandArgs,
         state: &mut WorkspaceState,
     ) -> Option<scholium_session::typst::Outcome> {
-        let before = self.core.session().layout_epoch();
-        let result = self.core.run(id, args);
+        let result = self
+            .core
+            .input(scholium_session::typst::Input::Command(id, args));
         match result {
             Ok(outcome) => {
                 self.follow.sync_from_outcome(&outcome, &self.core.follow);
@@ -21,20 +22,15 @@ impl EditorSession {
                 }
                 if outcome.changed {
                     if outcome.invalidate_scene {
-                        self.scene = None;
                         self.texture = None;
                         self.focus = true;
                     }
-                    self.publish(state);
+                    state.edit_error = None;
+                    self.metadata(state);
                 }
                 Some(outcome)
             }
             Err(error) => {
-                // Rollback restores the accepted authority with a fresh layout lifetime.
-                // Never allow a pre-rollback picture to regain pointer authority.
-                if self.core.session().layout_epoch() != before {
-                    self.publish(state);
-                }
                 state.edit_error = Some(match error {
                     CommandError::Rejected(reason) => {
                         input::rejection_message(reason, state.locale.resolve())
