@@ -41,11 +41,11 @@ pub(super) fn show(ui: &mut Ui, state: &mut WorkspaceState) {
 }
 
 fn in_math(state: &WorkspaceState) -> bool {
-    state.mode == ViewMode::Visual && state.editor.as_ref().is_some_and(|e| e.in_math)
+    state.mode == ViewMode::Page && state.editor.as_ref().is_some_and(|e| e.in_math)
 }
 
 fn mode_segments(state: &WorkspaceState) -> Vec<Segment> {
-    ["view.mode.visual", "view.mode.source"]
+    ["view.mode.page", "view.mode.source"]
         .into_iter()
         .filter_map(|id| command_ui::resolve(state, id))
         .map(|resolved| Segment {
@@ -67,7 +67,7 @@ fn mode_switch(
         egui::pos2(right - width, ui.max_rect().top()),
         egui::vec2(width, ui.max_rect().height()),
     );
-    let ids = ["view.mode.visual", "view.mode.source"];
+    let ids = ["view.mode.page", "view.mode.source"];
     let picked = ui
         .scope_builder(
             UiBuilder::new()

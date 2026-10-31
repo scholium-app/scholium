@@ -1,6 +1,6 @@
 //! Mode segmented control: 22px high, the current segment in active_bg with accent text.
 //! Each segment is as wide as its measured label, never under 96px, so a label such as
-//! "所见即所得" or "WYSIWYG" is never squeezed onto two lines. Left/Right switch segments.
+//! "页面编辑" or "Source Preview" is never squeezed onto two lines. Left/Right switch segments.
 use super::{Meta, State, focus_ring, single_line, text_pos, text_width};
 use crate::theme::{self, Tokens};
 use eframe::egui::{self, Key, Modifiers, Ui};

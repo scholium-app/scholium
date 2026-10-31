@@ -46,7 +46,7 @@ impl EditorSession {
         if state.composition.is_some() {
             return;
         }
-        if state.mode != crate::state::ViewMode::Visual {
+        if state.mode != crate::state::ViewMode::Page {
             state.edit_error = Some(input::read_only_message(state.locale.resolve()));
             return;
         }

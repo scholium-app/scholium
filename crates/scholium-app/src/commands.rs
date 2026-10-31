@@ -10,7 +10,7 @@ pub(crate) enum ViewCommand {
     Save,
     /// Close the open document through the window's close and discard flow.
     CloseDocument,
-    Visual,
+    Page,
     Source,
     /// Switch between the two work modes.
     ToggleMode,
@@ -34,7 +34,7 @@ pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
                 | ViewCommand::Save
                 | ViewCommand::CloseDocument
                 | ViewCommand::Source
-                | ViewCommand::Visual
+                | ViewCommand::Page
                 | ViewCommand::ToggleMode
         )
     {
@@ -52,16 +52,16 @@ pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
         ViewCommand::ToggleToolbars => state.toolbars_visible = !state.toolbars_visible,
         ViewCommand::SetTheme(theme) => state.theme = theme,
         ViewCommand::SetLocale(locale) => state.locale = locale,
-        ViewCommand::Visual => {
+        ViewCommand::Page => {
             // The page widget was not drawn in Source mode, so egui dropped its focus.
-            state.mode = ViewMode::Visual;
+            state.mode = ViewMode::Page;
             state.focus_requested = true;
         }
         ViewCommand::Source => state.mode = ViewMode::Source,
         ViewCommand::ToggleMode => {
             let next = match state.mode {
-                ViewMode::Visual => ViewCommand::Source,
-                ViewMode::Source => ViewCommand::Visual,
+                ViewMode::Page => ViewCommand::Source,
+                ViewMode::Source => ViewCommand::Page,
             };
             dispatch(state, next);
         }

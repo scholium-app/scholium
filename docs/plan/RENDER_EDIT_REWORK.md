@@ -29,7 +29,7 @@
 
 ## 与既有规范的关系
 
-- [体验规范](../EXPERIENCE.md)与[P1 规划](P1_UI.md)的"单一所见即所得编辑面"不变；
+- [体验规范](../EXPERIENCE.md)与[P1 规划](P1_UI.md)的"页面编辑采用单一编辑面"不变；
   本计划是它的实现质量补齐，不新增产品能力边界。
 - [render 模块](../modules/render.md)的不变量全部保留：过期预览不替换 current、图像/映射/几何
   同 revision 原子采纳、overlay 不写回 graph。乐观渲染属于"当前 revision 之上的过渡显示"，

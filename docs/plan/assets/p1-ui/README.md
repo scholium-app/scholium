@@ -5,11 +5,11 @@
 
 | 文件 | 内容 |
 |---|---|
-| `design-light-text-focus.png` | 浅色 · 所见即所得 · 光标在正文（焦点工具栏显示文档属性） |
-| `design-light-math-focus.png` | 浅色 · 所见即所得 · 光标在公式（焦点工具栏为数学上下文） |
+| `design-light-text-focus.png` | 浅色 · 页面编辑 · 光标在正文（焦点工具栏显示文档属性） |
+| `design-light-math-focus.png` | 浅色 · 页面编辑 · 光标在公式（焦点工具栏为数学上下文） |
 | `design-light-source.png` | 浅色 · 源码模式（只读生成源码与 A4 预览约 1:1） |
 | `design-light-format-menu.png` | 浅色 · 展开“格式”菜单与“段落样式”子菜单 |
-| `design-dark-text-focus.png` | 深色 · 所见即所得 · 光标在正文 |
+| `design-dark-text-focus.png` | 深色 · 页面编辑 · 光标在正文 |
 | `design-narrow-overflow.png` | 浅色 · 1024×700 窄窗口与“»”溢出菜单 |
 | `design-tokens.png` | 设计令牌表（语义颜色浅/深、栏高、字号、间距、圆角、图标） |
 | `design-components.png` | 组件规格（图标按钮、下拉框、分隔线、标签页、模式切换、状态栏警告） |

@@ -31,7 +31,7 @@ fn the_backend_label_is_always_shown_and_reads_updating_while_stale() {
         (ZH, "Typst 预览", "更新中"),
         (EN, "Typst preview", "Updating"),
     ] {
-        for mode in [ViewMode::Visual, ViewMode::Source] {
+        for mode in [ViewMode::Page, ViewMode::Source] {
             let mut w = Window::new(1280.0, locale);
             w.state.mode = mode;
             w.editor().revision = 7;
@@ -82,7 +82,9 @@ fn the_status_bar_shows_words_context_and_page_info_only_in_source() {
     assert!(texts.contains(&"1,284 字".to_owned()), "{texts:?}");
     assert!(texts.contains(&"正文".to_owned()));
     assert!(
-        !texts.iter().any(|t| t.contains("页")),
+        !texts
+            .iter()
+            .any(|t| t.starts_with("第 ") && t.ends_with(" 页")),
         "no page info in the continuous view"
     );
     w.editor().in_math = true;
