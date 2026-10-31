@@ -1,0 +1,1233 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "kind": "formula",
+      "start": 84,
+      "stop": 94,
+      "parent": null,
+      "char": null
+    },
+    {
+      "id": 2,
+      "kind": "atom",
+      "start": 84,
+      "stop": 85,
+      "parent": 1,
+      "char": "x"
+    },
+    {
+      "id": 3,
+      "kind": "atom",
+      "start": 85,
+      "stop": 86,
+      "parent": 1,
+      "char": "+"
+    },
+    {
+      "id": 4,
+      "kind": "atom",
+      "start": 86,
+      "stop": 92,
+      "parent": 1,
+      "char": "α"
+    },
+    {
+      "id": 5,
+      "kind": "atom",
+      "start": 92,
+      "stop": 93,
+      "parent": 1,
+      "char": "+"
+    },
+    {
+      "id": 6,
+      "kind": "atom",
+      "start": 93,
+      "stop": 94,
+      "parent": 1,
+      "char": "y"
+    },
+    {
+      "id": 7,
+      "kind": "formula",
+      "start": 114,
+      "stop": 139,
+      "parent": null,
+      "char": null
+    },
+    {
+      "id": 8,
+      "kind": "frac",
+      "start": 114,
+      "stop": 139,
+      "parent": 7,
+      "char": null
+    },
+    {
+      "id": 9,
+      "kind": "num",
+      "start": 120,
+      "stop": 123,
+      "parent": 8,
+      "char": null
+    },
+    {
+      "id": 10,
+      "kind": "atom",
+      "start": 120,
+      "stop": 121,
+      "parent": 9,
+      "char": "a"
+    },
+    {
+      "id": 11,
+      "kind": "atom",
+      "start": 121,
+      "stop": 122,
+      "parent": 9,
+      "char": "+"
+    },
+    {
+      "id": 12,
+      "kind": "atom",
+      "start": 122,
+      "stop": 123,
+      "parent": 9,
+      "char": "b"
+    },
+    {
+      "id": 13,
+      "kind": "den",
+      "start": 125,
+      "stop": 138,
+      "parent": 8,
+      "char": null
+    },
+    {
+      "id": 14,
+      "kind": "atom",
+      "start": 125,
+      "stop": 126,
+      "parent": 13,
+      "char": "c"
+    },
+    {
+      "id": 15,
+      "kind": "atom",
+      "start": 126,
+      "stop": 127,
+      "parent": 13,
+      "char": "+"
+    },
+    {
+      "id": 16,
+      "kind": "frac",
+      "start": 127,
+      "stop": 138,
+      "parent": 13,
+      "char": null
+    },
+    {
+      "id": 17,
+      "kind": "num",
+      "start": 133,
+      "stop": 134,
+      "parent": 16,
+      "char": null
+    },
+    {
+      "id": 18,
+      "kind": "atom",
+      "start": 133,
+      "stop": 134,
+      "parent": 17,
+      "char": "d"
+    },
+    {
+      "id": 19,
+      "kind": "den",
+      "start": 136,
+      "stop": 137,
+      "parent": 16,
+      "char": null
+    },
+    {
+      "id": 20,
+      "kind": "atom",
+      "start": 136,
+      "stop": 137,
+      "parent": 19,
+      "char": "e"
+    },
+    {
+      "id": 21,
+      "kind": "formula",
+      "start": 173,
+      "stop": 196,
+      "parent": null,
+      "char": null
+    },
+    {
+      "id": 22,
+      "kind": "atom",
+      "start": 173,
+      "stop": 174,
+      "parent": 21,
+      "char": "x"
+    },
+    {
+      "id": 23,
+      "kind": "sub",
+      "start": 176,
+      "stop": 179,
+      "parent": 22,
+      "char": null
+    },
+    {
+      "id": 24,
+      "kind": "atom",
+      "start": 176,
+      "stop": 177,
+      "parent": 23,
+      "char": "i"
+    },
+    {
+      "id": 25,
+      "kind": "sub",
+      "start": 178,
+      "stop": 179,
+      "parent": 24,
+      "char": null
+    },
+    {
+      "id": 26,
+      "kind": "atom",
+      "start": 178,
+      "stop": 179,
+      "parent": 25,
+      "char": "j"
+    },
+    {
+      "id": 27,
+      "kind": "sup",
+      "start": 182,
+      "stop": 187,
+      "parent": 22,
+      "char": null
+    },
+    {
+      "id": 28,
+      "kind": "atom",
+      "start": 182,
+      "stop": 183,
+      "parent": 27,
+      "char": "2"
+    },
+    {
+      "id": 29,
+      "kind": "sup",
+      "start": 185,
+      "stop": 186,
+      "parent": 28,
+      "char": null
+    },
+    {
+      "id": 30,
+      "kind": "atom",
+      "start": 185,
+      "stop": 186,
+      "parent": 29,
+      "char": "k"
+    },
+    {
+      "id": 31,
+      "kind": "atom",
+      "start": 188,
+      "stop": 189,
+      "parent": 21,
+      "char": "+"
+    },
+    {
+      "id": 32,
+      "kind": "atom",
+      "start": 189,
+      "stop": 190,
+      "parent": 21,
+      "char": "y"
+    },
+    {
+      "id": 33,
+      "kind": "sup",
+      "start": 191,
+      "stop": 192,
+      "parent": 32,
+      "char": null
+    },
+    {
+      "id": 34,
+      "kind": "atom",
+      "start": 191,
+      "stop": 192,
+      "parent": 33,
+      "char": "2"
+    },
+    {
+      "id": 35,
+      "kind": "atom",
+      "start": 192,
+      "stop": 193,
+      "parent": 21,
+      "char": "+"
+    },
+    {
+      "id": 36,
+      "kind": "atom",
+      "start": 193,
+      "stop": 194,
+      "parent": 21,
+      "char": "z"
+    },
+    {
+      "id": 37,
+      "kind": "sub",
+      "start": 195,
+      "stop": 196,
+      "parent": 36,
+      "char": null
+    },
+    {
+      "id": 38,
+      "kind": "atom",
+      "start": 195,
+      "stop": 196,
+      "parent": 37,
+      "char": "1"
+    },
+    {
+      "id": 39,
+      "kind": "formula",
+      "start": 239,
+      "stop": 269,
+      "parent": null,
+      "char": null
+    },
+    {
+      "id": 40,
+      "kind": "atom",
+      "start": 239,
+      "stop": 240,
+      "parent": 39,
+      "char": "u"
+    },
+    {
+      "id": 41,
+      "kind": "atom",
+      "start": 241,
+      "stop": 242,
+      "parent": 39,
+      "char": "="
+    },
+    {
+      "id": 42,
+      "kind": "rad",
+      "start": 242,
+      "stop": 262,
+      "parent": 39,
+      "char": null
+    },
+    {
+      "id": 43,
+      "kind": "degree",
+      "start": 248,
+      "stop": 249,
+      "parent": 42,
+      "char": null
+    },
+    {
+      "id": 44,
+      "kind": "atom",
+      "start": 248,
+      "stop": 249,
+      "parent": 43,
+      "char": "3"
+    },
+    {
+      "id": 45,
+      "kind": "radicand",
+      "start": 251,
+      "stop": 261,
+      "parent": 42,
+      "char": null
+    },
+    {
+      "id": 46,
+      "kind": "atom",
+      "start": 251,
+      "stop": 252,
+      "parent": 45,
+      "char": "x"
+    },
+    {
+      "id": 47,
+      "kind": "atom",
+      "start": 252,
+      "stop": 253,
+      "parent": 45,
+      "char": "+"
+    },
+    {
+      "id": 48,
+      "kind": "rad",
+      "start": 253,
+      "stop": 261,
+      "parent": 45,
+      "char": null
+    },
+    {
+      "id": 49,
+      "kind": "radicand",
+      "start": 259,
+      "stop": 260,
+      "parent": 48,
+      "char": null
+    },
+    {
+      "id": 50,
+      "kind": "atom",
+      "start": 259,
+      "stop": 260,
+      "parent": 49,
+      "char": "y"
+    },
+    {
+      "id": 51,
+      "kind": "atom",
+      "start": 265,
+      "stop": 266,
+      "parent": 39,
+      "char": "v"
+    },
+    {
+      "id": 52,
+      "kind": "atom",
+      "start": 267,
+      "stop": 268,
+      "parent": 39,
+      "char": "="
+    },
+    {
+      "id": 53,
+      "kind": "atom",
+      "start": 268,
+      "stop": 269,
+      "parent": 39,
+      "char": "w"
+    },
+    {
+      "id": 54,
+      "kind": "formula",
+      "start": 295,
+      "stop": 319,
+      "parent": null,
+      "char": null
+    },
+    {
+      "id": 55,
+      "kind": "fence",
+      "start": 295,
+      "stop": 301,
+      "parent": 54,
+      "char": "("
+    },
+    {
+      "id": 56,
+      "kind": "frac",
+      "start": 301,
+      "stop": 312,
+      "parent": 54,
+      "char": null
+    },
+    {
+      "id": 57,
+      "kind": "num",
+      "start": 307,
+      "stop": 308,
+      "parent": 56,
+      "char": null
+    },
+    {
+      "id": 58,
+      "kind": "atom",
+      "start": 307,
+      "stop": 308,
+      "parent": 57,
+      "char": "x"
+    },
+    {
+      "id": 59,
+      "kind": "den",
+      "start": 310,
+      "stop": 311,
+      "parent": 56,
+      "char": null
+    },
+    {
+      "id": 60,
+      "kind": "atom",
+      "start": 310,
+      "stop": 311,
+      "parent": 59,
+      "char": "y"
+    },
+    {
+      "id": 61,
+      "kind": "fence",
+      "start": 312,
+      "stop": 319,
+      "parent": 54,
+      "char": ")"
+    },
+    {
+      "id": 62,
+      "kind": "formula",
+      "start": 337,
+      "stop": 373,
+      "parent": null,
+      "char": null
+    },
+    {
+      "id": 63,
+      "kind": "matrix",
+      "start": 337,
+      "stop": 373,
+      "parent": 62,
+      "char": null
+    },
+    {
+      "id": 64,
+      "kind": "cell",
+      "start": 352,
+      "stop": 353,
+      "parent": 63,
+      "char": null
+    },
+    {
+      "id": 65,
+      "kind": "atom",
+      "start": 352,
+      "stop": 353,
+      "parent": 64,
+      "char": "a"
+    },
+    {
+      "id": 66,
+      "kind": "cell",
+      "start": 354,
+      "stop": 355,
+      "parent": 63,
+      "char": null
+    },
+    {
+      "id": 67,
+      "kind": "atom",
+      "start": 354,
+      "stop": 355,
+      "parent": 66,
+      "char": "b"
+    },
+    {
+      "id": 68,
+      "kind": "cell",
+      "start": 357,
+      "stop": 358,
+      "parent": 63,
+      "char": null
+    },
+    {
+      "id": 69,
+      "kind": "atom",
+      "start": 357,
+      "stop": 358,
+      "parent": 68,
+      "char": "c"
+    },
+    {
+      "id": 70,
+      "kind": "cell",
+      "start": 359,
+      "stop": 360,
+      "parent": 63,
+      "char": null
+    },
+    {
+      "id": 71,
+      "kind": "atom",
+      "start": 359,
+      "stop": 360,
+      "parent": 70,
+      "char": "d"
+    },
+    {
+      "id": 72,
+      "kind": "formula",
+      "start": 403,
+      "stop": 429,
+      "parent": null,
+      "char": null
+    },
+    {
+      "id": 73,
+      "kind": "atom",
+      "start": 403,
+      "stop": 407,
+      "parent": 72,
+      "char": "∑"
+    },
+    {
+      "id": 74,
+      "kind": "sub",
+      "start": 409,
+      "stop": 412,
+      "parent": 73,
+      "char": null
+    },
+    {
+      "id": 75,
+      "kind": "atom",
+      "start": 409,
+      "stop": 410,
+      "parent": 74,
+      "char": "i"
+    },
+    {
+      "id": 76,
+      "kind": "atom",
+      "start": 410,
+      "stop": 411,
+      "parent": 74,
+      "char": "="
+    },
+    {
+      "id": 77,
+      "kind": "atom",
+      "start": 411,
+      "stop": 412,
+      "parent": 74,
+      "char": "1"
+    },
+    {
+      "id": 78,
+      "kind": "sup",
+      "start": 415,
+      "stop": 416,
+      "parent": 73,
+      "char": null
+    },
+    {
+      "id": 79,
+      "kind": "atom",
+      "start": 415,
+      "stop": 416,
+      "parent": 78,
+      "char": "n"
+    },
+    {
+      "id": 80,
+      "kind": "atom",
+      "start": 417,
+      "stop": 418,
+      "parent": 72,
+      "char": "i"
+    },
+    {
+      "id": 81,
+      "kind": "atom",
+      "start": 418,
+      "stop": 419,
+      "parent": 72,
+      "char": "+"
+    },
+    {
+      "id": 82,
+      "kind": "font",
+      "start": 419,
+      "stop": 429,
+      "parent": 72,
+      "char": null
+    },
+    {
+      "id": 83,
+      "kind": "font-row",
+      "start": 427,
+      "stop": 428,
+      "parent": 82,
+      "char": null
+    },
+    {
+      "id": 84,
+      "kind": "atom",
+      "start": 427,
+      "stop": 428,
+      "parent": 83,
+      "char": "R"
+    },
+    {
+      "id": 85,
+      "kind": "formula",
+      "start": 456,
+      "stop": 473,
+      "parent": null,
+      "char": null
+    },
+    {
+      "id": 86,
+      "kind": "atom",
+      "start": 456,
+      "stop": 457,
+      "parent": 85,
+      "char": "x"
+    },
+    {
+      "id": 87,
+      "kind": "atom",
+      "start": 457,
+      "stop": 458,
+      "parent": 85,
+      "char": "+"
+    },
+    {
+      "id": 88,
+      "kind": "text",
+      "start": 458,
+      "stop": 471,
+      "parent": 85,
+      "char": null
+    },
+    {
+      "id": 89,
+      "kind": "text-row",
+      "start": 464,
+      "stop": 470,
+      "parent": 88,
+      "char": null
+    },
+    {
+      "id": 90,
+      "kind": "atom",
+      "start": 464,
+      "stop": 467,
+      "parent": 89,
+      "char": "中"
+    },
+    {
+      "id": 91,
+      "kind": "atom",
+      "start": 467,
+      "stop": 470,
+      "parent": 89,
+      "char": "文"
+    },
+    {
+      "id": 92,
+      "kind": "atom",
+      "start": 471,
+      "stop": 472,
+      "parent": 85,
+      "char": "+"
+    },
+    {
+      "id": 93,
+      "kind": "atom",
+      "start": 472,
+      "stop": 473,
+      "parent": 85,
+      "char": "y"
+    },
+    {
+      "id": 94,
+      "kind": "formula",
+      "start": 495,
+      "stop": 504,
+      "parent": null,
+      "char": null
+    },
+    {
+      "id": 95,
+      "kind": "frac",
+      "start": 495,
+      "stop": 504,
+      "parent": 94,
+      "char": null
+    },
+    {
+      "id": 96,
+      "kind": "num",
+      "start": 501,
+      "stop": 501,
+      "parent": 95,
+      "char": null
+    },
+    {
+      "id": 97,
+      "kind": "den",
+      "start": 503,
+      "stop": 503,
+      "parent": 95,
+      "char": null
+    },
+    {
+      "id": 98,
+      "kind": "formula",
+      "start": 528,
+      "stop": 537,
+      "parent": null,
+      "char": null
+    },
+    {
+      "id": 99,
+      "kind": "atom",
+      "start": 528,
+      "stop": 529,
+      "parent": 98,
+      "char": "x"
+    },
+    {
+      "id": 100,
+      "kind": "sup",
+      "start": 531,
+      "stop": 531,
+      "parent": 99,
+      "char": null
+    },
+    {
+      "id": 101,
+      "kind": "atom",
+      "start": 532,
+      "stop": 533,
+      "parent": 98,
+      "char": "+"
+    },
+    {
+      "id": 102,
+      "kind": "atom",
+      "start": 533,
+      "stop": 534,
+      "parent": 98,
+      "char": "y"
+    },
+    {
+      "id": 103,
+      "kind": "sub",
+      "start": 536,
+      "stop": 536,
+      "parent": 102,
+      "char": null
+    },
+    {
+      "id": 104,
+      "kind": "formula",
+      "start": 556,
+      "stop": 573,
+      "parent": null,
+      "char": null
+    },
+    {
+      "id": 105,
+      "kind": "atom",
+      "start": 556,
+      "stop": 557,
+      "parent": 104,
+      "char": "x"
+    },
+    {
+      "id": 106,
+      "kind": "atom",
+      "start": 557,
+      "stop": 558,
+      "parent": 104,
+      "char": "+"
+    },
+    {
+      "id": 107,
+      "kind": "atom",
+      "start": 558,
+      "stop": 559,
+      "parent": 104,
+      "char": "x"
+    },
+    {
+      "id": 108,
+      "kind": "atom",
+      "start": 559,
+      "stop": 560,
+      "parent": 104,
+      "char": "+"
+    },
+    {
+      "id": 109,
+      "kind": "frac",
+      "start": 560,
+      "stop": 571,
+      "parent": 104,
+      "char": null
+    },
+    {
+      "id": 110,
+      "kind": "num",
+      "start": 566,
+      "stop": 567,
+      "parent": 109,
+      "char": null
+    },
+    {
+      "id": 111,
+      "kind": "atom",
+      "start": 566,
+      "stop": 567,
+      "parent": 110,
+      "char": "x"
+    },
+    {
+      "id": 112,
+      "kind": "den",
+      "start": 569,
+      "stop": 570,
+      "parent": 109,
+      "char": null
+    },
+    {
+      "id": 113,
+      "kind": "atom",
+      "start": 569,
+      "stop": 570,
+      "parent": 112,
+      "char": "x"
+    },
+    {
+      "id": 114,
+      "kind": "atom",
+      "start": 571,
+      "stop": 572,
+      "parent": 104,
+      "char": "+"
+    },
+    {
+      "id": 115,
+      "kind": "atom",
+      "start": 572,
+      "stop": 573,
+      "parent": 104,
+      "char": "x"
+    },
+    {
+      "id": 116,
+      "kind": "formula",
+      "start": 597,
+      "stop": 631,
+      "parent": null,
+      "char": null
+    },
+    {
+      "id": 117,
+      "kind": "matrix",
+      "start": 597,
+      "stop": 631,
+      "parent": 116,
+      "char": null
+    },
+    {
+      "id": 118,
+      "kind": "cell",
+      "start": 612,
+      "stop": 613,
+      "parent": 117,
+      "char": null
+    },
+    {
+      "id": 119,
+      "kind": "atom",
+      "start": 612,
+      "stop": 613,
+      "parent": 118,
+      "char": "a"
+    },
+    {
+      "id": 120,
+      "kind": "cell",
+      "start": 614,
+      "stop": 614,
+      "parent": 117,
+      "char": null
+    },
+    {
+      "id": 121,
+      "kind": "cell",
+      "start": 616,
+      "stop": 616,
+      "parent": 117,
+      "char": null
+    },
+    {
+      "id": 122,
+      "kind": "cell",
+      "start": 617,
+      "stop": 618,
+      "parent": 117,
+      "char": null
+    },
+    {
+      "id": 123,
+      "kind": "atom",
+      "start": 617,
+      "stop": 618,
+      "parent": 122,
+      "char": "d"
+    }
+  ],
+  "cases": [
+    {
+      "name": "inline",
+      "mode": "inline",
+      "tex": "x+\\alpha+y",
+      "start": 84,
+      "stop": 94,
+      "root": 1,
+      "nodes": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "name": "fraction",
+      "mode": "display",
+      "tex": "\\frac{a+b}{c+\\frac{d}{e}}",
+      "start": 114,
+      "stop": 139,
+      "root": 7,
+      "nodes": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ]
+    },
+    {
+      "name": "scripts",
+      "mode": "equation",
+      "tex": "x_{i_j}^{2^{k}}+y^2+z_1",
+      "start": 173,
+      "stop": 196,
+      "root": 21,
+      "nodes": [
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38
+      ]
+    },
+    {
+      "name": "radical",
+      "mode": "align",
+      "tex": "u&=\\sqrt[3]{x+\\sqrt{y}}\\\\ v&=w",
+      "start": 239,
+      "stop": 269,
+      "root": 39,
+      "nodes": [
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53
+      ]
+    },
+    {
+      "name": "fence",
+      "mode": "inline",
+      "tex": "\\left(\\frac{x}{y}\\right)",
+      "start": 295,
+      "stop": 319,
+      "root": 54,
+      "nodes": [
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61
+      ]
+    },
+    {
+      "name": "matrix",
+      "mode": "display",
+      "tex": "\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}",
+      "start": 337,
+      "stop": 373,
+      "root": 62,
+      "nodes": [
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71
+      ]
+    },
+    {
+      "name": "sum",
+      "mode": "equation",
+      "tex": "\\sum_{i=1}^{n}i+\\mathbb{R}",
+      "start": 403,
+      "stop": 429,
+      "root": 72,
+      "nodes": [
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84
+      ]
+    },
+    {
+      "name": "cjk",
+      "mode": "inline",
+      "tex": "x+\\text{中文}+y",
+      "start": 456,
+      "stop": 473,
+      "root": 85,
+      "nodes": [
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93
+      ]
+    },
+    {
+      "name": "empty-frac",
+      "mode": "display",
+      "tex": "\\frac{}{}",
+      "start": 495,
+      "stop": 504,
+      "root": 94,
+      "nodes": [
+        94,
+        95,
+        96,
+        97
+      ]
+    },
+    {
+      "name": "empty-script",
+      "mode": "inline",
+      "tex": "x^{}+y_{}",
+      "start": 528,
+      "stop": 537,
+      "root": 98,
+      "nodes": [
+        98,
+        99,
+        100,
+        101,
+        102,
+        103
+      ]
+    },
+    {
+      "name": "repeated",
+      "mode": "inline",
+      "tex": "x+x+\\frac{x}{x}+x",
+      "start": 556,
+      "stop": 573,
+      "root": 104,
+      "nodes": [
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115
+      ]
+    },
+    {
+      "name": "empty-matrix",
+      "mode": "display",
+      "tex": "\\begin{pmatrix}a&\\\\&d\\end{pmatrix}",
+      "start": 597,
+      "stop": 631,
+      "root": 116,
+      "nodes": [
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123
+      ]
+    }
+  ]
+}

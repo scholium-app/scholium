@@ -1,0 +1,14 @@
+[
+  {"name":"inline", "mode":"inline", "tex":"x+\\alpha+y"},
+  {"name":"fraction", "mode":"display", "tex":"\\frac{a+b}{c+\\frac{d}{e}}"},
+  {"name":"scripts", "mode":"equation", "tex":"x_{i_j}^{2^{k}}+y^2+z_1"},
+  {"name":"radical", "mode":"align", "tex":"u&=\\sqrt[3]{x+\\sqrt{y}}\\\\ v&=w"},
+  {"name":"fence", "mode":"inline", "tex":"\\left(\\frac{x}{y}\\right)"},
+  {"name":"matrix", "mode":"display", "tex":"\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}"},
+  {"name":"sum", "mode":"equation", "tex":"\\sum_{i=1}^{n}i+\\mathbb{R}"},
+  {"name":"cjk", "mode":"inline", "tex":"x+\\text{中文}+y"},
+  {"name":"empty-frac", "mode":"display", "tex":"\\frac{}{}"},
+  {"name":"empty-script", "mode":"inline", "tex":"x^{}+y_{}"},
+  {"name":"repeated", "mode":"inline", "tex":"x+x+\\frac{x}{x}+x"},
+  {"name":"empty-matrix", "mode":"display", "tex":"\\begin{pmatrix}a&\\\\&d\\end{pmatrix}"}
+]

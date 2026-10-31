@@ -1,0 +1,20 @@
+diff --git a/crates/rtex-core/src/eligibility.rs b/crates/rtex-core/src/eligibility.rs
+index 7979a03..e076064 100644
+--- a/crates/rtex-core/src/eligibility.rs
++++ b/crates/rtex-core/src/eligibility.rs
+@@ -106,6 +106,7 @@ pub enum UnitShape {
+ }
+ 
+ const TEXT_MACROS: &[&str] = &[
++    "attribute", // Evaluation-only: generated source tags inside \text.
+     // font switches
+     "emph",
+     "textit",
+@@ -370,6 +371,7 @@ const GROUP_ONLY_DECLARATIONS: &[&str] = &[
+ ];
+ 
+ const MATH_MACROS: &[&str] = &[
++    "attribute", // Evaluation-only: host reserves attribute 65000 for source ownership.
+     "frac",
+     "dfrac",
+     "tfrac",

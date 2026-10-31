@@ -1,0 +1,157 @@
+{
+  "paragraphs_total": 12,
+  "paragraphs_eligible": 12,
+  "ineligible_reasons": {},
+  "paragraphs": [
+    {
+      "seq": 1,
+      "kind": "par",
+      "lines": 1,
+      "glyphs_total": 16,
+      "glyphs_identical": 16,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 19.45941
+    },
+    {
+      "seq": 2,
+      "kind": "par",
+      "lines": 2,
+      "glyphs_total": 20,
+      "glyphs_identical": 20,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 2.770628
+    },
+    {
+      "seq": 3,
+      "kind": "par",
+      "lines": 2,
+      "glyphs_total": 26,
+      "glyphs_identical": 26,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 2.998307
+    },
+    {
+      "seq": 4,
+      "kind": "par",
+      "lines": 3,
+      "glyphs_total": 29,
+      "glyphs_identical": 29,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 7.968655999999999
+    },
+    {
+      "seq": 5,
+      "kind": "par",
+      "lines": 1,
+      "glyphs_total": 14,
+      "glyphs_identical": 14,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 1.406731
+    },
+    {
+      "seq": 6,
+      "kind": "par",
+      "lines": 2,
+      "glyphs_total": 17,
+      "glyphs_identical": 17,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 2.687645
+    },
+    {
+      "seq": 7,
+      "kind": "par",
+      "lines": 2,
+      "glyphs_total": 19,
+      "glyphs_identical": 19,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 2.586175
+    },
+    {
+      "seq": 8,
+      "kind": "par",
+      "lines": 1,
+      "glyphs_total": 14,
+      "glyphs_identical": 14,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 9.165309
+    },
+    {
+      "seq": 9,
+      "kind": "par",
+      "lines": 2,
+      "glyphs_total": 15,
+      "glyphs_identical": 15,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 0.764557
+    },
+    {
+      "seq": 10,
+      "kind": "par",
+      "lines": 1,
+      "glyphs_total": 20,
+      "glyphs_identical": 20,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 1.0902100000000001
+    },
+    {
+      "seq": 11,
+      "kind": "par",
+      "lines": 1,
+      "glyphs_total": 21,
+      "glyphs_identical": 21,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 1.444584
+    },
+    {
+      "seq": 12,
+      "kind": "par",
+      "lines": 2,
+      "glyphs_total": 21,
+      "glyphs_identical": 21,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 2.686884
+    }
+  ],
+  "pages": [
+    {
+      "page": 1,
+      "dl_glyphs": 233,
+      "pdf_glyphs": 233,
+      "matched": 233,
+      "unmatched": 0,
+      "anchored_max_dx_bp": 0.0004732314854436481,
+      "interior_max_dx_bp": 0.00900921378135422,
+      "max_dy_bp": 0.000765219720449295,
+      "tj_quantum_bp": 0.010499990463256836,
+      "rules_dl": 6,
+      "rules_matched": 6,
+      "colors_dl": 0,
+      "colors_pdf": 0,
+      "exact": true,
+      "flags": [],
+      "raster_unmatched_fraction": null,
+      "raster_glyphs_skipped": null,
+      "images_dl": 0,
+      "images_matched": 0,
+      "images_pdf": 0
+    }
+  ],
+  "pages_degraded": 0,
+  "capture_pdf_equals_clean": true,
+  "layer1_pass": true,
+  "layer2_pass": true,
+  "layer3_pass": null,
+  "pic_cache": null
+}
