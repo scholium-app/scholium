@@ -18,9 +18,9 @@ fn fonts(names: &[&str]) -> FontList {
 }
 
 /// Document-wide text and paragraph rules (the preamble's `set text`/`set par`).
-pub(super) fn apply_document_style(content: Content) -> Content {
+pub(super) fn apply_document_style(content: Content, profile: crate::FontProfile) -> Content {
     content
-        .styled(TextElem::font.set(fonts(BODY_FONTS)))
+        .styled(TextElem::font.set(fonts(profile.body(BODY_FONTS))))
         .styled(TextElem::size.set(TextSize(Abs::pt(BODY_SIZE_PT).into())))
         .styled(TextElem::lang.set(Lang::from_str(LANG).expect("fixed language code")))
         .styled(TextElem::region.set(Some(Region::from_str(REGION).expect("fixed region code"))))
@@ -40,12 +40,12 @@ fn first_line_indent() -> FirstLineIndent {
 }
 
 /// A real heading element with the preview's `show heading: set text(...)` applied.
-pub(super) fn heading(level: usize, body: Content) -> Content {
+pub(super) fn heading(level: usize, body: Content, profile: crate::FontProfile) -> Content {
     let level = NonZeroUsize::new(level).expect("heading levels start at one");
     HeadingElem::new(body)
         .with_level(Smart::Custom(level))
         .pack()
-        .styled(TextElem::font.set(fonts(HEADING_FONTS)))
+        .styled(TextElem::font.set(fonts(profile.body(HEADING_FONTS))))
         .styled(TextElem::weight.set(FontWeight::BOLD))
 }
 

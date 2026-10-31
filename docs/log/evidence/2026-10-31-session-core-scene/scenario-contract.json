@@ -1,0 +1,86 @@
+[
+  {
+    "scenario": "double-click-bold",
+    "inputs_unchanged": true,
+    "previous_undo_depth": 2,
+    "undo_depth": 2,
+    "expected_fields": [
+      "anchor",
+      "cursor",
+      "snapshot",
+      "undo_depth"
+    ]
+  },
+  {
+    "scenario": "formula-fraction-superscript",
+    "inputs_unchanged": true,
+    "previous_undo_depth": 7,
+    "undo_depth": 5,
+    "expected_fields": [
+      "anchor",
+      "cursor",
+      "snapshot",
+      "undo_depth"
+    ]
+  },
+  {
+    "scenario": "mixed-cjk-english",
+    "inputs_unchanged": true,
+    "previous_undo_depth": 1,
+    "undo_depth": 1,
+    "expected_fields": [
+      "anchor",
+      "cursor",
+      "snapshot",
+      "undo_depth"
+    ]
+  },
+  {
+    "scenario": "shift-selection-replace",
+    "inputs_unchanged": true,
+    "previous_undo_depth": 2,
+    "undo_depth": 2,
+    "expected_fields": [
+      "anchor",
+      "cursor",
+      "snapshot",
+      "undo_depth"
+    ]
+  },
+  {
+    "scenario": "triple-click-delete",
+    "inputs_unchanged": true,
+    "previous_undo_depth": 2,
+    "undo_depth": 2,
+    "expected_fields": [
+      "anchor",
+      "cursor",
+      "snapshot",
+      "undo_depth"
+    ]
+  },
+  {
+    "scenario": "undo-redo",
+    "inputs_unchanged": true,
+    "previous_undo_depth": 1,
+    "undo_depth": 1,
+    "expected_fields": [
+      "anchor",
+      "cursor",
+      "snapshot",
+      "undo_depth"
+    ]
+  },
+  {
+    "scenario": "vertical-goal",
+    "inputs_unchanged": true,
+    "previous_undo_depth": 1,
+    "undo_depth": 1,
+    "expected_fields": [
+      "anchor",
+      "cursor",
+      "snapshot",
+      "undo_depth"
+    ]
+  }
+]

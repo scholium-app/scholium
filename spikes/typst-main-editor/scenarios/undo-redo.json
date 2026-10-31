@@ -1,1 +1,73 @@
-{"name":"undo-redo","inputs":[{"text":"history"},{"key":"Character","value":"z","mods":{"command":true}},{"key":"Character","value":"z","mods":{"command":true,"shift":true}}],"expected":{"undo_depth":1}}
+{
+  "name": "undo-redo",
+  "inputs": [
+    {
+      "text": "history"
+    },
+    {
+      "key": "Character",
+      "value": "z",
+      "mods": {
+        "command": true
+      },
+      "expected": {
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": ""
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "anchor": null,
+        "undo_depth": 0
+      }
+    },
+    {
+      "key": "Character",
+      "value": "z",
+      "mods": {
+        "command": true,
+        "shift": true
+      }
+    }
+  ],
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "history"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/0",
+      "byte": 7,
+      "affinity": "Upstream"
+    },
+    "anchor": null,
+    "undo_depth": 1
+  }
+}

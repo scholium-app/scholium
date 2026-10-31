@@ -1,0 +1,21 @@
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-session)
+    Finished `test` profile [unoptimized] target(s) in 0.72s
+     Running unittests src/lib.rs (target/debug/deps/scholium_session-389a88f8e81084e1)
+
+running 1 test
+
+thread 'typst::runtime_tests::completed_multi_click_selects_word_or_paragraph_before_delete' (567839) panicked at crates/scholium-session/src/typst/runtime_tests.rs:29:9:
+assertion `left == right` failed
+  left: None
+ right: Some("delete")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test typst::runtime_tests::completed_multi_click_selects_word_or_paragraph_before_delete ... FAILED
+
+failures:
+
+failures:
+    typst::runtime_tests::completed_multi_click_selects_word_or_paragraph_before_delete
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 12 filtered out; finished in 1.71s
+
+error: test failed, to rerun pass `-p scholium-session --lib`

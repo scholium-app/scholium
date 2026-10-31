@@ -84,6 +84,7 @@ impl EditorCore {
     /// event is rejected or panics.
     pub fn input(&mut self, input: Input) -> Result<Outcome, CommandError> {
         let checkpoint = self.checkpoint()?;
+        let epoch = self.session.layout_epoch();
         let before = self.cursor;
         let draft = match &input {
             Input::Text(text) => Some(text.clone()),
@@ -104,12 +105,22 @@ impl EditorCore {
                 if self.cursor != before || self.selected() {
                     self.pending_style = None;
                 }
-                Ok(self.decorate(outcome))
+                let outcome = self.decorate(outcome);
+                if outcome.changed || outcome.invalidate_scene {
+                    if outcome.invalidate_scene {
+                        self.clear_scene();
+                    }
+                    self.submit_layout();
+                }
+                Ok(outcome)
             }
             Ok(Ok(_)) => {
                 #[cfg(test)]
                 {
                     self.rollback(checkpoint);
+                    if self.session.layout_epoch() != epoch {
+                        self.submit_layout();
+                    }
                     Err(CommandError::Injected)
                 }
                 #[cfg(not(test))]
@@ -117,6 +128,9 @@ impl EditorCore {
             }
             Ok(Err(error)) => {
                 self.rollback(checkpoint);
+                if self.session.layout_epoch() != epoch {
+                    self.submit_layout();
+                }
                 if let Some(text) = draft {
                     self.rejected_input = Some(text);
                 }
@@ -124,6 +138,9 @@ impl EditorCore {
             }
             Err(_) => {
                 self.rollback(checkpoint);
+                if self.session.layout_epoch() != epoch {
+                    self.submit_layout();
+                }
                 if let Some(text) = draft {
                     self.rejected_input = Some(text);
                 }
@@ -177,9 +194,12 @@ impl EditorCore {
                 })
             }
             Input::Viewport { visible, raster } => {
-                self.visible = visible;
+                self.view = visible;
                 self.raster = raster;
-                Ok(Outcome::default())
+                Ok(Outcome {
+                    repaint_after: self.viewport_changed(),
+                    ..Outcome::default()
+                })
             }
             Input::Pointer {
                 kind,
@@ -239,35 +259,6 @@ impl EditorCore {
             byte: 0,
             affinity: Affinity::Downstream,
         };
-    }
-
-    fn pointer_input(
-        &mut self,
-        kind: PointerKind,
-        at: [f64; 2],
-        clicks: u8,
-        mods: Modifiers,
-    ) -> Result<Outcome, CommandError> {
-        self.pointer = Some(PointerState { at, clicks });
-        let before = self.cursor;
-        match kind {
-            PointerKind::Press => {
-                self.pointer_start(at, mods.shift);
-                if clicks >= 2 {
-                    self.pointer_multi(at, clicks);
-                }
-                self.follow = FollowState::default();
-            }
-            PointerKind::Move if self.pointer_drag => {
-                self.pointer_drag_to(at);
-            }
-            PointerKind::Move => {}
-            PointerKind::Release => self.pointer_drag = false,
-        }
-        Ok(Outcome {
-            applied: self.cursor != before || self.anchor.is_some(),
-            ..Outcome::default()
-        })
     }
 
     pub(super) fn move_horizontal(&mut self, right: bool, extend: bool) {

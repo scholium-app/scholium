@@ -6,19 +6,9 @@
 use super::super::EditorSession;
 use super::*;
 use scholium_typst::editor::{
-    EditorScene, Raster, RasterSpec, SHARP_STRIP_PX, StripUpdate, ViewRange, strip_window,
+    Raster, RasterSpec, SHARP_STRIP_PX, StripUpdate, ViewRange, strip_window,
 };
 use std::collections::BTreeMap;
-
-/// A changed visible range is sent to the worker at most this often while scrolling.
-pub(super) const VIEW_THROTTLE: Duration = Duration::from_millis(40);
-/// Visible-range changes smaller than this are not worth a request.
-const VIEW_EPSILON_PT: f64 = 0.5;
-
-fn same_view(a: ViewRange, b: ViewRange) -> bool {
-    (a.top_pt - b.top_pt).abs() < VIEW_EPSILON_PT
-        && (a.bottom_pt - b.bottom_pt).abs() < VIEW_EPSILON_PT
-}
 
 /// Texture bands of one page bitmap, keyed by their first pixel row.
 struct Bands {
@@ -108,13 +98,14 @@ pub(in crate::typst_editor) struct Layers {
 
 impl Layers {
     /// Upload the base and the sharp strips of `scene`, taking their bitmaps.
-    pub(in crate::typst_editor) fn from_scene(
+    pub(in crate::typst_editor) fn from_rasters(
         ctx: &egui::Context,
-        scene: &mut EditorScene,
+        mut base: Raster,
+        mut sharp: Raster,
     ) -> Self {
         Self {
-            base: Bands::upload(ctx, &mut scene.base),
-            sharp: Bands::upload(ctx, &mut scene.sharp),
+            base: Bands::upload(ctx, &mut base),
+            sharp: Bands::upload(ctx, &mut sharp),
             next: None,
         }
     }
@@ -189,69 +180,34 @@ impl EditorSession {
         ctx: &egui::Context,
         update: StripUpdate,
     ) {
-        self.settle.arrived();
-        let current = self.scene.as_ref().is_some_and(|s| s.stamp == update.stamp);
+        let current = self.core.strip_is_current(update.stamp);
         if let (true, Some(layers)) = (current, self.texture.as_mut()) {
             layers.add(ctx, update);
         }
     }
 
-    /// Follow the resolution and visible range the placed page needs: ask the worker for
-    /// missing strips once the scale is stable, and promptly (throttled) when scrolling.
+    /// Translate the placed viewport; core owns all request timing and worker access.
     pub(in crate::typst_editor) fn track_raster(
         &mut self,
         ctx: &egui::Context,
         px_per_pt: f64,
         view: ViewRange,
     ) {
-        self.spec = RasterSpec {
+        if let Some(layers) = &mut self.texture {
+            layers.maintain(view);
+        }
+        self.core
+            .raster_displayed(self.texture.as_ref().map(Layers::sharp_px_per_pt));
+        let spec = RasterSpec {
             px_per_pt: forced_px_per_pt().unwrap_or(px_per_pt),
             max_side: ctx.input(|i| i.max_texture_side) as u32,
         };
-        self.view = view;
-        let _ = self.core.input(scholium_session::typst::Input::Viewport {
+        if let Ok(outcome) = self.core.input(scholium_session::typst::Input::Viewport {
             visible: view,
-            raster: self.spec,
-        });
-        let (Some(scene), Some(layers)) = (&self.scene, &mut self.texture) else {
-            return;
-        };
-        layers.maintain(view);
-        let now = Instant::now();
-        let wanted = self.spec.resolve(scene.size_pt);
-        let shown = layers.sharp_px_per_pt();
-        let spec = match self.settle.step(now, wanted, Some(shown)) {
-            Step::Request => Some(self.spec),
-            Step::Wait(after) => {
-                ctx.request_repaint_after(after);
-                None
-            }
-            Step::Idle => None,
-        };
-        if let Some(spec) = spec {
-            self.send_view(now, spec);
-            return;
+            raster: spec,
+        }) && let Some(after) = outcome.repaint_after
+        {
+            ctx.request_repaint_after(after);
         }
-        let unsent = self.sent.is_none_or(|(_, sent)| !same_view(sent, view));
-        if !unsent {
-            return;
-        }
-        let due = self.sent.map_or(Duration::ZERO, |(at, _)| {
-            VIEW_THROTTLE.saturating_sub(now.saturating_duration_since(at))
-        });
-        if due.is_zero() {
-            let spec = RasterSpec {
-                px_per_pt: shown,
-                ..self.spec
-            };
-            self.send_view(now, spec);
-        } else {
-            ctx.request_repaint_after(due);
-        }
-    }
-
-    fn send_view(&mut self, now: Instant, spec: RasterSpec) {
-        self.worker.set_view(spec, self.view);
-        self.sent = Some((now, self.view));
     }
 }

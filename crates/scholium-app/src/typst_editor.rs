@@ -33,14 +33,14 @@ use crate::state::WorkspaceState;
 use eframe::egui;
 #[cfg(test)]
 use scholium_model::RequestId;
-use scholium_model::{layout_identity::*, structured::*};
+#[cfg(test)]
+use scholium_model::layout_identity::*;
+use scholium_model::structured::*;
 pub(crate) use scholium_session::typst::CommandId as Command;
 use scholium_session::typst::{CommandArgs, CommandError, EditorCore, Origin};
 #[cfg(test)]
 use scholium_storage::SessionStore;
-use scholium_typst::editor::{
-    Affinity, EditorScene, EditorWorker, Position, RasterSpec, ViewRange,
-};
+use scholium_typst::editor::{Affinity, EditorScene, Position, RasterSpec, ViewRange};
 use std::{collections::VecDeque, path::PathBuf, sync::Arc};
 
 /// Visible page range assumed until the page has been placed once, in pt.
@@ -94,19 +94,10 @@ pub(crate) struct EditorView {
     pub preview_page: Option<(usize, usize)>,
 }
 
-/// UI client of EditorCore; owns derived scenes, event translation and platform state.
+/// UI client of EditorCore; owns textures, toolkit event storage and platform state.
 pub(crate) struct EditorSession {
     core: EditorCore,
-    worker: EditorWorker,
-    wanted: SceneStamp,
-    scene: Option<EditorScene>,
     texture: Option<raster::Layers>,
-    /// Visible part of the page in pt, and what the worker was last told.
-    view: ViewRange,
-    sent: Option<(std::time::Instant, ViewRange)>,
-    /// Raster resolution wanted for 1:1 display; layouts are submitted with it.
-    spec: RasterSpec,
-    settle: raster::Settle,
     /// Last display scale, for diagnostics.
     pixels_per_point: f32,
     drag: Option<selection::Drag>,
@@ -134,7 +125,6 @@ pub(crate) struct EditorSession {
 impl std::fmt::Debug for EditorSession {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("EditorSession")
-            .field("wanted", &self.wanted)
             .field("current", &self.current())
             .finish_non_exhaustive()
     }
@@ -168,15 +158,16 @@ impl EditorSession {
         state: &mut WorkspaceState,
         path: &std::path::Path,
     ) -> Result<Self, SessionError> {
-        let core = EditorCore::open(path).map_err(|error| match error {
-            scholium_session::typst::SessionError::NoInputLeaf => {
-                SessionError::Startup(error.to_string())
-            }
-            _ => error.into(),
-        })?;
         let wake = ctx.clone();
-        let worker = EditorWorker::spawn(move || wake.request_repaint())?;
-        let wanted = core.scene_stamp();
+        let mut core =
+            EditorCore::open_with_wake(path, move || wake.request_repaint()).map_err(|error| {
+                match error {
+                    scholium_session::typst::SessionError::NoInputLeaf => {
+                        SessionError::Startup(error.to_string())
+                    }
+                    _ => error.into(),
+                }
+            })?;
         // A guess until the first page is placed; the first re-raster corrects it.
         let spec = RasterSpec {
             px_per_pt: raster::forced_px_per_pt()
@@ -187,23 +178,21 @@ impl EditorSession {
             top_pt: 0.0,
             bottom_pt: INITIAL_VIEW_PT,
         };
-        worker.submit(core.snapshot.clone(), wanted, spec, view);
+        core.input(scholium_session::typst::Input::Viewport {
+            visible: view,
+            raster: spec,
+        })
+        .map_err(|error| SessionError::Startup(error.to_string()))?;
+        core.submit_layout();
         let mut result = Self {
             core,
-            worker,
-            wanted,
             drag: None,
             published: None,
             source_view: Default::default(),
             deferred: VecDeque::new(),
             placement: None,
             ime_anchor: None,
-            scene: None,
             texture: None,
-            spec,
-            view,
-            sent: Some((std::time::Instant::now(), view)),
-            settle: raster::Settle::default(),
             pixels_per_point: 1.0,
             focus: true,
             confirm_new: false,
@@ -234,7 +223,7 @@ impl EditorSession {
         // A click inside paint may have moved the caret out of a placeholder.
         self.settle_placeholder(state);
         // Saving while input waits for layout would persist a state the user never saw.
-        if self.deferred.is_empty() && std::mem::take(&mut state.save_requested) {
+        if self.core.deferred_len() == 0 && std::mem::take(&mut state.save_requested) {
             self.save(state);
             self.focus = true;
             ui.ctx().request_repaint();
@@ -251,19 +240,20 @@ impl EditorSession {
         }
     }
 
-    /// Submit the accepted core snapshot to the app-owned worker.
+    /// Submit the accepted core snapshot to the session-owned worker.
+    #[cfg(test)]
     fn publish(&mut self, state: &mut WorkspaceState) {
-        self.wanted = self.core.scene_stamp();
-        self.core.set_geometry(None, None);
-        self.worker
-            .submit(self.snapshot.clone(), self.wanted, self.spec, self.view);
-        self.sent = Some((std::time::Instant::now(), self.view));
+        self.core.submit_layout();
         state.edit_error = None;
         self.metadata(state);
     }
 
+    pub(super) fn scene(&self) -> Option<&EditorScene> {
+        self.core.current_scene()
+    }
+
     fn current(&self) -> bool {
-        self.scene.as_ref().is_some_and(|s| s.stamp == self.wanted) && self.layout_error.is_none()
+        self.core.scene_is_current() && self.layout_error.is_none()
     }
 
     /// Publishes view metadata; true when something the status bar shows changed.
@@ -289,7 +279,7 @@ impl EditorSession {
         self.shown_problems = problems.clone();
         let panel_open = state.diagnostics;
         let layout = panel_open
-            .then(|| self.scene.as_ref().map(scene::layout_stats))
+            .then(|| self.scene().map(scene::layout_stats))
             .flatten();
         let preview_page = (state.mode == crate::state::ViewMode::Source)
             .then(|| self.source_view.page_info())
@@ -308,7 +298,7 @@ impl EditorSession {
             view.active = self.active_styles();
             view.can_undo = !self.undo.is_empty();
             view.can_redo = !self.redo.is_empty();
-            view.shown_revision = self.scene.as_ref().map(|s| s.stamp.revision.0);
+            view.shown_revision = self.scene().map(|s| s.stamp.revision.0);
             view.pending = !self.current();
             view.problems = problems;
             view.rejected_input = self.rejected_input.clone();
@@ -328,7 +318,7 @@ impl EditorSession {
 
     fn controls(&mut self, ctx: &egui::Context, state: &mut WorkspaceState) {
         // Ribbon and history actions arrived after queued keys; keep them requested.
-        if self.deferred.is_empty() {
+        if self.core.deferred_len() == 0 {
             self.intents(state);
         }
         if std::mem::take(&mut state.new_requested) {
@@ -338,7 +328,7 @@ impl EditorSession {
             self.focus = true;
         }
         // Input still waiting for layout is not in the snapshot yet, but is unsaved work.
-        let dirty = self.core.dirty() || !self.deferred.is_empty();
+        let dirty = self.core.dirty() || self.core.deferred_len() != 0;
         // The tab's close button asks like the window's own close button does.
         let close_asked = std::mem::take(&mut state.close_requested);
         if (ctx.input(|i| i.viewport().close_requested()) || close_asked)

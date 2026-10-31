@@ -1,1 +1,188 @@
-{"name":"formula-fraction-superscript","inputs":[{"text":"$"},{"text":"12"},{"key":"Slash","mods":{"command":true}},{"text":"3"},{"key":"ArrowRight"},{"key":"Character","value":"^"},{"text":"2"},{"key":"ArrowRight"}],"expected":{"undo_depth":7}}
+{
+  "name": "formula-fraction-superscript",
+  "inputs": [
+    {
+      "text": "$",
+      "expected": {
+        "undo_depth": 1
+      }
+    },
+    {
+      "text": "12",
+      "expected": {
+        "undo_depth": 2
+      }
+    },
+    {
+      "key": "Slash",
+      "mods": {
+        "command": true
+      },
+      "expected": {
+        "undo_depth": 3
+      }
+    },
+    {
+      "text": "3",
+      "expected": {
+        "undo_depth": 4
+      }
+    },
+    {
+      "key": "Character",
+      "value": "^",
+      "expected": {
+        "undo_depth": 5
+      }
+    },
+    {
+      "text": "2",
+      "expected": {
+        "undo_depth": 6,
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": ""
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "math",
+                    "root": {
+                      "body": {
+                        "kind": "fraction",
+                        "numerator": {
+                          "body": {
+                            "kind": "text",
+                            "text": "12"
+                          }
+                        },
+                        "denominator": {
+                          "body": {
+                            "kind": "attach",
+                            "base": {
+                              "body": {
+                                "kind": "text",
+                                "text": "3"
+                              }
+                            },
+                            "sup": {
+                              "body": {
+                                "kind": "text",
+                                "text": "2"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": ""
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/denominator/body/sup",
+          "byte": 1,
+          "affinity": "Upstream"
+        },
+        "anchor": null
+      }
+    },
+    {
+      "key": "Character",
+      "value": "m",
+      "mods": {
+        "command": true
+      },
+      "expected": {
+        "undo_depth": 6
+      }
+    },
+    {
+      "text": ".",
+      "expected": {
+        "undo_depth": 7
+      }
+    }
+  ],
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": ""
+              }
+            },
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "kind": "fraction",
+                    "numerator": {
+                      "body": {
+                        "kind": "text",
+                        "text": "12"
+                      }
+                    },
+                    "denominator": {
+                      "body": {
+                        "kind": "attach",
+                        "base": {
+                          "body": {
+                            "kind": "text",
+                            "text": "3"
+                          }
+                        },
+                        "sup": {
+                          "body": {
+                            "kind": "text",
+                            "text": "2"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/2",
+      "byte": 1,
+      "affinity": "Upstream"
+    },
+    "anchor": null,
+    "undo_depth": 7
+  }
+}

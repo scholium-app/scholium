@@ -75,13 +75,24 @@ impl EditorWorker {
     /// # Errors
     /// Fails if the host cannot create a thread.
     pub fn spawn(wake: impl Fn() + Send + 'static) -> Result<Self, EditorError> {
+        Self::spawn_with_fonts(wake, crate::FontProfile::from_environment())
+    }
+
+    /// Spawn the same worker with explicit font sources, independent of host discovery.
+    ///
+    /// # Errors
+    /// Fails if the host cannot create a thread.
+    pub fn spawn_with_fonts(
+        wake: impl Fn() + Send + 'static,
+        fonts: crate::FontProfile,
+    ) -> Result<Self, EditorError> {
         let shared = Arc::new((Mutex::new(Mailbox::default()), Condvar::new()));
         let thread_shared = shared.clone();
         std::thread::Builder::new()
             .name("typst-content-editor".into())
             .spawn(move || {
-                let world = kernel::EditWorld::new();
-                let mut cache = ContentCache::default();
+                let world = kernel::EditWorld::with_fonts(fonts);
+                let mut cache = ContentCache::new(fonts);
                 let mut laid: Option<Laid> = None;
                 while let Some(work) = next(&thread_shared) {
                     // Poison cannot introduce an invalid result: every result retains its stamp.

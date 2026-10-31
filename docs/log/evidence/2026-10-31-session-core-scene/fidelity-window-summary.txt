@@ -1,0 +1,33 @@
+check                     result      seconds
+a4-surface [zh-Hans]      pass            7.0
+caret-follow [zh-Hans]    pass           33.8
+chrome [zh-Hans]          pass           27.4
+default-launch [zh-Hans]  pass            7.4
+diagnostics [zh-Hans]     pass           15.8
+inline-style [zh-Hans]    pass            5.8
+interaction [zh-Hans]     pass            8.5
+math-attach [zh-Hans]     pass            5.2
+math-enter [zh-Hans]      pass           12.1
+native [zh-Hans]          pass           16.7
+parity [zh-Hans]          pass           21.1
+sharp-raster [zh-Hans]    pass           57.8
+source-view [zh-Hans]     pass            6.0
+undo-group [zh-Hans]      pass            4.8
+a11y [zh-Hans]            pass            7.2
+a4-surface [en]           pass            6.5
+caret-follow [en]         pass           34.1
+chrome [en]               pass           27.1
+default-launch [en]       pass            7.5
+diagnostics [en]          pass           15.9
+inline-style [en]         pass            5.9
+interaction [en]          pass            8.6
+math-attach [en]          pass            5.3
+math-enter [en]           pass           12.0
+native [en]               pass           17.9
+parity [en]               pass           21.6
+sharp-raster [en]         pass           57.3
+source-view [en]          pass            6.1
+undo-group [en]           pass            4.8
+a11y [en]                 pass            6.9
+
+30/30 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t20-fidelity-final-window

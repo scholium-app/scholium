@@ -10,7 +10,7 @@ impl EditorSession {
         if !self.current() {
             return None;
         }
-        self.core.math_indicator(self.scene.as_ref()?)
+        self.core.math_indicator(self.scene()?)
     }
     pub(super) fn formula_overflows(&self) -> bool {
         self.math_indicator()

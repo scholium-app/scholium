@@ -1,1 +1,56 @@
-{"name":"triple-click-delete","inputs":[{"text":"paragraph to delete"},{"pointer":{"target":"end of leaf 0","kind":"Release","clicks":3}},{"key":"Delete"}],"expected":{"undo_depth":2}}
+{
+  "name": "triple-click-delete",
+  "inputs": [
+    {
+      "text": "paragraph to delete"
+    },
+    {
+      "pointer": {
+        "target": "end of leaf 0",
+        "kind": "Release",
+        "clicks": 3
+      },
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 19,
+          "affinity": "Upstream"
+        },
+        "anchor": {
+          "path": "blocks/0/content/0",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 1
+      }
+    },
+    {
+      "key": "Delete"
+    }
+  ],
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": ""
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/0",
+      "byte": 0,
+      "affinity": "Upstream"
+    },
+    "anchor": null,
+    "undo_depth": 2
+  }
+}

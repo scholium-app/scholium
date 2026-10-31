@@ -129,8 +129,19 @@ impl EditorSession {
                 ..
             }
         );
+        let multi_click = matches!(
+            &input,
+            Input::Pointer {
+                kind: scholium_session::typst::PointerKind::Release,
+                clicks: 2..,
+                ..
+            }
+        );
         match self.core.input(input) {
             Ok(outcome) => {
+                if multi_click && !outcome.applied && self.current() {
+                    state.edit_error = Some(selection::pointer_message());
+                }
                 if vertical_key && !outcome.applied && self.core.in_math() {
                     state.edit_error = Some(crate::i18n::text(
                         state.locale.resolve(),
@@ -166,13 +177,13 @@ impl EditorSession {
             self.drag = None;
         }
         if outcome.invalidate_scene {
-            self.scene = None;
             self.texture = None;
             self.focus = true;
         }
         self.rejected_input = self.core.rejected_input.clone();
         if outcome.changed || outcome.invalidate_scene {
-            self.publish(state);
+            state.edit_error = None;
+            self.metadata(state);
         }
         self.follow.sync_from_outcome(&outcome, &self.core.follow);
     }

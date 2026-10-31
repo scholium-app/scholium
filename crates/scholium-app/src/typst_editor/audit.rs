@@ -31,7 +31,7 @@ impl EditorSession {
         if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_none() {
             return;
         }
-        let carets: Vec<_> = self.scene.as_ref().into_iter().flat_map(|s| &s.geometry.carets).map(|c| json!({
+        let carets: Vec<_> = self.scene().into_iter().flat_map(|s| &s.geometry.carets).map(|c| json!({
             "leaf": format!("{:?}", c.position.leaf), "byte": c.position.byte,
             "affinity": format!("{:?}", c.position.affinity),
             "x": rect.left() + c.top[0] as f32 * scale,
@@ -55,26 +55,32 @@ impl EditorSession {
             json!({
                 "px_per_pt": layers.sharp_px_per_pt(), "width_px": width_px, "height_px": height_px,
                 "strips": strips, "base_px_per_pt": base,
-                "visible_sharp": layers.covers(self.view),
-                "wanted_px_per_pt": self.spec.px_per_pt,
+                "visible_sharp": layers.covers(self.core.visible_range()),
+                "wanted_px_per_pt": self.core.raster_spec().px_per_pt,
                 "pixels_per_point": ppp,
                 "displayed_width_px": rect.width() * ppp,
                 "page_left_px": rect.min.x * ppp, "page_top_px": rect.min.y * ppp,
             })
         });
+        let (wanted, shown) = self.core.scene_identities();
         let value = json!({
             "backend": "Typst Content main app", "current": self.current(),
-            "revision": self.snapshot.revision.0, "wanted": format!("{:?}", self.wanted),
-            "shown": self.scene.as_ref().map(|s| format!("{:?}", s.stamp)),
+            "revision": self.snapshot.revision.0, "wanted": wanted,
+            "shown": shown,
             "cursor_leaf": format!("{:?}", self.cursor.leaf), "cursor_byte": self.cursor.byte,
             "cursor_affinity": format!("{:?}", self.cursor.affinity),
+            "anchor_leaf": self.anchor.map(|p| format!("{:?}", p.leaf)),
+            "anchor_byte": self.anchor.map(|p| p.byte),
+            "anchor_affinity": self.anchor.map(|p| format!("{:?}", p.affinity)),
+            "undo_depth": self.undo.len(), "redo_depth": self.redo.len(),
             "saved": !self.core.dirty(),
             "snapshot": self.snapshot.as_ref(), "carets": carets, "page_text_draws": text_shapes,
-            "source_reads": self.scene.as_ref().map(|s| s.stats.source_reads),
+            "semantic": self.core.semantic_projection(),
+            "source_reads": self.scene().map(|s| s.stats.source_reads),
             "layout_error": self.layout_error,
             "selection": selection, "selection_quads": quads.as_ref().map(|q| q.len()).ok(),
             "selection_geometry_error": quads.err().map(|e| e.to_string()),
-            "body_leaves": body_leaves, "deferred": self.deferred.len(),
+            "body_leaves": body_leaves, "deferred": self.core.deferred_len(),
             "source_mode": source_mode, "preview": self.source_view.audit(),
             "raster": raster, "follow": self.follow_audit(),
             "formula_overflow": self.formula_overflows(),

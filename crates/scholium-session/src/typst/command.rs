@@ -110,6 +110,8 @@ pub enum CommandError {
 /// Accepted command result; persistence remains an explicit successful `save` operation.
 #[derive(Debug, Default)]
 pub struct Outcome {
+    /// When the host should poll a moving viewport's raster request again.
+    pub repaint_after: Option<std::time::Duration>,
     /// Authority changed or was restored (including a new layout lifetime).
     pub changed: bool,
     /// Whether a conditional operation applied or moved the caret.

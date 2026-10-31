@@ -8,7 +8,7 @@ use scholium_typst::editor::SelectionQuad;
 #[derive(Debug, Clone, Copy)]
 #[allow(dead_code)]
 pub(super) struct Drag {
-    stamp: SceneStamp,
+    identity: u64,
     placement: Option<(egui::Rect, f32)>,
 }
 
@@ -18,18 +18,7 @@ impl EditorSession {
     }
 
     pub(super) fn sync_geometry(&mut self) {
-        let geometry = self
-            .scene
-            .as_ref()
-            .filter(|scene| scene.stamp == self.wanted)
-            .map(|scene| scene.geometry.clone());
-        self.core.set_geometry(
-            geometry,
-            self.scene
-                .as_ref()
-                .filter(|scene| scene.stamp == self.wanted)
-                .map(|scene| scene.stamp),
-        );
+        self.core.sync_scene_geometry();
     }
     pub(super) fn replacement_proven(&self, state: &mut WorkspaceState) -> bool {
         if self.selected() && self.current() && self.selection_quads().is_err() {
@@ -86,7 +75,7 @@ impl EditorSession {
             } if rect.contains(*pos) => {
                 self.clicks.press(*pos, std::time::Instant::now());
                 self.drag = self.core.pointer_hit(at(*pos)).map(|_| Drag {
-                    stamp: self.wanted,
+                    identity: self.core.scene_token(),
                     placement: self.placement,
                 });
                 Input::Pointer {
@@ -110,7 +99,7 @@ impl EditorSession {
             }
             egui::Event::PointerMoved(pos)
                 if self.drag.is_some_and(|drag| {
-                    drag.stamp == self.wanted && drag.placement == self.placement
+                    drag.identity == self.core.scene_token() && drag.placement == self.placement
                 }) =>
             {
                 self.clicks.moved(*pos);
@@ -165,10 +154,9 @@ impl EditorSession {
 
     #[cfg(test)]
     pub(super) fn pointer_drag(&mut self, point: [f64; 2]) -> bool {
-        if !self
-            .drag
-            .is_some_and(|drag| drag.stamp == self.wanted && drag.placement == self.placement)
-        {
+        if !self.drag.is_some_and(|drag| {
+            drag.identity == self.core.scene_token() && drag.placement == self.placement
+        }) {
             self.drag = None;
             return false;
         }
@@ -183,7 +171,7 @@ impl EditorSession {
         let applied = self.core.pointer_start(point, shift);
         if applied && self.body_leaf(self.cursor.leaf) {
             self.drag = Some(Drag {
-                stamp: self.wanted,
+                identity: self.core.scene_token(),
                 placement: self.placement,
             });
         }
@@ -197,6 +185,7 @@ impl EditorSession {
         self.core.pointer_multi(point, clicks)
     }
 
+    #[cfg(test)]
     pub(super) fn pointer_clicks(
         &mut self,
         pos: egui::Pos2,
@@ -206,7 +195,7 @@ impl EditorSession {
         let Some((rect, scale)) = self.placement else {
             return;
         };
-        if !rect.contains(pos) || !self.current() || !self.deferred.is_empty() {
+        if !rect.contains(pos) || !self.current() || self.core.deferred_len() != 0 {
             return;
         }
         let point = (pos - rect.min) / scale;
@@ -217,9 +206,7 @@ impl EditorSession {
             mods: scholium_session::typst::Modifiers::default(),
         });
         match result {
-            Ok(outcome) if !outcome.applied => {
-                state.edit_error = Some("此位置没有精确的当前命中几何；可使用键盘导航。".into())
-            }
+            Ok(outcome) if !outcome.applied => state.edit_error = Some(pointer_message()),
             Err(error) => state.edit_error = Some(error.to_string()),
             _ => {}
         }
@@ -237,7 +224,7 @@ impl EditorSession {
         let Some((start, end)) = self.range()? else {
             return Ok(Vec::new());
         };
-        let scene = self.scene.as_ref().expect("current scene checked");
+        let scene = self.scene().expect("current scene checked");
         let inlines: Vec<_> = self
             .snapshot
             .blocks
@@ -286,6 +273,10 @@ impl EditorSession {
         }
         Ok(quads)
     }
+}
+
+pub(super) fn pointer_message() -> String {
+    "此位置没有精确的当前命中几何；可使用键盘导航。".into()
 }
 
 mod pointer;

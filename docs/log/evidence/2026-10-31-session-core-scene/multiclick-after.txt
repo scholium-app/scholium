@@ -1,0 +1,8 @@
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-session)
+    Finished `test` profile [unoptimized] target(s) in 0.69s
+     Running unittests src/lib.rs (target/debug/deps/scholium_session-389a88f8e81084e1)
+
+running 1 test
+test typst::runtime_tests::completed_multi_click_selects_word_or_paragraph_before_delete ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.79s

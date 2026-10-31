@@ -68,7 +68,9 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 `editor` feature 由 `scholium-app` 启用，并打开 `typst-layout/editor`；它要求根 workspace
 统一 patch 的锁定 fork 13 个库（[ADR 0036](../adr/ADR-0036-typst-default-editor.md)）。
 `typst-main-fork-check` 示例按同一 fixture 输出 fork 像素，供与独立 stock 参照逐像素比较。
-`EditorWorker::spawn(wake)` 在 CPU 线程驻留 World/字体和 Content cache；
+`EditorWorker::spawn(wake)` 在 CPU 线程驻留 World/字体和 Content cache；默认使用嵌入字体加宿主扫描，
+共享场景 headless worker 与 parity 窗口子进程通过 `SCHOLIUM_TEST_FONTS=bundled` 固定为应用打包 Noto Sans CJK 与 Typst embedded，禁止扫描宿主字体。
+World 创建后字体集不再改变；该验收 profile 不改变普通产品启动策略。
 `submit(Arc<StructuredDocument>, SceneStamp, RasterSpec, ViewRange)` 传递完整已接受快照、栅格分辨率与页面可见范围（pt），`poll()` 非阻塞返回
 带 stamp 的结果。队列和结果分别只保留最新一份派生工作；关闭不在 UI join。
 Scene 有两层：`base` 是整页、倍率不超过 1 px/pt（受页宽 ≤ `max_side` 与 `MAX_RASTER_PIXELS` = 64 MP 限制，仅作缺条带时的底图）；

@@ -1,0 +1,434 @@
+[
+  {
+    "file": "crates/scholium-app/src/typst_editor.rs",
+    "baseline_6fa1469": 417,
+    "before_0f68c05": 407,
+    "after": 407
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/access.rs",
+    "baseline_6fa1469": 267,
+    "before_0f68c05": 267,
+    "after": 267
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/access/runs.rs",
+    "baseline_6fa1469": 255,
+    "before_0f68c05": 255,
+    "after": 255
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/access/speech.rs",
+    "baseline_6fa1469": 106,
+    "before_0f68c05": 106,
+    "after": 106
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/access/tests.rs",
+    "baseline_6fa1469": 395,
+    "before_0f68c05": 395,
+    "after": 395
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/attach.rs",
+    "baseline_6fa1469": 7,
+    "before_0f68c05": 7,
+    "after": 7
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/attach/tests.rs",
+    "baseline_6fa1469": 444,
+    "before_0f68c05": 444,
+    "after": 444
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/audit.rs",
+    "baseline_6fa1469": 94,
+    "before_0f68c05": 100,
+    "after": 100
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/clipboard.rs",
+    "baseline_6fa1469": 14,
+    "before_0f68c05": 14,
+    "after": 14
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/command_keys_tests.rs",
+    "baseline_6fa1469": 107,
+    "before_0f68c05": 107,
+    "after": 107
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/confirm.rs",
+    "baseline_6fa1469": 49,
+    "before_0f68c05": 50,
+    "after": 50
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/core_adapter.rs",
+    "baseline_6fa1469": 75,
+    "before_0f68c05": 71,
+    "after": 71
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/deferred.rs",
+    "baseline_6fa1469": 114,
+    "before_0f68c05": 87,
+    "after": 87
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/diagnose.rs",
+    "baseline_6fa1469": 116,
+    "before_0f68c05": 113,
+    "after": 113
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/diagnose/tests.rs",
+    "baseline_6fa1469": 112,
+    "before_0f68c05": 112,
+    "after": 112
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/follow.rs",
+    "baseline_6fa1469": 98,
+    "before_0f68c05": 98,
+    "after": 98
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/follow_tests.rs",
+    "baseline_6fa1469": 228,
+    "before_0f68c05": 228,
+    "after": 228
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/history.rs",
+    "baseline_6fa1469": 39,
+    "before_0f68c05": 39,
+    "after": 39
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/history/tests.rs",
+    "baseline_6fa1469": 209,
+    "before_0f68c05": 209,
+    "after": 209
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/indicator.rs",
+    "baseline_6fa1469": 21,
+    "before_0f68c05": 21,
+    "after": 21
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/indicator/tests.rs",
+    "baseline_6fa1469": 167,
+    "before_0f68c05": 167,
+    "after": 167
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/input.rs",
+    "baseline_6fa1469": 227,
+    "before_0f68c05": 238,
+    "after": 238
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/math_enter.rs",
+    "baseline_6fa1469": 9,
+    "before_0f68c05": 9,
+    "after": 9
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/math_enter/tests.rs",
+    "baseline_6fa1469": 172,
+    "before_0f68c05": 172,
+    "after": 172
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/paint.rs",
+    "baseline_6fa1469": 283,
+    "before_0f68c05": 274,
+    "after": 274
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/raster.rs",
+    "baseline_6fa1469": 152,
+    "before_0f68c05": 103,
+    "after": 103
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/raster/layers.rs",
+    "baseline_6fa1469": 257,
+    "before_0f68c05": 213,
+    "after": 213
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/raster/tests.rs",
+    "baseline_6fa1469": 165,
+    "before_0f68c05": 165,
+    "after": 165
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/scene.rs",
+    "baseline_6fa1469": 44,
+    "before_0f68c05": 38,
+    "after": 38
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/selection.rs",
+    "baseline_6fa1469": 308,
+    "before_0f68c05": 299,
+    "after": 299
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/selection/pointer.rs",
+    "baseline_6fa1469": 39,
+    "before_0f68c05": 39,
+    "after": 39
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/selection/pointer_tests.rs",
+    "baseline_6fa1469": 364,
+    "before_0f68c05": 364,
+    "after": 364
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/selection/tests.rs",
+    "baseline_6fa1469": 467,
+    "before_0f68c05": 467,
+    "after": 467
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/source_view.rs",
+    "baseline_6fa1469": 464,
+    "before_0f68c05": 464,
+    "after": 464
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/source_view/tests.rs",
+    "baseline_6fa1469": 121,
+    "before_0f68c05": 121,
+    "after": 121
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/startup.rs",
+    "baseline_6fa1469": 54,
+    "before_0f68c05": 54,
+    "after": 54
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/startup/tests.rs",
+    "baseline_6fa1469": 113,
+    "before_0f68c05": 113,
+    "after": 113
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/style.rs",
+    "baseline_6fa1469": 13,
+    "before_0f68c05": 13,
+    "after": 13
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/style/tests.rs",
+    "baseline_6fa1469": 258,
+    "before_0f68c05": 258,
+    "after": 258
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/tests.rs",
+    "baseline_6fa1469": 502,
+    "before_0f68c05": 502,
+    "after": 502
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/vertical.rs",
+    "baseline_6fa1469": 16,
+    "before_0f68c05": 16,
+    "after": 16
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/vertical/tests.rs",
+    "baseline_6fa1469": 503,
+    "before_0f68c05": 503,
+    "after": 503
+  },
+  {
+    "file": "crates/scholium-app/src/typst_editor/window_tests.rs",
+    "baseline_6fa1469": 490,
+    "before_0f68c05": 490,
+    "after": 490
+  },
+  {
+    "file": "crates/scholium-session/src/lib.rs",
+    "baseline_6fa1469": 2,
+    "before_0f68c05": 2,
+    "after": 2
+  },
+  {
+    "file": "crates/scholium-session/src/typst.rs",
+    "baseline_6fa1469": 193,
+    "before_0f68c05": 206,
+    "after": 206
+  },
+  {
+    "file": "crates/scholium-session/src/typst/attach.rs",
+    "baseline_6fa1469": 135,
+    "before_0f68c05": 135,
+    "after": 135
+  },
+  {
+    "file": "crates/scholium-session/src/typst/checkpoint_bench.rs",
+    "baseline_6fa1469": 90,
+    "before_0f68c05": 90,
+    "after": 90
+  },
+  {
+    "file": "crates/scholium-session/src/typst/command.rs",
+    "baseline_6fa1469": 291,
+    "before_0f68c05": 293,
+    "after": 293
+  },
+  {
+    "file": "crates/scholium-session/src/typst/command/checkpoint.rs",
+    "baseline_6fa1469": 145,
+    "before_0f68c05": 145,
+    "after": 145
+  },
+  {
+    "file": "crates/scholium-session/src/typst/command/checkpoint/tests.rs",
+    "baseline_6fa1469": 68,
+    "before_0f68c05": 68,
+    "after": 68
+  },
+  {
+    "file": "crates/scholium-session/src/typst/deferred.rs",
+    "baseline_6fa1469": 0,
+    "before_0f68c05": 110,
+    "after": 110
+  },
+  {
+    "file": "crates/scholium-session/src/typst/diagnose.rs",
+    "baseline_6fa1469": 41,
+    "before_0f68c05": 41,
+    "after": 41
+  },
+  {
+    "file": "crates/scholium-session/src/typst/edit.rs",
+    "baseline_6fa1469": 60,
+    "before_0f68c05": 60,
+    "after": 60
+  },
+  {
+    "file": "crates/scholium-session/src/typst/events.rs",
+    "baseline_6fa1469": 218,
+    "before_0f68c05": 154,
+    "after": 154
+  },
+  {
+    "file": "crates/scholium-session/src/typst/follow.rs",
+    "baseline_6fa1469": 79,
+    "before_0f68c05": 79,
+    "after": 79
+  },
+  {
+    "file": "crates/scholium-session/src/typst/history.rs",
+    "baseline_6fa1469": 158,
+    "before_0f68c05": 158,
+    "after": 158
+  },
+  {
+    "file": "crates/scholium-session/src/typst/history/snapshot.rs",
+    "baseline_6fa1469": 29,
+    "before_0f68c05": 29,
+    "after": 29
+  },
+  {
+    "file": "crates/scholium-session/src/typst/indicator.rs",
+    "baseline_6fa1469": 145,
+    "before_0f68c05": 145,
+    "after": 145
+  },
+  {
+    "file": "crates/scholium-session/src/typst/input.rs",
+    "baseline_6fa1469": 550,
+    "before_0f68c05": 541,
+    "after": 541
+  },
+  {
+    "file": "crates/scholium-session/src/typst/key.rs",
+    "baseline_6fa1469": 195,
+    "before_0f68c05": 195,
+    "after": 195
+  },
+  {
+    "file": "crates/scholium-session/src/typst/math_enter.rs",
+    "baseline_6fa1469": 65,
+    "before_0f68c05": 65,
+    "after": 65
+  },
+  {
+    "file": "crates/scholium-session/src/typst/persistence.rs",
+    "baseline_6fa1469": 178,
+    "before_0f68c05": 185,
+    "after": 185
+  },
+  {
+    "file": "crates/scholium-session/src/typst/pointer.rs",
+    "baseline_6fa1469": 288,
+    "before_0f68c05": 325,
+    "after": 325
+  },
+  {
+    "file": "crates/scholium-session/src/typst/projection.rs",
+    "baseline_6fa1469": 0,
+    "before_0f68c05": 70,
+    "after": 70
+  },
+  {
+    "file": "crates/scholium-session/src/typst/raster.rs",
+    "baseline_6fa1469": 0,
+    "before_0f68c05": 59,
+    "after": 59
+  },
+  {
+    "file": "crates/scholium-session/src/typst/runtime.rs",
+    "baseline_6fa1469": 0,
+    "before_0f68c05": 213,
+    "after": 213
+  },
+  {
+    "file": "crates/scholium-session/src/typst/runtime_tests.rs",
+    "baseline_6fa1469": 0,
+    "before_0f68c05": 109,
+    "after": 109
+  },
+  {
+    "file": "crates/scholium-session/src/typst/scenario_tests.rs",
+    "baseline_6fa1469": 0,
+    "before_0f68c05": 150,
+    "after": 241
+  },
+  {
+    "file": "crates/scholium-session/src/typst/selection.rs",
+    "baseline_6fa1469": 139,
+    "before_0f68c05": 139,
+    "after": 139
+  },
+  {
+    "file": "crates/scholium-session/src/typst/style.rs",
+    "baseline_6fa1469": 166,
+    "before_0f68c05": 166,
+    "after": 166
+  },
+  {
+    "file": "crates/scholium-session/src/typst/tests.rs",
+    "baseline_6fa1469": 292,
+    "before_0f68c05": 292,
+    "after": 292
+  },
+  {
+    "file": "crates/scholium-session/src/typst/vertical.rs",
+    "baseline_6fa1469": 326,
+    "before_0f68c05": 326,
+    "after": 326
+  }
+]

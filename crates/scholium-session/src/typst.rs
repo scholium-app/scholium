@@ -1,6 +1,7 @@
-//! Typst local editing authority and atomic commands (ADR 0042, phase 1).
+//! Typst editing authority, abstract input and derived Scene runtime (ADR 0042).
 mod attach;
 mod command;
+mod deferred;
 mod diagnose;
 mod edit;
 mod events;
@@ -12,6 +13,13 @@ mod key;
 mod math_enter;
 mod persistence;
 pub mod pointer;
+mod projection;
+pub mod raster;
+mod runtime;
+#[cfg(test)]
+mod runtime_tests;
+#[cfg(test)]
+mod scenario_tests;
 mod selection;
 pub mod style;
 #[cfg(test)]
@@ -21,10 +29,12 @@ pub mod vertical;
 pub use command::{
     CommandArgs, CommandError, CommandId, FollowIntent, Outcome, OverlayData, Rejection,
 };
+pub use deferred::{Admission, DEFERRED_LIMIT, DeferredEvent, DeferredStep};
 pub use events::{FollowEdge, FollowState, Input, Key, Modifiers, PointerKind, PointerState};
 pub use history::Origin;
 use history::{HistoryEntry, RunKind};
 pub use persistence::{SessionError, prepare};
+use runtime::Runtime;
 use scholium_document::{
     BodyTextPosition, LocalSession, StructuralEdit, StructuralOutcome, StructuralRequest,
 };
@@ -49,6 +59,12 @@ pub struct Target {
 /// Local editing core. Public interaction fields are the phase-1 app adapter contract;
 /// document mutation and persistence go through commands and `save` respectively.
 pub struct EditorCore {
+    runtime: Option<Runtime>,
+    deferred: std::collections::VecDeque<DeferredEvent>,
+    /// Wanted complete layout identity, including the session lifetime.
+    pub wanted: SceneStamp,
+    /// Last adopted derived Scene, retained while newer layout is pending.
+    pub scene: Option<EditorScene>,
     /// Read-only authority access; mutable document methods are private to this crate.
     pub session: ReadAuthority,
     /// Read-only accepted document projection; never an independent authority.
@@ -78,12 +94,12 @@ pub struct EditorCore {
     /// Formula overflow targets from the current Scene.
     pub overflows: Vec<Target>,
     /// Last viewport supplied by the host, in page points.
-    pub visible: ViewRange,
+    pub view: ViewRange,
     /// Raster request supplied by the host.
     pub raster: RasterSpec,
     /// Last abstract pointer event, for drag continuity.
     pub pointer: Option<PointerState>,
-    /// Current Scene geometry supplied by the host adapter for semantic input.
+    /// Immutable geometry of the adopted current Scene for semantic input.
     pub geometry: Option<EditGeometry>,
     /// Scene identity associated with `geometry`.
     pub geometry_stamp: Option<SceneStamp>,
@@ -125,10 +141,7 @@ fn math_contains(node: &MathNode, leaf: scholium_model::NodeId) -> bool {
 }
 
 impl EditorCore {
-    /// Supply the latest current Scene geometry for semantic pointer and line input.
-    ///
-    /// The worker and Scene remain host-owned in this phase; only immutable geometry crosses
-    /// the boundary until the worker migration is completed.
+    /// Install immutable geometry while the session adopts or invalidates a Scene.
     pub fn set_geometry(&mut self, geometry: Option<EditGeometry>, stamp: Option<SceneStamp>) {
         self.geometry = geometry;
         self.geometry_stamp = stamp;

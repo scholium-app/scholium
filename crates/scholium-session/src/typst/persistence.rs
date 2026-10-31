@@ -16,6 +16,9 @@ pub enum SessionError {
     /// The filesystem could not be inspected.
     #[error(transparent)]
     Io(#[from] std::io::Error),
+    /// The derived layout worker could not start.
+    #[error(transparent)]
+    Worker(#[from] scholium_typst::editor::EditorError),
 }
 
 impl EditorCore {
@@ -42,6 +45,10 @@ impl EditorCore {
             .map(|l| l.id)
             .ok_or(SessionError::NoInputLeaf)?;
         Ok(Self {
+            runtime: None,
+            deferred: Default::default(),
+            wanted: session.scene_stamp(ProfileGeneration(0), ResourceGeneration(0)),
+            scene: None,
             session: ReadAuthority::new(session),
             snapshot,
             store,
@@ -61,7 +68,7 @@ impl EditorCore {
             layout_error: None,
             rejected_input: None,
             overflows: Vec::new(),
-            visible: ViewRange {
+            view: ViewRange {
                 top_pt: 0.0,
                 bottom_pt: 800.0,
             },
@@ -85,7 +92,7 @@ impl EditorCore {
         &self.session
     }
 
-    /// Allocate a Scene identity for the current authority; scenes are owned by app.
+    /// Allocate a complete Scene identity for the current authority.
     pub fn scene_stamp(&self) -> SceneStamp {
         self.session
             .scene_stamp(ProfileGeneration(0), ResourceGeneration(0))

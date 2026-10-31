@@ -63,10 +63,7 @@ impl EditorSession {
             };
             list.push(found.at(at, self.excerpt_near(target.node)));
         }
-        let caret = self
-            .scene
-            .as_ref()
-            .and_then(|s| s.geometry.caret(self.cursor));
+        let caret = self.scene().and_then(|s| s.geometry.caret(self.cursor));
         if caret.is_none() {
             let at = Target {
                 node: self.cursor.leaf,

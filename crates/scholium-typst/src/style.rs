@@ -67,8 +67,8 @@ pub fn preamble() -> String {
          #set text(font: ({body}), size: {BODY_SIZE_PT}pt, lang: \"{LANG}\", region: \"{REGION}\")\n\
          #show heading: set text(font: ({heading}), weight: \"bold\")\n\
          #set par(justify: true, leading: {LEADING_EM}em, first-line-indent: (amount: {FIRST_LINE_INDENT_EM}em, all: true))",
-        body = font_list(BODY_FONTS),
-        heading = font_list(HEADING_FONTS),
+        body = font_list(crate::FontProfile::from_environment().body(BODY_FONTS)),
+        heading = font_list(crate::FontProfile::from_environment().body(HEADING_FONTS)),
     );
     out
 }

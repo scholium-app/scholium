@@ -39,9 +39,11 @@ impl std::fmt::Debug for EditWorld {
 
 impl EditWorld {
     pub(crate) fn new() -> Self {
-        let mut fonts = FontStore::new();
-        fonts.extend(typst_kit::fonts::embedded());
-        fonts.extend(typst_kit::fonts::system());
+        Self::with_fonts(crate::FontProfile::from_environment())
+    }
+
+    pub(crate) fn with_fonts(profile: crate::FontProfile) -> Self {
+        let fonts = profile.load();
         let mut library = Library::default();
         library.editing = true;
         let main = RootedPath::new(

@@ -39,6 +39,7 @@ impl EditorSession {
             {
                 self.drag = None;
                 self.deferred.clear();
+                self.core.clear_deferred();
                 state.composition = None;
                 self.focus = true;
             }

@@ -74,7 +74,7 @@ impl EditorSession {
         {
             return;
         }
-        let scene = self.scene.as_ref().filter(|_| current);
+        let scene = self.scene().filter(|_| current);
         self.published = Some(Published {
             snapshot: self.snapshot.clone(),
             current,
@@ -176,7 +176,7 @@ impl EditorSession {
         selection: TextSelection,
         state: &WorkspaceState,
     ) -> Result<(), &'static str> {
-        if !self.deferred.is_empty() || state.composition.is_some() {
+        if self.core.deferred_len() != 0 || state.composition.is_some() {
             return Err("排版更新或输入法组合期间不接受辅助技术选区。");
         }
         let published = self

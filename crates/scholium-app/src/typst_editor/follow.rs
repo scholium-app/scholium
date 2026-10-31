@@ -84,10 +84,10 @@ impl EditorSession {
 impl EditorSession {
     /// Caret and visible page range in pt, for window checks.
     pub(super) fn follow_audit(&self) -> Option<serde_json::Value> {
-        let caret = self.scene.as_ref()?.geometry.caret(self.cursor)?;
+        let caret = self.scene()?.geometry.caret(self.cursor)?;
         Some(serde_json::json!({
             "caret_top_pt": caret.top[1], "caret_bottom_pt": caret.bottom[1],
-            "view_top_pt": self.view.top_pt, "view_bottom_pt": self.view.bottom_pt,
+            "view_top_pt": self.core.visible_range().top_pt, "view_bottom_pt": self.core.visible_range().bottom_pt,
             "margin_lines": FOLLOW_MARGIN_LINES, "pending": self.follow.pending,
         }))
     }
