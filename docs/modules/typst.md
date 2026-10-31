@@ -118,6 +118,23 @@ inline 包装身份没有对应 bounds 时不得猜矩形。所有四角与 rast
 端点选择与编辑请求仍由 app/core 负责，adapter 不修改权威或从 markup 偏移猜选框。
 SceneStats 记录 built/reused/source_reads/elapsed，不能作为物理刷新或分页性能证明。
 
+## 上游跟进
+
+- fork 基线只钉在 Typst 正式发布版。当前是 v0.15.1（`9dfd3a0`），这个提交在上游 `0.15` 发布分支上，不在 main 上。
+  `vendor/typst-edit` 只随新版本发布整体移动，并作为单独任务完成。
+- 每周一 03:17 UTC，`.github/workflows/typst-upstream.yml` 运行 `scripts/typst-upstream-drift.py`（也可手动触发），
+  对上游 main 依次检查三个阶段：
+  1. 四份补丁能否应用：clean 表示直接应用，merged 表示 git 三方合并成功，conflict 表示需要人工解决。
+  2. `scholium-typst --features editor` 能否针对打补丁的树编译。
+  3. 打补丁的树与同一提交、未打补丁的上游是否逐像素一致。
+
+  退出码 1/2/3 表示第一个失败的阶段。结果表写入 job summary，日志作为 artifact 上传。这个 job 不在 push 或 PR 上运行，
+  不阻塞 PR，也不自动开 issue。上游不接受 AI 编写的代码，跟进只在本仓库内进行，不向 typst/typst 提交任何内容。
+- 新版本发布时，以 drift job 最近一次绿灯运行的状态为起点做 rebase。只要结果还停在 conflict，就以结果表列出的冲突文件和上游提交为准，
+  并参照最近一次试 rebase 留下的补丁序列和 adapter 改动（见下方开发日志）。
+- 补丁规模预算：13 个库相对上游的净新增少于 600 行。当前净新增 592 行，删除 16 行，涉及 21 个文件。
+  会超出预算的新能力，优先放在 adapter 里实现。2026-10-31 的试 rebase 见[开发日志](../log/2026-10-31-typst-upstream-tracking.md)。
+
 ## 不变量
 
 - 生成相同 SDG 和 profile 得到相同源码。

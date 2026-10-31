@@ -1,0 +1,41 @@
+name: Typst upstream drift
+# Weekly: apply the fork's tracked patches to upstream Typst main, build the adapter against the patched
+# tree, and compare its pixels with unpatched upstream at the same commit (scripts/typst-upstream-drift.py).
+# It tracks an external moving target, so it never runs on push or pull_request and never blocks a PR.
+# It opens no issues; read the job summary.
+on:
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Upstream typst/typst branch, tag or commit
+        default: main
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  drift:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+        with:
+          cache-key: typst-upstream
+          cache-workspaces: . -> target/typst-upstream
+      - name: Clone upstream Typst (full history names the commits behind a conflict)
+        run: git clone --quiet --no-checkout https://github.com/typst/typst.git /tmp/typst-upstream
+      - name: Patches, adapter build, pixels
+        env:
+          UPSTREAM_REF: ${{ inputs.ref || 'main' }}
+        run: |
+          python3 scripts/typst-upstream-drift.py /tmp/typst-upstream --ref "$UPSTREAM_REF" \
+            --work /tmp/typst-upstream-work --summary "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: typst-upstream-drift
+          path: /tmp/typst-upstream-work/logs
