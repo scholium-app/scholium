@@ -1,0 +1,10 @@
+== verify /project (main.tex)
+capture: 39 paragraphs, 6 pages (1.1s, 2 passes); clean build 1.0s (2 passes)
+T3 (instrumented PDF == clean PDF): true
+server ready in 0.66s
+layer 1 (fast vs extractor): 30 eligible of 30 units; 30 compiled; 5510/5510 glyphs identical; 0 units with differences
+  env:itemize         3 units,   0 with differences, round trip median 2.296 ms, max 2.305 ms
+  env:theorem         3 units,   0 with differences, round trip median 2.847 ms, max 25.051 ms
+  heading:section     3 units,   0 with differences, round trip median 0.989 ms, max 26.326 ms
+  par                21 units,   0 with differences, round trip median 1.915 ms, max 31.428 ms
+layer 2 (pages vs PDF content stream): 6 pages, 6 exact, 0 degraded (PDF fallback), pass=true; worst anchored dx 0.00051 bp, worst interior dx 0.00997 bp

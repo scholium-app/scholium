@@ -1,0 +1,248 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(/project/main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+(/usr/share/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(/usr/share/texmf-dist/tex/latex/base/size10.clo))
+(/usr/share/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/share/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/share/texmf-dist/tex/latex/amscls/amsthm.sty)
+(/usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def)
+No file main.aux.
+(/usr/share/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texmf-dist/tex/latex/amsfonts/umsb.fd)
+
+LaTeX Warning: Reference `eq:1' on page 1 undefined on input line 15.
+
+
+LaTeX Warning: Reference `sec:1' on page 1 undefined on input line 15.
+
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf-dist/fon
+ts/enc/dvips/cm-super/cm-super-ts1.enc}]
+
+LaTeX Warning: Reference `eq:2' on page 2 undefined on input line 43.
+
+
+LaTeX Warning: Reference `sec:2' on page 2 undefined on input line 43.
+
+[2] [3]
+
+LaTeX Warning: Reference `eq:3' on page 4 undefined on input line 71.
+
+
+LaTeX Warning: Reference `sec:3' on page 4 undefined on input line 71.
+
+[4]
+
+LaTeX Warning: Reference `eq:4' on page 5 undefined on input line 99.
+
+
+LaTeX Warning: Reference `sec:4' on page 5 undefined on input line 99.
+
+[5] [6]
+
+LaTeX Warning: Reference `eq:5' on page 7 undefined on input line 127.
+
+
+LaTeX Warning: Reference `sec:5' on page 7 undefined on input line 127.
+
+[7]
+
+LaTeX Warning: Reference `eq:6' on page 8 undefined on input line 155.
+
+
+LaTeX Warning: Reference `sec:6' on page 8 undefined on input line 155.
+
+[8]
+
+LaTeX Warning: Reference `eq:7' on page 9 undefined on input line 183.
+
+
+LaTeX Warning: Reference `sec:7' on page 9 undefined on input line 183.
+
+[9] [10]
+
+LaTeX Warning: Reference `eq:8' on page 11 undefined on input line 211.
+
+
+LaTeX Warning: Reference `sec:8' on page 11 undefined on input line 211.
+
+[11]
+
+LaTeX Warning: Reference `eq:9' on page 12 undefined on input line 239.
+
+
+LaTeX Warning: Reference `sec:9' on page 12 undefined on input line 239.
+
+[12] [13]
+
+LaTeX Warning: Reference `eq:10' on page 14 undefined on input line 267.
+
+
+LaTeX Warning: Reference `sec:10' on page 14 undefined on input line 267.
+
+[14]
+
+LaTeX Warning: Reference `eq:11' on page 15 undefined on input line 295.
+
+
+LaTeX Warning: Reference `sec:11' on page 15 undefined on input line 295.
+
+[15] [16]
+
+LaTeX Warning: Reference `eq:12' on page 17 undefined on input line 323.
+
+
+LaTeX Warning: Reference `sec:12' on page 17 undefined on input line 323.
+
+[17]
+
+LaTeX Warning: Reference `eq:13' on page 18 undefined on input line 351.
+
+
+LaTeX Warning: Reference `sec:13' on page 18 undefined on input line 351.
+
+[18] [19]
+
+LaTeX Warning: Reference `eq:14' on page 20 undefined on input line 379.
+
+
+LaTeX Warning: Reference `sec:14' on page 20 undefined on input line 379.
+
+[20]
+
+LaTeX Warning: Reference `eq:15' on page 21 undefined on input line 407.
+
+
+LaTeX Warning: Reference `sec:15' on page 21 undefined on input line 407.
+
+[21]
+Overfull \hbox (2.2299pt too wide) in paragraph at lines 423--424
+\OT1/cmr/m/n/10 para-graph, marked by QZge, for ex-am-ple $\OML/cmm/m/it/10 n\O
+T1/cmr/m/n/10 !$. Glyph-by-glyph com-par-i-son catches
+[22]
+
+LaTeX Warning: Reference `eq:16' on page 23 undefined on input line 435.
+
+
+LaTeX Warning: Reference `sec:16' on page 23 undefined on input line 435.
+
+[23]
+
+LaTeX Warning: Reference `eq:17' on page 24 undefined on input line 463.
+
+
+LaTeX Warning: Reference `sec:17' on page 24 undefined on input line 463.
+
+[24]
+Overfull \hbox (4.67186pt too wide) in paragraph at lines 479--480
+[]\OT1/cmr/m/n/10 Glyph-by-glyph com-par-i-son catches tiny po-si-tion dif-fer-
+ences. Cross-references
+[25]
+
+LaTeX Warning: Reference `eq:18' on page 26 undefined on input line 491.
+
+
+LaTeX Warning: Reference `sec:18' on page 26 undefined on input line 491.
+
+[26]
+
+LaTeX Warning: Reference `eq:19' on page 27 undefined on input line 519.
+
+
+LaTeX Warning: Reference `sec:19' on page 27 undefined on input line 519.
+
+[27]
+
+LaTeX Warning: Reference `eq:20' on page 28 undefined on input line 547.
+
+
+LaTeX Warning: Reference `sec:20' on page 28 undefined on input line 547.
+
+[28] [29]
+
+LaTeX Warning: Reference `eq:21' on page 30 undefined on input line 575.
+
+
+LaTeX Warning: Reference `sec:21' on page 30 undefined on input line 575.
+
+[30]
+
+LaTeX Warning: Reference `eq:22' on page 31 undefined on input line 603.
+
+
+LaTeX Warning: Reference `sec:22' on page 31 undefined on input line 603.
+
+[31]
+
+LaTeX Warning: Reference `eq:23' on page 32 undefined on input line 631.
+
+
+LaTeX Warning: Reference `sec:23' on page 32 undefined on input line 631.
+
+[32] [33]
+
+LaTeX Warning: Reference `eq:24' on page 34 undefined on input line 659.
+
+
+LaTeX Warning: Reference `sec:24' on page 34 undefined on input line 659.
+
+[34]
+
+LaTeX Warning: Reference `eq:25' on page 35 undefined on input line 687.
+
+
+LaTeX Warning: Reference `sec:25' on page 35 undefined on input line 687.
+
+[35] [36]
+
+LaTeX Warning: Reference `eq:26' on page 37 undefined on input line 715.
+
+
+LaTeX Warning: Reference `sec:26' on page 37 undefined on input line 715.
+
+[37]
+
+LaTeX Warning: Reference `eq:27' on page 38 undefined on input line 743.
+
+
+LaTeX Warning: Reference `sec:27' on page 38 undefined on input line 743.
+
+[38]
+Overfull \hbox (11.10138pt too wide) in paragraph at lines 757--757
+\OT1/cmr/bx/n/10 Theorem 27. \OT1/cmr/m/it/10 Glyph-by-glyph com-par-i-son catc
+hes tiny po-si-tion dif-fer-ences. Glyph-
+
+LaTeX Warning: Reference `eq:28' on page 39 undefined on input line 771.
+
+
+LaTeX Warning: Reference `sec:28' on page 39 undefined on input line 771.
+
+[39] [40] [41] (/work/main.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ )
+(see the transcript file for additional information)</usr/share/texmf-dist/font
+s/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></us
+r/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb
+></usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
+Output written on /work/main.pdf (41 pages, 222189 bytes).
+Transcript written on /work/main.log.

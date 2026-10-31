@@ -62,6 +62,14 @@ case "${SCHOLIUM_SANDBOX_PROFILE:-full}" in
     # Resolve that snapshot before the immutable original with the same filename.
     texinputs=.:/project:
     runtime_env=(--setenv RTEX_TEXLIVE_BIN "$rtex_texlive_bin" --setenv RTEX_TEXDIR /rtex/tex)
+    # Opt-in, trusted harness only: a writable TEXMFVAR directory (luaotfload font cache) that
+    # outlives the session, instead of the per-session tmpfs. luaotfload needs it writable.
+    if [ -n "${SCHOLIUM_RTEX_FONT_CACHE:-}" ]; then
+      font_cache="$(realpath -e "$SCHOLIUM_RTEX_FONT_CACHE")"
+      [ -d "$font_cache" ] || exit 2
+      mounts+=(--bind "$font_cache" /rtex/texmf-var)
+      runtime_env+=(--setenv TEXMFVAR /rtex/texmf-var)
+    fi
     ;;
   full|recovery)
     runtime_tools=(bash sh xelatex xetex xdvipdfmx kpsewhich paper paperconf prlimit

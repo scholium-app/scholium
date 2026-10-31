@@ -1,0 +1,254 @@
+[
+ {
+  "scenario": "live engine SIGKILL",
+  "baseline": {
+   "routed": "fast",
+   "edit_id": 1,
+   "update": "ParagraphUpdate",
+   "status": "ok",
+   "reasons": [],
+   "latency_s": 0.021
+  },
+  "killed": [
+   "lualatex"
+  ],
+  "recovered_live_s": 15.128,
+  "layout_after": {
+   "event": "LayoutUpdate",
+   "compile": {
+    "state": "Ok"
+   },
+   "convergence": {
+    "state": "Converged"
+   },
+   "wall_ms": 447,
+   "pages_total": 1,
+   "source_revision": 6,
+   "engine_generation": 0
+  },
+  "sandbox_alive": true,
+  "engine_states": [
+   {
+    "t": 0.023,
+    "state": "Restarting",
+    "reason": "set_context: server closed the response channel"
+   },
+   {
+    "t": 0.023,
+    "state": "Starting",
+    "reason": null
+   },
+   {
+    "t": 0.698,
+    "state": "Ready",
+    "reason": null
+   }
+  ],
+  "edit_after_kill": {
+   "edit_id": 3,
+   "routed": "fast",
+   "own_update": null
+  },
+  "first_ok_update_after_kill_s": 15.126
+ },
+ {
+  "scenario": "live and background hang",
+  "watchdog_s": null,
+  "tex_processes_at_end": [
+   0.29,
+   0.32
+  ],
+  "loop_removed_at_s": 8.018,
+  "other_unit_edit": null,
+  "engine_states": [
+   {
+    "t": -17.581,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": -1.856,
+    "state": "Ready",
+    "reason": ""
+   },
+   {
+    "t": 5.016,
+    "state": "Restarting",
+    "reason": "engine watchdog: no response within 5s; server killed"
+   },
+   {
+    "t": 5.016,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 5.314,
+    "state": "Ready",
+    "reason": ""
+   }
+  ],
+  "follow_up_edit": {
+   "routed": "fast",
+   "reasons": []
+  },
+  "layouts": [
+   {
+    "t": -0.0,
+    "t_after_fix": -8.02,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Converged",
+    "wall_ms": 17578,
+    "source_revision": 1
+   },
+   {
+    "t": 34.894,
+    "t_after_fix": 26.88,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Stale",
+    "wall_ms": 29578,
+    "source_revision": 6
+   },
+   {
+    "t": 64.634,
+    "t_after_fix": 56.62,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Stale",
+    "wall_ms": 59318,
+    "source_revision": 6
+   },
+   {
+    "t": 65.412,
+    "t_after_fix": 57.39,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Converged",
+    "wall_ms": 477,
+    "source_revision": 6
+   }
+  ],
+  "diagnostics": [
+   {
+    "t": 5.016,
+    "event": "Diagnostics",
+    "source": "fast:ParaId(3)",
+    "items": [
+     {
+      "severity": "error",
+      "line": null,
+      "message": "engine watchdog: no response within 5s; server killed"
+     }
+    ]
+   }
+  ],
+  "layout_recovered_after_fix_s": 57.39
+ },
+ {
+  "scenario": "live and background hang",
+  "watchdog_s": 8,
+  "tex_processes_at_end": [
+   0.36,
+   0.47
+  ],
+  "watchdog_kills": [
+   {
+    "t": 13.37,
+    "pid": 188023,
+    "active_s": 8.12,
+    "cpu_s": 8.28
+   },
+   {
+    "t": 21.46,
+    "pid": 188038,
+    "active_s": 8.09,
+    "cpu_s": 8.38
+   }
+  ],
+  "loop_removed_at_s": 8.078,
+  "other_unit_edit": null,
+  "engine_states": [
+   {
+    "t": -9.496,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": -0.232,
+    "state": "Ready",
+    "reason": ""
+   },
+   {
+    "t": 5.076,
+    "state": "Restarting",
+    "reason": "engine watchdog: no response within 5s; server killed"
+   },
+   {
+    "t": 5.076,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 5.537,
+    "state": "Ready",
+    "reason": ""
+   }
+  ],
+  "follow_up_edit": {
+   "routed": "fast",
+   "reasons": []
+  },
+  "layouts": [
+   {
+    "t": 13.381,
+    "t_after_fix": 5.3,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Stale",
+    "wall_ms": 8004,
+    "source_revision": 6
+   },
+   {
+    "t": 21.478,
+    "t_after_fix": 13.4,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Stale",
+    "wall_ms": 16101,
+    "source_revision": 6
+   },
+   {
+    "t": 22.344,
+    "t_after_fix": 14.27,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Converged",
+    "wall_ms": 565,
+    "source_revision": 6
+   }
+  ],
+  "diagnostics": [
+   {
+    "t": 5.076,
+    "event": "Diagnostics",
+    "source": "fast:ParaId(3)",
+    "items": [
+     {
+      "severity": "error",
+      "line": null,
+      "message": "engine watchdog: no response within 5s; server killed"
+     }
+    ]
+   }
+  ],
+  "layout_recovered_after_fix_s": 14.27
+ }
+]

@@ -1,0 +1,23 @@
+[package]
+name = "rtex-eval-raster"
+version = "0.0.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+rust-version = "1.96"
+publish = false
+description = "T18 E4/E6 prototype: rasterize rtex display lists and PDF pages, compare ink"
+
+# 独立 workspace：评估原型不进入根 workspace 的依赖图（spikes/README.md）。
+[workspace]
+
+[dependencies]
+# PDF fallback rasterizer under evaluation (MIT OR Apache-2.0, pure Rust).
+hayro = "=0.8.0"
+# Outlines for OpenType/CFF/TrueType and Type 1 fonts; the same version hayro uses.
+skrifa = "=0.46.0"
+tiny-skia = "=0.12.0"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+debug = false

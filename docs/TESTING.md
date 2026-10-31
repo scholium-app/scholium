@@ -113,8 +113,13 @@ Iced → GPUI → C++ EUI-NEO → Slint 或 egui 使用 [同一验收集](plan/N
   test（一次编译后跑 `cargo test` 和两种语言的真实窗口检查）。fork 与 stock Typst 的像素对照在 `typst-fork.yml`，
   只在 fork、`scholium-typst`、参考实现、锁文件或工具链变动时运行。
   `push` 只在 `main` 触发，PR 只由 `pull_request` 触发，同一 PR 的新推送取消旧运行。
+- 所有 workflow 显式固定同一个 runner 镜像 `ubuntu-26.04`，不用 `ubuntu-latest`：镜像升级会同时换掉 Xvfb、xkb-data
+  和 xdotool，真实窗口检查对此敏感，换镜像必须是一个单独审查的 PR（经过见
+  [ubuntu-26.04 窗口检查记录](log/2026-10-30-ubuntu-2604-window.md)）。
 - 真实窗口检查统一由 `python3 scripts/window-checks.py` 运行（自动发现、顺序执行、不重试、机器级锁），
   新增检查无需修改 `rust.yml`，见 `spikes/typst-main-editor/README.md`。
+  功能键（F1–F12）组合键按键码发送（`chrome_ui.keycode`，如 `ctrl+67`），不要写 `ctrl+F1`：Ubuntu 的 xdotool 3.20160805
+  在 xkeyboard-config ≥ 2.46 下会给功能键 keysym 自动加上 Alt。
 
 ## WASM 与跨宿主验证
 
