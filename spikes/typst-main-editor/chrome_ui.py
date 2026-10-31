@@ -10,6 +10,7 @@ Surfaces: menubar, menu (open menu rows), toolbar, overflow (open "»" list), fo
 status. Ids of chrome that is not a command start with `ui.` (`ui.menu.file`,
 `ui.toolbar.overflow`, `ui.menu.format.paragraph_style`, `ui.tab`).
 """
+import ctypes
 import re
 import time
 from pathlib import Path
@@ -39,6 +40,34 @@ def catalog(locale):
 def title(locale, command_id):
     """The catalog title of a command in `locale`."""
     return catalog(locale)["command-" + command_id.replace(".", "-") + ".title"]
+
+
+def keycode(display, keysym):
+    """The keycode of `keysym` in the X server's keymap, for xdotool chords such as `ctrl+67`.
+
+    Ubuntu's xdotool (3.20160805, still on 26.04) presses a keysym together with the modifiers
+    of the first key-type entry that reaches the keysym's level. From xkeyboard-config 2.46 the
+    function keys' CTRL+ALT type lists `map[Alt]= Level1` first, so `ctrl+F1` became
+    Ctrl+Alt+F1 = XF86Switch_VT_1, which the server consumes (upstream xdotool#491). A numeric
+    keycode is sent without inferred modifiers."""
+    x11 = ctypes.CDLL("libX11.so.6")
+    x11.XOpenDisplay.argtypes = [ctypes.c_char_p]
+    x11.XOpenDisplay.restype = ctypes.c_void_p
+    x11.XStringToKeysym.argtypes = [ctypes.c_char_p]
+    x11.XStringToKeysym.restype = ctypes.c_ulong
+    x11.XKeysymToKeycode.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
+    x11.XKeysymToKeycode.restype = ctypes.c_ubyte
+    x11.XCloseDisplay.argtypes = [ctypes.c_void_p]
+    connection = x11.XOpenDisplay(display.encode())
+    if not connection:
+        raise RuntimeError(f"cannot open X display {display}")
+    try:
+        code = x11.XKeysymToKeycode(connection, x11.XStringToKeysym(keysym.encode()))
+    finally:
+        x11.XCloseDisplay(connection)
+    if not code:
+        raise RuntimeError(f"keysym {keysym} is not in the keymap of {display}")
+    return code
 
 
 class Chrome:

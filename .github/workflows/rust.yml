@@ -12,11 +12,11 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 permissions:
   contents: read
-# Pinned: ubuntu-latest moved to 26.04 on 2026-10-21 and the real-window checks fail there
-# (xdotool Ctrl+F1 no longer toggles the toolbars); move only after they pass on the new image.
+# Every workflow pins the same runner image explicitly (never ubuntu-latest): an image change
+# alters Xvfb, xkb-data and xdotool under the real-window checks, so it lands as a reviewed PR.
 jobs:
   lint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +41,7 @@ jobs:
           python3 scripts/check-doc-links.py
   # Unit tests and both locales of the real-window checks share one build.
   test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
