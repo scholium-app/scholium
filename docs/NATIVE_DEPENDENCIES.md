@@ -63,7 +63,7 @@ ABI 只传递整数，无指针或跨边界内存所有权。调用限定在 `Co
 
 | 工具 | 版本 | 许可 | 调用方式 | 分发义务 |
 |---|---|---|---|---|
-| TeX Live（`xelatex` / `pdflatex` / `latexmk`） | 2026（`texlive-bin 2026.0-2`、`texlive-core 2026.1-1`） | GPL-2.0-or-later / GPL（latexmk 亦为 GPL 系） | **独立子进程**，本阶段用于 LaTeX 构建与验证 | 若随安装包分发二进制，须单独履行 GPL 义务并在此登记；当前仅依赖用户系统安装 |
+| TeX Live（`xelatex` / `pdflatex` / `lualatex` / `latexmk`） | 2026（`texlive-bin 2026.0-2`、`texlive-core 2026.1-1`） | GPL-2.0-or-later / GPL（latexmk 亦为 GPL 系） | **独立子进程**，本阶段用于 LaTeX 构建与验证 | 若随安装包分发二进制，须单独履行 GPL 义务并在此登记；当前仅依赖用户系统安装 |
 | [bubblewrap](https://github.com/containers/bubblewrap)（`bwrap`） | 0.12.0-1 | LGPL-2.1-or-later | **独立子进程**，用于把不可信构建放进 OS 级沙箱 | 同上；动态链接由发行版提供 |
 
 **安全边界（阶段 0 实测，见[报告 0011](spikes/SPK-0011-untrusted-input.md)）**：

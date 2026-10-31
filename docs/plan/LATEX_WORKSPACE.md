@@ -37,6 +37,9 @@ latex 内核
 
 ## L0：实时预览引擎评估（选型前置）
 
+已完成，由 [ADR 0043](../adr/ADR-0043-rtex-live-preview.md) 裁决：rtex 作为沙箱内子进程采用，附带宿主兜底条件。
+两轮证据见[第一轮](../log/2026-10-30-rtex-evaluation.md)与[第二轮](../log/2026-10-30-rtex-evaluation-2.md)日志。
+
 rtex 是第三方核心选型，须先评估再立 ADR。证据写入 `docs/log/YYYY-MM-DD-rtex-evaluation.md`，
 原始数据放 `docs/log/evidence/rtex-evaluation/`。逐项判定：
 
@@ -45,7 +48,7 @@ rtex 是第三方核心选型，须先评估再立 ADR。证据写入 `docs/log/
 | E1 | 许可与依赖 | 锁定版本通过 `cargo deny`；原生依赖登记；TeX Live 仍为用户安装的独立子进程 |
 | E2 | 沙箱 | `rtex serve` + LuaLaTeX 在现有 OS 沙箱与固定运行时白名单内正常工作；负对照：Lua `io.open` 读白名单外文件、`\input` 绝对路径、shell escape、写出构建目录外均失败 |
 | E3 | 中文 | ctex（LuaLaTeX）与 luatexja 夹具：实时单元占比、单段 p50/p95 时延、`rtex verify` 逐字形一致 |
-| E4 | 绘制 | display list 在 egui 纹理中的栅格结果与 PDF 栅格未匹配墨迹 ≤ 1%；含 TikZ 的页面经 PDF 回退正确显示。PDF 栅格化候选为 hayro（MIT/Apache-2.0，纯 Rust）与 pdfium（原生依赖，须登记）；MuPDF 为 AGPL，排除 |
+| E4 | 绘制 | display list 按不低于 2 倍像素密度栅格化，与 PDF 栅格未匹配墨迹 ≤ 1%（150 dpi 下两个参考渲染器自身就相差 1.3–1.7%，不作为判据）；含 TikZ 的页面经 PDF 回退正确显示。PDF 栅格化候选为 hayro（MIT/Apache-2.0，纯 Rust）与 pdfium（原生依赖，须登记）；MuPDF 为 AGPL，排除 |
 | E5 | 定位 | 页面点击 → 源码字节、源码光标 → 页面位置的粒度与误差；不足字形级时说明可支撑的交互 |
 | E6 | 端到端时延 | 10 / 100 页夹具在真实窗口内从击键到画面更新的 p50/p95，与 rtex 自报数字分开记录；输入不被阻塞 |
 | E7 | 非 LuaLaTeX 回退 | XeLaTeX 夹具的整编预览时延、旧 revision 门与“整编预览”标识 |
@@ -56,14 +59,21 @@ E2 不通过则不得接入，退回自研或纯整编预览；E3 不通过时�
 
 ## L1：打开—编辑—预览—导出闭环
 
-依赖 L0 的 ADR。交付 session、build、live、view 的最小实现与工作区装配。
+依赖 [ADR 0043](../adr/ADR-0043-rtex-live-preview.md)。交付 session、build、live、view 的最小实现与工作区装配，并实现 ADR 0043 的接入条件：
+
+- 产品级沙箱：会话级 cgroup（内存、进程数）、常驻进程不设墙钟与 `RLIMIT_CPU`、单次编译由宿主计时；
+- 每用户字体缓存的可信预热与每会话可写副本；
+- 后台编译看门狗（超时即终止并标为失败）、会话心跳与重启、`EngineState Restarting/Failed` 后重新请求布局；
+- 编辑转发前校验（UTF-8 字符边界、不越界、项目内规范化相对路径）；
+- 二进制 display list 通道（上游未提供时经 fork，见 ADR 0043），按不低于 2 倍像素密度绘制，TikZ 等页面用 hayro 回退。
 
 出口：
 
 - 打开中英文混排的 LuaLaTeX 论文夹具，编辑正文与公式时预览按段落更新，停止输入后整编更新整页。
 - XeLaTeX 夹具显示整编预览并标明来源。
 - 保存、强杀恢复、重开后源码与预览一致；PDF 导出与命令行构建一致。
-- 沙箱负对照在产品路径上复测通过。
+- 沙箱负对照在产品路径上复测通过；E6 在真实窗口内复测。
+- 宿主兜底的每一条都有故障注入测试：引擎被杀、实时与后台挂起、导言区缺包、畸形偏移与路径、`rtex serve` 被杀。
 
 ## L2：定位、诊断与协作
 
