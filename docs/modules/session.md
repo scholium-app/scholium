@@ -69,6 +69,7 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
   不要求宿主重造此前的按下事件。app 只判定像素距离/时间所对应的点击数，不在绘制后另触发选择。
 - `semantic_projection()` 返回稳定快照摘要、cursor/anchor 和 undo_depth，供无界面与 AUDIT 共用。
   摘要仅去除随机 node/document 身份和 revision，保留整个语义树、内容与样式；端点为结构路径、UTF-8 byte 与 affinity。
+- 场景 worker 可固定使用应用打包 Noto CJK 与 Typst embedded 字体；该 profile 在 worker 创建时固定，避免排版测试读取宿主字体库。
 - `math_indicator(scene)`、`find_overflows(scene)` 要求调用方先证明 Scene 当前；返回 padded Frame pt 或叶 ID，
   worker/Scene 由 core 持有。layout error、rejected input 与 overflow targets 是纯数据，语言目录和状态栏在 app。
 

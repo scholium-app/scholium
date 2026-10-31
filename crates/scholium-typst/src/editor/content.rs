@@ -21,6 +21,7 @@ enum Value {
 
 #[derive(Default)]
 pub(super) struct ContentCache {
+    pub fonts: crate::FontProfile,
     cache: HashMap<NodeId, (Value, Content)>,
     ids: HashMap<NodeId, u128>,
     pub reverse: HashMap<u128, NodeId>,
@@ -30,6 +31,13 @@ pub(super) struct ContentCache {
 }
 
 impl ContentCache {
+    pub fn new(fonts: crate::FontProfile) -> Self {
+        Self {
+            fonts,
+            ..Self::default()
+        }
+    }
+
     pub fn document(&mut self, doc: &StructuredDocument) -> Result<Content, EditorError> {
         doc.validate()?;
         self.stats = EditorStats::default();
@@ -44,7 +52,7 @@ impl ContentCache {
         self.ids.retain(|id, _| self.live.contains(id));
         self.reverse.retain(|_, id| self.live.contains(id));
         let content = sequence(children);
-        let content = super::style::apply_document_style(content);
+        let content = super::style::apply_document_style(content, self.fonts);
         Ok(content)
     }
 
@@ -136,8 +144,8 @@ impl ContentCache {
         );
         let body = match block.kind {
             BlockKind::Paragraph => ParElem::new(body).pack(),
-            BlockKind::Heading1 => super::style::heading(1, body),
-            BlockKind::Heading2 => super::style::heading(2, body),
+            BlockKind::Heading1 => super::style::heading(1, body, self.fonts),
+            BlockKind::Heading2 => super::style::heading(2, body, self.fonts),
         };
         let body = if block_is_empty(block) {
             super::style::without_indent(body)

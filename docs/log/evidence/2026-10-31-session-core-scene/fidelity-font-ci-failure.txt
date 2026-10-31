@@ -1,0 +1,465 @@
+test	Run cargo test --locked --workspace	﻿2026-10-31T10:50:50.6479610Z ##[group]Run cargo test --locked --workspace
+test	Run cargo test --locked --workspace	2026-10-31T10:50:50.6479976Z ^[[36;1mcargo test --locked --workspace^[[0m
+test	Run cargo test --locked --workspace	2026-10-31T10:50:50.6499636Z shell: /usr/bin/bash -e {0}
+test	Run cargo test --locked --workspace	2026-10-31T10:50:50.6499918Z env:
+test	Run cargo test --locked --workspace	2026-10-31T10:50:50.6500138Z   CARGO_HOME: /home/runner/.cargo
+test	Run cargo test --locked --workspace	2026-10-31T10:50:50.6500402Z   CARGO_INCREMENTAL: 0
+test	Run cargo test --locked --workspace	2026-10-31T10:50:50.6500753Z   CARGO_TERM_COLOR: always
+test	Run cargo test --locked --workspace	2026-10-31T10:50:50.6501063Z   CACHE_ON_FAILURE: false
+test	Run cargo test --locked --workspace	2026-10-31T10:50:50.6501331Z ##[endgroup]
+test	Run cargo test --locked --workspace	2026-10-31T10:50:50.8886231Z ^[[1m^[[92m   Compiling^[[0m scholium-session v0.1.0 (/home/runner/work/scholium/scholium/crates/scholium-session)
+test	Run cargo test --locked --workspace	2026-10-31T10:50:50.8888560Z ^[[1m^[[92m   Compiling^[[0m scholium-app v0.1.0 (/home/runner/work/scholium/scholium/crates/scholium-app)
+test	Run cargo test --locked --workspace	2026-10-31T10:50:50.8889444Z ^[[1m^[[92m   Compiling^[[0m scholium-typst v0.1.0 (/home/runner/work/scholium/scholium/crates/scholium-typst)
+test	Run cargo test --locked --workspace	2026-10-31T10:50:51.6538547Z ^[[1m^[[92m   Compiling^[[0m scholium-storage v0.1.0 (/home/runner/work/scholium/scholium/crates/scholium-storage)
+test	Run cargo test --locked --workspace	2026-10-31T10:50:53.0424114Z ^[[1m^[[92m   Compiling^[[0m scholium-document v0.1.0 (/home/runner/work/scholium/scholium/crates/scholium-document)
+test	Run cargo test --locked --workspace	2026-10-31T10:50:53.0452458Z ^[[1m^[[92m   Compiling^[[0m scholium-model v0.1.0 (/home/runner/work/scholium/scholium/crates/scholium-model)
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.2308437Z ^[[1m^[[92m    Finished^[[0m `test` profile [unoptimized] target(s) in 4.55s
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.2607227Z ^[[1m^[[92m     Running^[[0m unittests src/main.rs (target/debug/deps/scholium_app-5686846af1fcfca7)
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.2638421Z
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.2638876Z running 302 tests
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.2649319Z test chrome::layout::tests::every_group_stays_when_it_fits ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.2650317Z test chrome::layout::tests::nothing_fits_means_everything_overflows ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.2651260Z test chrome::layout::tests::fields_keep_their_width_when_there_is_room ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.2651951Z test chrome::layout::tests::the_last_groups_move_into_overflow_in_order ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.2652972Z test chrome::layout::tests::trailing_fields_are_dropped_when_even_the_minimum_does_not_fit ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.2654151Z test chrome::layout::tests::the_longest_field_is_cut_first ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.2654848Z test chrome::stats::tests::cjk_characters_and_latin_words_each_count_once ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.2655562Z test chrome::stats::tests::kana_and_hangul_count_per_character ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.2656165Z test chrome::stats::tests::numbers_group_by_thousands ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.2656843Z test chrome::stats::tests::punctuation_and_spaces_are_not_words ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.3541767Z test chrome::status_tests::revisions_and_backend_move_into_the_context_tooltip_and_mark_a_stale_picture ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.3551825Z test chrome::status_tests::developer_revisions_are_not_in_the_status_bar_text ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.3652099Z test chrome::status_tests::the_status_bar_shows_words_context_and_page_info_only_in_source ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.3761711Z test chrome::tests::a_narrow_window_moves_whole_trailing_groups_into_overflow_in_order ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.3821810Z test chrome::status_tests::the_warning_segment_is_the_only_message_and_zoom_runs_commands ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.3926912Z test chrome::tests::a_submenu_opens_on_hover_and_lists_its_registry_entries ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.3929415Z test chrome::tests::every_group_fits_in_a_wide_window_and_no_overflow_button_shows ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.4082414Z test chrome::tests::hiding_the_toolbars_keeps_menu_tabs_and_status ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.4182235Z test chrome::status_tests::the_backend_label_is_always_shown_and_reads_updating_while_stale ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.4234986Z test chrome::tests::hovering_another_title_switches_the_open_menu ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.4381396Z test chrome::tests::only_checkable_commands_are_exposed_as_toggles ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.4411528Z test chrome::tests::mode_segments_are_at_least_96_wide_and_the_switch_is_rightmost ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.4591418Z test chrome::tests::the_bars_have_the_designed_heights ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.4610128Z test chrome::tests::switching_the_language_relabels_every_visible_control_at_runtime ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.4779633Z test chrome::tests::the_focus_bar_leaves_formulas_alone_in_the_source_view ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.4817512Z test chrome::tests::the_focus_bar_shows_document_properties_in_text_and_formula_commands_in_math ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.4981436Z test chrome::tests::the_menu_bar_lists_the_eight_menus_left_to_right ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5161487Z test chrome::tests::the_language_menu_switches_the_locale_through_the_registry ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5251632Z test chrome::tests::the_tab_shows_the_title_and_its_buttons_use_the_new_and_close_flows ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5341667Z test chrome::tests::no_text_wraps_or_overflows_and_no_controls_overlap ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5411636Z test chrome::tests::the_toolbar_follows_the_registry_groups_and_ends_with_the_search ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5441504Z test chrome::tests::words_count_cjk_characters_and_latin_words ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5446489Z test command::tests::command_ids_are_unique_dotted_names ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5488155Z test command::tests::composition_blocks_writes_file_actions_and_mode_switches ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5501524Z test command::tests::ctrl_1_and_ctrl_2_leave_the_work_mode_alone ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5521635Z test command::tests::ctrl_shift_b_toggles_navigation_and_plain_ctrl_b_is_left_to_the_editor ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5551399Z test command::tests::ctrl_shift_m_toggles_the_work_mode_both_ways ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5556295Z test command::tests::every_command_has_a_title_and_tooltip_in_both_locales ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5557280Z test command::tests::every_p1_menu_lists_its_commands ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5558125Z test chrome::tests::unimplemented_toolbar_commands_are_disabled_with_a_reason ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5559000Z test command::tests::every_reason_a_command_can_give_is_in_the_catalog ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5562855Z test command::tests::history_and_clipboard_availability_follow_the_facts ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5564012Z test command::tests::no_two_commands_share_a_chord ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5564930Z test command::tests::page_chords_are_registered_for_the_page_and_app_chords_for_the_app ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5565944Z test command::tests::source_mode_disables_every_writing_command_with_a_reason ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5566979Z test command::tests::script_commands_need_the_caret_in_a_formula_outside_source_and_composition ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5567971Z test command::tests::the_format_and_view_menus_keep_their_submenus ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5568897Z test command::tests::the_same_registry_title_renders_in_each_language_without_restart ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5569835Z test command::tests::unimplemented_commands_are_greyed_with_a_reason ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5570574Z test command::tests::zoom_chords_still_work_with_shift_held ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5571485Z test commands::tests::view_commands_update_only_view_preferences ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5572229Z test commands::tests::zoom_commands_are_bounded ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5573010Z test commands::tests::zoom_from_fit_width_starts_at_visible_page_scale ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5573816Z test diagnostics::tests::an_excerpt_is_one_short_line ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5574551Z test command::tests::undo_and_redo_chords_never_fire_each_other ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5575385Z test chrome::tests::the_theme_menu_switches_between_light_and_dark ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5711896Z test diagnostics::tests::clicking_a_row_requests_the_jump_to_its_location ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5751640Z test diagnostics::tests::messages_render_in_the_chosen_language_with_their_arguments ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5811583Z test diagnostics::tests::clicking_a_located_warning_requests_a_jump_and_a_bare_one_opens_the_panel ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5841635Z test diagnostics::tests::enter_on_the_focused_warning_does_what_a_click_does ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.5871378Z test diagnostics::tests::the_count_reads_gong_n_tiao_and_n_issues ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6070309Z test diagnostics::tests::rows_move_with_up_and_down_and_escape_returns_to_the_page ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6072358Z test diagnostics::tests::the_list_orders_by_severity_and_keeps_collection_order_within_one ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6101379Z test diagnostics::tests::the_count_toggles_the_panel ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6311531Z test diagnostics::tests::the_panel_is_hidden_until_toggled ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6331749Z test diagnostics::tests::several_diagnostics_show_the_most_serious_and_the_count ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6491628Z test diagnostics::tests::the_panel_never_covers_the_status_bar_and_is_a_resizable_bottom_dock ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6511573Z test i18n::tests::a_missing_key_is_detectable_and_falls_back_visibly ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6512649Z test i18n::tests::every_declared_key_resolves_in_both_locales ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6513760Z test i18n::tests::fluent_selects_cldr_plural_forms_for_en_and_zh ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6515293Z test diagnostics::tests::the_panel_shows_layout_facts_and_the_status_bar_no_longer_does ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6516842Z test diagnostics::tests::the_panel_lists_rows_with_excerpts_and_an_empty_state ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6518742Z test i18n::tests::registered_commands_and_menus_have_titles_in_both_locales ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6520099Z test i18n::tests::the_same_command_title_switches_language_at_runtime ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6521948Z test i18n::tests::system_locale_follows_lang_and_falls_back_to_english ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6532815Z test i18n::tests::zh_hans_and_en_declare_exactly_the_same_keys ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6536701Z test i18n::tests::the_catalog_has_no_key_that_nothing_uses ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6537466Z test icons::tests::every_registry_icon_has_a_glyph ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6539691Z test icons::tests::a_thicker_stroke_covers_more_pixels ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6545293Z test icons::tests::textures_are_cached_per_scale_and_color ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6546577Z test state::tests::default_workspace_starts_in_visual_fit_width_mode_without_a_document ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6548603Z test theme::tests::every_semantic_token_has_the_p1_ui_value_in_both_themes ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6549795Z test theme::tests::bar_heights_sum_to_the_designed_chrome ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6551202Z test theme::tests::the_first_installed_family_of_each_preference_list_wins ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6552072Z test theme::tests::the_page_is_white_in_both_themes ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6552947Z test theme::tests::the_tooltip_text_is_the_opposite_themes_text ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6578144Z test icons::tests::every_glyph_rasterizes_to_visible_tinted_pixels ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.6582548Z test theme::tests::no_color_literal_exists_outside_the_theme_module ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.7036937Z test chrome::tests::every_open_menu_equals_the_registry_tree ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.8161728Z test typst_editor::access::tests::assistive_caret_at_a_soft_wrap_stays_on_the_earlier_line ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.8199929Z test typst_editor::access::tests::assistive_selection_against_an_older_publication_is_rejected ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.8281254Z test typst_editor::access::tests::assistive_selection_inside_a_grapheme_is_rejected ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.8737442Z test typst_editor::access::tests::assistive_selection_maps_to_semantic_endpoints_and_typing_replaces_it ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.9381804Z test typst_editor::access::tests::caret_and_selection_are_published_as_text_positions ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.9620444Z test typst_editor::access::tests::caret_in_the_empty_leaf_after_a_formula_is_still_published ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:55.9772253Z test typst_editor::access::tests::body_is_a_named_text_input_whose_runs_read_the_document_in_order ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.0028179Z test typst_editor::access::tests::formula_is_a_math_object_and_slot_context_is_a_live_status ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.0670199Z test typst_editor::access::tests::formula_only_paragraph_keeps_a_run_and_a_caret ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.0676518Z test typst_editor::access::tests::speech_names_script_slots_like_fraction_slots ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.0678224Z test typst_editor::access::tests::speech_reads_nested_fractions_outside_in_and_empty_slots_as_empty ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.1141761Z test typst_editor::access::tests::pending_scene_keeps_the_current_text_without_stale_geometry ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.1171827Z test typst_editor::access::tests::mixed_cjk_and_latin_on_one_line_stay_in_one_run ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.1313134Z test typst_editor::attach::tests::attach_commands_are_ignored_while_composing_or_selecting ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.1386546Z test typst_editor::attach::tests::a_script_command_in_body_text_changes_nothing ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.1551697Z test typst_editor::access::tests::scripts_in_a_live_formula_are_spoken_in_the_math_object_and_status ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.1582637Z test typst_editor::attach::tests::backspace_in_an_empty_slot_removes_it_and_undo_restores_it ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.1795273Z test typst_editor::attach::tests::caret_at_text_start_attaches_to_an_empty_base ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.1863204Z test typst_editor::attach::tests::clicking_away_from_an_empty_placeholder_restores_the_state_after_the_script ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.1912456Z test typst_editor::access::tests::wrapped_paragraph_is_split_into_visual_line_runs ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.2072286Z test typst_editor::attach::tests::grouped_typing_into_a_placeholder_keeps_it_and_undoes_in_one_step ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.2262180Z test typst_editor::attach::tests::left_enters_the_base_end_and_right_leaves_to_just_after_the_attach ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.2546040Z test typst_editor::attach::tests::one_undo_after_leaving_a_placeholder_undoes_the_users_last_action ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.2671451Z test typst_editor::attach::tests::removing_the_last_slot_of_mid_text_merges_the_text_back ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.3184966Z test typst_editor::attach::tests::script_markers_are_literal_in_body_text_and_paste ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.3288641Z test typst_editor::attach::tests::right_from_an_empty_placeholder_exits_the_formula ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.3436543Z test typst_editor::attach::tests::leaving_a_placeholder_by_left_or_ctrl_home_end_removes_it ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.3732206Z test typst_editor::attach::tests::tab_walks_base_sub_sup_and_then_out_of_the_formula ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.3752002Z test typst_editor::attach::tests::subscript_then_superscript_is_one_attach_with_both_slots ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.4381703Z test typst_editor::attach::tests::typing_into_a_placeholder_keeps_it_as_content ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.4756752Z test typst_editor::attach::tests::attach_scene_has_current_geometry_for_every_leaf ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.5009334Z test typst_editor::attach::tests::the_script_commands_create_the_same_slots_as_typing_caret_and_underscore ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.5551626Z test typst_editor::command_keys_tests::ctrl_0_1_2_set_body_heading_1_and_heading_2 ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.5771502Z test typst_editor::command_keys_tests::ctrl_shift_digit_is_not_a_paragraph_style ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.5891462Z test typst_editor::command_keys_tests::ctrl_shift_m_does_not_toggle_a_formula_in_the_page ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.6241568Z test typst_editor::command_keys_tests::esc_during_ime_composition_only_cancels_the_composition ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.6624252Z test typst_editor::command_keys_tests::esc_in_a_formula_without_selection_leaves_it_after_the_formula ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.6648689Z test typst_editor::command_keys_tests::the_page_keeps_keyboard_focus_through_esc ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.6741466Z test typst_editor::command_keys_tests::esc_with_a_selection_only_clears_the_selection ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.8257628Z test typst_editor::attach::tests::up_and_down_move_between_base_subscript_and_superscript ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.8693986Z test typst_editor::attach::tests::typing_caret_two_right_plus_y_builds_an_attach_followed_by_text ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:56.9941726Z test typst_editor::diagnose::tests::a_target_that_no_longer_exists_leaves_the_caret_alone ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.0258364Z test typst_editor::diagnose::tests::a_formula_that_fits_is_not_reported ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.0425783Z test typst_editor::diagnose::tests::an_overflowing_formula_is_listed_at_its_leaf_while_the_caret_is_elsewhere ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.0439751Z test typst_editor::diagnose::tests::errors_have_no_location_and_outrank_warnings ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.0618019Z test typst_editor::diagnose::tests::rejected_input_is_a_warning_without_a_location ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.1613054Z test typst_editor::diagnose::tests::jumping_to_a_formula_target_puts_the_caret_inside_that_formula ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.1656923Z test typst_editor::diagnose::tests::jumping_to_a_body_target_moves_the_caret_and_asks_the_view_to_follow ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.2689998Z test typst_editor::follow::tests::arrow_up_near_the_top_edge_scrolls_up_to_keep_the_margin ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.2712307Z test typst_editor::follow::tests::reveal_widens_to_the_page_edge_only_for_document_edge_keys ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.2764595Z test typst_editor::follow::tests::a_click_never_scrolls ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.3789912Z test typst_editor::follow::tests::ctrl_end_and_ctrl_home_reach_the_page_ends ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.3969682Z test typst_editor::follow::tests::follow_waits_for_the_new_scene_instead_of_aiming_at_a_stale_caret ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.4656781Z test typst_editor::follow::tests::typing_past_the_viewport_bottom_scrolls_the_caret_into_view_with_margin ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.5251816Z test typst_editor::follow::tests::undo_after_typing_past_the_viewport_removes_the_whole_word_and_follows_the_caret ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.5759977Z test typst_editor::history::tests::a_click_splits_the_group ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.5834550Z test typst_editor::follow::tests::wheel_scrolling_away_is_not_undone_until_the_next_keystroke ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.6290555Z test typst_editor::history::tests::a_new_edit_after_undo_clears_redo ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.7204612Z test typst_editor::history::tests::a_pause_of_one_second_starts_a_new_group ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.7740072Z test typst_editor::history::tests::a_structural_command_ends_the_group ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.8735807Z test typst_editor::history::tests::moving_the_caret_with_an_arrow_splits_the_group ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.8819186Z test typst_editor::history::tests::consecutive_backspaces_are_one_step_and_separate_from_typing ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.8853726Z test typst_editor::history::tests::ime_commits_join_the_typing_group_but_paste_does_not ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:57.9082464Z test typst_editor::history::tests::printable_key_events_beside_text_do_not_split_the_group ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.0322766Z test typst_editor::indicator::tests::a_breakable_long_formula_reports_no_overflow ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.0393648Z test typst_editor::history::tests::the_history_cap_counts_groups ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.0899521Z test typst_editor::history::tests::typing_in_a_pending_style_forms_one_step_with_the_arming ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.0971463Z test typst_editor::history::tests::typing_undoes_and_redoes_word_by_word ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.1644832Z test typst_editor::indicator::tests::an_overlong_superscript_run_warns_too ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.1793035Z test typst_editor::indicator::tests::an_operator_free_run_past_the_column_warns_wherever_the_caret_is ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.2158199Z test typst_editor::indicator::tests::indicator_covers_a_row_formula_that_owns_no_frame_bounds_itself ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.2223410Z test typst_editor::indicator::tests::indicator_covers_the_whole_fraction_and_outlines_the_current_slot ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.3031004Z test typst_editor::indicator::tests::indicator_outlines_an_attach_script_slot ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.3074086Z test typst_editor::indicator::tests::indicator_exists_only_while_the_caret_is_inside_a_formula ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.3183218Z test typst_editor::math_enter::tests::enter_at_the_end_of_a_formula_starts_a_block_after_it ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.3290408Z test typst_editor::math_enter::tests::enter_ends_the_open_typing_group_inside_the_formula ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.3472971Z test typst_editor::indicator::tests::status_metadata_reports_math_mode_and_clears_after_leaving ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.3481654Z test typst_editor::indicator::tests::stale_scene_paints_no_indicator ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.3517522Z test typst_editor::math_enter::tests::enter_in_body_text_still_splits_there ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.3601611Z test typst_editor::math_enter::tests::enter_in_the_middle_of_a_formula_keeps_it_whole ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.3751677Z test typst_editor::math_enter::tests::enter_with_text_after_the_formula_carries_it_into_the_new_block ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.3862593Z test typst_editor::math_enter::tests::enter_inside_a_superscript_slot_leaves_the_whole_formula ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.3902562Z test typst_editor::math_enter::tests::enter_in_the_placeholder_removes_it_and_undo_returns_to_the_slot ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.3932773Z test typst_editor::raster::tests::a_scene_laid_out_at_the_wanted_scale_needs_no_re_raster ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.3969317Z test typst_editor::raster::tests::fit_width_scale_is_clamped_like_the_page_view ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.4012157Z test typst_editor::raster::tests::fit_width_target_follows_viewport_and_pixels_per_point ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.4030401Z test typst_editor::raster::tests::hit_testing_in_points_is_unchanged_by_snapping_within_half_a_pixel ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.4053511Z test typst_editor::raster::tests::one_to_one_strips_are_whole_physical_pixels_and_share_edges ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.4082362Z test typst_editor::raster::tests::re_raster_waits_for_the_wanted_resolution_to_settle ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.4091469Z test typst_editor::raster::tests::snapped_origin_lies_on_the_physical_grid_within_half_a_pixel ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.4141850Z test typst_editor::raster::tests::stale_raster_is_stretched_to_the_page_without_gaps ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.4143117Z test typst_editor::raster::tests::width_is_quantized_to_whole_physical_pixels ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.4172828Z test typst_editor::raster::tests::zoom_target_is_zoom_in_css_pixels_times_pixels_per_point ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.4179468Z test typst_editor::math_enter::tests::one_undo_restores_the_formula_and_the_caret_inside_it ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.4219203Z test typst_editor::math_enter::tests::shift_enter_in_a_formula_does_the_same ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.6455792Z test typst_editor::selection::pointer_tests::click_above_the_first_line_matches_the_ctrl_home_position ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.6605133Z test typst_editor::selection::pointer_tests::click_below_a_document_ending_in_a_formula_goes_to_the_ctrl_end_position ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.6858938Z test typst_editor::selection::pointer_tests::a_press_outside_the_page_resets_the_click_history ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.6915115Z test typst_editor::selection::pointer_tests::click_above_the_first_line_goes_to_the_document_start ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.7715919Z test typst_editor::selection::pointer_tests::click_below_the_last_line_goes_to_the_end_of_the_document ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.7773269Z test typst_editor::selection::pointer_tests::click_between_lines_picks_the_nearest_line_then_the_nearest_stop ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.8111236Z test typst_editor::selection::pointer_tests::click_inside_the_formula_bounds_still_enters_the_formula ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.8188013Z test typst_editor::selection::pointer_tests::click_right_of_a_line_ending_in_a_formula_goes_after_the_formula ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.9031733Z test typst_editor::selection::pointer_tests::click_right_of_a_line_goes_to_that_lines_end_even_beside_a_formula ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.9077846Z test typst_editor::selection::pointer_tests::double_click_after_a_far_click_selects_only_the_word ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.9343921Z test typst_editor::selection::pointer_tests::double_click_on_whitespace_and_punctuation_selects_that_run ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:58.9376980Z test typst_editor::selection::pointer_tests::double_click_in_math_keeps_the_caret_and_reports_the_unsupported_selection ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.0271622Z test typst_editor::selection::pointer_tests::double_click_selects_the_word_under_the_pointer_and_typing_replaces_it ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.0614847Z test typst_editor::selection::pointer_tests::double_click_selects_cjk_text_by_unicode_word_boundaries ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.0624863Z test typst_editor::selection::pointer_tests::three_nearby_clicks_select_the_block ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.1456757Z test typst_editor::selection::pointer_tests::two_nearby_clicks_still_select_the_word ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.1881859Z test typst_editor::selection::tests::approximate_or_unknown_caret_cannot_become_a_pointer_endpoint ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.1919950Z test typst_editor::selection::pointer_tests::two_quick_clicks_at_different_places_select_nothing ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.1945570Z test typst_editor::selection::pointer_tests::triple_click_selects_the_whole_block_body_and_cut_removes_it ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.2046139Z test typst_editor::selection::tests::copy_and_cut_reject_formula_selection_without_mutating_authority ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.2091399Z test typst_editor::selection::tests::copy_selection_preserves_unicode_and_empty_paragraph_boundaries ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.2842451Z test typst_editor::selection::tests::body_shift_crosses_whole_fraction_and_selection_includes_its_rule_extent ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.3513426Z test typst_editor::selection::tests::cut_selection_returns_exact_text_and_undo_restores_original_range ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.3977920Z test typst_editor::selection::tests::deletion_and_enter_each_replace_cross_paragraph_selection_as_one_action ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.3989332Z test typst_editor::selection::tests::drag_rejects_epoch_reuse_and_changed_placement ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.4103281Z test typst_editor::selection::tests::math_shift_is_rejected_and_selection_styles_only_the_text_around_a_formula ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.4114458Z test typst_editor::selection::tests::pending_range_covering_raw_math_is_rejected_without_losing_selection ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.5197601Z test typst_editor::selection::tests::multiline_paste_keeps_empty_paragraphs_and_places_following_input_in_new_leaf ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.5409968Z test typst_editor::selection::tests::rejected_capacity_preserves_selection_and_copyable_paste ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.5490062Z test typst_editor::selection::tests::same_frame_accepted_text_makes_later_pointer_event_stale ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.5961914Z test typst_editor::selection::tests::reverse_drag_across_paragraphs_replaces_once_and_undo_restores_selection ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.6501711Z test typst_editor::selection::tests::selection_extent_uses_current_cluster_edges_and_pending_hides_it ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.7031674Z test typst_editor::selection::tests::shift_unicode_selection_replaces_once_with_literal_text_and_retains_identity ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.7306554Z test typst_editor::source_view::tests::structure_view_shows_the_generated_typst_of_the_snapshot ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.7790476Z test typst_editor::source_view::tests::clicking_a_preview_block_moves_the_caret_to_that_block ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.8011603Z test typst_editor::startup::tests::empty_legacy_file_is_not_migrated ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.8481586Z test typst_editor::startup::tests::existing_target_is_never_replaced_by_migration ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.8633691Z test typst_editor::startup::tests::failed_probe_of_a_non_legacy_file_names_the_file_and_keeps_it ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.9318316Z test typst_editor::startup::tests::legacy_head_migrates_once_into_a_new_file_and_keeps_the_original ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.9351824Z test typst_editor::startup::tests::missing_legacy_file_leaves_the_target_for_a_blank_document ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.9353195Z test typst_editor::startup::tests::startup_error_page_shows_the_reason_and_recovery_without_an_editor ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.9418338Z test typst_editor::source_view::tests::preview_compiles_and_opens_on_the_page_of_the_cursor_block ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.9538202Z test typst_editor::style::tests::caret_moves_clicks_escape_and_selection_clear_the_pending_style ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.9655454Z test typst_editor::style::tests::ctrl_b_bolds_only_the_selected_word_and_keeps_the_selection ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:50:59.9991645Z test typst_editor::style::tests::ctrl_i_on_bold_text_makes_it_emphasis_and_clear_format_resets_it ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.0152380Z test typst_editor::source_view::tests::results_of_an_older_generation_are_never_shown ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.0292250Z test typst_editor::style::tests::ime_commit_honours_the_pending_style ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.0501551Z test typst_editor::style::tests::pending_bold_types_a_new_strong_leaf_at_the_caret ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.0682447Z test typst_editor::style::tests::pending_style_in_the_middle_splits_the_leaf_and_undoes_in_one_step ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.0838322Z test typst_editor::style::tests::pending_toggles_off_and_can_type_plain_inside_bold_text ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.0891601Z test typst_editor::style::tests::ribbon_state_follows_the_caret_leaf_pending_style_and_selection ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.1033755Z test typst_editor::source_view::tests::undo_back_to_an_earlier_revision_still_recompiles ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.1315400Z test typst_editor::style::tests::selection_styling_is_one_undo_step_that_restores_the_document_and_selection ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.1463218Z test typst_editor::style::tests::style_commands_are_rejected_inside_a_formula_without_changing_the_document ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.1571699Z test typst_editor::style::tests::carets_stay_exact_after_a_range_style_split ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.1966875Z test typst_editor::tests::deletion_that_joins_regional_indicators_keeps_a_valid_insertion_point ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.3938514Z test typst_editor::tests::close_with_queued_input_asks_before_discarding_it ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.3996103Z test typst_editor::tests::empty_inline_formula_and_empty_fraction_denominator_have_current_geometry ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.4068925Z test typst_editor::tests::horizontal_arrows_cross_identified_body_and_math_leaves_without_wrapping ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.4142743Z test typst_editor::tests::ime_commit_and_duplicate_text_event_create_one_action_and_one_value ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.4184035Z test typst_editor::tests::committed_canvas_contains_no_egui_text_shapes_even_while_pending ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.4224511Z test typst_editor::tests::every_scene_identity_field_gates_adoption_of_failed_results ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.4261943Z test typst_editor::tests::joining_emoji_graphemes_does_not_strand_following_input_inside_a_cluster ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.4425357Z test typst_editor::tests::rejected_math_multiline_paste_keeps_authority_and_copyable_draft ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.4651505Z test typst_editor::tests::save_reopen_preserves_holes_and_can_continue_after_redo ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.7033504Z test typst_editor::tests::multi_event_frame_enters_fraction_and_nested_denominator_without_losing_input ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.7422551Z test typst_editor::tests::strips_of_an_older_scene_are_never_adopted_over_a_newer_one ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.7523843Z test typst_editor::tests::text_passed_through_by_an_active_ime_is_still_typed ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.8477796Z test typst_editor::tests::scale_change_re_rasters_after_the_debounce_without_layout_and_edits_use_the_new_scale ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.8621605Z test typst_editor::vertical::tests::command_home_and_end_reach_document_body_edges ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.8952309Z test typst_editor::tests::scrolling_loads_visible_strips_and_evicts_those_outside_three_viewports ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:00.9191420Z test typst_editor::tests::undo_redo_preserves_request_ids_and_rejects_old_scene_at_same_revision ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.0109013Z test typst_editor::vertical::tests::down_and_up_follow_wrapped_lines_with_sticky_goal_and_return_exactly ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.0110283Z test typst_editor::vertical::tests::equal_x_ties_choose_logical_end_for_line_end_and_start_for_line_start ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.0215689Z test typst_editor::tests::styled_leaf_has_exact_carets_at_every_grapheme_before_and_after_relayout ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.0249642Z test typst_editor::vertical::tests::empty_paragraph_is_a_vertical_stop ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.0527958Z test typst_editor::vertical::tests::end_and_home_use_visual_line_edges_at_a_soft_wrap ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.0663046Z test typst_editor::vertical::tests::layout_failure_drops_the_waiting_geometry_key_and_runs_later_input ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.0686505Z test typst_editor::vertical::tests::nearest_line_wins_before_horizontal_distance ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.1497382Z test typst_editor::vertical::tests::first_line_up_and_last_line_down_stop_at_line_edges ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.1581655Z test typst_editor::vertical::tests::horizontal_moves_discard_the_vertical_goal_even_when_returning_to_the_same_stop ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.1937932Z test typst_editor::vertical::tests::ime_cancel_and_escape_are_still_queued_at_the_limit ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.2348976Z test typst_editor::vertical::tests::numerator_down_enters_denominator_then_leaves_the_formula_by_lines ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.3160368Z test typst_editor::vertical::tests::pointer_press_while_input_is_queued_is_rejected_not_reordered ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.3199122Z test typst_editor::vertical::tests::selection_across_an_empty_leaf_after_a_formula_keeps_geometry_and_replaces ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.3302140Z test typst_editor::vertical::tests::queued_input_beyond_the_limit_is_rejected_but_kept_copyable ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.3509164Z test typst_editor::vertical::tests::shift_down_extends_across_lines_and_typing_replaces_once ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.4414932Z test typst_editor::vertical::tests::shift_vertical_in_math_is_rejected_without_selection ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.4542865Z test typst_editor::vertical::tests::unhandled_key_keeps_the_upstream_wrap_end_for_a_following_shift_up ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.4793538Z test typst_editor::vertical::tests::undo_and_ribbon_intents_wait_behind_queued_input ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.5042354Z test typst_editor::vertical::tests::vertical_key_before_layout_waits_and_later_input_keeps_its_order ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.5855466Z test typst_editor::window_tests::a_jump_request_moves_the_caret_in_order_and_is_consumed ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.6076412Z test typst_editor::window_tests::clicking_a_panel_row_jumps_without_the_page_taking_the_click ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.6330979Z test typst_editor::window_tests::clicking_the_status_bar_warning_jumps_without_the_page_taking_the_click ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.6388262Z test typst_editor::window_tests::ctrl_1_and_ctrl_2_no_longer_switch_the_work_mode ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.7369405Z test typst_editor::window_tests::ctrl_j_docks_the_panel_and_layout_stats_leave_the_status_bar ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.7838108Z test typst_editor::window_tests::enter_on_a_panel_row_jumps_and_is_not_typed_into_the_page ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.7888371Z test typst_editor::window_tests::metadata_reports_changes_the_status_bar_shows ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.7948376Z test typst_editor::window_tests::escape_never_drops_the_pages_keyboard_focus ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.8741613Z test typst_editor::window_tests::no_developer_text_is_painted_above_the_page ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.9153792Z test typst_editor::window_tests::page_is_centered_in_a_wide_viewport ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.9212274Z test typst_editor::window_tests::page_stays_put_when_an_error_appears_and_the_status_bar_shows_it ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:01.9561714Z test typst_editor::window_tests::returning_from_source_view_restores_typing_on_the_page ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.0273203Z test typst_editor::window_tests::save_shortcut_persists_through_the_editor_and_clears_dirty ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.0425596Z test typst_editor::window_tests::status_bar_is_redrawn_once_a_stale_marker_clears ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.0802146Z test typst_editor::window_tests::the_interface_language_switches_at_runtime_without_touching_the_document ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.1091903Z test typst_editor::window_tests::toolbar_intents_apply_in_order_through_the_editor_session ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.1156411Z test widgets::tests::a_disabled_button_cannot_be_clicked ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.1231433Z test widgets::tests::a_dropdown_truncates_a_long_value_with_an_ellipsis_inside_its_width ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.1311403Z test widgets::tests::a_menu_is_as_wide_as_its_longest_row ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.1388619Z test widgets::tests::a_segment_is_as_wide_as_its_text_but_never_under_96 ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.1427179Z test widgets::tests::a_status_button_is_smaller_than_the_bar ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.1500465Z test widgets::tests::an_icon_button_is_28_square_and_paints_each_state_from_tokens ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.1502013Z test widgets::tests::state_colors_come_from_the_tokens ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.1619667Z test widgets::tests::the_keyboard_focus_ring_shows_after_tab_and_never_after_a_click ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.1768378Z test typst_editor::window_tests::view_shortcuts_switch_modes_without_touching_the_document ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.1818301Z test typst_editor::window_tests::toolbar_intents_queued_in_source_view_never_reach_the_document ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2208808Z test typst_editor::window_tests::whole_window_stays_inside_tiled_sizes_in_both_modes ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2210585Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2211359Z test result: ok. 302 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.96s
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2212181Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2473161Z ^[[1m^[[92m     Running^[[0m unittests src/lib.rs (target/debug/deps/scholium_document-c4beecf332035a04)
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2484380Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2484711Z running 58 tests
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2488496Z test range_edit::tests::non_boundary_and_reversed_ranges_never_change_the_document ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2489551Z test range_edit::tests::cross_block_selection_is_one_atomic_action_and_preserves_outside_nodes ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2490919Z test structured_session::attach::tests::an_existing_slot_only_moves_the_caret_to_its_end ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2491988Z test structured_session::attach::tests::attaching_at_text_start_or_in_a_hole_uses_a_new_hole_base ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2493092Z test structured_session::attach::tests::attaching_at_the_end_of_text_keeps_no_empty_neighbours_and_no_single_row ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2494243Z test structured_session::attach::tests::attaching_mid_text_splits_around_the_last_grapheme_into_a_row ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2495331Z test structured_session::attach::tests::attaching_off_a_grapheme_boundary_is_rejected_without_a_change ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2496340Z test structured_session::attach::tests::attaching_uses_the_whole_grapheme_cluster_as_base ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2497362Z test structured_session::attach::tests::every_attach_edit_is_one_action_and_history_restores_the_exact_snapshot ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2498382Z test structured_session::attach::tests::leaving_a_slot_reuses_following_content_and_otherwise_appends_a_hole ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2499353Z test structured_session::attach::tests::removing_a_slot_from_a_hole_base_keeps_the_hole_in_the_row ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2500176Z test structured_session::attach::tests::leaving_outside_any_slot_changes_nothing ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2501168Z test structured_session::attach::tests::removing_a_slot_outside_an_attach_changes_nothing ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2502054Z test structured_session::attach::tests::removing_a_trailing_placeholder_hole_returns_to_the_attach ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2502904Z test structured_session::attach::tests::removing_one_of_two_slots_keeps_the_attach ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2503814Z test structured_session::attach::tests::removing_the_last_slot_flattens_to_the_base_and_merges_adjacent_text ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2504967Z test structured_session::attach::tests::slot_start_navigation_targets_the_end_of_the_base ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2505919Z test structured_session::attach::tests::the_caret_after_an_attach_adds_its_slot_and_consumes_the_placeholder_hole ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2507079Z test structured_session::attach::tests::the_other_slot_is_added_to_the_attach_the_caret_just_left ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2508056Z test structured_session::range::tests::cross_block_deletion_keeps_outer_blocks_and_surviving_inline_identities ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2509071Z test structured_session::range::tests::cross_inline_range_removes_whole_math_and_raw_and_retains_both_styles ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2510068Z test structured_session::range::tests::invalid_grapheme_order_unknown_and_math_endpoints_reject_atomically ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2511638Z test structured_session::range::tests::excessive_line_count_is_rejected_before_publication ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2512659Z test structured_session::range::tests::multiline_cross_block_replacement_retains_right_suffix_style_and_identity ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2513714Z test structured_session::range::tests::multiline_paste_at_zero_splits_once_and_preserves_trailing_empty_line ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2514685Z test structured_session::range::tests::no_op_does_not_consume_request_or_increment_revision ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2515915Z test structured_session::range::tests::range_outcome_identifies_the_fresh_multiline_cursor_in_accepted_authority ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2517120Z test structured_session::range::tests::same_leaf_replacement_is_literal_and_preserves_identity_and_style ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2518306Z test structured_session::range::tests::range_outcome_revalidates_grapheme_join_and_noop_still_returns_valid_cursor ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2519496Z test structured_session::range::tests::stale_and_duplicate_requests_reject_and_restore_preserves_the_range_result ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2520826Z test structured_session::style::tests::applying_the_existing_style_or_an_empty_range_is_a_no_op ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2521910Z test structured_session::style::tests::fully_styled_range_toggles_off_and_the_pieces_merge_back ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2523156Z test structured_session::style::tests::range_across_blocks_styles_the_tail_the_middle_and_the_head ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2524300Z test structured_session::style::tests::range_across_leaves_leaves_math_between_them_untouched ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2525500Z test structured_session::style::tests::restyled_text_merges_with_equal_neighbours_keeping_the_left_leaf ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2526743Z test structured_session::style::tests::range_inside_one_leaf_splits_three_ways_and_keeps_the_left_identity ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2527838Z test structured_session::style::tests::rejected_ranges_never_change_the_document ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2528960Z test structured_session::style::tests::untouched_equal_neighbours_far_from_the_range_stay_separate ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2530081Z test structured_session::tests::failed_migration_returns_the_original_session_and_journal ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2531386Z test structured_session::tests::filling_deleting_and_wrapping_math_preserves_slot_identity ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2532577Z test structured_session::tests::invalid_grapheme_ranges_and_raw_editing_leave_authority_unchanged ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2533761Z test structured_session::tests::inline_math_insertion_splits_a_body_grapheme_atomically_and_retains_style ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2534965Z test structured_session::tests::local_fraction_undo_redo_restoration_retains_ids_and_refreshes_epoch ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2536123Z test structured_session::tests::render_stamps_separate_revision_reuse_requests_and_generations ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2537209Z test structured_session::tests::splits_and_merges_retain_surviving_inline_ids_and_styles ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2538280Z test structured_session::tests::structured_restore_rejects_duplicate_and_mismatched_logs ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2539529Z test structured_session::tests::wrong_stale_duplicate_and_noop_requests_do_not_append_actions ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2540570Z test tests::boundary_merges_are_wrong_targets_and_empty_merges_remove_blocks ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2541514Z test tests::inline_format_pairs_parse_like_math ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2542247Z test tests::kind_changes_keep_identity_text_and_append_actions ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2543006Z test tests::markup_parsing_keeps_math_first_class ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2543859Z test structured_session::tests::whole_leaf_styles_and_headings_preserve_text_and_ids ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2544784Z test tests::merges_keep_the_absorber_identity_kind_and_order ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2545595Z test tests::newline_replacements_split_into_consecutive_blocks ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2546369Z test tests::projections_cannot_mutate_the_authority ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2547129Z test tests::stale_duplicate_wrong_target_and_capacity_are_atomic ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2547957Z test tests::no_op_and_capacity_rejection_leave_revision_unchanged ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2648934Z test structured_session::range::tests::capacity_failure_after_prefix_planning_rolls_back_and_request_can_retry ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2649699Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2650130Z test result: ok. 58 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2650764Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2652712Z ^[[1m^[[92m     Running^[[0m unittests src/lib.rs (target/debug/deps/scholium_model-87977605a9600fa5)
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2662752Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2663073Z running 12 tests
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2667628Z test structured::tests::all_addressed_nodes_share_one_uniqueness_namespace ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2668617Z test structured::tests::attach_counts_toward_the_depth_limit ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2669664Z test structured::tests::attach_slots_share_identity_namespace_and_report_unfilled_holes ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2670848Z test structured::tests::attach_without_any_slot_is_rejected ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2673011Z test structured::tests::attach_round_trips_with_one_or_both_slots_and_a_stable_tag ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2674314Z test structured::tests::complete_rows_symbols_and_fixed_slots_round_trip_without_holes ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2675221Z test structured::tests::invalid_containers_leaves_and_unknown_tags_are_rejected ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2682328Z test structured::tests::maximum_depth_round_trips_and_one_more_level_is_rejected ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2683148Z test structured::tests::required_holes_do_not_become_persisted_placeholder_text ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2683942Z test structured::tests::migration_retains_values_and_block_ids_and_reports_raw_formulas ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.2695084Z test structured::tests::over_capacity_input_is_rejected_without_truncation ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.3323085Z test structured::tests::aggregate_text_and_node_caps_reject_many_individually_valid_leaves ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.3323771Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.3324196Z test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.3324746Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.3325480Z ^[[1m^[[92m     Running^[[0m unittests src/lib.rs (target/debug/deps/scholium_session-632e620457437284)
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.3350506Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.3351045Z running 13 tests
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.3516928Z test typst::events::tests::abstract_input_edits_text_and_reports_semantic_geometry ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.3539488Z test typst::events::tests::failed_key_and_pointer_inputs_restore_the_complete_checkpoint ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.4230409Z test typst::command::checkpoint::tests::full_history_and_authority_share_immutable_checkpoint_state ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.4459798Z test typst::tests::both_script_placeholders_settle_without_an_extra_undo_step ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.4461636Z test typst::tests::checkpoint_bench::full_history_text_checkpoint ... ignored, manual timing; run with --ignored --exact --nocapture
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.4568701Z test typst::tests::failed_and_panicking_commands_restore_every_checkpoint_field_and_saved_head ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.4675779Z test typst::tests::formula_fraction_and_scripts_use_the_same_command_path ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.4784654Z test typst::tests::malformed_arguments_and_rejected_edits_keep_selection_history_and_snapshot ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.4890564Z test typst::tests::pending_bold_and_emphasis_apply_to_typed_text_and_save_reopens_identically ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.4976354Z test typst::tests::typing_groups_and_selection_replacement_restore_both_endpoints ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.5222615Z test typst::runtime_tests::worker_adoption_releases_visual_keys_and_rasters_without_transferring_scene_ownership ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:02.5761894Z test typst::runtime_tests::completed_multi_click_selects_word_or_paragraph_before_delete ... ok
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0600434Z test typst::scenario_tests::every_shared_scenario_replays_through_abstract_inputs ... FAILED
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0601234Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0601361Z failures:
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0601545Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0601856Z ---- typst::scenario_tests::every_shared_scenario_replays_through_abstract_inputs stdout ----
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0603019Z "double-click-bold" step 1: {"actual":{"anchor":null,"cursor":{"affinity":"Upstream","byte":9,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"bold word"}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[144.54614173228347,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0604702Z "double-click-bold" step 2: {"actual":{"anchor":{"affinity":"Downstream","byte":0,"path":"blocks/0/content/0"},"cursor":{"affinity":"Upstream","byte":4,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"bold word"}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[116.19014173228348,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0606635Z "double-click-bold" step 3: {"actual":{"anchor":{"affinity":"Downstream","byte":0,"path":"blocks/0/content/0"},"cursor":{"affinity":"Upstream","byte":4,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"strong","text":"bold"}},{"body":{"kind":"text","style":"plain","text":" word"}}],"kind":"Paragraph"}]},"undo_depth":2},"caret_pt":[118.73414173228348,76.02600000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0608890Z "formula-fraction-superscript" step 1: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":0,"path":"blocks/0/content/1/body/root"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":""}},{"body":{"kind":"math","root":{"body":{"kind":"hole"}}}},{"body":{"kind":"text","style":"plain","text":""}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[96.85814173228347,76.524]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0611241Z "formula-fraction-superscript" step 2: {"actual":{"anchor":null,"cursor":{"affinity":"Upstream","byte":2,"path":"blocks/0/content/1/body/root"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":""}},{"body":{"kind":"math","root":{"body":{"kind":"text","text":"12"}}}},{"body":{"kind":"text","style":"plain","text":""}}],"kind":"Paragraph"}]},"undo_depth":2},"caret_pt":[106.86614173228347,76.19999999999999]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0613595Z "formula-fraction-superscript" step 3: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":0,"path":"blocks/0/content/1/body/root/body/denominator"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":""}},{"body":{"kind":"math","root":{"body":{"denominator":{"body":{"kind":"hole"}},"kind":"fraction","numerator":{"body":{"kind":"text","text":"12"}}}}}},{"body":{"kind":"text","style":"plain","text":""}}],"kind":"Paragraph"}]},"undo_depth":3},"caret_pt":[100.84574173228347,82.26]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0616134Z "formula-fraction-superscript" step 4: {"actual":{"anchor":null,"cursor":{"affinity":"Upstream","byte":1,"path":"blocks/0/content/1/body/root/body/denominator"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":""}},{"body":{"kind":"math","root":{"body":{"denominator":{"body":{"kind":"text","text":"3"}},"kind":"fraction","numerator":{"body":{"kind":"text","text":"12"}}}}}},{"body":{"kind":"text","style":"plain","text":""}}],"kind":"Paragraph"}]},"undo_depth":4},"caret_pt":[103.23554173228347,81.6312]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0618992Z "formula-fraction-superscript" step 5: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":0,"path":"blocks/0/content/1/body/root/body/denominator/body/sup"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":""}},{"body":{"kind":"math","root":{"body":{"denominator":{"body":{"base":{"body":{"kind":"text","text":"3"}},"kind":"attach","sup":{"body":{"kind":"hole"}}}},"kind":"fraction","numerator":{"body":{"kind":"text","text":"12"}}}}}},{"body":{"kind":"text","style":"plain","text":""}}],"kind":"Paragraph"}]},"undo_depth":5},"caret_pt":[103.00034173228347,81.05999999999999]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0622235Z "formula-fraction-superscript" step 6: {"actual":{"anchor":null,"cursor":{"affinity":"Upstream","byte":1,"path":"blocks/0/content/1/body/root/body/denominator/body/sup"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":""}},{"body":{"kind":"math","root":{"body":{"denominator":{"body":{"base":{"body":{"kind":"text","text":"3"}},"kind":"attach","sup":{"body":{"kind":"text","text":"2"}}}},"kind":"fraction","numerator":{"body":{"kind":"text","text":"12"}}}}}},{"body":{"kind":"text","style":"plain","text":""}}],"kind":"Paragraph"}]},"undo_depth":6},"caret_pt":[105.04334173228347,80.05799999999999]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0625359Z "formula-fraction-superscript" step 7: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":0,"path":"blocks/0/content/2"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":""}},{"body":{"kind":"math","root":{"body":{"denominator":{"body":{"base":{"body":{"kind":"text","text":"3"}},"kind":"attach","sup":{"body":{"kind":"text","text":"2"}}}},"kind":"fraction","numerator":{"body":{"kind":"text","text":"12"}}}}}},{"body":{"kind":"text","style":"plain","text":""}}],"kind":"Paragraph"}]},"undo_depth":6},"caret_pt":null}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0629689Z "formula-fraction-superscript" step 8: {"actual":{"anchor":null,"cursor":{"affinity":"Upstream","byte":1,"path":"blocks/0/content/2"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":""}},{"body":{"kind":"math","root":{"body":{"denominator":{"body":{"base":{"body":{"kind":"text","text":"3"}},"kind":"attach","sup":{"body":{"kind":"text","text":"2"}}}},"kind":"fraction","numerator":{"body":{"kind":"text","text":"12"}}}}}},{"body":{"kind":"text","style":"plain","text":"."}}],"kind":"Paragraph"}]},"undo_depth":7},"caret_pt":[109.46534173228346,76.24799999999999]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0633879Z "mixed-cjk-english" step 1: {"actual":{"anchor":null,"cursor":{"affinity":"Upstream","byte":24,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"中文 English paragraph"}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[211.9021417322835,76.84799999999998]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0637948Z "vertical-goal" step 1: {"actual":{"anchor":null,"cursor":{"affinity":"Upstream","byte":373,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[155.86214173228348,155.53199999999998]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0643637Z "vertical-goal" step 2: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":0,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[94.86614173228347,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0647472Z "vertical-goal" step 3: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":1,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[106.27814173228347,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0651369Z "vertical-goal" step 4: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":2,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[109.53014173228345,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0654956Z "vertical-goal" step 5: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":3,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[115.60214173228346,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0658643Z "vertical-goal" step 6: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":4,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[120.96614173228348,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0662530Z "vertical-goal" step 7: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":5,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[123.94066366704158,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0666053Z "vertical-goal" step 8: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":6,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[132.80866366704157,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0669623Z "vertical-goal" step 9: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":7,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[138.85666366704157,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0673393Z "vertical-goal" step 10: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":8,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[143.2246636670416,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0676909Z "vertical-goal" step 11: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":9,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[149.2966636670416,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0680697Z "vertical-goal" step 12: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":10,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[153.9766636670416,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0684395Z "vertical-goal" step 13: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":11,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[156.9511856017997,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0687993Z "vertical-goal" step 14: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":12,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[168.6511856017997,75.94800000000001]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0691732Z "vertical-goal" step 15: {"actual":{"anchor":null,"cursor":{"affinity":"Downstream","byte":106,"path":"blocks/0/content/0"},"snapshot":{"blocks":[{"content":[{"body":{"kind":"text","style":"plain","text":"Wide words WWW alternate with thin iii and ordinary letters to test a persistent visual column. Every line belongs to this single paragraph and wraps automatically without an explicit newline. Proportional glyph widths make the nearest caret differ from the original horizontal goal. Moving down twice then back up must recover the starting column across these soft wraps. "}}],"kind":"Paragraph"}]},"undo_depth":1},"caret_pt":[166.6926929133858,95.844]}
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0693493Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0693962Z thread 'typst::scenario_tests::every_shared_scenario_replays_through_abstract_inputs' (5098) panicked at crates/scholium-session/src/typst/scenario_tests.rs:177:9:
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0694684Z fixture must distinguish the original goal from the previous line's caret x
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0694967Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0694973Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0695063Z failures:
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0695381Z     typst::scenario_tests::every_shared_scenario_replays_through_abstract_inputs
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0695662Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0695944Z test result: FAILED. 11 passed; 1 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.72s
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0696269Z
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0696628Z ^[[1m^[[91merror^[[0m: test failed, to rerun pass `-p scholium-session --lib`
+test	Run cargo test --locked --workspace	2026-10-31T10:51:03.0717109Z ##[error]Process completed with exit code 101.

@@ -428,3 +428,38 @@ session **3853 → 4641（+788）**。
 验证继续使用 slot 内 TMPDIR，fork 核验加 Git ceiling，窗口使用私有 Xvfb 与机器级锁。
 fetch 确认 origin/main 仍为 3bfc176，已是当前分支祖先；没有需要追加的 main 合并。
 本轮要求均已完成，无遗留项；不合并、不轮询 CI。
+
+
+## PR #73 CI 字体封闭修复
+
+PR test job `124517079568` 在 Ubuntu 26.04 的既有 column-goal 断言失败，触发点是
+`fixture must distinguish the original goal from the previous line's caret x`。日志中原列 x=168.651 pt，
+第二行 byte106/x=166.693 pt；宿主字体造成第一软换行边界变化后，原输入的候选第三行位置无法区分沿用目标还是重置目标。
+
+根因已做隔离复现而非仅推测：本机默认 fontconfig 可通过；使用 `FONTCONFIG_FILE` 指向只包含
+`crates/scholium-app/assets/fonts/NotoSansCJKsc-Regular.otf` 的临时配置，未修复代码也在相同断言失败，
+vertical-goal 第二行变为 byte106，与 CI 完全一致。没有改断言、阈值或 fixture 文本。
+[CI 失败日志](evidence/2026-10-31-session-core-scene/fidelity-font-ci-failure.txt)、
+[隔离环境及修复后轨迹](evidence/2026-10-31-session-core-scene/fidelity-font-isolated.json)。
+
+Typst pinned `FontStore` 先载入 embedded 字体，随后 `system()` 以 fontdb 扫描系统字体；文档 style 请求
+Times New Roman/SimSun。增加不可变 `FontProfile`：`System` 保持上述生产默认；`Bundled` 将应用打包的
+Noto Sans CJK 放在 Typst embedded 之前，并且完全不调用 `system()`。场景 headless worker 显式选择 Bundled；
+独立 parity 子进程设置 `SCHOLIUM_TEST_FONTS=bundled`，所以场景窗口的 worker 和 source PreviewWorld
+使用相同固定集合。其它已有窗口检查保持原字体环境和阈值；该变量只在 parity 检查子进程中设置，不改变 app 正常启动。
+
+最初把该变量施加到 window-checks 的所有检查进程，触发 sharp-raster 既有 `GAIN_REQUIRED=1.2` 门槛（实测 1.094）。
+这是测试环境扩大范围造成的无关差异，未更改阈值；已移除全局设置，仅在 parity-check 自身启用固定 profile，
+使其它窗口检查继续覆盖原产品字体配置。
+
+这次排查也确认了产品层面的现状：普通 app 的 Typst editor worker 和 source PreviewWorld 都默认使用
+System profile，且正文明确请求宿主 Times New Roman/SimSun。不同机器可能以不同 fallback 字形宽度布局，
+改变软换行和页面分页；该影响在本日志与 [app 模块说明](../modules/app.md) 如实记录，按任务要求本 PR 不调整产品字体策略。
+
+在原断言和原 fixture 文本均未改变时，Bundled + 隔离 fontconfig 下场景通过，第二/三行 caret 为 byte99/181，
+原列目标 discriminator 仍有效。修正环境范围后完整双语窗口 **30/30** 通过：只 parity 场景检查使用 Bundled，
+其余窗口检查（包括 sharp-raster）保持原系统字体并通过未变阈值；workspace tests 为 444 passed / 2 ignored，
+fmt/Clippy/rustdoc、五个仓库静态门禁、build 均通过。固定上游 fork 重建及 stock comparison 继续 **4/4** 像素相等。
+[双语窗口摘要](evidence/2026-10-31-session-core-scene/fidelity-font-window-summary.txt)、
+[隔离字体下的 targeted replay](evidence/2026-10-31-session-core-scene/fidelity-font-bundled-isolated.log)、
+[workspace 测试输出](evidence/2026-10-31-session-core-scene/fidelity-font-tests.log)。

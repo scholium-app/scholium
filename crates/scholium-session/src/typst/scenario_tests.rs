@@ -71,7 +71,9 @@ fn every_shared_scenario_replays_through_abstract_inputs() {
             path.display()
         );
         let db = std::env::temp_dir().join(format!("t20-scenario-{:?}.db", RequestId::fresh()));
-        let mut core = EditorCore::open_with_wake(&db, || {}).expect("fixture");
+        let mut core =
+            EditorCore::open_with_fonts(&db, || {}, scholium_typst::FontProfile::Bundled)
+                .expect("fixture");
         core.submit_layout();
         settle(&mut core);
         let mut points = Vec::new();

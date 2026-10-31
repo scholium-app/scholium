@@ -20,9 +20,21 @@ impl EditorCore {
         path: &Path,
         wake: impl Fn() + Send + 'static,
     ) -> Result<Self, SessionError> {
+        Self::open_with_fonts(path, wake, scholium_typst::FontProfile::from_environment())
+    }
+
+    /// Open the same runtime with explicit, immutable font sources.
+    ///
+    /// # Errors
+    /// Returns storage/validation failures or failure to spawn the layout thread.
+    pub fn open_with_fonts(
+        path: &Path,
+        wake: impl Fn() + Send + 'static,
+        fonts: scholium_typst::FontProfile,
+    ) -> Result<Self, SessionError> {
         let mut core = Self::open(path)?;
         core.runtime = Some(Runtime {
-            worker: EditorWorker::spawn(wake)?,
+            worker: EditorWorker::spawn_with_fonts(wake, fonts)?,
             token: 0,
             settle: Default::default(),
             sent: None,

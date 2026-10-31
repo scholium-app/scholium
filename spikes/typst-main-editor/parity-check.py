@@ -50,6 +50,7 @@ class Replay:
         self.log = output / "app.log"
         self.env = dict(os.environ, SCHOLIUM_SESSION_FILE=str(output / "doc.sqlite"),
                         SCHOLIUM_EDITOR_AUDIT="1", WINIT_UNIX_BACKEND="x11", WINIT_X11_SCALE_FACTOR="1")
+        self.env["SCHOLIUM_TEST_FONTS"] = "bundled"
         self.env.pop("WAYLAND_DISPLAY", None)
         self.writer = self.log.open("w")
         self.proc = subprocess.Popen([str(binary)], env=self.env, stdout=self.writer, stderr=subprocess.STDOUT)

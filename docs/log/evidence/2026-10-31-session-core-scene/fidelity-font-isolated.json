@@ -1,0 +1,7 @@
+{
+  "reproduction": "Before fix: set FONTCONFIG_FILE to XML containing only crates/scholium-app/assets/fonts; no test-font override.",
+  "local_native_fonts": "scenario step 15 cursor byte 106, test failed at step 16 previous-x discriminator.",
+  "ci_ubuntu_26_04": "scenario step 15 cursor byte 106 at y 95.844; test failed at step 16 same discriminator.",
+  "fixed_bundled_profile": "explicit bundled worker produced stable step bytes 99 and 181; test passed with host font isolation still active.",
+  "policy": "Application EditorWorker and PreviewWorld still default to System profile and typst-kit system font scan."
+}
