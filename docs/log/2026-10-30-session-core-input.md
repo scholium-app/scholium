@@ -2,9 +2,10 @@
 
 ## 范围
 
-从 `origin/main` 的 phase-1 session core 提取抽象输入边界。app 将提交文字和不需要 Scene 几何的 egui 按键翻译为
+从 `origin/main` 的 phase-1 session core 提取抽象输入边界。app 将文字提交、页面坐标和视口规格翻译为
 `scholium_session::typst::Input`；核心保存页面 pt 视口、栅格规格和指针连续状态，并通过 `Outcome` 返回语义 caret、
-selection、overlay 与新布局意图。IME preedit、屏幕坐标换算、绘制和 AccessKit 仍属于 app。
+selection、overlay 与新布局意图。Scene 几何命中、IME preedit、屏幕坐标换算、绘制和 AccessKit 仍属于 app；egui
+按键路由保留原有 app 行为。
 
 ## 验证
 
@@ -14,7 +15,7 @@ selection、overlay 与新布局意图。IME preedit、屏幕坐标换算、绘�
 
 ## 行数
 
-`crates/scholium-app/src/typst_editor.rs`：425 → 425 行。`crates/scholium-session/src/**/*.rs`：2299 → 2830 行；新增
+`crates/scholium-app/src/typst_editor.rs`：425 → 425 行。`crates/scholium-session/src/**/*.rs`：2299 → 2805 行；新增
 事件类型与测试位于独立模块，所有文件低于 600 行。临时基线记录在未提交的 `target/t17-lines-before.json`。
 
 工作区 fmt、clippy、test、rustdoc、规模、文档链接、layer、UI 字串、cargo deny、双语言窗口检查（30/30）和四项
