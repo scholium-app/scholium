@@ -1,1 +1,87 @@
-{"name":"formula-fraction-superscript","inputs":[{"text":"$"},{"text":"12"},{"key":"Slash","mods":{"command":true}},{"text":"3"},{"key":"ArrowRight"},{"key":"Character","value":"^"},{"text":"2"},{"key":"ArrowRight"}],"expected":{"undo_depth":7}}
+{
+  "name": "formula-fraction-superscript",
+  "inputs": [
+    {
+      "text": "$"
+    },
+    {
+      "text": "12"
+    },
+    {
+      "key": "Slash",
+      "mods": {
+        "command": true
+      }
+    },
+    {
+      "text": "3"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "Character",
+      "value": "^"
+    },
+    {
+      "text": "2"
+    },
+    {
+      "key": "ArrowRight"
+    }
+  ],
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": ""
+              }
+            },
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "kind": "fraction",
+                    "numerator": {
+                      "body": {
+                        "kind": "text",
+                        "text": "12"
+                      }
+                    },
+                    "denominator": {
+                      "body": {
+                        "kind": "text",
+                        "text": "3"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "^2"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/2",
+      "byte": 2,
+      "affinity": "Downstream"
+    },
+    "anchor": null,
+    "undo_depth": 5
+  }
+}

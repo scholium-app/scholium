@@ -1,1 +1,39 @@
-{"name":"vertical-goal","inputs":[{"text":"a long soft-wrapped paragraph that crosses a visual line"},{"key":"ArrowUp"},{"key":"ArrowDown"}],"expected":{"undo_depth":1}}
+{
+  "name": "vertical-goal",
+  "inputs": [
+    {
+      "text": "a long soft-wrapped paragraph that crosses a visual line"
+    },
+    {
+      "key": "ArrowUp"
+    },
+    {
+      "key": "ArrowDown"
+    }
+  ],
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "a long soft-wrapped paragraph that crosses a visual line"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/0",
+      "byte": 56,
+      "affinity": "Upstream"
+    },
+    "anchor": null,
+    "undo_depth": 1
+  }
+}

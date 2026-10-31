@@ -1,0 +1,13 @@
+FAIL mixed-cjk-english at input 1: {'text': '中文 English paragraph'}: {
+  "undo_depth": {
+    "expected": 999,
+    "actual": 1
+  }
+}
+parity-check failed: {
+  "undo_depth": {
+    "expected": 999,
+    "actual": 1
+  }
+}
+X connection to :99 broken (explicit kill or server shutdown).

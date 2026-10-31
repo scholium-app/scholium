@@ -12,6 +12,47 @@ fn settle(core: &mut EditorCore) {
 }
 
 #[test]
+fn completed_multi_click_selects_word_or_paragraph_before_delete() {
+    for (clicks, selected) in [(2, "delete"), (3, "paragraph to delete")] {
+        let path = std::env::temp_dir().join(format!("t20-click-{:?}.db", RequestId::fresh()));
+        let mut core = EditorCore::open_with_wake(&path, || {}).expect("fixture");
+        core.input(Input::Text("paragraph to delete".into()))
+            .expect("text");
+        settle(&mut core);
+        let caret = core
+            .current_scene()
+            .expect("Scene")
+            .geometry
+            .caret(core.cursor)
+            .expect("caret");
+        let at = [caret.top[0], (caret.top[1] + caret.bottom[1]) * 0.5];
+        core.input(Input::Pointer {
+            kind: PointerKind::Release,
+            at,
+            clicks,
+            mods: Modifiers::default(),
+        })
+        .expect("completed multi click");
+        assert_eq!(
+            core.selection_text().expect("selection"),
+            Some(selected.into())
+        );
+        core.input(Input::Key {
+            key: Key::Delete,
+            mods: Modifiers::default(),
+        })
+        .expect("delete");
+        assert_eq!(core.undo.len(), 2);
+        assert_eq!(
+            input::leaves(&core.snapshot)[0].text,
+            if clicks == 3 { "" } else { "paragraph to " }
+        );
+        drop(core);
+        let _ = std::fs::remove_file(path);
+    }
+}
+
+#[test]
 fn worker_adoption_releases_visual_keys_and_rasters_without_transferring_scene_ownership() {
     let path = std::env::temp_dir().join(format!("t20-worker-{:?}.db", RequestId::fresh()));
     let mut core = EditorCore::open_with_wake(&path, || {}).expect("fixture");

@@ -1,1 +1,46 @@
-{"name":"shift-selection-replace","inputs":[{"text":"select me"},{"key":"ArrowLeft","repeat":true},{"key":"ArrowLeft","mods":{"shift":true}},{"text":"X"}],"expected":{"undo_depth":2}}
+{
+  "name": "shift-selection-replace",
+  "inputs": [
+    {
+      "text": "select me"
+    },
+    {
+      "key": "ArrowLeft",
+      "repeat": true
+    },
+    {
+      "key": "ArrowLeft",
+      "mods": {
+        "shift": true
+      }
+    },
+    {
+      "text": "X"
+    }
+  ],
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "select Xe"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/0",
+      "byte": 8,
+      "affinity": "Upstream"
+    },
+    "anchor": null,
+    "undo_depth": 2
+  }
+}

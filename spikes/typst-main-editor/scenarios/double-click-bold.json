@@ -1,1 +1,54 @@
-{"name":"double-click-bold","inputs":[{"text":"bold word"},{"pointer":{"target":"word 0","kind":"Press","clicks":2}},{"command":"Bold"}],"expected":{"undo_depth":2}}
+{
+  "name": "double-click-bold",
+  "inputs": [
+    {
+      "text": "bold word"
+    },
+    {
+      "pointer": {
+        "target": "word 0",
+        "kind": "Press",
+        "clicks": 2
+      }
+    },
+    {
+      "command": "Bold"
+    }
+  ],
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "strong",
+                "text": "bold"
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": " word"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/0",
+      "byte": 4,
+      "affinity": "Upstream"
+    },
+    "anchor": {
+      "path": "blocks/0/content/0",
+      "byte": 0,
+      "affinity": "Downstream"
+    },
+    "undo_depth": 2
+  }
+}

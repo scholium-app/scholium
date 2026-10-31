@@ -1,0 +1,58 @@
+{
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "中文 English paragraph"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/0",
+      "byte": 24,
+      "affinity": "Upstream"
+    },
+    "anchor": null,
+    "undo_depth": 999
+  },
+  "actual": {
+    "anchor": null,
+    "cursor": {
+      "affinity": "Upstream",
+      "byte": 24,
+      "path": "blocks/0/content/0"
+    },
+    "snapshot": {
+      "blocks": [
+        {
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "中文 English paragraph"
+              }
+            }
+          ],
+          "kind": "Paragraph"
+        }
+      ]
+    },
+    "undo_depth": 1
+  },
+  "diff": {
+    "undo_depth": {
+      "expected": 999,
+      "actual": 1
+    }
+  }
+}

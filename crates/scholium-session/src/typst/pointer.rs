@@ -8,6 +8,43 @@ use scholium_model::NodeId;
 use std::collections::HashMap;
 use unicode_segmentation::UnicodeSegmentation;
 impl EditorCore {
+    pub(super) fn pointer_input(
+        &mut self,
+        kind: PointerKind,
+        at: [f64; 2],
+        clicks: u8,
+        mods: Modifiers,
+    ) -> Result<Outcome, CommandError> {
+        self.pointer = Some(PointerState { at, clicks });
+        let before = self.cursor;
+        match kind {
+            PointerKind::Press => {
+                self.pointer_start(at, mods.shift);
+                if clicks >= 2 {
+                    self.pointer_multi(at, clicks);
+                }
+                self.follow = FollowState::default();
+            }
+            PointerKind::Move if self.pointer_drag => {
+                self.pointer_drag_to(at);
+            }
+            PointerKind::Move => {}
+            PointerKind::Release => {
+                self.pointer_drag = false;
+                // A completed multi-click is also a complete abstract gesture: headless
+                // callers need not synthesize the toolkit's preceding press sequence.
+                if clicks >= 2 {
+                    self.pointer_multi(at, clicks);
+                    self.follow = FollowState::default();
+                }
+            }
+        }
+        Ok(Outcome {
+            applied: self.cursor != before || self.anchor.is_some(),
+            ..Outcome::default()
+        })
+    }
+
     /// Resolve a page-point to an exact semantic caret in the supplied geometry.
     pub fn pointer_hit(&self, point: [f64; 2]) -> Option<Position> {
         let geometry = self.geometry.as_ref()?;
@@ -105,7 +142,7 @@ impl EditorCore {
             .any(|[x0, y0, x1, y1]| (x0..=x1).contains(&point[0]) && (y0..=y1).contains(&point[1]))
     }
 
-    /// A completed double/triple click at a screen position (the press already placed the caret).
+    /// Select at a page point, including a completed multi-click without preceding presses.
     /// Double click selects the word under the pointer, triple click the block's body text.
     pub fn pointer_multi(&mut self, point: [f64; 2], clicks: u8) -> bool {
         let Some(hit) = self.pointer_hit(point) else {

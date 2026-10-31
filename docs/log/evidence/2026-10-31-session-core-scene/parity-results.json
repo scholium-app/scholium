@@ -1,0 +1,932 @@
+[
+  {
+    "locale": "zh-Hans",
+    "scenario": "double-click-bold",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "strong",
+                  "text": "bold"
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": " word"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 4,
+        "affinity": "Upstream"
+      },
+      "anchor": {
+        "path": "blocks/0/content/0",
+        "byte": 0,
+        "affinity": "Downstream"
+      },
+      "undo_depth": 2
+    },
+    "actual": {
+      "anchor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/0"
+      },
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 4,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "strong",
+                  "text": "bold"
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": " word"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 2
+    },
+    "diff": {}
+  },
+  {
+    "locale": "zh-Hans",
+    "scenario": "formula-fraction-superscript",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "12"
+                        }
+                      },
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "3"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "^2"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/2",
+        "byte": 2,
+        "affinity": "Downstream"
+      },
+      "anchor": null,
+      "undo_depth": 5
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 2,
+        "path": "blocks/0/content/2"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "3"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "12"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "^2"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 5
+    },
+    "diff": {}
+  },
+  {
+    "locale": "zh-Hans",
+    "scenario": "mixed-cjk-english",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "中文 English paragraph"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 24,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 1
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 24,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "中文 English paragraph"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 1
+    },
+    "diff": {}
+  },
+  {
+    "locale": "zh-Hans",
+    "scenario": "shift-selection-replace",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "select Xe"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 8,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 2
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 8,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "select Xe"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 2
+    },
+    "diff": {}
+  },
+  {
+    "locale": "zh-Hans",
+    "scenario": "triple-click-delete",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 0,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 2
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 0,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 2
+    },
+    "diff": {}
+  },
+  {
+    "locale": "zh-Hans",
+    "scenario": "undo-redo",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "history"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 7,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 1
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 7,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "history"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 1
+    },
+    "diff": {}
+  },
+  {
+    "locale": "zh-Hans",
+    "scenario": "vertical-goal",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "a long soft-wrapped paragraph that crosses a visual line"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 56,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 1
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 56,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "a long soft-wrapped paragraph that crosses a visual line"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 1
+    },
+    "diff": {}
+  },
+  {
+    "locale": "en",
+    "scenario": "double-click-bold",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "strong",
+                  "text": "bold"
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": " word"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 4,
+        "affinity": "Upstream"
+      },
+      "anchor": {
+        "path": "blocks/0/content/0",
+        "byte": 0,
+        "affinity": "Downstream"
+      },
+      "undo_depth": 2
+    },
+    "actual": {
+      "anchor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/0"
+      },
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 4,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "strong",
+                  "text": "bold"
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": " word"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 2
+    },
+    "diff": {}
+  },
+  {
+    "locale": "en",
+    "scenario": "formula-fraction-superscript",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "12"
+                        }
+                      },
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "3"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "^2"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/2",
+        "byte": 2,
+        "affinity": "Downstream"
+      },
+      "anchor": null,
+      "undo_depth": 5
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 2,
+        "path": "blocks/0/content/2"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "3"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "12"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "^2"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 5
+    },
+    "diff": {}
+  },
+  {
+    "locale": "en",
+    "scenario": "mixed-cjk-english",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "中文 English paragraph"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 24,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 1
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 24,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "中文 English paragraph"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 1
+    },
+    "diff": {}
+  },
+  {
+    "locale": "en",
+    "scenario": "shift-selection-replace",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "select Xe"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 8,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 2
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 8,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "select Xe"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 2
+    },
+    "diff": {}
+  },
+  {
+    "locale": "en",
+    "scenario": "triple-click-delete",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 0,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 2
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 0,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 2
+    },
+    "diff": {}
+  },
+  {
+    "locale": "en",
+    "scenario": "undo-redo",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "history"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 7,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 1
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 7,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "history"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 1
+    },
+    "diff": {}
+  },
+  {
+    "locale": "en",
+    "scenario": "vertical-goal",
+    "expected": {
+      "snapshot": {
+        "blocks": [
+          {
+            "kind": "Paragraph",
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "a long soft-wrapped paragraph that crosses a visual line"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cursor": {
+        "path": "blocks/0/content/0",
+        "byte": 56,
+        "affinity": "Upstream"
+      },
+      "anchor": null,
+      "undo_depth": 1
+    },
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 56,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "a long soft-wrapped paragraph that crosses a visual line"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 1
+    },
+    "diff": {}
+  }
+]

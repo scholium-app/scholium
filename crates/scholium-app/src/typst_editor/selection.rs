@@ -185,6 +185,7 @@ impl EditorSession {
         self.core.pointer_multi(point, clicks)
     }
 
+    #[cfg(test)]
     pub(super) fn pointer_clicks(
         &mut self,
         pos: egui::Pos2,
@@ -205,9 +206,7 @@ impl EditorSession {
             mods: scholium_session::typst::Modifiers::default(),
         });
         match result {
-            Ok(outcome) if !outcome.applied => {
-                state.edit_error = Some("此位置没有精确的当前命中几何；可使用键盘导航。".into())
-            }
+            Ok(outcome) if !outcome.applied => state.edit_error = Some(pointer_message()),
             Err(error) => state.edit_error = Some(error.to_string()),
             _ => {}
         }
@@ -274,6 +273,10 @@ impl EditorSession {
         }
         Ok(quads)
     }
+}
+
+pub(super) fn pointer_message() -> String {
+    "此位置没有精确的当前命中几何；可使用键盘导航。".into()
 }
 
 mod pointer;

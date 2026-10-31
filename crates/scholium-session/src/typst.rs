@@ -13,10 +13,13 @@ mod key;
 mod math_enter;
 mod persistence;
 pub mod pointer;
+mod projection;
 pub mod raster;
 mod runtime;
 #[cfg(test)]
 mod runtime_tests;
+#[cfg(test)]
+mod scenario_tests;
 mod selection;
 pub mod style;
 #[cfg(test)]

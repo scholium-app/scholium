@@ -261,35 +261,6 @@ impl EditorCore {
         };
     }
 
-    fn pointer_input(
-        &mut self,
-        kind: PointerKind,
-        at: [f64; 2],
-        clicks: u8,
-        mods: Modifiers,
-    ) -> Result<Outcome, CommandError> {
-        self.pointer = Some(PointerState { at, clicks });
-        let before = self.cursor;
-        match kind {
-            PointerKind::Press => {
-                self.pointer_start(at, mods.shift);
-                if clicks >= 2 {
-                    self.pointer_multi(at, clicks);
-                }
-                self.follow = FollowState::default();
-            }
-            PointerKind::Move if self.pointer_drag => {
-                self.pointer_drag_to(at);
-            }
-            PointerKind::Move => {}
-            PointerKind::Release => self.pointer_drag = false,
-        }
-        Ok(Outcome {
-            applied: self.cursor != before || self.anchor.is_some(),
-            ..Outcome::default()
-        })
-    }
-
     pub(super) fn move_horizontal(&mut self, right: bool, extend: bool) {
         let all = leaves(&self.snapshot);
         let Some(index) = all.iter().position(|leaf| leaf.id == self.cursor.leaf) else {

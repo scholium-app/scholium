@@ -1,1 +1,33 @@
-{"name":"mixed-cjk-english","inputs":[{"text":"中文 English paragraph"}],"expected":{"undo_depth":1}}
+{
+  "name": "mixed-cjk-english",
+  "inputs": [
+    {
+      "text": "中文 English paragraph"
+    }
+  ],
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "中文 English paragraph"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/0",
+      "byte": 24,
+      "affinity": "Upstream"
+    },
+    "anchor": null,
+    "undo_depth": 1
+  }
+}

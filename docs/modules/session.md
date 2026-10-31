@@ -65,6 +65,10 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
   app 不能从此调用可变 document 方法。`restore_document` 在验证后恢复本地文档，供恢复入口和 fixture 使用。
 - app 只把 egui 文字、按键和页面指针翻译成 `Input`；光标/anchor、输入分组、输入样式、视觉导航、点击选区和
   follow 意图均由 core 更新。`record`、`range`、`selected`、`active_styles`、`in_math` 读取同一权威投影。
+- `Input::Pointer` 的双击选词、三击选段由 core 处理；`Release` 携带点击数时也独立完成该手势，
+  不要求宿主重造此前的按下事件。app 只判定像素距离/时间所对应的点击数，不在绘制后另触发选择。
+- `semantic_projection()` 返回稳定快照摘要、cursor/anchor 和 undo_depth，供无界面与 AUDIT 共用。
+  摘要仅去除随机 node/document 身份和 revision，保留整个语义树、内容与样式；端点为结构路径、UTF-8 byte 与 affinity。
 - `math_indicator(scene)`、`find_overflows(scene)` 要求调用方先证明 Scene 当前；返回 padded Frame pt 或叶 ID，
   worker/Scene 由 core 持有。layout error、rejected input 与 overflow targets 是纯数据，语言目录和状态栏在 app。
 

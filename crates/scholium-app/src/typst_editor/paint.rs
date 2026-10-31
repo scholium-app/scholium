@@ -108,14 +108,6 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
             }
         }
     }
-    if let Some(pos) = response.interact_pointer_pos() {
-        // The press of the last click already placed the caret; the release picks the unit.
-        if response.triple_clicked() {
-            session.pointer_clicks(pos, 3, state);
-        } else if response.double_clicked() {
-            session.pointer_clicks(pos, 2, state);
-        }
-    }
     session.apply_follow(ui, rect, scale, OUTER_MARGIN);
     session.accessibility(ui, response.has_focus(), state);
     // All accepted intents have reached LocalSession and the worker before this pass.
