@@ -1,0 +1,167 @@
+diff --git a/tex/rtex-dl.lua b/tex/rtex-dl.lua
+index a0bfb6f..6a6dfe8 100644
+--- a/tex/rtex-dl.lua
++++ b/tex/rtex-dl.lua
+@@ -508,6 +508,7 @@ hlist_out = function(st, box, left, base_v)
+       elseif id == hlist_id or id == vlist_id then
+         local w, h, d = getwhd(n)
+         local sh = getshift(n)
++        math_edit.box(st, n, cur_h, base_v + sh, w, h, d)
+         local par = st.attr_par and getattribute(n, st.attr_par)
+         local line = par and st.attr_line and getattribute(n, st.attr_line)
+         sync_out()
+@@ -554,6 +555,7 @@ hlist_out = function(st, box, left, base_v)
+         sync_in()
+         cur_h = cur_h + w
+       elseif id == math_id then
++        math_edit.boundary(st, n, cur_h, base_v, box_h, box_d)
+         local wd, st_, sh, sto, sho = getglue(n)
+         local sub = getsubtype(n)
+         sync_out(); st:emit({ "m", sub == 0 and "on" or "off", cur_h }); sync_in()
+@@ -563,6 +565,7 @@ hlist_out = function(st, box, left, base_v)
+           cur_h = cur_h + glue_advance(wd, st_, sh, sto, sho)
+         end
+       elseif id == whatsit_id then
++        if math_edit.marker(st, n, cur_h, base_v, box_h, box_d) then goto continue end
+         local sub = getsubtype(n)
+         sync_out()
+         if sub == ws_colorstack then
+@@ -622,6 +625,7 @@ vlist_out = function(st, box, left, top)
+       local w, h, d = getwhd(n)
+       local s = getshift(n)
+       cur_v = cur_v + h
++      math_edit.box(st, n, left + s, cur_v, w, h, d)
+       local par = st.attr_par and getattribute(n, st.attr_par)
+       local line = par and st.attr_line and getattribute(n, st.attr_line)
+       local pic = note_pic(st, n, left + s, cur_v, w, h, d)
+diff --git a/tex/rtex-math-edit.lua b/tex/rtex-math-edit.lua
+index 724800e..07879d1 100644
+--- a/tex/rtex-math-edit.lua
++++ b/tex/rtex-math-edit.lua
+@@ -1,58 +1,77 @@
+--- Evaluation-only source ownership. Attribute 65000 is reserved by the host fixture.
+--- No nodes, dimensions, or math classes are changed by this observer.
+-local M = { attr = 65000, noads = {} }
++-- Evaluation-only attributes. Source maps and revisions belong to the host.
++local M = { attr = 65000, formula_attr = 65001 }
+ local getattribute = node.direct.getattribute or node.direct.get_attribute
+-local fields = { 'nucleus', 'sub', 'sup', 'num', 'denom', 'degree', 'head' }
+-local function walk(head, parent, role, depth)
+-  if not head or depth > 48 then return end
+-  for n in node.traverse(head) do
+-    local source = node.has_attribute(n, M.attr)
+-    local key = tostring(n)
+-    if source and scholium_math_sources and scholium_math_sources[source] then
+-      if not M.seen[source] then M.noads[source] = {}; M.seen[source] = true end
+-      local out = M.noads[source]
+-      out[#out + 1] = { kind = node.type(n.id), subtype = n.subtype,
+-                       parent = parent, role = role, key = key }
+-    end
+-    for _, field in ipairs(fields) do
+-      local ok, child = pcall(function() return n[field] end)
+-      if ok and type(child) == 'userdata' then walk(child, key, field, depth + 1) end
+-    end
+-  end
++local roles = { [16] = 'num', [17] = 'den', [20] = 'radicand', [21] = 'sup', [22] = 'sub' }
++local function owner(n, attr)
++  local value = getattribute(n, attr)
++  if value and value > 0 then return value end
++end
++local function state(st)
++  if not st.math_edit then st.math_edit = { glyphs = {}, boxes = {}, boundaries = {} } end
++  return st.math_edit
+ end
+-luatexbase.add_to_callback('pre_mlist_to_hlist_filter', function(head)
+-  -- Keep other formulas, replacing repeated observations for IDs in this conversion.
+-  M.seen = {}
+-  walk(head, '', 'formula', 0)
+-  return head
+-end, 'scholium-math-observer')
+-
+ function M.glyph(st, n, x, y, w)
+-  local source = getattribute(n, M.attr)
+-  local sources = scholium_math_sources
+-  if not source or not sources or not sources[source] then return end
+-  st.math_edit = st.math_edit or { glyphs = {}, nodes = {} }
++  local tag = owner(n, M.attr)
++  if not tag then return end
+   local _, h, d = node.direct.getwhd(n)
+-  h, d = h or 0, d or 0
+-  local bbox = { x, y - h, x + w, y + d }
+-  local glyphs = st.math_edit.glyphs
+-  glyphs[#glyphs + 1] = { source_id = source, bbox = bbox,
++  local glyphs = state(st).glyphs
++  glyphs[#glyphs + 1] = { source_id = tag, bbox = { x, y - h, x + w, y + d },
+     font = node.direct.getfont(n), char = node.direct.getchar(n) }
+-  while source and sources[source] do
+-    local desc = sources[source]
+-    local key = tostring(source)
+-    local out = st.math_edit.nodes[key]
+-    if not out then
+-      out = { id = source, parent = desc.parent, kind = desc.kind,
+-              src_range = { desc.start, desc.stop }, bbox = {table.unpack(bbox)},
+-              noads = M.noads[source] or {} }
+-      st.math_edit.nodes[key] = out
+-    else
+-      local b = out.bbox
+-      b[1], b[2] = math.min(b[1], bbox[1]), math.min(b[2], bbox[2])
+-      b[3], b[4] = math.max(b[3], bbox[3]), math.max(b[4], bbox[4])
++end
++function M.box(st, n, x, y, w, h, d)
++  local tag = owner(n, M.attr)
++  local role = roles[node.direct.getsubtype(n)]
++  if not tag or not role then return end
++  local boxes = state(st).boxes
++  boxes[#boxes + 1] = { owner = tag, role = role, bbox = { x, y - h, x + w, y + d },
++    empty = node.direct.getlist(n) == nil }
++end
++function M.boundary(st, n, x, y, h, d)
++  local tag = owner(n, M.attr)
++  local formula = owner(n, M.formula_attr)
++  if not tag and not formula then return end
++  local boundaries = state(st).boundaries
++  boundaries[#boundaries + 1] = { owner = tag, formula = formula,
++    on = node.direct.getsubtype(n) == 0, bbox = { x, y - h, x, y + d } }
++end
++-- Empty packed fields get the attribute state at conversion time (after the
++-- formula reset), so their own attributes are not reliable. Add a zero-size
++-- marker only to a truly empty sub_mlist, never before a nonempty character.
++local marker_id = 220650
++local role_codes = { num = 1, den = 2, radicand = 3, sup = 4, sub = 5, degree = 6 }
++local code_roles = { 'num', 'den', 'radicand', 'sup', 'sub', 'degree' }
++local function mark_fields(head)
++  if not head then return end
++  for n in node.traverse(head) do
++    local kind = node.type(n.id)
++    local tag = node.has_attribute(n, M.attr)
++    local fields = {}
++    if kind == 'noad' then fields = { nucleus = false, sup = 'sup', sub = 'sub' }
++    elseif kind == 'fraction' then fields = { num = 'num', denom = 'den' }
++    elseif kind == 'radical' then fields = { nucleus = 'radicand', degree = 'degree', sup = 'sup', sub = 'sub' }
++    elseif kind == 'sub_mlist' then mark_fields(n.head) end
++    for field, role in pairs(fields) do
++      local child = n[field]
++      if child and node.type(child.id) == 'sub_mlist' then
++        if not child.head and role and tag and tag > 0 then
++          local marker = node.new('whatsit', 'user_defined')
++          marker.user_id, marker.type, marker.value = marker_id, 100, role_codes[role]
++          node.set_attribute(marker, M.attr, tag)
++          child.head = marker
++        else mark_fields(child.head) end
++      end
+     end
+-    source = desc.parent
+   end
++  return head
++end
++luatexbase.add_to_callback('pre_mlist_to_hlist_filter', mark_fields, 'scholium-empty-fields')
++function M.marker(st, n, x, y, h, d)
++  if node.direct.getsubtype(n) ~= node.subtype('user_defined') or
++     node.direct.getfield(n, 'user_id') ~= marker_id then return false end
++  local tag = owner(n, M.attr)
++  local role = code_roles[node.direct.getfield(n, 'value')]
++  local boxes = state(st).boxes
++  boxes[#boxes + 1] = { owner = tag, role = role, bbox = { x, y - h, x, y + d }, empty = true }
++  return true
+ end
+ return M

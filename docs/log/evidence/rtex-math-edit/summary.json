@@ -1,0 +1,5259 @@
+{
+  "cm": {
+    "base": {
+      "verify": {
+        "exit": 0,
+        "wall_s": 3.977,
+        "paragraphs_total": 12,
+        "paragraphs_eligible": 12,
+        "ineligible_reasons": {},
+        "layer1_pass": true,
+        "layer2_pass": true,
+        "capture_pdf_equals_clean": true,
+        "glyphs_identical": 232,
+        "glyphs_total": 232
+      },
+      "full_compile": {
+        "exit": 0,
+        "wall_s": 0.846,
+        "page_sha256": "a5fc99f6048efad8cc1f11dc0bc1965475f5e50c9db54c21fff9c3d78b88864c"
+      },
+      "layout": {
+        "pages": 1,
+        "compile": {
+          "state": "Ok"
+        }
+      },
+      "latency": {
+        "inline-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 1.137,
+            "p95": 1.36,
+            "min": 0.735,
+            "max": 1.438
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.359,
+            "p95": 0.448,
+            "min": 0.297,
+            "max": 0.536
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 0.742,
+            "p95": 0.852,
+            "min": 0.403,
+            "max": 0.982
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 1.831,
+            "p95": 2.289,
+            "min": 1.377,
+            "max": 2.329
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.26,
+            "p95": 0.396,
+            "min": 0.232,
+            "max": 0.435
+          }
+        },
+        "inline-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 1.021,
+            "p95": 1.222,
+            "min": 0.789,
+            "max": 1.349
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.345,
+            "p95": 0.469,
+            "min": 0.251,
+            "max": 0.472
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 0.68,
+            "p95": 0.798,
+            "min": 0.463,
+            "max": 0.886
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 1.561,
+            "p95": 1.844,
+            "min": 1.286,
+            "max": 2.009
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.231,
+            "p95": 0.252,
+            "min": 0.21,
+            "max": 0.253
+          }
+        },
+        "display-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 1.151,
+            "p95": 1.424,
+            "min": 0.715,
+            "max": 1.426
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.37,
+            "p95": 0.435,
+            "min": 0.249,
+            "max": 0.496
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 0.743,
+            "p95": 1.0,
+            "min": 0.461,
+            "max": 1.013
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 1.946,
+            "p95": 2.275,
+            "min": 1.558,
+            "max": 2.324
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.356,
+            "p95": 0.392,
+            "min": 0.298,
+            "max": 0.551
+          }
+        },
+        "display-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 1.258,
+            "p95": 1.414,
+            "min": 0.939,
+            "max": 1.459
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.346,
+            "p95": 0.462,
+            "min": 0.286,
+            "max": 0.467
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 0.836,
+            "p95": 0.955,
+            "min": 0.601,
+            "max": 0.96
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 2.256,
+            "p95": 2.537,
+            "min": 1.638,
+            "max": 2.895
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.516,
+            "p95": 0.596,
+            "min": 0.332,
+            "max": 0.683
+          }
+        },
+        "equation-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 1.861,
+            "p95": 2.019,
+            "min": 1.151,
+            "max": 2.023
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.399,
+            "p95": 0.488,
+            "min": 0.212,
+            "max": 0.488
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 1.417,
+            "p95": 1.494,
+            "min": 0.799,
+            "max": 1.519
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 2.908,
+            "p95": 3.233,
+            "min": 2.279,
+            "max": 3.347
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.554,
+            "p95": 0.615,
+            "min": 0.36,
+            "max": 0.725
+          }
+        },
+        "equation-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 1.494,
+            "p95": 1.957,
+            "min": 1.281,
+            "max": 2.147
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.357,
+            "p95": 0.477,
+            "min": 0.303,
+            "max": 0.492
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 1.091,
+            "p95": 1.495,
+            "min": 0.947,
+            "max": 1.699
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 2.522,
+            "p95": 3.229,
+            "min": 2.088,
+            "max": 3.399
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.422,
+            "p95": 0.614,
+            "min": 0.362,
+            "max": 0.619
+          }
+        },
+        "align-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 5.135,
+            "p95": 6.234,
+            "min": 4.216,
+            "max": 6.427
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.365,
+            "p95": 0.481,
+            "min": 0.163,
+            "max": 0.495
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 4.621,
+            "p95": 5.801,
+            "min": 3.701,
+            "max": 5.948
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 6.384,
+            "p95": 7.653,
+            "min": 5.158,
+            "max": 7.714
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.797,
+            "p95": 0.9,
+            "min": 0.496,
+            "max": 0.923
+          }
+        },
+        "align-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 4.618,
+            "p95": 6.298,
+            "min": 3.948,
+            "max": 6.331
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.363,
+            "p95": 0.464,
+            "min": 0.302,
+            "max": 0.476
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 4.176,
+            "p95": 5.846,
+            "min": 3.607,
+            "max": 5.858
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 5.882,
+            "p95": 7.539,
+            "min": 4.905,
+            "max": 7.887
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.54,
+            "p95": 0.837,
+            "min": 0.485,
+            "max": 0.84
+          }
+        }
+      },
+      "session_exit": 0,
+      "peak_bytes": 795516928,
+      "recovery": {
+        "final_patch_verify": {
+          "exit": 0,
+          "wall_s": 4.19,
+          "paragraphs_total": 12,
+          "paragraphs_eligible": 12,
+          "ineligible_reasons": {},
+          "layer1_pass": true,
+          "layer2_pass": true,
+          "capture_pdf_equals_clean": true,
+          "glyphs_identical": 232,
+          "glyphs_total": 232
+        },
+        "states": [
+          {
+            "state": "unbalanced-brace",
+            "bad": {
+              "routed": "background",
+              "reasons": [
+                "UnbalancedMath",
+                "UnbalancedBraces"
+              ],
+              "edit_id": 1,
+              "reply_ms": 0.228,
+              "update": "BackgroundScheduled",
+              "update_ms": 0.247,
+              "status": null,
+              "timing": null
+            },
+            "typed_while_invalid": {
+              "routed": "background",
+              "reasons": [
+                "UnbalancedMath",
+                "UnbalancedBraces"
+              ],
+              "edit_id": 2,
+              "reply_ms": 0.351,
+              "update": "BackgroundScheduled",
+              "update_ms": 0.383,
+              "status": null,
+              "timing": null
+            },
+            "error_events": [
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 4,
+                    "message": "Missing } inserted.",
+                    "context": "<inserted text> "
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 2,
+                  "context_revision": 2,
+                  "engine_generation": 0,
+                  "layout_version": 2
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 430,
+                "pages_changed_count": 0
+              },
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 4,
+                    "message": "Missing } inserted.",
+                    "context": "<inserted text> "
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 3,
+                  "context_revision": 3,
+                  "engine_generation": 0,
+                  "layout_version": 3
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 179,
+                "pages_changed_count": 1
+              }
+            ],
+            "repair": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 3,
+              "reply_ms": 0.36,
+              "update": "ParagraphUpdate",
+              "update_ms": 2.121,
+              "status": "ok",
+              "timing": {
+                "total_us": 900,
+                "tex_us": 500,
+                "traverse_us": 116,
+                "pack_us": 0
+              }
+            },
+            "q_in_live_update": true,
+            "repaired_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 4,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 2
+              },
+              "source_equals_expected": true
+            },
+            "restore": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 5,
+              "reply_ms": 0.203,
+              "update": "ParagraphUpdate",
+              "update_ms": 1.022,
+              "status": "ok",
+              "timing": {
+                "total_us": 757,
+                "tex_us": 470,
+                "traverse_us": 99,
+                "pack_us": 0
+              }
+            },
+            "restored_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 6,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 1
+              },
+              "source_equals_expected": true
+            }
+          },
+          {
+            "state": "undefined-macro",
+            "bad": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 7,
+              "reply_ms": 0.279,
+              "update": "BackgroundScheduled",
+              "update_ms": 1.177,
+              "status": null,
+              "timing": null
+            },
+            "typed_while_invalid": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 8,
+              "reply_ms": 0.431,
+              "update": "BackgroundScheduled",
+              "update_ms": 1.976,
+              "status": null,
+              "timing": null
+            },
+            "error_events": [
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 4,
+                    "message": "Undefined control sequence.",
+                    "context": "<recently read> \\scholiumUndefined "
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 6,
+                  "context_revision": 4,
+                  "engine_generation": 0,
+                  "layout_version": 4
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 181,
+                "pages_changed_count": 1
+              },
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 4,
+                    "message": "Undefined control sequence.",
+                    "context": "<recently read> \\scholiumUndefined "
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 7,
+                  "context_revision": 5,
+                  "engine_generation": 0,
+                  "layout_version": 5
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 173,
+                "pages_changed_count": 1
+              }
+            ],
+            "repair": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 9,
+              "reply_ms": 0.415,
+              "update": "ParagraphUpdate",
+              "update_ms": 1.889,
+              "status": "ok",
+              "timing": {
+                "total_us": 721,
+                "tex_us": 498,
+                "traverse_us": 90,
+                "pack_us": 0
+              }
+            },
+            "q_in_live_update": true,
+            "repaired_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 10,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 1
+              },
+              "source_equals_expected": true
+            },
+            "restore": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 11,
+              "reply_ms": 0.195,
+              "update": "ParagraphUpdate",
+              "update_ms": 0.969,
+              "status": "ok",
+              "timing": {
+                "total_us": 746,
+                "tex_us": 430,
+                "traverse_us": 88,
+                "pack_us": 0
+              }
+            },
+            "restored_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 12,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 1
+              },
+              "source_equals_expected": true
+            }
+          }
+        ]
+      }
+    },
+    "A": {
+      "verify": {
+        "exit": 0,
+        "wall_s": 4.408,
+        "paragraphs_total": 12,
+        "paragraphs_eligible": 12,
+        "ineligible_reasons": {},
+        "layer1_pass": true,
+        "layer2_pass": true,
+        "capture_pdf_equals_clean": true,
+        "glyphs_identical": 232,
+        "glyphs_total": 232
+      },
+      "full_compile": {
+        "exit": 0,
+        "wall_s": 0.903,
+        "page_sha256": "a5fc99f6048efad8cc1f11dc0bc1965475f5e50c9db54c21fff9c3d78b88864c"
+      },
+      "layout": {
+        "pages": 1,
+        "compile": {
+          "state": "Ok"
+        }
+      },
+      "mapping": {
+        "total": 73,
+        "A_owned": 73,
+        "A_label_valid": 73,
+        "B_mapped": 69,
+        "B_exact": 69,
+        "details": [
+          {
+            "case": "inline",
+            "glyphs": 5,
+            "rows": [
+              {
+                "truth_id": 2,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 2,
+                "B_exact": true
+              },
+              {
+                "truth_id": 3,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 3,
+                "B_exact": true
+              },
+              {
+                "truth_id": 4,
+                "decoded": "α",
+                "A_label_valid": true,
+                "B_id": 4,
+                "B_exact": true
+              },
+              {
+                "truth_id": 5,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 5,
+                "B_exact": true
+              },
+              {
+                "truth_id": 6,
+                "decoded": "y",
+                "A_label_valid": true,
+                "B_id": 6,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "fraction",
+            "glyphs": 7,
+            "rows": [
+              {
+                "truth_id": 10,
+                "decoded": "a",
+                "A_label_valid": true,
+                "B_id": 10,
+                "B_exact": true
+              },
+              {
+                "truth_id": 11,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 11,
+                "B_exact": true
+              },
+              {
+                "truth_id": 12,
+                "decoded": "b",
+                "A_label_valid": true,
+                "B_id": 12,
+                "B_exact": true
+              },
+              {
+                "truth_id": 14,
+                "decoded": "c",
+                "A_label_valid": true,
+                "B_id": 14,
+                "B_exact": true
+              },
+              {
+                "truth_id": 15,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 15,
+                "B_exact": true
+              },
+              {
+                "truth_id": 18,
+                "decoded": "d",
+                "A_label_valid": true,
+                "B_id": 18,
+                "B_exact": true
+              },
+              {
+                "truth_id": 20,
+                "decoded": "e",
+                "A_label_valid": true,
+                "B_id": 20,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "scripts",
+            "glyphs": 11,
+            "rows": [
+              {
+                "truth_id": 22,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 22,
+                "B_exact": true
+              },
+              {
+                "truth_id": 28,
+                "decoded": "2",
+                "A_label_valid": true,
+                "B_id": 28,
+                "B_exact": true
+              },
+              {
+                "truth_id": 30,
+                "decoded": "k",
+                "A_label_valid": true,
+                "B_id": 30,
+                "B_exact": true
+              },
+              {
+                "truth_id": 24,
+                "decoded": "i",
+                "A_label_valid": true,
+                "B_id": null,
+                "B_exact": false
+              },
+              {
+                "truth_id": 26,
+                "decoded": "j",
+                "A_label_valid": true,
+                "B_id": null,
+                "B_exact": false
+              },
+              {
+                "truth_id": 31,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 31,
+                "B_exact": true
+              },
+              {
+                "truth_id": 32,
+                "decoded": "y",
+                "A_label_valid": true,
+                "B_id": 32,
+                "B_exact": true
+              },
+              {
+                "truth_id": 34,
+                "decoded": "2",
+                "A_label_valid": true,
+                "B_id": 34,
+                "B_exact": true
+              },
+              {
+                "truth_id": 35,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 35,
+                "B_exact": true
+              },
+              {
+                "truth_id": 36,
+                "decoded": "z",
+                "A_label_valid": true,
+                "B_id": 36,
+                "B_exact": true
+              },
+              {
+                "truth_id": 38,
+                "decoded": "1",
+                "A_label_valid": true,
+                "B_id": 38,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "radical",
+            "glyphs": 11,
+            "rows": [
+              {
+                "truth_id": 40,
+                "decoded": "u",
+                "A_label_valid": true,
+                "B_id": 40,
+                "B_exact": true
+              },
+              {
+                "truth_id": 41,
+                "decoded": "=",
+                "A_label_valid": true,
+                "B_id": 41,
+                "B_exact": true
+              },
+              {
+                "truth_id": 44,
+                "decoded": "3",
+                "A_label_valid": true,
+                "B_id": 44,
+                "B_exact": true
+              },
+              {
+                "truth_id": 42,
+                "decoded": "√",
+                "A_label_valid": true,
+                "B_id": null,
+                "B_exact": false
+              },
+              {
+                "truth_id": 46,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 46,
+                "B_exact": true
+              },
+              {
+                "truth_id": 47,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 47,
+                "B_exact": true
+              },
+              {
+                "truth_id": 48,
+                "decoded": "√",
+                "A_label_valid": true,
+                "B_id": 48,
+                "B_exact": true
+              },
+              {
+                "truth_id": 50,
+                "decoded": "y",
+                "A_label_valid": true,
+                "B_id": 50,
+                "B_exact": true
+              },
+              {
+                "truth_id": 51,
+                "decoded": "v",
+                "A_label_valid": true,
+                "B_id": 51,
+                "B_exact": true
+              },
+              {
+                "truth_id": 52,
+                "decoded": "=",
+                "A_label_valid": true,
+                "B_id": 52,
+                "B_exact": true
+              },
+              {
+                "truth_id": 53,
+                "decoded": "w",
+                "A_label_valid": true,
+                "B_id": 53,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "fence",
+            "glyphs": 4,
+            "rows": [
+              {
+                "truth_id": 55,
+                "decoded": "(",
+                "A_label_valid": true,
+                "B_id": 55,
+                "B_exact": true
+              },
+              {
+                "truth_id": 58,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 58,
+                "B_exact": true
+              },
+              {
+                "truth_id": 60,
+                "decoded": "y",
+                "A_label_valid": true,
+                "B_id": 60,
+                "B_exact": true
+              },
+              {
+                "truth_id": 61,
+                "decoded": ")",
+                "A_label_valid": true,
+                "B_id": 61,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "matrix",
+            "glyphs": 6,
+            "rows": [
+              {
+                "truth_id": 63,
+                "decoded": "(",
+                "A_label_valid": true,
+                "B_id": 63,
+                "B_exact": true
+              },
+              {
+                "truth_id": 65,
+                "decoded": "a",
+                "A_label_valid": true,
+                "B_id": 65,
+                "B_exact": true
+              },
+              {
+                "truth_id": 67,
+                "decoded": "b",
+                "A_label_valid": true,
+                "B_id": 67,
+                "B_exact": true
+              },
+              {
+                "truth_id": 69,
+                "decoded": "c",
+                "A_label_valid": true,
+                "B_id": 69,
+                "B_exact": true
+              },
+              {
+                "truth_id": 71,
+                "decoded": "d",
+                "A_label_valid": true,
+                "B_id": 71,
+                "B_exact": true
+              },
+              {
+                "truth_id": 63,
+                "decoded": ")",
+                "A_label_valid": true,
+                "B_id": 63,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "sum",
+            "glyphs": 8,
+            "rows": [
+              {
+                "truth_id": 79,
+                "decoded": "n",
+                "A_label_valid": true,
+                "B_id": null,
+                "B_exact": false
+              },
+              {
+                "truth_id": 73,
+                "decoded": "∑",
+                "A_label_valid": true,
+                "B_id": 73,
+                "B_exact": true
+              },
+              {
+                "truth_id": 75,
+                "decoded": "i",
+                "A_label_valid": true,
+                "B_id": 75,
+                "B_exact": true
+              },
+              {
+                "truth_id": 76,
+                "decoded": "=",
+                "A_label_valid": true,
+                "B_id": 76,
+                "B_exact": true
+              },
+              {
+                "truth_id": 77,
+                "decoded": "1",
+                "A_label_valid": true,
+                "B_id": 77,
+                "B_exact": true
+              },
+              {
+                "truth_id": 80,
+                "decoded": "i",
+                "A_label_valid": true,
+                "B_id": 80,
+                "B_exact": true
+              },
+              {
+                "truth_id": 81,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 81,
+                "B_exact": true
+              },
+              {
+                "truth_id": 84,
+                "decoded": "R",
+                "A_label_valid": true,
+                "B_id": 84,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "cjk",
+            "glyphs": 6,
+            "rows": [
+              {
+                "truth_id": 86,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 86,
+                "B_exact": true
+              },
+              {
+                "truth_id": 87,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 87,
+                "B_exact": true
+              },
+              {
+                "truth_id": 90,
+                "decoded": "中",
+                "A_label_valid": true,
+                "B_id": 90,
+                "B_exact": true
+              },
+              {
+                "truth_id": 91,
+                "decoded": "文",
+                "A_label_valid": true,
+                "B_id": 91,
+                "B_exact": true
+              },
+              {
+                "truth_id": 92,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 92,
+                "B_exact": true
+              },
+              {
+                "truth_id": 93,
+                "decoded": "y",
+                "A_label_valid": true,
+                "B_id": 93,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "empty-frac",
+            "glyphs": 0,
+            "rows": []
+          },
+          {
+            "case": "empty-script",
+            "glyphs": 3,
+            "rows": [
+              {
+                "truth_id": 99,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 99,
+                "B_exact": true
+              },
+              {
+                "truth_id": 101,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 101,
+                "B_exact": true
+              },
+              {
+                "truth_id": 102,
+                "decoded": "y",
+                "A_label_valid": true,
+                "B_id": 102,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "repeated",
+            "glyphs": 8,
+            "rows": [
+              {
+                "truth_id": 105,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 105,
+                "B_exact": true
+              },
+              {
+                "truth_id": 106,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 106,
+                "B_exact": true
+              },
+              {
+                "truth_id": 107,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 107,
+                "B_exact": true
+              },
+              {
+                "truth_id": 108,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 108,
+                "B_exact": true
+              },
+              {
+                "truth_id": 111,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 111,
+                "B_exact": true
+              },
+              {
+                "truth_id": 113,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 113,
+                "B_exact": true
+              },
+              {
+                "truth_id": 114,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 114,
+                "B_exact": true
+              },
+              {
+                "truth_id": 115,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 115,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "empty-matrix",
+            "glyphs": 4,
+            "rows": [
+              {
+                "truth_id": 117,
+                "decoded": "(",
+                "A_label_valid": true,
+                "B_id": 117,
+                "B_exact": true
+              },
+              {
+                "truth_id": 119,
+                "decoded": "a",
+                "A_label_valid": true,
+                "B_id": 119,
+                "B_exact": true
+              },
+              {
+                "truth_id": 123,
+                "decoded": "d",
+                "A_label_valid": true,
+                "B_id": 123,
+                "B_exact": true
+              },
+              {
+                "truth_id": 117,
+                "decoded": ")",
+                "A_label_valid": true,
+                "B_id": 117,
+                "B_exact": true
+              }
+            ]
+          }
+        ]
+      },
+      "structure": {
+        "positions": 123,
+        "with_bbox": 115,
+        "missing": [
+          {
+            "id": 94,
+            "kind": "formula",
+            "start": 495,
+            "stop": 504,
+            "parent": null,
+            "char": null
+          },
+          {
+            "id": 95,
+            "kind": "frac",
+            "start": 495,
+            "stop": 504,
+            "parent": 94,
+            "char": null
+          },
+          {
+            "id": 96,
+            "kind": "num",
+            "start": 501,
+            "stop": 501,
+            "parent": 95,
+            "char": null
+          },
+          {
+            "id": 97,
+            "kind": "den",
+            "start": 503,
+            "stop": 503,
+            "parent": 95,
+            "char": null
+          },
+          {
+            "id": 100,
+            "kind": "sup",
+            "start": 531,
+            "stop": 531,
+            "parent": 99,
+            "char": null
+          },
+          {
+            "id": 103,
+            "kind": "sub",
+            "start": 536,
+            "stop": 536,
+            "parent": 102,
+            "char": null
+          },
+          {
+            "id": 120,
+            "kind": "cell",
+            "start": 614,
+            "stop": 614,
+            "parent": 117,
+            "char": null
+          },
+          {
+            "id": 121,
+            "kind": "cell",
+            "start": 616,
+            "stop": 616,
+            "parent": 117,
+            "char": null
+          }
+        ],
+        "empty_slots": 6,
+        "empty_with_bbox": 0,
+        "nodes_with_engine_noad_observation": 75,
+        "kinds": {
+          "formula": 12,
+          "atom": 65,
+          "frac": 5,
+          "num": 5,
+          "den": 5,
+          "sub": 5,
+          "sup": 5,
+          "rad": 2,
+          "degree": 1,
+          "radicand": 2,
+          "fence": 2,
+          "matrix": 2,
+          "cell": 8,
+          "font": 1,
+          "font-row": 1,
+          "text": 1,
+          "text-row": 1
+        }
+      },
+      "caret": {
+        "checks": 380,
+        "passed": 378,
+        "failures": [
+          {
+            "kind": "down",
+            "id": 96,
+            "expected": 503,
+            "actual": null
+          },
+          {
+            "kind": "up",
+            "id": 97,
+            "expected": 501,
+            "actual": null
+          }
+        ]
+      },
+      "post_edit": {
+        "edit": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 1,
+          "reply_ms": 0.364,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.051,
+          "status": "ok",
+          "timing": {
+            "total_us": 1642,
+            "tex_us": 880,
+            "traverse_us": 475,
+            "pack_us": 0
+          }
+        },
+        "z_owned_by_original_atom": true,
+        "expected": 85,
+        "actual": 85,
+        "passed": true,
+        "restore": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 2,
+          "reply_ms": 0.299,
+          "update": "ParagraphUpdate",
+          "update_ms": 1.628,
+          "status": "ok",
+          "timing": {
+            "total_us": 1337,
+            "tex_us": 685,
+            "traverse_us": 437,
+            "pack_us": 0
+          }
+        }
+      },
+      "cjk": [
+        {
+          "bbox": [
+            14454169,
+            27117656,
+            15144877,
+            27766922
+          ],
+          "char": 20013,
+          "font": 25,
+          "source_id": 90
+        },
+        {
+          "bbox": [
+            15144877,
+            27134924,
+            15835585,
+            27760015
+          ],
+          "char": 25991,
+          "font": 25,
+          "source_id": 91
+        }
+      ],
+      "latency": {
+        "inline-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 1.995,
+            "p95": 2.468,
+            "min": 1.653,
+            "max": 2.928
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.369,
+            "p95": 0.472,
+            "min": 0.188,
+            "max": 0.504
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 1.579,
+            "p95": 2.141,
+            "min": 1.401,
+            "max": 2.412
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 2.824,
+            "p95": 3.391,
+            "min": 2.45,
+            "max": 3.678
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.25,
+            "p95": 0.379,
+            "min": 0.234,
+            "max": 0.381
+          }
+        },
+        "inline-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 2.069,
+            "p95": 2.738,
+            "min": 1.785,
+            "max": 2.783
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.341,
+            "p95": 0.412,
+            "min": 0.225,
+            "max": 0.427
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 1.678,
+            "p95": 2.254,
+            "min": 1.386,
+            "max": 2.382
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 2.945,
+            "p95": 3.647,
+            "min": 2.482,
+            "max": 3.896
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.251,
+            "p95": 0.365,
+            "min": 0.226,
+            "max": 0.391
+          }
+        },
+        "display-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 3.873,
+            "p95": 5.53,
+            "min": 3.39,
+            "max": 5.531
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.353,
+            "p95": 0.51,
+            "min": 0.18,
+            "max": 0.517
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 3.494,
+            "p95": 5.006,
+            "min": 3.045,
+            "max": 5.114
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 5.204,
+            "p95": 7.061,
+            "min": 4.406,
+            "max": 7.088
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.391,
+            "p95": 0.56,
+            "min": 0.362,
+            "max": 0.617
+          }
+        },
+        "display-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 3.76,
+            "p95": 5.49,
+            "min": 3.234,
+            "max": 6.315
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.32,
+            "p95": 0.454,
+            "min": 0.201,
+            "max": 0.483
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 3.474,
+            "p95": 4.916,
+            "min": 2.954,
+            "max": 5.948
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 4.962,
+            "p95": 7.191,
+            "min": 4.252,
+            "max": 8.105
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.38,
+            "p95": 0.636,
+            "min": 0.341,
+            "max": 0.673
+          }
+        },
+        "equation-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 4.192,
+            "p95": 5.837,
+            "min": 3.627,
+            "max": 6.227
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.367,
+            "p95": 0.45,
+            "min": 0.291,
+            "max": 0.456
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 3.773,
+            "p95": 5.403,
+            "min": 3.293,
+            "max": 5.809
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 5.727,
+            "p95": 7.459,
+            "min": 4.633,
+            "max": 7.807
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.398,
+            "p95": 0.615,
+            "min": 0.362,
+            "max": 0.615
+          }
+        },
+        "equation-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 4.998,
+            "p95": 5.796,
+            "min": 3.656,
+            "max": 6.281
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.37,
+            "p95": 0.415,
+            "min": 0.232,
+            "max": 0.435
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 4.632,
+            "p95": 5.364,
+            "min": 3.296,
+            "max": 5.875
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 6.558,
+            "p95": 7.342,
+            "min": 4.884,
+            "max": 7.769
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.398,
+            "p95": 0.629,
+            "min": 0.356,
+            "max": 0.635
+          }
+        },
+        "align-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 13.089,
+            "p95": 14.901,
+            "min": 11.849,
+            "max": 17.699
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.354,
+            "p95": 0.422,
+            "min": 0.29,
+            "max": 0.477
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 12.641,
+            "p95": 14.36,
+            "min": 11.412,
+            "max": 17.161
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 14.739,
+            "p95": 16.892,
+            "min": 13.404,
+            "max": 19.651
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.801,
+            "p95": 0.863,
+            "min": 0.489,
+            "max": 0.866
+          }
+        },
+        "align-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 13.08,
+            "p95": 14.706,
+            "min": 11.685,
+            "max": 14.866
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.384,
+            "p95": 0.452,
+            "min": 0.294,
+            "max": 0.567
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 12.554,
+            "p95": 14.256,
+            "min": 11.23,
+            "max": 14.419
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 14.759,
+            "p95": 16.553,
+            "min": 13.133,
+            "max": 16.832
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.846,
+            "p95": 0.873,
+            "min": 0.506,
+            "max": 0.876
+          }
+        }
+      },
+      "session_exit": 0,
+      "peak_bytes": 791293952,
+      "recovery": {
+        "final_patch_verify": {
+          "exit": 0,
+          "wall_s": 4.363,
+          "paragraphs_total": 12,
+          "paragraphs_eligible": 12,
+          "ineligible_reasons": {},
+          "layer1_pass": true,
+          "layer2_pass": true,
+          "capture_pdf_equals_clean": true,
+          "glyphs_identical": 232,
+          "glyphs_total": 232
+        },
+        "states": [
+          {
+            "state": "unbalanced-brace",
+            "bad": {
+              "routed": "background",
+              "reasons": [
+                "UnbalancedMath",
+                "UnbalancedBraces"
+              ],
+              "edit_id": 1,
+              "reply_ms": 0.268,
+              "update": "BackgroundScheduled",
+              "update_ms": 0.303,
+              "status": null,
+              "timing": null
+            },
+            "typed_while_invalid": {
+              "routed": "background",
+              "reasons": [
+                "UnbalancedMath",
+                "UnbalancedBraces"
+              ],
+              "edit_id": 2,
+              "reply_ms": 0.417,
+              "update": "BackgroundScheduled",
+              "update_ms": 0.594,
+              "status": null,
+              "timing": null
+            },
+            "error_events": [
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 5,
+                    "message": "Missing } inserted.",
+                    "context": "<inserted text> "
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 2,
+                  "context_revision": 2,
+                  "engine_generation": 0,
+                  "layout_version": 2
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 387,
+                "pages_changed_count": 1
+              },
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 5,
+                    "message": "Missing } inserted.",
+                    "context": "<inserted text> "
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 3,
+                  "context_revision": 3,
+                  "engine_generation": 0,
+                  "layout_version": 3
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 206,
+                "pages_changed_count": 1
+              }
+            ],
+            "repair": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 3,
+              "reply_ms": 0.395,
+              "update": "ParagraphUpdate",
+              "update_ms": 3.312,
+              "status": "ok",
+              "timing": {
+                "total_us": 2184,
+                "tex_us": 1293,
+                "traverse_us": 716,
+                "pack_us": 0
+              }
+            },
+            "q_in_live_update": true,
+            "repaired_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 4,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 2
+              },
+              "source_equals_expected": true
+            },
+            "restore": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 5,
+              "reply_ms": 0.338,
+              "update": "ParagraphUpdate",
+              "update_ms": 2.151,
+              "status": "ok",
+              "timing": {
+                "total_us": 1738,
+                "tex_us": 930,
+                "traverse_us": 478,
+                "pack_us": 0
+              }
+            },
+            "restored_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 6,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 1
+              },
+              "source_equals_expected": true
+            }
+          },
+          {
+            "state": "undefined-macro",
+            "bad": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 7,
+              "reply_ms": 0.201,
+              "update": "BackgroundScheduled",
+              "update_ms": 2.071,
+              "status": null,
+              "timing": null
+            },
+            "typed_while_invalid": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 8,
+              "reply_ms": 0.408,
+              "update": "BackgroundScheduled",
+              "update_ms": 3.304,
+              "status": null,
+              "timing": null
+            },
+            "error_events": [
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 5,
+                    "message": "Undefined control sequence.",
+                    "context": "l.5 Case inline: $\\attribute65000=2 \\scholiumUndefined"
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 6,
+                  "context_revision": 4,
+                  "engine_generation": 0,
+                  "layout_version": 4
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 196,
+                "pages_changed_count": 1
+              },
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 5,
+                    "message": "Undefined control sequence.",
+                    "context": "l.5 Case inline: $\\attribute65000=2 \\scholiumUndefined"
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 7,
+                  "context_revision": 5,
+                  "engine_generation": 0,
+                  "layout_version": 5
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 196,
+                "pages_changed_count": 1
+              }
+            ],
+            "repair": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 9,
+              "reply_ms": 0.325,
+              "update": "ParagraphUpdate",
+              "update_ms": 2.629,
+              "status": "ok",
+              "timing": {
+                "total_us": 1642,
+                "tex_us": 914,
+                "traverse_us": 480,
+                "pack_us": 0
+              }
+            },
+            "q_in_live_update": true,
+            "repaired_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 10,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 1
+              },
+              "source_equals_expected": true
+            },
+            "restore": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 11,
+              "reply_ms": 0.182,
+              "update": "ParagraphUpdate",
+              "update_ms": 1.942,
+              "status": "ok",
+              "timing": {
+                "total_us": 1669,
+                "tex_us": 872,
+                "traverse_us": 504,
+                "pack_us": 0
+              }
+            },
+            "restored_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 12,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 1
+              },
+              "source_equals_expected": true
+            }
+          }
+        ]
+      }
+    },
+    "identity": {
+      "full_compile_pixels_equal": true,
+      "all_glyphs_and_rules_equal": true,
+      "glyphs_and_rules": 238
+    },
+    "intermediate": {
+      "exit": 0,
+      "wall_s": 0.874,
+      "page_sha256": "0e38ccf33dfb091580a1b71e46dad15c05f5f60f35382ddc32dc496f6e2cb9b5",
+      "states": {
+        "fraction": [
+          "x",
+          "\\frac{}{}",
+          "\\frac{x}{}",
+          "\\frac{x}{y}"
+        ],
+        "script": [
+          "x",
+          "x^{}",
+          "x^{2}",
+          "x^{2}_{}",
+          "x^{2}_{i}"
+        ],
+        "sqrt": [
+          "x",
+          "\\sqrt{}",
+          "\\sqrt{x}",
+          "\\sqrt[3]{x}"
+        ],
+        "matrix": [
+          "\\begin{pmatrix}a\\end{pmatrix}",
+          "\\begin{pmatrix}a\\\\\\end{pmatrix}",
+          "\\begin{pmatrix}a\\\\b\\end{pmatrix}"
+        ]
+      },
+      "state_count": 17,
+      "command_typing": {
+        "buffered_prefix": "\\al",
+        "engine_inputs": [
+          "\\alpha"
+        ]
+      }
+    },
+    "B": {
+      "structure": {
+        "positions": 123,
+        "with_bbox": 109,
+        "missing": [
+          {
+            "id": 23,
+            "kind": "sub",
+            "start": 176,
+            "stop": 179,
+            "parent": 22,
+            "char": null
+          },
+          {
+            "id": 24,
+            "kind": "atom",
+            "start": 176,
+            "stop": 177,
+            "parent": 23,
+            "char": "i"
+          },
+          {
+            "id": 25,
+            "kind": "sub",
+            "start": 178,
+            "stop": 179,
+            "parent": 24,
+            "char": null
+          },
+          {
+            "id": 26,
+            "kind": "atom",
+            "start": 178,
+            "stop": 179,
+            "parent": 25,
+            "char": "j"
+          },
+          {
+            "id": 78,
+            "kind": "sup",
+            "start": 415,
+            "stop": 416,
+            "parent": 73,
+            "char": null
+          },
+          {
+            "id": 79,
+            "kind": "atom",
+            "start": 415,
+            "stop": 416,
+            "parent": 78,
+            "char": "n"
+          },
+          {
+            "id": 94,
+            "kind": "formula",
+            "start": 495,
+            "stop": 504,
+            "parent": null,
+            "char": null
+          },
+          {
+            "id": 95,
+            "kind": "frac",
+            "start": 495,
+            "stop": 504,
+            "parent": 94,
+            "char": null
+          },
+          {
+            "id": 96,
+            "kind": "num",
+            "start": 501,
+            "stop": 501,
+            "parent": 95,
+            "char": null
+          },
+          {
+            "id": 97,
+            "kind": "den",
+            "start": 503,
+            "stop": 503,
+            "parent": 95,
+            "char": null
+          },
+          {
+            "id": 100,
+            "kind": "sup",
+            "start": 531,
+            "stop": 531,
+            "parent": 99,
+            "char": null
+          },
+          {
+            "id": 103,
+            "kind": "sub",
+            "start": 536,
+            "stop": 536,
+            "parent": 102,
+            "char": null
+          },
+          {
+            "id": 120,
+            "kind": "cell",
+            "start": 614,
+            "stop": 614,
+            "parent": 117,
+            "char": null
+          },
+          {
+            "id": 121,
+            "kind": "cell",
+            "start": 616,
+            "stop": 616,
+            "parent": 117,
+            "char": null
+          }
+        ],
+        "empty_slots": 6,
+        "empty_with_bbox": 0,
+        "nodes_with_engine_noad_observation": 0,
+        "kinds": {
+          "formula": 12,
+          "atom": 65,
+          "frac": 5,
+          "num": 5,
+          "den": 5,
+          "sub": 5,
+          "sup": 5,
+          "rad": 2,
+          "degree": 1,
+          "radicand": 2,
+          "fence": 2,
+          "matrix": 2,
+          "cell": 8,
+          "font": 1,
+          "font-row": 1,
+          "text": 1,
+          "text-row": 1
+        }
+      },
+      "clicks": 134,
+      "clicks_exact": 128,
+      "click_failures": [
+        {
+          "expected": 176,
+          "actual": null
+        },
+        {
+          "expected": 177,
+          "actual": null
+        },
+        {
+          "expected": 178,
+          "actual": null
+        },
+        {
+          "expected": 179,
+          "actual": null
+        },
+        {
+          "expected": 415,
+          "actual": null
+        },
+        {
+          "expected": 416,
+          "actual": null
+        }
+      ]
+    },
+    "structural_edit": {
+      "edit": {
+        "routed": "fast",
+        "reasons": [],
+        "edit_id": 1,
+        "reply_ms": 0.312,
+        "update": "ParagraphUpdate",
+        "update_ms": 84.426,
+        "status": "ok",
+        "timing": {
+          "total_us": 1605,
+          "tex_us": 856,
+          "traverse_us": 519,
+          "pack_us": 0
+        }
+      },
+      "expected_caret": 94,
+      "actual_caret": 85,
+      "passed": false,
+      "denominator_glyph": {
+        "bbox": [
+          5289310,
+          406555,
+          5519778,
+          725132
+        ],
+        "char": 98,
+        "font": 29,
+        "source_id": 2
+      },
+      "new_num_den_slots": [],
+      "restore": {
+        "routed": "fast",
+        "reasons": [],
+        "edit_id": 2,
+        "reply_ms": 0.26,
+        "update": "ParagraphUpdate",
+        "update_ms": 1.825,
+        "status": "ok",
+        "timing": {
+          "total_us": 1364,
+          "tex_us": 757,
+          "traverse_us": 456,
+          "pack_us": 0
+        }
+      },
+      "restored_export": {
+        "event": {
+          "event": "PdfExported",
+          "job_id": 3,
+          "path": "/work/restored.pdf",
+          "status": {
+            "state": "Ok"
+          },
+          "converged": true,
+          "passes": 2
+        },
+        "source_equals_expected": true
+      }
+    }
+  },
+  "unicode": {
+    "base": {
+      "verify": {
+        "exit": 0,
+        "wall_s": 6.392,
+        "paragraphs_total": 12,
+        "paragraphs_eligible": 12,
+        "ineligible_reasons": {},
+        "layer1_pass": true,
+        "layer2_pass": true,
+        "capture_pdf_equals_clean": true,
+        "glyphs_identical": 232,
+        "glyphs_total": 232
+      },
+      "full_compile": {
+        "exit": 0,
+        "wall_s": 1.34,
+        "page_sha256": "209fd6df43bc051ca311c67a6698cae714a2d9697ef5586ea8f80b12006da4ac"
+      },
+      "layout": {
+        "pages": 1,
+        "compile": {
+          "state": "Ok"
+        }
+      },
+      "latency": {
+        "inline-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 1.109,
+            "p95": 1.313,
+            "min": 0.609,
+            "max": 1.387
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.35,
+            "p95": 0.467,
+            "min": 0.241,
+            "max": 0.495
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 0.671,
+            "p95": 0.867,
+            "min": 0.396,
+            "max": 0.911
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 1.896,
+            "p95": 2.176,
+            "min": 1.367,
+            "max": 2.332
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.285,
+            "p95": 0.384,
+            "min": 0.229,
+            "max": 0.45
+          }
+        },
+        "inline-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 1.226,
+            "p95": 1.342,
+            "min": 1.034,
+            "max": 1.37
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.363,
+            "p95": 0.452,
+            "min": 0.271,
+            "max": 0.476
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 0.811,
+            "p95": 0.917,
+            "min": 0.641,
+            "max": 0.929
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 2.045,
+            "p95": 2.273,
+            "min": 1.759,
+            "max": 2.3
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.366,
+            "p95": 0.398,
+            "min": 0.234,
+            "max": 0.408
+          }
+        },
+        "display-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 1.236,
+            "p95": 1.474,
+            "min": 0.867,
+            "max": 1.488
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.355,
+            "p95": 0.438,
+            "min": 0.242,
+            "max": 0.468
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 0.877,
+            "p95": 1.005,
+            "min": 0.46,
+            "max": 1.03
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 2.393,
+            "p95": 2.61,
+            "min": 1.812,
+            "max": 2.654
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.57,
+            "p95": 0.632,
+            "min": 0.375,
+            "max": 0.635
+          }
+        },
+        "display-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 1.339,
+            "p95": 1.502,
+            "min": 1.157,
+            "max": 1.515
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.366,
+            "p95": 0.453,
+            "min": 0.258,
+            "max": 0.465
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 0.971,
+            "p95": 1.117,
+            "min": 0.657,
+            "max": 1.124
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 2.499,
+            "p95": 2.667,
+            "min": 2.045,
+            "max": 2.737
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.597,
+            "p95": 0.706,
+            "min": 0.357,
+            "max": 0.781
+          }
+        },
+        "equation-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 1.651,
+            "p95": 2.068,
+            "min": 1.304,
+            "max": 2.081
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.363,
+            "p95": 0.445,
+            "min": 0.207,
+            "max": 0.446
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 1.262,
+            "p95": 1.596,
+            "min": 0.883,
+            "max": 1.598
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 2.593,
+            "p95": 3.269,
+            "min": 2.287,
+            "max": 3.378
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.41,
+            "p95": 0.609,
+            "min": 0.341,
+            "max": 0.611
+          }
+        },
+        "equation-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 1.885,
+            "p95": 2.093,
+            "min": 1.533,
+            "max": 2.117
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.365,
+            "p95": 0.42,
+            "min": 0.276,
+            "max": 0.446
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 1.418,
+            "p95": 1.568,
+            "min": 1.101,
+            "max": 1.671
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 3.065,
+            "p95": 3.295,
+            "min": 2.32,
+            "max": 3.428
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.585,
+            "p95": 0.635,
+            "min": 0.374,
+            "max": 0.636
+          }
+        },
+        "align-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 4.494,
+            "p95": 5.508,
+            "min": 3.52,
+            "max": 5.521
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.36,
+            "p95": 0.454,
+            "min": 0.18,
+            "max": 0.507
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 3.973,
+            "p95": 5.076,
+            "min": 3.227,
+            "max": 5.193
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 5.923,
+            "p95": 7.037,
+            "min": 4.381,
+            "max": 7.064
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.816,
+            "p95": 0.861,
+            "min": 0.476,
+            "max": 0.862
+          }
+        },
+        "align-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 3.909,
+            "p95": 5.158,
+            "min": 3.521,
+            "max": 5.271
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.322,
+            "p95": 0.366,
+            "min": 0.204,
+            "max": 0.369
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 3.604,
+            "p95": 4.842,
+            "min": 3.2,
+            "max": 4.935
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 5.106,
+            "p95": 6.598,
+            "min": 4.511,
+            "max": 6.725
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.562,
+            "p95": 0.856,
+            "min": 0.507,
+            "max": 0.87
+          }
+        }
+      },
+      "session_exit": 0,
+      "peak_bytes": 1136615424,
+      "recovery": {
+        "final_patch_verify": {
+          "exit": 0,
+          "wall_s": 6.133,
+          "paragraphs_total": 12,
+          "paragraphs_eligible": 12,
+          "ineligible_reasons": {},
+          "layer1_pass": true,
+          "layer2_pass": true,
+          "capture_pdf_equals_clean": true,
+          "glyphs_identical": 232,
+          "glyphs_total": 232
+        },
+        "states": [
+          {
+            "state": "unbalanced-brace",
+            "bad": {
+              "routed": "background",
+              "reasons": [
+                "UnbalancedMath",
+                "UnbalancedBraces"
+              ],
+              "edit_id": 1,
+              "reply_ms": 0.209,
+              "update": "BackgroundScheduled",
+              "update_ms": 0.234,
+              "status": null,
+              "timing": null
+            },
+            "typed_while_invalid": {
+              "routed": "background",
+              "reasons": [
+                "UnbalancedMath",
+                "UnbalancedBraces"
+              ],
+              "edit_id": 2,
+              "reply_ms": 0.406,
+              "update": "BackgroundScheduled",
+              "update_ms": 0.441,
+              "status": null,
+              "timing": null
+            },
+            "error_events": [
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 5,
+                    "message": "Missing } inserted.",
+                    "context": "<inserted text> "
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 2,
+                  "context_revision": 2,
+                  "engine_generation": 0,
+                  "layout_version": 2
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 795,
+                "pages_changed_count": 0
+              },
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 5,
+                    "message": "Missing } inserted.",
+                    "context": "<inserted text> "
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 3,
+                  "context_revision": 3,
+                  "engine_generation": 0,
+                  "layout_version": 3
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 207,
+                "pages_changed_count": 1
+              }
+            ],
+            "repair": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 3,
+              "reply_ms": 0.354,
+              "update": "ParagraphUpdate",
+              "update_ms": 1.619,
+              "status": "ok",
+              "timing": {
+                "total_us": 595,
+                "tex_us": 371,
+                "traverse_us": 67,
+                "pack_us": 0
+              }
+            },
+            "q_in_live_update": true,
+            "repaired_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 4,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 2
+              },
+              "source_equals_expected": true
+            },
+            "restore": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 5,
+              "reply_ms": 0.215,
+              "update": "ParagraphUpdate",
+              "update_ms": 0.836,
+              "status": "ok",
+              "timing": {
+                "total_us": 595,
+                "tex_us": 304,
+                "traverse_us": 57,
+                "pack_us": 0
+              }
+            },
+            "restored_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 6,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 1
+              },
+              "source_equals_expected": true
+            }
+          },
+          {
+            "state": "undefined-macro",
+            "bad": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 7,
+              "reply_ms": 0.165,
+              "update": "BackgroundScheduled",
+              "update_ms": 1.156,
+              "status": null,
+              "timing": null
+            },
+            "typed_while_invalid": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 8,
+              "reply_ms": 0.325,
+              "update": "BackgroundScheduled",
+              "update_ms": 1.287,
+              "status": null,
+              "timing": null
+            },
+            "error_events": [
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 5,
+                    "message": "Undefined control sequence.",
+                    "context": "<recently read> \\scholiumUndefined "
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 6,
+                  "context_revision": 4,
+                  "engine_generation": 0,
+                  "layout_version": 4
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 203,
+                "pages_changed_count": 1
+              },
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 5,
+                    "message": "Undefined control sequence.",
+                    "context": "<recently read> \\scholiumUndefined "
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 7,
+                  "context_revision": 5,
+                  "engine_generation": 0,
+                  "layout_version": 5
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 208,
+                "pages_changed_count": 1
+              }
+            ],
+            "repair": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 9,
+              "reply_ms": 0.4,
+              "update": "ParagraphUpdate",
+              "update_ms": 1.657,
+              "status": "ok",
+              "timing": {
+                "total_us": 543,
+                "tex_us": 326,
+                "traverse_us": 56,
+                "pack_us": 0
+              }
+            },
+            "q_in_live_update": true,
+            "repaired_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 10,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 1
+              },
+              "source_equals_expected": true
+            },
+            "restore": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 11,
+              "reply_ms": 0.287,
+              "update": "ParagraphUpdate",
+              "update_ms": 0.906,
+              "status": "ok",
+              "timing": {
+                "total_us": 662,
+                "tex_us": 366,
+                "traverse_us": 54,
+                "pack_us": 0
+              }
+            },
+            "restored_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 12,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 1
+              },
+              "source_equals_expected": true
+            }
+          }
+        ]
+      }
+    },
+    "A": {
+      "verify": {
+        "exit": 0,
+        "wall_s": 6.357,
+        "paragraphs_total": 12,
+        "paragraphs_eligible": 12,
+        "ineligible_reasons": {},
+        "layer1_pass": true,
+        "layer2_pass": true,
+        "capture_pdf_equals_clean": true,
+        "glyphs_identical": 232,
+        "glyphs_total": 232
+      },
+      "full_compile": {
+        "exit": 0,
+        "wall_s": 1.342,
+        "page_sha256": "209fd6df43bc051ca311c67a6698cae714a2d9697ef5586ea8f80b12006da4ac"
+      },
+      "layout": {
+        "pages": 1,
+        "compile": {
+          "state": "Ok"
+        }
+      },
+      "mapping": {
+        "total": 73,
+        "A_owned": 73,
+        "A_label_valid": 73,
+        "B_mapped": 69,
+        "B_exact": 69,
+        "details": [
+          {
+            "case": "inline",
+            "glyphs": 5,
+            "rows": [
+              {
+                "truth_id": 2,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 2,
+                "B_exact": true
+              },
+              {
+                "truth_id": 3,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 3,
+                "B_exact": true
+              },
+              {
+                "truth_id": 4,
+                "decoded": "α",
+                "A_label_valid": true,
+                "B_id": 4,
+                "B_exact": true
+              },
+              {
+                "truth_id": 5,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 5,
+                "B_exact": true
+              },
+              {
+                "truth_id": 6,
+                "decoded": "y",
+                "A_label_valid": true,
+                "B_id": 6,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "fraction",
+            "glyphs": 7,
+            "rows": [
+              {
+                "truth_id": 10,
+                "decoded": "a",
+                "A_label_valid": true,
+                "B_id": 10,
+                "B_exact": true
+              },
+              {
+                "truth_id": 11,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 11,
+                "B_exact": true
+              },
+              {
+                "truth_id": 12,
+                "decoded": "b",
+                "A_label_valid": true,
+                "B_id": 12,
+                "B_exact": true
+              },
+              {
+                "truth_id": 14,
+                "decoded": "c",
+                "A_label_valid": true,
+                "B_id": 14,
+                "B_exact": true
+              },
+              {
+                "truth_id": 15,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 15,
+                "B_exact": true
+              },
+              {
+                "truth_id": 18,
+                "decoded": "d",
+                "A_label_valid": true,
+                "B_id": 18,
+                "B_exact": true
+              },
+              {
+                "truth_id": 20,
+                "decoded": "e",
+                "A_label_valid": true,
+                "B_id": 20,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "scripts",
+            "glyphs": 11,
+            "rows": [
+              {
+                "truth_id": 22,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 22,
+                "B_exact": true
+              },
+              {
+                "truth_id": 28,
+                "decoded": "2",
+                "A_label_valid": true,
+                "B_id": 28,
+                "B_exact": true
+              },
+              {
+                "truth_id": 30,
+                "decoded": "k",
+                "A_label_valid": true,
+                "B_id": 30,
+                "B_exact": true
+              },
+              {
+                "truth_id": 24,
+                "decoded": "i",
+                "A_label_valid": true,
+                "B_id": null,
+                "B_exact": false
+              },
+              {
+                "truth_id": 26,
+                "decoded": "j",
+                "A_label_valid": true,
+                "B_id": null,
+                "B_exact": false
+              },
+              {
+                "truth_id": 31,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 31,
+                "B_exact": true
+              },
+              {
+                "truth_id": 32,
+                "decoded": "y",
+                "A_label_valid": true,
+                "B_id": 32,
+                "B_exact": true
+              },
+              {
+                "truth_id": 34,
+                "decoded": "2",
+                "A_label_valid": true,
+                "B_id": 34,
+                "B_exact": true
+              },
+              {
+                "truth_id": 35,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 35,
+                "B_exact": true
+              },
+              {
+                "truth_id": 36,
+                "decoded": "z",
+                "A_label_valid": true,
+                "B_id": 36,
+                "B_exact": true
+              },
+              {
+                "truth_id": 38,
+                "decoded": "1",
+                "A_label_valid": true,
+                "B_id": 38,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "radical",
+            "glyphs": 11,
+            "rows": [
+              {
+                "truth_id": 40,
+                "decoded": "u",
+                "A_label_valid": true,
+                "B_id": 40,
+                "B_exact": true
+              },
+              {
+                "truth_id": 41,
+                "decoded": "=",
+                "A_label_valid": true,
+                "B_id": 41,
+                "B_exact": true
+              },
+              {
+                "truth_id": 44,
+                "decoded": "3",
+                "A_label_valid": true,
+                "B_id": 44,
+                "B_exact": true
+              },
+              {
+                "truth_id": 42,
+                "decoded": "√",
+                "A_label_valid": true,
+                "B_id": null,
+                "B_exact": false
+              },
+              {
+                "truth_id": 46,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 46,
+                "B_exact": true
+              },
+              {
+                "truth_id": 47,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 47,
+                "B_exact": true
+              },
+              {
+                "truth_id": 48,
+                "decoded": "√",
+                "A_label_valid": true,
+                "B_id": 48,
+                "B_exact": true
+              },
+              {
+                "truth_id": 50,
+                "decoded": "y",
+                "A_label_valid": true,
+                "B_id": 50,
+                "B_exact": true
+              },
+              {
+                "truth_id": 51,
+                "decoded": "v",
+                "A_label_valid": true,
+                "B_id": 51,
+                "B_exact": true
+              },
+              {
+                "truth_id": 52,
+                "decoded": "=",
+                "A_label_valid": true,
+                "B_id": 52,
+                "B_exact": true
+              },
+              {
+                "truth_id": 53,
+                "decoded": "w",
+                "A_label_valid": true,
+                "B_id": 53,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "fence",
+            "glyphs": 4,
+            "rows": [
+              {
+                "truth_id": 55,
+                "decoded": "(",
+                "A_label_valid": true,
+                "B_id": 55,
+                "B_exact": true
+              },
+              {
+                "truth_id": 58,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 58,
+                "B_exact": true
+              },
+              {
+                "truth_id": 60,
+                "decoded": "y",
+                "A_label_valid": true,
+                "B_id": 60,
+                "B_exact": true
+              },
+              {
+                "truth_id": 61,
+                "decoded": ")",
+                "A_label_valid": true,
+                "B_id": 61,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "matrix",
+            "glyphs": 6,
+            "rows": [
+              {
+                "truth_id": 63,
+                "decoded": "(",
+                "A_label_valid": true,
+                "B_id": 63,
+                "B_exact": true
+              },
+              {
+                "truth_id": 65,
+                "decoded": "a",
+                "A_label_valid": true,
+                "B_id": 65,
+                "B_exact": true
+              },
+              {
+                "truth_id": 67,
+                "decoded": "b",
+                "A_label_valid": true,
+                "B_id": 67,
+                "B_exact": true
+              },
+              {
+                "truth_id": 69,
+                "decoded": "c",
+                "A_label_valid": true,
+                "B_id": 69,
+                "B_exact": true
+              },
+              {
+                "truth_id": 71,
+                "decoded": "d",
+                "A_label_valid": true,
+                "B_id": 71,
+                "B_exact": true
+              },
+              {
+                "truth_id": 63,
+                "decoded": ")",
+                "A_label_valid": true,
+                "B_id": 63,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "sum",
+            "glyphs": 8,
+            "rows": [
+              {
+                "truth_id": 79,
+                "decoded": "n",
+                "A_label_valid": true,
+                "B_id": null,
+                "B_exact": false
+              },
+              {
+                "truth_id": 73,
+                "decoded": "∑",
+                "A_label_valid": true,
+                "B_id": 73,
+                "B_exact": true
+              },
+              {
+                "truth_id": 75,
+                "decoded": "i",
+                "A_label_valid": true,
+                "B_id": 75,
+                "B_exact": true
+              },
+              {
+                "truth_id": 76,
+                "decoded": "=",
+                "A_label_valid": true,
+                "B_id": 76,
+                "B_exact": true
+              },
+              {
+                "truth_id": 77,
+                "decoded": "1",
+                "A_label_valid": true,
+                "B_id": 77,
+                "B_exact": true
+              },
+              {
+                "truth_id": 80,
+                "decoded": "i",
+                "A_label_valid": true,
+                "B_id": 80,
+                "B_exact": true
+              },
+              {
+                "truth_id": 81,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 81,
+                "B_exact": true
+              },
+              {
+                "truth_id": 84,
+                "decoded": "R",
+                "A_label_valid": true,
+                "B_id": 84,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "cjk",
+            "glyphs": 6,
+            "rows": [
+              {
+                "truth_id": 86,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 86,
+                "B_exact": true
+              },
+              {
+                "truth_id": 87,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 87,
+                "B_exact": true
+              },
+              {
+                "truth_id": 90,
+                "decoded": "中",
+                "A_label_valid": true,
+                "B_id": 90,
+                "B_exact": true
+              },
+              {
+                "truth_id": 91,
+                "decoded": "文",
+                "A_label_valid": true,
+                "B_id": 91,
+                "B_exact": true
+              },
+              {
+                "truth_id": 92,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 92,
+                "B_exact": true
+              },
+              {
+                "truth_id": 93,
+                "decoded": "y",
+                "A_label_valid": true,
+                "B_id": 93,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "empty-frac",
+            "glyphs": 0,
+            "rows": []
+          },
+          {
+            "case": "empty-script",
+            "glyphs": 3,
+            "rows": [
+              {
+                "truth_id": 99,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 99,
+                "B_exact": true
+              },
+              {
+                "truth_id": 101,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 101,
+                "B_exact": true
+              },
+              {
+                "truth_id": 102,
+                "decoded": "y",
+                "A_label_valid": true,
+                "B_id": 102,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "repeated",
+            "glyphs": 8,
+            "rows": [
+              {
+                "truth_id": 105,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 105,
+                "B_exact": true
+              },
+              {
+                "truth_id": 106,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 106,
+                "B_exact": true
+              },
+              {
+                "truth_id": 107,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 107,
+                "B_exact": true
+              },
+              {
+                "truth_id": 108,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 108,
+                "B_exact": true
+              },
+              {
+                "truth_id": 111,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 111,
+                "B_exact": true
+              },
+              {
+                "truth_id": 113,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 113,
+                "B_exact": true
+              },
+              {
+                "truth_id": 114,
+                "decoded": "+",
+                "A_label_valid": true,
+                "B_id": 114,
+                "B_exact": true
+              },
+              {
+                "truth_id": 115,
+                "decoded": "x",
+                "A_label_valid": true,
+                "B_id": 115,
+                "B_exact": true
+              }
+            ]
+          },
+          {
+            "case": "empty-matrix",
+            "glyphs": 4,
+            "rows": [
+              {
+                "truth_id": 117,
+                "decoded": "(",
+                "A_label_valid": true,
+                "B_id": 117,
+                "B_exact": true
+              },
+              {
+                "truth_id": 119,
+                "decoded": "a",
+                "A_label_valid": true,
+                "B_id": 119,
+                "B_exact": true
+              },
+              {
+                "truth_id": 123,
+                "decoded": "d",
+                "A_label_valid": true,
+                "B_id": 123,
+                "B_exact": true
+              },
+              {
+                "truth_id": 117,
+                "decoded": ")",
+                "A_label_valid": true,
+                "B_id": 117,
+                "B_exact": true
+              }
+            ]
+          }
+        ]
+      },
+      "structure": {
+        "positions": 123,
+        "with_bbox": 115,
+        "missing": [
+          {
+            "id": 94,
+            "kind": "formula",
+            "start": 552,
+            "stop": 561,
+            "parent": null,
+            "char": null
+          },
+          {
+            "id": 95,
+            "kind": "frac",
+            "start": 552,
+            "stop": 561,
+            "parent": 94,
+            "char": null
+          },
+          {
+            "id": 96,
+            "kind": "num",
+            "start": 558,
+            "stop": 558,
+            "parent": 95,
+            "char": null
+          },
+          {
+            "id": 97,
+            "kind": "den",
+            "start": 560,
+            "stop": 560,
+            "parent": 95,
+            "char": null
+          },
+          {
+            "id": 100,
+            "kind": "sup",
+            "start": 588,
+            "stop": 588,
+            "parent": 99,
+            "char": null
+          },
+          {
+            "id": 103,
+            "kind": "sub",
+            "start": 593,
+            "stop": 593,
+            "parent": 102,
+            "char": null
+          },
+          {
+            "id": 120,
+            "kind": "cell",
+            "start": 671,
+            "stop": 671,
+            "parent": 117,
+            "char": null
+          },
+          {
+            "id": 121,
+            "kind": "cell",
+            "start": 673,
+            "stop": 673,
+            "parent": 117,
+            "char": null
+          }
+        ],
+        "empty_slots": 6,
+        "empty_with_bbox": 0,
+        "nodes_with_engine_noad_observation": 74,
+        "kinds": {
+          "formula": 12,
+          "atom": 65,
+          "frac": 5,
+          "num": 5,
+          "den": 5,
+          "sub": 5,
+          "sup": 5,
+          "rad": 2,
+          "degree": 1,
+          "radicand": 2,
+          "fence": 2,
+          "matrix": 2,
+          "cell": 8,
+          "font": 1,
+          "font-row": 1,
+          "text": 1,
+          "text-row": 1
+        }
+      },
+      "caret": {
+        "checks": 380,
+        "passed": 378,
+        "failures": [
+          {
+            "kind": "down",
+            "id": 96,
+            "expected": 560,
+            "actual": null
+          },
+          {
+            "kind": "up",
+            "id": 97,
+            "expected": 558,
+            "actual": null
+          }
+        ]
+      },
+      "post_edit": {
+        "edit": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 1,
+          "reply_ms": 0.264,
+          "update": "ParagraphUpdate",
+          "update_ms": 1.94,
+          "status": "ok",
+          "timing": {
+            "total_us": 1642,
+            "tex_us": 915,
+            "traverse_us": 513,
+            "pack_us": 0
+          }
+        },
+        "z_owned_by_original_atom": false,
+        "restore": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 2,
+          "reply_ms": 0.101,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.309,
+          "status": "ok",
+          "timing": {
+            "total_us": 2134,
+            "tex_us": 1246,
+            "traverse_us": 709,
+            "pack_us": 0
+          }
+        }
+      },
+      "cjk": [
+        {
+          "bbox": [
+            14454647,
+            26784790,
+            15145355,
+            27434056
+          ],
+          "char": 20013,
+          "font": 25,
+          "source_id": 90
+        },
+        {
+          "bbox": [
+            15145355,
+            26802058,
+            15836063,
+            27427149
+          ],
+          "char": 25991,
+          "font": 25,
+          "source_id": 91
+        }
+      ],
+      "latency": {
+        "inline-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 2.008,
+            "p95": 2.553,
+            "min": 1.688,
+            "max": 2.653
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.339,
+            "p95": 0.425,
+            "min": 0.191,
+            "max": 0.447
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 1.638,
+            "p95": 2.074,
+            "min": 1.432,
+            "max": 2.256
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 3.081,
+            "p95": 3.408,
+            "min": 2.64,
+            "max": 3.503
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.267,
+            "p95": 0.409,
+            "min": 0.231,
+            "max": 0.461
+          }
+        },
+        "inline-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 1.995,
+            "p95": 2.566,
+            "min": 1.708,
+            "max": 2.68
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.323,
+            "p95": 0.366,
+            "min": 0.196,
+            "max": 0.397
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 1.625,
+            "p95": 2.142,
+            "min": 1.475,
+            "max": 2.287
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 3.01,
+            "p95": 3.631,
+            "min": 2.524,
+            "max": 3.799
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.302,
+            "p95": 0.417,
+            "min": 0.227,
+            "max": 0.482
+          }
+        },
+        "display-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 3.938,
+            "p95": 5.55,
+            "min": 3.145,
+            "max": 5.751
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.378,
+            "p95": 0.472,
+            "min": 0.29,
+            "max": 0.475
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 3.416,
+            "p95": 5.156,
+            "min": 2.88,
+            "max": 5.165
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 5.445,
+            "p95": 7.221,
+            "min": 4.415,
+            "max": 7.353
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.616,
+            "p95": 0.878,
+            "min": 0.509,
+            "max": 0.923
+          }
+        },
+        "display-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 3.979,
+            "p95": 5.565,
+            "min": 3.343,
+            "max": 6.366
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.362,
+            "p95": 0.467,
+            "min": 0.277,
+            "max": 0.468
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 3.467,
+            "p95": 5.087,
+            "min": 3.061,
+            "max": 5.993
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 5.511,
+            "p95": 7.018,
+            "min": 4.306,
+            "max": 7.939
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.559,
+            "p95": 0.629,
+            "min": 0.345,
+            "max": 0.664
+          }
+        },
+        "equation-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 4.358,
+            "p95": 5.722,
+            "min": 3.565,
+            "max": 5.766
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.369,
+            "p95": 0.431,
+            "min": 0.201,
+            "max": 0.433
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 4.009,
+            "p95": 5.278,
+            "min": 3.3,
+            "max": 5.297
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 5.859,
+            "p95": 7.348,
+            "min": 4.825,
+            "max": 7.388
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.603,
+            "p95": 0.636,
+            "min": 0.379,
+            "max": 0.666
+          }
+        },
+        "equation-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 4.156,
+            "p95": 5.968,
+            "min": 3.613,
+            "max": 6.231
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.403,
+            "p95": 0.443,
+            "min": 0.227,
+            "max": 0.47
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 3.765,
+            "p95": 5.565,
+            "min": 3.195,
+            "max": 5.807
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 5.399,
+            "p95": 7.553,
+            "min": 4.786,
+            "max": 7.89
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.38,
+            "p95": 0.621,
+            "min": 0.353,
+            "max": 0.655
+          }
+        },
+        "align-steady": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 8.939,
+            "p95": 10.997,
+            "min": 8.097,
+            "max": 12.422
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.37,
+            "p95": 0.459,
+            "min": 0.243,
+            "max": 0.579
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 8.497,
+            "p95": 10.595,
+            "min": 7.795,
+            "max": 12.015
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 10.492,
+            "p95": 12.757,
+            "min": 9.44,
+            "max": 14.408
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.521,
+            "p95": 0.874,
+            "min": 0.482,
+            "max": 0.889
+          }
+        },
+        "align-burst": {
+          "edits": 20,
+          "routed": {
+            "fast": 20,
+            "background": 0,
+            "preamble": 0
+          },
+          "paragraph_ok": 20,
+          "statuses": [
+            "ok"
+          ],
+          "update_ms": {
+            "n": 20,
+            "p50": 9.27,
+            "p95": 9.82,
+            "min": 8.467,
+            "max": 11.222
+          },
+          "reply_ms": {
+            "n": 20,
+            "p50": 0.377,
+            "p95": 0.426,
+            "min": 0.287,
+            "max": 0.452
+          },
+          "rtex_total_ms": {
+            "n": 20,
+            "p50": 8.765,
+            "p95": 9.336,
+            "min": 7.911,
+            "max": 10.798
+          },
+          "raster_ms": {
+            "n": 20,
+            "p50": 10.88,
+            "p95": 11.636,
+            "min": 9.881,
+            "max": 13.119
+          },
+          "raster_only_ms": {
+            "n": 20,
+            "p50": 0.533,
+            "p95": 0.885,
+            "min": 0.499,
+            "max": 0.914
+          }
+        }
+      },
+      "session_exit": 0,
+      "peak_bytes": 1124970496,
+      "recovery": {
+        "final_patch_verify": {
+          "exit": 0,
+          "wall_s": 6.497,
+          "paragraphs_total": 12,
+          "paragraphs_eligible": 12,
+          "ineligible_reasons": {},
+          "layer1_pass": true,
+          "layer2_pass": true,
+          "capture_pdf_equals_clean": true,
+          "glyphs_identical": 232,
+          "glyphs_total": 232
+        },
+        "states": [
+          {
+            "state": "unbalanced-brace",
+            "bad": {
+              "routed": "background",
+              "reasons": [
+                "UnbalancedMath",
+                "UnbalancedBraces"
+              ],
+              "edit_id": 1,
+              "reply_ms": 0.388,
+              "update": "BackgroundScheduled",
+              "update_ms": 0.425,
+              "status": null,
+              "timing": null
+            },
+            "typed_while_invalid": {
+              "routed": "background",
+              "reasons": [
+                "UnbalancedMath",
+                "UnbalancedBraces"
+              ],
+              "edit_id": 2,
+              "reply_ms": 0.324,
+              "update": "BackgroundScheduled",
+              "update_ms": 0.357,
+              "status": null,
+              "timing": null
+            },
+            "error_events": [
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 6,
+                    "message": "Missing } inserted.",
+                    "context": "<inserted text> "
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 2,
+                  "context_revision": 2,
+                  "engine_generation": 0,
+                  "layout_version": 2
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 805,
+                "pages_changed_count": 1
+              },
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 6,
+                    "message": "Missing } inserted.",
+                    "context": "<inserted text> "
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 3,
+                  "context_revision": 3,
+                  "engine_generation": 0,
+                  "layout_version": 3
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 268,
+                "pages_changed_count": 1
+              }
+            ],
+            "repair": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 3,
+              "reply_ms": 0.338,
+              "update": "ParagraphUpdate",
+              "update_ms": 2.588,
+              "status": "ok",
+              "timing": {
+                "total_us": 1468,
+                "tex_us": 807,
+                "traverse_us": 467,
+                "pack_us": 0
+              }
+            },
+            "q_in_live_update": true,
+            "repaired_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 4,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 2
+              },
+              "source_equals_expected": true
+            },
+            "restore": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 5,
+              "reply_ms": 0.245,
+              "update": "ParagraphUpdate",
+              "update_ms": 2.774,
+              "status": "ok",
+              "timing": {
+                "total_us": 2526,
+                "tex_us": 1474,
+                "traverse_us": 744,
+                "pack_us": 0
+              }
+            },
+            "restored_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 6,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 1
+              },
+              "source_equals_expected": true
+            }
+          },
+          {
+            "state": "undefined-macro",
+            "bad": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 7,
+              "reply_ms": 0.297,
+              "update": "BackgroundScheduled",
+              "update_ms": 2.62,
+              "status": null,
+              "timing": null
+            },
+            "typed_while_invalid": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 8,
+              "reply_ms": 0.325,
+              "update": "BackgroundScheduled",
+              "update_ms": 3.068,
+              "status": null,
+              "timing": null
+            },
+            "error_events": [
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 6,
+                    "message": "Undefined control sequence.",
+                    "context": "l.6 Case inline: $\\attribute65000=2 \\scholiumUndefined"
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 6,
+                  "context_revision": 4,
+                  "engine_generation": 0,
+                  "layout_version": 4
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 334,
+                "pages_changed_count": 1
+              },
+              {
+                "event": "Diagnostics",
+                "source": "background",
+                "items": [
+                  {
+                    "severity": "error",
+                    "file": "./main.tex",
+                    "line": 6,
+                    "message": "Undefined control sequence.",
+                    "context": "l.6 Case inline: $\\attribute65000=2 \\scholiumUndefined"
+                  }
+                ]
+              },
+              {
+                "event": "LayoutUpdate",
+                "versions": {
+                  "source_revision": 7,
+                  "context_revision": 5,
+                  "engine_generation": 0,
+                  "layout_version": 5
+                },
+                "compile": {
+                  "state": "CompiledWithErrors",
+                  "count": 1
+                },
+                "convergence": {
+                  "state": "Converging",
+                  "pass": 1,
+                  "reasons": [
+                    "1 compile errors"
+                  ]
+                },
+                "passes": 1,
+                "pages_total": 1,
+                "eligible_paragraphs": [
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13
+                ],
+                "pdf_fallback": null,
+                "wall_ms": 223,
+                "pages_changed_count": 1
+              }
+            ],
+            "repair": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 9,
+              "reply_ms": 0.348,
+              "update": "ParagraphUpdate",
+              "update_ms": 3.112,
+              "status": "ok",
+              "timing": {
+                "total_us": 2045,
+                "tex_us": 1178,
+                "traverse_us": 655,
+                "pack_us": 0
+              }
+            },
+            "q_in_live_update": true,
+            "repaired_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 10,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 1
+              },
+              "source_equals_expected": true
+            },
+            "restore": {
+              "routed": "fast",
+              "reasons": [],
+              "edit_id": 11,
+              "reply_ms": 0.159,
+              "update": "ParagraphUpdate",
+              "update_ms": 1.814,
+              "status": "ok",
+              "timing": {
+                "total_us": 1580,
+                "tex_us": 814,
+                "traverse_us": 431,
+                "pack_us": 0
+              }
+            },
+            "restored_export": {
+              "event": {
+                "event": "PdfExported",
+                "job_id": 12,
+                "path": "/work/restored.pdf",
+                "status": {
+                  "state": "Ok"
+                },
+                "converged": true,
+                "passes": 1
+              },
+              "source_equals_expected": true
+            }
+          }
+        ]
+      }
+    },
+    "identity": {
+      "full_compile_pixels_equal": true,
+      "all_glyphs_and_rules_equal": true,
+      "glyphs_and_rules": 238
+    },
+    "intermediate": {
+      "exit": 0,
+      "wall_s": 1.307,
+      "page_sha256": "940a930019f5ee473f9712dc26ae4b7bd8071ef34551ca37f7210192fe07de9e",
+      "states": {
+        "fraction": [
+          "x",
+          "\\frac{}{}",
+          "\\frac{x}{}",
+          "\\frac{x}{y}"
+        ],
+        "script": [
+          "x",
+          "x^{}",
+          "x^{2}",
+          "x^{2}_{}",
+          "x^{2}_{i}"
+        ],
+        "sqrt": [
+          "x",
+          "\\sqrt{}",
+          "\\sqrt{x}",
+          "\\sqrt[3]{x}"
+        ],
+        "matrix": [
+          "\\begin{pmatrix}a\\end{pmatrix}",
+          "\\begin{pmatrix}a\\\\\\end{pmatrix}",
+          "\\begin{pmatrix}a\\\\b\\end{pmatrix}"
+        ]
+      },
+      "state_count": 17,
+      "command_typing": {
+        "buffered_prefix": "\\al",
+        "engine_inputs": [
+          "\\alpha"
+        ]
+      }
+    },
+    "B": {
+      "structure": {
+        "positions": 123,
+        "with_bbox": 109,
+        "missing": [
+          {
+            "id": 23,
+            "kind": "sub",
+            "start": 233,
+            "stop": 236,
+            "parent": 22,
+            "char": null
+          },
+          {
+            "id": 24,
+            "kind": "atom",
+            "start": 233,
+            "stop": 234,
+            "parent": 23,
+            "char": "i"
+          },
+          {
+            "id": 25,
+            "kind": "sub",
+            "start": 235,
+            "stop": 236,
+            "parent": 24,
+            "char": null
+          },
+          {
+            "id": 26,
+            "kind": "atom",
+            "start": 235,
+            "stop": 236,
+            "parent": 25,
+            "char": "j"
+          },
+          {
+            "id": 78,
+            "kind": "sup",
+            "start": 472,
+            "stop": 473,
+            "parent": 73,
+            "char": null
+          },
+          {
+            "id": 79,
+            "kind": "atom",
+            "start": 472,
+            "stop": 473,
+            "parent": 78,
+            "char": "n"
+          },
+          {
+            "id": 94,
+            "kind": "formula",
+            "start": 552,
+            "stop": 561,
+            "parent": null,
+            "char": null
+          },
+          {
+            "id": 95,
+            "kind": "frac",
+            "start": 552,
+            "stop": 561,
+            "parent": 94,
+            "char": null
+          },
+          {
+            "id": 96,
+            "kind": "num",
+            "start": 558,
+            "stop": 558,
+            "parent": 95,
+            "char": null
+          },
+          {
+            "id": 97,
+            "kind": "den",
+            "start": 560,
+            "stop": 560,
+            "parent": 95,
+            "char": null
+          },
+          {
+            "id": 100,
+            "kind": "sup",
+            "start": 588,
+            "stop": 588,
+            "parent": 99,
+            "char": null
+          },
+          {
+            "id": 103,
+            "kind": "sub",
+            "start": 593,
+            "stop": 593,
+            "parent": 102,
+            "char": null
+          },
+          {
+            "id": 120,
+            "kind": "cell",
+            "start": 671,
+            "stop": 671,
+            "parent": 117,
+            "char": null
+          },
+          {
+            "id": 121,
+            "kind": "cell",
+            "start": 673,
+            "stop": 673,
+            "parent": 117,
+            "char": null
+          }
+        ],
+        "empty_slots": 6,
+        "empty_with_bbox": 0,
+        "nodes_with_engine_noad_observation": 0,
+        "kinds": {
+          "formula": 12,
+          "atom": 65,
+          "frac": 5,
+          "num": 5,
+          "den": 5,
+          "sub": 5,
+          "sup": 5,
+          "rad": 2,
+          "degree": 1,
+          "radicand": 2,
+          "fence": 2,
+          "matrix": 2,
+          "cell": 8,
+          "font": 1,
+          "font-row": 1,
+          "text": 1,
+          "text-row": 1
+        }
+      },
+      "clicks": 134,
+      "clicks_exact": 128,
+      "click_failures": [
+        {
+          "expected": 233,
+          "actual": null
+        },
+        {
+          "expected": 234,
+          "actual": null
+        },
+        {
+          "expected": 235,
+          "actual": null
+        },
+        {
+          "expected": 236,
+          "actual": null
+        },
+        {
+          "expected": 472,
+          "actual": null
+        },
+        {
+          "expected": 473,
+          "actual": null
+        }
+      ]
+    },
+    "structural_edit": {
+      "edit": {
+        "routed": "fast",
+        "reasons": [],
+        "edit_id": 1,
+        "reply_ms": 0.606,
+        "update": "ParagraphUpdate",
+        "update_ms": 76.255,
+        "status": "ok",
+        "timing": {
+          "total_us": 1711,
+          "tex_us": 988,
+          "traverse_us": 534,
+          "pack_us": 0
+        }
+      },
+      "expected_caret": 151,
+      "actual_caret": 142,
+      "passed": false,
+      "denominator_glyph": {
+        "bbox": [
+          5290935,
+          389697,
+          5533650,
+          730078
+        ],
+        "char": 119887,
+        "font": 31,
+        "source_id": 2
+      },
+      "new_num_den_slots": [],
+      "restore": {
+        "routed": "fast",
+        "reasons": [],
+        "edit_id": 2,
+        "reply_ms": 0.161,
+        "update": "ParagraphUpdate",
+        "update_ms": 1.542,
+        "status": "ok",
+        "timing": {
+          "total_us": 1355,
+          "tex_us": 734,
+          "traverse_us": 469,
+          "pack_us": 0
+        }
+      },
+      "restored_export": {
+        "event": {
+          "event": "PdfExported",
+          "job_id": 3,
+          "path": "/work/restored.pdf",
+          "status": {
+            "state": "Ok"
+          },
+          "converged": true,
+          "passes": 2
+        },
+        "source_equals_expected": true
+      }
+    }
+  }
+}

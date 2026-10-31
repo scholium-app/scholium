@@ -1,0 +1,37 @@
+{
+  "cm": {
+    "edits": 34,
+    "assertions": 361,
+    "failures": [],
+    "exports": 34,
+    "maps": 34,
+    "host_retag_ms": {
+      "n": 34,
+      "p50": 0.1,
+      "p95": 0.157,
+      "min": 0.054,
+      "max": 0.186
+    }
+  },
+  "unicode": {
+    "edits": 34,
+    "assertions": 360,
+    "failures": [
+      {
+        "step": 14,
+        "kind": "empty-slot-available",
+        "expected": 14,
+        "actual": null
+      }
+    ],
+    "exports": 34,
+    "maps": 34,
+    "host_retag_ms": {
+      "n": 34,
+      "p50": 0.092,
+      "p95": 0.131,
+      "min": 0.046,
+      "max": 0.151
+    }
+  }
+}

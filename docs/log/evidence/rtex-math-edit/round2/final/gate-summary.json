@@ -1,0 +1,738 @@
+{
+  "cm": {
+    "trials": 4,
+    "all_rejected": true,
+    "all_recovered": false,
+    "raster_calls": 1,
+    "rows": [
+      {
+        "trial": 1,
+        "state": "unbalanced-brace",
+        "bad": {
+          "routed": "background",
+          "reasons": [
+            "UnbalancedMath",
+            "UnbalancedBraces"
+          ],
+          "edit_id": 1,
+          "reply_ms": 0.321,
+          "update": "BackgroundScheduled",
+          "update_ms": 0.353,
+          "status": null,
+          "timing": null
+        },
+        "diagnostics": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 4,
+                "message": "Missing } inserted.",
+                "context": "<inserted text> "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 2,
+              "context_revision": 2,
+              "engine_generation": 0,
+              "layout_version": 2
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 341,
+            "pages_changed_count": 0
+          }
+        ],
+        "rejected_dirty_or_stale": [
+          true
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 2,
+          "reply_ms": 0.465,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.458,
+          "status": "ok",
+          "timing": {
+            "total_us": 1269,
+            "tex_us": 784,
+            "traverse_us": 292,
+            "pack_us": 0
+          }
+        },
+        "accepted_recovery": false,
+        "shown_revision": 1,
+        "raster_calls": 1
+      },
+      {
+        "trial": 2,
+        "state": "undefined-macro",
+        "bad": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 3,
+          "reply_ms": 0.392,
+          "update": "BackgroundScheduled",
+          "update_ms": 1.644,
+          "status": null,
+          "timing": null
+        },
+        "diagnostics": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 4,
+                "message": "Undefined control sequence.",
+                "context": "<recently read> \\scholiumUndefined "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 4,
+              "context_revision": 3,
+              "engine_generation": 0,
+              "layout_version": 3
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 183,
+            "pages_changed_count": 0
+          }
+        ],
+        "rejected_dirty_or_stale": [
+          true
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 4,
+          "reply_ms": 0.444,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.258,
+          "status": "ok",
+          "timing": {
+            "total_us": 1115,
+            "tex_us": 760,
+            "traverse_us": 280,
+            "pack_us": 0
+          }
+        },
+        "accepted_recovery": false,
+        "shown_revision": 1,
+        "raster_calls": 1
+      },
+      {
+        "trial": 3,
+        "state": "unbalanced-brace-repeat",
+        "bad": {
+          "routed": "background",
+          "reasons": [
+            "UnbalancedMath",
+            "UnbalancedBraces"
+          ],
+          "edit_id": 5,
+          "reply_ms": 0.335,
+          "update": "BackgroundScheduled",
+          "update_ms": 0.364,
+          "status": null,
+          "timing": null
+        },
+        "diagnostics": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 4,
+                "message": "Missing } inserted.",
+                "context": "<inserted text> "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 6,
+              "context_revision": 4,
+              "engine_generation": 0,
+              "layout_version": 4
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 192,
+            "pages_changed_count": 0
+          }
+        ],
+        "rejected_dirty_or_stale": [
+          true
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 6,
+          "reply_ms": 0.383,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.116,
+          "status": "ok",
+          "timing": {
+            "total_us": 1081,
+            "tex_us": 728,
+            "traverse_us": 281,
+            "pack_us": 0
+          }
+        },
+        "accepted_recovery": false,
+        "shown_revision": 1,
+        "raster_calls": 1
+      },
+      {
+        "trial": 4,
+        "state": "undefined-macro-repeat",
+        "bad": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 7,
+          "reply_ms": 0.337,
+          "update": "BackgroundScheduled",
+          "update_ms": 1.651,
+          "status": null,
+          "timing": null
+        },
+        "diagnostics": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 4,
+                "message": "Undefined control sequence.",
+                "context": "<recently read> \\scholiumUndefined "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 8,
+              "context_revision": 5,
+              "engine_generation": 0,
+              "layout_version": 5
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 191,
+            "pages_changed_count": 0
+          }
+        ],
+        "rejected_dirty_or_stale": [
+          true
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 8,
+          "reply_ms": 0.46,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.199,
+          "status": "ok",
+          "timing": {
+            "total_us": 1160,
+            "tex_us": 707,
+            "traverse_us": 294,
+            "pack_us": 0
+          }
+        },
+        "accepted_recovery": false,
+        "shown_revision": 1,
+        "raster_calls": 1
+      }
+    ]
+  },
+  "unicode": {
+    "trials": 4,
+    "all_rejected": true,
+    "all_recovered": false,
+    "raster_calls": 1,
+    "rows": [
+      {
+        "trial": 1,
+        "state": "unbalanced-brace",
+        "bad": {
+          "routed": "background",
+          "reasons": [
+            "UnbalancedMath",
+            "UnbalancedBraces"
+          ],
+          "edit_id": 1,
+          "reply_ms": 0.352,
+          "update": "BackgroundScheduled",
+          "update_ms": 0.375,
+          "status": null,
+          "timing": null
+        },
+        "diagnostics": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 5,
+                "message": "Missing } inserted.",
+                "context": "<inserted text> "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 2,
+              "context_revision": 2,
+              "engine_generation": 0,
+              "layout_version": 2
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 696,
+            "pages_changed_count": 0
+          }
+        ],
+        "rejected_dirty_or_stale": [
+          true
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 2,
+          "reply_ms": 0.335,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.218,
+          "status": "ok",
+          "timing": {
+            "total_us": 1210,
+            "tex_us": 734,
+            "traverse_us": 290,
+            "pack_us": 0
+          }
+        },
+        "accepted_recovery": false,
+        "shown_revision": 1,
+        "raster_calls": 1
+      },
+      {
+        "trial": 2,
+        "state": "undefined-macro",
+        "bad": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 3,
+          "reply_ms": 0.215,
+          "update": "BackgroundScheduled",
+          "update_ms": 1.52,
+          "status": null,
+          "timing": null
+        },
+        "diagnostics": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 5,
+                "message": "Undefined control sequence.",
+                "context": "<recently read> \\scholiumUndefined "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 4,
+              "context_revision": 3,
+              "engine_generation": 0,
+              "layout_version": 3
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 211,
+            "pages_changed_count": 0
+          }
+        ],
+        "rejected_dirty_or_stale": [
+          true
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 4,
+          "reply_ms": 0.344,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.36,
+          "status": "ok",
+          "timing": {
+            "total_us": 1223,
+            "tex_us": 742,
+            "traverse_us": 291,
+            "pack_us": 0
+          }
+        },
+        "accepted_recovery": false,
+        "shown_revision": 1,
+        "raster_calls": 1
+      },
+      {
+        "trial": 3,
+        "state": "unbalanced-brace-repeat",
+        "bad": {
+          "routed": "background",
+          "reasons": [
+            "UnbalancedMath",
+            "UnbalancedBraces"
+          ],
+          "edit_id": 5,
+          "reply_ms": 0.264,
+          "update": "BackgroundScheduled",
+          "update_ms": 0.293,
+          "status": null,
+          "timing": null
+        },
+        "diagnostics": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 5,
+                "message": "Missing } inserted.",
+                "context": "<inserted text> "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 6,
+              "context_revision": 4,
+              "engine_generation": 0,
+              "layout_version": 4
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 216,
+            "pages_changed_count": 0
+          }
+        ],
+        "rejected_dirty_or_stale": [
+          true
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 6,
+          "reply_ms": 0.336,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.34,
+          "status": "ok",
+          "timing": {
+            "total_us": 1199,
+            "tex_us": 746,
+            "traverse_us": 274,
+            "pack_us": 0
+          }
+        },
+        "accepted_recovery": false,
+        "shown_revision": 1,
+        "raster_calls": 1
+      },
+      {
+        "trial": 4,
+        "state": "undefined-macro-repeat",
+        "bad": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 7,
+          "reply_ms": 0.173,
+          "update": "BackgroundScheduled",
+          "update_ms": 1.616,
+          "status": null,
+          "timing": null
+        },
+        "diagnostics": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 5,
+                "message": "Undefined control sequence.",
+                "context": "<recently read> \\scholiumUndefined "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 8,
+              "context_revision": 5,
+              "engine_generation": 0,
+              "layout_version": 5
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 206,
+            "pages_changed_count": 0
+          }
+        ],
+        "rejected_dirty_or_stale": [
+          true
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 8,
+          "reply_ms": 0.409,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.245,
+          "status": "ok",
+          "timing": {
+            "total_us": 1214,
+            "tex_us": 733,
+            "traverse_us": 272,
+            "pack_us": 0
+          }
+        },
+        "accepted_recovery": false,
+        "shown_revision": 1,
+        "raster_calls": 1
+      }
+    ]
+  }
+}

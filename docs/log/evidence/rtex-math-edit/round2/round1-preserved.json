@@ -1,0 +1,446 @@
+{
+  "files": 88,
+  "all_unchanged": true,
+  "details": [
+    {
+      "path": "docs/log/evidence/rtex-math-edit/apply.log",
+      "unchanged": true,
+      "sha256": "d466c0ec4354ad8cbbfaf93226e08fd1aa0fd2f084c390d5b1962e131f52ae25"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/build.log",
+      "unchanged": true,
+      "sha256": "f7771f1a773f0bb66722a0490d64d63a146d4218a372a46d7e0354d1137c723c"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-A-full.log",
+      "unchanged": true,
+      "sha256": "9679fe3a62f0973d5822a28dc3a124bd246bd1266c29a6fae4f136465d684d50"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-A-full.pdf",
+      "unchanged": true,
+      "sha256": "0b7a7246c32bc32758db29d59ef06bf74f1d0689cfe5f153d2f3394418b7fa39"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-A-keystrokes.json",
+      "unchanged": true,
+      "sha256": "5bacb42a55225e7cc3fb89b495e858a5a17433cb3954433e3a2bfe8fe421294c"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-A-live.jsonl.gz",
+      "unchanged": true,
+      "sha256": "77de5e5e63e8f63c9e3d4794e86d47d7cb3c166675afc5b63d3a360dc1c7d542"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-A-live.stderr.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-A-pages.json",
+      "unchanged": true,
+      "sha256": "031936ef3611ebf9cdb5e4460a917d96c1b8e8c9e8a5f78a591faa441fc1e0d7"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-A-recovery-verify.json",
+      "unchanged": true,
+      "sha256": "7f18d460763a6805aa43d7c0d8248dbb8a50e934f1bf6f3d48c8ca0960e24628"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-A-recovery-verify.log",
+      "unchanged": true,
+      "sha256": "96ea931643675319409b4ce4ab6dfabf15f83b240bd9a57581d97a83cc880ce9"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-A-recovery.jsonl.gz",
+      "unchanged": true,
+      "sha256": "516b3ecd201fec889a4585bd5c5513996d5eb7cfbc252ee7579db3a555f4b4a7"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-A-recovery.stderr.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-A-verify.json",
+      "unchanged": true,
+      "sha256": "1316f7eabe97871a78444c64c97ae1aec48f93a28284e8a0d8472d262b71f9d9"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-A-verify.log",
+      "unchanged": true,
+      "sha256": "1cd9d5a86694dc9a13d5007d1f4ef2d8df2a937728d986f1e50d2d15e0905f2c"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-base-full.log",
+      "unchanged": true,
+      "sha256": "570c18d0e3da5cd330c79bdc1f4d2e2912ba74c80de3db6aac971613b87fd702"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-base-full.pdf",
+      "unchanged": true,
+      "sha256": "2dfe2790259afd81434143ef20b8dd8b4024303c68dda65f9a11386a8b871373"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-base-keystrokes.json",
+      "unchanged": true,
+      "sha256": "ba685b3439bf3237b8fe28600cf2ad8494f0408adea442180215360b0909ee58"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-base-live.jsonl.gz",
+      "unchanged": true,
+      "sha256": "66808329cea3a4454621db0afcf8c7b45c8303e76abe146ccf0d9dcbb4c1116c"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-base-live.stderr.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-base-pages.json",
+      "unchanged": true,
+      "sha256": "f94dea7fd3cdad75888e013986a7d0d7b6cbdaa148bbd7f8036955e495aba128"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-base-recovery-verify.json",
+      "unchanged": true,
+      "sha256": "cf261320092e2705d25d1716a0718d4cb3f209dd0269e87ec777f87b4a5c1664"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-base-recovery-verify.log",
+      "unchanged": true,
+      "sha256": "0c90e7e645be7fb76b379a991480df831d7a9a1274b24193ba29cbf7d8cbf62f"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-base-recovery.jsonl.gz",
+      "unchanged": true,
+      "sha256": "eef417801ae7bcf4203900533dd46b8ebadda8186847041523ab862eff01d614"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-base-recovery.stderr.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-base-verify.json",
+      "unchanged": true,
+      "sha256": "8505a50e2914f0ba05005a947d4d186032445fcb43c576642e56bbd91de8218b"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-base-verify.log",
+      "unchanged": true,
+      "sha256": "41c6033deaad3866410a791478967aa4d5854b2159c5194e5c0b27fc63c3a036"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-caret-checks.json",
+      "unchanged": true,
+      "sha256": "c9dcbf2be785d4389b71ea47d96314cb93efad4c69eff9e9fcb9029f6a4f1024"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-intermediate.log",
+      "unchanged": true,
+      "sha256": "e3bb2e940d7755917ffa70e9223e78c4d76a69dac584902600c82878db8faea0"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-intermediate.pdf",
+      "unchanged": true,
+      "sha256": "d643d4343f78139de202a4d661a5d2be4f7d2a0edc4b8dbb0f2b9b7954599fa8"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-source-map.json",
+      "unchanged": true,
+      "sha256": "775825854a0b976b1819ba948dca937bfa30f06c35f380d8d201cbff868ef964"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-structural-edit.jsonl.gz",
+      "unchanged": true,
+      "sha256": "b227de27feac130221ca492e71d39ce4fed464f088491280b59c016b58bf5899"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-structural-edit.stderr.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/cm-warm.log",
+      "unchanged": true,
+      "sha256": "570c18d0e3da5cd330c79bdc1f4d2e2912ba74c80de3db6aac971613b87fd702"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/debug.log",
+      "unchanged": true,
+      "sha256": "e967af2f88a1e1bd2a6bef06b6eaed817bfd2a83f0abfceb1a14c49e208d4e6f"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/doc-links.log",
+      "unchanged": true,
+      "sha256": "107467ee89c4550487ee2b8cd2582381743660670179950305aeb441c6afaced"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/driver-tests-before.log",
+      "unchanged": true,
+      "sha256": "e3215d205aa0ad1ec36ac3d9aef5fa1ce01ec5443ce2edac79277cb61acf0d9c"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/driver-tests.log",
+      "unchanged": true,
+      "sha256": "feabb4add9e2ca3374e538560634d1ec97dc4f4ce89aab12f3d726e36ea9b2f6"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/environment.json",
+      "unchanged": true,
+      "sha256": "065d5fcca78ab5d9147b4afa6d1cf3df5babde76fa0d0fa34ac62dd325a71815"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/exploratory-summary.json",
+      "unchanged": true,
+      "sha256": "9099aa07aed7edd82462c712b941ba9ff13df972ea96eac6147837de7508a439"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/patch-fmt.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/probe-pages.json",
+      "unchanged": true,
+      "sha256": "501cf5ed21da1871404e85ae6581d73a930b5d9fd14c7b52cde30bea96795dab"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/probe1.jsonl.gz",
+      "unchanged": true,
+      "sha256": "f07b9340ad851241cb04093af07398fdb19f6e149ebf9fdb6f7900f4df828dd9"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/probe1.stderr.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/probe2.jsonl.gz",
+      "unchanged": true,
+      "sha256": "71d73b8952d2b76e4e420ed61ebd058e382a6c32c52777d7aa1875a37ca59eb9"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/probe2.stderr.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/probe3.jsonl.gz",
+      "unchanged": true,
+      "sha256": "c8bef3d05d94bb59acdaa489c7f1e671fbf9929231096a6e44871a92e0e3a1b7"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/probe3.stderr.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/recovery-probe-summary.json",
+      "unchanged": true,
+      "sha256": "b9053594cae27cb0e7aeb1e2d9eaacb0692c512fe492c23417c1689895804885"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/recovery-summary.json",
+      "unchanged": true,
+      "sha256": "312d07402767936cfc6cdd8b3912012c0a2971dc55844433d859dfeb24e97fb4"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/recovery.log",
+      "unchanged": true,
+      "sha256": "01a38f1deaa8b4e5b61b29fc2540beaa638aa5c7b7c418726742ded6e64cffb5"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/rtex-dl-tests.log",
+      "unchanged": true,
+      "sha256": "43e8bfcc82fe5abbbc3d214fa652ebd7d2acffaed465f8db63fb00925dd28918"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/run.log",
+      "unchanged": true,
+      "sha256": "7be6a4b6263d0519c7451a10c5b530a16c3776d358f626b77e26bd85f66f6e6d"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/structural-edit-summary.json",
+      "unchanged": true,
+      "sha256": "25cd243b3c26426a0d76118b11e29abc1845a127db27ab8728c24e8c40bd93d6"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/structural-edit.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/summary.json",
+      "unchanged": true,
+      "sha256": "6c22db804fecb5e376a4cb46dd3d4532651c3c28f7879ceeb80ca8d9f67a8ce7"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-A-full.log",
+      "unchanged": true,
+      "sha256": "c978df09e5668bf634698c18d0036cd6df4248866594380939a23b7af846b4c3"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-A-full.pdf",
+      "unchanged": true,
+      "sha256": "4215ae37931af19b9b12c353511f064eb6615608a4a975d611215de26e50d12a"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-A-keystrokes.json",
+      "unchanged": true,
+      "sha256": "941d153a01a36374b1b31cd9bce4801ea1d82979374f89a0384964e0fedc3083"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-A-live.jsonl.gz",
+      "unchanged": true,
+      "sha256": "559fefbe2dc7ad5a057d3d73a02d0aaaee043269c8b845114ef6078e43697c5c"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-A-live.stderr.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-A-pages.json",
+      "unchanged": true,
+      "sha256": "a401d7769ae73e3e4102bd06e15c08c26a87d15c3f5fea15668991981ca8942e"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-A-recovery-verify.json",
+      "unchanged": true,
+      "sha256": "ee01088d2c6eee72d8323fc218ab1d22849c243701fbc2d187d044040d70dd15"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-A-recovery-verify.log",
+      "unchanged": true,
+      "sha256": "13aa68fdd862b8eee7ddcb91f1f615df7755980c6970af71ba83bc753f5ace72"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-A-recovery.jsonl.gz",
+      "unchanged": true,
+      "sha256": "a450d78b7efbdf1824380e6b0f951c686f1fbffc58e4e313eaccc8e443ee72c7"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-A-recovery.stderr.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-A-verify.json",
+      "unchanged": true,
+      "sha256": "9eb1b62cca5af890cd588832ee6fd6812fa57fec0fccb100d310cedb1bc712c4"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-A-verify.log",
+      "unchanged": true,
+      "sha256": "e5b78852e50081c7a3624e2f2a0fd85bc27f7f001b420fa25e3528ce0a26afa1"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-base-full.log",
+      "unchanged": true,
+      "sha256": "53b6df0a06f46b647620a3f5412dcfce4a5a7ce4d43513225d95a63e3ea4fbe9"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-base-full.pdf",
+      "unchanged": true,
+      "sha256": "5dfc425ac238138480e1827f9441b7cb329c3da23653031df9e72dd366ee7610"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-base-keystrokes.json",
+      "unchanged": true,
+      "sha256": "760e00a4750f4fa5a48e72a67d9cefb8067ae0f76be00bffeb5b02864f527904"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-base-live.jsonl.gz",
+      "unchanged": true,
+      "sha256": "4ef552ba23357181b6d2375a26dda844ce17715eaf8d8f7c55f68dff9ec90f34"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-base-live.stderr.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-base-pages.json",
+      "unchanged": true,
+      "sha256": "739f73eca0797875df064fd52234243dd8cc2dc78f86fc5321fad8a51057542d"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-base-recovery-verify.json",
+      "unchanged": true,
+      "sha256": "2f2eb2ea1f6a0e879e25b38b5551530991a18cfe1624204d9be8e68e276a45c5"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-base-recovery-verify.log",
+      "unchanged": true,
+      "sha256": "52b20698a2eb0114d6e342545c00c8b9807c2aa6ac0c8edeb971ab5c88708303"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-base-recovery.jsonl.gz",
+      "unchanged": true,
+      "sha256": "c93c4b5e078d1e3c52b1a0524797689a0361220cd04ded6c4ee73dd2af7668a7"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-base-recovery.stderr.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-base-verify.json",
+      "unchanged": true,
+      "sha256": "ee854dfa8eb8ac443012eb799e61f3897807adb8c32560c80935cb96ade10335"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-base-verify.log",
+      "unchanged": true,
+      "sha256": "2ed311aa760de801dbef3747d5f097a71b4e3ee4ae921ad9e9893db4d11634fe"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-caret-checks.json",
+      "unchanged": true,
+      "sha256": "3887b0599469a5d575a830375a57a74c19365b7d98777775f89966d0a93cdb41"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-intermediate.log",
+      "unchanged": true,
+      "sha256": "f3e2310558f7b9bfe41188f313fd96a63b779d6538fd9dc07cee38e3f878b7fd"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-intermediate.pdf",
+      "unchanged": true,
+      "sha256": "0fc5f1ced17c92fabb5ea09888287cfe8f1d14e14e650b9c3866efe712606c33"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-source-map.json",
+      "unchanged": true,
+      "sha256": "b8dac885ff0d27440b23b53e0fc81752880f76906737ce750be020add4fc22d6"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-structural-edit.jsonl.gz",
+      "unchanged": true,
+      "sha256": "ebc50f63a67b93cbed854740c52665c69f8dc6e583139117f203e8901dc14cca"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-structural-edit.stderr.log",
+      "unchanged": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/unicode-warm.log",
+      "unchanged": true,
+      "sha256": "53b6df0a06f46b647620a3f5412dcfce4a5a7ce4d43513225d95a63e3ea4fbe9"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/verify-probe.log",
+      "unchanged": true,
+      "sha256": "0012fc35b12d16db1c06ca4881313b2ffbf637c43a31d61d823da7d336f69dac"
+    },
+    {
+      "path": "docs/log/evidence/rtex-math-edit/warm-cm.log",
+      "unchanged": true,
+      "sha256": "1b60fa714f2bd74b1b474b027c23bfec68bdf02609e5fb4327efa65348e91c8e"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "cm": {
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 1,
+      "reply_ms": 0.312,
+      "update": "ParagraphUpdate",
+      "update_ms": 84.426,
+      "status": "ok",
+      "timing": {
+        "total_us": 1605,
+        "tex_us": 856,
+        "traverse_us": 519,
+        "pack_us": 0
+      }
+    },
+    "expected_caret": 94,
+    "actual_caret": 85,
+    "passed": false,
+    "denominator_glyph": {
+      "bbox": [
+        5289310,
+        406555,
+        5519778,
+        725132
+      ],
+      "char": 98,
+      "font": 29,
+      "source_id": 2
+    },
+    "new_num_den_slots": [],
+    "restore": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 2,
+      "reply_ms": 0.26,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.825,
+      "status": "ok",
+      "timing": {
+        "total_us": 1364,
+        "tex_us": 757,
+        "traverse_us": 456,
+        "pack_us": 0
+      }
+    },
+    "restored_export": {
+      "event": {
+        "event": "PdfExported",
+        "job_id": 3,
+        "path": "/work/restored.pdf",
+        "status": {
+          "state": "Ok"
+        },
+        "converged": true,
+        "passes": 2
+      },
+      "source_equals_expected": true
+    }
+  },
+  "unicode": {
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 1,
+      "reply_ms": 0.606,
+      "update": "ParagraphUpdate",
+      "update_ms": 76.255,
+      "status": "ok",
+      "timing": {
+        "total_us": 1711,
+        "tex_us": 988,
+        "traverse_us": 534,
+        "pack_us": 0
+      }
+    },
+    "expected_caret": 151,
+    "actual_caret": 142,
+    "passed": false,
+    "denominator_glyph": {
+      "bbox": [
+        5290935,
+        389697,
+        5533650,
+        730078
+      ],
+      "char": 119887,
+      "font": 31,
+      "source_id": 2
+    },
+    "new_num_den_slots": [],
+    "restore": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 2,
+      "reply_ms": 0.161,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.542,
+      "status": "ok",
+      "timing": {
+        "total_us": 1355,
+        "tex_us": 734,
+        "traverse_us": 469,
+        "pack_us": 0
+      }
+    },
+    "restored_export": {
+      "event": {
+        "event": "PdfExported",
+        "job_id": 3,
+        "path": "/work/restored.pdf",
+        "status": {
+          "state": "Ok"
+        },
+        "converged": true,
+        "passes": 2
+      },
+      "source_equals_expected": true
+    }
+  }
+}

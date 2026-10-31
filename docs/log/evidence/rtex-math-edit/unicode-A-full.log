@@ -1,0 +1,79 @@
+This is LuaHBTeX, Version 1.24.0 (TeX Live 2026/Arch Linux) 
+ restricted system commands enabled.
+(/project/main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+ (/usr/share/texmf-dist/tex/latex/ctex/ctexart.cls
+(/usr/share/texmf-dist/tex/latex/ctex/config/ctexbackend.cfg)
+(/usr/share/texmf-dist/tex/latex/l3kernel/expl3.sty
+(/usr/share/texmf-dist/tex/latex/l3backend/l3backend-luatex.def))
+Document Class: ctexart 2022/07/14 v2.5.10 Chinese adapter for class article (C
+TEX)
+(/usr/share/texmf-dist/tex/latex/ctex/ctexhook.sty)
+(/usr/share/texmf-dist/tex/latex/ctex/ctexpatch.sty)
+(/usr/share/texmf-dist/tex/latex/base/fix-cm.sty
+(/usr/share/texmf-dist/tex/latex/base/ts1enc.def))
+(/usr/share/texmf-dist/tex/latex/ctex/config/ctexopts.cfg)
+(/usr/share/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(/usr/share/texmf-dist/tex/latex/base/size10.clo))
+(/usr/share/texmf-dist/tex/latex/ctex/engine/ctex-engine-luatex.def
+(/usr/share/texmf-dist/tex/luatex/luatexja/luatexja.sty
+(/usr/share/texmf-dist/tex/luatex/luatexja/luatexja-core.sty
+(/usr/share/texmf-dist/tex/generic/infwarerr/infwarerr.sty)
+(/usr/share/texmf-dist/tex/luatex/luatexbase/luatexbase.sty
+(/usr/share/texmf-dist/tex/luatex/ctablestack/ctablestack.sty))
+(/usr/share/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/usr/share/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(/usr/share/texmf-dist/tex/generic/iftex/iftex.sty))
+(/usr/share/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/usr/share/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/share/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+(/usr/share/texmf-dist/tex/generic/xkeyval/keyval.tex))))
+(/usr/share/texmf-dist/tex/latex/etoolbox/etoolbox.sty)
+(/usr/share/texmf-dist/tex/latex/everyhook/everyhook.sty
+(/usr/share/texmf-dist/tex/latex/svn-prov/svn-prov.sty))
+(/usr/share/texmf-dist/tex/luatex/luatexja/ltj-base.sty))
+(/usr/share/texmf-dist/tex/luatex/luatexja/luatexja-compat.sty))
+(/usr/share/texmf-dist/tex/latex/fontspec/fontspec.sty
+(/usr/share/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)
+(/usr/share/texmf-dist/tex/latex/fontspec/fontspec-luatex.sty
+(/usr/share/texmf-dist/tex/latex/base/fontenc.sty)
+(/usr/share/texmf-dist/tex/latex/fontspec/fontspec.cfg)))
+(/usr/share/texmf-dist/tex/latex/base/tuenc.def)
+(/usr/share/texmf-dist/tex/luatex/chinese-jfm/jfm-zh_CN.lua))
+(/usr/share/texmf-dist/tex/latex/zhnumber/zhnumber.sty
+(/usr/share/texmf-dist/tex/latex/zhnumber/zhnumber-utf8.cfg))
+(/usr/share/texmf-dist/tex/latex/ctex/scheme/ctex-scheme-chinese-article.def
+(/usr/share/texmf-dist/tex/latex/ctex/config/ctex-name-utf8.cfg))
+(/usr/share/texmf-dist/tex/latex/ctex/ctex-c5size.clo)
+(/usr/share/texmf-dist/tex/latex/ctex/fontset/ctex-fontset-fandol.def))
+(/usr/share/texmf-dist/tex/latex/ctex/config/ctex.cfg)
+(/usr/share/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/share/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/share/texmf-dist/tex/latex/unicode-math/unicode-math.sty
+(/usr/share/texmf-dist/tex/latex/unicode-math/unicode-math-luatex.sty
+(/usr/share/texmf-dist/tex/latex/l3packages/l3keys2e/l3keys2e.sty)
+(/usr/share/texmf-dist/tex/lualatex/lualatex-math/lualatex-math.sty)
+(/usr/share/texmf-dist/tex/latex/unicode-math/unicode-math-table.tex)))
+(/usr/share/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texmf-dist/tex/latex/amsfonts/umsb.fd)
+No file main.aux.
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (/work/main.aux))
+ 1004 words of node memory still in use:
+   8 hlist, 2 vlist, 2 rule, 2 glue, 4 kern, 1 glyph, 208 attribute, 54 glue_sp
+ec, 28 attribute_list, 1 write, 11 user_defined nodes
+   avail lists: 1:3,2:6647,3:74,4:125,5:106,6:24,7:994,8:13,9:366,10:1,11:18
+</usr/share/texmf-dist/fonts/opentype/public/fandol/FandolSong-Regular.otf></us
+r/share/texmf-dist/fonts/opentype/public/lm-math/latinmodern-math.otf></usr/sha
+re/texmf-dist/fonts/opentype/public/lm-math/latinmodern-math.otf></usr/share/te
+xmf-dist/fonts/opentype/public/lm-math/latinmodern-math.otf></usr/share/texmf-d
+ist/fonts/opentype/public/lm/lmroman10-regular.otf>
+Output written on main.pdf (1 page, 16414 bytes).
+Transcript written on main.log.

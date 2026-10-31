@@ -1,0 +1,27 @@
+This is LuaHBTeX, Version 1.24.0 (TeX Live 2026/Arch Linux) 
+ restricted system commands enabled.
+(/project/main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+ (/usr/share/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(/usr/share/texmf-dist/tex/latex/base/size10.clo))
+(/usr/share/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-dist/tex/latex/l3backend/l3backend-luatex.def)
+No file main.aux.
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (/work/main.aux))
+ 479 words of node memory still in use:
+   6 hlist, 2 vlist, 2 rule, 2 glue, 4 kern, 1 glyph, 6 attribute, 51 glue_spec
+, 6 attribute_list, 1 write nodes
+   avail lists: 2:110,3:4,4:2,5:27,6:2,7:130,8:4,9:76
+</usr/share/texmf-dist/fonts/opentype/public/lm/lmroman10-regular.otf></usr/sha
+re/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy10.pfb>
+Output written on main.pdf (1 page, 24512 bytes).
+Transcript written on main.log.

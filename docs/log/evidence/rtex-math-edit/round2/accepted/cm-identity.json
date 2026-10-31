@@ -1,0 +1,428 @@
+{
+  "r2-cm-plain": {
+    "verify": {
+      "exit": 0,
+      "wall_s": 4.123,
+      "paragraphs_total": 14,
+      "paragraphs_eligible": 14,
+      "ineligible_reasons": {},
+      "layer1_pass": true,
+      "layer2_pass": true,
+      "capture_pdf_equals_clean": true,
+      "glyphs_identical": 176,
+      "glyphs_total": 176
+    },
+    "full": {
+      "exit": 0,
+      "wall_s": 0.887,
+      "pages": [
+        "cf5b9267c044ba474ad056c837499d2ce1b9ff947ab23c03871b5ab0bc03ebd1"
+      ]
+    }
+  },
+  "r2-cm-A": {
+    "verify": {
+      "exit": 0,
+      "wall_s": 4.371,
+      "paragraphs_total": 14,
+      "paragraphs_eligible": 14,
+      "ineligible_reasons": {},
+      "layer1_pass": true,
+      "layer2_pass": true,
+      "capture_pdf_equals_clean": true,
+      "glyphs_identical": 176,
+      "glyphs_total": 176
+    },
+    "full": {
+      "exit": 0,
+      "wall_s": 0.954,
+      "pages": [
+        "cf5b9267c044ba474ad056c837499d2ce1b9ff947ab23c03871b5ab0bc03ebd1"
+      ]
+    }
+  },
+  "identity": {
+    "glyphs_rules_equal": true,
+    "items": 182,
+    "all_pages_pixels_equal": true
+  },
+  "structure": [
+    {
+      "expr": "x+\\alpha+y",
+      "positions": 6,
+      "with_bbox": 6,
+      "missing": [],
+      "empty_slots": 0,
+      "empty_with_bbox": 0,
+      "nodes_with_engine_noad_observation": 0,
+      "kinds": {
+        "formula": 1,
+        "atom": 5
+      },
+      "slots": []
+    },
+    {
+      "expr": "\\frac{a+b}{c+\\frac{d}{e}}",
+      "positions": 14,
+      "with_bbox": 14,
+      "missing": [],
+      "empty_slots": 0,
+      "empty_with_bbox": 0,
+      "nodes_with_engine_noad_observation": 0,
+      "kinds": {
+        "formula": 1,
+        "frac": 2,
+        "num": 2,
+        "atom": 7,
+        "den": 2
+      },
+      "slots": []
+    },
+    {
+      "expr": "x_{i_j}^{2^{k}}+y^2+z_1",
+      "positions": 18,
+      "with_bbox": 18,
+      "missing": [],
+      "empty_slots": 0,
+      "empty_with_bbox": 0,
+      "nodes_with_engine_noad_observation": 0,
+      "kinds": {
+        "formula": 1,
+        "atom": 11,
+        "sub": 3,
+        "sup": 3
+      },
+      "slots": []
+    },
+    {
+      "expr": "u&=\\sqrt[3]{x+\\sqrt{y}}\\\\ v&=w",
+      "positions": 15,
+      "with_bbox": 15,
+      "missing": [],
+      "empty_slots": 0,
+      "empty_with_bbox": 0,
+      "nodes_with_engine_noad_observation": 0,
+      "kinds": {
+        "formula": 1,
+        "atom": 9,
+        "rad": 2,
+        "degree": 1,
+        "radicand": 2
+      },
+      "slots": []
+    },
+    {
+      "expr": "\\left(\\frac{x}{y}\\right)",
+      "positions": 8,
+      "with_bbox": 8,
+      "missing": [],
+      "empty_slots": 0,
+      "empty_with_bbox": 0,
+      "nodes_with_engine_noad_observation": 0,
+      "kinds": {
+        "formula": 1,
+        "fence": 2,
+        "frac": 1,
+        "num": 1,
+        "atom": 2,
+        "den": 1
+      },
+      "slots": []
+    },
+    {
+      "expr": "\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}",
+      "positions": 10,
+      "with_bbox": 10,
+      "missing": [],
+      "empty_slots": 0,
+      "empty_with_bbox": 0,
+      "nodes_with_engine_noad_observation": 0,
+      "kinds": {
+        "formula": 1,
+        "matrix": 1,
+        "cell": 4,
+        "atom": 4
+      },
+      "slots": []
+    },
+    {
+      "expr": "\\sum_{i=1}^{n}i+\\mathbb{R}",
+      "positions": 13,
+      "with_bbox": 13,
+      "missing": [],
+      "empty_slots": 0,
+      "empty_with_bbox": 0,
+      "nodes_with_engine_noad_observation": 0,
+      "kinds": {
+        "formula": 1,
+        "atom": 8,
+        "sub": 1,
+        "sup": 1,
+        "font": 1,
+        "font-row": 1
+      },
+      "slots": []
+    },
+    {
+      "expr": "x+\\text{中文}+y",
+      "positions": 9,
+      "with_bbox": 9,
+      "missing": [],
+      "empty_slots": 0,
+      "empty_with_bbox": 0,
+      "nodes_with_engine_noad_observation": 0,
+      "kinds": {
+        "formula": 1,
+        "atom": 6,
+        "text": 1,
+        "text-row": 1
+      },
+      "slots": []
+    },
+    {
+      "expr": "\\frac{}{}",
+      "positions": 4,
+      "with_bbox": 4,
+      "missing": [],
+      "empty_slots": 2,
+      "empty_with_bbox": 2,
+      "nodes_with_engine_noad_observation": 0,
+      "kinds": {
+        "formula": 1,
+        "frac": 1,
+        "num": 1,
+        "den": 1
+      },
+      "slots": [
+        {
+          "source_id": 8000003,
+          "bbox": [
+            20038942.0,
+            29146164.0,
+            20170014.0,
+            29539380.0
+          ],
+          "anchor": [
+            20104478.0,
+            29342772.0
+          ],
+          "origin": "packed-field-box"
+        },
+        {
+          "source_id": 8000004,
+          "bbox": [
+            20038942.0,
+            30087224.0,
+            20170014.0,
+            30480440.0
+          ],
+          "anchor": [
+            20104478.0,
+            30283832.0
+          ],
+          "origin": "packed-field-box"
+        }
+      ]
+    },
+    {
+      "expr": "x^{}+y_{}",
+      "positions": 6,
+      "with_bbox": 6,
+      "missing": [],
+      "empty_slots": 2,
+      "empty_with_bbox": 2,
+      "nodes_with_engine_noad_observation": 0,
+      "kinds": {
+        "formula": 1,
+        "atom": 3,
+        "sup": 1,
+        "sub": 1
+      },
+      "slots": [
+        {
+          "source_id": 9000003,
+          "bbox": [
+            13023451.0,
+            30833504.0,
+            13154523.0,
+            31226720.0
+          ],
+          "anchor": [
+            13088987.0,
+            31030112.0
+          ],
+          "origin": "packed-field-box"
+        },
+        {
+          "source_id": 9000006,
+          "bbox": [
+            14239055.0,
+            31187761.0,
+            14370127.0,
+            31580977.0
+          ],
+          "anchor": [
+            14304591.0,
+            31384369.0
+          ],
+          "origin": "packed-field-box"
+        }
+      ]
+    },
+    {
+      "expr": "x+x+\\frac{x}{x}+x",
+      "positions": 12,
+      "with_bbox": 12,
+      "missing": [],
+      "empty_slots": 0,
+      "empty_with_bbox": 0,
+      "nodes_with_engine_noad_observation": 0,
+      "kinds": {
+        "formula": 1,
+        "atom": 8,
+        "frac": 1,
+        "num": 1,
+        "den": 1
+      },
+      "slots": []
+    },
+    {
+      "expr": "\\begin{pmatrix}a&\\\\&d\\end{pmatrix}",
+      "positions": 8,
+      "with_bbox": 8,
+      "missing": [],
+      "empty_slots": 2,
+      "empty_with_bbox": 2,
+      "nodes_with_engine_noad_observation": 0,
+      "kinds": {
+        "formula": 1,
+        "matrix": 1,
+        "cell": 4,
+        "atom": 2
+      },
+      "slots": [
+        {
+          "source_id": 11000005,
+          "bbox": [
+            20549173.0,
+            33516510,
+            20680245.0,
+            34594016
+          ],
+          "anchor": [
+            20614709.0,
+            34055263.0
+          ],
+          "origin": "cell-math-boundary"
+        },
+        {
+          "source_id": 11000006,
+          "bbox": [
+            19531510.0,
+            34594016,
+            19662582.0,
+            35671522
+          ],
+          "anchor": [
+            19597046.0,
+            35132769.0
+          ],
+          "origin": "cell-math-boundary"
+        }
+      ]
+    },
+    {
+      "expr": "\\sqrt{}+\\sqrt[]{}",
+      "positions": 7,
+      "with_bbox": 7,
+      "missing": [],
+      "empty_slots": 3,
+      "empty_with_bbox": 3,
+      "nodes_with_engine_noad_observation": 0,
+      "kinds": {
+        "formula": 1,
+        "rad": 2,
+        "radicand": 2,
+        "atom": 1,
+        "degree": 1
+      },
+      "slots": [
+        {
+          "source_id": 12000003,
+          "bbox": [
+            13533253.0,
+            36420615.0,
+            13664325.0,
+            36813831.0
+          ],
+          "anchor": [
+            13598789.0,
+            36617223.0
+          ],
+          "origin": "packed-field-box"
+        },
+        {
+          "source_id": 12000006,
+          "bbox": [
+            14569308.0,
+            36366742.0,
+            14700380.0,
+            36759958.0
+          ],
+          "anchor": [
+            14634844.0,
+            36563350.0
+          ],
+          "origin": "degree-math-boundary"
+        },
+        {
+          "source_id": 12000007,
+          "bbox": [
+            14761179.0,
+            36420615.0,
+            14892251.0,
+            36813831.0
+          ],
+          "anchor": [
+            14826715.0,
+            36617223.0
+          ],
+          "origin": "packed-field-box"
+        }
+      ]
+    },
+    {
+      "expr": "",
+      "positions": 1,
+      "with_bbox": 1,
+      "missing": [],
+      "empty_slots": 1,
+      "empty_with_bbox": 1,
+      "nodes_with_engine_noad_observation": 0,
+      "kinds": {
+        "formula": 1
+      },
+      "slots": [
+        {
+          "source_id": 13000001,
+          "bbox": [
+            12957662.0,
+            37207781,
+            13088734.0,
+            37709926
+          ],
+          "anchor": [
+            13023198.0,
+            37458853.5
+          ],
+          "origin": "formula-math-boundary"
+        }
+      ]
+    }
+  ],
+  "caret": {
+    "checks": 378,
+    "passed": 378,
+    "failures": []
+  }
+}

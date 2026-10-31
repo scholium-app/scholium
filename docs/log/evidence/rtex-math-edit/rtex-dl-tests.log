@@ -1,0 +1,18 @@
+   Compiling rtex-dl v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-math-edit/crates/rtex-dl)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.61s
+     Running unittests src/lib.rs (/home/ation_ciger/.cache/scholium-eval/rtex-math-edit/target/debug/deps/rtex_dl-c0e4ce3380423491)
+
+running 4 tests
+test tests::page_without_glyphs_has_empty_fonts_array ... ok
+test tests::item_roundtrip ... ok
+test binary::tests::roundtrip ... ok
+test binary::tests::math_ownership_survives_binary_and_json_transport ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rtex_dl
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

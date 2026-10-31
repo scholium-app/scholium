@@ -1,0 +1,182 @@
+diff --git a/crates/rtex-dl/src/binary.rs b/crates/rtex-dl/src/binary.rs
+index 7edfdbb..1a3438b 100644
+--- a/crates/rtex-dl/src/binary.rs
++++ b/crates/rtex-dl/src/binary.rs
+@@ -140,6 +140,12 @@ pub fn decode(bytes: &[u8]) -> Result<DisplayList, BinError> {
+         let mut p = Reader { b: payload, pos: 0 };
+         let malformed = |_e: BinError| BinError::Malformed { tag, offset: start };
+         match tag {
++            0x40 => {
++                dl.math_edit = Some(
++                    serde_json::from_slice(payload)
++                        .map_err(|_| BinError::Malformed { tag, offset: start })?,
++                );
++            }
+             0x01 => {
+                 dl.width = p.i32().map_err(malformed)? as Sp;
+                 dl.height = p.i32().map_err(malformed)? as Sp;
+@@ -600,6 +606,12 @@ pub fn encode(dl: &DisplayList) -> Vec<u8> {
+         write_items(&mut body, &l.items);
+         body.rec(0x11, &[]);
+     }
++    if let Some(metadata) = &dl.math_edit {
++        body.rec(
++            0x40,
++            &serde_json::to_vec(metadata).expect("JSON value serializes"),
++        );
++    }
+     body.rec(0xFF, &[]);
+     let mut out = Writer(Vec::new());
+     out.0.extend_from_slice(MAGIC);
+@@ -614,6 +626,20 @@ pub fn encode(dl: &DisplayList) -> Vec<u8> {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    #[test]
++    fn math_ownership_survives_binary_and_json_transport() {
++        let mut dl = sample();
++        let metadata = serde_json::json!({"glyphs": [{"source_id": 7, "bbox": [1, 2, 3, 4]}]});
++        dl.math_edit = Some(metadata.clone());
++        let decoded = decode(&encode(&dl)).unwrap();
++        assert_eq!(decoded.math_edit, Some(metadata.clone()));
++        let json = serde_json::to_string(&decoded).unwrap();
++        assert_eq!(
++            DisplayList::from_json(&json).unwrap().math_edit,
++            Some(metadata)
++        );
++    }
++
+     fn sample() -> DisplayList {
+         let mut fonts = BTreeMap::new();
+         fonts.insert(
+@@ -637,6 +663,7 @@ mod tests {
+             },
+         );
+         DisplayList {
++            math_edit: None,
+             kind: "page".into(),
+             unit: "sp".into(),
+             fonts,
+diff --git a/crates/rtex-dl/src/lib.rs b/crates/rtex-dl/src/lib.rs
+index cca7523..848e86b 100644
+--- a/crates/rtex-dl/src/lib.rs
++++ b/crates/rtex-dl/src/lib.rs
+@@ -313,6 +313,9 @@ pub struct ImageInfo {
+ 
+ #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
+ pub struct DisplayList {
++    /// Evaluation-only source ownership and observed noad tree; coordinates in sp.
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub math_edit: Option<serde_json::Value>,
+     pub kind: String,
+     #[serde(default)]
+     pub unit: String,
+diff --git a/tex/rtex-dl.lua b/tex/rtex-dl.lua
+index 41c2942..a0bfb6f 100644
+--- a/tex/rtex-dl.lua
++++ b/tex/rtex-dl.lua
+@@ -22,6 +22,11 @@ local getid, getnext, getlist, getfield, getsubtype = D.getid, D.getnext, D.getl
+ local getwhd, getwidth = D.getwhd, D.getwidth
+ local getfont, getchar, getkern, getshift = D.getfont, D.getchar, D.getkern, D.getshift
+ local getglue, getexpansion, getoffsets = D.getglue, D.getexpansion, D.getoffsets
++local math_edit = _G.scholium_math_observer
++if not math_edit then
++  math_edit = dofile(kpse.find_file("rtex-math-edit.lua", "lua") or "rtex-math-edit.lua")
++  _G.scholium_math_observer = math_edit
++end
+ local getattribute = D.getattribute or D.get_attribute
+ local getdisc, getdata = D.getdisc, D.getdata
+ local getleader = D.getleader
+@@ -389,6 +394,7 @@ hlist_out = function(st, box, left, base_v)
+           if ef ~= 0 then w = expand(w, ef) end
+           ew[c] = w
+         end
++        math_edit.glyph(st, n, cur_h + (xo or 0), base_v - (yo or 0), w)
+         if e.virtual then
+           sync_out(); st:emit_virtual(f, c, cur_h + (xo or 0), base_v - (yo or 0), ef); sync_in()
+         elseif bin then
+@@ -832,7 +838,8 @@ local function result(st, kind, extra)
+   local fonts = {}
+   for id, d in pairs(st.fonts) do fonts[tostring(id)] = d end
+   local r = { kind = kind, unit = "sp", fonts = fonts, lines = st.lines, other = st.other,
+-              flags = st.flags, glyphs = st.glyphs, images = st.images, inserts = st.inserts }
++              flags = st.flags, glyphs = st.glyphs, images = st.images, inserts = st.inserts,
++              math_edit = st.math_edit }
+   if extra then for k, v in pairs(extra) do r[k] = v end end
+   return r
+ end
+@@ -875,6 +882,10 @@ function M.paragraph_binary(boxnode, initial_color, extra_inserts)
+   for k, v in pairs(st.flags) do
+     buf[#buf + 1] = pack("<Bs4", 0x03, bstr(k) .. pack("<i4", type(v) == "number" and floor(v) or 1))
+   end
++  if st.math_edit then
++    local json = dofile(kpse.find_file("rtex-json.lua", "lua") or "rtex-json.lua")
++    buf[#buf + 1] = pack("<Bs4", 0x40, json.encode(st.math_edit))
++  end
+   buf[#buf + 1] = pack("<Bs4", 0xFF, "")
+   local body = concat(buf)
+   return pack("<c4I2I2I4I4", "RTDL", 1, 0, 16 + #body, 0) .. body, st.nlines, st.glyphs, w, h, d, st.flags, st.inserts
+diff --git a/tex/rtex-math-edit.lua b/tex/rtex-math-edit.lua
+new file mode 100644
+index 0000000..724800e
+--- /dev/null
++++ b/tex/rtex-math-edit.lua
+@@ -0,0 +1,58 @@
++-- Evaluation-only source ownership. Attribute 65000 is reserved by the host fixture.
++-- No nodes, dimensions, or math classes are changed by this observer.
++local M = { attr = 65000, noads = {} }
++local getattribute = node.direct.getattribute or node.direct.get_attribute
++local fields = { 'nucleus', 'sub', 'sup', 'num', 'denom', 'degree', 'head' }
++local function walk(head, parent, role, depth)
++  if not head or depth > 48 then return end
++  for n in node.traverse(head) do
++    local source = node.has_attribute(n, M.attr)
++    local key = tostring(n)
++    if source and scholium_math_sources and scholium_math_sources[source] then
++      if not M.seen[source] then M.noads[source] = {}; M.seen[source] = true end
++      local out = M.noads[source]
++      out[#out + 1] = { kind = node.type(n.id), subtype = n.subtype,
++                       parent = parent, role = role, key = key }
++    end
++    for _, field in ipairs(fields) do
++      local ok, child = pcall(function() return n[field] end)
++      if ok and type(child) == 'userdata' then walk(child, key, field, depth + 1) end
++    end
++  end
++end
++luatexbase.add_to_callback('pre_mlist_to_hlist_filter', function(head)
++  -- Keep other formulas, replacing repeated observations for IDs in this conversion.
++  M.seen = {}
++  walk(head, '', 'formula', 0)
++  return head
++end, 'scholium-math-observer')
++
++function M.glyph(st, n, x, y, w)
++  local source = getattribute(n, M.attr)
++  local sources = scholium_math_sources
++  if not source or not sources or not sources[source] then return end
++  st.math_edit = st.math_edit or { glyphs = {}, nodes = {} }
++  local _, h, d = node.direct.getwhd(n)
++  h, d = h or 0, d or 0
++  local bbox = { x, y - h, x + w, y + d }
++  local glyphs = st.math_edit.glyphs
++  glyphs[#glyphs + 1] = { source_id = source, bbox = bbox,
++    font = node.direct.getfont(n), char = node.direct.getchar(n) }
++  while source and sources[source] do
++    local desc = sources[source]
++    local key = tostring(source)
++    local out = st.math_edit.nodes[key]
++    if not out then
++      out = { id = source, parent = desc.parent, kind = desc.kind,
++              src_range = { desc.start, desc.stop }, bbox = {table.unpack(bbox)},
++              noads = M.noads[source] or {} }
++      st.math_edit.nodes[key] = out
++    else
++      local b = out.bbox
++      b[1], b[2] = math.min(b[1], bbox[1]), math.min(b[2], bbox[2])
++      b[3], b[4] = math.max(b[3], bbox[3]), math.max(b[4], bbox[4])
++    end
++    source = desc.parent
++  end
++end
++return M

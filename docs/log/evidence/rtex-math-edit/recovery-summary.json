@@ -1,0 +1,1570 @@
+{
+  "cm-base": {
+    "final_patch_verify": {
+      "exit": 0,
+      "wall_s": 4.19,
+      "paragraphs_total": 12,
+      "paragraphs_eligible": 12,
+      "ineligible_reasons": {},
+      "layer1_pass": true,
+      "layer2_pass": true,
+      "capture_pdf_equals_clean": true,
+      "glyphs_identical": 232,
+      "glyphs_total": 232
+    },
+    "states": [
+      {
+        "state": "unbalanced-brace",
+        "bad": {
+          "routed": "background",
+          "reasons": [
+            "UnbalancedMath",
+            "UnbalancedBraces"
+          ],
+          "edit_id": 1,
+          "reply_ms": 0.228,
+          "update": "BackgroundScheduled",
+          "update_ms": 0.247,
+          "status": null,
+          "timing": null
+        },
+        "typed_while_invalid": {
+          "routed": "background",
+          "reasons": [
+            "UnbalancedMath",
+            "UnbalancedBraces"
+          ],
+          "edit_id": 2,
+          "reply_ms": 0.351,
+          "update": "BackgroundScheduled",
+          "update_ms": 0.383,
+          "status": null,
+          "timing": null
+        },
+        "error_events": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 4,
+                "message": "Missing } inserted.",
+                "context": "<inserted text> "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 2,
+              "context_revision": 2,
+              "engine_generation": 0,
+              "layout_version": 2
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 430,
+            "pages_changed_count": 0
+          },
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 4,
+                "message": "Missing } inserted.",
+                "context": "<inserted text> "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 3,
+              "context_revision": 3,
+              "engine_generation": 0,
+              "layout_version": 3
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 179,
+            "pages_changed_count": 1
+          }
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 3,
+          "reply_ms": 0.36,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.121,
+          "status": "ok",
+          "timing": {
+            "total_us": 900,
+            "tex_us": 500,
+            "traverse_us": 116,
+            "pack_us": 0
+          }
+        },
+        "q_in_live_update": true,
+        "repaired_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 4,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 2
+          },
+          "source_equals_expected": true
+        },
+        "restore": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 5,
+          "reply_ms": 0.203,
+          "update": "ParagraphUpdate",
+          "update_ms": 1.022,
+          "status": "ok",
+          "timing": {
+            "total_us": 757,
+            "tex_us": 470,
+            "traverse_us": 99,
+            "pack_us": 0
+          }
+        },
+        "restored_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 6,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 1
+          },
+          "source_equals_expected": true
+        }
+      },
+      {
+        "state": "undefined-macro",
+        "bad": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 7,
+          "reply_ms": 0.279,
+          "update": "BackgroundScheduled",
+          "update_ms": 1.177,
+          "status": null,
+          "timing": null
+        },
+        "typed_while_invalid": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 8,
+          "reply_ms": 0.431,
+          "update": "BackgroundScheduled",
+          "update_ms": 1.976,
+          "status": null,
+          "timing": null
+        },
+        "error_events": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 4,
+                "message": "Undefined control sequence.",
+                "context": "<recently read> \\scholiumUndefined "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 6,
+              "context_revision": 4,
+              "engine_generation": 0,
+              "layout_version": 4
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 181,
+            "pages_changed_count": 1
+          },
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 4,
+                "message": "Undefined control sequence.",
+                "context": "<recently read> \\scholiumUndefined "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 7,
+              "context_revision": 5,
+              "engine_generation": 0,
+              "layout_version": 5
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 173,
+            "pages_changed_count": 1
+          }
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 9,
+          "reply_ms": 0.415,
+          "update": "ParagraphUpdate",
+          "update_ms": 1.889,
+          "status": "ok",
+          "timing": {
+            "total_us": 721,
+            "tex_us": 498,
+            "traverse_us": 90,
+            "pack_us": 0
+          }
+        },
+        "q_in_live_update": true,
+        "repaired_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 10,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 1
+          },
+          "source_equals_expected": true
+        },
+        "restore": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 11,
+          "reply_ms": 0.195,
+          "update": "ParagraphUpdate",
+          "update_ms": 0.969,
+          "status": "ok",
+          "timing": {
+            "total_us": 746,
+            "tex_us": 430,
+            "traverse_us": 88,
+            "pack_us": 0
+          }
+        },
+        "restored_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 12,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 1
+          },
+          "source_equals_expected": true
+        }
+      }
+    ]
+  },
+  "cm-A": {
+    "final_patch_verify": {
+      "exit": 0,
+      "wall_s": 4.363,
+      "paragraphs_total": 12,
+      "paragraphs_eligible": 12,
+      "ineligible_reasons": {},
+      "layer1_pass": true,
+      "layer2_pass": true,
+      "capture_pdf_equals_clean": true,
+      "glyphs_identical": 232,
+      "glyphs_total": 232
+    },
+    "states": [
+      {
+        "state": "unbalanced-brace",
+        "bad": {
+          "routed": "background",
+          "reasons": [
+            "UnbalancedMath",
+            "UnbalancedBraces"
+          ],
+          "edit_id": 1,
+          "reply_ms": 0.268,
+          "update": "BackgroundScheduled",
+          "update_ms": 0.303,
+          "status": null,
+          "timing": null
+        },
+        "typed_while_invalid": {
+          "routed": "background",
+          "reasons": [
+            "UnbalancedMath",
+            "UnbalancedBraces"
+          ],
+          "edit_id": 2,
+          "reply_ms": 0.417,
+          "update": "BackgroundScheduled",
+          "update_ms": 0.594,
+          "status": null,
+          "timing": null
+        },
+        "error_events": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 5,
+                "message": "Missing } inserted.",
+                "context": "<inserted text> "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 2,
+              "context_revision": 2,
+              "engine_generation": 0,
+              "layout_version": 2
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 387,
+            "pages_changed_count": 1
+          },
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 5,
+                "message": "Missing } inserted.",
+                "context": "<inserted text> "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 3,
+              "context_revision": 3,
+              "engine_generation": 0,
+              "layout_version": 3
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 206,
+            "pages_changed_count": 1
+          }
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 3,
+          "reply_ms": 0.395,
+          "update": "ParagraphUpdate",
+          "update_ms": 3.312,
+          "status": "ok",
+          "timing": {
+            "total_us": 2184,
+            "tex_us": 1293,
+            "traverse_us": 716,
+            "pack_us": 0
+          }
+        },
+        "q_in_live_update": true,
+        "repaired_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 4,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 2
+          },
+          "source_equals_expected": true
+        },
+        "restore": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 5,
+          "reply_ms": 0.338,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.151,
+          "status": "ok",
+          "timing": {
+            "total_us": 1738,
+            "tex_us": 930,
+            "traverse_us": 478,
+            "pack_us": 0
+          }
+        },
+        "restored_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 6,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 1
+          },
+          "source_equals_expected": true
+        }
+      },
+      {
+        "state": "undefined-macro",
+        "bad": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 7,
+          "reply_ms": 0.201,
+          "update": "BackgroundScheduled",
+          "update_ms": 2.071,
+          "status": null,
+          "timing": null
+        },
+        "typed_while_invalid": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 8,
+          "reply_ms": 0.408,
+          "update": "BackgroundScheduled",
+          "update_ms": 3.304,
+          "status": null,
+          "timing": null
+        },
+        "error_events": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 5,
+                "message": "Undefined control sequence.",
+                "context": "l.5 Case inline: $\\attribute65000=2 \\scholiumUndefined"
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 6,
+              "context_revision": 4,
+              "engine_generation": 0,
+              "layout_version": 4
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 196,
+            "pages_changed_count": 1
+          },
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 5,
+                "message": "Undefined control sequence.",
+                "context": "l.5 Case inline: $\\attribute65000=2 \\scholiumUndefined"
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 7,
+              "context_revision": 5,
+              "engine_generation": 0,
+              "layout_version": 5
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 196,
+            "pages_changed_count": 1
+          }
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 9,
+          "reply_ms": 0.325,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.629,
+          "status": "ok",
+          "timing": {
+            "total_us": 1642,
+            "tex_us": 914,
+            "traverse_us": 480,
+            "pack_us": 0
+          }
+        },
+        "q_in_live_update": true,
+        "repaired_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 10,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 1
+          },
+          "source_equals_expected": true
+        },
+        "restore": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 11,
+          "reply_ms": 0.182,
+          "update": "ParagraphUpdate",
+          "update_ms": 1.942,
+          "status": "ok",
+          "timing": {
+            "total_us": 1669,
+            "tex_us": 872,
+            "traverse_us": 504,
+            "pack_us": 0
+          }
+        },
+        "restored_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 12,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 1
+          },
+          "source_equals_expected": true
+        }
+      }
+    ]
+  },
+  "unicode-base": {
+    "final_patch_verify": {
+      "exit": 0,
+      "wall_s": 6.133,
+      "paragraphs_total": 12,
+      "paragraphs_eligible": 12,
+      "ineligible_reasons": {},
+      "layer1_pass": true,
+      "layer2_pass": true,
+      "capture_pdf_equals_clean": true,
+      "glyphs_identical": 232,
+      "glyphs_total": 232
+    },
+    "states": [
+      {
+        "state": "unbalanced-brace",
+        "bad": {
+          "routed": "background",
+          "reasons": [
+            "UnbalancedMath",
+            "UnbalancedBraces"
+          ],
+          "edit_id": 1,
+          "reply_ms": 0.209,
+          "update": "BackgroundScheduled",
+          "update_ms": 0.234,
+          "status": null,
+          "timing": null
+        },
+        "typed_while_invalid": {
+          "routed": "background",
+          "reasons": [
+            "UnbalancedMath",
+            "UnbalancedBraces"
+          ],
+          "edit_id": 2,
+          "reply_ms": 0.406,
+          "update": "BackgroundScheduled",
+          "update_ms": 0.441,
+          "status": null,
+          "timing": null
+        },
+        "error_events": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 5,
+                "message": "Missing } inserted.",
+                "context": "<inserted text> "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 2,
+              "context_revision": 2,
+              "engine_generation": 0,
+              "layout_version": 2
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 795,
+            "pages_changed_count": 0
+          },
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 5,
+                "message": "Missing } inserted.",
+                "context": "<inserted text> "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 3,
+              "context_revision": 3,
+              "engine_generation": 0,
+              "layout_version": 3
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 207,
+            "pages_changed_count": 1
+          }
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 3,
+          "reply_ms": 0.354,
+          "update": "ParagraphUpdate",
+          "update_ms": 1.619,
+          "status": "ok",
+          "timing": {
+            "total_us": 595,
+            "tex_us": 371,
+            "traverse_us": 67,
+            "pack_us": 0
+          }
+        },
+        "q_in_live_update": true,
+        "repaired_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 4,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 2
+          },
+          "source_equals_expected": true
+        },
+        "restore": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 5,
+          "reply_ms": 0.215,
+          "update": "ParagraphUpdate",
+          "update_ms": 0.836,
+          "status": "ok",
+          "timing": {
+            "total_us": 595,
+            "tex_us": 304,
+            "traverse_us": 57,
+            "pack_us": 0
+          }
+        },
+        "restored_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 6,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 1
+          },
+          "source_equals_expected": true
+        }
+      },
+      {
+        "state": "undefined-macro",
+        "bad": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 7,
+          "reply_ms": 0.165,
+          "update": "BackgroundScheduled",
+          "update_ms": 1.156,
+          "status": null,
+          "timing": null
+        },
+        "typed_while_invalid": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 8,
+          "reply_ms": 0.325,
+          "update": "BackgroundScheduled",
+          "update_ms": 1.287,
+          "status": null,
+          "timing": null
+        },
+        "error_events": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 5,
+                "message": "Undefined control sequence.",
+                "context": "<recently read> \\scholiumUndefined "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 6,
+              "context_revision": 4,
+              "engine_generation": 0,
+              "layout_version": 4
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 203,
+            "pages_changed_count": 1
+          },
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 5,
+                "message": "Undefined control sequence.",
+                "context": "<recently read> \\scholiumUndefined "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 7,
+              "context_revision": 5,
+              "engine_generation": 0,
+              "layout_version": 5
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 208,
+            "pages_changed_count": 1
+          }
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 9,
+          "reply_ms": 0.4,
+          "update": "ParagraphUpdate",
+          "update_ms": 1.657,
+          "status": "ok",
+          "timing": {
+            "total_us": 543,
+            "tex_us": 326,
+            "traverse_us": 56,
+            "pack_us": 0
+          }
+        },
+        "q_in_live_update": true,
+        "repaired_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 10,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 1
+          },
+          "source_equals_expected": true
+        },
+        "restore": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 11,
+          "reply_ms": 0.287,
+          "update": "ParagraphUpdate",
+          "update_ms": 0.906,
+          "status": "ok",
+          "timing": {
+            "total_us": 662,
+            "tex_us": 366,
+            "traverse_us": 54,
+            "pack_us": 0
+          }
+        },
+        "restored_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 12,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 1
+          },
+          "source_equals_expected": true
+        }
+      }
+    ]
+  },
+  "unicode-A": {
+    "final_patch_verify": {
+      "exit": 0,
+      "wall_s": 6.497,
+      "paragraphs_total": 12,
+      "paragraphs_eligible": 12,
+      "ineligible_reasons": {},
+      "layer1_pass": true,
+      "layer2_pass": true,
+      "capture_pdf_equals_clean": true,
+      "glyphs_identical": 232,
+      "glyphs_total": 232
+    },
+    "states": [
+      {
+        "state": "unbalanced-brace",
+        "bad": {
+          "routed": "background",
+          "reasons": [
+            "UnbalancedMath",
+            "UnbalancedBraces"
+          ],
+          "edit_id": 1,
+          "reply_ms": 0.388,
+          "update": "BackgroundScheduled",
+          "update_ms": 0.425,
+          "status": null,
+          "timing": null
+        },
+        "typed_while_invalid": {
+          "routed": "background",
+          "reasons": [
+            "UnbalancedMath",
+            "UnbalancedBraces"
+          ],
+          "edit_id": 2,
+          "reply_ms": 0.324,
+          "update": "BackgroundScheduled",
+          "update_ms": 0.357,
+          "status": null,
+          "timing": null
+        },
+        "error_events": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 6,
+                "message": "Missing } inserted.",
+                "context": "<inserted text> "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 2,
+              "context_revision": 2,
+              "engine_generation": 0,
+              "layout_version": 2
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 805,
+            "pages_changed_count": 1
+          },
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 6,
+                "message": "Missing } inserted.",
+                "context": "<inserted text> "
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 3,
+              "context_revision": 3,
+              "engine_generation": 0,
+              "layout_version": 3
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 268,
+            "pages_changed_count": 1
+          }
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 3,
+          "reply_ms": 0.338,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.588,
+          "status": "ok",
+          "timing": {
+            "total_us": 1468,
+            "tex_us": 807,
+            "traverse_us": 467,
+            "pack_us": 0
+          }
+        },
+        "q_in_live_update": true,
+        "repaired_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 4,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 2
+          },
+          "source_equals_expected": true
+        },
+        "restore": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 5,
+          "reply_ms": 0.245,
+          "update": "ParagraphUpdate",
+          "update_ms": 2.774,
+          "status": "ok",
+          "timing": {
+            "total_us": 2526,
+            "tex_us": 1474,
+            "traverse_us": 744,
+            "pack_us": 0
+          }
+        },
+        "restored_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 6,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 1
+          },
+          "source_equals_expected": true
+        }
+      },
+      {
+        "state": "undefined-macro",
+        "bad": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 7,
+          "reply_ms": 0.297,
+          "update": "BackgroundScheduled",
+          "update_ms": 2.62,
+          "status": null,
+          "timing": null
+        },
+        "typed_while_invalid": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 8,
+          "reply_ms": 0.325,
+          "update": "BackgroundScheduled",
+          "update_ms": 3.068,
+          "status": null,
+          "timing": null
+        },
+        "error_events": [
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 6,
+                "message": "Undefined control sequence.",
+                "context": "l.6 Case inline: $\\attribute65000=2 \\scholiumUndefined"
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 6,
+              "context_revision": 4,
+              "engine_generation": 0,
+              "layout_version": 4
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 334,
+            "pages_changed_count": 1
+          },
+          {
+            "event": "Diagnostics",
+            "source": "background",
+            "items": [
+              {
+                "severity": "error",
+                "file": "./main.tex",
+                "line": 6,
+                "message": "Undefined control sequence.",
+                "context": "l.6 Case inline: $\\attribute65000=2 \\scholiumUndefined"
+              }
+            ]
+          },
+          {
+            "event": "LayoutUpdate",
+            "versions": {
+              "source_revision": 7,
+              "context_revision": 5,
+              "engine_generation": 0,
+              "layout_version": 5
+            },
+            "compile": {
+              "state": "CompiledWithErrors",
+              "count": 1
+            },
+            "convergence": {
+              "state": "Converging",
+              "pass": 1,
+              "reasons": [
+                "1 compile errors"
+              ]
+            },
+            "passes": 1,
+            "pages_total": 1,
+            "eligible_paragraphs": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "pdf_fallback": null,
+            "wall_ms": 223,
+            "pages_changed_count": 1
+          }
+        ],
+        "repair": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 9,
+          "reply_ms": 0.348,
+          "update": "ParagraphUpdate",
+          "update_ms": 3.112,
+          "status": "ok",
+          "timing": {
+            "total_us": 2045,
+            "tex_us": 1178,
+            "traverse_us": 655,
+            "pack_us": 0
+          }
+        },
+        "q_in_live_update": true,
+        "repaired_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 10,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 1
+          },
+          "source_equals_expected": true
+        },
+        "restore": {
+          "routed": "fast",
+          "reasons": [],
+          "edit_id": 11,
+          "reply_ms": 0.159,
+          "update": "ParagraphUpdate",
+          "update_ms": 1.814,
+          "status": "ok",
+          "timing": {
+            "total_us": 1580,
+            "tex_us": 814,
+            "traverse_us": 431,
+            "pack_us": 0
+          }
+        },
+        "restored_export": {
+          "event": {
+            "event": "PdfExported",
+            "job_id": 12,
+            "path": "/work/restored.pdf",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true,
+            "passes": 1
+          },
+          "source_equals_expected": true
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,7226 @@
+[
+  {
+    "step": 1,
+    "revision": 2,
+    "expr": "\\frac{a}{b}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 1,
+      "reply_ms": 0.198,
+      "update": "ParagraphUpdate",
+      "update_ms": 84.821,
+      "status": "ok",
+      "timing": {
+        "total_us": 895,
+        "tex_us": 559,
+        "traverse_us": 266,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.135,
+    "to_raster_ms": -1459.779,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 43,
+      "pixels": 67445,
+      "raster_us": 94826,
+      "seq": 1,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 7,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 1
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 10004,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "click",
+        "id": 10004,
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "click",
+        "id": 10006,
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "click",
+        "id": 10006,
+        "expected": 18,
+        "actual": 18
+      },
+      {
+        "kind": "right",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "left",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "right",
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "left",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "right",
+        "expected": 18,
+        "actual": 18
+      },
+      {
+        "kind": "left",
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "down",
+        "id": 10003,
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "up",
+        "id": 10005,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "round1-b",
+        "expected": 18,
+        "actual": 18
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "10004": {
+          "id": 10004,
+          "kind": "atom",
+          "start": 14,
+          "stop": 15,
+          "parent": 10003,
+          "char": "a",
+          "bbox": [
+            3321518,
+            2283,
+            3605790,
+            199801
+          ],
+          "geometry_origin": "glyph"
+        },
+        "10003": {
+          "id": 10003,
+          "kind": "num",
+          "start": 14,
+          "stop": 15,
+          "parent": 10002,
+          "char": null,
+          "bbox": [
+            3321518,
+            2283,
+            3605790,
+            199801
+          ],
+          "geometry_origin": "glyph"
+        },
+        "10002": {
+          "id": 10002,
+          "kind": "frac",
+          "start": 8,
+          "stop": 19,
+          "parent": 10001,
+          "char": null,
+          "bbox": [
+            3321518,
+            2283,
+            3605790,
+            709937
+          ],
+          "geometry_origin": "glyph"
+        },
+        "10001": {
+          "id": 10001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 19,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3605790,
+            709938
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "10006": {
+          "id": 10006,
+          "kind": "atom",
+          "start": 17,
+          "stop": 18,
+          "parent": 10005,
+          "char": "b",
+          "bbox": [
+            3348420,
+            391360,
+            3578888,
+            709937
+          ],
+          "geometry_origin": "glyph"
+        },
+        "10005": {
+          "id": 10005,
+          "kind": "den",
+          "start": 17,
+          "stop": 18,
+          "parent": 10002,
+          "char": null,
+          "bbox": [
+            3348420,
+            391360,
+            3578888,
+            709937
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3321518,
+            2283,
+            3605790,
+            199801
+          ],
+          "char": 97,
+          "font": 29,
+          "source_id": 10004
+        },
+        {
+          "bbox": [
+            3348420,
+            391360,
+            3578888,
+            709937
+          ],
+          "char": 98,
+          "font": 29,
+          "source_id": 10006
+        }
+      ],
+      "slots": [],
+      "revision": 2
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": {
+      "expected": 18,
+      "actual": 18
+    }
+  },
+  {
+    "step": 2,
+    "revision": 3,
+    "expr": "\\frac{}{b}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 3,
+      "reply_ms": 0.19,
+      "update": "ParagraphUpdate",
+      "update_ms": 2.042,
+      "status": "ok",
+      "timing": {
+        "total_us": 1808,
+        "tex_us": 1080,
+        "traverse_us": 443,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.089,
+    "to_raster_ms": -774.143,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 22,
+      "pixels": 67445,
+      "raster_us": 170,
+      "seq": 2,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 6,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 1
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 20005,
+        "expected": 16,
+        "actual": 16
+      },
+      {
+        "kind": "click",
+        "id": 20005,
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "right",
+        "expected": 16,
+        "actual": 16
+      },
+      {
+        "kind": "left",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "right",
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "left",
+        "expected": 16,
+        "actual": 16
+      },
+      {
+        "kind": "down",
+        "id": 20003,
+        "expected": 16,
+        "actual": 16
+      },
+      {
+        "kind": "up",
+        "id": 20004,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "slot-click",
+        "expected": 14,
+        "actual": 14
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "20005": {
+          "id": 20005,
+          "kind": "atom",
+          "start": 16,
+          "stop": 17,
+          "parent": 20004,
+          "char": "b",
+          "bbox": [
+            3321518,
+            391360,
+            3551986,
+            709937
+          ],
+          "geometry_origin": "glyph"
+        },
+        "20004": {
+          "id": 20004,
+          "kind": "den",
+          "start": 16,
+          "stop": 17,
+          "parent": 20002,
+          "char": null,
+          "bbox": [
+            3321518,
+            391360,
+            3551986,
+            709937
+          ],
+          "geometry_origin": "glyph"
+        },
+        "20002": {
+          "id": 20002,
+          "kind": "frac",
+          "start": 8,
+          "stop": 18,
+          "parent": 20001,
+          "char": null,
+          "bbox": [
+            3321518,
+            199801,
+            3551986,
+            709937
+          ],
+          "geometry_origin": "packed-field-box"
+        },
+        "20001": {
+          "id": 20001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 18,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3551986,
+            709938
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "20003": {
+          "id": 20003,
+          "kind": "num",
+          "start": 14,
+          "stop": 14,
+          "parent": 20002,
+          "char": null,
+          "bbox": [
+            3436752,
+            199801,
+            3436752,
+            199801
+          ],
+          "geometry_origin": "packed-field-box"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3321518,
+            391360,
+            3551986,
+            709937
+          ],
+          "char": 98,
+          "font": 29,
+          "source_id": 20005
+        }
+      ],
+      "slots": [
+        {
+          "source_id": 20003,
+          "bbox": [
+            3371216.0,
+            3193.0,
+            3502288.0,
+            396409.0
+          ],
+          "anchor": [
+            3436752.0,
+            199801.0
+          ],
+          "origin": "packed-field-box"
+        }
+      ],
+      "revision": 3
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 3,
+    "revision": 4,
+    "expr": "\\frac{}{}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 5,
+      "reply_ms": 0.198,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.426,
+      "status": "ok",
+      "timing": {
+        "total_us": 1133,
+        "tex_us": 675,
+        "traverse_us": 288,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.069,
+    "to_raster_ms": -766.211,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 21,
+      "pixels": 67445,
+      "raster_us": 96,
+      "seq": 3,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 5,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "right",
+        "expected": 16,
+        "actual": 16
+      },
+      {
+        "kind": "left",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "down",
+        "id": 30003,
+        "expected": 16,
+        "actual": 16
+      },
+      {
+        "kind": "up",
+        "id": 30004,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "slot-click",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "slot-click",
+        "expected": 16,
+        "actual": 16
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "30003": {
+          "id": 30003,
+          "kind": "num",
+          "start": 14,
+          "stop": 14,
+          "parent": 30002,
+          "char": null,
+          "bbox": [
+            3321518,
+            199801,
+            3321518,
+            199801
+          ],
+          "geometry_origin": "packed-field-box"
+        },
+        "30002": {
+          "id": 30002,
+          "kind": "frac",
+          "start": 8,
+          "stop": 17,
+          "parent": 30001,
+          "char": null,
+          "bbox": [
+            3321518,
+            199801,
+            3321518,
+            709937
+          ],
+          "geometry_origin": "packed-field-box"
+        },
+        "30001": {
+          "id": 30001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 17,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3321518,
+            709938
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "30004": {
+          "id": 30004,
+          "kind": "den",
+          "start": 16,
+          "stop": 16,
+          "parent": 30002,
+          "char": null,
+          "bbox": [
+            3321518,
+            709937,
+            3321518,
+            709937
+          ],
+          "geometry_origin": "packed-field-box"
+        }
+      },
+      "glyphs": [],
+      "slots": [
+        {
+          "source_id": 30003,
+          "bbox": [
+            3255982.0,
+            3193.0,
+            3387054.0,
+            396409.0
+          ],
+          "anchor": [
+            3321518.0,
+            199801.0
+          ],
+          "origin": "packed-field-box"
+        },
+        {
+          "source_id": 30004,
+          "bbox": [
+            3255982.0,
+            513329.0,
+            3387054.0,
+            906545.0
+          ],
+          "anchor": [
+            3321518.0,
+            709937.0
+          ],
+          "origin": "packed-field-box"
+        }
+      ],
+      "revision": 4
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 4,
+    "revision": 5,
+    "expr": "x",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 7,
+      "reply_ms": 0.12,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.683,
+      "status": "ok",
+      "timing": {
+        "total_us": 1503,
+        "tex_us": 858,
+        "traverse_us": 413,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.057,
+    "to_raster_ms": -771.302,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 33,
+      "pixels": 47355,
+      "raster_us": 35105,
+      "seq": 4,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 6,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 40002,
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "click",
+        "id": 40002,
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "right",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "left",
+        "expected": 8,
+        "actual": 8
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "40002": {
+          "id": 40002,
+          "kind": "atom",
+          "start": 8,
+          "stop": 9,
+          "parent": 40001,
+          "char": "x",
+          "bbox": [
+            3242875,
+            174366,
+            3637634,
+            471754
+          ],
+          "geometry_origin": "glyph"
+        },
+        "40001": {
+          "id": 40001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 9,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3637634,
+            486950
+          ],
+          "geometry_origin": "formula-math-boundary"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            174366,
+            3637634,
+            471754
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 40002
+        }
+      ],
+      "slots": [],
+      "revision": 5
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 5,
+    "revision": 6,
+    "expr": "x^{}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 9,
+      "reply_ms": 0.267,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.58,
+      "status": "ok",
+      "timing": {
+        "total_us": 1199,
+        "tex_us": 604,
+        "traverse_us": 328,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.064,
+    "to_raster_ms": -780.968,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 47,
+      "pixels": 47355,
+      "raster_us": 109,
+      "seq": 5,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 6,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 50002,
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "click",
+        "id": 50002,
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "right",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "left",
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "right",
+        "expected": 11,
+        "actual": 11
+      },
+      {
+        "kind": "left",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "slot-click",
+        "expected": 11,
+        "actual": 11
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "50002": {
+          "id": 50002,
+          "kind": "atom",
+          "start": 8,
+          "stop": 9,
+          "parent": 50001,
+          "char": "x",
+          "bbox": [
+            3242875,
+            174366,
+            3670402,
+            471754
+          ],
+          "geometry_origin": "packed-field-box"
+        },
+        "50001": {
+          "id": 50001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 12,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3670402,
+            486950
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "50003": {
+          "id": 50003,
+          "kind": "sup",
+          "start": 11,
+          "stop": 11,
+          "parent": 50002,
+          "char": null,
+          "bbox": [
+            3637634,
+            221102,
+            3670402,
+            221102
+          ],
+          "geometry_origin": "packed-field-box"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            174366,
+            3637634,
+            471754
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 50002
+        }
+      ],
+      "slots": [
+        {
+          "source_id": 50003,
+          "bbox": [
+            3588482.0,
+            24494.0,
+            3719554.0,
+            417710.0
+          ],
+          "anchor": [
+            3654018.0,
+            221102.0
+          ],
+          "origin": "packed-field-box"
+        }
+      ],
+      "revision": 6
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 6,
+    "revision": 7,
+    "expr": "x^{2}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 11,
+      "reply_ms": 0.198,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.355,
+      "status": "ok",
+      "timing": {
+        "total_us": 1073,
+        "tex_us": 599,
+        "traverse_us": 314,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.067,
+    "to_raster_ms": -757.147,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 48,
+      "pixels": 54530,
+      "raster_us": 38590,
+      "seq": 6,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 7,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 60002,
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "click",
+        "id": 60002,
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "click",
+        "id": 60004,
+        "expected": 11,
+        "actual": 11
+      },
+      {
+        "kind": "click",
+        "id": 60004,
+        "expected": 12,
+        "actual": 12
+      },
+      {
+        "kind": "right",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "left",
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "right",
+        "expected": 11,
+        "actual": 11
+      },
+      {
+        "kind": "left",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "right",
+        "expected": 12,
+        "actual": 12
+      },
+      {
+        "kind": "left",
+        "expected": 11,
+        "actual": 11
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "60002": {
+          "id": 60002,
+          "kind": "atom",
+          "start": 8,
+          "stop": 9,
+          "parent": 60001,
+          "char": "x",
+          "bbox": [
+            3242875,
+            0,
+            3898869,
+            546292
+          ],
+          "geometry_origin": "glyph"
+        },
+        "60001": {
+          "id": 60001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 13,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3898869,
+            561488
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "60004": {
+          "id": 60004,
+          "kind": "atom",
+          "start": 11,
+          "stop": 12,
+          "parent": 60003,
+          "char": "2",
+          "bbox": [
+            3637634,
+            0,
+            3898869,
+            295640
+          ],
+          "geometry_origin": "glyph"
+        },
+        "60003": {
+          "id": 60003,
+          "kind": "sup",
+          "start": 11,
+          "stop": 12,
+          "parent": 60002,
+          "char": null,
+          "bbox": [
+            3637634,
+            0,
+            3898869,
+            295640
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            248904,
+            3637634,
+            546292
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 60002
+        },
+        {
+          "bbox": [
+            3637634,
+            0,
+            3898869,
+            295640
+          ],
+          "char": 50,
+          "font": 46,
+          "source_id": 60004
+        }
+      ],
+      "slots": [],
+      "revision": 7
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 7,
+    "revision": 8,
+    "expr": "x^{2}_{}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 13,
+      "reply_ms": 0.16,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.486,
+      "status": "ok",
+      "timing": {
+        "total_us": 1197,
+        "tex_us": 692,
+        "traverse_us": 345,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.093,
+    "to_raster_ms": -776.62,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 45,
+      "pixels": 68880,
+      "raster_us": 149,
+      "seq": 7,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 7,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 70002,
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "click",
+        "id": 70002,
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "click",
+        "id": 70004,
+        "expected": 11,
+        "actual": 11
+      },
+      {
+        "kind": "click",
+        "id": 70004,
+        "expected": 12,
+        "actual": 12
+      },
+      {
+        "kind": "right",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "left",
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "right",
+        "expected": 11,
+        "actual": 11
+      },
+      {
+        "kind": "left",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "right",
+        "expected": 12,
+        "actual": 12
+      },
+      {
+        "kind": "left",
+        "expected": 11,
+        "actual": 11
+      },
+      {
+        "kind": "right",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "left",
+        "expected": 12,
+        "actual": 12
+      },
+      {
+        "kind": "up",
+        "id": 70005,
+        "expected": 11,
+        "actual": 11
+      },
+      {
+        "kind": "down",
+        "id": 70003,
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "slot-click",
+        "expected": 15,
+        "actual": 15
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "70002": {
+          "id": 70002,
+          "kind": "atom",
+          "start": 8,
+          "stop": 9,
+          "parent": 70001,
+          "char": "x",
+          "bbox": [
+            3242875,
+            0,
+            3898869,
+            717046
+          ],
+          "geometry_origin": "packed-field-box"
+        },
+        "70001": {
+          "id": 70001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 16,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3898869,
+            717046
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "70004": {
+          "id": 70004,
+          "kind": "atom",
+          "start": 11,
+          "stop": 12,
+          "parent": 70003,
+          "char": "2",
+          "bbox": [
+            3637634,
+            0,
+            3898869,
+            295640
+          ],
+          "geometry_origin": "glyph"
+        },
+        "70003": {
+          "id": 70003,
+          "kind": "sup",
+          "start": 11,
+          "stop": 12,
+          "parent": 70002,
+          "char": null,
+          "bbox": [
+            3637634,
+            0,
+            3898869,
+            295640
+          ],
+          "geometry_origin": "glyph"
+        },
+        "70005": {
+          "id": 70005,
+          "kind": "sub",
+          "start": 15,
+          "stop": 15,
+          "parent": 70002,
+          "char": null,
+          "bbox": [
+            3637634,
+            717046,
+            3670402,
+            717046
+          ],
+          "geometry_origin": "packed-field-box"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            248904,
+            3637634,
+            546292
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 70002
+        },
+        {
+          "bbox": [
+            3637634,
+            0,
+            3898869,
+            295640
+          ],
+          "char": 50,
+          "font": 46,
+          "source_id": 70004
+        }
+      ],
+      "slots": [
+        {
+          "source_id": 70005,
+          "bbox": [
+            3588482.0,
+            520438.0,
+            3719554.0,
+            913654.0
+          ],
+          "anchor": [
+            3654018.0,
+            717046.0
+          ],
+          "origin": "packed-field-box"
+        }
+      ],
+      "revision": 8
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 8,
+    "revision": 9,
+    "expr": "x^{2}_{i}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 15,
+      "reply_ms": 0.223,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.607,
+      "status": "ok",
+      "timing": {
+        "total_us": 1269,
+        "tex_us": 711,
+        "traverse_us": 344,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.096,
+    "to_raster_ms": -787.667,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 37,
+      "pixels": 68880,
+      "raster_us": 217,
+      "seq": 8,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 8,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 80002,
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "click",
+        "id": 80002,
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "click",
+        "id": 80004,
+        "expected": 11,
+        "actual": 11
+      },
+      {
+        "kind": "click",
+        "id": 80004,
+        "expected": 12,
+        "actual": 12
+      },
+      {
+        "kind": "click",
+        "id": 80006,
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "click",
+        "id": 80006,
+        "expected": 16,
+        "actual": 16
+      },
+      {
+        "kind": "right",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "left",
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "right",
+        "expected": 11,
+        "actual": 11
+      },
+      {
+        "kind": "left",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "right",
+        "expected": 12,
+        "actual": 12
+      },
+      {
+        "kind": "left",
+        "expected": 11,
+        "actual": 11
+      },
+      {
+        "kind": "right",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "left",
+        "expected": 12,
+        "actual": 12
+      },
+      {
+        "kind": "right",
+        "expected": 16,
+        "actual": 16
+      },
+      {
+        "kind": "left",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "up",
+        "id": 80005,
+        "expected": 11,
+        "actual": 11
+      },
+      {
+        "kind": "down",
+        "id": 80003,
+        "expected": 15,
+        "actual": 15
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "80002": {
+          "id": 80002,
+          "kind": "atom",
+          "start": 8,
+          "stop": 9,
+          "parent": 80001,
+          "char": "x",
+          "bbox": [
+            3242875,
+            0,
+            3898869,
+            717046
+          ],
+          "geometry_origin": "glyph"
+        },
+        "80001": {
+          "id": 80001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 17,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3898869,
+            717046
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "80004": {
+          "id": 80004,
+          "kind": "atom",
+          "start": 11,
+          "stop": 12,
+          "parent": 80003,
+          "char": "2",
+          "bbox": [
+            3637634,
+            0,
+            3898869,
+            295640
+          ],
+          "geometry_origin": "glyph"
+        },
+        "80003": {
+          "id": 80003,
+          "kind": "sup",
+          "start": 11,
+          "stop": 12,
+          "parent": 80002,
+          "char": null,
+          "bbox": [
+            3637634,
+            0,
+            3898869,
+            295640
+          ],
+          "geometry_origin": "glyph"
+        },
+        "80006": {
+          "id": 80006,
+          "kind": "atom",
+          "start": 15,
+          "stop": 16,
+          "parent": 80005,
+          "char": "i",
+          "bbox": [
+            3637634,
+            413488,
+            3823054,
+            717046
+          ],
+          "geometry_origin": "glyph"
+        },
+        "80005": {
+          "id": 80005,
+          "kind": "sub",
+          "start": 15,
+          "stop": 16,
+          "parent": 80002,
+          "char": null,
+          "bbox": [
+            3637634,
+            413488,
+            3823054,
+            717046
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            248904,
+            3637634,
+            546292
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 80002
+        },
+        {
+          "bbox": [
+            3637634,
+            0,
+            3898869,
+            295640
+          ],
+          "char": 50,
+          "font": 46,
+          "source_id": 80004
+        },
+        {
+          "bbox": [
+            3637634,
+            413488,
+            3823054,
+            717046
+          ],
+          "char": 105,
+          "font": 29,
+          "source_id": 80006
+        }
+      ],
+      "slots": [],
+      "revision": 9
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 9,
+    "revision": 10,
+    "expr": "x_{i}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 17,
+      "reply_ms": 0.268,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.926,
+      "status": "ok",
+      "timing": {
+        "total_us": 1595,
+        "tex_us": 925,
+        "traverse_us": 428,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.105,
+    "to_raster_ms": -786.037,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 24,
+      "pixels": 55965,
+      "raster_us": 115,
+      "seq": 9,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 7,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 90002,
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "click",
+        "id": 90002,
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "click",
+        "id": 90004,
+        "expected": 11,
+        "actual": 11
+      },
+      {
+        "kind": "click",
+        "id": 90004,
+        "expected": 12,
+        "actual": 12
+      },
+      {
+        "kind": "right",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "left",
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "right",
+        "expected": 11,
+        "actual": 11
+      },
+      {
+        "kind": "left",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "right",
+        "expected": 12,
+        "actual": 12
+      },
+      {
+        "kind": "left",
+        "expected": 11,
+        "actual": 11
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "90002": {
+          "id": 90002,
+          "kind": "atom",
+          "start": 8,
+          "stop": 9,
+          "parent": 90001,
+          "char": "x",
+          "bbox": [
+            3242875,
+            174366,
+            3823054,
+            575359
+          ],
+          "geometry_origin": "glyph"
+        },
+        "90001": {
+          "id": 90001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 13,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3823054,
+            575359
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "90004": {
+          "id": 90004,
+          "kind": "atom",
+          "start": 11,
+          "stop": 12,
+          "parent": 90003,
+          "char": "i",
+          "bbox": [
+            3637634,
+            271801,
+            3823054,
+            575359
+          ],
+          "geometry_origin": "glyph"
+        },
+        "90003": {
+          "id": 90003,
+          "kind": "sub",
+          "start": 11,
+          "stop": 12,
+          "parent": 90002,
+          "char": null,
+          "bbox": [
+            3637634,
+            271801,
+            3823054,
+            575359
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            174366,
+            3637634,
+            471754
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 90002
+        },
+        {
+          "bbox": [
+            3637634,
+            271801,
+            3823054,
+            575359
+          ],
+          "char": 105,
+          "font": 29,
+          "source_id": 90004
+        }
+      ],
+      "slots": [],
+      "revision": 10
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 10,
+    "revision": 11,
+    "expr": "x",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 19,
+      "reply_ms": 0.185,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.362,
+      "status": "ok",
+      "timing": {
+        "total_us": 1183,
+        "tex_us": 652,
+        "traverse_us": 291,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.059,
+    "to_raster_ms": -781.962,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 21,
+      "pixels": 47355,
+      "raster_us": 107,
+      "seq": 10,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 6,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 100002,
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "click",
+        "id": 100002,
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "right",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "left",
+        "expected": 8,
+        "actual": 8
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "100002": {
+          "id": 100002,
+          "kind": "atom",
+          "start": 8,
+          "stop": 9,
+          "parent": 100001,
+          "char": "x",
+          "bbox": [
+            3242875,
+            174366,
+            3637634,
+            471754
+          ],
+          "geometry_origin": "glyph"
+        },
+        "100001": {
+          "id": 100001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 9,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3637634,
+            486950
+          ],
+          "geometry_origin": "formula-math-boundary"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            174366,
+            3637634,
+            471754
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 100002
+        }
+      ],
+      "slots": [],
+      "revision": 11
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 11,
+    "revision": 12,
+    "expr": "\\sqrt{}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 21,
+      "reply_ms": 0.375,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.692,
+      "status": "ok",
+      "timing": {
+        "total_us": 1285,
+        "tex_us": 614,
+        "traverse_us": 326,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.061,
+    "to_raster_ms": -775.126,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 28,
+      "pixels": 74620,
+      "raster_us": 39535,
+      "seq": 11,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 6,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "slot-click",
+        "expected": 14,
+        "actual": 14
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "110002": {
+          "id": 110002,
+          "kind": "rad",
+          "start": 8,
+          "stop": 15,
+          "parent": 110001,
+          "char": null,
+          "bbox": [
+            3242875,
+            95320,
+            3818466,
+            786027
+          ],
+          "geometry_origin": "packed-field-box"
+        },
+        "110001": {
+          "id": 110001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 15,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3818466,
+            786027
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "110003": {
+          "id": 110003,
+          "kind": "radicand",
+          "start": 14,
+          "stop": 14,
+          "parent": 110002,
+          "char": null,
+          "bbox": [
+            3818466,
+            471754,
+            3818466,
+            471754
+          ],
+          "geometry_origin": "packed-field-box"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            95320,
+            3818466,
+            786027
+          ],
+          "char": 112,
+          "font": 31,
+          "source_id": 110002
+        }
+      ],
+      "slots": [
+        {
+          "source_id": 110003,
+          "bbox": [
+            3752930.0,
+            275146.0,
+            3884002.0,
+            668362.0
+          ],
+          "anchor": [
+            3818466.0,
+            471754.0
+          ],
+          "origin": "packed-field-box"
+        }
+      ],
+      "revision": 12
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 12,
+    "revision": 13,
+    "expr": "\\sqrt{x}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 23,
+      "reply_ms": 0.327,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.535,
+      "status": "ok",
+      "timing": {
+        "total_us": 1215,
+        "tex_us": 693,
+        "traverse_us": 338,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.083,
+    "to_raster_ms": -791.05,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 37,
+      "pixels": 68880,
+      "raster_us": 132,
+      "seq": 12,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 7,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 1
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 120004,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "click",
+        "id": 120004,
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "right",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "left",
+        "expected": 14,
+        "actual": 14
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "120002": {
+          "id": 120002,
+          "kind": "rad",
+          "start": 8,
+          "stop": 16,
+          "parent": 120001,
+          "char": null,
+          "bbox": [
+            3242875,
+            27627,
+            4213225,
+            718334
+          ],
+          "geometry_origin": "glyph"
+        },
+        "120001": {
+          "id": 120001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 16,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            4213225,
+            718334
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "120004": {
+          "id": 120004,
+          "kind": "atom",
+          "start": 14,
+          "stop": 15,
+          "parent": 120003,
+          "char": "x",
+          "bbox": [
+            3818466,
+            255367,
+            4213225,
+            552755
+          ],
+          "geometry_origin": "glyph"
+        },
+        "120003": {
+          "id": 120003,
+          "kind": "radicand",
+          "start": 14,
+          "stop": 15,
+          "parent": 120002,
+          "char": null,
+          "bbox": [
+            3818466,
+            255367,
+            4213225,
+            552755
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            27627,
+            3818466,
+            718334
+          ],
+          "char": 112,
+          "font": 31,
+          "source_id": 120002
+        },
+        {
+          "bbox": [
+            3818466,
+            255367,
+            4213225,
+            552755
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 120004
+        }
+      ],
+      "slots": [],
+      "revision": 13
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 13,
+    "revision": 14,
+    "expr": "\\sqrt[3]{x}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 25,
+      "reply_ms": 0.239,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.256,
+      "status": "ok",
+      "timing": {
+        "total_us": 2934,
+        "tex_us": 2214,
+        "traverse_us": 392,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.083,
+    "to_raster_ms": -757.142,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 55,
+      "pixels": 68880,
+      "raster_us": 38501,
+      "seq": 13,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 8,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 1
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 130004,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "click",
+        "id": 130004,
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "click",
+        "id": 130006,
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "click",
+        "id": 130006,
+        "expected": 18,
+        "actual": 18
+      },
+      {
+        "kind": "right",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "left",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "right",
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "left",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "right",
+        "expected": 18,
+        "actual": 18
+      },
+      {
+        "kind": "left",
+        "expected": 17,
+        "actual": 17
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "130004": {
+          "id": 130004,
+          "kind": "atom",
+          "start": 14,
+          "stop": 15,
+          "parent": 130003,
+          "char": "3",
+          "bbox": [
+            3434735,
+            109277,
+            3657743,
+            320448
+          ],
+          "geometry_origin": "glyph"
+        },
+        "130003": {
+          "id": 130003,
+          "kind": "degree",
+          "start": 14,
+          "stop": 15,
+          "parent": 130002,
+          "char": null,
+          "bbox": [
+            3434735,
+            109277,
+            3657743,
+            320448
+          ],
+          "geometry_origin": "glyph"
+        },
+        "130002": {
+          "id": 130002,
+          "kind": "rad",
+          "start": 8,
+          "stop": 19,
+          "parent": 130001,
+          "char": null,
+          "bbox": [
+            3274023,
+            27627,
+            4244373,
+            718334
+          ],
+          "geometry_origin": "glyph"
+        },
+        "130001": {
+          "id": 130001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 19,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            4244373,
+            718334
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "130006": {
+          "id": 130006,
+          "kind": "atom",
+          "start": 17,
+          "stop": 18,
+          "parent": 130005,
+          "char": "x",
+          "bbox": [
+            3849614,
+            255367,
+            4244373,
+            552755
+          ],
+          "geometry_origin": "glyph"
+        },
+        "130005": {
+          "id": 130005,
+          "kind": "radicand",
+          "start": 17,
+          "stop": 18,
+          "parent": 130002,
+          "char": null,
+          "bbox": [
+            3849614,
+            255367,
+            4244373,
+            552755
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3434735,
+            109277,
+            3657743,
+            320448
+          ],
+          "char": 51,
+          "font": 47,
+          "source_id": 130004
+        },
+        {
+          "bbox": [
+            3274023,
+            27627,
+            3849614,
+            718334
+          ],
+          "char": 112,
+          "font": 31,
+          "source_id": 130002
+        },
+        {
+          "bbox": [
+            3849614,
+            255367,
+            4244373,
+            552755
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 130006
+        }
+      ],
+      "slots": [],
+      "revision": 14
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 14,
+    "revision": 15,
+    "expr": "\\sqrt[]{x}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 27,
+      "reply_ms": 0.332,
+      "update": "ParagraphUpdate",
+      "update_ms": 2.99,
+      "status": "ok",
+      "timing": {
+        "total_us": 2640,
+        "tex_us": 2089,
+        "traverse_us": 364,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.082,
+    "to_raster_ms": -785.95,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 38,
+      "pixels": 68880,
+      "raster_us": 237,
+      "seq": 14,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 7,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 1
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 140005,
+        "expected": 16,
+        "actual": 16
+      },
+      {
+        "kind": "click",
+        "id": 140005,
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "right",
+        "expected": 16,
+        "actual": 16
+      },
+      {
+        "kind": "left",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "right",
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "left",
+        "expected": 16,
+        "actual": 16
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "140002": {
+          "id": 140002,
+          "kind": "rad",
+          "start": 8,
+          "stop": 18,
+          "parent": 140001,
+          "char": null,
+          "bbox": [
+            3051015,
+            27627,
+            4021365,
+            718334
+          ],
+          "geometry_origin": "glyph"
+        },
+        "140001": {
+          "id": 140001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 18,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3051015,
+            0,
+            4021365,
+            718334
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "140005": {
+          "id": 140005,
+          "kind": "atom",
+          "start": 16,
+          "stop": 17,
+          "parent": 140004,
+          "char": "x",
+          "bbox": [
+            3626606,
+            255367,
+            4021365,
+            552755
+          ],
+          "geometry_origin": "glyph"
+        },
+        "140004": {
+          "id": 140004,
+          "kind": "radicand",
+          "start": 16,
+          "stop": 17,
+          "parent": 140002,
+          "char": null,
+          "bbox": [
+            3626606,
+            255367,
+            4021365,
+            552755
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3051015,
+            27627,
+            3626606,
+            718334
+          ],
+          "char": 112,
+          "font": 31,
+          "source_id": 140002
+        },
+        {
+          "bbox": [
+            3626606,
+            255367,
+            4021365,
+            552755
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 140005
+        }
+      ],
+      "slots": [],
+      "revision": 15
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 15,
+    "revision": 16,
+    "expr": "\\sqrt{x+\\frac{a}{b}}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 29,
+      "reply_ms": 0.355,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.951,
+      "status": "ok",
+      "timing": {
+        "total_us": 1533,
+        "tex_us": 819,
+        "traverse_us": 404,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.167,
+    "to_raster_ms": -782.062,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 44,
+      "pixels": 81795,
+      "raster_us": 72958,
+      "seq": 15,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 10,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 150004,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "click",
+        "id": 150004,
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "click",
+        "id": 150005,
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "click",
+        "id": 150005,
+        "expected": 16,
+        "actual": 16
+      },
+      {
+        "kind": "click",
+        "id": 150008,
+        "expected": 22,
+        "actual": 22
+      },
+      {
+        "kind": "click",
+        "id": 150008,
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "click",
+        "id": 150010,
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "click",
+        "id": 150010,
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "right",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "left",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "right",
+        "expected": 16,
+        "actual": 16
+      },
+      {
+        "kind": "left",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "right",
+        "expected": 22,
+        "actual": 22
+      },
+      {
+        "kind": "left",
+        "expected": 16,
+        "actual": 16
+      },
+      {
+        "kind": "right",
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "left",
+        "expected": 22,
+        "actual": 22
+      },
+      {
+        "kind": "right",
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "left",
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "right",
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "left",
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "down",
+        "id": 150007,
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "up",
+        "id": 150009,
+        "expected": 22,
+        "actual": 22
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "150002": {
+          "id": 150002,
+          "kind": "rad",
+          "start": 8,
+          "stop": 28,
+          "parent": 150001,
+          "char": null,
+          "bbox": [
+            3242875,
+            27627,
+            5535453,
+            856484
+          ],
+          "geometry_origin": "glyph"
+        },
+        "150001": {
+          "id": 150001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 28,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            5535453,
+            856484
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "150004": {
+          "id": 150004,
+          "kind": "atom",
+          "start": 14,
+          "stop": 15,
+          "parent": 150003,
+          "char": "x",
+          "bbox": [
+            3933584,
+            291391,
+            4328343,
+            588779
+          ],
+          "geometry_origin": "glyph"
+        },
+        "150003": {
+          "id": 150003,
+          "kind": "radicand",
+          "start": 14,
+          "stop": 27,
+          "parent": 150002,
+          "char": null,
+          "bbox": [
+            3933584,
+            119308,
+            5535453,
+            826962
+          ],
+          "geometry_origin": "glyph"
+        },
+        "150005": {
+          "id": 150005,
+          "kind": "atom",
+          "start": 15,
+          "stop": 16,
+          "parent": 150003,
+          "char": "+",
+          "bbox": [
+            4481831,
+            185866,
+            5019050,
+            646338
+          ],
+          "geometry_origin": "glyph"
+        },
+        "150008": {
+          "id": 150008,
+          "kind": "atom",
+          "start": 22,
+          "stop": 23,
+          "parent": 150007,
+          "char": "a",
+          "bbox": [
+            5251181,
+            119308,
+            5535453,
+            316826
+          ],
+          "geometry_origin": "glyph"
+        },
+        "150007": {
+          "id": 150007,
+          "kind": "num",
+          "start": 22,
+          "stop": 23,
+          "parent": 150006,
+          "char": null,
+          "bbox": [
+            5251181,
+            119308,
+            5535453,
+            316826
+          ],
+          "geometry_origin": "glyph"
+        },
+        "150006": {
+          "id": 150006,
+          "kind": "frac",
+          "start": 16,
+          "stop": 27,
+          "parent": 150003,
+          "char": null,
+          "bbox": [
+            5251181,
+            119308,
+            5535453,
+            826962
+          ],
+          "geometry_origin": "glyph"
+        },
+        "150010": {
+          "id": 150010,
+          "kind": "atom",
+          "start": 25,
+          "stop": 26,
+          "parent": 150009,
+          "char": "b",
+          "bbox": [
+            5278083,
+            508385,
+            5508551,
+            826962
+          ],
+          "geometry_origin": "glyph"
+        },
+        "150009": {
+          "id": 150009,
+          "kind": "den",
+          "start": 25,
+          "stop": 26,
+          "parent": 150006,
+          "char": null,
+          "bbox": [
+            5278083,
+            508385,
+            5508551,
+            826962
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            27627,
+            3933584,
+            856484
+          ],
+          "char": 112,
+          "font": 34,
+          "source_id": 150002
+        },
+        {
+          "bbox": [
+            3933584,
+            291391,
+            4328343,
+            588779
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 150004
+        },
+        {
+          "bbox": [
+            4481831,
+            185866,
+            5019050,
+            646338
+          ],
+          "char": 43,
+          "font": 45,
+          "source_id": 150005
+        },
+        {
+          "bbox": [
+            5251181,
+            119308,
+            5535453,
+            316826
+          ],
+          "char": 97,
+          "font": 29,
+          "source_id": 150008
+        },
+        {
+          "bbox": [
+            5278083,
+            508385,
+            5508551,
+            826962
+          ],
+          "char": 98,
+          "font": 29,
+          "source_id": 150010
+        }
+      ],
+      "slots": [],
+      "revision": 16
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 16,
+    "revision": 17,
+    "expr": "x",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 31,
+      "reply_ms": 0.288,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.567,
+      "status": "ok",
+      "timing": {
+        "total_us": 1215,
+        "tex_us": 623,
+        "traverse_us": 292,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.054,
+    "to_raster_ms": -787.462,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 23,
+      "pixels": 47355,
+      "raster_us": 99,
+      "seq": 16,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 6,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 160002,
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "click",
+        "id": 160002,
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "right",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "left",
+        "expected": 8,
+        "actual": 8
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "160002": {
+          "id": 160002,
+          "kind": "atom",
+          "start": 8,
+          "stop": 9,
+          "parent": 160001,
+          "char": "x",
+          "bbox": [
+            3242875,
+            174366,
+            3637634,
+            471754
+          ],
+          "geometry_origin": "glyph"
+        },
+        "160001": {
+          "id": 160001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 9,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3637634,
+            486950
+          ],
+          "geometry_origin": "formula-math-boundary"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            174366,
+            3637634,
+            471754
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 160002
+        }
+      ],
+      "slots": [],
+      "revision": 17
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 17,
+    "revision": 18,
+    "expr": "\\left(x\\right)",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 33,
+      "reply_ms": 0.269,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.823,
+      "status": "ok",
+      "timing": {
+        "total_us": 1544,
+        "tex_us": 1002,
+        "traverse_us": 330,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.079,
+    "to_raster_ms": -756.609,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 34,
+      "pixels": 66010,
+      "raster_us": 226,
+      "seq": 17,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 8,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 170002,
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "click",
+        "id": 170002,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "click",
+        "id": 170003,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "click",
+        "id": 170003,
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "click",
+        "id": 170004,
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "click",
+        "id": 170004,
+        "expected": 22,
+        "actual": 22
+      },
+      {
+        "kind": "right",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "left",
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "right",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "left",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "right",
+        "expected": 22,
+        "actual": 22
+      },
+      {
+        "kind": "left",
+        "expected": 15,
+        "actual": 15
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "170002": {
+          "id": 170002,
+          "kind": "fence",
+          "start": 8,
+          "stop": 14,
+          "parent": 170001,
+          "char": "(",
+          "bbox": [
+            3242875,
+            0,
+            3511484,
+            690708
+          ],
+          "geometry_origin": "glyph"
+        },
+        "170001": {
+          "id": 170001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 22,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            4174852,
+            690708
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "170003": {
+          "id": 170003,
+          "kind": "atom",
+          "start": 14,
+          "stop": 15,
+          "parent": 170001,
+          "char": "x",
+          "bbox": [
+            3511484,
+            220643,
+            3906243,
+            518031
+          ],
+          "geometry_origin": "glyph"
+        },
+        "170004": {
+          "id": 170004,
+          "kind": "fence",
+          "start": 15,
+          "stop": 22,
+          "parent": 170001,
+          "char": ")",
+          "bbox": [
+            3906243,
+            0,
+            4174852,
+            690708
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            0,
+            3511484,
+            690708
+          ],
+          "char": 40,
+          "font": 45,
+          "source_id": 170002
+        },
+        {
+          "bbox": [
+            3511484,
+            220643,
+            3906243,
+            518031
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 170003
+        },
+        {
+          "bbox": [
+            3906243,
+            0,
+            4174852,
+            690708
+          ],
+          "char": 41,
+          "font": 45,
+          "source_id": 170004
+        }
+      ],
+      "slots": [],
+      "revision": 18
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 18,
+    "revision": 19,
+    "expr": "\\left(\\frac{a}{b}\\right)",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 35,
+      "reply_ms": 0.381,
+      "update": "ParagraphUpdate",
+      "update_ms": 2.376,
+      "status": "ok",
+      "timing": {
+        "total_us": 1918,
+        "tex_us": 1188,
+        "traverse_us": 534,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.161,
+    "to_raster_ms": -781.963,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 38,
+      "pixels": 78925,
+      "raster_us": 256,
+      "seq": 18,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 9,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 1
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 180002,
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "click",
+        "id": 180002,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "click",
+        "id": 180005,
+        "expected": 20,
+        "actual": 20
+      },
+      {
+        "kind": "click",
+        "id": 180005,
+        "expected": 21,
+        "actual": 21
+      },
+      {
+        "kind": "click",
+        "id": 180007,
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "click",
+        "id": 180007,
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "click",
+        "id": 180008,
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "click",
+        "id": 180008,
+        "expected": 32,
+        "actual": 32
+      },
+      {
+        "kind": "right",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "left",
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "right",
+        "expected": 20,
+        "actual": 20
+      },
+      {
+        "kind": "left",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "right",
+        "expected": 21,
+        "actual": 21
+      },
+      {
+        "kind": "left",
+        "expected": 20,
+        "actual": 20
+      },
+      {
+        "kind": "right",
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "left",
+        "expected": 21,
+        "actual": 21
+      },
+      {
+        "kind": "right",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "left",
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "right",
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "left",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "right",
+        "expected": 32,
+        "actual": 32
+      },
+      {
+        "kind": "left",
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "down",
+        "id": 180004,
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "up",
+        "id": 180006,
+        "expected": 20,
+        "actual": 20
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "180002": {
+          "id": 180002,
+          "kind": "fence",
+          "start": 8,
+          "stop": 14,
+          "parent": 180001,
+          "char": "(",
+          "bbox": [
+            3242875,
+            0,
+            3559451,
+            828857
+          ],
+          "geometry_origin": "glyph"
+        },
+        "180001": {
+          "id": 180001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 32,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            4317585,
+            828857
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "180005": {
+          "id": 180005,
+          "kind": "atom",
+          "start": 20,
+          "stop": 21,
+          "parent": 180004,
+          "char": "a",
+          "bbox": [
+            3638094,
+            117634,
+            3922366,
+            315152
+          ],
+          "geometry_origin": "glyph"
+        },
+        "180004": {
+          "id": 180004,
+          "kind": "num",
+          "start": 20,
+          "stop": 21,
+          "parent": 180003,
+          "char": null,
+          "bbox": [
+            3638094,
+            117634,
+            3922366,
+            315152
+          ],
+          "geometry_origin": "glyph"
+        },
+        "180003": {
+          "id": 180003,
+          "kind": "frac",
+          "start": 14,
+          "stop": 25,
+          "parent": 180001,
+          "char": null,
+          "bbox": [
+            3638094,
+            117634,
+            3922366,
+            825288
+          ],
+          "geometry_origin": "glyph"
+        },
+        "180007": {
+          "id": 180007,
+          "kind": "atom",
+          "start": 23,
+          "stop": 24,
+          "parent": 180006,
+          "char": "b",
+          "bbox": [
+            3664996,
+            506711,
+            3895464,
+            825288
+          ],
+          "geometry_origin": "glyph"
+        },
+        "180006": {
+          "id": 180006,
+          "kind": "den",
+          "start": 23,
+          "stop": 24,
+          "parent": 180003,
+          "char": null,
+          "bbox": [
+            3664996,
+            506711,
+            3895464,
+            825288
+          ],
+          "geometry_origin": "glyph"
+        },
+        "180008": {
+          "id": 180008,
+          "kind": "fence",
+          "start": 25,
+          "stop": 32,
+          "parent": 180001,
+          "char": ")",
+          "bbox": [
+            4001009,
+            0,
+            4317585,
+            828857
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            0,
+            3559451,
+            828857
+          ],
+          "char": 0,
+          "font": 34,
+          "source_id": 180002
+        },
+        {
+          "bbox": [
+            3638094,
+            117634,
+            3922366,
+            315152
+          ],
+          "char": 97,
+          "font": 29,
+          "source_id": 180005
+        },
+        {
+          "bbox": [
+            3664996,
+            506711,
+            3895464,
+            825288
+          ],
+          "char": 98,
+          "font": 29,
+          "source_id": 180007
+        },
+        {
+          "bbox": [
+            4001009,
+            0,
+            4317585,
+            828857
+          ],
+          "char": 1,
+          "font": 34,
+          "source_id": 180008
+        }
+      ],
+      "slots": [],
+      "revision": 19
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 19,
+    "revision": 20,
+    "expr": "\\left(\\right)",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 37,
+      "reply_ms": 0.376,
+      "update": "ParagraphUpdate",
+      "update_ms": 2.07,
+      "status": "ok",
+      "timing": {
+        "total_us": 1646,
+        "tex_us": 972,
+        "traverse_us": 413,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.107,
+    "to_raster_ms": -753.25,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 35,
+      "pixels": 66010,
+      "raster_us": 184,
+      "seq": 19,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 7,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 190002,
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "click",
+        "id": 190002,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "click",
+        "id": 190003,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "click",
+        "id": 190003,
+        "expected": 21,
+        "actual": 21
+      },
+      {
+        "kind": "right",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "left",
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "right",
+        "expected": 21,
+        "actual": 21
+      },
+      {
+        "kind": "left",
+        "expected": 14,
+        "actual": 14
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "190002": {
+          "id": 190002,
+          "kind": "fence",
+          "start": 8,
+          "stop": 14,
+          "parent": 190001,
+          "char": "(",
+          "bbox": [
+            3242875,
+            0,
+            3511484,
+            690708
+          ],
+          "geometry_origin": "glyph"
+        },
+        "190001": {
+          "id": 190001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 21,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3780093,
+            690708
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "190003": {
+          "id": 190003,
+          "kind": "fence",
+          "start": 14,
+          "stop": 21,
+          "parent": 190001,
+          "char": ")",
+          "bbox": [
+            3511484,
+            0,
+            3780093,
+            690708
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            0,
+            3511484,
+            690708
+          ],
+          "char": 40,
+          "font": 45,
+          "source_id": 190002
+        },
+        {
+          "bbox": [
+            3511484,
+            0,
+            3780093,
+            690708
+          ],
+          "char": 41,
+          "font": 45,
+          "source_id": 190003
+        }
+      ],
+      "slots": [],
+      "revision": 20
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 20,
+    "revision": 21,
+    "expr": "x",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 39,
+      "reply_ms": 0.315,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.889,
+      "status": "ok",
+      "timing": {
+        "total_us": 1534,
+        "tex_us": 906,
+        "traverse_us": 411,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.082,
+    "to_raster_ms": -777.63,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 164,
+      "pixels": 47355,
+      "raster_us": 108,
+      "seq": 20,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 6,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 200002,
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "click",
+        "id": 200002,
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "right",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "left",
+        "expected": 8,
+        "actual": 8
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "200002": {
+          "id": 200002,
+          "kind": "atom",
+          "start": 8,
+          "stop": 9,
+          "parent": 200001,
+          "char": "x",
+          "bbox": [
+            3242875,
+            174366,
+            3637634,
+            471754
+          ],
+          "geometry_origin": "glyph"
+        },
+        "200001": {
+          "id": 200001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 9,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3637634,
+            486950
+          ],
+          "geometry_origin": "formula-math-boundary"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            174366,
+            3637634,
+            471754
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 200002
+        }
+      ],
+      "slots": [],
+      "revision": 21
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 21,
+    "revision": 22,
+    "expr": "\\begin{pmatrix}a\\end{pmatrix}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 41,
+      "reply_ms": 0.205,
+      "update": "ParagraphUpdate",
+      "update_ms": 2.769,
+      "status": "ok",
+      "timing": {
+        "total_us": 2451,
+        "tex_us": 1717,
+        "traverse_us": 494,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.115,
+    "to_raster_ms": -758.619,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 37,
+      "pixels": 116235,
+      "raster_us": 410,
+      "seq": 21,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 8,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 210004,
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "click",
+        "id": 210004,
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "right",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "left",
+        "expected": 23,
+        "actual": 23
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "210002": {
+          "id": 210002,
+          "kind": "matrix",
+          "start": 8,
+          "stop": 37,
+          "parent": 210001,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            4432990,
+            1243286
+          ],
+          "geometry_origin": "glyph"
+        },
+        "210001": {
+          "id": 210001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 37,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            4432990,
+            1243286
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "210004": {
+          "id": 210004,
+          "kind": "atom",
+          "start": 23,
+          "stop": 24,
+          "parent": 210003,
+          "char": "a",
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        },
+        "210003": {
+          "id": 210003,
+          "kind": "cell",
+          "start": 23,
+          "stop": 24,
+          "parent": 210002,
+          "char": null,
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            0,
+            3655382,
+            1243286
+          ],
+          "char": 16,
+          "font": 34,
+          "source_id": 210002
+        },
+        {
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "char": 97,
+          "font": 28,
+          "source_id": 210004
+        },
+        {
+          "bbox": [
+            4020483,
+            0,
+            4432990,
+            1243286
+          ],
+          "char": 17,
+          "font": 34,
+          "source_id": 210002
+        }
+      ],
+      "slots": [],
+      "revision": 22
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 22,
+    "revision": 23,
+    "expr": "\\begin{pmatrix}a&\\end{pmatrix}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 43,
+      "reply_ms": 0.222,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.06,
+      "status": "ok",
+      "timing": {
+        "total_us": 2642,
+        "tex_us": 1864,
+        "traverse_us": 500,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.388,
+    "to_raster_ms": -777.049,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 40,
+      "pixels": 116235,
+      "raster_us": 257,
+      "seq": 22,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 8,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 220004,
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "click",
+        "id": 220004,
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "right",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "left",
+        "expected": 23,
+        "actual": 23
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "220002": {
+          "id": 220002,
+          "kind": "matrix",
+          "start": 8,
+          "stop": 38,
+          "parent": 220001,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            5088350,
+            1243286
+          ],
+          "geometry_origin": "glyph"
+        },
+        "220001": {
+          "id": 220001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 38,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            5088350,
+            1243286
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "220004": {
+          "id": 220004,
+          "kind": "atom",
+          "start": 23,
+          "stop": 24,
+          "parent": 220003,
+          "char": "a",
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        },
+        "220003": {
+          "id": 220003,
+          "kind": "cell",
+          "start": 23,
+          "stop": 24,
+          "parent": 220002,
+          "char": null,
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            0,
+            3655382,
+            1243286
+          ],
+          "char": 16,
+          "font": 34,
+          "source_id": 220002
+        },
+        {
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "char": 97,
+          "font": 28,
+          "source_id": 220004
+        },
+        {
+          "bbox": [
+            4675843,
+            0,
+            5088350,
+            1243286
+          ],
+          "char": 17,
+          "font": 34,
+          "source_id": 220002
+        }
+      ],
+      "slots": [],
+      "revision": 23
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 23,
+    "revision": 24,
+    "expr": "\\begin{pmatrix}a&b\\end{pmatrix}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 45,
+      "reply_ms": 0.352,
+      "update": "ParagraphUpdate",
+      "update_ms": 2.878,
+      "status": "ok",
+      "timing": {
+        "total_us": 2539,
+        "tex_us": 1950,
+        "traverse_us": 366,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.096,
+    "to_raster_ms": -793.233,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 48,
+      "pixels": 116235,
+      "raster_us": 280,
+      "seq": 23,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 9,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 230004,
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "click",
+        "id": 230004,
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "click",
+        "id": 230006,
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "click",
+        "id": 230006,
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "right",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "left",
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "right",
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "left",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "right",
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "left",
+        "expected": 25,
+        "actual": 25
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "230002": {
+          "id": 230002,
+          "kind": "matrix",
+          "start": 8,
+          "stop": 39,
+          "parent": 230001,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            5384778,
+            1243286
+          ],
+          "geometry_origin": "glyph"
+        },
+        "230001": {
+          "id": 230001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 39,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            5384778,
+            1243286
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "230004": {
+          "id": 230004,
+          "kind": "atom",
+          "start": 23,
+          "stop": 24,
+          "parent": 230003,
+          "char": "a",
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        },
+        "230003": {
+          "id": 230003,
+          "kind": "cell",
+          "start": 23,
+          "stop": 24,
+          "parent": 230002,
+          "char": null,
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        },
+        "230006": {
+          "id": 230006,
+          "kind": "atom",
+          "start": 25,
+          "stop": 26,
+          "parent": 230005,
+          "char": "b",
+          "bbox": [
+            4675843,
+            357483,
+            4972271,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        },
+        "230005": {
+          "id": 230005,
+          "kind": "cell",
+          "start": 25,
+          "stop": 26,
+          "parent": 230002,
+          "char": null,
+          "bbox": [
+            4675843,
+            357483,
+            4972271,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            0,
+            3655382,
+            1243286
+          ],
+          "char": 16,
+          "font": 34,
+          "source_id": 230002
+        },
+        {
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "char": 97,
+          "font": 28,
+          "source_id": 230004
+        },
+        {
+          "bbox": [
+            4675843,
+            357483,
+            4972271,
+            837141
+          ],
+          "char": 98,
+          "font": 28,
+          "source_id": 230006
+        },
+        {
+          "bbox": [
+            4972271,
+            0,
+            5384778,
+            1243286
+          ],
+          "char": 17,
+          "font": 34,
+          "source_id": 230002
+        }
+      ],
+      "slots": [],
+      "revision": 24
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 24,
+    "revision": 25,
+    "expr": "\\begin{pmatrix}a&b\\\\\\end{pmatrix}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 47,
+      "reply_ms": 0.249,
+      "update": "ParagraphUpdate",
+      "update_ms": 3.105,
+      "status": "ok",
+      "timing": {
+        "total_us": 2726,
+        "tex_us": 2082,
+        "traverse_us": 401,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.129,
+    "to_raster_ms": -778.714,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 48,
+      "pixels": 116235,
+      "raster_us": 280,
+      "seq": 24,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 9,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 240004,
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "click",
+        "id": 240004,
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "click",
+        "id": 240006,
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "click",
+        "id": 240006,
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "right",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "left",
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "right",
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "left",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "right",
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "left",
+        "expected": 25,
+        "actual": 25
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "240002": {
+          "id": 240002,
+          "kind": "matrix",
+          "start": 8,
+          "stop": 41,
+          "parent": 240001,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            5384778,
+            1243286
+          ],
+          "geometry_origin": "glyph"
+        },
+        "240001": {
+          "id": 240001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 41,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            5384778,
+            1243286
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "240004": {
+          "id": 240004,
+          "kind": "atom",
+          "start": 23,
+          "stop": 24,
+          "parent": 240003,
+          "char": "a",
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        },
+        "240003": {
+          "id": 240003,
+          "kind": "cell",
+          "start": 23,
+          "stop": 24,
+          "parent": 240002,
+          "char": null,
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        },
+        "240006": {
+          "id": 240006,
+          "kind": "atom",
+          "start": 25,
+          "stop": 26,
+          "parent": 240005,
+          "char": "b",
+          "bbox": [
+            4675843,
+            357483,
+            4972271,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        },
+        "240005": {
+          "id": 240005,
+          "kind": "cell",
+          "start": 25,
+          "stop": 26,
+          "parent": 240002,
+          "char": null,
+          "bbox": [
+            4675843,
+            357483,
+            4972271,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            0,
+            3655382,
+            1243286
+          ],
+          "char": 16,
+          "font": 34,
+          "source_id": 240002
+        },
+        {
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "char": 97,
+          "font": 28,
+          "source_id": 240004
+        },
+        {
+          "bbox": [
+            4675843,
+            357483,
+            4972271,
+            837141
+          ],
+          "char": 98,
+          "font": 28,
+          "source_id": 240006
+        },
+        {
+          "bbox": [
+            4972271,
+            0,
+            5384778,
+            1243286
+          ],
+          "char": 17,
+          "font": 34,
+          "source_id": 240002
+        }
+      ],
+      "slots": [],
+      "revision": 25
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 25,
+    "revision": 26,
+    "expr": "\\begin{pmatrix}a&b\\\\&d\\end{pmatrix}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 49,
+      "reply_ms": 0.381,
+      "update": "ParagraphUpdate",
+      "update_ms": 2.669,
+      "status": "ok",
+      "timing": {
+        "total_us": 2291,
+        "tex_us": 1662,
+        "traverse_us": 432,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.101,
+    "to_raster_ms": -804.872,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 35,
+      "pixels": 199465,
+      "raster_us": 303,
+      "seq": 25,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 10,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 250004,
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "click",
+        "id": 250004,
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "click",
+        "id": 250006,
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "click",
+        "id": 250006,
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "click",
+        "id": 250009,
+        "expected": 29,
+        "actual": 29
+      },
+      {
+        "kind": "click",
+        "id": 250009,
+        "expected": 30,
+        "actual": 30
+      },
+      {
+        "kind": "right",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "left",
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "right",
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "left",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "right",
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "left",
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "right",
+        "expected": 28,
+        "actual": 28
+      },
+      {
+        "kind": "left",
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "right",
+        "expected": 29,
+        "actual": 29
+      },
+      {
+        "kind": "left",
+        "expected": 28,
+        "actual": 28
+      },
+      {
+        "kind": "right",
+        "expected": 30,
+        "actual": 30
+      },
+      {
+        "kind": "left",
+        "expected": 29,
+        "actual": 29
+      },
+      {
+        "kind": "slot-click",
+        "expected": 28,
+        "actual": 28
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "250002": {
+          "id": 250002,
+          "kind": "matrix",
+          "start": 8,
+          "stop": 43,
+          "parent": 250001,
+          "char": null,
+          "bbox": [
+            3242875,
+            41434,
+            5716465,
+            2155012
+          ],
+          "geometry_origin": "cell-math-boundary"
+        },
+        "250001": {
+          "id": 250001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 43,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            5716465,
+            2155012
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "250004": {
+          "id": 250004,
+          "kind": "atom",
+          "start": 23,
+          "stop": 24,
+          "parent": 250003,
+          "char": "a",
+          "bbox": [
+            3789687,
+            456863,
+            4154788,
+            754251
+          ],
+          "geometry_origin": "glyph"
+        },
+        "250003": {
+          "id": 250003,
+          "kind": "cell",
+          "start": 23,
+          "stop": 24,
+          "parent": 250002,
+          "char": null,
+          "bbox": [
+            3789687,
+            456863,
+            4154788,
+            754251
+          ],
+          "geometry_origin": "glyph"
+        },
+        "250006": {
+          "id": 250006,
+          "kind": "atom",
+          "start": 25,
+          "stop": 26,
+          "parent": 250005,
+          "char": "b",
+          "bbox": [
+            4841687,
+            274593,
+            5138115,
+            754251
+          ],
+          "geometry_origin": "glyph"
+        },
+        "250005": {
+          "id": 250005,
+          "kind": "cell",
+          "start": 25,
+          "stop": 26,
+          "parent": 250002,
+          "char": null,
+          "bbox": [
+            4841687,
+            274593,
+            5138115,
+            754251
+          ],
+          "geometry_origin": "glyph"
+        },
+        "250009": {
+          "id": 250009,
+          "kind": "atom",
+          "start": 29,
+          "stop": 30,
+          "parent": 250008,
+          "char": "d",
+          "bbox": [
+            4810148,
+            1352099,
+            5169653,
+            1831757
+          ],
+          "geometry_origin": "glyph"
+        },
+        "250008": {
+          "id": 250008,
+          "kind": "cell",
+          "start": 29,
+          "stop": 30,
+          "parent": 250002,
+          "char": null,
+          "bbox": [
+            4810148,
+            1352099,
+            5169653,
+            1831757
+          ],
+          "geometry_origin": "glyph"
+        },
+        "250007": {
+          "id": 250007,
+          "kind": "cell",
+          "start": 28,
+          "stop": 28,
+          "parent": 250002,
+          "char": null,
+          "bbox": [
+            3972238,
+            1077506,
+            3972238,
+            2155012
+          ],
+          "geometry_origin": "cell-math-boundary"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            41434,
+            3789687,
+            2113578
+          ],
+          "char": 32,
+          "font": 34,
+          "source_id": 250002
+        },
+        {
+          "bbox": [
+            3789687,
+            456863,
+            4154788,
+            754251
+          ],
+          "char": 97,
+          "font": 28,
+          "source_id": 250004
+        },
+        {
+          "bbox": [
+            4841687,
+            274593,
+            5138115,
+            754251
+          ],
+          "char": 98,
+          "font": 28,
+          "source_id": 250006
+        },
+        {
+          "bbox": [
+            4810148,
+            1352099,
+            5169653,
+            1831757
+          ],
+          "char": 100,
+          "font": 28,
+          "source_id": 250009
+        },
+        {
+          "bbox": [
+            5169653,
+            41434,
+            5716465,
+            2113578
+          ],
+          "char": 33,
+          "font": 34,
+          "source_id": 250002
+        }
+      ],
+      "slots": [
+        {
+          "source_id": 250007,
+          "bbox": [
+            3906702.0,
+            1077506,
+            4037774.0,
+            2155012
+          ],
+          "anchor": [
+            3972238.0,
+            1616259.0
+          ],
+          "origin": "cell-math-boundary"
+        }
+      ],
+      "revision": 26
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 26,
+    "revision": 27,
+    "expr": "\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 51,
+      "reply_ms": 0.374,
+      "update": "ParagraphUpdate",
+      "update_ms": 2.823,
+      "status": "ok",
+      "timing": {
+        "total_us": 2385,
+        "tex_us": 1689,
+        "traverse_us": 467,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.123,
+    "to_raster_ms": -767.884,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 70,
+      "pixels": 199465,
+      "raster_us": 256,
+      "seq": 26,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 11,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 260004,
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "click",
+        "id": 260004,
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "click",
+        "id": 260006,
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "click",
+        "id": 260006,
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "click",
+        "id": 260008,
+        "expected": 28,
+        "actual": 28
+      },
+      {
+        "kind": "click",
+        "id": 260008,
+        "expected": 29,
+        "actual": 29
+      },
+      {
+        "kind": "click",
+        "id": 260010,
+        "expected": 30,
+        "actual": 30
+      },
+      {
+        "kind": "click",
+        "id": 260010,
+        "expected": 31,
+        "actual": 31
+      },
+      {
+        "kind": "right",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "left",
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "right",
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "left",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "right",
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "left",
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "right",
+        "expected": 28,
+        "actual": 28
+      },
+      {
+        "kind": "left",
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "right",
+        "expected": 29,
+        "actual": 29
+      },
+      {
+        "kind": "left",
+        "expected": 28,
+        "actual": 28
+      },
+      {
+        "kind": "right",
+        "expected": 30,
+        "actual": 30
+      },
+      {
+        "kind": "left",
+        "expected": 29,
+        "actual": 29
+      },
+      {
+        "kind": "right",
+        "expected": 31,
+        "actual": 31
+      },
+      {
+        "kind": "left",
+        "expected": 30,
+        "actual": 30
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "260002": {
+          "id": 260002,
+          "kind": "matrix",
+          "start": 8,
+          "stop": 44,
+          "parent": 260001,
+          "char": null,
+          "bbox": [
+            3242875,
+            41434,
+            5716465,
+            2113578
+          ],
+          "geometry_origin": "glyph"
+        },
+        "260001": {
+          "id": 260001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 44,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            5716465,
+            2155012
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "260004": {
+          "id": 260004,
+          "kind": "atom",
+          "start": 23,
+          "stop": 24,
+          "parent": 260003,
+          "char": "a",
+          "bbox": [
+            3789687,
+            456863,
+            4154788,
+            754251
+          ],
+          "geometry_origin": "glyph"
+        },
+        "260003": {
+          "id": 260003,
+          "kind": "cell",
+          "start": 23,
+          "stop": 24,
+          "parent": 260002,
+          "char": null,
+          "bbox": [
+            3789687,
+            456863,
+            4154788,
+            754251
+          ],
+          "geometry_origin": "glyph"
+        },
+        "260006": {
+          "id": 260006,
+          "kind": "atom",
+          "start": 25,
+          "stop": 26,
+          "parent": 260005,
+          "char": "b",
+          "bbox": [
+            4841687,
+            274593,
+            5138115,
+            754251
+          ],
+          "geometry_origin": "glyph"
+        },
+        "260005": {
+          "id": 260005,
+          "kind": "cell",
+          "start": 25,
+          "stop": 26,
+          "parent": 260002,
+          "char": null,
+          "bbox": [
+            4841687,
+            274593,
+            5138115,
+            754251
+          ],
+          "geometry_origin": "glyph"
+        },
+        "260008": {
+          "id": 260008,
+          "kind": "atom",
+          "start": 28,
+          "stop": 29,
+          "parent": 260007,
+          "char": "c",
+          "bbox": [
+            3822784,
+            1534369,
+            4121692,
+            1831757
+          ],
+          "geometry_origin": "glyph"
+        },
+        "260007": {
+          "id": 260007,
+          "kind": "cell",
+          "start": 28,
+          "stop": 29,
+          "parent": 260002,
+          "char": null,
+          "bbox": [
+            3822784,
+            1534369,
+            4121692,
+            1831757
+          ],
+          "geometry_origin": "glyph"
+        },
+        "260010": {
+          "id": 260010,
+          "kind": "atom",
+          "start": 30,
+          "stop": 31,
+          "parent": 260009,
+          "char": "d",
+          "bbox": [
+            4810148,
+            1352099,
+            5169653,
+            1831757
+          ],
+          "geometry_origin": "glyph"
+        },
+        "260009": {
+          "id": 260009,
+          "kind": "cell",
+          "start": 30,
+          "stop": 31,
+          "parent": 260002,
+          "char": null,
+          "bbox": [
+            4810148,
+            1352099,
+            5169653,
+            1831757
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            41434,
+            3789687,
+            2113578
+          ],
+          "char": 32,
+          "font": 34,
+          "source_id": 260002
+        },
+        {
+          "bbox": [
+            3789687,
+            456863,
+            4154788,
+            754251
+          ],
+          "char": 97,
+          "font": 28,
+          "source_id": 260004
+        },
+        {
+          "bbox": [
+            4841687,
+            274593,
+            5138115,
+            754251
+          ],
+          "char": 98,
+          "font": 28,
+          "source_id": 260006
+        },
+        {
+          "bbox": [
+            3822784,
+            1534369,
+            4121692,
+            1831757
+          ],
+          "char": 99,
+          "font": 28,
+          "source_id": 260008
+        },
+        {
+          "bbox": [
+            4810148,
+            1352099,
+            5169653,
+            1831757
+          ],
+          "char": 100,
+          "font": 28,
+          "source_id": 260010
+        },
+        {
+          "bbox": [
+            5169653,
+            41434,
+            5716465,
+            2113578
+          ],
+          "char": 33,
+          "font": 34,
+          "source_id": 260002
+        }
+      ],
+      "slots": [],
+      "revision": 27
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 27,
+    "revision": 28,
+    "expr": "\\begin{pmatrix}a&b\\end{pmatrix}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 53,
+      "reply_ms": 0.286,
+      "update": "ParagraphUpdate",
+      "update_ms": 2.32,
+      "status": "ok",
+      "timing": {
+        "total_us": 1982,
+        "tex_us": 1323,
+        "traverse_us": 384,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.092,
+    "to_raster_ms": -792.209,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 43,
+      "pixels": 116235,
+      "raster_us": 264,
+      "seq": 27,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 9,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 270004,
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "click",
+        "id": 270004,
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "click",
+        "id": 270006,
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "click",
+        "id": 270006,
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "right",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "left",
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "right",
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "left",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "right",
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "left",
+        "expected": 25,
+        "actual": 25
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "270002": {
+          "id": 270002,
+          "kind": "matrix",
+          "start": 8,
+          "stop": 39,
+          "parent": 270001,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            5384778,
+            1243286
+          ],
+          "geometry_origin": "glyph"
+        },
+        "270001": {
+          "id": 270001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 39,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            5384778,
+            1243286
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "270004": {
+          "id": 270004,
+          "kind": "atom",
+          "start": 23,
+          "stop": 24,
+          "parent": 270003,
+          "char": "a",
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        },
+        "270003": {
+          "id": 270003,
+          "kind": "cell",
+          "start": 23,
+          "stop": 24,
+          "parent": 270002,
+          "char": null,
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        },
+        "270006": {
+          "id": 270006,
+          "kind": "atom",
+          "start": 25,
+          "stop": 26,
+          "parent": 270005,
+          "char": "b",
+          "bbox": [
+            4675843,
+            357483,
+            4972271,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        },
+        "270005": {
+          "id": 270005,
+          "kind": "cell",
+          "start": 25,
+          "stop": 26,
+          "parent": 270002,
+          "char": null,
+          "bbox": [
+            4675843,
+            357483,
+            4972271,
+            837141
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            0,
+            3655382,
+            1243286
+          ],
+          "char": 16,
+          "font": 34,
+          "source_id": 270002
+        },
+        {
+          "bbox": [
+            3655382,
+            539753,
+            4020483,
+            837141
+          ],
+          "char": 97,
+          "font": 28,
+          "source_id": 270004
+        },
+        {
+          "bbox": [
+            4675843,
+            357483,
+            4972271,
+            837141
+          ],
+          "char": 98,
+          "font": 28,
+          "source_id": 270006
+        },
+        {
+          "bbox": [
+            4972271,
+            0,
+            5384778,
+            1243286
+          ],
+          "char": 17,
+          "font": 34,
+          "source_id": 270002
+        }
+      ],
+      "slots": [],
+      "revision": 28
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 28,
+    "revision": 29,
+    "expr": "x",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 55,
+      "reply_ms": 0.301,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.37,
+      "status": "ok",
+      "timing": {
+        "total_us": 1097,
+        "tex_us": 607,
+        "traverse_us": 292,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.075,
+    "to_raster_ms": -769.253,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 57,
+      "pixels": 47355,
+      "raster_us": 112,
+      "seq": 28,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 6,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 280002,
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "click",
+        "id": 280002,
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "right",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "left",
+        "expected": 8,
+        "actual": 8
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "280002": {
+          "id": 280002,
+          "kind": "atom",
+          "start": 8,
+          "stop": 9,
+          "parent": 280001,
+          "char": "x",
+          "bbox": [
+            3242875,
+            174366,
+            3637634,
+            471754
+          ],
+          "geometry_origin": "glyph"
+        },
+        "280001": {
+          "id": 280001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 9,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3637634,
+            486950
+          ],
+          "geometry_origin": "formula-math-boundary"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            174366,
+            3637634,
+            471754
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 280002
+        }
+      ],
+      "slots": [],
+      "revision": 29
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 29,
+    "revision": 30,
+    "expr": "\\frac{x^{}}{\\sqrt{}}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 57,
+      "reply_ms": 0.292,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.782,
+      "status": "ok",
+      "timing": {
+        "total_us": 1414,
+        "tex_us": 750,
+        "traverse_us": 396,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.099,
+    "to_raster_ms": -800.015,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 29,
+      "pixels": 86100,
+      "raster_us": 45778,
+      "seq": 29,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 7,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 1
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 290004,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "click",
+        "id": 290004,
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "right",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "left",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "right",
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "left",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "right",
+        "expected": 26,
+        "actual": 26
+      },
+      {
+        "kind": "left",
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "down",
+        "id": 290003,
+        "expected": 20,
+        "actual": 20
+      },
+      {
+        "kind": "up",
+        "id": 290006,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "slot-click",
+        "expected": 17,
+        "actual": 17
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "290004": {
+          "id": 290004,
+          "kind": "atom",
+          "start": 14,
+          "stop": 15,
+          "parent": 290003,
+          "char": "x",
+          "bbox": [
+            3371809,
+            2027,
+            3701765,
+            199801
+          ],
+          "geometry_origin": "packed-field-box"
+        },
+        "290003": {
+          "id": 290003,
+          "kind": "num",
+          "start": 14,
+          "stop": 18,
+          "parent": 290002,
+          "char": null,
+          "bbox": [
+            3371809,
+            2027,
+            3701765,
+            199801
+          ],
+          "geometry_origin": "packed-field-box"
+        },
+        "290002": {
+          "id": 290002,
+          "kind": "frac",
+          "start": 8,
+          "stop": 28,
+          "parent": 290001,
+          "char": null,
+          "bbox": [
+            3321518,
+            2027,
+            3752055,
+            914246
+          ],
+          "geometry_origin": "packed-field-box"
+        },
+        "290001": {
+          "id": 290001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 28,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3752055,
+            914247
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "290006": {
+          "id": 290006,
+          "kind": "den",
+          "start": 20,
+          "stop": 27,
+          "parent": 290002,
+          "char": null,
+          "bbox": [
+            3321518,
+            455495,
+            3752055,
+            914246
+          ],
+          "geometry_origin": "glyph"
+        },
+        "290005": {
+          "id": 290005,
+          "kind": "sup",
+          "start": 17,
+          "stop": 17,
+          "parent": 290004,
+          "char": null,
+          "bbox": [
+            3668997,
+            2027,
+            3701765,
+            2027
+          ],
+          "geometry_origin": "packed-field-box"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3371809,
+            2283,
+            3668997,
+            199801
+          ],
+          "char": 120,
+          "font": 29,
+          "source_id": 290004
+        },
+        {
+          "bbox": [
+            3321518,
+            455495,
+            3752055,
+            914246
+          ],
+          "char": 112,
+          "font": 32,
+          "source_id": 290006
+        }
+      ],
+      "slots": [
+        {
+          "source_id": 290005,
+          "bbox": [
+            3619845.0,
+            -194581.0,
+            3750917.0,
+            198635.0
+          ],
+          "anchor": [
+            3685381.0,
+            2027.0
+          ],
+          "origin": "packed-field-box"
+        }
+      ],
+      "revision": 30
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 30,
+    "revision": 31,
+    "expr": "\\frac{x^{2}_{i}}{\\sqrt{y}}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 59,
+      "reply_ms": 0.298,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.766,
+      "status": "ok",
+      "timing": {
+        "total_us": 1449,
+        "tex_us": 816,
+        "traverse_us": 424,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.138,
+    "to_raster_ms": -777.918,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 55,
+      "pixels": 107625,
+      "raster_us": 39110,
+      "seq": 30,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 10,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 300004,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "click",
+        "id": 300004,
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "click",
+        "id": 300006,
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "click",
+        "id": 300006,
+        "expected": 18,
+        "actual": 18
+      },
+      {
+        "kind": "click",
+        "id": 300008,
+        "expected": 21,
+        "actual": 21
+      },
+      {
+        "kind": "click",
+        "id": 300008,
+        "expected": 22,
+        "actual": 22
+      },
+      {
+        "kind": "click",
+        "id": 300012,
+        "expected": 31,
+        "actual": 31
+      },
+      {
+        "kind": "click",
+        "id": 300012,
+        "expected": 32,
+        "actual": 32
+      },
+      {
+        "kind": "right",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "left",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "right",
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "left",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "right",
+        "expected": 18,
+        "actual": 18
+      },
+      {
+        "kind": "left",
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "right",
+        "expected": 21,
+        "actual": 21
+      },
+      {
+        "kind": "left",
+        "expected": 18,
+        "actual": 18
+      },
+      {
+        "kind": "right",
+        "expected": 22,
+        "actual": 22
+      },
+      {
+        "kind": "left",
+        "expected": 21,
+        "actual": 21
+      },
+      {
+        "kind": "right",
+        "expected": 31,
+        "actual": 31
+      },
+      {
+        "kind": "left",
+        "expected": 22,
+        "actual": 22
+      },
+      {
+        "kind": "right",
+        "expected": 32,
+        "actual": 32
+      },
+      {
+        "kind": "left",
+        "expected": 31,
+        "actual": 31
+      },
+      {
+        "kind": "down",
+        "id": 300003,
+        "expected": 25,
+        "actual": 25
+      },
+      {
+        "kind": "up",
+        "id": 300009,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "up",
+        "id": 300007,
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "down",
+        "id": 300005,
+        "expected": 21,
+        "actual": 21
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "300004": {
+          "id": 300004,
+          "kind": "atom",
+          "start": 14,
+          "stop": 15,
+          "parent": 300003,
+          "char": "x",
+          "bbox": [
+            3401428,
+            0,
+            3921624,
+            540016
+          ],
+          "geometry_origin": "glyph"
+        },
+        "300003": {
+          "id": 300003,
+          "kind": "num",
+          "start": 14,
+          "stop": 23,
+          "parent": 300002,
+          "char": null,
+          "bbox": [
+            3401428,
+            0,
+            3921624,
+            540016
+          ],
+          "geometry_origin": "glyph"
+        },
+        "300002": {
+          "id": 300002,
+          "kind": "frac",
+          "start": 8,
+          "stop": 34,
+          "parent": 300001,
+          "char": null,
+          "bbox": [
+            3321518,
+            0,
+            4017842,
+            1142468
+          ],
+          "geometry_origin": "glyph"
+        },
+        "300001": {
+          "id": 300001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 34,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            4017842,
+            1142469
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "300006": {
+          "id": 300006,
+          "kind": "atom",
+          "start": 17,
+          "stop": 18,
+          "parent": 300005,
+          "char": "2",
+          "bbox": [
+            3698616,
+            0,
+            3921624,
+            211171
+          ],
+          "geometry_origin": "glyph"
+        },
+        "300005": {
+          "id": 300005,
+          "kind": "sup",
+          "start": 17,
+          "stop": 18,
+          "parent": 300004,
+          "char": null,
+          "bbox": [
+            3698616,
+            0,
+            3921624,
+            211171
+          ],
+          "geometry_origin": "glyph"
+        },
+        "300008": {
+          "id": 300008,
+          "kind": "atom",
+          "start": 21,
+          "stop": 22,
+          "parent": 300007,
+          "char": "i",
+          "bbox": [
+            3698616,
+            321628,
+            3873456,
+            540016
+          ],
+          "geometry_origin": "glyph"
+        },
+        "300007": {
+          "id": 300007,
+          "kind": "sub",
+          "start": 21,
+          "stop": 22,
+          "parent": 300004,
+          "char": null,
+          "bbox": [
+            3698616,
+            321628,
+            3873456,
+            540016
+          ],
+          "geometry_origin": "glyph"
+        },
+        "300009": {
+          "id": 300009,
+          "kind": "den",
+          "start": 25,
+          "stop": 33,
+          "parent": 300002,
+          "char": null,
+          "bbox": [
+            3321518,
+            683717,
+            4017842,
+            1142468
+          ],
+          "geometry_origin": "glyph"
+        },
+        "300012": {
+          "id": 300012,
+          "kind": "atom",
+          "start": 31,
+          "stop": 32,
+          "parent": 300011,
+          "char": "y",
+          "bbox": [
+            3752055,
+            794799,
+            4017842,
+            1081518
+          ],
+          "geometry_origin": "glyph"
+        },
+        "300011": {
+          "id": 300011,
+          "kind": "radicand",
+          "start": 31,
+          "stop": 32,
+          "parent": 300010,
+          "char": null,
+          "bbox": [
+            3752055,
+            794799,
+            4017842,
+            1081518
+          ],
+          "geometry_origin": "glyph"
+        },
+        "300010": {
+          "id": 300010,
+          "kind": "rad",
+          "start": 25,
+          "stop": 33,
+          "parent": 300009,
+          "char": null,
+          "bbox": [
+            3752055,
+            794799,
+            4017842,
+            1081518
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3401428,
+            211427,
+            3698616,
+            408945
+          ],
+          "char": 120,
+          "font": 29,
+          "source_id": 300004
+        },
+        {
+          "bbox": [
+            3698616,
+            0,
+            3921624,
+            211171
+          ],
+          "char": 50,
+          "font": 47,
+          "source_id": 300006
+        },
+        {
+          "bbox": [
+            3698616,
+            321628,
+            3873456,
+            540016
+          ],
+          "char": 105,
+          "font": 30,
+          "source_id": 300008
+        },
+        {
+          "bbox": [
+            3321518,
+            683717,
+            3752055,
+            1142468
+          ],
+          "char": 112,
+          "font": 32,
+          "source_id": 300009
+        },
+        {
+          "bbox": [
+            3752055,
+            794799,
+            4017842,
+            1081518
+          ],
+          "char": 121,
+          "font": 29,
+          "source_id": 300012
+        }
+      ],
+      "slots": [],
+      "revision": 31
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 31,
+    "revision": 32,
+    "expr": "\\frac{\\frac{a}{b}}{c}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 61,
+      "reply_ms": 0.272,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.647,
+      "status": "ok",
+      "timing": {
+        "total_us": 1382,
+        "tex_us": 778,
+        "traverse_us": 376,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.095,
+    "to_raster_ms": -804.557,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 30,
+      "pixels": 87535,
+      "raster_us": 152,
+      "seq": 31,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 8,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 2
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 310006,
+        "expected": 20,
+        "actual": 20
+      },
+      {
+        "kind": "click",
+        "id": 310006,
+        "expected": 21,
+        "actual": 21
+      },
+      {
+        "kind": "click",
+        "id": 310008,
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "click",
+        "id": 310008,
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "click",
+        "id": 310010,
+        "expected": 27,
+        "actual": 27
+      },
+      {
+        "kind": "click",
+        "id": 310010,
+        "expected": 28,
+        "actual": 28
+      },
+      {
+        "kind": "right",
+        "expected": 21,
+        "actual": 21
+      },
+      {
+        "kind": "left",
+        "expected": 20,
+        "actual": 20
+      },
+      {
+        "kind": "right",
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "left",
+        "expected": 21,
+        "actual": 21
+      },
+      {
+        "kind": "right",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "left",
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "right",
+        "expected": 27,
+        "actual": 27
+      },
+      {
+        "kind": "left",
+        "expected": 24,
+        "actual": 24
+      },
+      {
+        "kind": "right",
+        "expected": 28,
+        "actual": 28
+      },
+      {
+        "kind": "left",
+        "expected": 27,
+        "actual": 27
+      },
+      {
+        "kind": "down",
+        "id": 310003,
+        "expected": 27,
+        "actual": 27
+      },
+      {
+        "kind": "down",
+        "id": 310005,
+        "expected": 23,
+        "actual": 23
+      },
+      {
+        "kind": "up",
+        "id": 310007,
+        "expected": 20,
+        "actual": 20
+      },
+      {
+        "kind": "up",
+        "id": 310009,
+        "expected": 14,
+        "actual": 14
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "310006": {
+          "id": 310006,
+          "kind": "atom",
+          "start": 20,
+          "stop": 21,
+          "parent": 310005,
+          "char": "a",
+          "bbox": [
+            3400161,
+            0,
+            3653926,
+            141084
+          ],
+          "geometry_origin": "glyph"
+        },
+        "310005": {
+          "id": 310005,
+          "kind": "num",
+          "start": 20,
+          "stop": 21,
+          "parent": 310004,
+          "char": null,
+          "bbox": [
+            3400161,
+            0,
+            3653926,
+            141084
+          ],
+          "geometry_origin": "glyph"
+        },
+        "310004": {
+          "id": 310004,
+          "kind": "frac",
+          "start": 14,
+          "stop": 25,
+          "parent": 310003,
+          "char": null,
+          "bbox": [
+            3400161,
+            0,
+            3653926,
+            475108
+          ],
+          "geometry_origin": "glyph"
+        },
+        "310003": {
+          "id": 310003,
+          "kind": "num",
+          "start": 14,
+          "stop": 25,
+          "parent": 310002,
+          "char": null,
+          "bbox": [
+            3400161,
+            0,
+            3653926,
+            475108
+          ],
+          "geometry_origin": "glyph"
+        },
+        "310002": {
+          "id": 310002,
+          "kind": "frac",
+          "start": 8,
+          "stop": 29,
+          "parent": 310001,
+          "char": null,
+          "bbox": [
+            3400161,
+            0,
+            3653926,
+            927410
+          ],
+          "geometry_origin": "glyph"
+        },
+        "310001": {
+          "id": 310001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 29,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3653926,
+            927411
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "310008": {
+          "id": 310008,
+          "kind": "atom",
+          "start": 23,
+          "stop": 24,
+          "parent": 310007,
+          "char": "b",
+          "bbox": [
+            3423278,
+            247553,
+            3630809,
+            475108
+          ],
+          "geometry_origin": "glyph"
+        },
+        "310007": {
+          "id": 310007,
+          "kind": "den",
+          "start": 23,
+          "stop": 24,
+          "parent": 310004,
+          "char": null,
+          "bbox": [
+            3423278,
+            247553,
+            3630809,
+            475108
+          ],
+          "geometry_origin": "glyph"
+        },
+        "310010": {
+          "id": 310010,
+          "kind": "atom",
+          "start": 27,
+          "stop": 28,
+          "parent": 310009,
+          "char": "c",
+          "bbox": [
+            3409939,
+            729892,
+            3644148,
+            927410
+          ],
+          "geometry_origin": "glyph"
+        },
+        "310009": {
+          "id": 310009,
+          "kind": "den",
+          "start": 27,
+          "stop": 28,
+          "parent": 310002,
+          "char": null,
+          "bbox": [
+            3409939,
+            729892,
+            3644148,
+            927410
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3400161,
+            0,
+            3653926,
+            141084
+          ],
+          "char": 97,
+          "font": 30,
+          "source_id": 310006
+        },
+        {
+          "bbox": [
+            3423278,
+            247553,
+            3630809,
+            475108
+          ],
+          "char": 98,
+          "font": 30,
+          "source_id": 310008
+        },
+        {
+          "bbox": [
+            3409939,
+            729892,
+            3644148,
+            927410
+          ],
+          "char": 99,
+          "font": 29,
+          "source_id": 310010
+        }
+      ],
+      "slots": [],
+      "revision": 32
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 32,
+    "revision": 33,
+    "expr": "\\frac{a}{b}",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 63,
+      "reply_ms": 0.287,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.732,
+      "status": "ok",
+      "timing": {
+        "total_us": 1385,
+        "tex_us": 747,
+        "traverse_us": 364,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.085,
+    "to_raster_ms": -765.253,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 36,
+      "pixels": 67445,
+      "raster_us": 139,
+      "seq": 32,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 7,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 1
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 320004,
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "click",
+        "id": 320004,
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "click",
+        "id": 320006,
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "click",
+        "id": 320006,
+        "expected": 18,
+        "actual": 18
+      },
+      {
+        "kind": "right",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "left",
+        "expected": 14,
+        "actual": 14
+      },
+      {
+        "kind": "right",
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "left",
+        "expected": 15,
+        "actual": 15
+      },
+      {
+        "kind": "right",
+        "expected": 18,
+        "actual": 18
+      },
+      {
+        "kind": "left",
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "down",
+        "id": 320003,
+        "expected": 17,
+        "actual": 17
+      },
+      {
+        "kind": "up",
+        "id": 320005,
+        "expected": 14,
+        "actual": 14
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "320004": {
+          "id": 320004,
+          "kind": "atom",
+          "start": 14,
+          "stop": 15,
+          "parent": 320003,
+          "char": "a",
+          "bbox": [
+            3321518,
+            2283,
+            3605790,
+            199801
+          ],
+          "geometry_origin": "glyph"
+        },
+        "320003": {
+          "id": 320003,
+          "kind": "num",
+          "start": 14,
+          "stop": 15,
+          "parent": 320002,
+          "char": null,
+          "bbox": [
+            3321518,
+            2283,
+            3605790,
+            199801
+          ],
+          "geometry_origin": "glyph"
+        },
+        "320002": {
+          "id": 320002,
+          "kind": "frac",
+          "start": 8,
+          "stop": 19,
+          "parent": 320001,
+          "char": null,
+          "bbox": [
+            3321518,
+            2283,
+            3605790,
+            709937
+          ],
+          "geometry_origin": "glyph"
+        },
+        "320001": {
+          "id": 320001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 19,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3605790,
+            709938
+          ],
+          "geometry_origin": "formula-math-boundary"
+        },
+        "320006": {
+          "id": 320006,
+          "kind": "atom",
+          "start": 17,
+          "stop": 18,
+          "parent": 320005,
+          "char": "b",
+          "bbox": [
+            3348420,
+            391360,
+            3578888,
+            709937
+          ],
+          "geometry_origin": "glyph"
+        },
+        "320005": {
+          "id": 320005,
+          "kind": "den",
+          "start": 17,
+          "stop": 18,
+          "parent": 320002,
+          "char": null,
+          "bbox": [
+            3348420,
+            391360,
+            3578888,
+            709937
+          ],
+          "geometry_origin": "glyph"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3321518,
+            2283,
+            3605790,
+            199801
+          ],
+          "char": 97,
+          "font": 29,
+          "source_id": 320004
+        },
+        {
+          "bbox": [
+            3348420,
+            391360,
+            3578888,
+            709937
+          ],
+          "char": 98,
+          "font": 29,
+          "source_id": 320006
+        }
+      ],
+      "slots": [],
+      "revision": 33
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 33,
+    "revision": 34,
+    "expr": "",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 65,
+      "reply_ms": 0.327,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.799,
+      "status": "ok",
+      "timing": {
+        "total_us": 1382,
+        "tex_us": 807,
+        "traverse_us": 365,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.051,
+    "to_raster_ms": -784.333,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 34,
+      "pixels": 47355,
+      "raster_us": 91,
+      "seq": 33,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 5,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "slot-click",
+        "expected": 8,
+        "actual": 8
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "330001": {
+          "id": 330001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 8,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3242875,
+            486950
+          ],
+          "geometry_origin": "formula-math-boundary"
+        }
+      },
+      "glyphs": [],
+      "slots": [
+        {
+          "source_id": 330001,
+          "bbox": [
+            3177339.0,
+            0,
+            3308411.0,
+            486950
+          ],
+          "anchor": [
+            3242875.0,
+            243475.0
+          ],
+          "origin": "formula-math-boundary"
+        }
+      ],
+      "revision": 34
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  },
+  {
+    "step": 34,
+    "revision": 35,
+    "expr": "x",
+    "edit": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 67,
+      "reply_ms": 0.201,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.306,
+      "status": "ok",
+      "timing": {
+        "total_us": 1024,
+        "tex_us": 572,
+        "traverse_us": 289,
+        "pack_us": 0
+      }
+    },
+    "host_retag_ms": 0.067,
+    "to_raster_ms": -785.039,
+    "raster": {
+      "kind": "unit",
+      "parse_us": 54,
+      "pixels": 47355,
+      "raster_us": 114,
+      "seq": 34,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 6,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      }
+    },
+    "checks": [
+      {
+        "kind": "click",
+        "id": 340002,
+        "expected": 8,
+        "actual": 8
+      },
+      {
+        "kind": "click",
+        "id": 340002,
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "right",
+        "expected": 9,
+        "actual": 9
+      },
+      {
+        "kind": "left",
+        "expected": 8,
+        "actual": 8
+      }
+    ],
+    "geometry": {
+      "nodes": {
+        "340002": {
+          "id": 340002,
+          "kind": "atom",
+          "start": 8,
+          "stop": 9,
+          "parent": 340001,
+          "char": "x",
+          "bbox": [
+            3242875,
+            174366,
+            3637634,
+            471754
+          ],
+          "geometry_origin": "glyph"
+        },
+        "340001": {
+          "id": 340001,
+          "kind": "formula",
+          "start": 8,
+          "stop": 9,
+          "parent": null,
+          "char": null,
+          "bbox": [
+            3242875,
+            0,
+            3637634,
+            486950
+          ],
+          "geometry_origin": "formula-math-boundary"
+        }
+      },
+      "glyphs": [
+        {
+          "bbox": [
+            3242875,
+            174366,
+            3637634,
+            471754
+          ],
+          "char": 120,
+          "font": 28,
+          "source_id": 340002
+        }
+      ],
+      "slots": [],
+      "revision": 35
+    },
+    "plain_export_exact": true,
+    "engine_buffer_exact": true,
+    "offset_map_roundtrip": true,
+    "no_foreign_ids": true,
+    "counterexample": null
+  }
+]

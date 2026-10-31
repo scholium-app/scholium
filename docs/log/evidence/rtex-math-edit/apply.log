@@ -1,0 +1,7 @@
+   Compiling rtex-dl v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-math-edit/crates/rtex-dl)
+   Compiling rtex-verify v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-math-edit/crates/rtex-verify)
+   Compiling rtex-core v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-math-edit/crates/rtex-core)
+   Compiling rtex-cli v0.0.5 (/home/ation_ciger/.cache/scholium-eval/rtex-math-edit/crates/rtex-cli)
+    Finished `release` profile [optimized + debuginfo] target(s) in 10.15s
+patches already applied
+patched file contents match reconstruction
