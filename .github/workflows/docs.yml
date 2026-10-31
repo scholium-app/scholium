@@ -13,7 +13,7 @@ permissions:
   contents: read
 jobs:
   links:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04  # same pinned image as rust.yml
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4

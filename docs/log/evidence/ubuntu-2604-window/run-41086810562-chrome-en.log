@@ -1,0 +1,14 @@
+PASS 01-controls-map-covers-the-chrome
+PASS 02-menus-open-and-close
+PASS 03-toolbar-bold-toggles-and-shows-active
+PASS 04-paragraph-dropdown-and-history
+PASS 05-work-mode-from-menu-and-segmented-control
+PASS 06-focus-bar-follows-the-caret
+PASS 07-narrow-window-overflows-trailing-groups
+Traceback (most recent call last):
+  File "/home/runner/work/scholium/scholium/spikes/typst-main-editor/chrome-check.py", line 210, in <module>
+    s = wait(lambda s: not drawn(s, "format.bold", "toolbar") and not drawn(s, "view.mode.visual", "focus"),
+             "toolbars hidden")
+  File "/home/runner/work/scholium/scholium/spikes/typst-main-editor/chrome-check.py", line 49, in wait
+    raise RuntimeError(f"timeout: {what}")
+RuntimeError: timeout: toolbars hidden
