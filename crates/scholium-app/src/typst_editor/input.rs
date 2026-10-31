@@ -114,7 +114,7 @@ impl EditorSession {
     pub(super) fn submit(&mut self, input: Input, state: &mut WorkspaceState) {
         self.sync_geometry();
         if state.mode != crate::state::ViewMode::Visual {
-            state.edit_error = Some(read_only_message().into());
+            state.edit_error = Some(read_only_message(state.locale.resolve()));
             return;
         }
         if matches!(&input, Input::Text(_) | Input::Command(Command::Text, _))
@@ -132,8 +132,10 @@ impl EditorSession {
         match self.core.input(input) {
             Ok(outcome) => {
                 if vertical_key && !outcome.applied && self.core.in_math() {
-                    state.edit_error =
-                        Some("当前位置没有可证的行几何；可使用左右键或 Tab。".into());
+                    state.edit_error = Some(crate::i18n::text(
+                        state.locale.resolve(),
+                        "diag.input.line_geometry",
+                    ));
                 }
                 let cleared_error = outcome.cleared_error;
                 self.accept_input_outcome(outcome, state);
@@ -146,7 +148,9 @@ impl EditorSession {
                     self.rejected_input = Some(text);
                 }
                 state.edit_error = Some(match error {
-                    CommandError::Rejected(reason) => rejection_message(reason).into(),
+                    CommandError::Rejected(reason) => {
+                        rejection_message(reason, state.locale.resolve())
+                    }
                     _ => error.to_string(),
                 });
             }
@@ -201,19 +205,23 @@ fn abstract_key(key: egui::Key) -> Option<Key> {
     })
 }
 
-pub(super) fn read_only_message() -> &'static str {
-    "结构视图只读；回到编辑面再执行正文命令。"
+pub(super) fn read_only_message(locale: crate::i18n::Locale) -> String {
+    crate::i18n::text(locale, "diag.input.read_only")
 }
 
-pub(super) fn rejection_message(reason: scholium_session::typst::Rejection) -> &'static str {
+pub(super) fn rejection_message(
+    reason: scholium_session::typst::Rejection,
+    locale: crate::i18n::Locale,
+) -> String {
     use scholium_session::typst::Rejection as R;
-    match reason {
+    let message = match reason {
         R::StructuralSelection => "选区上的公式与段落命令尚未接入；可输入或删除替换此选区。",
         R::NotMath => "先插入行内公式，再选择数学槽位。",
         R::MathStyle | R::StyleEndpoints => style::rejection_message(reason),
         R::RawSelection => selection::raw_message(),
         R::MissingBody => math_enter::missing_body_message(),
-        R::MathSelection => "此批选区只接受正文端点；数学槽位选区尚未接入。",
+        R::MathSelection => return crate::i18n::text(locale, "diag.input.math_selection"),
         R::CopyEndpoints | R::CopyNonText => selection::copy_message(reason),
-    }
+    };
+    message.into()
 }

@@ -75,3 +75,30 @@ core 的输入事务处理，失败仍保持文档、端点和历史不变。
 
 - 下一 PR 迁移 `EditorWorker`、Scene 所有权/采纳和 deferred-input 队列到 session core。
 - 下一 PR 完成后，将 ADR 0042 从 Accepted（phase 1 + phase 2a）更新为最终实现状态。
+
+## CI 界面文字检查修复
+
+PR #69 的 CI 检出 `input.rs` 新增的三条硬编码提示和六条已经失效的白名单记录。
+三条提示已改用 `diag.input.line_geometry`、`diag.input.math_selection`、`diag.input.read_only`，
+按当前界面语言查询 Fluent，并补齐 zh-Hans/en 目录及诊断 key 使用登记。
+白名单只删除六条失效记录，剩余 63 条；既有测试断言、窗口检查和阈值均未修改。
+
+本次修复后重新运行的门禁：
+
+| 命令 | 结果 |
+| --- | --- |
+| `cargo fmt --all -- --check` | 通过 |
+| `cargo clippy --locked --workspace --all-targets -- -D warnings` | 通过 |
+| `cargo test --locked --workspace` | 通过（app 302 项；workspace 无失败） |
+| `RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps` | 通过 |
+| `python3 scripts/check-rust-size.py` | 通过 |
+| `python3 scripts/check-doc-links.py` | 通过 |
+| `python3 scripts/check-ui-strings.py` | 通过（63 条存量白名单） |
+| `python3 scripts/check-layers.py` | 通过 |
+| `cargo deny --locked check licenses bans sources` | 通过 |
+| `cargo build --locked -p scholium-app -p scholium-storage --bins` | 通过 |
+| `python3 scripts/window-checks.py --locale zh-Hans en` | 30/30 通过，两种语言各 15 项 |
+
+stock 源码重建校验通过；`typst-main-fork-check` 与独立 stock reference 重新生成四个场景，
+`compare.py` 对四项均报告 `equal_pixels: true`。本地结果保存在 slot 的 `target/t17-ci-*`；
+窗口日志与证据位于 `/tmp/scholium-window-70z62vxv`。

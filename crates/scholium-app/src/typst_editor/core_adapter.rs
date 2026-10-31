@@ -36,7 +36,9 @@ impl EditorSession {
                     self.publish(state);
                 }
                 state.edit_error = Some(match error {
-                    CommandError::Rejected(reason) => input::rejection_message(reason).into(),
+                    CommandError::Rejected(reason) => {
+                        input::rejection_message(reason, state.locale.resolve())
+                    }
                     _ => error.to_string(),
                 });
                 None
@@ -49,7 +51,7 @@ impl EditorSession {
             return;
         }
         if state.mode != crate::state::ViewMode::Visual {
-            state.edit_error = Some(input::read_only_message().into());
+            state.edit_error = Some(input::read_only_message(state.locale.resolve()));
             return;
         }
         self.run_core(command, CommandArgs::None, state);

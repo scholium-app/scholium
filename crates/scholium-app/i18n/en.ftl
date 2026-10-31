@@ -420,3 +420,9 @@ diag-panel-content = Content built { $built } / reused { $reused } · source rea
 diag-panel-timing = Layout + raster { $ms } ms
 
 diag-panel-row = { $severity }: { $message }
+
+diag-input-line_geometry = No verified line geometry is available here; use Left/Right or Tab.
+
+diag-input-math_selection = Selection endpoints must be in body text; selection inside math slots is not yet supported.
+
+diag-input-read_only = The structure view is read-only; return to the editor before editing body text.

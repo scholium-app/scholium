@@ -414,3 +414,9 @@ diag-panel-content = Content 新建 { $built } / 复用 { $reused } · source re
 diag-panel-timing = 布局+栅格 { $ms } ms
 
 diag-panel-row = { $severity }：{ $message }
+
+diag-input-line_geometry = 当前位置没有可证的行几何；可使用左右键或 Tab。
+
+diag-input-math_selection = 此批选区只接受正文端点；数学槽位选区尚未接入。
+
+diag-input-read_only = 结构视图只读；回到编辑面再执行正文命令。
