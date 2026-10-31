@@ -1,7 +1,9 @@
 //! Semantic input; offsets are leaf-local UTF-8 grapheme boundaries.
+#![allow(clippy::items_after_test_module)]
 use super::*;
 use scholium_model::NodeId;
 use unicode_segmentation::UnicodeSegmentation;
+
 /// One supported editable text or Hole leaf in logical caret order.
 #[derive(Debug)]
 pub struct Leaf<'a> {
@@ -72,6 +74,268 @@ pub fn math_children(node: &MathNode) -> Vec<&MathNode> {
 }
 
 impl EditorCore {
+    /// Apply one toolkit-independent event atomically.
+    ///
+    /// A failed event restores the same checkpoint as [`EditorCore::run`], including
+    /// navigation and pointer state.
+    ///
+    /// # Errors
+    /// Returns a structured command error and restores the pre-input checkpoint when the
+    /// event is rejected or panics.
+    pub fn input(&mut self, input: Input) -> Result<Outcome, CommandError> {
+        let checkpoint = self.checkpoint()?;
+        #[cfg(test)]
+        let inject = std::mem::take(&mut self.fail_next_input);
+        #[cfg(not(test))]
+        let inject = false;
+        let result =
+            std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| self.apply_input(input)));
+        match result {
+            Ok(Ok(outcome)) if !inject => Ok(self.decorate(outcome)),
+            Ok(Ok(_)) => {
+                #[cfg(test)]
+                {
+                    self.rollback(checkpoint);
+                    Err(CommandError::Injected)
+                }
+                #[cfg(not(test))]
+                unreachable!()
+            }
+            Ok(Err(error)) => {
+                self.rollback(checkpoint);
+                Err(error)
+            }
+            Err(_) => {
+                self.rollback(checkpoint);
+                Err(CommandError::Panicked)
+            }
+        }
+    }
+
+    fn decorate(&self, mut outcome: Outcome) -> Outcome {
+        outcome.caret = Some(Target {
+            node: self.cursor.leaf,
+            byte: self.cursor.byte,
+        });
+        outcome.selection = self.range().ok().flatten().map(|(start, end)| {
+            (
+                Target {
+                    node: start.leaf,
+                    byte: start.byte,
+                },
+                Target {
+                    node: end.leaf,
+                    byte: end.byte,
+                },
+            )
+        });
+        outcome.overlay = OverlayData {
+            placeholder: self.placeholder.is_some(),
+            indicator: self.in_math(),
+        };
+        outcome.new_layout = outcome.changed;
+        outcome
+    }
+
+    fn apply_input(&mut self, input: Input) -> Result<Outcome, CommandError> {
+        match input {
+            Input::Text(text) => self.run(CommandId::Text, CommandArgs::Text(text, Origin::Typed)),
+            Input::Command(id, args) => self.run(id, args),
+            Input::Viewport { visible, raster } => {
+                self.visible = visible;
+                self.raster = raster;
+                Ok(Outcome::default())
+            }
+            Input::Pointer {
+                kind,
+                at,
+                clicks,
+                mods,
+            } => {
+                self.pointer = Some(PointerState { at, clicks });
+                if matches!(kind, PointerKind::Release) && clicks >= 2 && !mods.shift {
+                    self.select_word_at_pointer(clicks);
+                }
+                Ok(Outcome::default())
+            }
+            Input::Key { key, mods } => self.key_input(key, mods),
+        }
+    }
+
+    fn key_input(&mut self, key: Key, mods: Modifiers) -> Result<Outcome, CommandError> {
+        if mods.command {
+            let command = match key {
+                Key::Character('a') | Key::Character('A') => Some(CommandId::SelectAll),
+                Key::Character('z') | Key::Character('Z') if mods.shift => Some(CommandId::Redo),
+                Key::Character('z') | Key::Character('Z') => Some(CommandId::Undo),
+                Key::Character('y') | Key::Character('Y') => Some(CommandId::Redo),
+                Key::Home => {
+                    self.move_document_edge(false, mods.shift);
+                    None
+                }
+                Key::End => {
+                    self.move_document_edge(true, mods.shift);
+                    None
+                }
+                _ => None,
+            };
+            return command.map_or_else(
+                || Ok(Outcome::default()),
+                |id| self.run(id, CommandArgs::None),
+            );
+        }
+        let before = self.cursor;
+        match key {
+            Key::ArrowLeft => self.move_horizontal(false, mods.shift),
+            Key::ArrowRight => self.move_horizontal(true, mods.shift),
+            Key::Home => self.move_line_edge(false, mods.shift),
+            Key::End => self.move_line_edge(true, mods.shift),
+            Key::Backspace => return self.delete_before(),
+            Key::Delete => return self.delete_after(),
+            Key::Enter => return self.run(CommandId::Split, CommandArgs::None),
+            Key::Escape => self.anchor = None,
+            Key::ArrowUp | Key::ArrowDown | Key::Tab | Key::Character(_) => {}
+        }
+        Ok(Outcome {
+            applied: self.cursor != before || self.anchor.is_some(),
+            ..Outcome::default()
+        })
+    }
+
+    fn move_horizontal(&mut self, right: bool, extend: bool) {
+        let all = leaves(&self.snapshot);
+        let Some(index) = all.iter().position(|leaf| leaf.id == self.cursor.leaf) else {
+            return;
+        };
+        let leaf = &all[index];
+        let next = if right {
+            leaf.text
+                .grapheme_indices(true)
+                .map(|(at, _)| at)
+                .find(|at| *at > self.cursor.byte)
+                .or_else(|| (self.cursor.byte < leaf.text.len()).then_some(leaf.text.len()))
+                .or_else(|| {
+                    all.get(index + 1).map(|next| {
+                        self.cursor.leaf = next.id;
+                        0
+                    })
+                })
+        } else {
+            leaf.text
+                .grapheme_indices(true)
+                .map(|(at, _)| at)
+                .rfind(|at| *at < self.cursor.byte)
+                .or_else(|| {
+                    index.checked_sub(1).and_then(|i| {
+                        all.get(i).map(|prev| {
+                            self.cursor.leaf = prev.id;
+                            prev.text.len()
+                        })
+                    })
+                })
+        };
+        if let Some(byte) = next {
+            self.cursor.byte = byte;
+        }
+        self.cursor.affinity = Affinity::Downstream;
+        if extend {
+            self.anchor.get_or_insert(self.cursor);
+        } else {
+            self.anchor = None;
+        }
+    }
+
+    fn move_line_edge(&mut self, end: bool, extend: bool) {
+        if let Some(leaf) = leaves(&self.snapshot)
+            .into_iter()
+            .find(|leaf| leaf.id == self.cursor.leaf)
+        {
+            self.cursor.byte = if end { leaf.text.len() } else { 0 };
+        }
+        if extend {
+            self.anchor.get_or_insert(self.cursor);
+        } else {
+            self.anchor = None;
+        }
+    }
+
+    fn move_document_edge(&mut self, end: bool, extend: bool) {
+        let all = leaves(&self.snapshot)
+            .into_iter()
+            .filter(|leaf| !leaf.math)
+            .collect::<Vec<_>>();
+        if let Some(leaf) = if end { all.last() } else { all.first() } {
+            self.cursor = Position {
+                leaf: leaf.id,
+                byte: if end { leaf.text.len() } else { 0 },
+                affinity: Affinity::Downstream,
+            };
+        }
+        if extend {
+            self.anchor.get_or_insert(self.cursor);
+        } else {
+            self.anchor = None;
+        }
+    }
+
+    fn delete_before(&mut self) -> Result<Outcome, CommandError> {
+        let Some(leaf) = leaves(&self.snapshot)
+            .into_iter()
+            .find(|leaf| leaf.id == self.cursor.leaf)
+        else {
+            return Ok(Outcome::default());
+        };
+        let start = leaf
+            .text
+            .grapheme_indices(true)
+            .map(|(at, _)| at)
+            .rfind(|at| *at < self.cursor.byte)
+            .unwrap_or(self.cursor.byte);
+        self.run(
+            CommandId::Delete,
+            CommandArgs::Range(start, self.cursor.byte),
+        )
+    }
+
+    fn delete_after(&mut self) -> Result<Outcome, CommandError> {
+        let Some(leaf) = leaves(&self.snapshot)
+            .into_iter()
+            .find(|leaf| leaf.id == self.cursor.leaf)
+        else {
+            return Ok(Outcome::default());
+        };
+        let end = leaf
+            .text
+            .grapheme_indices(true)
+            .map(|(at, _)| at)
+            .find(|at| *at > self.cursor.byte)
+            .unwrap_or(self.cursor.byte);
+        self.run(CommandId::Delete, CommandArgs::Range(self.cursor.byte, end))
+    }
+
+    fn select_word_at_pointer(&mut self, clicks: u8) {
+        if clicks < 2 {
+            return;
+        }
+        let Some(leaf) = leaves(&self.snapshot).into_iter().find(|leaf| !leaf.math) else {
+            return;
+        };
+        let end = leaf
+            .text
+            .split_word_bound_indices()
+            .next()
+            .map_or(0, |(_, value)| value.len());
+        self.anchor = Some(Position {
+            leaf: leaf.id,
+            byte: 0,
+            affinity: Affinity::Downstream,
+        });
+        self.cursor = Position {
+            leaf: leaf.id,
+            byte: if clicks >= 3 { leaf.text.len() } else { end },
+            affinity: Affinity::Upstream,
+        };
+    }
     pub(super) fn insert(&mut self, text: String, origin: Origin, state: &mut EditState) {
         if text.is_empty() {
             return;

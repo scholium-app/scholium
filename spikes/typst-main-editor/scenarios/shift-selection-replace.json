@@ -1,0 +1,1 @@
+{"name":"shift-selection-replace","inputs":[{"text":"select me"},{"key":"ArrowLeft","repeat":true},{"key":"ArrowLeft","mods":{"shift":true}},{"text":"X"}],"expected":{"undo_depth":2}}

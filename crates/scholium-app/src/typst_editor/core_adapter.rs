@@ -59,7 +59,21 @@ impl EditorSession {
             self.rejected_input = Some(text);
             return;
         }
-        self.run_core(Command::Text, CommandArgs::Text(text, origin), state);
+        match self.core.input(scholium_session::typst::Input::Command(
+            Command::Text,
+            CommandArgs::Text(text.clone(), origin),
+        )) {
+            Ok(outcome) => {
+                if outcome.changed {
+                    self.publish(state);
+                }
+                state.edit_error = None;
+            }
+            Err(error) => {
+                self.rejected_input = Some(text);
+                state.edit_error = Some(error.to_string());
+            }
+        }
     }
 
     pub(super) fn erase(&mut self, start: usize, end: usize, state: &mut WorkspaceState) {

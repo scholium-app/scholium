@@ -48,7 +48,7 @@ pub enum CommandId {
 }
 
 /// Typed command arguments; mismatched variants fail before mutation.
-#[derive(Debug, Default)]
+#[derive(Debug, Clone, Default)]
 pub enum CommandArgs {
     /// Command has no payload.
     #[default]
@@ -118,6 +118,31 @@ pub struct Outcome {
     pub reset_drag: bool,
     /// History/New restored a different document lifetime; app discards its old Scene.
     pub invalidate_scene: bool,
+    /// Current caret in page-independent semantic coordinates.
+    pub caret: Option<Target>,
+    /// Current semantic selection endpoints.
+    pub selection: Option<(Target, Target)>,
+    /// A page-point rectangle the host should keep visible, when navigation requests it.
+    pub follow: Option<FollowIntent>,
+    /// Overlay state owned by the host renderer.
+    pub overlay: OverlayData,
+    /// Whether the accepted snapshot needs a new layout.
+    pub new_layout: bool,
+}
+
+/// A page-point rectangle requested by the editing core.
+#[allow(missing_docs)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct FollowIntent {
+    pub rect_pt: [f64; 4],
+}
+
+/// Non-rendering overlay state published with an input result.
+#[allow(missing_docs)]
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
+pub struct OverlayData {
+    pub placeholder: bool,
+    pub indicator: bool,
 }
 
 impl EditorCore {
@@ -158,6 +183,7 @@ impl EditorCore {
                 cleared_error: state.cleared_error,
                 reset_drag: state.reset_drag,
                 invalidate_scene: matches!(id, CommandId::Undo | CommandId::Redo | CommandId::New),
+                ..Outcome::default()
             }),
             Err(error) => {
                 self.rollback(checkpoint);

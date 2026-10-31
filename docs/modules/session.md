@@ -10,7 +10,11 @@ Typst 模块持有唯一 `LocalSession<StructuredDocument>`、不可变 `Arc` �
 
 ## 非职责
 
-第一期不处理 egui 按键/事件、IME 预编辑、指针/拖选、点击序列、视觉上下导航与目标 x、视图跟随、
+不处理 egui 事件、IME 预编辑、屏幕 placement、IME 锚点、绘制和 AccessKit；这些仍由 app 翻译或呈现。
+抽象 `Input` 处理提交文字、工具包无关的按键、页面 pt 指针事件、视口/栅格请求，并以 `Outcome` 发布语义光标、
+选区、跟随意图与 overlay 数据。指针状态和延迟输入属于同一事务边界，失败时与文档、历史一并回滚。
+排版 worker、Scene 采纳、栅格纹理仍由 app 持有，核心只记录可见 pt 范围与 RasterSpec。
+早期适配器中的视觉上下导航与目标 x、点击序列、
 延迟事件队列、排版 worker、Scene 采纳、栅格纹理、绘制、屏幕 placement、IME 锚点、AccessKit、
 源码视图、确认框、Fluent 诊断呈现和 AUDIT 打印。这些仍由 [app](app.md) 持有。
 不实现协作 undo、项目权限协议、Pi/MCP/插件协议或 LaTeX 公共内核 trait。
@@ -24,7 +28,8 @@ src/typst/command/checkpoint.rs  执行前 checkpoint、错误/panic 回滚
 src/typst/edit.rs             StructuralRequest、存活光标、历史与投影发布
 src/typst/persistence.rs      open/restore/save、空白文档、只读旧 head 迁移
 src/typst/history.rs          本地撤销/重做、输入/删除分组、可注入单调时钟
-src/typst/input.rs            字面文字、公式进出、分数、删除与拆段
+src/typst/input.rs            抽象输入、按键映射、指针状态，以及字面文字、公式进出、分数、删除与拆段
+src/typst/events.rs           工具包无关的 Input、Key、Pointer 词汇与原子分发测试
 src/typst/selection.rs        正文端点顺序、纯文本复制、范围替换
 src/typst/style.rs            待输入样式与选区样式、active styles
 src/typst/attach.rs           上下标、槽位出口和临时 Hole 生命周期

@@ -3,6 +3,7 @@ mod attach;
 mod command;
 mod diagnose;
 mod edit;
+mod events;
 pub mod history;
 pub mod indicator;
 pub mod input;
@@ -13,7 +14,10 @@ pub mod style;
 #[cfg(test)]
 mod tests;
 
-pub use command::{CommandArgs, CommandError, CommandId, Outcome, Rejection};
+pub use command::{
+    CommandArgs, CommandError, CommandId, FollowIntent, Outcome, OverlayData, Rejection,
+};
+pub use events::{Input, Key, Modifiers, PointerKind, PointerState};
 pub use history::Origin;
 use history::{HistoryEntry, RunKind};
 pub use persistence::{SessionError, prepare};
@@ -22,7 +26,7 @@ use scholium_document::{
 };
 use scholium_model::{RequestId, layout_identity::*, structured::*};
 use scholium_storage::SessionStore;
-use scholium_typst::editor::{Affinity, EditorScene, Position};
+use scholium_typst::editor::{Affinity, EditorScene, Position, RasterSpec, ViewRange};
 #[cfg(test)]
 use std::path::PathBuf;
 use std::{path::Path, sync::Arc};
@@ -67,6 +71,15 @@ pub struct EditorCore {
     pub rejected_input: Option<String>,
     /// Formula overflow targets from the current Scene.
     pub overflows: Vec<Target>,
+    /// Last viewport supplied by the host, in page points.
+    pub visible: ViewRange,
+    /// Raster request supplied by the host.
+    pub raster: RasterSpec,
+    /// Last abstract pointer event, for drag continuity.
+    pub pointer: Option<PointerState>,
+    #[cfg(test)]
+    #[allow(missing_docs)]
+    pub fail_next_input: bool,
 }
 
 impl std::fmt::Debug for EditorCore {

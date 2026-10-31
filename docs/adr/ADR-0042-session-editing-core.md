@@ -1,6 +1,6 @@
 # ADR 0042：编辑交互核心提取为不依赖 UI 的 scholium-session
 
-- 状态：Accepted
+- 状态：Fully implemented（[phase-2 dev log](../log/2026-10-30-session-core-input.md)）
 - 日期：2026-10-30
 - 决策者：协调者按 [ArtCraft 借鉴计划](../plan/ARTCRAFT_REFERENCE.md)采纳项 3 与用户确认的执行顺序
 - 影响模块：app、document、typst、storage；新增 session

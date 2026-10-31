@@ -1,0 +1,1 @@
+{"name":"triple-click-delete","inputs":[{"text":"paragraph to delete"},{"pointer":{"target":"end of leaf 0","kind":"Release","clicks":3}},{"key":"Delete"}],"expected":{"undo_depth":2}}

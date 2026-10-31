@@ -1,0 +1,1 @@
+{"name":"double-click-bold","inputs":[{"text":"bold word"},{"pointer":{"target":"word 0","kind":"Press","clicks":2}},{"command":"Bold"}],"expected":{"undo_depth":2}}
