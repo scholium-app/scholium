@@ -30,3 +30,6 @@ Thumbs.db
 /spikes/**/.cargo-home/
 # 候选预筛用的上游源码克隆与临时工程，不入库（结论写进 docs/spikes/）。
 /spikes/**/.vendor/
+
+# Python bytecode caches written by the spike and window-check scripts.
+__pycache__/
