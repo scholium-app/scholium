@@ -1,0 +1,3122 @@
+[
+ {
+  "i": 0,
+  "par": 2,
+  "reply_ms": 0.463,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   105,
+   38,
+   15
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 12.048,
+  "status": "ok",
+  "timing": {
+   "total_us": 11205,
+   "tex_us": 9965,
+   "traverse_us": 640,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 21.289,
+  "raster_us": 6501,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 1,
+  "par": 2,
+  "reply_ms": 0.561,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   49,
+   21,
+   7
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 5.337,
+  "status": "ok",
+  "timing": {
+   "total_us": 4593,
+   "tex_us": 3821,
+   "traverse_us": 272,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 10.037,
+  "raster_us": 3400,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 2,
+  "par": 3,
+  "reply_ms": 0.41,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   38,
+   10,
+   4
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 2.421,
+  "status": "ok",
+  "timing": {
+   "total_us": 1298,
+   "tex_us": 1054,
+   "traverse_us": 153,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 4.595,
+  "raster_us": 1310,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 3,
+  "par": 3,
+  "reply_ms": 0.354,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   38,
+   11,
+   7
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 1.863,
+  "status": "ok",
+  "timing": {
+   "total_us": 1435,
+   "tex_us": 990,
+   "traverse_us": 122,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 4.02,
+  "raster_us": 1278,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 4,
+  "par": 4,
+  "reply_ms": 0.449,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   48,
+   24,
+   4
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 2.691,
+  "status": "ok",
+  "timing": {
+   "total_us": 1561,
+   "tex_us": 1188,
+   "traverse_us": 146,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 4.458,
+  "raster_us": 1074,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 5,
+  "par": 4,
+  "reply_ms": 0.443,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   31,
+   13,
+   7
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 2.078,
+  "status": "ok",
+  "timing": {
+   "total_us": 1609,
+   "tex_us": 1229,
+   "traverse_us": 135,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 3.803,
+  "raster_us": 1025,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 6,
+  "par": 5,
+  "reply_ms": 0.403,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   35,
+   13,
+   3
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 3.865,
+  "status": "ok",
+  "timing": {
+   "total_us": 2649,
+   "tex_us": 2226,
+   "traverse_us": 173,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 6.469,
+  "raster_us": 1729,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 7,
+  "par": 5,
+  "reply_ms": 0.501,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   78,
+   21,
+   15
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 4.789,
+  "status": "ok",
+  "timing": {
+   "total_us": 4150,
+   "tex_us": 3346,
+   "traverse_us": 241,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 7.353,
+  "raster_us": 1618,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 8,
+  "par": 6,
+  "reply_ms": 0.454,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   42,
+   16,
+   4
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 4.433,
+  "status": "ok",
+  "timing": {
+   "total_us": 3248,
+   "tex_us": 2769,
+   "traverse_us": 237,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 9.095,
+  "raster_us": 3216,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 9,
+  "par": 6,
+  "reply_ms": 0.611,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   51,
+   17,
+   9
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 4.506,
+  "status": "ok",
+  "timing": {
+   "total_us": 3946,
+   "tex_us": 3234,
+   "traverse_us": 239,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 8.856,
+  "raster_us": 3140,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 10,
+  "par": 7,
+  "reply_ms": 0.656,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   54,
+   31,
+   4
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 17.268,
+  "status": "ok",
+  "timing": {
+   "total_us": 15454,
+   "tex_us": 14214,
+   "traverse_us": 819,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 33.151,
+  "raster_us": 12973,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 11,
+  "par": 7,
+  "reply_ms": 0.503,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   73,
+   32,
+   9
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 15.304,
+  "status": "ok",
+  "timing": {
+   "total_us": 14454,
+   "tex_us": 13079,
+   "traverse_us": 845,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 29.804,
+  "raster_us": 11335,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 12,
+  "par": 8,
+  "reply_ms": 0.512,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   69,
+   19,
+   17
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 3.452,
+  "status": "ok",
+  "timing": {
+   "total_us": 1911,
+   "tex_us": 1339,
+   "traverse_us": 204,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 5.988,
+  "raster_us": 1350,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 13,
+  "par": 8,
+  "reply_ms": 0.364,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   36,
+   13,
+   7
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 1.86,
+  "status": "ok",
+  "timing": {
+   "total_us": 1354,
+   "tex_us": 969,
+   "traverse_us": 123,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 3.939,
+  "raster_us": 1298,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 14,
+  "par": 9,
+  "reply_ms": 0.602,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   84,
+   33,
+   5
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 6.948,
+  "status": "ok",
+  "timing": {
+   "total_us": 5478,
+   "tex_us": 4701,
+   "traverse_us": 388,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 12.893,
+  "raster_us": 4284,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 15,
+  "par": 9,
+  "reply_ms": 0.441,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   42,
+   18,
+   7
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 6.513,
+  "status": "ok",
+  "timing": {
+   "total_us": 5989,
+   "tex_us": 5094,
+   "traverse_us": 414,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 13.284,
+  "raster_us": 4824,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 16,
+  "par": 10,
+  "reply_ms": 0.442,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   62,
+   20,
+   5
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 6.538,
+  "status": "ok",
+  "timing": {
+   "total_us": 5164,
+   "tex_us": 4461,
+   "traverse_us": 373,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 12.742,
+  "raster_us": 4529,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 17,
+  "par": 10,
+  "reply_ms": 0.47,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   88,
+   32,
+   15
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 11.769,
+  "status": "ok",
+  "timing": {
+   "total_us": 10977,
+   "tex_us": 10211,
+   "traverse_us": 427,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 21.962,
+  "raster_us": 8199,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 18,
+  "par": 11,
+  "reply_ms": 0.438,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   102,
+   36,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 9.504,
+  "status": "ok",
+  "timing": {
+   "total_us": 7935,
+   "tex_us": 7241,
+   "traverse_us": 382,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 17.443,
+  "raster_us": 5637,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 19,
+  "par": 11,
+  "reply_ms": 0.541,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   81,
+   25,
+   15
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 9.271,
+  "status": "ok",
+  "timing": {
+   "total_us": 8713,
+   "tex_us": 7815,
+   "traverse_us": 468,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 16.457,
+  "raster_us": 5542,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 20,
+  "par": 12,
+  "reply_ms": 0.47,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   75,
+   31,
+   7
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 11.802,
+  "status": "ok",
+  "timing": {
+   "total_us": 9762,
+   "tex_us": 8980,
+   "traverse_us": 483,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 19.573,
+  "raster_us": 5834,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 21,
+  "par": 12,
+  "reply_ms": 2.334,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   101,
+   47,
+   36
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 10.196,
+  "status": "ok",
+  "timing": {
+   "total_us": 9361,
+   "tex_us": 8281,
+   "traverse_us": 519,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 22.855,
+  "raster_us": 10093,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 22,
+  "par": 13,
+  "reply_ms": 0.919,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   98,
+   34,
+   12
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 7.679,
+  "status": "ok",
+  "timing": {
+   "total_us": 5479,
+   "tex_us": 4802,
+   "traverse_us": 368,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 12.368,
+  "raster_us": 3358,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 23,
+  "par": 13,
+  "reply_ms": 95.736,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   95229,
+   21,
+   10
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 109.779,
+  "status": "ok",
+  "timing": {
+   "total_us": 2406,
+   "tex_us": 2063,
+   "traverse_us": 158,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 113.946,
+  "raster_us": 3013,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 24,
+  "par": 14,
+  "reply_ms": 0.65,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   87,
+   59,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 16.965,
+  "status": "ok",
+  "timing": {
+   "total_us": 14343,
+   "tex_us": 12786,
+   "traverse_us": 1062,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 28.209,
+  "raster_us": 8250,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 25,
+  "par": 14,
+  "reply_ms": 0.783,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   94,
+   49,
+   33
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 17.436,
+  "status": "ok",
+  "timing": {
+   "total_us": 16426,
+   "tex_us": 15054,
+   "traverse_us": 826,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 30.307,
+  "raster_us": 10042,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 26,
+  "par": 15,
+  "reply_ms": 0.63,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   93,
+   31,
+   12
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 5.346,
+  "status": "ok",
+  "timing": {
+   "total_us": 1984,
+   "tex_us": 1364,
+   "traverse_us": 275,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 7.737,
+  "raster_us": 1108,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 27,
+  "par": 15,
+  "reply_ms": 0.595,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   102,
+   27,
+   19
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 2.514,
+  "status": "ok",
+  "timing": {
+   "total_us": 1841,
+   "tex_us": 1066,
+   "traverse_us": 308,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 4.857,
+  "raster_us": 1143,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 28,
+  "par": 16,
+  "reply_ms": 0.695,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   89,
+   36,
+   11
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 13.697,
+  "status": "ok",
+  "timing": {
+   "total_us": 10252,
+   "tex_us": 8126,
+   "traverse_us": 1490,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 24.557,
+  "raster_us": 8305,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 29,
+  "par": 16,
+  "reply_ms": 0.435,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   69,
+   21,
+   10
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 7.486,
+  "status": "ok",
+  "timing": {
+   "total_us": 6738,
+   "tex_us": 5508,
+   "traverse_us": 934,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 14.644,
+  "raster_us": 5831,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 30,
+  "par": 17,
+  "reply_ms": 0.628,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   88,
+   37,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 24.521,
+  "status": "ok",
+  "timing": {
+   "total_us": 21173,
+   "tex_us": 17510,
+   "traverse_us": 3010,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 48.376,
+  "raster_us": 19878,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 31,
+  "par": 17,
+  "reply_ms": 0.437,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   76,
+   41,
+   23
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 17.261,
+  "status": "ok",
+  "timing": {
+   "total_us": 16382,
+   "tex_us": 11580,
+   "traverse_us": 2359,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 34.745,
+  "raster_us": 15255,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 32,
+  "par": 18,
+  "reply_ms": 0.873,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   119,
+   50,
+   13
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 31.825,
+  "status": "ok",
+  "timing": {
+   "total_us": 26145,
+   "tex_us": 22092,
+   "traverse_us": 2606,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 49.897,
+  "raster_us": 13638,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 33,
+  "par": 18,
+  "reply_ms": 0.424,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   44,
+   19,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 10.956,
+  "status": "ok",
+  "timing": {
+   "total_us": 10440,
+   "tex_us": 9244,
+   "traverse_us": 835,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 19.407,
+  "raster_us": 6846,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 34,
+  "par": 19,
+  "reply_ms": 0.376,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   59,
+   26,
+   4
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 16.95,
+  "status": "ok",
+  "timing": {
+   "total_us": 15065,
+   "tex_us": 13427,
+   "traverse_us": 1029,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 30.794,
+  "raster_us": 11025,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 35,
+  "par": 19,
+  "reply_ms": 0.638,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   79,
+   30,
+   10
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 18.266,
+  "status": "ok",
+  "timing": {
+   "total_us": 17626,
+   "tex_us": 15662,
+   "traverse_us": 1566,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 32.803,
+  "raster_us": 11289,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 36,
+  "par": 20,
+  "reply_ms": 0.514,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   75,
+   24,
+   12
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 3.718,
+  "status": "ok",
+  "timing": {
+   "total_us": 1341,
+   "tex_us": 875,
+   "traverse_us": 157,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 6.088,
+  "raster_us": 931,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 37,
+  "par": 20,
+  "reply_ms": 0.714,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   123,
+   23,
+   16
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 2.66,
+  "status": "ok",
+  "timing": {
+   "total_us": 1993,
+   "tex_us": 1300,
+   "traverse_us": 243,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 5.02,
+  "raster_us": 1404,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 38,
+  "par": 21,
+  "reply_ms": 0.36,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   45,
+   19,
+   4
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 5.568,
+  "status": "ok",
+  "timing": {
+   "total_us": 4218,
+   "tex_us": 3538,
+   "traverse_us": 499,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 12.413,
+  "raster_us": 5439,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 39,
+  "par": 21,
+  "reply_ms": 0.505,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   62,
+   28,
+   12
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 11.15,
+  "status": "ok",
+  "timing": {
+   "total_us": 10422,
+   "tex_us": 9196,
+   "traverse_us": 783,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 26.241,
+  "raster_us": 11632,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 40,
+  "par": 22,
+  "reply_ms": 0.368,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   74,
+   30,
+   10
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 15.257,
+  "status": "ok",
+  "timing": {
+   "total_us": 11306,
+   "tex_us": 9596,
+   "traverse_us": 1373,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 23.214,
+  "raster_us": 5909,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 41,
+  "par": 22,
+  "reply_ms": 0.606,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   76,
+   41,
+   14
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 22.814,
+  "status": "ok",
+  "timing": {
+   "total_us": 21938,
+   "tex_us": 20536,
+   "traverse_us": 848,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 41.841,
+  "raster_us": 14249,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 42,
+  "par": 23,
+  "reply_ms": 0.711,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   92,
+   42,
+   10
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 17.401,
+  "status": "ok",
+  "timing": {
+   "total_us": 15157,
+   "tex_us": 13742,
+   "traverse_us": 864,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 37.252,
+  "raster_us": 15718,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 43,
+  "par": 23,
+  "reply_ms": 0.826,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   135,
+   49,
+   19
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 19.249,
+  "status": "ok",
+  "timing": {
+   "total_us": 18159,
+   "tex_us": 16180,
+   "traverse_us": 1379,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 33.737,
+  "raster_us": 10571,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 44,
+  "par": 24,
+  "reply_ms": 0.405,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   43,
+   17,
+   5
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 7.018,
+  "status": "ok",
+  "timing": {
+   "total_us": 5482,
+   "tex_us": 4750,
+   "traverse_us": 502,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 13.078,
+  "raster_us": 4397,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 45,
+  "par": 24,
+  "reply_ms": 0.411,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   64,
+   19,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 5.985,
+  "status": "ok",
+  "timing": {
+   "total_us": 5243,
+   "tex_us": 4507,
+   "traverse_us": 322,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 12.31,
+  "raster_us": 4817,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 46,
+  "par": 25,
+  "reply_ms": 0.313,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   66,
+   32,
+   9
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 10.637,
+  "status": "ok",
+  "timing": {
+   "total_us": 9005,
+   "tex_us": 7943,
+   "traverse_us": 607,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 20.312,
+  "raster_us": 6702,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 47,
+  "par": 25,
+  "reply_ms": 0.562,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   42,
+   21,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 9.596,
+  "status": "ok",
+  "timing": {
+   "total_us": 8977,
+   "tex_us": 8150,
+   "traverse_us": 465,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 19.216,
+  "raster_us": 7793,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 48,
+  "par": 26,
+  "reply_ms": 0.351,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   49,
+   16,
+   4
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 3.047,
+  "status": "ok",
+  "timing": {
+   "total_us": 1582,
+   "tex_us": 1337,
+   "traverse_us": 114,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 4.633,
+  "raster_us": 1045,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 49,
+  "par": 26,
+  "reply_ms": 0.555,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   45,
+   15,
+   18
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 2.894,
+  "status": "ok",
+  "timing": {
+   "total_us": 2178,
+   "tex_us": 1806,
+   "traverse_us": 149,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 4.544,
+  "raster_us": 1056,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 50,
+  "par": 27,
+  "reply_ms": 0.412,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   53,
+   15,
+   5
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 4.502,
+  "status": "ok",
+  "timing": {
+   "total_us": 3416,
+   "tex_us": 2737,
+   "traverse_us": 389,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 8.819,
+  "raster_us": 2810,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 51,
+  "par": 27,
+  "reply_ms": 0.37,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   64,
+   29,
+   13
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 4.197,
+  "status": "ok",
+  "timing": {
+   "total_us": 3625,
+   "tex_us": 2811,
+   "traverse_us": 369,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 10.719,
+  "raster_us": 4520,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 52,
+  "par": 28,
+  "reply_ms": 3.566,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   109,
+   85,
+   26
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 25.438,
+  "status": "ok",
+  "timing": {
+   "total_us": 22756,
+   "tex_us": 20875,
+   "traverse_us": 1327,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 44.046,
+  "raster_us": 14770,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 53,
+  "par": 28,
+  "reply_ms": 0.807,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   94,
+   68,
+   21
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 25.683,
+  "status": "ok",
+  "timing": {
+   "total_us": 24504,
+   "tex_us": 22501,
+   "traverse_us": 1309,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 46.476,
+  "raster_us": 16300,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 54,
+  "par": 29,
+  "reply_ms": 1.21,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   98,
+   37,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 14.496,
+  "status": "ok",
+  "timing": {
+   "total_us": 12017,
+   "tex_us": 10706,
+   "traverse_us": 740,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 28.432,
+  "raster_us": 10031,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 55,
+  "par": 29,
+  "reply_ms": 0.536,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   63,
+   32,
+   13
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 8.065,
+  "status": "ok",
+  "timing": {
+   "total_us": 7362,
+   "tex_us": 6499,
+   "traverse_us": 409,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 14.483,
+  "raster_us": 4575,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 56,
+  "par": 30,
+  "reply_ms": 0.662,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   139,
+   54,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 5.233,
+  "status": "ok",
+  "timing": {
+   "total_us": 1255,
+   "tex_us": 928,
+   "traverse_us": 134,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 8.426,
+  "raster_us": 748,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 57,
+  "par": 30,
+  "reply_ms": 0.55,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   84,
+   22,
+   17
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 1.948,
+  "status": "ok",
+  "timing": {
+   "total_us": 1313,
+   "tex_us": 850,
+   "traverse_us": 155,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 3.624,
+  "raster_us": 720,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 58,
+  "par": 31,
+  "reply_ms": 0.588,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   101,
+   24,
+   7
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 3.858,
+  "status": "ok",
+  "timing": {
+   "total_us": 1508,
+   "tex_us": 1055,
+   "traverse_us": 196,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 6.484,
+  "raster_us": 1323,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 59,
+  "par": 31,
+  "reply_ms": 0.755,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   117,
+   40,
+   17
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 2.298,
+  "status": "ok",
+  "timing": {
+   "total_us": 1431,
+   "tex_us": 923,
+   "traverse_us": 152,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 4.152,
+  "raster_us": 869,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 60,
+  "par": 32,
+  "reply_ms": 1.711,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   61,
+   22,
+   4
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 7.308,
+  "status": "ok",
+  "timing": {
+   "total_us": 6273,
+   "tex_us": 5490,
+   "traverse_us": 620,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 16.147,
+  "raster_us": 6219,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 61,
+  "par": 32,
+  "reply_ms": 0.43,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   68,
+   26,
+   16
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 7.076,
+  "status": "ok",
+  "timing": {
+   "total_us": 6320,
+   "tex_us": 5509,
+   "traverse_us": 388,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 15.39,
+  "raster_us": 6347,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 62,
+  "par": 33,
+  "reply_ms": 0.366,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   72,
+   31,
+   5
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 13.82,
+  "status": "ok",
+  "timing": {
+   "total_us": 12460,
+   "tex_us": 11548,
+   "traverse_us": 591,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 25.211,
+  "raster_us": 8541,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 63,
+  "par": 33,
+  "reply_ms": 0.368,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   101,
+   48,
+   17
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 11.814,
+  "status": "ok",
+  "timing": {
+   "total_us": 11237,
+   "tex_us": 10428,
+   "traverse_us": 493,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 21.291,
+  "raster_us": 7043,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 64,
+  "par": 34,
+  "reply_ms": 0.307,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   68,
+   28,
+   4
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 10.811,
+  "status": "ok",
+  "timing": {
+   "total_us": 9666,
+   "tex_us": 9002,
+   "traverse_us": 437,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 17.135,
+  "raster_us": 4705,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 65,
+  "par": 34,
+  "reply_ms": 0.389,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   81,
+   32,
+   9
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 8.124,
+  "status": "ok",
+  "timing": {
+   "total_us": 7533,
+   "tex_us": 6809,
+   "traverse_us": 375,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 16.653,
+  "raster_us": 6700,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 66,
+  "par": 35,
+  "reply_ms": 0.38,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   103,
+   19,
+   12
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 5.624,
+  "status": "ok",
+  "timing": {
+   "total_us": 4464,
+   "tex_us": 3804,
+   "traverse_us": 417,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 10.276,
+  "raster_us": 3037,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 67,
+  "par": 35,
+  "reply_ms": 0.493,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   108,
+   36,
+   17
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 15.231,
+  "status": "ok",
+  "timing": {
+   "total_us": 14449,
+   "tex_us": 13117,
+   "traverse_us": 790,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 27.012,
+  "raster_us": 8900,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 68,
+  "par": 36,
+  "reply_ms": 0.321,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   53,
+   29,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 7.763,
+  "status": "ok",
+  "timing": {
+   "total_us": 6521,
+   "tex_us": 5746,
+   "traverse_us": 468,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 19.099,
+  "raster_us": 9258,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 69,
+  "par": 36,
+  "reply_ms": 0.458,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   42,
+   16,
+   6
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 6.864,
+  "status": "ok",
+  "timing": {
+   "total_us": 6372,
+   "tex_us": 5499,
+   "traverse_us": 385,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 16.215,
+  "raster_us": 7550,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 70,
+  "par": 37,
+  "reply_ms": 0.822,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   53,
+   32,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 14.66,
+  "status": "ok",
+  "timing": {
+   "total_us": 13249,
+   "tex_us": 12057,
+   "traverse_us": 724,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 24.749,
+  "raster_us": 8094,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 71,
+  "par": 37,
+  "reply_ms": 0.315,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   52,
+   32,
+   16
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 9.627,
+  "status": "ok",
+  "timing": {
+   "total_us": 8849,
+   "tex_us": 8003,
+   "traverse_us": 438,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 17.133,
+  "raster_us": 5604,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 72,
+  "par": 38,
+  "reply_ms": 0.509,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   107,
+   57,
+   6
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 8.436,
+  "status": "ok",
+  "timing": {
+   "total_us": 6657,
+   "tex_us": 5877,
+   "traverse_us": 509,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 15.251,
+  "raster_us": 4793,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 73,
+  "par": 38,
+  "reply_ms": 3.29,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   76,
+   35,
+   24
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 8.242,
+  "status": "ok",
+  "timing": {
+   "total_us": 7484,
+   "tex_us": 6467,
+   "traverse_us": 578,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 15.732,
+  "raster_us": 5457,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 74,
+  "par": 39,
+  "reply_ms": 0.573,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   89,
+   41,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 13.889,
+  "status": "ok",
+  "timing": {
+   "total_us": 11919,
+   "tex_us": 10580,
+   "traverse_us": 847,
+   "pack_us": 0
+  },
+  "pagination_stale": true,
+  "context_stale": false,
+  "raster_ms": 30.801,
+  "raster_us": 12733,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 75,
+  "par": 39,
+  "reply_ms": 0.43,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   48,
+   21,
+   10
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 8.626,
+  "status": "ok",
+  "timing": {
+   "total_us": 8033,
+   "tex_us": 7294,
+   "traverse_us": 395,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 17.478,
+  "raster_us": 7135,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 76,
+  "par": 40,
+  "reply_ms": 0.387,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   74,
+   28,
+   5
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 9.23,
+  "status": "ok",
+  "timing": {
+   "total_us": 7823,
+   "tex_us": 6938,
+   "traverse_us": 670,
+   "pack_us": 0
+  },
+  "pagination_stale": true,
+  "context_stale": false,
+  "raster_ms": 17.179,
+  "raster_us": 5376,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 77,
+  "par": 40,
+  "reply_ms": 0.748,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   190,
+   68,
+   19
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 16.792,
+  "status": "ok",
+  "timing": {
+   "total_us": 15625,
+   "tex_us": 13781,
+   "traverse_us": 1217,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 36.398,
+  "raster_us": 15596,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 78,
+  "par": 41,
+  "reply_ms": 0.499,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   80,
+   36,
+   7
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 11.202,
+  "status": "ok",
+  "timing": {
+   "total_us": 9708,
+   "tex_us": 8811,
+   "traverse_us": 566,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 18.071,
+  "raster_us": 5286,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 79,
+  "par": 41,
+  "reply_ms": 0.546,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   53,
+   28,
+   11
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 7.277,
+  "status": "ok",
+  "timing": {
+   "total_us": 6655,
+   "tex_us": 5963,
+   "traverse_us": 408,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 13.897,
+  "raster_us": 4494,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 80,
+  "par": 42,
+  "reply_ms": 0.465,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   82,
+   35,
+   10
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 10.839,
+  "status": "ok",
+  "timing": {
+   "total_us": 9439,
+   "tex_us": 8462,
+   "traverse_us": 648,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 16.899,
+  "raster_us": 4613,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 81,
+  "par": 42,
+  "reply_ms": 0.651,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   59,
+   46,
+   10
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 6.644,
+  "status": "ok",
+  "timing": {
+   "total_us": 5802,
+   "tex_us": 5142,
+   "traverse_us": 364,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 14.859,
+  "raster_us": 6226,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 82,
+  "par": 43,
+  "reply_ms": 0.67,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   172,
+   83,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 22.844,
+  "status": "ok",
+  "timing": {
+   "total_us": 20781,
+   "tex_us": 19414,
+   "traverse_us": 923,
+   "pack_us": 0
+  },
+  "pagination_stale": true,
+  "context_stale": false,
+  "raster_ms": 45.475,
+  "raster_us": 17702,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 83,
+  "par": 43,
+  "reply_ms": 0.51,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   45,
+   28,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 16.278,
+  "status": "ok",
+  "timing": {
+   "total_us": 15651,
+   "tex_us": 14327,
+   "traverse_us": 659,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 27.593,
+  "raster_us": 8317,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 84,
+  "par": 44,
+  "reply_ms": 0.48,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   51,
+   23,
+   9
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 6.713,
+  "status": "ok",
+  "timing": {
+   "total_us": 5399,
+   "tex_us": 4622,
+   "traverse_us": 347,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 16.358,
+  "raster_us": 7665,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 85,
+  "par": 44,
+  "reply_ms": 0.456,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   38,
+   18,
+   7
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 5.719,
+  "status": "ok",
+  "timing": {
+   "total_us": 5222,
+   "tex_us": 4449,
+   "traverse_us": 414,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 14.673,
+  "raster_us": 6999,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 86,
+  "par": 45,
+  "reply_ms": 0.644,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   43,
+   18,
+   5
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 9.784,
+  "status": "ok",
+  "timing": {
+   "total_us": 8135,
+   "tex_us": 7085,
+   "traverse_us": 416,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 16.72,
+  "raster_us": 5110,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 87,
+  "par": 45,
+  "reply_ms": 0.651,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   110,
+   58,
+   20
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 14.106,
+  "status": "ok",
+  "timing": {
+   "total_us": 13161,
+   "tex_us": 11951,
+   "traverse_us": 763,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 33.261,
+  "raster_us": 15515,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 88,
+  "par": 46,
+  "reply_ms": 0.785,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   130,
+   46,
+   9
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 10.936,
+  "status": "ok",
+  "timing": {
+   "total_us": 8689,
+   "tex_us": 7715,
+   "traverse_us": 567,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 25.226,
+  "raster_us": 11136,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 89,
+  "par": 46,
+  "reply_ms": 0.656,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   78,
+   41,
+   19
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 11.045,
+  "status": "ok",
+  "timing": {
+   "total_us": 10134,
+   "tex_us": 8835,
+   "traverse_us": 714,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 25.339,
+  "raster_us": 11181,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 90,
+  "par": 47,
+  "reply_ms": 0.544,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   87,
+   28,
+   9
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 4.54,
+  "status": "ok",
+  "timing": {
+   "total_us": 2638,
+   "tex_us": 2078,
+   "traverse_us": 263,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 10.98,
+  "raster_us": 4884,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 91,
+  "par": 47,
+  "reply_ms": 0.636,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   70,
+   22,
+   18
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 3.459,
+  "status": "ok",
+  "timing": {
+   "total_us": 2684,
+   "tex_us": 2042,
+   "traverse_us": 256,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 11.239,
+  "raster_us": 3908,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 92,
+  "par": 48,
+  "reply_ms": 3.781,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   92,
+   44,
+   16
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 16.841,
+  "status": "ok",
+  "timing": {
+   "total_us": 9407,
+   "tex_us": 8031,
+   "traverse_us": 762,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 29.886,
+  "raster_us": 9705,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 93,
+  "par": 48,
+  "reply_ms": 0.646,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   102,
+   52,
+   18
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 9.149,
+  "status": "ok",
+  "timing": {
+   "total_us": 8231,
+   "tex_us": 7123,
+   "traverse_us": 607,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 19.763,
+  "raster_us": 7873,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 94,
+  "par": 49,
+  "reply_ms": 0.514,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   59,
+   18,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 3.448,
+  "status": "ok",
+  "timing": {
+   "total_us": 1352,
+   "tex_us": 988,
+   "traverse_us": 151,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 5.35,
+  "raster_us": 824,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 95,
+  "par": 49,
+  "reply_ms": 0.665,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   81,
+   21,
+   19
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 2.218,
+  "status": "ok",
+  "timing": {
+   "total_us": 1472,
+   "tex_us": 1044,
+   "traverse_us": 167,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 4.223,
+  "raster_us": 1035,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 96,
+  "par": 50,
+  "reply_ms": 0.592,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   104,
+   53,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 15.127,
+  "status": "ok",
+  "timing": {
+   "total_us": 13178,
+   "tex_us": 12166,
+   "traverse_us": 603,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 28.526,
+  "raster_us": 10169,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 97,
+  "par": 50,
+  "reply_ms": 1.093,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   66,
+   36,
+   16
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 10.855,
+  "status": "ok",
+  "timing": {
+   "total_us": 10090,
+   "tex_us": 8619,
+   "traverse_us": 430,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 19.396,
+  "raster_us": 6180,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 98,
+  "par": 51,
+  "reply_ms": 0.496,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   65,
+   28,
+   4
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 3.205,
+  "status": "ok",
+  "timing": {
+   "total_us": 1922,
+   "tex_us": 1473,
+   "traverse_us": 215,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 7.525,
+  "raster_us": 3079,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 99,
+  "par": 51,
+  "reply_ms": 0.511,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   112,
+   22,
+   11
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 3.479,
+  "status": "ok",
+  "timing": {
+   "total_us": 2828,
+   "tex_us": 2139,
+   "traverse_us": 336,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 7.179,
+  "raster_us": 2427,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 100,
+  "par": 52,
+  "reply_ms": 0.459,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   64,
+   21,
+   4
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 3.537,
+  "status": "ok",
+  "timing": {
+   "total_us": 2324,
+   "tex_us": 1896,
+   "traverse_us": 195,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 7.404,
+  "raster_us": 2755,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 101,
+  "par": 52,
+  "reply_ms": 0.622,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   71,
+   23,
+   9
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 4.716,
+  "status": "ok",
+  "timing": {
+   "total_us": 4023,
+   "tex_us": 3095,
+   "traverse_us": 363,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 8.664,
+  "raster_us": 2695,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 102,
+  "par": 53,
+  "reply_ms": 0.639,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   96,
+   34,
+   5
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 16.617,
+  "status": "ok",
+  "timing": {
+   "total_us": 15218,
+   "tex_us": 12093,
+   "traverse_us": 1088,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 27.002,
+  "raster_us": 7364,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 103,
+  "par": 53,
+  "reply_ms": 0.54,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   42,
+   28,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 9.525,
+  "status": "ok",
+  "timing": {
+   "total_us": 8947,
+   "tex_us": 8036,
+   "traverse_us": 464,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 20.78,
+  "raster_us": 8408,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 104,
+  "par": 54,
+  "reply_ms": 0.48,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   84,
+   17,
+   9
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 5.076,
+  "status": "ok",
+  "timing": {
+   "total_us": 3773,
+   "tex_us": 3317,
+   "traverse_us": 242,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 9.358,
+  "raster_us": 3051,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 105,
+  "par": 54,
+  "reply_ms": 0.581,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   114,
+   31,
+   21
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 7.442,
+  "status": "ok",
+  "timing": {
+   "total_us": 6629,
+   "tex_us": 5710,
+   "traverse_us": 433,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 17.157,
+  "raster_us": 7646,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 106,
+  "par": 55,
+  "reply_ms": 0.547,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   70,
+   45,
+   6
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 12.253,
+  "status": "ok",
+  "timing": {
+   "total_us": 10058,
+   "tex_us": 8669,
+   "traverse_us": 875,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 24.94,
+  "raster_us": 9276,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 107,
+  "par": 55,
+  "reply_ms": 0.596,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   84,
+   52,
+   19
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 9.527,
+  "status": "ok",
+  "timing": {
+   "total_us": 8754,
+   "tex_us": 7505,
+   "traverse_us": 677,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 20.794,
+  "raster_us": 9229,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 108,
+  "par": 56,
+  "reply_ms": 0.363,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   43,
+   20,
+   5
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 8.868,
+  "status": "ok",
+  "timing": {
+   "total_us": 7216,
+   "tex_us": 6225,
+   "traverse_us": 548,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 16.821,
+  "raster_us": 6176,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 109,
+  "par": 56,
+  "reply_ms": 0.726,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   50,
+   31,
+   17
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 5.243,
+  "status": "ok",
+  "timing": {
+   "total_us": 4563,
+   "tex_us": 3837,
+   "traverse_us": 323,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 12.85,
+  "raster_us": 5681,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 110,
+  "par": 57,
+  "reply_ms": 0.351,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   67,
+   24,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 5.063,
+  "status": "ok",
+  "timing": {
+   "total_us": 3555,
+   "tex_us": 2771,
+   "traverse_us": 253,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 8.085,
+  "raster_us": 2033,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 111,
+  "par": 57,
+  "reply_ms": 0.597,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   48,
+   26,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 3.62,
+  "status": "ok",
+  "timing": {
+   "total_us": 2914,
+   "tex_us": 2355,
+   "traverse_us": 200,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 7.077,
+  "raster_us": 2323,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 112,
+  "par": 58,
+  "reply_ms": 0.348,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   49,
+   20,
+   6
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 6.458,
+  "status": "ok",
+  "timing": {
+   "total_us": 4816,
+   "tex_us": 4159,
+   "traverse_us": 284,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 13.434,
+  "raster_us": 4934,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 113,
+  "par": 58,
+  "reply_ms": 2.543,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   86,
+   41,
+   24
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 11.227,
+  "status": "ok",
+  "timing": {
+   "total_us": 10368,
+   "tex_us": 9310,
+   "traverse_us": 551,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 22.866,
+  "raster_us": 8623,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 114,
+  "par": 59,
+  "reply_ms": 0.722,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   113,
+   63,
+   11
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 15.43,
+  "status": "ok",
+  "timing": {
+   "total_us": 13119,
+   "tex_us": 11596,
+   "traverse_us": 1018,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 28.461,
+  "raster_us": 9404,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 115,
+  "par": 59,
+  "reply_ms": 0.76,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   126,
+   56,
+   21
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 10.855,
+  "status": "ok",
+  "timing": {
+   "total_us": 9917,
+   "tex_us": 8658,
+   "traverse_us": 637,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 21.366,
+  "raster_us": 8094,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 116,
+  "par": 60,
+  "reply_ms": 0.545,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   73,
+   38,
+   6
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 9.156,
+  "status": "ok",
+  "timing": {
+   "total_us": 7345,
+   "tex_us": 6458,
+   "traverse_us": 442,
+   "pack_us": 0
+  },
+  "pagination_stale": true,
+  "context_stale": false,
+  "raster_ms": 16.684,
+  "raster_us": 5423,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 117,
+  "par": 60,
+  "reply_ms": 0.47,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   49,
+   26,
+   10
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 4.563,
+  "status": "ok",
+  "timing": {
+   "total_us": 3917,
+   "tex_us": 3263,
+   "traverse_us": 257,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 9.156,
+  "raster_us": 3208,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 118,
+  "par": 61,
+  "reply_ms": 0.594,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   64,
+   33,
+   8
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 7.399,
+  "status": "ok",
+  "timing": {
+   "total_us": 5666,
+   "tex_us": 4854,
+   "traverse_us": 371,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 15.099,
+  "raster_us": 5589,
+  "raster_glyphs_skipped": 0
+ },
+ {
+  "i": 119,
+  "par": 61,
+  "reply_ms": 0.576,
+  "routed": "fast",
+  "reasons": [],
+  "host_us": [
+   99,
+   39,
+   16
+  ],
+  "update": "ParagraphUpdate",
+  "update_ms": 9.013,
+  "status": "ok",
+  "timing": {
+   "total_us": 7582,
+   "tex_us": 6384,
+   "traverse_us": 511,
+   "pack_us": 0
+  },
+  "pagination_stale": false,
+  "context_stale": false,
+  "raster_ms": 17.412,
+  "raster_us": 5798,
+  "raster_glyphs_skipped": 0
+ }
+]

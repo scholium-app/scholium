@@ -1,0 +1,224 @@
+[
+ {
+  "scenario": "preamble error: missing-package",
+  "body_edit_while_broken": {
+   "routed": "background",
+   "edit_id": 2,
+   "update": "BackgroundScheduled",
+   "status": null,
+   "reasons": [
+    "NoContext"
+   ],
+   "latency_s": 0.0
+  },
+  "recovered_live_s": 1.114,
+  "fixed_at_s": 9.189,
+  "engine_states": [
+   {
+    "t": 0.338,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 1.191,
+    "state": "Failed",
+    "reason": "lualatex server exited during startup with exit status: 1; TeX log: ! LaTeX Error: File `scholiumnosuchpkg.sty' not foun"
+   },
+   {
+    "t": 2.191,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 2.944,
+    "state": "Failed",
+    "reason": "lualatex server exited during startup with exit status: 1; TeX log: ! LaTeX Error: File `scholiumnosuchpkg.sty' not foun"
+   },
+   {
+    "t": 3.944,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 4.797,
+    "state": "Failed",
+    "reason": "lualatex server exited during startup with exit status: 1; TeX log: ! LaTeX Error: File `scholiumnosuchpkg.sty' not foun"
+   },
+   {
+    "t": 5.798,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 6.601,
+    "state": "Failed",
+    "reason": "lualatex server exited during startup with exit status: 1; TeX log: ! LaTeX Error: File `scholiumnosuchpkg.sty' not foun"
+   },
+   {
+    "t": 7.601,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 8.404,
+    "state": "Failed",
+    "reason": "lualatex server exited during startup with exit status: 1; TeX log: ! LaTeX Error: File `scholiumnosuchpkg.sty' not foun"
+   },
+   {
+    "t": 9.404,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 10.26,
+    "state": "Ready",
+    "reason": ""
+   }
+  ],
+  "layouts": [
+   {
+    "t": 1.186,
+    "compile": {
+     "state": "CompiledWithErrors",
+     "count": 3
+    },
+    "convergence": "Converging",
+    "pages_total": 1
+   },
+   {
+    "t": 2.055,
+    "compile": {
+     "state": "CompiledWithErrors",
+     "count": 3
+    },
+    "convergence": "Converging",
+    "pages_total": 1
+   },
+   {
+    "t": 10.551,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Stale",
+    "pages_total": 1
+   },
+   {
+    "t": 11.209,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Converged",
+    "pages_total": 1
+   }
+  ],
+  "diagnostics": [
+   [
+    {
+     "severity": "error",
+     "line": null,
+     "message": "LaTeX Error: File `scholiumnosuchpkg.sty' not found."
+    },
+    {
+     "severity": "error",
+     "line": null,
+     "message": "Emergency stop."
+    },
+    {
+     "severity": "error",
+     "line": null,
+     "message": " ==> Fatal error occurred, no output PDF file produced!"
+    }
+   ],
+   [
+    {
+     "severity": "error",
+     "line": null,
+     "message": "LaTeX Error: File `scholiumnosuchpkg.sty' not found."
+    },
+    {
+     "severity": "error",
+     "line": null,
+     "message": "Emergency stop."
+    },
+    {
+     "severity": "error",
+     "line": null,
+     "message": " ==> Fatal error occurred, no output PDF file produced!"
+    }
+   ]
+  ],
+  "layout_ok_after_fix_s": 1.362
+ },
+ {
+  "scenario": "preamble error: undefined-command",
+  "body_edit_while_broken": {
+   "routed": "fast",
+   "edit_id": 2,
+   "update": "ParagraphUpdate",
+   "status": "ok",
+   "reasons": [],
+   "latency_s": 0.143
+  },
+  "recovered_live_s": 1.255,
+  "fixed_at_s": 9.594,
+  "engine_states": [
+   {
+    "t": 0.347,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 1.209,
+    "state": "Ready",
+    "reason": ""
+   },
+   {
+    "t": 9.935,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 10.807,
+    "state": "Ready",
+    "reason": ""
+   }
+  ],
+  "layouts": [
+   {
+    "t": 1.449,
+    "compile": {
+     "state": "CompiledWithErrors",
+     "count": 1
+    },
+    "convergence": "Converging",
+    "pages_total": 1
+   },
+   {
+    "t": 11.067,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Stale",
+    "pages_total": 1
+   },
+   {
+    "t": 11.695,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Converged",
+    "pages_total": 1
+   }
+  ],
+  "diagnostics": [
+   [
+    {
+     "severity": "error",
+     "line": 5,
+     "message": "Undefined control sequence."
+    }
+   ]
+  ],
+  "layout_ok_after_fix_s": 1.473
+ }
+]

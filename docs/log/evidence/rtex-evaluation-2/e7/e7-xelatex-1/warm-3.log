@@ -1,0 +1,49 @@
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Arch Linux) (preloaded format=xelatex)
+ restricted \write18 enabled.
+entering extended mode
+(/project/main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+(/usr/share/texmf-dist/tex/latex/ctex/ctexart.cls
+(/usr/share/texmf-dist/tex/latex/ctex/config/ctexbackend.cfg)
+(/usr/share/texmf-dist/tex/latex/l3kernel/expl3.sty
+(/usr/share/texmf-dist/tex/latex/l3backend/l3backend-xetex.def))
+Document Class: ctexart 2022/07/14 v2.5.10 Chinese adapter for class article (C
+TEX)
+(/usr/share/texmf-dist/tex/latex/ctex/ctexhook.sty)
+(/usr/share/texmf-dist/tex/latex/ctex/ctexpatch.sty)
+(/usr/share/texmf-dist/tex/latex/base/fix-cm.sty
+(/usr/share/texmf-dist/tex/latex/base/ts1enc.def))
+(/usr/share/texmf-dist/tex/latex/ctex/config/ctexopts.cfg)
+(/usr/share/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(/usr/share/texmf-dist/tex/latex/base/size10.clo))
+(/usr/share/texmf-dist/tex/latex/ctex/engine/ctex-engine-xetex.def
+(/usr/share/texmf-dist/tex/xelatex/xecjk/xeCJK.sty
+(/usr/share/texmf-dist/tex/latex/l3packages/xtemplate/xtemplate.sty)
+(/usr/share/texmf-dist/tex/latex/fontspec/fontspec.sty
+(/usr/share/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)
+(/usr/share/texmf-dist/tex/latex/fontspec/fontspec-xetex.sty
+(/usr/share/texmf-dist/tex/latex/base/fontenc.sty)
+(/usr/share/texmf-dist/tex/latex/fontspec/fontspec.cfg)))
+(/usr/share/texmf-dist/tex/xelatex/xecjk/xeCJK.cfg)))
+(/usr/share/texmf-dist/tex/latex/zhnumber/zhnumber.sty
+(/usr/share/texmf-dist/tex/latex/zhnumber/zhnumber-utf8.cfg))
+(/usr/share/texmf-dist/tex/latex/ctex/scheme/ctex-scheme-chinese-article.def
+(/usr/share/texmf-dist/tex/latex/ctex/config/ctex-name-utf8.cfg))
+(/usr/share/texmf-dist/tex/latex/ctex/ctex-c5size.clo)
+(/usr/share/texmf-dist/tex/latex/ctex/fontset/ctex-fontset-fandol.def))
+(/usr/share/texmf-dist/tex/latex/ctex/config/ctex.cfg)
+(/usr/share/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/share/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/share/texmf-dist/tex/latex/amscls/amsthm.sty) (/work/main.aux)
+(/usr/share/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texmf-dist/tex/latex/amsfonts/umsb.fd) [1] (/work/main.aux) )
+Output written on /work/main.pdf (1 page).
+Transcript written on /work/main.log.

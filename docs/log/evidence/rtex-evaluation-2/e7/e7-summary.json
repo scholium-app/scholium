@@ -1,0 +1,253 @@
+{
+  "sandbox_overhead": {
+    "command": "kpsewhich --version",
+    "wall_s": [
+      0.507,
+      0.5,
+      0.528
+    ],
+    "median_s": 0.507
+  },
+  "runs": [
+    {
+      "engine": "xelatex",
+      "requested_pages": 1,
+      "pages": 1,
+      "cold_first": {
+        "exit": 0,
+        "wall_s": 1.756,
+        "rerun_requested": true,
+        "errors": 0
+      },
+      "cold_second": {
+        "exit": 0,
+        "wall_s": 1.717,
+        "rerun_requested": false,
+        "errors": 0
+      },
+      "cold_open_s": 3.473,
+      "warm": [
+        {
+          "exit": 0,
+          "wall_s": 1.828,
+          "rerun_requested": false,
+          "errors": 0
+        },
+        {
+          "exit": 0,
+          "wall_s": 1.778,
+          "rerun_requested": false,
+          "errors": 0
+        },
+        {
+          "exit": 0,
+          "wall_s": 1.736,
+          "rerun_requested": false,
+          "errors": 0
+        }
+      ],
+      "warm_median_s": 1.778,
+      "edit_in_pdf": true
+    },
+    {
+      "engine": "xelatex",
+      "requested_pages": 10,
+      "pages": 11,
+      "cold_first": {
+        "exit": 0,
+        "wall_s": 1.97,
+        "rerun_requested": true,
+        "errors": 0
+      },
+      "cold_second": {
+        "exit": 0,
+        "wall_s": 1.851,
+        "rerun_requested": false,
+        "errors": 0
+      },
+      "cold_open_s": 3.821,
+      "warm": [
+        {
+          "exit": 0,
+          "wall_s": 1.907,
+          "rerun_requested": false,
+          "errors": 0
+        },
+        {
+          "exit": 0,
+          "wall_s": 1.807,
+          "rerun_requested": true,
+          "errors": 0
+        },
+        {
+          "exit": 0,
+          "wall_s": 1.973,
+          "rerun_requested": false,
+          "errors": 0
+        }
+      ],
+      "warm_median_s": 1.907,
+      "edit_in_pdf": true
+    },
+    {
+      "engine": "xelatex",
+      "requested_pages": 50,
+      "pages": 49,
+      "cold_first": {
+        "exit": 0,
+        "wall_s": 2.025,
+        "rerun_requested": true,
+        "errors": 0
+      },
+      "cold_second": {
+        "exit": 0,
+        "wall_s": 2.152,
+        "rerun_requested": false,
+        "errors": 0
+      },
+      "cold_open_s": 4.177,
+      "warm": [
+        {
+          "exit": 0,
+          "wall_s": 2.242,
+          "rerun_requested": false,
+          "errors": 0
+        },
+        {
+          "exit": 0,
+          "wall_s": 2.16,
+          "rerun_requested": true,
+          "errors": 0
+        },
+        {
+          "exit": 0,
+          "wall_s": 2.176,
+          "rerun_requested": false,
+          "errors": 0
+        }
+      ],
+      "warm_median_s": 2.176,
+      "edit_in_pdf": true
+    },
+    {
+      "engine": "pdflatex",
+      "requested_pages": 1,
+      "pages": 1,
+      "cold_first": {
+        "exit": 0,
+        "wall_s": 0.801,
+        "rerun_requested": true,
+        "errors": 0
+      },
+      "cold_second": {
+        "exit": 0,
+        "wall_s": 0.906,
+        "rerun_requested": false,
+        "errors": 0
+      },
+      "cold_open_s": 1.707,
+      "warm": [
+        {
+          "exit": 0,
+          "wall_s": 0.914,
+          "rerun_requested": false,
+          "errors": 0
+        },
+        {
+          "exit": 0,
+          "wall_s": 0.895,
+          "rerun_requested": false,
+          "errors": 0
+        },
+        {
+          "exit": 0,
+          "wall_s": 0.907,
+          "rerun_requested": false,
+          "errors": 0
+        }
+      ],
+      "warm_median_s": 0.907,
+      "edit_in_pdf": true
+    },
+    {
+      "engine": "pdflatex",
+      "requested_pages": 10,
+      "pages": 9,
+      "cold_first": {
+        "exit": 0,
+        "wall_s": 0.932,
+        "rerun_requested": true,
+        "errors": 0
+      },
+      "cold_second": {
+        "exit": 0,
+        "wall_s": 0.714,
+        "rerun_requested": false,
+        "errors": 0
+      },
+      "cold_open_s": 1.646,
+      "warm": [
+        {
+          "exit": 0,
+          "wall_s": 0.671,
+          "rerun_requested": false,
+          "errors": 0
+        },
+        {
+          "exit": 0,
+          "wall_s": 0.67,
+          "rerun_requested": false,
+          "errors": 0
+        },
+        {
+          "exit": 0,
+          "wall_s": 0.694,
+          "rerun_requested": false,
+          "errors": 0
+        }
+      ],
+      "warm_median_s": 0.671,
+      "edit_in_pdf": true
+    },
+    {
+      "engine": "pdflatex",
+      "requested_pages": 50,
+      "pages": 41,
+      "cold_first": {
+        "exit": 0,
+        "wall_s": 0.71,
+        "rerun_requested": true,
+        "errors": 0
+      },
+      "cold_second": {
+        "exit": 0,
+        "wall_s": 0.704,
+        "rerun_requested": true,
+        "errors": 0
+      },
+      "cold_open_s": 1.414,
+      "warm": [
+        {
+          "exit": 0,
+          "wall_s": 0.722,
+          "rerun_requested": false,
+          "errors": 0
+        },
+        {
+          "exit": 0,
+          "wall_s": 0.71,
+          "rerun_requested": false,
+          "errors": 0
+        },
+        {
+          "exit": 0,
+          "wall_s": 0.758,
+          "rerun_requested": false,
+          "errors": 0
+        }
+      ],
+      "warm_median_s": 0.722,
+      "edit_in_pdf": true
+    }
+  ]
+}

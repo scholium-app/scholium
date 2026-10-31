@@ -1,0 +1,259 @@
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Arch Linux) (preloaded format=xelatex)
+ restricted \write18 enabled.
+entering extended mode
+(/project/main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+(/usr/share/texmf-dist/tex/latex/ctex/ctexart.cls
+(/usr/share/texmf-dist/tex/latex/ctex/config/ctexbackend.cfg)
+(/usr/share/texmf-dist/tex/latex/l3kernel/expl3.sty
+(/usr/share/texmf-dist/tex/latex/l3backend/l3backend-xetex.def))
+Document Class: ctexart 2022/07/14 v2.5.10 Chinese adapter for class article (C
+TEX)
+(/usr/share/texmf-dist/tex/latex/ctex/ctexhook.sty)
+(/usr/share/texmf-dist/tex/latex/ctex/ctexpatch.sty)
+(/usr/share/texmf-dist/tex/latex/base/fix-cm.sty
+(/usr/share/texmf-dist/tex/latex/base/ts1enc.def))
+(/usr/share/texmf-dist/tex/latex/ctex/config/ctexopts.cfg)
+(/usr/share/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(/usr/share/texmf-dist/tex/latex/base/size10.clo))
+(/usr/share/texmf-dist/tex/latex/ctex/engine/ctex-engine-xetex.def
+(/usr/share/texmf-dist/tex/xelatex/xecjk/xeCJK.sty
+(/usr/share/texmf-dist/tex/latex/l3packages/xtemplate/xtemplate.sty)
+(/usr/share/texmf-dist/tex/latex/fontspec/fontspec.sty
+(/usr/share/texmf-dist/tex/latex/l3packages/xparse/xparse.sty)
+(/usr/share/texmf-dist/tex/latex/fontspec/fontspec-xetex.sty
+(/usr/share/texmf-dist/tex/latex/base/fontenc.sty)
+(/usr/share/texmf-dist/tex/latex/fontspec/fontspec.cfg)))
+(/usr/share/texmf-dist/tex/xelatex/xecjk/xeCJK.cfg)))
+(/usr/share/texmf-dist/tex/latex/zhnumber/zhnumber.sty
+(/usr/share/texmf-dist/tex/latex/zhnumber/zhnumber-utf8.cfg))
+(/usr/share/texmf-dist/tex/latex/ctex/scheme/ctex-scheme-chinese-article.def
+(/usr/share/texmf-dist/tex/latex/ctex/config/ctex-name-utf8.cfg))
+(/usr/share/texmf-dist/tex/latex/ctex/ctex-c5size.clo)
+(/usr/share/texmf-dist/tex/latex/ctex/fontset/ctex-fontset-fandol.def))
+(/usr/share/texmf-dist/tex/latex/ctex/config/ctex.cfg)
+(/usr/share/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/share/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/share/texmf-dist/tex/latex/amscls/amsthm.sty)
+No file main.aux.
+(/usr/share/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texmf-dist/tex/latex/amsfonts/umsb.fd)
+
+LaTeX Warning: Reference `eq:1' on page 1 undefined on input line 15.
+
+
+LaTeX Warning: Reference `sec:1' on page 1 undefined on input line 15.
+
+[1]
+Overfull \hbox (0.47871pt too wide) in paragraph at lines 36--37
+[]\TU/FandolSong-Regular(0)/m/n/10.53937 长 文 档 的 后 台 编 译 可 能 需 要 几 秒 钟，|  但 击 键
+ 不 应 因 此 卡 顿，|  例 如 $[][] \OML/cmm/m/it/10.53937 k$\TU/FandolSong-Regular(0)/m/
+n/10.53937 。|
+[2]
+
+LaTeX Warning: Reference `eq:2' on page 3 undefined on input line 43.
+
+
+LaTeX Warning: Reference `sec:2' on page 3 undefined on input line 43.
+
+[3]
+
+LaTeX Warning: Reference `eq:3' on page 4 undefined on input line 71.
+
+
+LaTeX Warning: Reference `sec:3' on page 4 undefined on input line 71.
+
+[4] [5]
+
+LaTeX Warning: Reference `eq:4' on page 6 undefined on input line 99.
+
+
+LaTeX Warning: Reference `sec:4' on page 6 undefined on input line 99.
+
+[6] [7]
+
+LaTeX Warning: Reference `eq:5' on page 8 undefined on input line 127.
+
+
+LaTeX Warning: Reference `sec:5' on page 8 undefined on input line 127.
+
+[8] [9]
+
+LaTeX Warning: Reference `eq:6' on page 10 undefined on input line 155.
+
+
+LaTeX Warning: Reference `sec:6' on page 10 undefined on input line 155.
+
+[10]
+
+LaTeX Warning: Reference `eq:7' on page 11 undefined on input line 183.
+
+
+LaTeX Warning: Reference `sec:7' on page 11 undefined on input line 183.
+
+[11] [12]
+
+LaTeX Warning: Reference `eq:8' on page 13 undefined on input line 211.
+
+
+LaTeX Warning: Reference `sec:8' on page 13 undefined on input line 211.
+
+[13] [14]
+
+LaTeX Warning: Reference `eq:9' on page 15 undefined on input line 239.
+
+
+LaTeX Warning: Reference `sec:9' on page 15 undefined on input line 239.
+
+[15]
+
+LaTeX Warning: Reference `eq:10' on page 16 undefined on input line 267.
+
+
+LaTeX Warning: Reference `sec:10' on page 16 undefined on input line 267.
+
+[16] [17]
+
+LaTeX Warning: Reference `eq:11' on page 18 undefined on input line 295.
+
+
+LaTeX Warning: Reference `sec:11' on page 18 undefined on input line 295.
+
+[18] [19]
+
+LaTeX Warning: Reference `eq:12' on page 20 undefined on input line 323.
+
+
+LaTeX Warning: Reference `sec:12' on page 20 undefined on input line 323.
+
+[20] [21]
+
+LaTeX Warning: Reference `eq:13' on page 22 undefined on input line 351.
+
+
+LaTeX Warning: Reference `sec:13' on page 22 undefined on input line 351.
+
+[22]
+
+LaTeX Warning: Reference `eq:14' on page 23 undefined on input line 379.
+
+
+LaTeX Warning: Reference `sec:14' on page 23 undefined on input line 379.
+
+[23] [24]
+
+LaTeX Warning: Reference `eq:15' on page 25 undefined on input line 407.
+
+
+LaTeX Warning: Reference `sec:15' on page 25 undefined on input line 407.
+
+[25] [26]
+
+LaTeX Warning: Reference `eq:16' on page 27 undefined on input line 435.
+
+
+LaTeX Warning: Reference `sec:16' on page 27 undefined on input line 435.
+
+[27] [28]
+
+LaTeX Warning: Reference `eq:17' on page 29 undefined on input line 463.
+
+
+LaTeX Warning: Reference `sec:17' on page 29 undefined on input line 463.
+
+[29]
+
+LaTeX Warning: Reference `eq:18' on page 30 undefined on input line 491.
+
+
+LaTeX Warning: Reference `sec:18' on page 30 undefined on input line 491.
+
+[30] [31]
+
+LaTeX Warning: Reference `eq:19' on page 32 undefined on input line 519.
+
+
+LaTeX Warning: Reference `sec:19' on page 32 undefined on input line 519.
+
+[32] [33]
+
+LaTeX Warning: Reference `eq:20' on page 34 undefined on input line 547.
+
+
+LaTeX Warning: Reference `sec:20' on page 34 undefined on input line 547.
+
+[34]
+
+LaTeX Warning: Reference `eq:21' on page 35 undefined on input line 575.
+
+
+LaTeX Warning: Reference `sec:21' on page 35 undefined on input line 575.
+
+[35] [36]
+
+LaTeX Warning: Reference `eq:22' on page 37 undefined on input line 603.
+
+
+LaTeX Warning: Reference `sec:22' on page 37 undefined on input line 603.
+
+[37] [38]
+
+LaTeX Warning: Reference `eq:23' on page 39 undefined on input line 631.
+
+
+LaTeX Warning: Reference `sec:23' on page 39 undefined on input line 631.
+
+[39] [40]
+
+LaTeX Warning: Reference `eq:24' on page 41 undefined on input line 659.
+
+
+LaTeX Warning: Reference `sec:24' on page 41 undefined on input line 659.
+
+[41]
+
+LaTeX Warning: Reference `eq:25' on page 42 undefined on input line 687.
+
+
+LaTeX Warning: Reference `sec:25' on page 42 undefined on input line 687.
+
+[42] [43]
+
+LaTeX Warning: Reference `eq:26' on page 44 undefined on input line 715.
+
+
+LaTeX Warning: Reference `sec:26' on page 44 undefined on input line 715.
+
+[44] [45]
+
+LaTeX Warning: Reference `eq:27' on page 46 undefined on input line 743.
+
+
+LaTeX Warning: Reference `sec:27' on page 46 undefined on input line 743.
+
+[46] [47]
+
+LaTeX Warning: Reference `eq:28' on page 48 undefined on input line 771.
+
+
+LaTeX Warning: Reference `sec:28' on page 48 undefined on input line 771.
+
+[48] [49] (/work/main.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ )
+(see the transcript file for additional information)
+Output written on /work/main.pdf (49 pages).
+Transcript written on /work/main.log.

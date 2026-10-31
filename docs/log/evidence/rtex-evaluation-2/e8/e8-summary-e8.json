@@ -1,0 +1,432 @@
+[
+ {
+  "scenario": "malformed host commands",
+  "cases": [
+   {
+    "case": "start>end",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": 442,
+     "end": 440,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "edit",
+     "result": {
+      "edit_id": 1,
+      "routed": "fast",
+      "reasons": [],
+      "source_revision": 2
+     }
+    },
+    "events": [
+     {
+      "t": 0.007,
+      "event": "ParagraphUpdate",
+      "status": "ok",
+      "par_id": 3,
+      "edit_id": 1,
+      "reasons": [],
+      "source_revision": 2,
+      "engine_generation": 0
+     }
+    ],
+    "alive": true
+   },
+   {
+    "case": "end beyond file",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": 2504,
+     "end": 3507,
+     "text": ""
+    },
+    "reply": {
+     "reply": "edit",
+     "result": {
+      "edit_id": 3,
+      "routed": "background",
+      "reasons": [
+       "UnbalancedEnvironment",
+       "UnbalancedBraces",
+       "NoContext"
+      ],
+      "source_revision": 4
+     }
+    },
+    "events": [
+     {
+      "t": -0.0,
+      "event": "BackgroundScheduled",
+      "par_id": 14,
+      "edit_id": 3,
+      "reasons": [
+       "UnbalancedEnvironment",
+       "UnbalancedBraces",
+       "NoContext"
+      ]
+     },
+     {
+      "t": 1.235,
+      "event": "Diagnostics",
+      "source": "background",
+      "items": [
+       {
+        "severity": "warning",
+        "line": null,
+        "message": "Reference `eq:1' on page 1 undefined on input line 15."
+       },
+       {
+        "severity": "warning",
+        "line": null,
+        "message": "Reference `sec:1' on page 1 undefined on input line 15."
+       },
+       {
+        "severity": "error",
+        "line": null,
+        "message": "File ended while scanning use of \\end ."
+       }
+      ]
+     },
+     {
+      "t": 1.235,
+      "event": "LayoutUpdate",
+      "compile": {
+       "state": "CompiledWithErrors",
+       "count": 3
+      },
+      "convergence": {
+       "state": "Converging",
+       "pass": 2,
+       "reasons": [
+        "3 compile errors"
+       ]
+      },
+      "wall_ms": 934,
+      "pages_total": 1,
+      "source_revision": 4,
+      "engine_generation": 1
+     }
+    ],
+    "alive": true
+   },
+   {
+    "case": "start beyond file",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": 2607,
+     "end": 2607,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "edit",
+     "result": {
+      "edit_id": 5,
+      "routed": "background",
+      "reasons": [
+       "Trailer span",
+       "UnbalancedEnvironment",
+       "NoContext"
+      ],
+      "source_revision": 6
+     }
+    },
+    "events": [
+     {
+      "t": -0.0,
+      "event": "BackgroundScheduled",
+      "par_id": 21,
+      "edit_id": 5,
+      "reasons": [
+       "Trailer span",
+       "UnbalancedEnvironment",
+       "NoContext"
+      ]
+     },
+     {
+      "t": 0.62,
+      "event": "LayoutUpdate",
+      "compile": {
+       "state": "Ok"
+      },
+      "convergence": {
+       "state": "Converged"
+      },
+      "wall_ms": 319,
+      "pages_total": 1,
+      "source_revision": 6,
+      "engine_generation": 2
+     }
+    ],
+    "alive": true
+   },
+   {
+    "case": "negative start",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": -5,
+     "end": -5,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "edit",
+     "result": {
+      "edit_id": 7,
+      "routed": "preamble",
+      "reasons": [
+       "preamble changed"
+      ],
+      "source_revision": 8
+     }
+    },
+    "events": [
+     {
+      "t": 0.325,
+      "event": "EngineState",
+      "state": "Starting",
+      "reason": null
+     },
+     {
+      "t": 1.253,
+      "event": "EngineState",
+      "state": "Ready",
+      "reason": null
+     },
+     {
+      "t": 1.957,
+      "event": "Diagnostics",
+      "source": "background",
+      "items": [
+       {
+        "severity": "error",
+        "line": 1,
+        "message": "LaTeX Error: Missing \\begin{document}."
+       },
+       {
+        "severity": "info",
+        "line": 1,
+        "message": "Overfull \\hbox (20.0pt too wide) in paragraph at lines 1--48"
+       }
+      ]
+     },
+     {
+      "t": 1.957,
+      "event": "LayoutUpdate",
+      "compile": {
+       "state": "CompiledWithErrors",
+       "count": 1
+      },
+      "convergence": {
+       "state": "Converging",
+       "pass": 2,
+       "reasons": [
+        "1 compile errors"
+       ]
+      },
+      "wall_ms": 1657,
+      "pages_total": 1,
+      "source_revision": 8,
+      "engine_generation": 4
+     }
+    ],
+    "alive": true
+   },
+   {
+    "case": "unknown file",
+    "command": {
+     "cmd": "edit",
+     "path": "nope.tex",
+     "start": 0,
+     "end": 0,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "unknown file nope.tex"
+    },
+    "events": [
+     {
+      "t": 0.062,
+      "event": "LayoutUpdate",
+      "compile": {
+       "state": "Ok"
+      },
+      "convergence": {
+       "state": "Stale",
+       "pending_since": 10
+      },
+      "wall_ms": 1762,
+      "pages_total": 1,
+      "source_revision": 10,
+      "engine_generation": 5
+     },
+     {
+      "t": 0.862,
+      "event": "LayoutUpdate",
+      "compile": {
+       "state": "Ok"
+      },
+      "convergence": {
+       "state": "Converged"
+      },
+      "wall_ms": 499,
+      "pages_total": 1,
+      "source_revision": 10,
+      "engine_generation": 5
+     }
+    ],
+    "alive": true
+   },
+   {
+    "case": "path traversal edit",
+    "command": {
+     "cmd": "edit",
+     "path": "../../etc/passwd",
+     "start": 0,
+     "end": 0,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "unknown file ../../etc/passwd"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "set_document outside project",
+    "command": {
+     "cmd": "set_document",
+     "path": "../../e8-escape.tex",
+     "text": "escape\n"
+    },
+    "reply": {
+     "reply": "set_document",
+     "result": {
+      "edit_id": 11,
+      "routed": "background",
+      "reasons": [
+       "new file"
+      ],
+      "source_revision": 12
+     }
+    },
+    "events": [
+     {
+      "t": 0.748,
+      "event": "LayoutUpdate",
+      "compile": {
+       "state": "Ok"
+      },
+      "convergence": {
+       "state": "Converged"
+      },
+      "wall_ms": 447,
+      "pages_total": 1,
+      "source_revision": 12,
+      "engine_generation": 5
+     }
+    ],
+    "alive": true
+   },
+   {
+    "case": "set_document absolute",
+    "command": {
+     "cmd": "set_document",
+     "path": "/tmp/e8-escape-abs.tex",
+     "text": "escape\n"
+    },
+    "reply": {
+     "reply": "set_document",
+     "result": {
+      "edit_id": 12,
+      "routed": "background",
+      "reasons": [
+       "new file"
+      ],
+      "source_revision": 13
+     }
+    },
+    "events": [
+     {
+      "t": 0.665,
+      "event": "LayoutUpdate",
+      "compile": {
+       "state": "Ok"
+      },
+      "convergence": {
+       "state": "Converged"
+      },
+      "wall_ms": 364,
+      "pages_total": 1,
+      "source_revision": 13,
+      "engine_generation": 5
+     }
+    ],
+    "alive": true
+   },
+   {
+    "case": "invalid json",
+    "command": "{not json",
+    "reply": {
+     "reply": "error",
+     "message": "bad json: key must be a string at line 1 column 2"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "unknown cmd",
+    "command": {
+     "cmd": "format_disk"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "unknown cmd format_disk"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "mid-codepoint",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": 166,
+     "end": 166,
+     "text": "x"
+    },
+    "alive": false,
+    "error": "{'harness_eof': True}",
+    "exit": 101
+   }
+  ],
+  "written_outside_snapshot": [
+   "e8-malformed/e8-escape.tex"
+  ],
+  "exit": 101
+ },
+ {
+  "scenario": "rtex serve SIGKILL",
+  "first_layout_s": 13.439,
+  "killed": [
+   158374
+  ],
+  "events": [
+   {
+    "t": 0.002,
+    "harness": "{'harness_eof': True}"
+   }
+  ],
+  "eof_after_s": 0.002,
+  "sandbox_exit": 137,
+  "detected_s": 0.002,
+  "stray_processes": [],
+  "restart_tmpfs_first_layout_s": 13.428,
+  "restart_cache-copy_first_layout_s": 1.571
+ }
+]

@@ -1,0 +1,77 @@
+{
+  "paragraphs_total": 4,
+  "paragraphs_eligible": 4,
+  "ineligible_reasons": {},
+  "paragraphs": [
+    {
+      "seq": 1,
+      "kind": "heading:section",
+      "lines": 1,
+      "glyphs_total": 6,
+      "glyphs_identical": 6,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 31.445381
+    },
+    {
+      "seq": 2,
+      "kind": "par",
+      "lines": 2,
+      "glyphs_total": 63,
+      "glyphs_identical": 63,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 29.606469
+    },
+    {
+      "seq": 3,
+      "kind": "par",
+      "lines": 3,
+      "glyphs_total": 47,
+      "glyphs_identical": 47,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 1.403806
+    },
+    {
+      "seq": 4,
+      "kind": "par",
+      "lines": 2,
+      "glyphs_total": 58,
+      "glyphs_identical": 58,
+      "status": "ok",
+      "notes": [],
+      "t_total_ms": 0.941734
+    }
+  ],
+  "pages": [
+    {
+      "page": 1,
+      "dl_glyphs": 181,
+      "pdf_glyphs": 181,
+      "matched": 181,
+      "unmatched": 0,
+      "anchored_max_dx_bp": 0.0004968702569954075,
+      "interior_max_dx_bp": 0.009028200002262565,
+      "max_dy_bp": 0.0007347781512407892,
+      "tj_quantum_bp": 0.014999990463256835,
+      "rules_dl": 1,
+      "rules_matched": 1,
+      "colors_dl": 0,
+      "colors_pdf": 0,
+      "exact": true,
+      "flags": [],
+      "raster_unmatched_fraction": null,
+      "raster_glyphs_skipped": null,
+      "images_dl": 0,
+      "images_matched": 0,
+      "images_pdf": 0
+    }
+  ],
+  "pages_degraded": 0,
+  "capture_pdf_equals_clean": true,
+  "layer1_pass": true,
+  "layer2_pass": true,
+  "layer3_pass": null,
+  "pic_cache": null
+}
