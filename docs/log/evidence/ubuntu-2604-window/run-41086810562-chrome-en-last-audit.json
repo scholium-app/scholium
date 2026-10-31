@@ -1,0 +1,17 @@
+{
+  "last_audit_chrome_facts": {
+    "locale": "En",
+    "status": {
+      "backend": "chrome.status.backend",
+      "context": "chrome.status.context.body",
+      "diagnostic_count": 0,
+      "preview_page": null,
+      "warning": null,
+      "words": 1
+    },
+    "tab_title": "doc",
+    "theme": "Light",
+    "toolbar_overflow": [],
+    "toolbars_visible": true
+  }
+}

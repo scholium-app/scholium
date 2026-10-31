@@ -1,0 +1,33 @@
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+xdotool	1:3.20160805.1-5build1
+xkb-data	2.41-2ubuntu1.1
+xvfb	2:21.1.12-1ubuntu1.9
+== key type of <FK01> (F1) in the server keymap
+    key <FK01> {
+        type= "CTRL+ALT",
+        symbols[Group1]= [              F1,              F1,              F1,              F1, XF86Switch_VT_1 ]
+    };
+    type "CTRL+ALT" {
+        modifiers= Shift+Control+Alt+LevelThree;
+        map[Shift]= Level2;
+        preserve[Shift]= Shift;
+        map[LevelThree]= Level3;
+        map[Shift+LevelThree]= Level4;
+        preserve[Shift+LevelThree]= Shift;
+        map[Control+Alt]= Level5;
+        level_name[Level1]= "Base";
+        level_name[Level2]= "Shift";
+        level_name[Level3]= "AltGr";
+        level_name[Level4]= "Shift AltGr";
+        level_name[Level5]= "Ctrl+Alt";
+    };
+== xdotool key --clearmodifiers ctrl+F1  (events seen by the focused client)
+KeyPress state 0x0, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
+KeyPress state 0x4, keycode 67 (keysym 0xffbe, F1), same_screen YES,
+KeyRelease state 0x4, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
+KeyRelease state 0x0, keycode 67 (keysym 0xffbe, F1), same_screen YES,
+== xdotool key --clearmodifiers ctrl+67  (events seen by the focused client)
+KeyPress state 0x0, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
+KeyPress state 0x4, keycode 67 (keysym 0xffbe, F1), same_screen YES,
+KeyRelease state 0x4, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
+KeyRelease state 0x0, keycode 67 (keysym 0xffbe, F1), same_screen YES,

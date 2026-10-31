@@ -205,8 +205,9 @@ try:
     wait(lambda s: not drawn(s, "ui.toolbar.overflow", "toolbar"), "overflow gone when wide")
     record("07-narrow-window-overflows-trailing-groups", True)
 
-    # 8. Ctrl+F1 and the View menu both toggle the toolbars.
-    xdo("key", "--clearmodifiers", "ctrl+F1")
+    # 8. Ctrl+F1 and the View menu both toggle the toolbars. F1 goes by keycode: xdotool would
+    # add Alt to the keysym on xkeyboard-config >= 2.46 (see chrome_ui.keycode).
+    xdo("key", "--clearmodifiers", f"ctrl+{chrome_ui.keycode(env['DISPLAY'], 'F1')}")
     s = wait(lambda s: not drawn(s, "format.bold", "toolbar") and not drawn(s, "view.mode.visual", "focus"),
              "toolbars hidden")
     assert drawn(s, "ui.menu.file", "menubar") and drawn(s, "ui.tab", "tab")

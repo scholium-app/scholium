@@ -1,0 +1,30 @@
+{
+  "01-controls-map-covers-the-chrome": {
+    "pass": true,
+    "locale": "En",
+    "fonts": {
+      "latin": null,
+      "mono": null,
+      "ui": "Noto Sans CJK SC (bundled)"
+    },
+    "controls": 36
+  },
+  "02-menus-open-and-close": {
+    "pass": true
+  },
+  "03-toolbar-bold-toggles-and-shows-active": {
+    "pass": true
+  },
+  "04-paragraph-dropdown-and-history": {
+    "pass": true
+  },
+  "05-work-mode-from-menu-and-segmented-control": {
+    "pass": true
+  },
+  "06-focus-bar-follows-the-caret": {
+    "pass": true
+  },
+  "07-narrow-window-overflows-trailing-groups": {
+    "pass": true
+  }
+}
