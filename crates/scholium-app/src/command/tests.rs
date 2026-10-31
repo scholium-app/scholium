@@ -47,7 +47,7 @@ fn context_from(bits: u32) -> CommandContext {
         mode: if bit(1) {
             ViewMode::Source
         } else {
-            ViewMode::Visual
+            ViewMode::Page
         },
         composing: bit(2),
         in_math: false,
@@ -429,7 +429,7 @@ fn ctrl_shift_m_toggles_the_work_mode_both_ways() {
     press(&mut state, egui::Key::M, chord);
     assert_eq!(state.mode, ViewMode::Source);
     press(&mut state, egui::Key::M, chord);
-    assert_eq!(state.mode, ViewMode::Visual);
+    assert_eq!(state.mode, ViewMode::Page);
     assert!(
         state.focus_requested,
         "returning to the page asks for focus back"
@@ -441,7 +441,7 @@ fn ctrl_1_and_ctrl_2_leave_the_work_mode_alone() {
     let mut state = WorkspaceState::default();
     press(&mut state, egui::Key::Num1, egui::Modifiers::COMMAND);
     press(&mut state, egui::Key::Num2, egui::Modifiers::COMMAND);
-    assert_eq!(state.mode, ViewMode::Visual);
+    assert_eq!(state.mode, ViewMode::Page);
     state.mode = ViewMode::Source;
     press(&mut state, egui::Key::Num1, egui::Modifiers::COMMAND);
     assert_eq!(state.mode, ViewMode::Source);

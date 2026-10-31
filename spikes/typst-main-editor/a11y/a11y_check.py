@@ -187,7 +187,7 @@ try:
         "toolbar": [chrome_ui.title(locale, c) for c in
                     ("format.bold", "format.italic", "edit.undo", "insert.formula", "tools.search")],
         "focus": [chrome_ui.title(locale, c) for c in
-                  ("view.mode.visual", "view.mode.source", "insert.exit_formula")],
+                  ("view.mode.page", "view.mode.source", "insert.exit_formula")],
         "tab": [chrome_ui.title(locale, c) for c in ("file.new", "file.close")],
         "status": [chrome_ui.title(locale, c) for c in ("view.zoom.in", "view.zoom.out", "view.zoom.fit_width")],
     }

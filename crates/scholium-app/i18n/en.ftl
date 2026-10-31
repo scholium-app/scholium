@@ -166,8 +166,8 @@ command-document-final_check =
     .title = Final Layout Check
     .tooltip = Run the final build and check the layout
 
-command-view-mode-visual =
-    .title = WYSIWYG
+command-view-mode-page =
+    .title = Page Editing
     .tooltip = Edit on the page · Ctrl+Shift+M to switch
 
 command-view-mode-source =
@@ -176,7 +176,7 @@ command-view-mode-source =
 
 command-view-mode-toggle =
     .title = Switch Work Mode
-    .tooltip = Switch between WYSIWYG and source
+    .tooltip = Switch between page editing and source preview
 
 command-view-navigation =
     .title = File Navigation
@@ -284,7 +284,7 @@ menu-view-language = Language
 
 reason-no_document = No document is open
 
-reason-source_readonly = The source view is read-only; switch back to WYSIWYG first
+reason-source_readonly = The source view is read-only; switch back to page editing first
 
 reason-composing = Finish the IME composition first
 

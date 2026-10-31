@@ -4,7 +4,7 @@
 pub(crate) enum ViewMode {
     /// The Typst Content editing surface.
     #[default]
-    Visual,
+    Page,
     /// Read-only structure view of the authoritative snapshot.
     Source,
 }
@@ -59,7 +59,7 @@ impl Default for WorkspaceState {
             edit_error: None,
             storage_error: None,
             composition: None,
-            mode: ViewMode::Visual,
+            mode: ViewMode::Page,
             locale: Default::default(),
             toolbars_visible: true,
             theme: Default::default(),
@@ -88,9 +88,9 @@ mod tests {
     use super::{ViewMode, WorkspaceState};
 
     #[test]
-    fn default_workspace_starts_in_visual_fit_width_mode_without_a_document() {
+    fn default_workspace_starts_in_page_fit_width_mode_without_a_document() {
         let state = WorkspaceState::default();
-        assert_eq!(state.mode, ViewMode::Visual);
+        assert_eq!(state.mode, ViewMode::Page);
         assert!(state.fit_width);
         assert_eq!(state.zoom, 1.0);
         assert!(!state.navigation);

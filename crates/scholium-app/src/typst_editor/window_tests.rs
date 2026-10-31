@@ -50,8 +50,8 @@ fn whole_window_stays_inside_tiled_sizes_in_both_modes() {
     let mut f = window();
     f.settle();
     for (mode, navigation) in [
-        (ViewMode::Visual, false),
-        (ViewMode::Visual, true),
+        (ViewMode::Page, false),
+        (ViewMode::Page, true),
         (ViewMode::Source, false),
     ] {
         f.state.mode = mode;
@@ -89,7 +89,7 @@ fn view_shortcuts_switch_modes_without_touching_the_document() {
     frame(&mut f, size, vec![command(egui::Key::J)]);
     assert!(f.state.diagnostics);
     frame(&mut f, size, vec![toggle_mode()]);
-    assert_eq!(f.state.mode, ViewMode::Visual);
+    assert_eq!(f.state.mode, ViewMode::Page);
     frame(&mut f, size, vec![command(egui::Key::F1)]);
     assert!(!f.state.toolbars_visible);
     assert_eq!(f.editor.record().snapshot, before.snapshot);
@@ -281,7 +281,7 @@ fn ctrl_1_and_ctrl_2_no_longer_switch_the_work_mode() {
     let size = egui::vec2(1280.0, 900.0);
     frame(&mut f, size, vec![]);
     frame(&mut f, size, vec![command(egui::Key::Num2)]);
-    assert_eq!(f.state.mode, ViewMode::Visual);
+    assert_eq!(f.state.mode, ViewMode::Page);
     f.state.mode = ViewMode::Source;
     frame(&mut f, size, vec![command(egui::Key::Num1)]);
     assert_eq!(f.state.mode, ViewMode::Source);

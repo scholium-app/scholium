@@ -100,7 +100,7 @@ try:
     record("03-click-locates-block", True, cursor=[s["cursor_leaf"], s["cursor_byte"]])
 
     generation = s["preview"]["generation"]
-    chrome.click("view.mode.visual", "focus")
+    chrome.click("view.mode.page", "focus")
     wait(lambda s: not s["source_mode"], "back to the editor")
     xdo("type", "X")
     s = wait(lambda s: s["current"] and texts(s)[1] == "X第二段 beta", "typing at the located block")

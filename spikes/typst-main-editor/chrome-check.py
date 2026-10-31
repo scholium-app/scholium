@@ -120,7 +120,7 @@ try:
     ppp = state()["chrome"]["pixels_per_point"]
 
     # 1. The audit map covers every bar, and the language and fonts are what the run asked for.
-    s = wait(lambda s: drawn(s, "ui.menu.file", "menubar") and drawn(s, "view.mode.visual", "focus"), "chrome drawn")
+    s = wait(lambda s: drawn(s, "ui.menu.file", "menubar") and drawn(s, "view.mode.page", "focus"), "chrome drawn")
     ok = (all(drawn(s, f"ui.menu.{m}", "menubar") for m in MENUS)
           and drawn(s, "format.bold", "toolbar") and drawn(s, "tools.search", "toolbar")
           and drawn(s, "document.page_size", "focus") and drawn(s, "ui.tab", "tab")
@@ -174,8 +174,8 @@ try:
     s = wait(lambda s: s["source_mode"] and s["preview"]["shown"], "source mode from the View menu")
     assert facts(s)["status"]["context"] == "chrome.status.context.source"
     shot("05-source")
-    chrome.click("view.mode.visual", "focus")
-    wait(lambda s: not s["source_mode"], "WYSIWYG from the segmented control")
+    chrome.click("view.mode.page", "focus")
+    wait(lambda s: not s["source_mode"], "Page editing from the segmented control")
     record("05-work-mode-from-menu-and-segmented-control", True)
 
     # 6. The focus toolbar follows the caret: formula commands inside a formula.
@@ -193,7 +193,7 @@ try:
     # 7. A narrow window moves whole trailing groups into the overflow list; the search stays.
     xdo("windowsize", window, 480, 700)
     s = wait(lambda s: drawn(s, "ui.toolbar.overflow", "toolbar"), "overflow button")
-    assert drawn(s, "tools.search", "toolbar") and drawn(s, "view.mode.visual", "focus")
+    assert drawn(s, "tools.search", "toolbar") and drawn(s, "view.mode.page", "focus")
     assert not drawn(s, "edit.undo", "toolbar"), "history moved into overflow"
     chrome.click("ui.toolbar.overflow", "toolbar")
     chrome.wait("edit.redo", "overflow")
@@ -208,7 +208,7 @@ try:
     # 8. Ctrl+F1 and the View menu both toggle the toolbars. F1 goes by keycode: xdotool would
     # add Alt to the keysym on xkeyboard-config >= 2.46 (see chrome_ui.keycode).
     xdo("key", "--clearmodifiers", f"ctrl+{chrome_ui.keycode(env['DISPLAY'], 'F1')}")
-    s = wait(lambda s: not drawn(s, "format.bold", "toolbar") and not drawn(s, "view.mode.visual", "focus"),
+    s = wait(lambda s: not drawn(s, "format.bold", "toolbar") and not drawn(s, "view.mode.page", "focus"),
              "toolbars hidden")
     assert drawn(s, "ui.menu.file", "menubar") and drawn(s, "ui.tab", "tab")
     chrome.menu("ui.menu.view", "view.toolbars")

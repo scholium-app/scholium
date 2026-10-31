@@ -74,8 +74,8 @@ pub(super) fn final_build_missing(_: &CommandContext) -> Availability {
     Availability::Unimplemented("reason.final_build")
 }
 
-pub(super) fn visual(c: &CommandContext) -> bool {
-    c.mode == ViewMode::Visual
+pub(super) fn page(c: &CommandContext) -> bool {
+    c.mode == ViewMode::Page
 }
 
 pub(super) fn source(c: &CommandContext) -> bool {
