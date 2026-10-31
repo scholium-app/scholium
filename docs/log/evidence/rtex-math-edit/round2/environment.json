@@ -1,0 +1,65 @@
+{
+  "base_sha": {
+    "exit": 0,
+    "stdout": "e0ad11765ec016846b6e07619081f0528621636b\n",
+    "stderr": ""
+  },
+  "baseline_status": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "kernel": "Linux-7.2.11-arch1-1-x86_64-with-glibc2.44",
+  "tex": {
+    "exit": 0,
+    "stdout": "This is LuaHBTeX, Version 1.24.0 (TeX Live 2026/Arch Linux)\nDevelopment id: 7724\n\nExecute  'luahbtex --credits'  for credits and version details.\n\nThere is NO warranty. Redistribution of this software is covered by\nthe terms of the GNU General Public License, version 2 or (at your option)\nany later version. For more information about these matters, see the file\nnamed COPYING and the LuaTeX source.\n\nLuaTeX is Copyright 2025 Taco Hoekwater and the LuaTeX Team.\n\n",
+    "stderr": ""
+  },
+  "bwrap": {
+    "exit": 0,
+    "stdout": "bubblewrap 0.13.1\n",
+    "stderr": ""
+  },
+  "rust": {
+    "exit": 0,
+    "stdout": "rustc 1.99.0 (b940084d7 2026-09-28)\n",
+    "stderr": ""
+  },
+  "patches": [
+    {
+      "path": "spikes/rtex-math-edit/patches/0001-observe-math-source-ownership.patch",
+      "sha256": "1c9b1bfbf4bb88e21876a8827ba802c866deca8c94a22d69bfd8cb284a127b39",
+      "numstat": {
+        "exit": 0,
+        "stdout": "27\t0\tcrates/rtex-dl/src/binary.rs\n3\t0\tcrates/rtex-dl/src/lib.rs\n12\t1\ttex/rtex-dl.lua\n58\t0\ttex/rtex-math-edit.lua\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "spikes/rtex-math-edit/patches/0002-allow-generated-attribute-tags.patch",
+      "sha256": "53e15e2ab1cc2b2206a96ea32f52b20f72d886e3d2132d5cbc828605874fa36f",
+      "numstat": {
+        "exit": 0,
+        "stdout": "2\t0\tcrates/rtex-core/src/eligibility.rs\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "spikes/rtex-math-edit/patches/0003-report-empty-fields-without-source-registry.patch",
+      "sha256": "cf2619e038c932e129f354e6ef2a9669c0cfeef06c2533a2c01cbc6f305f5973",
+      "numstat": {
+        "exit": 0,
+        "stdout": "4\t0\ttex/rtex-dl.lua\n68\t49\ttex/rtex-math-edit.lua\n",
+        "stderr": ""
+      }
+    }
+  ],
+  "patched_executable_sha256": "2d1f8bd606671ec6a02f60fcc4b6aee34a6bcfa3125a6e1725198fd2b40b9180",
+  "baseline_executable_sha256": "851f791156a06398ce53801dfe1560d4f7a3ef31ecc63ca347fc561b019b9462",
+  "tex_packages": {
+    "exit": 0,
+    "stdout": "texlive-basic 2026.1-1\ntexlive-luatex 2026.1-1\ntexlive-langchinese 2026.1-1\ntexlive-mathscience 2026.1-1\npython-fonttools 4.68.0-1\n",
+    "stderr": ""
+  },
+  "net_patch_numstat": "2\t0\tcrates/rtex-core/src/eligibility.rs\n27\t0\tcrates/rtex-dl/src/binary.rs\n3\t0\tcrates/rtex-dl/src/lib.rs\n16\t1\ttex/rtex-dl.lua\n77\t0\ttex/rtex-math-edit.lua\n"
+}

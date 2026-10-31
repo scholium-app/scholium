@@ -8,10 +8,11 @@
 
 ## 结论
 
-**完整目标 Fail；按本轮实现，L3 的 TeXmacs 式结构数学编辑不可采用。**
-“不可采用”限定于本轮补丁与驱动，不是证明 LuaTeX 原理上不能实现。
-引擎端标记已消除 E5 的 TFM 字形来源缺口，输出身份和微型夹具的实时性通过；阻塞项是空槽几何、
-结构插入后来源表过期，以及错误编译仍发布新页面。不能凭 100% 的静态字形映射把这些项目判为通过。
+**第二轮修订：引擎能力有条件可行；当前小型驱动仍未通过完整 L3 验收。**
+第一轮的旧归属、0/6 空槽和错误页面来自宿主/补丁设计，不能用于断言 rtex/LuaTeX 不可行。
+第二轮以宿主 revision 来源表、全单元重标记、空字段 marker 和显示门修复这三条路径；
+仍保留 Unicode 空 degree 缺失。真实窗口、大文档、任意宏和 IME 未验收。
+第二轮方法、数字和剩余失败见文末「第二轮」；下表及其后原章节保留**第一轮历史测量**。
 
 | 项目 | 方法与数字（每种字体各 12 个公式） | A / B 与判定 | 原始证据 |
 |---|---|---|---|
@@ -149,3 +150,88 @@ A 的未闭合花括号试验也发布了错误页；基线首个未闭合状态
 不改变完整编译输出的空 noad/slot 几何出口；错误编译结果的宿主显示门和稳定结构光标协议。
 应先用本轮的空分式与新分式反例作为失败门，再扩大宏集合和窗口测试。
 本轮可支持的正面结论仅为：**非空、冻结结构上的精确字形归属与有限光标操作可行；完整页面内结构编辑尚不可行。**
+
+
+## 第二轮（T22b）：验证诊断与重跑
+
+协调者的三项诊断均确认：[诊断记录](evidence/rtex-math-edit/round2/diagnosis.json)。
+第一轮导言区 registry 不随编辑改变，结构替换发出无标签 frac；新 a/b 继承旧 x 属性是驱动输入的结果。
+字形并集无法覆盖无字形空槽，且驱动从未实现 ADR 0043 规定的 host 显示门。原结论据此修订。
+第一轮全部 evidence 文件保留原字节，新增证据仅在 round2 子目录。
+
+### 方法与边界
+
+选择方案 (b)：host 持有 `(unit, revision)` 来源树与 tagged↔plain UTF-8 byte map，
+新节点 ID 由 document allocator 单调分配，不能跨 unit/revision 复用。每次重解析受影响 unit，
+发送整个带标签单元替换；属性 65000/65001 在公式末尾复位。引擎只报告 ID/几何，不接受来源范围 registry。
+每个 revision 的 plain save 与预期原字符串比较；另调用 rtex export 核对其真实 tagged buffer。
+这证明 host save 和 engine buffer 都准确，不声称 rtex 自动导出无标签源码。
+
+先做 [ctex packed box 探针](evidence/rtex-math-edit/round2/box-probe-ctex.txt)：
+LuaTeX 转换后有 num/den/sup/sub/radicand 盒，但实际提取时空盒属性来自转换结束时的 reset，
+见 [实际提取探针](evidence/rtex-math-edit/round2/box-runtime-untaggedbox-pages.json)。
+因此 0003 只给真正空 sub_mlist 加零尺寸 user_defined marker，携带 parent tag+role，
+非空字段完全不插 marker；其前置 marker 会影响 clean_box 删除 italic correction 的条件。
+宿主从 marker/packed box 取锚点，从 Math-on 取空 cell/formula，画 2pt 最小 hit width 和 6pt 高度轮廓。
+[CM host 占位图](evidence/rtex-math-edit/round2/accepted/cm-host-placeholders.png)和
+[Unicode 图](evidence/rtex-math-edit/round2/accepted/unicode-host-placeholders.png)只修改显示副本，不写 PDF。
+替代方案 transient phantom 会让空槽暂有占位宽高，可能改变 TeX 间距/断行，付出 M1 identity 成本；未实现。
+
+显示门将 raster/geometry 作为同一个 shown 对象发布，只接受当前 revision 的 clean live/layout。
+错误和过期事件只加诊断，继续接收输入。fingerprint 是渲染输入+geometry 的 SHA-256，**不是像素哈希**；
+错误期间原 shown 对象身份不变，raster worker 不被调用；最终门控另用 E4 pages 出口保存实际不可变 PGM，shown 持有其路径与像素字节 SHA-256。冷态持久化采图不计入 M5。M1 使用独立全页 PGM 像素哈希。
+
+### 第二轮汇总
+
+| 项目 | 最终结果 | 判定与证据 |
+|---|---|---|
+| M1 | 两字体×tag/plain 四次 verify，各 14/14 eligible、176/176 glyph；layer1/layer2/capture-clean 均通过；两对完整编译全页像素一致，glyph/rule 182 项精确相同 | **Pass**，空槽补丁未触发否决；[最终 M1](evidence/rtex-math-edit/round2/accepted/identity-summary.json) |
+| M2 | 第一轮冻结 A 73/73、B 69/73；本轮按要求未重测 B | **沿用第一轮限定结论**，不把第二轮新几何当成 B 提升 |
+| M3 | 14 个公式静态节点 CM 131/131、Unicode 130/131；空节点 CM 10/10、Unicode 9/10。原六空槽两字体都 6/6；新增 Unicode 空 degree 缺失 | **Fail（完整覆盖）/原阻塞修复**；[CM](evidence/rtex-math-edit/round2/accepted/cm-identity.json)、[Unicode](evidence/rtex-math-edit/round2/accepted/unicode-identity.json) |
+| M4 | 每字体 34 次真实全单元结构替换，plain save/engine export/map 各 34/34；x→frac 后 b 点击已正确。静态光标 CM 378/378、Unicode 377/377；动态检查 CM 361/361、Unicode 359/360，缺的是 Unicode 空 degree 可用性 | **Fail（完整覆盖）**；[动态逐步](evidence/rtex-math-edit/round2/accepted/structural-summary.json) |
+| M5 | 160 个新 spot 样本全部 fast/ok；整单元重标记包含在计时，四模式 p95 见下表 | **Conditional**，微型夹具无窗口；[原始统计](evidence/rtex-math-edit/round2/accepted/latency-summary.json) |
+| M6 | 原八次非法试验全部保留相同旧 raster/geometry 对象、拒绝 stale、有诊断、恢复当前 revision；q 导出 8/8 精确，restore 导出 8/8 | **Pass（host gate/输入保留）**；[汇总](evidence/rtex-math-edit/round2/bitmaps/gate-summary.json)、[CM 步骤](evidence/rtex-math-edit/round2/bitmaps/cm-gate-trials.json)、[Unicode 步骤](evidence/rtex-math-edit/round2/bitmaps/unicode-gate-trials.json) |
+| M7 | 第一轮中文 4/4 与 identity 保留；新 M1 仍含 ctex 中文 | **沿用第一轮限定结论** |
+
+动态缺口必须单独列出，不能把只测到的 glyph click 通过当成全部编辑位置通过：
+第 29 步最初缺失的是嵌套根式 radicand，已用失败回归修正字段标签覆盖结构标签的问题；最终该步通过。第 14 步 `\sqrt[]{x}` 的 Unicode 空 degree 缺失。
+静态 CM 空 degree 能由 amsmath 内部 Math-on 定位，unicode-math 的空 degree 则没有可用输出锚点，
+[Unicode noad 探针](evidence/rtex-math-edit/round2/box-probe-unicode.txt)证明它存在于转换前结构。
+这是当前 patch/host 的具体遗漏，没有证明 LuaTeX 无法补足。M4 把缺失位置计入失败，不静默跳过。
+
+M6 每个试验的可见顺序是：最后良好公式 → 非法错误时保持原图并显示诊断 → 非法期间 q 仍保持原图 →
+修复后显示包含 q 的新 revision → 删除 q 后还原。实际事件与 shown fingerprint 保留在上面的逐步 JSON，
+完整消息在对应 gzip JSONL；这是一套 headless raster host，不是真实编辑窗口验收。
+早期 `round2/final` 的四次 gate 探针错误地未在恢复前 begin 新 revision，因此拒绝恢复；
+最终 `round2/bitmaps` 绑定实际 source_revision，八次试验才是验收数据，早期失败没有删除。
+
+### 时延 spot 与补丁大小
+
+各格为 host 重标记 p95 / 编辑开始至 300dpi raster 完成 p95（ms），每格 20 个样本；
+先各做两次不计时预热，逐次等待回复。测完整单元 replacement，不是第一轮的裸字符路径。
+
+| 字体 | inline | display | equation | align |
+|---|---|---|---|---|
+| CM | 0.123 / 2.663 | 0.197 / 5.783 | 0.188 / 4.540 | 0.243 / 14.099 |
+| Unicode | 0.091 / 2.488 | 0.219 / 6.245 | 0.235 / 6.409 | 0.233 / 14.266 |
+
+与第一轮 A steady p95（3.391–16.892ms / 3.408–12.757ms）相比inline/display/equation 未见明显恶化；Unicode align 从 12.757 到 14.266ms（约 +11.8%），应保留该尾部差异而非宣称全模式等价。
+不同 fixture/source 长度、20 样本和环境波动使其只能算 spot，不能宣称性能提升或统计等价。
+
+新增 [0003](../../spikes/rtex-math-edit/patches/0003-report-empty-fields-without-source-registry.patch)
+为 72 行新增/49 行删除、2 个 Lua 文件；0001/0002 原字节不变。
+三补丁最终对基线净变化为 125 行新增/1 行删除、5 个文件；净变化和哈希见 [environment](evidence/rtex-math-edit/round2/environment.json)，
+[apply](evidence/rtex-math-edit/round2/apply.log)逐 blob 核对通过。
+`apply.py` 改为临时 index 顺序应用依赖补丁；不 reset/clean。Rust transport 沿用第一轮，不增加生产依赖。
+
+### 验证与 L3 判断
+
+- `python3 spikes/rtex-math-edit/test_driver.py`：4/4；`test_round2.py`：7/7，含 ID 跨 unit、UTF-8 map、单 token 脚本标签顺序和 dirty/stale 显示门回归。
+- 外部 `cargo fmt --all -- --check`、`cargo test --locked -p rtex-dl`：通过，后者 4 个测试；[日志](evidence/rtex-math-edit/round2/rtex-dl-test.log)。release build 通过，[构建日志](evidence/rtex-math-edit/round2/build.log)。
+- `python3 scripts/check-doc-links.py`：通过。根 workspace Rust/clippy/doc/deny/build、真实 window checks 按 T22 不适用，未运行；没有生产 Rust/UI/沙箱变更。
+- 原 E1–E8 克隆状态仍 clean，所有第二轮运行均复用原 `rtex` 沙箱。最终 run-id 为 identity-05、structural-04、spot-03、gate-real-02（均带 r2 前缀）。
+
+**建议：保留 rtex/LuaTeX 作为 L3 有条件可行候选，当前驱动完整验收仍 Fail。**
+继续的具体门槛是：补齐 Unicode 空 degree，扩大宏/展开覆盖并明确 unsupported，
+实现矩阵上下/选择删除语义，在真实窗口验证 caret/overlay/编辑映射，再测大文档/跨页和 IME 输入事务。
+本记录不替协调者做选型、不写 ADR、不改计划，不合并 PR。

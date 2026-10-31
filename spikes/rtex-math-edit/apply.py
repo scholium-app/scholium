@@ -21,7 +21,8 @@ def verify_contents(patches):
     with tempfile.TemporaryDirectory(prefix="t22-index-") as temporary:
         env = dict(os.environ, GIT_INDEX_FILE=str(Path(temporary) / "index"))
         git("read-tree", BASE, env=env)
-        git("apply", "--cached", *map(str, patches), env=env)
+        for patch in patches:
+            git("apply", "--cached", str(patch), env=env)
         paths = git("diff", "--cached", "--name-only", BASE, env=env).stdout.splitlines()
         for path in paths:
             expected = git("ls-files", "--stage", "--", path, env=env).stdout.split()[1]
@@ -44,21 +45,28 @@ def main():
     patches = sorted((HERE / "patches").glob("*.patch"))
     if not patches:
         raise SystemExit("refuse: no patches")
-    # All-or-nothing preflight. Existing unrelated changes are never reset or cleaned.
-    applied = git("apply", "--reverse", "--check", *map(str, patches), check=False).returncode == 0
-    if applied:
-        expected = subprocess.check_output(["git", "apply", "--numstat", *map(str, patches)], text=True)
-        paths = {line.split("\t", 2)[2] for line in expected.splitlines()}
+    # Reconstruct the entire series before changing any working-tree file.
+    # git apply treats multiple patch arguments as one diff, so dependent rounds
+    # must be applied sequentially to the temporary index.
+    with tempfile.TemporaryDirectory(prefix="t22-series-") as temporary:
+        env = dict(os.environ, GIT_INDEX_FILE=str(Path(temporary) / "index"))
+        git("read-tree", BASE, env=env)
+        for patch in patches:
+            git("apply", "--cached", str(patch), env=env)
+        paths = git("diff", "--cached", "--name-only", BASE, env=env).stdout.splitlines()
         changed = {line[3:] for line in git("status", "--porcelain").stdout.splitlines()}
-        if changed != paths:
-            raise SystemExit(f"refuse: unexpected evaluation-clone paths: {changed ^ paths}")
-        print("patches already applied")
-    else:
-        if git("status", "--porcelain").stdout:
-            raise SystemExit("refuse: evaluation clone is dirty and does not match the patch series")
-        git("apply", "--check", *map(str, patches))
-        git("apply", *map(str, patches))
-        print("applied", len(patches), "patches")
+        if changed:
+            if changed != set(paths):
+                raise SystemExit("refuse: unexpected evaluation-clone paths")
+            for path in paths:
+                expected = git("ls-files", "--stage", "--", path, env=env).stdout.split()[1]
+                if git("hash-object", "--", path).stdout.strip() != expected:
+                    raise SystemExit(f"refuse: patched content differs at {path}")
+            print("patches already applied")
+        else:
+            for patch in patches:
+                git("apply", str(patch))
+            print("applied", len(patches), "patches")
     verify_contents(patches)
     if args.build:
         subprocess.run(["cargo", "build", "--release", "--locked", "--manifest-path", str(DEST / "Cargo.toml")],

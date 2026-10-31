@@ -10,6 +10,10 @@ class Caret:
                             {n["start"] for n in nodes if n["start"] == n["stop"]})
 
     def click(self, point):
+        for slot in self.geometry.get("slots", []):
+            left, top, right, bottom = slot["bbox"]
+            if left <= point[0] <= right and top <= point[1] <= bottom:
+                return self.nodes[slot["source_id"]]["start"]
         hits = []
         for glyph in self.geometry.get("glyphs", []):
             left, top, right, bottom = glyph["bbox"]

@@ -1,0 +1,542 @@
+[
+  {
+    "variant": "plain",
+    "fault": "unbalanced-brace",
+    "bad": {
+      "routed": "background",
+      "reasons": [
+        "UnbalancedMath",
+        "UnbalancedBraces"
+      ],
+      "edit_id": 1,
+      "reply_ms": 0.209,
+      "update": "BackgroundScheduled",
+      "update_ms": 0.247,
+      "status": null,
+      "timing": null
+    },
+    "typed": {
+      "routed": "background",
+      "reasons": [
+        "UnbalancedMath",
+        "UnbalancedBraces"
+      ],
+      "edit_id": 2,
+      "reply_ms": 0.379,
+      "update": "BackgroundScheduled",
+      "update_ms": 0.419,
+      "status": null,
+      "timing": null
+    },
+    "repair": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 3,
+      "reply_ms": 0.337,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.714,
+      "status": "ok",
+      "timing": {
+        "total_us": 717,
+        "tex_us": 476,
+        "traverse_us": 102,
+        "pack_us": 0
+      }
+    },
+    "last_good_object_retained_while_invalid": true,
+    "stale_rejected": true,
+    "recovered_revision_shown": true,
+    "q_export_exact": true,
+    "diagnostics": [
+      {
+        "severity": "error",
+        "file": "./main.tex",
+        "line": 4,
+        "message": "Missing } inserted.",
+        "context": "<inserted text> "
+      },
+      {
+        "severity": "error",
+        "file": "./main.tex",
+        "line": 4,
+        "message": "Missing } inserted.",
+        "context": "<inserted text> "
+      }
+    ],
+    "screens": [
+      {
+        "event": "LayoutUpdate",
+        "source_revision": 2,
+        "compile": {
+          "state": "CompiledWithErrors",
+          "count": 1
+        },
+        "status": null,
+        "accepted": false,
+        "shown_revision": 1,
+        "shown_fingerprint": "e1cf62e9878b408a3fd748b6cbd45a889f4cb46d96cc291c072a1411c4c4b165"
+      },
+      {
+        "event": "LayoutUpdate",
+        "source_revision": 3,
+        "compile": {
+          "state": "CompiledWithErrors",
+          "count": 1
+        },
+        "status": null,
+        "accepted": false,
+        "shown_revision": 1,
+        "shown_fingerprint": "e1cf62e9878b408a3fd748b6cbd45a889f4cb46d96cc291c072a1411c4c4b165"
+      },
+      {
+        "event": "ParagraphUpdate",
+        "source_revision": 4,
+        "compile": null,
+        "status": "ok",
+        "accepted": true,
+        "shown_revision": 4,
+        "shown_fingerprint": "1b7e4cbf87407b6fa3133ec7379a799674606834d3ad8d158da14be185bf7259"
+      },
+      {
+        "event": "ParagraphUpdate",
+        "source_revision": 5,
+        "compile": null,
+        "status": "ok",
+        "accepted": true,
+        "shown_revision": 5,
+        "shown_fingerprint": "73276e1bf55cc35b1eec1657c517b768f7a1ddcba8fe632d8988e7cd06c8930b"
+      }
+    ],
+    "old_raster_reply": {
+      "kind": "layout",
+      "pages": [
+        {
+          "exact": true,
+          "missing_fonts": [],
+          "page": 1,
+          "parse_us": 25,
+          "raster_us": 503469,
+          "size": [
+            2481,
+            3508
+          ],
+          "stats": {
+            "degraded": false,
+            "glyphs_drawn": 233,
+            "glyphs_skipped": 0,
+            "images_skipped": 0,
+            "rules_drawn": 6
+          }
+        }
+      ],
+      "parse_us": 243,
+      "raster_us": 505231,
+      "seq": 1,
+      "bitmaps": [
+        {
+          "path": "cm-plain-bitmaps/1/page-1.pgm",
+          "sha256": "4344aa28ba0520a6b77d4b9182f169f4f929fcfa3aa6aef0df9cae121fffa4c4",
+          "bytes": 8703365
+        }
+      ]
+    },
+    "old_fingerprint": "e1cf62e9878b408a3fd748b6cbd45a889f4cb46d96cc291c072a1411c4c4b165",
+    "restore_export_exact": true
+  },
+  {
+    "variant": "plain",
+    "fault": "undefined-macro",
+    "bad": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 7,
+      "reply_ms": 0.193,
+      "update": "BackgroundScheduled",
+      "update_ms": 0.99,
+      "status": null,
+      "timing": null
+    },
+    "typed": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 8,
+      "reply_ms": 0.372,
+      "update": "BackgroundScheduled",
+      "update_ms": 1.896,
+      "status": null,
+      "timing": null
+    },
+    "repair": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 9,
+      "reply_ms": 0.323,
+      "update": "ParagraphUpdate",
+      "update_ms": 1.362,
+      "status": "ok",
+      "timing": {
+        "total_us": 485,
+        "tex_us": 341,
+        "traverse_us": 75,
+        "pack_us": 0
+      }
+    },
+    "last_good_object_retained_while_invalid": true,
+    "stale_rejected": true,
+    "recovered_revision_shown": true,
+    "q_export_exact": true,
+    "diagnostics": [
+      {
+        "severity": "error",
+        "file": "./main.tex",
+        "line": 4,
+        "message": "Undefined control sequence.",
+        "context": "<recently read> \\scholiumUndefined "
+      },
+      {
+        "severity": "error",
+        "file": "./main.tex",
+        "line": 4,
+        "message": "Undefined control sequence.",
+        "context": "<recently read> \\scholiumUndefined "
+      }
+    ],
+    "screens": [
+      {
+        "event": "LayoutUpdate",
+        "source_revision": 6,
+        "compile": {
+          "state": "CompiledWithErrors",
+          "count": 1
+        },
+        "status": null,
+        "accepted": false,
+        "shown_revision": 5,
+        "shown_fingerprint": "73276e1bf55cc35b1eec1657c517b768f7a1ddcba8fe632d8988e7cd06c8930b"
+      },
+      {
+        "event": "LayoutUpdate",
+        "source_revision": 7,
+        "compile": {
+          "state": "CompiledWithErrors",
+          "count": 1
+        },
+        "status": null,
+        "accepted": false,
+        "shown_revision": 5,
+        "shown_fingerprint": "73276e1bf55cc35b1eec1657c517b768f7a1ddcba8fe632d8988e7cd06c8930b"
+      },
+      {
+        "event": "ParagraphUpdate",
+        "source_revision": 8,
+        "compile": null,
+        "status": "ok",
+        "accepted": true,
+        "shown_revision": 8,
+        "shown_fingerprint": "721230a14ebf5716ab365b027f154587467f2bb3a35e10278ac41fb2ac9dda6f"
+      },
+      {
+        "event": "ParagraphUpdate",
+        "source_revision": 9,
+        "compile": null,
+        "status": "ok",
+        "accepted": true,
+        "shown_revision": 9,
+        "shown_fingerprint": "217ddc6993958abea455a1a322fe8539ef7daf1aa19879906d10839012f8e33d"
+      }
+    ],
+    "old_raster_reply": {
+      "kind": "unit",
+      "parse_us": 26,
+      "pixels": 60270,
+      "raster_us": 264,
+      "seq": 3,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 16,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      },
+      "bitmaps": [
+        {
+          "path": "cm-plain-bitmaps/3/page-1.pgm",
+          "sha256": "937e09d85875ed97eb05349709adab7319cdc8b49b3180ca0517dbd1065c1d7e",
+          "bytes": 63243
+        }
+      ]
+    },
+    "old_fingerprint": "73276e1bf55cc35b1eec1657c517b768f7a1ddcba8fe632d8988e7cd06c8930b",
+    "restore_export_exact": true
+  },
+  {
+    "variant": "A",
+    "fault": "unbalanced-brace",
+    "bad": {
+      "routed": "background",
+      "reasons": [
+        "UnbalancedMath",
+        "UnbalancedBraces"
+      ],
+      "edit_id": 1,
+      "reply_ms": 0.444,
+      "update": "BackgroundScheduled",
+      "update_ms": 0.476,
+      "status": null,
+      "timing": null
+    },
+    "typed": {
+      "routed": "background",
+      "reasons": [
+        "UnbalancedMath",
+        "UnbalancedBraces"
+      ],
+      "edit_id": 2,
+      "reply_ms": 0.431,
+      "update": "BackgroundScheduled",
+      "update_ms": 0.468,
+      "status": null,
+      "timing": null
+    },
+    "repair": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 3,
+      "reply_ms": 0.425,
+      "update": "ParagraphUpdate",
+      "update_ms": 2.278,
+      "status": "ok",
+      "timing": {
+        "total_us": 1208,
+        "tex_us": 706,
+        "traverse_us": 318,
+        "pack_us": 0
+      }
+    },
+    "last_good_object_retained_while_invalid": true,
+    "stale_rejected": true,
+    "recovered_revision_shown": true,
+    "q_export_exact": true,
+    "diagnostics": [
+      {
+        "severity": "error",
+        "file": "./main.tex",
+        "line": 4,
+        "message": "Missing } inserted.",
+        "context": "<inserted text> "
+      },
+      {
+        "severity": "error",
+        "file": "./main.tex",
+        "line": 4,
+        "message": "Missing } inserted.",
+        "context": "<inserted text> "
+      }
+    ],
+    "screens": [
+      {
+        "event": "LayoutUpdate",
+        "source_revision": 2,
+        "compile": {
+          "state": "CompiledWithErrors",
+          "count": 1
+        },
+        "status": null,
+        "accepted": false,
+        "shown_revision": 1,
+        "shown_fingerprint": "a36983dc3da162973abf728608ecadbe5a4e42cb3bebd3ca100ad6f047beb5cb"
+      },
+      {
+        "event": "LayoutUpdate",
+        "source_revision": 3,
+        "compile": {
+          "state": "CompiledWithErrors",
+          "count": 1
+        },
+        "status": null,
+        "accepted": false,
+        "shown_revision": 1,
+        "shown_fingerprint": "a36983dc3da162973abf728608ecadbe5a4e42cb3bebd3ca100ad6f047beb5cb"
+      },
+      {
+        "event": "ParagraphUpdate",
+        "source_revision": 4,
+        "compile": null,
+        "status": "ok",
+        "accepted": true,
+        "shown_revision": 4,
+        "shown_fingerprint": "9134e878aa8d45a0a610a818543cbf3c26185a0b67766e6dc8aee2b633797c71"
+      },
+      {
+        "event": "ParagraphUpdate",
+        "source_revision": 5,
+        "compile": null,
+        "status": "ok",
+        "accepted": true,
+        "shown_revision": 5,
+        "shown_fingerprint": "6046c97988c8f46561cb3299ed305ae87ae5bf286c2688b06929819234cb5f4f"
+      }
+    ],
+    "old_raster_reply": {
+      "kind": "layout",
+      "pages": [
+        {
+          "exact": true,
+          "missing_fonts": [],
+          "page": 1,
+          "parse_us": 18,
+          "raster_us": 456220,
+          "size": [
+            2481,
+            3508
+          ],
+          "stats": {
+            "degraded": false,
+            "glyphs_drawn": 233,
+            "glyphs_skipped": 0,
+            "images_skipped": 0,
+            "rules_drawn": 6
+          }
+        }
+      ],
+      "parse_us": 231,
+      "raster_us": 457717,
+      "seq": 1,
+      "bitmaps": [
+        {
+          "path": "cm-A-bitmaps/1/page-1.pgm",
+          "sha256": "4344aa28ba0520a6b77d4b9182f169f4f929fcfa3aa6aef0df9cae121fffa4c4",
+          "bytes": 8703365
+        }
+      ]
+    },
+    "old_fingerprint": "a36983dc3da162973abf728608ecadbe5a4e42cb3bebd3ca100ad6f047beb5cb",
+    "restore_export_exact": true
+  },
+  {
+    "variant": "A",
+    "fault": "undefined-macro",
+    "bad": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 7,
+      "reply_ms": 0.341,
+      "update": "BackgroundScheduled",
+      "update_ms": 1.712,
+      "status": null,
+      "timing": null
+    },
+    "typed": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 8,
+      "reply_ms": 0.378,
+      "update": "BackgroundScheduled",
+      "update_ms": 2.178,
+      "status": null,
+      "timing": null
+    },
+    "repair": {
+      "routed": "fast",
+      "reasons": [],
+      "edit_id": 9,
+      "reply_ms": 0.344,
+      "update": "ParagraphUpdate",
+      "update_ms": 2.844,
+      "status": "ok",
+      "timing": {
+        "total_us": 1802,
+        "tex_us": 1181,
+        "traverse_us": 447,
+        "pack_us": 0
+      }
+    },
+    "last_good_object_retained_while_invalid": true,
+    "stale_rejected": true,
+    "recovered_revision_shown": true,
+    "q_export_exact": true,
+    "diagnostics": [
+      {
+        "severity": "error",
+        "file": "./main.tex",
+        "line": 4,
+        "message": "Undefined control sequence.",
+        "context": "l.4 Case inline: $\\attribute65000=2 \\scholiumUndefined"
+      },
+      {
+        "severity": "error",
+        "file": "./main.tex",
+        "line": 4,
+        "message": "Undefined control sequence.",
+        "context": "l.4 Case inline: $\\attribute65000=2 \\scholiumUndefined"
+      }
+    ],
+    "screens": [
+      {
+        "event": "LayoutUpdate",
+        "source_revision": 6,
+        "compile": {
+          "state": "CompiledWithErrors",
+          "count": 1
+        },
+        "status": null,
+        "accepted": false,
+        "shown_revision": 5,
+        "shown_fingerprint": "6046c97988c8f46561cb3299ed305ae87ae5bf286c2688b06929819234cb5f4f"
+      },
+      {
+        "event": "LayoutUpdate",
+        "source_revision": 7,
+        "compile": {
+          "state": "CompiledWithErrors",
+          "count": 1
+        },
+        "status": null,
+        "accepted": false,
+        "shown_revision": 5,
+        "shown_fingerprint": "6046c97988c8f46561cb3299ed305ae87ae5bf286c2688b06929819234cb5f4f"
+      },
+      {
+        "event": "ParagraphUpdate",
+        "source_revision": 8,
+        "compile": null,
+        "status": "ok",
+        "accepted": true,
+        "shown_revision": 8,
+        "shown_fingerprint": "ea00adca2f9edf861bba8cec634fc30fcb1817a52487fbcc3e2cc571f67f6576"
+      },
+      {
+        "event": "ParagraphUpdate",
+        "source_revision": 9,
+        "compile": null,
+        "status": "ok",
+        "accepted": true,
+        "shown_revision": 9,
+        "shown_fingerprint": "cf080cd923d6ff2c2eb98c09bbd76a50618ebea659fdebafe84e1fbdf20737f2"
+      }
+    ],
+    "old_raster_reply": {
+      "kind": "unit",
+      "parse_us": 27,
+      "pixels": 60270,
+      "raster_us": 239,
+      "seq": 3,
+      "stats": {
+        "degraded": false,
+        "glyphs_drawn": 16,
+        "glyphs_skipped": 0,
+        "images_skipped": 0,
+        "rules_drawn": 0
+      },
+      "bitmaps": [
+        {
+          "path": "cm-A-bitmaps/3/page-1.pgm",
+          "sha256": "937e09d85875ed97eb05349709adab7319cdc8b49b3180ca0517dbd1065c1d7e",
+          "bytes": 63243
+        }
+      ]
+    },
+    "old_fingerprint": "6046c97988c8f46561cb3299ed305ae87ae5bf286c2688b06929819234cb5f4f",
+    "restore_export_exact": true
+  }
+]

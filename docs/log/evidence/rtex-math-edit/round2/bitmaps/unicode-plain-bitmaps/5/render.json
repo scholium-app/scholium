@@ -1,0 +1,236 @@
+{
+  "kind": "paragraph",
+  "unit": "sp",
+  "fonts": {
+    "19": {
+      "id": 19,
+      "name": "[lmroman10-regular]:+tlig;",
+      "fullname": "LMRoman10-Regular",
+      "psname": "LMRoman10-Regular",
+      "filename": "/usr/share/texmf-dist/fonts/opentype/public/lm/lmroman10-regular.otf",
+      "format": "opentype",
+      "type": "real",
+      "size": 690708.0,
+      "designsize": 0.0,
+      "slant": 0.0,
+      "extend": 1000.0,
+      "squeeze": 1000.0,
+      "subfont": 1,
+      "encodingbytes": null,
+      "embedding": null
+    },
+    "30": {
+      "id": 30,
+      "name": "\"name:Latin Modern Math:mode=base;script=math;language=dflt;mathfontdimen=xetex;\"",
+      "fullname": "LatinModernMath-Regular-2",
+      "psname": "LatinModernMath-Regular",
+      "filename": "/usr/share/texmf-dist/fonts/opentype/public/lm-math/latinmodern-math.otf",
+      "format": "opentype",
+      "type": "real",
+      "size": 690708.0,
+      "designsize": 0.0,
+      "slant": 0.0,
+      "extend": 1000.0,
+      "squeeze": 1000.0,
+      "subfont": 1,
+      "encodingbytes": null,
+      "embedding": null
+    }
+  },
+  "lines": [
+    {
+      "par": 0,
+      "i": 1,
+      "x": 0,
+      "y": 486949,
+      "w": 22609920,
+      "h": 486949,
+      "d": 141595,
+      "gs": 221.9014892578125,
+      "gsign": 1,
+      "gorder": 2,
+      "items": [
+        [
+          "g",
+          19,
+          67,
+          42,
+          1381416,
+          486949,
+          498691,
+          0
+        ],
+        [
+          "g",
+          19,
+          97,
+          28,
+          1880107,
+          486949,
+          345354,
+          0
+        ],
+        [
+          "g",
+          19,
+          115,
+          98,
+          2225461,
+          486949,
+          272139,
+          0
+        ],
+        [
+          "g",
+          19,
+          101,
+          50,
+          2497600,
+          486949,
+          306674,
+          0
+        ],
+        [
+          "g",
+          19,
+          105,
+          66,
+          3034280,
+          486949,
+          192017,
+          0
+        ],
+        [
+          "g",
+          19,
+          110,
+          77,
+          3226297,
+          486949,
+          384034,
+          0
+        ],
+        [
+          "g",
+          19,
+          108,
+          72,
+          3610331,
+          486949,
+          192017,
+          0
+        ],
+        [
+          "g",
+          19,
+          105,
+          66,
+          3802348,
+          486949,
+          192017,
+          0
+        ],
+        [
+          "g",
+          19,
+          110,
+          77,
+          3994365,
+          486949,
+          384034,
+          0
+        ],
+        [
+          "g",
+          19,
+          101,
+          50,
+          4378399,
+          486949,
+          306674,
+          0
+        ],
+        [
+          "g",
+          19,
+          58,
+          44,
+          4685073,
+          486949,
+          192017,
+          0
+        ],
+        [
+          "m",
+          "on",
+          5183765
+        ],
+        [
+          "g",
+          30,
+          119909,
+          1319,
+          5183765,
+          486949,
+          395085,
+          0
+        ],
+        [
+          "g",
+          30,
+          43,
+          12,
+          5732338,
+          486949,
+          537371,
+          0
+        ],
+        [
+          "g",
+          30,
+          120572,
+          4459,
+          6423197,
+          486949,
+          442053,
+          0
+        ],
+        [
+          "g",
+          30,
+          43,
+          12,
+          7018738,
+          486949,
+          537371,
+          0
+        ],
+        [
+          "g",
+          30,
+          119910,
+          1320,
+          7709597,
+          486949,
+          338447,
+          0
+        ],
+        [
+          "m",
+          "off",
+          8067384
+        ]
+      ]
+    }
+  ],
+  "other": [],
+  "flags": {},
+  "glyphs": 16,
+  "width": 22609920,
+  "height": 486949,
+  "depth": 141595,
+  "page": 1,
+  "page_width": 22675456,
+  "page_height": 694080,
+  "origin": null
+}

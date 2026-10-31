@@ -1,0 +1,8 @@
+== verify /project (main.tex)
+capture: 14 paragraphs, 1 pages (0.8s, 2 passes); clean build 0.8s (2 passes)
+T3 (instrumented PDF == clean PDF): true
+server ready in 0.66s
+layer 1 (fast vs extractor): 13 eligible of 14 units; 13 compiled; 169/169 glyphs identical; 0 units with differences
+  par                13 units,   0 with differences, round trip median 0.561 ms, max 31.987 ms
+  ineligible reasons: {"UnbalancedMath": 1}
+layer 2 (pages vs PDF content stream): 1 pages, 1 exact, 0 degraded (PDF fallback), pass=true; worst anchored dx 0.00050 bp, worst interior dx 0.00737 bp

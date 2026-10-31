@@ -61,7 +61,7 @@ class Parser:
 
     def sequence(self, parent, close=None):
         last = parent
-        while self.peek() is not None and self.peek() != close:
+        while self.peek() is not None and (self.peek() not in close if isinstance(close, tuple) else self.peek() != close):
             value = self.peek()
             if value in ("^", "_"):
                 self.take()
@@ -123,8 +123,7 @@ class Parser:
         while self.peek() != r"\end":
             start = self.tokens[self.i].start()
             cell = self.new("cell", start, start, parent)
-            while self.peek() not in ("&", r"\\", r"\end"):
-                self.atom(cell)
+            self.sequence(cell, ("&", r"\\", r"\end"))
             node = next(n for n in self.nodes if n["id"] == cell)
             node["stop"] = self.byte(self.tokens[self.i].start())
             if self.peek() != r"\end":
@@ -163,10 +162,5 @@ def fixtures(font):
         source += prefix + case["tex"] + after + "\n\n"
         tagged_body.append(prefix + tagged + f"\\attribute{ATTR}=-2147483647 " + after + "\n\n")
     source += r"\end{document}" + "\n"
-    entries = []
-    for node in nodes:
-        entries.append(f"[{node['id']}]={{start={node['start']},stop={node['stop']},"
-                       f"kind='{node['kind']}',parent={node['parent'] or 'nil'}}}")
-    registry = r"\directlua{scholium_math_sources={" + ",".join(entries) + "}}\n"
-    tagged = preamble + registry + r"\begin{document}" + "\n" + "".join(tagged_body) + r"\end{document}" + "\n"
+    tagged = preamble + r"\begin{document}" + "\n" + "".join(tagged_body) + r"\end{document}" + "\n"
     return source, tagged, nodes, cases
