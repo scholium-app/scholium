@@ -12,6 +12,7 @@ impl EditorSession {
         let result = self.core.run(id, args);
         match result {
             Ok(outcome) => {
+                self.follow.sync_from_outcome(&outcome, &self.core.follow);
                 if outcome.cleared_error {
                     state.edit_error = None;
                 }
@@ -35,7 +36,9 @@ impl EditorSession {
                     self.publish(state);
                 }
                 state.edit_error = Some(match error {
-                    CommandError::Rejected(reason) => input::rejection_message(reason).into(),
+                    CommandError::Rejected(reason) => {
+                        input::rejection_message(reason, state.locale.resolve())
+                    }
                     _ => error.to_string(),
                 });
                 None
@@ -48,28 +51,10 @@ impl EditorSession {
             return;
         }
         if state.mode != crate::state::ViewMode::Visual {
-            state.edit_error = Some(input::read_only_message().into());
+            state.edit_error = Some(input::read_only_message(state.locale.resolve()));
             return;
         }
         self.run_core(command, CommandArgs::None, state);
-    }
-
-    pub(super) fn insert(&mut self, text: String, origin: Origin, state: &mut WorkspaceState) {
-        if !self.replacement_proven(state) {
-            self.rejected_input = Some(text);
-            return;
-        }
-        self.run_core(Command::Text, CommandArgs::Text(text, origin), state);
-    }
-
-    pub(super) fn erase(&mut self, start: usize, end: usize, state: &mut WorkspaceState) {
-        self.run_core(Command::Delete, CommandArgs::Range(start, end), state);
-    }
-
-    pub(super) fn split(&mut self, state: &mut WorkspaceState) {
-        if self.replacement_proven(state) {
-            self.run_core(Command::Split, CommandArgs::None, state);
-        }
     }
 
     pub(super) fn history(&mut self, redo: bool, state: &mut WorkspaceState) {
@@ -80,32 +65,6 @@ impl EditorSession {
                 state,
             );
         }
-    }
-
-    pub(super) fn replace_range(&mut self, text: String, state: &mut WorkspaceState) -> bool {
-        self.replacement_proven(state)
-            && self
-                .run_core(
-                    Command::ReplaceRange,
-                    CommandArgs::Text(text, Origin::Paste),
-                    state,
-                )
-                .is_some_and(|o| o.applied)
-    }
-
-    pub(super) fn leave_slot(
-        &mut self,
-        math: bool,
-        len: usize,
-        state: &mut WorkspaceState,
-    ) -> bool {
-        self.run_core(Command::LeaveSlot, CommandArgs::Slot(math, len), state)
-            .is_some_and(|o| o.applied)
-    }
-
-    pub(super) fn remove_slot(&mut self, empty_math: bool, state: &mut WorkspaceState) -> bool {
-        self.run_core(Command::RemoveSlot, CommandArgs::Slot(empty_math, 0), state)
-            .is_some_and(|o| o.applied)
     }
 
     pub(super) fn settle_placeholder(&mut self, state: &mut WorkspaceState) {

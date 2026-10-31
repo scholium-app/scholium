@@ -1,0 +1,1 @@
+{"name":"formula-fraction-superscript","inputs":[{"text":"$"},{"text":"12"},{"key":"Slash","mods":{"command":true}},{"text":"3"},{"key":"ArrowRight"},{"key":"Character","value":"^"},{"text":"2"},{"key":"ArrowRight"}],"expected":{"undo_depth":7}}

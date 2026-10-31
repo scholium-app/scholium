@@ -61,6 +61,22 @@ impl EditorCore {
             layout_error: None,
             rejected_input: None,
             overflows: Vec::new(),
+            visible: ViewRange {
+                top_pt: 0.0,
+                bottom_pt: 800.0,
+            },
+            raster: RasterSpec {
+                px_per_pt: 1.0,
+                max_side: 4096,
+            },
+            pointer: None,
+            geometry: None,
+            geometry_stamp: None,
+            goal: None,
+            follow: FollowState::default(),
+            pointer_drag: false,
+            #[cfg(test)]
+            fail_next_input: false,
         })
     }
 

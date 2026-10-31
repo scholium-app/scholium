@@ -1,0 +1,1 @@
+{"name":"undo-redo","inputs":[{"text":"history"},{"key":"Character","value":"z","mods":{"command":true}},{"key":"Character","value":"z","mods":{"command":true,"shift":true}}],"expected":{"undo_depth":1}}

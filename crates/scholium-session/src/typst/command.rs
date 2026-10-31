@@ -48,7 +48,7 @@ pub enum CommandId {
 }
 
 /// Typed command arguments; mismatched variants fail before mutation.
-#[derive(Debug, Default)]
+#[derive(Debug, Clone, Default)]
 pub enum CommandArgs {
     /// Command has no payload.
     #[default]
@@ -82,6 +82,8 @@ pub enum Rejection {
     RawSelection,
     /// Formula has no following body leaf for a split.
     MissingBody,
+    /// A selection endpoint inside a formula is not a body-text selection.
+    MathSelection,
 }
 
 /// A failed command is fully rolled back and never writes storage.
@@ -118,6 +120,34 @@ pub struct Outcome {
     pub reset_drag: bool,
     /// History/New restored a different document lifetime; app discards its old Scene.
     pub invalidate_scene: bool,
+    /// Current caret in page-independent semantic coordinates.
+    pub caret: Option<Target>,
+    /// Current semantic selection endpoints.
+    pub selection: Option<(Target, Target)>,
+    /// A page-point rectangle the host should keep visible, when navigation requests it.
+    pub follow: Option<FollowIntent>,
+    /// Overlay state owned by the host renderer.
+    pub overlay: OverlayData,
+    /// Whether the accepted snapshot needs a new layout.
+    pub new_layout: bool,
+}
+
+/// A page-point rectangle requested by the editing core.
+#[allow(missing_docs)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct FollowIntent {
+    /// Caret rectangle in page points; the host adds its viewport margin policy.
+    pub rect_pt: [f64; 4],
+    /// Optional document-edge widening requested by Ctrl+Home/End.
+    pub edge: Option<FollowEdge>,
+}
+
+/// Non-rendering overlay state published with an input result.
+#[allow(missing_docs)]
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
+pub struct OverlayData {
+    pub placeholder: bool,
+    pub indicator: bool,
 }
 
 impl EditorCore {
@@ -152,13 +182,23 @@ impl EditorCore {
             Err(_) => Err(CommandError::Panicked),
         };
         match result {
-            Ok(applied) => Ok(Outcome {
-                changed: !Arc::ptr_eq(&checkpoint.snapshot, &self.snapshot),
-                applied,
-                cleared_error: state.cleared_error,
-                reset_drag: state.reset_drag,
-                invalidate_scene: matches!(id, CommandId::Undo | CommandId::Redo | CommandId::New),
-            }),
+            Ok(applied) => {
+                if matches!(id, CommandId::Undo | CommandId::Redo) {
+                    self.follow.pending = true;
+                    self.follow.edge = None;
+                }
+                Ok(Outcome {
+                    changed: !Arc::ptr_eq(&checkpoint.snapshot, &self.snapshot),
+                    applied,
+                    cleared_error: state.cleared_error,
+                    reset_drag: state.reset_drag,
+                    invalidate_scene: matches!(
+                        id,
+                        CommandId::Undo | CommandId::Redo | CommandId::New
+                    ),
+                    ..Outcome::default()
+                })
+            }
             Err(error) => {
                 self.rollback(checkpoint);
                 if let Some(text) = draft {

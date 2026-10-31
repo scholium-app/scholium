@@ -80,23 +80,17 @@ impl EditorSession {
     /// Move the caret to a diagnostic's location and let caret-follow bring it into view.
     /// A location that no longer exists (the text was edited away) is ignored.
     pub(super) fn jump(&mut self, target: Target) -> bool {
-        let leaves = input::leaves(&self.snapshot);
-        let Some(leaf) = leaves.iter().find(|l| l.id == target.node) else {
+        if !self.core.jump_to(scholium_session::typst::Target {
+            node: target.node,
+            byte: target.byte,
+        }) {
             return false;
-        };
-        let at_boundary = target.byte <= leaf.text.len() && leaf.text.is_char_boundary(target.byte);
-        self.cursor = Position {
-            leaf: target.node,
-            byte: if at_boundary { target.byte } else { 0 },
-            affinity: Affinity::Downstream,
-        };
-        self.anchor = None;
+        }
         self.drag = None;
-        self.goal = None;
         self.run = None;
         self.pending_style = None;
         self.focus = true;
-        self.follow.request();
+        self.follow.sync_from_core(&self.core.follow);
         true
     }
 

@@ -110,7 +110,6 @@ pub(crate) struct EditorSession {
     /// Last display scale, for diagnostics.
     pixels_per_point: f32,
     drag: Option<selection::Drag>,
-    goal: Option<vertical::Goal>,
     published: Option<access::Published>,
     source_view: source_view::SourceView,
     deferred: VecDeque<egui::Event>,
@@ -194,7 +193,6 @@ impl EditorSession {
             worker,
             wanted,
             drag: None,
-            goal: None,
             published: None,
             source_view: Default::default(),
             deferred: VecDeque::new(),
@@ -256,6 +254,7 @@ impl EditorSession {
     /// Submit the accepted core snapshot to the app-owned worker.
     fn publish(&mut self, state: &mut WorkspaceState) {
         self.wanted = self.core.scene_stamp();
+        self.core.set_geometry(None, None);
         self.worker
             .submit(self.snapshot.clone(), self.wanted, self.spec, self.view);
         self.sent = Some((std::time::Instant::now(), self.view));
@@ -374,11 +373,9 @@ impl EditorSession {
     fn intents(&mut self, state: &mut WorkspaceState) {
         if std::mem::take(&mut state.undo_requested) {
             self.history(false, state);
-            self.follow.request();
         }
         if std::mem::take(&mut state.redo_requested) {
             self.history(true, state);
-            self.follow.request();
         }
         if let Some(target) = state.jump_request.take() {
             self.jump(target);
@@ -389,13 +386,8 @@ impl EditorSession {
             .map(|v| std::mem::take(&mut v.commands))
             .unwrap_or_default();
         for intent in intents {
-            let caret = (self.cursor.leaf, self.cursor.byte);
             self.command(intent, state);
             self.focus = true;
-            self.follow.note(
-                follow::Input::Keyed,
-                (self.cursor.leaf, self.cursor.byte) != caret,
-            );
         }
     }
 

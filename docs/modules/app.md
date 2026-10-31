@@ -91,7 +91,8 @@ Noto Sans CJK 只作最后回退。所选字体写入 AUDIT 的 `fonts`。
 文件不被迁移覆盖；显式 `SCHOLIUM_SESSION_FILE` 必须是 v1。没有可写副本对拷。旧文件只读探测；
 迁移或打开失败时窗口只显示原因与恢复方式，不运行编辑器。迁移只发生一次，此后不再读取旧文件。
 
-编辑器持有 [session](session.md) 的 `EditorCore`，按事件顺序经唯一 `run` 入口提交文字与命令，布局仅持有
+编辑器持有 [session](session.md) 的 `EditorCore`，将 egui 文字、可迁移按键、页面坐标和视口转换为 `Input`，由核心
+按事件顺序经唯一输入入口提交文字与命令；布局仅持有
 完整不可变投影。输入接受和提交先于页面绘制，后台完成唤醒 UI，不去抖源码求值。界面
 工具栏与页面之间没有任何信息行。状态栏左侧是字数（正文里每个 CJK 字符与每个拉丁词各计一，随快照修订更新）、
 页码（只在源码模式且预览已编译时显示，连续的所见即所得视图不显示）与上下文（正文 / 公式 / 源码 · 只读）；
@@ -117,13 +118,13 @@ placement 的 scale 取量化后的值，故命中/caret 与绘制一致。页�
 同帧 Text 仅在与 IME Commit 文字相同时视为重复丢弃；输入法透传的英文 Text 照常输入。
 Escape 分层取消，不释放页面焦点：先取消选区、IME 组合与拖动；三者都没有且光标在行内公式内时，离开该公式，
 光标落在公式之后的正文（与 Ctrl+M 离开同位；空占位槽由占位生命周期移除）；公式外无事可做。
-视图跟随光标（`typst_editor/follow.rs`）：键入/粘贴/提交、Enter、删除、方向键、Home/End、撤销重做与移动光标的工具栏命令
+视图跟随光标由 session core 返回 page-pt 矩形意图，app 的 `typst_editor/follow.rs` 只负责将其转换为滚动区动作：键入/粘贴/提交、Enter、删除、方向键、Home/End、撤销重做与移动光标的工具栏命令
 引起光标移动后，滚动区最小幅度滚动，使光标矩形上下（放宽时左右）各留 2 行正文（`FOLLOW_MARGIN_LINES`）；
 Ctrl+Home/End 另外露出页面顶部（含外边距）与底部。只有输入引起的光标变化才触发；滚轮、滚动条与点击不触发，
 指针按下或滚轮会丢弃尚未执行的跟随。Scene 不是当前版本时保持“待跟随”，等新 Scene 采纳后用其 caret 几何滚动，
 绝不对准旧位置；滚动改变的可见范围照常经 `set_view` 请求新区域条带。AUDIT `follow` 报告 caret 与可见范围（pt）。
 
-工具栏、菜单、Typed/Paste/IME Commit、删除/拆段与 undo/redo 都经 `EditorCore::run` 执行；
+工具栏、菜单、Typed/Paste/IME Commit、删除/拆段与 undo/redo 都翻译为 `Input` 后经 `EditorCore::input` 执行；
 app 保留组合输入、只读模式和当前选区几何的前置检查，按 Outcome 清除拖选、提交新 Scene 或刷新元数据。
 唯一 LocalSession、store/保存基线、撤销分组与时钟、输入样式和占位生命周期属于 session（[规则](session.md)）。
 app 不直接应用 StructuralRequest，也不持有第二份可写文档。确认框决定是否丢弃，然后发送 New 命令。
@@ -181,8 +182,8 @@ app 只检查当前选区几何和交付原生剪贴板。数学内部槽位选�
 与其他行内内容相邻的空 Text 叶在 Typst 中不成 cluster、没有可绘范围；选框跳过它，
 语义范围仍包含它。视觉行导航见[开发日志《Typst 主程序候选的视觉行导航与几何键有序排队》](../log/2026-10-10-typst-vertical-navigation.md)。
 
-第一期 core 提取不移动 worker、Scene 采纳、垂直目标、点击序列、视图跟随与 egui 队列。
-这些 app 职责的后续边界见 [ADR 0042](../adr/ADR-0042-session-editing-core.md)；不宣称已有项目级 actor。
+phase 2a 已迁移按键、文字、页面指针、垂直目标、点击序列与 follow 意图；app 仍持有排版 worker/Scene 所有权和 deferred-input
+队列。这两项列入下一 PR 的待办，见 [ADR 0042](../adr/ADR-0042-session-editing-core.md)。
 
 ## UI 状态
 

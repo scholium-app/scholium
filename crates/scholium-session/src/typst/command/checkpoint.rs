@@ -18,6 +18,14 @@ pub(in crate::typst) struct Checkpoint {
     layout_error: Option<String>,
     rejected_input: Option<String>,
     overflows: Vec<Target>,
+    visible: ViewRange,
+    raster: RasterSpec,
+    pointer: Option<PointerState>,
+    goal: Option<vertical::Goal>,
+    follow: FollowState,
+    pointer_drag: bool,
+    #[cfg(test)]
+    fail_next_input: bool,
 }
 
 impl std::fmt::Debug for Checkpoint {
@@ -37,6 +45,9 @@ impl std::fmt::Debug for Checkpoint {
             .field("layout_error", &self.layout_error)
             .field("rejected_input", &self.rejected_input)
             .field("overflows", &self.overflows)
+            .field("goal", &self.goal)
+            .field("follow", &self.follow)
+            .field("pointer_drag", &self.pointer_drag)
             .finish()
     }
 }
@@ -58,6 +69,14 @@ impl EditorCore {
             layout_error: self.layout_error.clone(),
             rejected_input: self.rejected_input.clone(),
             overflows: self.overflows.clone(),
+            visible: self.visible,
+            raster: self.raster,
+            pointer: self.pointer,
+            goal: self.goal,
+            follow: self.follow,
+            pointer_drag: self.pointer_drag,
+            #[cfg(test)]
+            fail_next_input: self.fail_next_input,
         })
     }
 
@@ -87,6 +106,16 @@ impl EditorCore {
         self.layout_error = before.layout_error;
         self.rejected_input = before.rejected_input;
         self.overflows = before.overflows;
+        self.visible = before.visible;
+        self.raster = before.raster;
+        self.pointer = before.pointer;
+        self.goal = before.goal;
+        self.follow = before.follow;
+        self.pointer_drag = before.pointer_drag;
+        #[cfg(test)]
+        {
+            self.fail_next_input = before.fail_next_input;
+        }
     }
 
     #[cfg(test)]

@@ -15,65 +15,29 @@ pub(super) enum Edge {
     Bottom,
 }
 
-/// What an event means for following, decided before the event is consumed.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(super) enum Input {
-    /// Keyboard, text or IME commit: follows if the caret moved.
-    Keyed,
-    /// Ctrl+Home/End: follows to the document edge even if the caret stays.
-    Edge(Edge),
-    /// Pointer press or wheel: drops a pending follow.
-    Pointer,
-    Other,
-}
-
-impl Input {
-    pub(super) fn of(event: &egui::Event) -> Self {
-        match event {
-            egui::Event::Text(_)
-            | egui::Event::Paste(_)
-            | egui::Event::Cut
-            | egui::Event::Ime(egui::ImeEvent::Commit(_)) => Self::Keyed,
-            egui::Event::Key {
-                key,
-                modifiers,
-                pressed: true,
-                ..
-            } => match (key, modifiers.command) {
-                (egui::Key::Home, true) => Self::Edge(Edge::Top),
-                (egui::Key::End, true) => Self::Edge(Edge::Bottom),
-                _ => Self::Keyed,
-            },
-            egui::Event::PointerButton { pressed: true, .. } | egui::Event::MouseWheel { .. } => {
-                Self::Pointer
-            }
-            _ => Self::Other,
-        }
-    }
-}
-
 #[derive(Debug, Default)]
 pub(super) struct Follow {
-    pending: bool,
-    edge: Option<Edge>,
+    pub(super) pending: bool,
+    pub(super) edge: Option<Edge>,
+    pub(super) intent: Option<scholium_session::typst::FollowIntent>,
 }
 
 impl Follow {
-    pub(super) fn request(&mut self) {
-        self.pending = true;
+    pub(super) fn sync_from_core(&mut self, core: &scholium_session::typst::FollowState) {
+        self.pending = core.pending;
+        self.edge = core.edge.map(|edge| match edge {
+            scholium_session::typst::FollowEdge::Top => Edge::Top,
+            scholium_session::typst::FollowEdge::Bottom => Edge::Bottom,
+        });
     }
 
-    /// Record one consumed event; `moved` says the caret changed because of it.
-    pub(super) fn note(&mut self, input: Input, moved: bool) {
-        match input {
-            Input::Keyed if moved => self.pending = true,
-            Input::Edge(edge) => {
-                self.pending = true;
-                self.edge = Some(edge);
-            }
-            Input::Pointer => *self = Self::default(),
-            Input::Keyed | Input::Other => {}
-        }
+    pub(super) fn sync_from_outcome(
+        &mut self,
+        outcome: &scholium_session::typst::Outcome,
+        core: &scholium_session::typst::FollowState,
+    ) {
+        self.sync_from_core(core);
+        self.intent = outcome.follow;
     }
 }
 
@@ -93,25 +57,26 @@ pub(super) fn reveal(caret: Rect, page: Rect, outer: f32, edge: Option<Edge>) ->
 impl EditorSession {
     /// Scroll the surrounding area so the caret shows, once the Scene allows it.
     pub(super) fn apply_follow(&mut self, ui: &egui::Ui, page: Rect, scale: f32, outer: f32) {
-        if !self.follow.pending || !self.current() {
+        if !self.core.follow.pending || !self.current() {
             return;
         }
-        let edge = self.follow.edge;
-        self.follow = Follow::default();
-        let Some(caret) = self
-            .scene
-            .as_ref()
-            .and_then(|s| s.geometry.caret(self.cursor))
-        else {
+        let Some(intent) = self.follow.intent.or_else(|| self.core.follow_intent()) else {
             return;
         };
-        let map = |p: [f64; 2]| page.min + egui::vec2(p[0] as f32, p[1] as f32) * scale;
-        let rect = Rect::from_two_pos(map(caret.top), map(caret.bottom));
+        let edge = intent.edge.map(|edge| match edge {
+            scholium_session::typst::FollowEdge::Top => Edge::Top,
+            scholium_session::typst::FollowEdge::Bottom => Edge::Bottom,
+        });
+        let [x0, y0, x1, y1] = intent.rect_pt;
+        let map = |x: f64, y: f64| page.min + egui::vec2(x as f32, y as f32) * scale;
+        let rect = Rect::from_two_pos(map(x0, y0), map(x1, y1));
+        self.follow = Follow::default();
         ui.scroll_to_rect_animation(
             reveal(rect, page, outer, edge),
             None,
             egui::style::ScrollAnimation::none(),
         );
+        self.core.follow = scholium_session::typst::FollowState::default();
         ui.ctx().request_repaint();
     }
 }
