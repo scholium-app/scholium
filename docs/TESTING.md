@@ -112,6 +112,8 @@ Iced → GPUI → C++ EUI-NEO → Slint 或 egui 使用 [同一验收集](plan/N
   缓存只在 `main` 保存，PR 只读取。`rust.yml` 只有两个 job：lint（fmt、clippy、doc、`cargo deny`、仓库门禁脚本）与
   test（一次编译后跑 `cargo test` 和两种语言的真实窗口检查）。fork 与 stock Typst 的像素对照在 `typst-fork.yml`，
   只在 fork、`scholium-typst`、参考实现、锁文件或工具链变动时运行。
+  `typst-upstream.yml` 每周一把补丁套到上游 Typst main 上，检查补丁能否应用、adapter 能否编译、像素是否一致，
+  只按计划或手动触发，不在 push/PR 上运行、不阻塞合并（见 [scholium-typst 上游跟进](modules/typst.md#上游跟进)）。
   `push` 只在 `main` 触发，PR 只由 `pull_request` 触发，同一 PR 的新推送取消旧运行。
 - 所有 workflow 显式固定同一个 runner 镜像 `ubuntu-26.04`，不用 `ubuntu-latest`：镜像升级会同时换掉 Xvfb、xkb-data
   和 xdotool，真实窗口检查对此敏感，换镜像必须是一个单独审查的 PR（经过见

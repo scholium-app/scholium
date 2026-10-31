@@ -1,0 +1,12 @@
+# cargo check -p scholium-typst --features editor, [patch.crates-io] -> rebased fork on typst/typst main 84cca406aafe
+# (Scholium main 936659a; the patched typst crates themselves compiled without errors)
+crates/scholium-typst/src/compiler.rs:249:13: error[E0560]: struct `RenderOptions<typst::format::Complete>` has no field named `pixel_per_pt`: `RenderOptions<_>` does not have this field
+crates/scholium-typst/src/editor/kernel.rs:45:36: error[E0599]: no associated function or constant named `default` found for struct `Library` in the current scope: associated function or constant not found in `Library`
+crates/scholium-typst/src/editor/kernel.rs:170:9: error[E0560]: struct `RenderOptions` has no field named `pixel_per_pt`: `RenderOptions<_>` does not have this field
+crates/scholium-typst/src/editor/raster.rs:215:45: error[E0308]: mismatched types: expected `&RenderOptions<Complete>`, found `&RenderOptions`
+crates/scholium-typst/src/editor/raster.rs:248:9: error[E0308]: mismatched types: expected `&RenderOptions<Complete>`, found `&RenderOptions`
+crates/scholium-typst/src/lib.rs:73:45: error[E0599]: no associated function or constant named `default` found for struct `Library` in the current scope: associated function or constant not found in `Library`
+crates/scholium-typst/src/editor/kernel.rs:13:22: warning: unused import: `LibraryExt`
+crates/scholium-typst/src/lib.rs:13:22: warning: unused import: `LibraryExt`
+warning: `scholium-typst` (lib) generated 2 warnings
+error: could not compile `scholium-typst` (lib) due to 6 previous errors; 2 warnings emitted

@@ -34,7 +34,8 @@ jobs:
           cache-key: stock
           cache-workspaces: |
             . -> target
-            spikes/typst-main-editor/reference -> target/stock-reference
+            # rust-cache resolves the target relative to the workspace; the build writes <root>/target/stock-reference.
+            spikes/typst-main-editor/reference -> ../../../target/stock-reference
       - name: Rebuild the pinned fork from upstream objects
         run: |
           git init /tmp/typst-origin
