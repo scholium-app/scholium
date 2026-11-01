@@ -1,5 +1,6 @@
 //! Typst editing authority, abstract input and derived Scene runtime (ADR 0042).
 mod attach;
+mod block_merge;
 mod command;
 mod deferred;
 mod diagnose;

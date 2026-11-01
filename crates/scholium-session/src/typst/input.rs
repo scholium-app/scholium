@@ -305,6 +305,9 @@ impl EditorCore {
     }
 
     pub(super) fn delete_before(&mut self) -> Result<Outcome, CommandError> {
+        if let Some(result) = self.delete_block_boundary(false) {
+            return result;
+        }
         let Some(leaf) = leaves(&self.snapshot)
             .into_iter()
             .find(|leaf| leaf.id == self.cursor.leaf)
@@ -324,6 +327,9 @@ impl EditorCore {
     }
 
     pub(super) fn delete_after(&mut self) -> Result<Outcome, CommandError> {
+        if let Some(result) = self.delete_block_boundary(true) {
+            return result;
+        }
         let Some(leaf) = leaves(&self.snapshot)
             .into_iter()
             .find(|leaf| leaf.id == self.cursor.leaf)
