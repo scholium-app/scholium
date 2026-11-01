@@ -95,4 +95,4 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0041](ADR-0041-separate-latex-typst-kernels.md)：LaTeX 与 Typst 分为两个编辑内核，项目语言固定、预览同引擎；取代 ADR 0001，混用与团队语言切换推迟，LaTeX 实时预览引擎（rtex）待评估。
 [ADR 0042](ADR-0042-session-editing-core.md)：编辑交互核心提取为不依赖 UI 的 scholium-session，原子命令与分层门禁。
 
-[ADR 0043](ADR-0043-rtex-live-preview.md)：LaTeX 实时预览采用沙箱内的 rtex 子进程，宿主兜底已知缺陷；上游 2026-11-14 前无回应则按 Typst fork 的方式建立补丁式 fork。
+[ADR 0043](ADR-0043-rtex-live-preview.md)：LaTeX 实时预览采用沙箱内的 rtex 子进程，宿主兜底已知缺陷；上游 2026-11-14 前无回应则按 Typst fork 的方式建立补丁式 fork。2026-11-01 修订：上游已在 v0.0.6 修复报告的问题，健壮性不再需要 fork；L3 公式补丁先提交上游。
