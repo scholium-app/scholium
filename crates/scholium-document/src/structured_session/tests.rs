@@ -380,3 +380,6 @@ fn whole_leaf_styles_and_headings_preserve_text_and_ids() {
     assert_eq!(s.snapshot(), after);
     assert_eq!(s.actions().len(), 2);
 }
+
+#[path = "math_edge_tests.rs"]
+mod math_edge_tests;

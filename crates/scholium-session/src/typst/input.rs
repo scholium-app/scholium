@@ -56,22 +56,7 @@ fn math_leaves<'a>(node: &'a MathNode, block: NodeId, result: &mut Vec<Leaf<'a>>
     }
 }
 
-/// Direct child slots in caret order: Attach reads base, subscript, superscript.
-pub fn math_children(node: &MathNode) -> Vec<&MathNode> {
-    match &node.body {
-        MathBody::Row { children } => children.iter().collect(),
-        MathBody::Fraction {
-            numerator,
-            denominator,
-        } => vec![numerator, denominator],
-        MathBody::Attach { base, sub, sup } => std::iter::once(base)
-            .chain(sub)
-            .chain(sup)
-            .map(|b| b.as_ref())
-            .collect(),
-        _ => Vec::new(),
-    }
-}
+pub use scholium_typst::editor::math_children;
 
 impl EditorCore {
     /// Apply one toolkit-independent event atomically.
@@ -261,90 +246,6 @@ impl EditorCore {
         };
     }
 
-    pub(super) fn move_horizontal(&mut self, right: bool, extend: bool) {
-        let all = leaves(&self.snapshot);
-        let Some(index) = all.iter().position(|leaf| leaf.id == self.cursor.leaf) else {
-            return;
-        };
-        let leaf = &all[index];
-        let next = if right {
-            leaf.text
-                .grapheme_indices(true)
-                .map(|(at, _)| at)
-                .find(|at| *at > self.cursor.byte)
-                .or_else(|| (self.cursor.byte < leaf.text.len()).then_some(leaf.text.len()))
-                .or_else(|| {
-                    all.get(index + 1).map(|next| {
-                        self.cursor.leaf = next.id;
-                        0
-                    })
-                })
-        } else {
-            leaf.text
-                .grapheme_indices(true)
-                .map(|(at, _)| at)
-                .rfind(|at| *at < self.cursor.byte)
-                .or_else(|| {
-                    index.checked_sub(1).and_then(|i| {
-                        all.get(i).map(|prev| {
-                            self.cursor.leaf = prev.id;
-                            prev.text.len()
-                        })
-                    })
-                })
-        };
-        if let Some(byte) = next {
-            self.cursor.byte = byte;
-        }
-        self.cursor.affinity = Affinity::Downstream;
-        if extend {
-            self.anchor.get_or_insert(self.cursor);
-        } else {
-            self.anchor = None;
-        }
-    }
-
-    pub(super) fn delete_before(&mut self) -> Result<Outcome, CommandError> {
-        if let Some(result) = self.delete_block_boundary(false) {
-            return result;
-        }
-        let Some(leaf) = leaves(&self.snapshot)
-            .into_iter()
-            .find(|leaf| leaf.id == self.cursor.leaf)
-        else {
-            return Ok(Outcome::default());
-        };
-        let start = leaf
-            .text
-            .grapheme_indices(true)
-            .map(|(at, _)| at)
-            .rfind(|at| *at < self.cursor.byte)
-            .unwrap_or(self.cursor.byte);
-        self.run(
-            CommandId::Delete,
-            CommandArgs::Range(start, self.cursor.byte),
-        )
-    }
-
-    pub(super) fn delete_after(&mut self) -> Result<Outcome, CommandError> {
-        if let Some(result) = self.delete_block_boundary(true) {
-            return result;
-        }
-        let Some(leaf) = leaves(&self.snapshot)
-            .into_iter()
-            .find(|leaf| leaf.id == self.cursor.leaf)
-        else {
-            return Ok(Outcome::default());
-        };
-        let end = leaf
-            .text
-            .grapheme_indices(true)
-            .map(|(at, _)| at)
-            .find(|at| *at > self.cursor.byte)
-            .unwrap_or(self.cursor.byte);
-        self.run(CommandId::Delete, CommandArgs::Range(self.cursor.byte, end))
-    }
-
     pub(super) fn insert(&mut self, text: String, origin: Origin, state: &mut EditState) {
         if text.is_empty() {
             return;
@@ -361,6 +262,14 @@ impl EditorCore {
             return;
         }
         if typed && self.attach_key(&text, state) {
+            return;
+        }
+        if self.at_math_edge() {
+            let closes = history::closes_word(None, &text);
+            self.insert_at_edge(text, state);
+            if state.edit_error.is_none() && origin != Origin::Paste {
+                self.note_run(RunKind::Insert, closes);
+            }
             return;
         }
         let length = text.len();
@@ -433,6 +342,13 @@ impl EditorCore {
             state.edit_error = Some(CommandError::Rejected(Rejection::StructuralSelection));
             return;
         }
+        if self.command_at_edge(command, state) {
+            return;
+        }
+        if matches!(command, CommandId::Math) && self.at_math_edge() {
+            self.exit_math();
+            return;
+        }
         let Some((block, math)) = leaves(&self.snapshot)
             .into_iter()
             .find(|l| l.id == self.cursor.leaf)
@@ -486,19 +402,24 @@ impl EditorCore {
         }
     }
     fn exit_math(&mut self) {
-        let leaves = leaves(&self.snapshot);
-        let at = leaves
-            .iter()
-            .position(|l| l.id == self.cursor.leaf)
-            .unwrap_or(0);
-        if let Some(leaf) = leaves[at..].iter().find(|l| !l.math) {
+        let owner = self.snapshot.blocks.iter().find_map(|block| {
+            let index = block.content.iter().position(|i| {
+                matches!(&i.body,
+                InlineBody::Math { root } if math_contains(root, self.cursor.leaf))
+            })?;
+            block.content[index + 1..]
+                .iter()
+                .find_map(|i| matches!(i.body, InlineBody::Text { .. }).then_some(i.node))
+        });
+        if let Some(leaf) = owner {
             self.cursor = Position {
-                leaf: leaf.id,
+                leaf,
                 byte: 0,
                 affinity: Affinity::Downstream,
             };
         }
     }
+
     fn fraction(&mut self, state: &mut EditState) {
         let leaf = self.cursor.leaf;
         if !self.apply(StructuralEdit::WrapFraction { node: leaf }, state) {

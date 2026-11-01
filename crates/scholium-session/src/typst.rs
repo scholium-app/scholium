@@ -11,6 +11,9 @@ pub mod history;
 pub mod indicator;
 pub mod input;
 mod key;
+mod math_caret;
+#[cfg(test)]
+mod math_edge_tests;
 mod math_enter;
 mod persistence;
 pub mod pointer;
@@ -22,6 +25,7 @@ mod runtime_tests;
 #[cfg(test)]
 mod scenario_tests;
 mod selection;
+mod structural_delete;
 pub mod style;
 #[cfg(test)]
 mod tests;
@@ -48,12 +52,12 @@ use scholium_typst::editor::{
 use std::path::PathBuf;
 use std::{path::Path, sync::Arc};
 
-/// Stable semantic location; UTF-8 byte offset within a text/math leaf.
+/// Stable semantic location: leaf UTF-8 bytes, or compound edge 0/1 (before/after).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Target {
-    /// Leaf identity.
+    /// Text/Hole or compound identity.
     pub node: scholium_model::NodeId,
-    /// Leaf-local UTF-8 byte offset.
+    /// Leaf-local UTF-8 byte offset, or compound edge 0/1.
     pub byte: usize,
 }
 
@@ -72,7 +76,7 @@ pub struct EditorCore {
     pub snapshot: Arc<StructuredDocument>,
     store: SessionStore,
     saved: Option<Arc<StructuredDocument>>,
-    /// Caret in leaf-local UTF-8 bytes.
+    /// Caret in leaf-local UTF-8 bytes or at a compound edge.
     pub cursor: Position,
     /// Semantic selection anchor.
     pub anchor: Option<Position>,

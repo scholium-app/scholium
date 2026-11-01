@@ -147,19 +147,19 @@ fn enter_ends_the_open_typing_group_inside_the_formula() {
 }
 
 #[test]
-fn enter_in_the_placeholder_removes_it_and_undo_returns_to_the_slot() {
+fn enter_at_an_attach_edge_splits_and_undo_returns_to_that_edge() {
     let mut f = Fixture::new();
     typed(&mut f, "$x^2");
-    let slot_caret = (f.editor.cursor.leaf, f.editor.cursor.byte);
     f.events(vec![press_right()]);
-    assert!(has_hole(&f.editor.snapshot), "placeholder exists");
+    let edge_caret = (f.editor.cursor.leaf, f.editor.cursor.byte);
+    assert!(!has_hole(&f.editor.snapshot), "edge creates no placeholder");
     f.events(vec![enter(false)]);
-    assert!(!has_hole(&f.editor.snapshot), "placeholder removed");
+    assert!(!has_hole(&f.editor.snapshot), "edge creates no placeholder");
     assert_caret_starts_new_block(&f);
     f.editor.history(false, &mut f.state);
     assert!(!has_hole(&f.editor.snapshot));
     assert_eq!(f.editor.snapshot.blocks.len(), 1);
-    assert_eq!((f.editor.cursor.leaf, f.editor.cursor.byte), slot_caret);
+    assert_eq!((f.editor.cursor.leaf, f.editor.cursor.byte), edge_caret);
 }
 
 #[test]

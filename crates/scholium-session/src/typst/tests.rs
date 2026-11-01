@@ -4,13 +4,13 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 static NEXT: AtomicU64 = AtomicU64::new(0);
 
-struct Fixture {
-    core: EditorCore,
+pub(super) struct Fixture {
+    pub(super) core: EditorCore,
     path: PathBuf,
 }
 
 impl Fixture {
-    fn new() -> Self {
+    pub(super) fn new() -> Self {
         let path = std::env::temp_dir().join(format!(
             "scholium-core-{}-{}.sqlite",
             std::process::id(),
@@ -22,11 +22,11 @@ impl Fixture {
         Self { core, path }
     }
 
-    fn run(&mut self, id: CommandId) -> Outcome {
+    pub(super) fn run(&mut self, id: CommandId) -> Outcome {
         self.core.run(id, CommandArgs::None).expect("command")
     }
 
-    fn text(&mut self, text: &str) {
+    pub(super) fn text(&mut self, text: &str) {
         self.core
             .run(
                 CommandId::Text,

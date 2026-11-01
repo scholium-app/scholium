@@ -1,0 +1,81 @@
+[
+  {
+    "command": "cargo fmt --all -- --check",
+    "exit_code": 0,
+    "local_log": "target/t30-final-fmt.log"
+  },
+  {
+    "command": "cargo clippy --locked --workspace --all-targets -- -D warnings",
+    "exit_code": 0,
+    "local_log": "target/t30-final-clippy.log"
+  },
+  {
+    "command": "cargo test --locked --workspace",
+    "exit_code": 0,
+    "local_log": "target/t30-final-workspace-tests.log"
+  },
+  {
+    "command": "RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps",
+    "exit_code": 0,
+    "local_log": "target/t30-final-doc.log"
+  },
+  {
+    "command": "cargo build --locked -p scholium-app -p scholium-storage --bins",
+    "exit_code": 0,
+    "local_log": "target/t30-final-build.log"
+  },
+  {
+    "command": "python3 scripts/check-rust-size.py",
+    "exit_code": 0,
+    "log": "target/t30-final-static-0.log"
+  },
+  {
+    "command": "python3 scripts/check-doc-links.py",
+    "exit_code": 0,
+    "log": "target/t30-final-static-1.log"
+  },
+  {
+    "command": "python3 scripts/check-ui-strings.py",
+    "exit_code": 0,
+    "log": "target/t30-final-static-2.log"
+  },
+  {
+    "command": "python3 scripts/check-layers.py",
+    "exit_code": 0,
+    "log": "target/t30-final-static-3.log"
+  },
+  {
+    "command": "cargo deny --locked check licenses bans sources",
+    "exit_code": 0,
+    "log": "target/t30-final-static-4.log"
+  },
+  {
+    "command": "python3 scripts/window-checks.py --locale zh-Hans en --out target/t30-final-window",
+    "exit_code": 0,
+    "checks_passed": 38,
+    "checks_total": 38,
+    "local_log": "target/t30-final-window.log"
+  },
+  {
+    "commands": [
+      "cargo run --locked -p scholium-typst --features editor --example typst-main-fork-check -- target/t30-stock/system-fork",
+      "cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir target/stock-reference -- target/t30-stock/system-reference",
+      "python3 spikes/typst-main-editor/compare.py target/t30-stock/system-fork target/t30-stock/system-reference"
+    ],
+    "exit_code": 0,
+    "cases": 14,
+    "all_rgba_equal": true,
+    "evidence": "stock-system.json"
+  },
+  {
+    "commands": [
+      "SCHOLIUM_TEST_FONTS=bundled cargo run --locked -p scholium-typst --features editor --example typst-main-fork-check -- target/t30-stock/bundled-fork",
+      "SCHOLIUM_TEST_FONTS=bundled cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir target/stock-reference -- target/t30-stock/bundled-reference",
+      "python3 spikes/typst-main-editor/compare.py target/t30-stock/bundled-fork target/t30-stock/bundled-reference"
+    ],
+    "exit_code": 0,
+    "cases": 14,
+    "all_rgba_equal": true,
+    "evidence": "stock-bundled.json"
+  }
+]

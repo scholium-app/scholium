@@ -20,18 +20,7 @@ impl EditorCore {
             .into_iter()
             .find(|leaf| leaf.id == self.cursor.leaf)
             .map_or(0, |leaf| leaf.text.len());
-        if key == Key::ArrowLeft && self.enter_base(math) {
-            return Ok(self.followed(key, mods, before, old_follow, true));
-        }
-        if key == Key::ArrowRight
-            && self
-                .run(CommandId::LeaveSlot, CommandArgs::Slot(math, leaf_len))
-                .map(|outcome| outcome.applied)
-                .unwrap_or(false)
-        {
-            return Ok(self.followed(key, mods, before, old_follow, true));
-        }
-        if key == Key::Backspace
+        if matches!(key, Key::Backspace | Key::Delete)
             && self
                 .run(
                     CommandId::RemoveSlot,

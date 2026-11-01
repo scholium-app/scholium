@@ -239,8 +239,9 @@ try:
     type_text("5")
     state = wait(lambda s: s["current"] and values(s) == ["English 中文 空格", "12", "3", "45", ""])
     record("10-continued", state)
-    command("key", "--clearmodifiers", "Right")
-    body = wait(lambda s: s["current"] and s["cursor_leaf"] != denominator)["cursor_leaf"]
+    # The nested fraction has an inner and outer edge before the body stop.
+    command("key", "--clearmodifiers", "Right", "Right", "Right")
+    body = wait(lambda s: s["current"] and s["cursor_leaf"] in {l["leaf"] for l in s["body_leaves"]})["cursor_leaf"]
     paste("👩🔬")
     wait(lambda s: s["current"] and values(s)[-1] == "👩🔬")
     # Home is a visual line edge now; Left stays inside this leaf after the formula.
@@ -268,6 +269,12 @@ try:
     original = state["snapshot"]
     tail = state["body_leaves"][-1]
     click(state, tail["leaf"], 0)
+    # This coordinate coincides with the fraction's right edge. Inside the formula,
+    # pointer targeting prefers that edge; Right then reaches the body boundary.
+    state = wait(lambda s: s["semantic"]["cursor"]["path"] == "blocks/0/content/1/body/root"
+                 and s["cursor_byte"] == 1)
+    assert state["snapshot"] == original and state["undo_depth"] == 0
+    command("key", "--clearmodifiers", "Right")
     wait(lambda s: s["cursor_leaf"] == tail["leaf"] and s["cursor_byte"] == 0)
     command("key", "--clearmodifiers", "shift+Left")
     state = wait(lambda s: s["current"] and s["selection"] is not None and s["selection_quads"] > 0)

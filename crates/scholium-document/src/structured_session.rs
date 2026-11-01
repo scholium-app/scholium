@@ -2,6 +2,7 @@
 
 mod attach;
 mod edit;
+mod math_edge;
 mod range;
 mod style;
 #[cfg(test)]
@@ -22,12 +23,13 @@ pub struct MigrationFailure {
 pub use attach::{AttachSlot, base_before_slot};
 pub use style::range_has_style;
 
-/// Stable body-text endpoint, independent of layout and source projection.
+/// Stable endpoint, independent of layout and source projection.
+/// Body-range inputs accept Text only; structural outcomes can also address math edges.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct BodyTextPosition {
-    /// Addressed body Text inline; mathematical and Raw endpoints are rejected.
+    /// Body Text identity for range inputs; math node identity in structural outcomes.
     pub leaf: NodeId,
-    /// Leaf-local UTF-8 extended-grapheme boundary.
+    /// Leaf-local UTF-8 extended-grapheme boundary; compound outcomes use 0/1 before/after.
     pub byte: usize,
 }
 
@@ -68,6 +70,25 @@ pub enum StructuralEdit {
         end: usize,
         /// Literal replacement; never evaluated as markup.
         text: String,
+    },
+    /// Insert literal mathematical content beside a compound, wrapping a slot/root in a Row.
+    InsertMathSibling {
+        /// Fraction/Attach identity whose edge is addressed.
+        node: NodeId,
+        /// False before the compound, true after it.
+        after: bool,
+        /// New identified subtree; normal document validation applies.
+        sibling: scholium_model::structured::MathNode,
+    },
+    /// Remove an all-empty compound; required slots become a fresh Hole.
+    RemoveEmptyMath {
+        /// Empty Fraction/Attach identity.
+        node: NodeId,
+    },
+    /// Remove an all-empty inline formula, retaining a usable body caret.
+    RemoveEmptyFormula {
+        /// Formula root identity.
+        root: NodeId,
     },
     /// Insert an empty structured formula into a block's inline sequence.
     InsertMath {

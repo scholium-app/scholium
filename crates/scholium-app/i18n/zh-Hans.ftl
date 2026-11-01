@@ -432,3 +432,10 @@ diag-input-line_geometry = 当前位置没有可证的行几何；可使用左�
 diag-input-math_selection = 此批选区只接受正文端点；数学槽位选区尚未接入。
 
 diag-input-read_only = 结构视图只读；回到编辑面再执行正文命令。
+
+# Math structure edge announcements never contribute to body Text offsets.
+a11y-math-edge-fraction-before = 公式内，分数前
+a11y-math-edge-fraction-after = 公式内，分数后
+a11y-math-edge-attach-before = 公式内，上下标前
+a11y-math-edge-attach-after = 公式内，上下标后
+a11y-math-edge-nested = { $path }，{ $edge }

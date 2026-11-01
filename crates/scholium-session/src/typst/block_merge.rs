@@ -55,10 +55,15 @@ impl EditorCore {
             } else {
                 block.content.first()
             };
-            edge.is_some_and(|inline| {
-                inline.node == self.cursor.leaf
-                    && matches!(&inline.body, InlineBody::Text { text, .. }
-                        if self.cursor.byte == if forward { text.len() } else { 0 })
+            edge.is_some_and(|inline| match &inline.body {
+                InlineBody::Text { text, .. } => {
+                    inline.node == self.cursor.leaf
+                        && self.cursor.byte == if forward { text.len() } else { 0 }
+                }
+                InlineBody::Math { root } => {
+                    math_boundary(root, forward) == Some((self.cursor.leaf, self.cursor.byte))
+                }
+                InlineBody::RawMath { .. } => false,
             })
         })
     }
@@ -72,4 +77,27 @@ fn body_edge(inline: &StructuredInline, end: bool) -> Option<BodyTextPosition> {
         leaf: inline.node,
         byte: if end { text.len() } else { 0 },
     })
+}
+
+pub(super) fn math_boundary(node: &MathNode, end: bool) -> Option<(scholium_model::NodeId, usize)> {
+    let byte = match &node.body {
+        MathBody::Text { text } => {
+            if end {
+                text.len()
+            } else {
+                0
+            }
+        }
+        MathBody::Hole => 0,
+        MathBody::Fraction { .. } | MathBody::Attach { .. } => usize::from(end),
+        MathBody::Row { children } => {
+            return if end {
+                children.iter().rev().find_map(|c| math_boundary(c, end))
+            } else {
+                children.iter().find_map(|c| math_boundary(c, end))
+            };
+        }
+        MathBody::Symbol { .. } => return None,
+    };
+    Some((node.node, byte))
 }

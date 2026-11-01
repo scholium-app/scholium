@@ -18,7 +18,7 @@ pub struct MathIndicator {
 }
 
 /// Innermost Fraction/Attach slot that contains `leaf`.
-fn slot_of(node: &MathNode, leaf: NodeId) -> Option<&MathNode> {
+pub(super) fn slot_of(node: &MathNode, leaf: NodeId) -> Option<&MathNode> {
     let child = input::math_children(node)
         .into_iter()
         .find(|c| math_contains(c, leaf))?;
@@ -99,7 +99,7 @@ impl EditorCore {
     pub fn in_math(&self) -> bool {
         !self.body_leaf(self.cursor.leaf) && self.formula_root().is_some()
     }
-    fn formula_root(&self) -> Option<&MathNode> {
+    pub(super) fn formula_root(&self) -> Option<&MathNode> {
         self.snapshot
             .blocks
             .iter()

@@ -98,6 +98,11 @@ fn the_catalog_has_no_key_that_nothing_uses() {
     used.insert("reason.document_properties".to_owned());
     used.extend(
         [
+            "a11y.math.edge.fraction.before",
+            "a11y.math.edge.fraction.after",
+            "a11y.math.edge.attach.before",
+            "a11y.math.edge.attach.after",
+            "a11y.math.edge.nested",
             "source.header",
             "source.warning",
             "source.preview.compiling",

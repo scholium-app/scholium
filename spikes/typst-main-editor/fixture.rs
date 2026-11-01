@@ -46,6 +46,25 @@ pub fn fixture(name: &str) -> StructuredDocument {
         return empty_fixture(name);
     }
     let (kind, content) = match name {
+        "edge-root" | "edge-row" => {
+            let fraction = frac(math("a"), math("b"));
+            let root = if name == "edge-row" {
+                row(vec![math("l"), fraction, math("r")])
+            } else {
+                fraction
+            };
+            (
+                BlockKind::Paragraph,
+                vec![
+                    text("edge ", TextStyle::Plain),
+                    StructuredInline {
+                        node: NodeId::fresh(),
+                        body: InlineBody::Math { root },
+                    },
+                    text(" tail", TextStyle::Plain),
+                ],
+            )
+        }
         "preedit" => (BlockKind::Paragraph, vec![text("abZZ", TextStyle::Plain)]),
         "full" => (
             BlockKind::Paragraph,

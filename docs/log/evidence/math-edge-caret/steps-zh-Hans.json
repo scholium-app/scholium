@@ -1,0 +1,1491 @@
+[
+  {
+    "step": "input 1: {'text': 'x'}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 1,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 1
+    },
+    "caret": {
+      "affinity": "Upstream",
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(e14a28b1-1b97-4bf2-9bd8-d9b8e301c471)",
+      "x": 246.80831909179688,
+      "y": 297.9146728515625
+    }
+  },
+  {
+    "step": "input 2: {'text': '$'}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/1/body/root"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "hole"
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 2
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(5e168df7-5f64-4ac6-a230-1d5d3c12a4b3)",
+      "x": 250.7938232421875,
+      "y": 299.105712890625
+    }
+  },
+  {
+    "step": "input 3: {'key': 'Slash', 'mods': {'command': True}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/1/body/root/body/denominator"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 3
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(2608e462-f004-4e8e-b8af-6b48f7b33abe)",
+      "x": 251.99908447265625,
+      "y": 310.58203125
+    }
+  },
+  {
+    "step": "input 4: {'text': 'aaa'}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 3,
+        "path": "blocks/0/content/1/body/root/body/denominator"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aaa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 4
+    },
+    "caret": {
+      "affinity": "Upstream",
+      "byte": 3,
+      "exact": true,
+      "leaf": "NodeId(2608e462-f004-4e8e-b8af-6b48f7b33abe)",
+      "x": 275.880859375,
+      "y": 311.11383056640625
+    }
+  },
+  {
+    "step": "input 5: {'key': 'Character', 'value': 'm', 'mods': {'command': True}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/2"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aaa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 4
+    },
+    "caret": null
+  },
+  {
+    "step": "input 6: {'text': 'dad'}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 3,
+        "path": "blocks/0/content/2"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aaa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 5
+    },
+    "caret": {
+      "affinity": "Upstream",
+      "byte": 3,
+      "exact": true,
+      "leaf": "NodeId(eda1179b-041d-4eba-aec4-d6f5d3c1ec90)",
+      "x": 312.9471740722656,
+      "y": 298.5920715332031
+    }
+  },
+  {
+    "step": "input 7: {'key': 'ArrowLeft', 'expected': {'cursor': {'path': 'blocks/0/content/2', 'byte': 2, 'affinity': 'Downstream'}, 'undo_depth': 5}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 2,
+        "path": "blocks/0/content/2"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aaa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 5
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(eda1179b-041d-4eba-aec4-d6f5d3c1ec90)",
+      "x": 300.9426574707031,
+      "y": 298.5920715332031
+    }
+  },
+  {
+    "step": "input 8: {'key': 'ArrowLeft', 'expected': {'cursor': {'path': 'blocks/0/content/2', 'byte': 1, 'affinity': 'Downstream'}, 'undo_depth': 5}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 1,
+        "path": "blocks/0/content/2"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aaa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 5
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(eda1179b-041d-4eba-aec4-d6f5d3c1ec90)",
+      "x": 290.28631591796875,
+      "y": 298.5920715332031
+    }
+  },
+  {
+    "step": "input 9: {'key': 'ArrowLeft', 'expected': {'cursor': {'path': 'blocks/0/content/2', 'byte': 0, 'affinity': 'Downstream'}, 'undo_depth': 5}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/2"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aaa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 5
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(eda1179b-041d-4eba-aec4-d6f5d3c1ec90)",
+      "x": 278.28179931640625,
+      "y": 298.5920715332031
+    }
+  },
+  {
+    "step": "input 10: {'key': 'Backspace', 'expected': {'cursor': {'path': 'blocks/0/content/1/body/root', 'byte': 1, 'affinity': 'Downstream'}, 'undo_depth': 5}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 1,
+        "path": "blocks/0/content/1/body/root"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aaa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 5
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(7559581e-3efa-4c1d-bb19-12b605e60ac2)",
+      "x": 278.28179931640625,
+      "y": 298.4178466796875
+    }
+  },
+  {
+    "step": "input 11: {'key': 'Backspace', 'expected': {'cursor': {'path': 'blocks/0/content/1/body/root/body/denominator', 'byte': 3, 'affinity': 'Downstream'}, 'undo_depth': 5}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 3,
+        "path": "blocks/0/content/1/body/root/body/denominator"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aaa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 5
+    },
+    "caret": {
+      "affinity": "Upstream",
+      "byte": 3,
+      "exact": true,
+      "leaf": "NodeId(2608e462-f004-4e8e-b8af-6b48f7b33abe)",
+      "x": 275.880859375,
+      "y": 311.11383056640625
+    }
+  },
+  {
+    "step": "input 12: {'key': 'Backspace', 'expected': {'cursor': {'path': 'blocks/0/content/1/body/root/body/denominator', 'byte': 2, 'affinity': 'Downstream'}, 'undo_depth': 6}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 2,
+        "path": "blocks/0/content/1/body/root/body/denominator"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 6
+    },
+    "caret": {
+      "affinity": "Upstream",
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(2608e462-f004-4e8e-b8af-6b48f7b33abe)",
+      "x": 266.9903259277344,
+      "y": 311.11383056640625
+    }
+  },
+  {
+    "step": "input 13: {'key': 'ArrowLeft', 'expected': {'cursor': {'path': 'blocks/0/content/1/body/root/body/denominator', 'byte': 1, 'affinity': 'Downstream'}, 'undo_depth': 6}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 1,
+        "path": "blocks/0/content/1/body/root/body/denominator"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 6
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(2608e462-f004-4e8e-b8af-6b48f7b33abe)",
+      "x": 258.09979248046875,
+      "y": 311.11383056640625
+    }
+  },
+  {
+    "step": "input 14: {'key': 'ArrowLeft', 'expected': {'cursor': {'path': 'blocks/0/content/1/body/root/body/denominator', 'byte': 0, 'affinity': 'Downstream'}, 'undo_depth': 6}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/1/body/root/body/denominator"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 6
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(2608e462-f004-4e8e-b8af-6b48f7b33abe)",
+      "x": 249.209228515625,
+      "y": 311.11383056640625
+    }
+  },
+  {
+    "step": "input 15: {'key': 'ArrowLeft', 'expected': {'cursor': {'path': 'blocks/0/content/1/body/root/body/numerator', 'byte': 0, 'affinity': 'Downstream'}, 'undo_depth': 6}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/1/body/root/body/numerator"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 6
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(5e168df7-5f64-4ac6-a230-1d5d3c12a4b3)",
+      "x": 258.09979248046875,
+      "y": 290.3183898925781
+    }
+  },
+  {
+    "step": "input 16: {'key': 'ArrowLeft', 'expected': {'cursor': {'path': 'blocks/0/content/1/body/root', 'byte': 0, 'affinity': 'Downstream'}, 'undo_depth': 6}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/1/body/root"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 6
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(7559581e-3efa-4c1d-bb19-12b605e60ac2)",
+      "x": 246.80831909179688,
+      "y": 298.4178466796875
+    }
+  },
+  {
+    "step": "input 17: {'key': 'ArrowLeft', 'expected': {'cursor': {'path': 'blocks/0/content/0', 'byte': 1, 'affinity': 'Downstream'}, 'undo_depth': 6}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 1,
+        "path": "blocks/0/content/0"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 6
+    },
+    "caret": {
+      "affinity": "Upstream",
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(e14a28b1-1b97-4bf2-9bd8-d9b8e301c471)",
+      "x": 246.80831909179688,
+      "y": 298.5920715332031
+    }
+  },
+  {
+    "step": "input 18: {'key': 'ArrowRight', 'expected': {'cursor': {'path': 'blocks/0/content/1/body/root', 'byte': 0, 'affinity': 'Downstream'}, 'undo_depth': 6}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/1/body/root"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 6
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(7559581e-3efa-4c1d-bb19-12b605e60ac2)",
+      "x": 246.80831909179688,
+      "y": 298.4178466796875
+    }
+  },
+  {
+    "step": "input 19: {'key': 'ArrowRight', 'expected': {'cursor': {'path': 'blocks/0/content/1/body/root/body/numerator', 'byte': 0, 'affinity': 'Downstream'}, 'undo_depth': 6}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/1/body/root/body/numerator"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 6
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(5e168df7-5f64-4ac6-a230-1d5d3c12a4b3)",
+      "x": 258.09979248046875,
+      "y": 290.3183898925781
+    }
+  },
+  {
+    "step": "input 20: {'key': 'ArrowRight', 'expected': {'cursor': {'path': 'blocks/0/content/1/body/root/body/denominator', 'byte': 0, 'affinity': 'Downstream'}, 'undo_depth': 6}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/1/body/root/body/denominator"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 6
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(2608e462-f004-4e8e-b8af-6b48f7b33abe)",
+      "x": 249.209228515625,
+      "y": 311.11383056640625
+    }
+  },
+  {
+    "step": "input 21: {'key': 'ArrowRight', 'expected': {'cursor': {'path': 'blocks/0/content/1/body/root/body/denominator', 'byte': 1, 'affinity': 'Downstream'}, 'undo_depth': 6}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 1,
+        "path": "blocks/0/content/1/body/root/body/denominator"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 6
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(2608e462-f004-4e8e-b8af-6b48f7b33abe)",
+      "x": 258.09979248046875,
+      "y": 311.11383056640625
+    }
+  },
+  {
+    "step": "input 22: {'key': 'ArrowRight', 'expected': {'cursor': {'path': 'blocks/0/content/1/body/root/body/denominator', 'byte': 2, 'affinity': 'Downstream'}, 'undo_depth': 6}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 2,
+        "path": "blocks/0/content/1/body/root/body/denominator"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 6
+    },
+    "caret": {
+      "affinity": "Upstream",
+      "byte": 2,
+      "exact": true,
+      "leaf": "NodeId(2608e462-f004-4e8e-b8af-6b48f7b33abe)",
+      "x": 266.9903259277344,
+      "y": 311.11383056640625
+    }
+  },
+  {
+    "step": "input 23: {'key': 'ArrowRight', 'expected': {'cursor': {'path': 'blocks/0/content/1/body/root', 'byte': 1, 'affinity': 'Downstream'}, 'undo_depth': 6}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 1,
+        "path": "blocks/0/content/1/body/root"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 6
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 1,
+      "exact": true,
+      "leaf": "NodeId(7559581e-3efa-4c1d-bb19-12b605e60ac2)",
+      "x": 269.3912353515625,
+      "y": 298.4178466796875
+    }
+  },
+  {
+    "step": "input 24: {'key': 'ArrowRight', 'expected': {'cursor': {'path': 'blocks/0/content/2', 'byte': 0, 'affinity': 'Downstream'}, 'undo_depth': 6}}",
+    "actual": {
+      "anchor": null,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/2"
+      },
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "x"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "aa"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "dad"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      },
+      "undo_depth": 6
+    },
+    "caret": {
+      "affinity": "Downstream",
+      "byte": 0,
+      "exact": true,
+      "leaf": "NodeId(eda1179b-041d-4eba-aec4-d6f5d3c1ec90)",
+      "x": 269.3912353515625,
+      "y": 298.5920715332031
+    }
+  }
+]

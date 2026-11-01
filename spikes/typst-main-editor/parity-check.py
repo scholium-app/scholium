@@ -202,7 +202,7 @@ def check_step(event, state, states):
             raise AssertionError("fixture must distinguish original goal from previous line's caret x")
 
 
-def scenario(binary, path, output):
+def scenario(binary, path, output, on_step=None):
     value = json.loads(path.read_text())
     output.mkdir(parents=True, exist_ok=False)
     replay = Replay(binary, output)
@@ -217,6 +217,8 @@ def scenario(binary, path, output):
             rows.append({"step": step, "actual": projection(state), "caret": cursor_caret(state)})
             (output / "steps.json").write_text(json.dumps(rows, ensure_ascii=False, indent=2) + "\n")
             check_step(event, state, states)
+            if on_step is not None:
+                on_step(replay, state, index + 1)
             states.append(state)
         actual = projection(replay.ready())
         diff = differences(value["expected"], actual)

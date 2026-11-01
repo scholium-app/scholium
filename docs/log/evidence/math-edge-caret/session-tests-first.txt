@@ -1,0 +1,80 @@
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-session)
+    Finished `test` profile [unoptimized] target(s) in 1.59s
+     Running unittests src/lib.rs (target/debug/deps/scholium_session-2c8345755d416c14)
+
+running 8 tests
+test typst::math_edge_tests::empty_fraction_then_empty_formula_are_removed_in_two_steps ... FAILED
+test typst::math_edge_tests::backspace_enters_structure_without_history_then_deletes_only_graphemes ... FAILED
+test typst::math_edge_tests::nested_fractions_and_attach_visit_edges_and_slots_in_tree_order ... FAILED
+test typst::math_edge_tests::fraction_root_has_both_edges_in_exact_bidirectional_order ... FAILED
+test typst::math_edge_tests::delete_mirrors_navigation_into_the_first_slot ... FAILED
+test typst::math_edge_tests::fraction_and_attach_commands_at_edges_create_empty_bases ... FAILED
+test typst::math_edge_tests::typing_committing_and_pasting_at_each_edge_undo_and_delete_back_to_edge ... FAILED
+test typst::math_edge_tests::adjacent_row_text_supplies_the_structure_edges_without_duplicate_stops ... FAILED
+
+failures:
+
+---- typst::math_edge_tests::empty_fraction_then_empty_formula_are_removed_in_two_steps stdout ----
+
+thread 'typst::math_edge_tests::empty_fraction_then_empty_formula_are_removed_in_two_steps' (795505) panicked at crates/scholium-session/src/typst/math_edge_tests.rs:94:5:
+assertion failed: !format!("{:?}",f.core.snapshot).contains("Fraction")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- typst::math_edge_tests::backspace_enters_structure_without_history_then_deletes_only_graphemes stdout ----
+
+thread 'typst::math_edge_tests::backspace_enters_structure_without_history_then_deletes_only_graphemes' (795503) panicked at crates/scholium-session/src/typst/math_edge_tests.rs:54:5:
+assertion `left == right` failed
+  left: (NodeId(6e03346e-d4a1-4741-82a3-fe1ecb2f9310), 0)
+ right: (NodeId(75c8bcb5-e9d0-41ad-987a-1c7cac4da381), 1)
+
+---- typst::math_edge_tests::nested_fractions_and_attach_visit_edges_and_slots_in_tree_order stdout ----
+
+thread 'typst::math_edge_tests::nested_fractions_and_attach_visit_edges_and_slots_in_tree_order' (795508) panicked at crates/scholium-session/src/typst/math_edge_tests.rs:129:76:
+assertion `left == right` failed
+  left: (NodeId(660dfa10-dcd8-49c6-8ff3-7f533202fe3d), 0)
+ right: (NodeId(ea4bbcb4-85e8-490b-b94f-164450eafa41), 0)
+
+---- typst::math_edge_tests::fraction_root_has_both_edges_in_exact_bidirectional_order stdout ----
+
+thread 'typst::math_edge_tests::fraction_root_has_both_edges_in_exact_bidirectional_order' (795507) panicked at crates/scholium-session/src/typst/math_edge_tests.rs:34:9:
+assertion `left == right` failed
+  left: (NodeId(7d6e6661-433e-4eff-9c70-d6bf15fa14ba), 3)
+ right: (NodeId(69f1730c-2f2c-4c18-a71a-b21597af2579), 1)
+
+---- typst::math_edge_tests::delete_mirrors_navigation_into_the_first_slot stdout ----
+
+thread 'typst::math_edge_tests::delete_mirrors_navigation_into_the_first_slot' (795504) panicked at crates/scholium-session/src/typst/math_edge_tests.rs:108:5:
+assertion `left == right` failed
+  left: (NodeId(da93bf25-14e3-4a76-a01f-573f27a1e4ba), 1)
+ right: (NodeId(84bd05f2-8620-4bdf-99bb-e82c2c044da1), 0)
+
+---- typst::math_edge_tests::fraction_and_attach_commands_at_edges_create_empty_bases stdout ----
+
+thread 'typst::math_edge_tests::fraction_and_attach_commands_at_edges_create_empty_bases' (795506) panicked at crates/scholium-session/src/typst/math_edge_tests.rs:159:13:
+assertion failed: input::leaves(&f.core.snapshot).iter().any(|l|
+        l.id == f.core.cursor.leaf && l.text.is_empty())
+
+---- typst::math_edge_tests::typing_committing_and_pasting_at_each_edge_undo_and_delete_back_to_edge stdout ----
+
+thread 'typst::math_edge_tests::typing_committing_and_pasting_at_each_edge_undo_and_delete_back_to_edge' (795509) panicked at crates/scholium-session/src/typst/math_edge_tests.rs:73:79:
+edge text: Edit(WrongTarget)
+
+---- typst::math_edge_tests::adjacent_row_text_supplies_the_structure_edges_without_duplicate_stops stdout ----
+
+thread 'typst::math_edge_tests::adjacent_row_text_supplies_the_structure_edges_without_duplicate_stops' (795502) panicked at crates/scholium-session/src/typst/tests.rs:35:14:
+text: Edit(WrongTarget)
+
+
+failures:
+    typst::math_edge_tests::adjacent_row_text_supplies_the_structure_edges_without_duplicate_stops
+    typst::math_edge_tests::backspace_enters_structure_without_history_then_deletes_only_graphemes
+    typst::math_edge_tests::delete_mirrors_navigation_into_the_first_slot
+    typst::math_edge_tests::empty_fraction_then_empty_formula_are_removed_in_two_steps
+    typst::math_edge_tests::fraction_and_attach_commands_at_edges_create_empty_bases
+    typst::math_edge_tests::fraction_root_has_both_edges_in_exact_bidirectional_order
+    typst::math_edge_tests::nested_fractions_and_attach_visit_edges_and_slots_in_tree_order
+    typst::math_edge_tests::typing_committing_and_pasting_at_each_edge_undo_and_delete_back_to_edge
+
+test result: FAILED. 0 passed; 8 failed; 0 ignored; 0 measured; 23 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p scholium-session --lib`

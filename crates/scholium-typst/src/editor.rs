@@ -2,9 +2,12 @@
 //! No source evaluation or UI types cross this boundary. Scenes are derived data.
 
 mod content;
+mod edge_geometry;
 #[cfg(test)]
 mod empty_paragraphs;
 mod geometry;
+mod stops;
+pub use stops::{math_children, next_caret};
 mod kernel;
 #[cfg(test)]
 mod parity;

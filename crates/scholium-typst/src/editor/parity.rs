@@ -281,3 +281,82 @@ fn operator_free_runs_stay_whole_in_both_surfaces() {
         }
     }
 }
+
+#[test]
+fn compound_edges_have_scene_bounds_without_changing_printed_lines() {
+    use super::{Affinity, Position};
+    for root in [
+        MathNode {
+            node: NodeId::fresh(),
+            body: MathBody::Fraction {
+                numerator: Box::new(text_node("a")),
+                denominator: Box::new(text_node("aaa")),
+            },
+        },
+        attach_sup("x", "2"),
+    ] {
+        let id = root.node;
+        let doc = math_doc(root);
+        assert_eq!(compact(editor_lines(&doc)), compact(preview_lines(&doc)));
+        let scene = edge_scene(doc);
+        let edges: Vec<_> = (0..=1)
+            .map(|byte| {
+                scene
+                    .geometry
+                    .caret(Position {
+                        leaf: id,
+                        byte,
+                        affinity: Affinity::Downstream,
+                    })
+                    .expect("edge caret")
+            })
+            .collect();
+        assert!(edges[0].top[0] < edges[1].top[0]);
+        assert_eq!(edges[0].top[1], edges[1].top[1]);
+        assert_eq!(edges[0].bottom[1], edges[1].bottom[1]);
+        for edge in edges {
+            assert!(edge.exact);
+            assert!(edge.top[1] < edge.bottom[1]);
+            assert_eq!(
+                scene
+                    .geometry
+                    .hit([edge.top[0], (edge.top[1] + edge.bottom[1]) * 0.5])
+                    .expect("hit")
+                    .position,
+                edge.position
+            );
+        }
+    }
+}
+
+fn edge_scene(doc: StructuredDocument) -> super::EditorScene {
+    use super::{EditorWorker, RasterSpec, ViewRange};
+    use scholium_model::layout_identity::*;
+    let stamp = SceneStamp {
+        document: doc.document,
+        epoch: LayoutEpoch::fresh(),
+        request: LayoutRequestId::fresh(),
+        revision: doc.revision,
+        profile: ProfileGeneration(0),
+        resources: ResourceGeneration(0),
+    };
+    let worker =
+        EditorWorker::spawn_with_fonts(|| {}, crate::FontProfile::Bundled).expect("worker");
+    worker.submit(
+        std::sync::Arc::new(doc),
+        stamp,
+        RasterSpec {
+            px_per_pt: 1.0,
+            max_side: 2048,
+        },
+        ViewRange::whole(),
+    );
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
+    loop {
+        if let Some((_, scene)) = worker.poll() {
+            return scene.expect("scene");
+        }
+        assert!(std::time::Instant::now() < deadline, "worker timeout");
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+}
