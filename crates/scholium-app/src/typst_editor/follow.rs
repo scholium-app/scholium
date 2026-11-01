@@ -57,7 +57,7 @@ pub(super) fn reveal(caret: Rect, page: Rect, outer: f32, edge: Option<Edge>) ->
 impl EditorSession {
     /// Scroll the surrounding area so the caret shows, once the Scene allows it.
     pub(super) fn apply_follow(&mut self, ui: &egui::Ui, page: Rect, scale: f32, outer: f32) {
-        if !self.core.follow.pending || !self.current() {
+        if !self.core.follow.pending || !self.core.document_scene_is_current() {
             return;
         }
         let Some(intent) = self.follow.intent.or_else(|| self.core.follow_intent()) else {

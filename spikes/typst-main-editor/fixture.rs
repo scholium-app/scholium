@@ -46,6 +46,7 @@ pub fn fixture(name: &str) -> StructuredDocument {
         return empty_fixture(name);
     }
     let (kind, content) = match name {
+        "preedit" => (BlockKind::Paragraph, vec![text("abZZ", TextStyle::Plain)]),
         "full" => (
             BlockKind::Paragraph,
             vec![

@@ -1,0 +1,21 @@
+{
+  "inline-no-overlap-and-caret-anchor": {
+    "preedit_width_px": 60.0225830078125,
+    "following_shift_px": 60.022613525390625,
+    "ime_area": [
+      317.4872741699219,
+      290.28875732421875,
+      317.4872741699219,
+      306.701171875
+    ]
+  },
+  "ime-cursor-inside-preedit": [
+    287.47601318359375,
+    290.28875732421875,
+    287.47601318359375,
+    306.701171875
+  ],
+  "cancel-restores-document-geometry": true,
+  "commit-once-without-position-jump": true,
+  "undo-contains-only-committed-text": true
+}

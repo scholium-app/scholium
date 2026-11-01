@@ -120,7 +120,8 @@ placement 的 scale 取量化后的值，故命中/caret 与绘制一致。页�
 源码模式 A4 预览按其显示物理宽请求页面栅格，规则相同（A4 页面恒小于单张纹理上限，不分条带）。
 测试专用环境变量 `SCHOLIUM_RASTER_PX_PER_PT` 强制旧的固定栅格倍率，仅供窗口检查对比锐度。
 页面持有焦点期间每帧都发布 IME 区域：旧图或当前叶无 caret 几何时沿用最近一次已证 caret
-位置，因为 egui-winit 在缺少 IME 输出的帧关闭平台输入法，反复开关会让 fcitx5 停止送字。
+位置，并把窗口逻辑像素矩形限制在可见页面范围内。`IMEOutput.rect` 与 `cursor_rect` 都是 caret 矩形，
+因为 egui-winit 0.36 的候选窗定位读取前者；不能发布整页矩形。egui-winit 在缺少 IME 输出的帧关闭平台输入法，反复开关会让 fcitx5 停止送字。
 同帧 Text 仅在与 IME Commit 文字相同时视为重复丢弃；输入法透传的英文 Text 照常输入。
 Escape 分层取消，不释放页面焦点：先取消选区、IME 组合与拖动；三者都没有且光标在行内公式内时，离开该公式，
 光标落在公式之后的正文（与 Ctrl+M 离开同位；空占位槽由占位生命周期移除）；公式外无事可做。
@@ -329,3 +330,18 @@ runs 以快照身份与 Scene 是否当前缓存，几何存 Frame pt，发布�
 解码，正文已变、字素内部、输入排队或组合期间拒绝并提示。行内公式是 `Math` 兄弟节点，不进入正文文本；
 数学槽位上下文由稳定的 polite `Status` 节点按由外到内路径播报，空槽读“空”。禁用控件依赖根 workspace
 的 `accesskit_atspi_common` 补丁不报 Enabled/Sensitive。裁决见 [ADR 0038](../adr/ADR-0038-editor-accessibility.md)。
+
+### 行内 IME 组合
+
+正文组合经独立 `Preedit` 排版输入在 caret 处交给 Typst，继承文档字体并加下划线，后文正常重排。
+caret 使用 egui 给出的 active range 末端（Unicode scalar 转 UTF-8 byte），否则在组合串末尾。
+新组合场景等待期间保留最后一幅 Typst 图，不叠加 egui 文字；取消或提交也保留旧图直到新图到达。
+组合不进入快照、请求日志、撤销分组、生成源码、保存文件或 AccessKit 文本文字。
+组合时暂停文档几何查询：指针、导航、选区 overlay、caret-follow 与 AccessKit 的位置几何不读取
+split-run offset；辅助技术继续读取权威正文。正常 Scene 到达后恢复。Commit 先清除临时排版输入，
+再走普通 `Origin::Commit`，不保留第二份可写文档。数学内暂不显示临时组合串，但 Commit 和 Escape
+仍沿原有数学输入路径；不执行用户文字为 Typst 源码。
+
+窗口测试可同时设置 `SCHOLIUM_EDITOR_AUDIT=1` 与 `SCHOLIUM_IME_CHECK_FILE`，通过原子写入
+JSON `preedit`/`commit`（可选 `cursor_chars`）给同一 egui 输入路径送事件；正常应用不读取此文件。
+该私有 Xvfb 测试验证 X11 窗口中排版与 IME 输出，不替代 fcitx5/Wayland 协议验收。

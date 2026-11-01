@@ -86,6 +86,13 @@ def click(state, leaf_debug, byte):
     command("click", 1)
 
 
+def assert_ime_anchor(state):
+    area, caret = state["ime_area"], state["ime_caret"]
+    assert area == caret and area is not None, (area, caret)
+    assert area[2] - area[0] <= 2, area
+    assert area[3] > area[1], area
+
+
 def caret_point(state, leaf, byte):
     caret = next(c for c in state["carets"] if c["leaf"] == leaf and c["byte"] == byte and c["exact"])
     return round(caret["x"]), round(caret["y"])
@@ -195,6 +202,7 @@ try:
     type_text("English ")
     paste("中文 空格")
     state = wait(lambda s: s["current"] and values(s) == ["English 中文 空格"])
+    assert_ime_anchor(state)
     record("03-chinese-english-space", state)
     type_text("$")
     state = wait(lambda s: s["current"] and len(leaves(s)) == 3)

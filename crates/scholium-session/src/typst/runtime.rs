@@ -5,6 +5,7 @@ use std::time::{Duration, Instant};
 
 pub(super) struct Runtime {
     worker: EditorWorker,
+    preedit: Option<scholium_typst::editor::Preedit>,
     token: u64,
     pub(super) settle: raster::Settle,
     pub(super) sent: Option<(Instant, ViewRange)>,
@@ -36,11 +37,37 @@ impl EditorCore {
         core.runtime = Some(Runtime {
             worker: EditorWorker::spawn_with_fonts(wake, fonts)?,
             token: 0,
+            preedit: None,
             settle: Default::default(),
             sent: None,
             shown_scale: None,
         });
         Ok(core)
+    }
+
+    /// Request display-only body preedit, without creating a semantic action.
+    pub fn set_preedit(&mut self, preedit: Option<scholium_typst::editor::Preedit>) {
+        // Math composition retains normal commit semantics, but its transient
+        // rendering is out of scope. Never insert body Text into a math tree.
+        let preedit = preedit.filter(|p| {
+            !p.text.is_empty()
+                && self.snapshot.blocks.iter().any(|b| {
+                    b.content.iter().any(|i| {
+                        i.node == p.at.leaf
+                            && matches!(&i.body,
+                InlineBody::Text { text, .. } if text.is_char_boundary(p.at.byte))
+                    })
+                })
+                && p.cursor.is_none_or(|byte| p.text.is_char_boundary(byte))
+        });
+        let Some(runtime) = &mut self.runtime else {
+            return;
+        };
+        if runtime.preedit == preedit {
+            return;
+        }
+        runtime.preedit = preedit;
+        self.submit_layout();
     }
 
     /// Submit the accepted snapshot and invalidate geometry until its Scene arrives.
@@ -49,9 +76,13 @@ impl EditorCore {
         self.set_geometry(None, None);
         if let Some(runtime) = &mut self.runtime {
             runtime.token = runtime.token.wrapping_add(1);
-            runtime
-                .worker
-                .submit(self.snapshot.clone(), self.wanted, self.raster, self.view);
+            runtime.worker.submit_with_preedit(
+                self.snapshot.clone(),
+                self.wanted,
+                self.raster,
+                self.view,
+                runtime.preedit.clone(),
+            );
             runtime.sent = Some((Instant::now(), self.view));
         }
     }
@@ -78,7 +109,11 @@ impl EditorCore {
                     runtime.shown_scale = Some(scene.sharp.px_per_pt);
                 }
                 self.overflows = self.find_overflows(&scene);
-                self.set_geometry(Some(scene.geometry.clone()), Some(stamp));
+                if scene.preedit.is_none() {
+                    self.set_geometry(Some(scene.geometry.clone()), Some(stamp));
+                } else {
+                    self.set_geometry(None, None);
+                }
                 self.scene = Some(scene);
                 true
             }
@@ -94,9 +129,15 @@ impl EditorCore {
         self.scene.as_ref()
     }
 
-    /// Whether the adopted Scene can supply current pointer and navigation geometry.
+    /// Whether the adopted display Scene matches the latest layout request.
     pub fn scene_is_current(&self) -> bool {
         self.scene.as_ref().is_some_and(|s| s.stamp == self.wanted) && self.layout_error.is_none()
+    }
+
+    /// Whether the current Scene can answer accepted-document geometry queries.
+    /// Composition split-run offsets are display-only and never escape as input geometry.
+    pub fn document_scene_is_current(&self) -> bool {
+        self.scene_is_current() && self.scene.as_ref().is_some_and(|s| s.preedit.is_none())
     }
 
     /// Drop the old picture when a history/new-document operation changes lifetimes.
@@ -107,7 +148,10 @@ impl EditorCore {
 
     /// Synchronize immutable geometry from the session's adopted Scene.
     pub fn sync_scene_geometry(&mut self) {
-        let current = self.scene.as_ref().filter(|s| s.stamp == self.wanted);
+        let current = self
+            .scene
+            .as_ref()
+            .filter(|s| s.stamp == self.wanted && s.preedit.is_none());
         let geometry = current.map(|s| s.geometry.clone());
         let stamp = current.map(|s| s.stamp);
         self.set_geometry(geometry, stamp);

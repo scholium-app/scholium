@@ -77,6 +77,10 @@ fn scripts(base: Content, sub: Option<Content>, sup: Option<Content>) -> Content
 fn fixture(name: &str) -> Content {
     let paragraph = |body| ParElem::new(body).pack();
     let block = match name {
+        "preedit" => paragraph(Content::sequence([
+            kernel::text("ab"), typst::text::UnderlineElem::new(kernel::text("中文")).pack(),
+            kernel::text("ZZ"),
+        ])),
         "full" => paragraph(Content::sequence([
             kernel::text("English 中文 空格"),
             EquationElem::new(
@@ -152,6 +156,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "scripts",
         "styles",
         "heading",
+        "preedit",
         "empty-start",
         "empty-middle",
         "empty-three",
@@ -171,6 +176,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             sheet(&frame)
         };
         let pixels = typst_render::render(&page, &kernel::render_options());
+
         std::fs::write(output.join(format!("{name}.rgba")), pixels.data())?;
         std::fs::write(
             output.join(format!("{name}.json")),

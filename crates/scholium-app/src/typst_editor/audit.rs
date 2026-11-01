@@ -63,7 +63,7 @@ impl EditorSession {
             })
         });
         let (wanted, shown) = self.core.scene_identities();
-        let value = json!({
+        let mut value = json!({
             "backend": "Typst Content main app", "current": self.current(),
             "revision": self.snapshot.revision.0, "wanted": wanted,
             "shown": shown,
@@ -76,6 +76,8 @@ impl EditorSession {
             "saved": !self.core.dirty(),
             "snapshot": self.snapshot.as_ref(), "carets": carets, "page_text_draws": text_shapes,
             "semantic": self.core.semantic_projection(),
+            "ime_area": ctx.output(|o| o.ime.as_ref().map(|i| [i.rect.left(), i.rect.top(), i.rect.right(), i.rect.bottom()])),
+            "ime_caret": ctx.output(|o| o.ime.as_ref().map(|i| [i.cursor_rect.left(), i.cursor_rect.top(), i.cursor_rect.right(), i.cursor_rect.bottom()])),
             "source_reads": self.scene().map(|s| s.stats.source_reads),
             "layout_error": self.layout_error,
             "selection": selection, "selection_quads": quads.as_ref().map(|q| q.len()).ok(),
@@ -90,8 +92,21 @@ impl EditorSession {
             "fonts": crate::theme::fonts::chosen().map(|f| json!({
                 "ui": f.ui, "latin": f.latin, "mono": f.mono,
             })),
-        })
-        .to_string();
+        });
+        value.as_object_mut().expect("audit is an object").extend(
+            json!({
+            "document_geometry": self.core.document_scene_is_current(),
+            "preedit_caret": self.scene().and_then(|s| s.preedit.as_ref()).map(|c| json!({
+                "leaf": format!("{:?}", c.position.leaf), "byte": c.position.byte,
+                "x": rect.left() + c.top[0] as f32 * scale,
+                "y": rect.top() + c.top[1] as f32 * scale,
+            })),
+            })
+            .as_object()
+            .expect("composition audit is an object")
+            .clone(),
+        );
+        let value = value.to_string();
         if self.last_audit.as_ref() != Some(&value) {
             println!("AUDIT {value}");
             self.last_audit = Some(value);

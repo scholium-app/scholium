@@ -49,11 +49,14 @@ impl EditorSession {
             ),
             egui::Event::Copy if state.composition.is_none() => return self.copy_selection(state),
             egui::Event::Cut if state.composition.is_none() => return self.cut_selection(state),
-            egui::Event::Ime(egui::ImeEvent::Preedit { text, .. }) => {
-                state.composition = (!text.is_empty()).then_some(text)
+            egui::Event::Ime(egui::ImeEvent::Preedit {
+                text,
+                active_range_chars,
+            }) => {
+                self.preedit(text, active_range_chars, state);
             }
             egui::Event::Ime(egui::ImeEvent::Commit(text)) => {
-                state.composition = None;
+                self.cancel_preedit(state);
                 self.submit(
                     Input::Command(Command::Text, CommandArgs::Text(text, Origin::Commit)),
                     state,
@@ -65,7 +68,7 @@ impl EditorSession {
                 ..
             } => {
                 if state.composition.is_some() {
-                    state.composition = None;
+                    self.cancel_preedit(state);
                 } else if let Some(key) = abstract_key(egui::Key::Escape) {
                     self.submit(
                         Input::Key {

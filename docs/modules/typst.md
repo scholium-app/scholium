@@ -197,3 +197,15 @@ Typst 同时负责预览与最终输出，动态代码保留 RawTypst，受控�
 输入队列通过通道唤醒线程，无输入时阻塞等待；丢弃句柄关闭通道，不在 UI 线程 join。
 应用启动时提前创建常驻 worker，使字体扫描尽量不落在首次键入之后。
 决策与测量边界见 [ADR 0030](../adr/ADR-0030-incomplete-formula-feedback.md)。
+
+## 显示专用 IME run
+
+`EditorWorker::submit_with_preedit` 接受独立的 `Preedit { at, text, cursor }`，`at` 是已接受正文叶内
+UTF-8 byte，`cursor` 是 preedit 内 UTF-8 byte（缺省为末尾）。它不修改传入快照，也不生成源码。
+Content cache 只使前后受影响正文叶及其段落失效；未变的段落继续复用。正文 Text 在插入点分成
+前串、带 `UnderlineElem` 的字面预编辑串和后串，同一 Typst 文档样式负责字体、断行、段落重排。
+无 egui 文本叠层。每次更新使用独立 layout request identity，旧结果不能覆盖新组合或已提交场景。
+`EditorScene.preedit` 给出显示 caret；组合中 `geometry` 的 split-run byte 只用于显示审计，不能回答
+真实文档的命中、导航、选区或 AccessKit 几何查询。取消/提交后正常 Scene 恢复该权限。
+数学预编辑暂不注入 Content；数学 Commit 保持原有字面提交与撤销语义。
+边界决策见 [ADR 0044](../adr/ADR-0044-transient-ime-layout.md)。

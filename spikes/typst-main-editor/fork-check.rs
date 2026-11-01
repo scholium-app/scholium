@@ -19,6 +19,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "scripts",
         "styles",
         "heading",
+        "preedit",
         "empty-start",
         "empty-middle",
         "empty-three",
@@ -36,14 +37,29 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             profile: ProfileGeneration(0),
             resources: ResourceGeneration(0),
         };
-        worker.submit(snapshot.clone(), stamp, PINNED, ViewRange::whole());
+        let preedit = (name == "preedit").then(|| scholium_typst::editor::Preedit {
+            at: scholium_typst::editor::Position {
+                leaf: snapshot.blocks[0].content[0].node,
+                byte: 2,
+                affinity: scholium_typst::editor::Affinity::Downstream,
+            },
+            text: "中文".into(),
+            cursor: None,
+        });
+        worker.submit_with_preedit(
+            snapshot.clone(),
+            stamp,
+            PINNED,
+            ViewRange::whole(),
+            preedit.clone(),
+        );
         let scene = wait(&worker, stamp)?;
         assert_eq!(scene.stats.source_reads, 0);
         let repeat_stamp = SceneStamp {
             request: LayoutRequestId::fresh(),
             ..stamp
         };
-        worker.submit(snapshot, repeat_stamp, PINNED, ViewRange::whole());
+        worker.submit_with_preedit(snapshot, repeat_stamp, PINNED, ViewRange::whole(), preedit);
         let repeat = wait(&worker, repeat_stamp)?;
         assert_eq!(repeat.stats.built, 0);
         assert!(repeat.stats.reused > 0);

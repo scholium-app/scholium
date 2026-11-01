@@ -1,0 +1,8 @@
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-typst)
+    Finished `test` profile [unoptimized] target(s) in 1.79s
+     Running unittests src/lib.rs (target/debug/deps/scholium_typst-d81faec90bccf0ff)
+
+running 1 test
+test editor::preedit::tests::preedit_in_an_empty_paragraph_has_the_same_position_as_committed_text ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 48 filtered out; finished in 0.28s

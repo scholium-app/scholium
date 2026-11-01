@@ -1,0 +1,15 @@
+   Compiling typst-layout v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-layout)
+   Compiling typst-svg v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-svg)
+   Compiling typst-render v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-render)
+   Compiling typst-html v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-html)
+   Compiling typst-realize v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-realize)
+   Compiling typst v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst)
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-typst)
+error[E0425]: cannot find function `block_is_empty` in this scope
+  --> crates/scholium-typst/src/editor/content/preedit.rs:53:31
+   |
+53 |         let composing_empty = block_is_empty(block)
+   |                               ^^^^^^^^^^^^^^ not found in this scope
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `scholium-typst` (lib test) due to 1 previous error

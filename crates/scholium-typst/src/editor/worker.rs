@@ -13,6 +13,7 @@ struct Job {
     stamp: SceneStamp,
     spec: RasterSpec,
     view: ViewRange,
+    preedit: Option<super::Preedit>,
 }
 struct ViewJob {
     spec: RasterSpec,
@@ -135,12 +136,26 @@ impl EditorWorker {
         spec: RasterSpec,
         view: ViewRange,
     ) {
+        self.submit_with_preedit(snapshot, stamp, spec, view, None);
+    }
+
+    /// Submit a separate display-only composition with the unchanged authority.
+    /// Give every preedit update a fresh SceneStamp request; old results stay stale.
+    pub fn submit_with_preedit(
+        &self,
+        snapshot: Arc<StructuredDocument>,
+        stamp: SceneStamp,
+        spec: RasterSpec,
+        view: ViewRange,
+        preedit: Option<super::Preedit>,
+    ) {
         let mut mailbox = self.shared.0.lock().unwrap_or_else(|e| e.into_inner());
         mailbox.job = Some(Job {
             snapshot,
             stamp,
             spec,
             view,
+            preedit,
         });
         self.shared.1.notify_one();
     }
@@ -259,10 +274,19 @@ fn render(
     if job.snapshot.document != job.stamp.document || job.snapshot.revision != job.stamp.revision {
         return Err(EditorError::Identity);
     }
-    let content = cache.document(&job.snapshot)?;
+    let content = cache.document_with_preedit(&job.snapshot, job.preedit.clone())?;
     let frame = kernel::layout(world, &content)?;
     let page = kernel::page(&frame);
     let geometry = EditGeometry::from_frame(&page.frame, &cache.reverse)?;
+    let preedit = if job.preedit.is_some() {
+        Some(
+            cache
+                .preedit_caret(&geometry)
+                .ok_or(EditorError::Geometry)?,
+        )
+    } else {
+        None
+    };
     let raster_at = std::time::Instant::now();
     let size_pt = page_size(&page);
     let base = raster::render_base(&page, job.spec);
@@ -298,6 +322,7 @@ fn render(
             strips,
         },
         geometry,
+        preedit,
         stats,
     })
 }
