@@ -96,6 +96,16 @@ fn the_catalog_has_no_key_that_nothing_uses() {
             .map(|k| (*k).to_owned()),
     );
     used.insert("reason.document_properties".to_owned());
+    used.extend(
+        [
+            "source.header",
+            "source.warning",
+            "source.preview.compiling",
+            "source.preview.failed",
+            "source.preview.ready",
+        ]
+        .map(str::to_owned),
+    );
     for key in leaves(Locale::En) {
         let key = dotted(&key);
         assert!(used.contains(&key), "unused catalog key {key}");

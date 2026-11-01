@@ -19,6 +19,9 @@ ROOT = Path(__file__).resolve().parents[1]
 ALLOWLIST = ROOT / "scripts" / "ui-strings-allowlist.txt"
 CJK = re.compile("[　-〿㐀-䶿一-鿿＀-￯]")
 TEST_FILE = re.compile(r"(^|/)(tests?|[a-z_]+_tests)(\.rs|/)")
+# Migrated surfaces must never silently regain an exception, even for a formatted
+# header. Generated Typst and user text are variables, not UI string literals here.
+CATALOG_ONLY = "crates/scholium-app/src/typst_editor/source_view"
 
 
 def is_test_file(path: Path) -> bool:
@@ -105,12 +108,25 @@ def load_allowlist() -> set[tuple[str, str]]:
     return allowed
 
 
+def scanner_regressions():
+    """Exercise formatted/concatenated headers using the same literal scanner as CI."""
+    templates = ["生成 Typst 源码 · 只读 · 正文 r{}", "A4 预览 · 第 {}/{} 页 · {} ms"]
+    source = 'ui.label(format!("' + templates[0] + '", revision));\n'
+    source += 'ui.label(format!(r#"' + templates[1] + '"#, page, pages, ms));\n'
+    source += 'ui.label(concat!("生成 ", "Typst 源码"));'
+    found = [text for _, text in literals(source) if CJK.search(text)]
+    if found != [*templates, "生成 ", "Typst 源码"]:
+        raise AssertionError(f"formatted/concatenated UI strings escaped scanning: {found}")
+
+
 def main() -> int:
+    scanner_regressions()
     found = collect()
     if "--list" in sys.argv:
         print("\n".join(entry(k) for k in sorted(found)))
         return 0
     allowed = load_allowlist()
+    forbidden = sorted(k for k in allowed if k[0].startswith(CATALOG_ONLY))
     new = sorted(set(found) - allowed)
     stale = sorted(allowed - set(found))
     if new:
@@ -119,7 +135,10 @@ def main() -> int:
     if stale:
         print("Allowlist entries whose literal is gone (delete them):", file=sys.stderr)
         print("\n".join("  " + entry(k) for k in stale), file=sys.stderr)
-    if new or stale:
+    if forbidden:
+        print("Migrated source view must use the catalog, never the allowlist:", file=sys.stderr)
+        print("\n".join("  " + entry(k) for k in forbidden), file=sys.stderr)
+    if new or stale or forbidden:
         return 1
     print(f"UI strings: OK ({len(found)} allowlisted literals remain)")
     return 0
