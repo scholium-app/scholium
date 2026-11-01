@@ -73,6 +73,8 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 `typst-main-fork-check` 示例按同一 fixture 输出 fork 像素，供与独立 stock 参照逐像素比较。
 独立 stock 参照对空段落夹具编译普通 Typst 源码，以自动页高同时验证文本位置与末尾空行高度；
 覆盖开头、中间一行/三行、结尾、标题旁及纯空段落，尺寸与 RGBA 字节必须完全相同。
+源码参照按自身 FontBook 过滤正文/标题字体偏好中的缺失家族并保留原顺序，与 Content 的 fallback 选择一致；
+stock 对照同时覆盖默认字体集和仅打包字体集，两者都要求源码编译零警告。
 `EditorWorker::spawn(wake)` 在 CPU 线程驻留 World/字体和 Content cache；默认使用 `FontProfile::System`：始终加载打包的 Noto Sans CJK SC、Liberation Serif 2.1.5
 （Regular/Italic/Bold/BoldItalic）及 Typst embedded，并额外扫描宿主字体。
 `FontProfile::Bundled` 使用相同字体列表与打包集合，但完全跳过宿主扫描；共享场景 headless worker 显式选择它，

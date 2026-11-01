@@ -49,6 +49,13 @@ jobs:
           cargo run --locked -p scholium-typst --features editor --example typst-main-fork-check -- /tmp/typst-fork-pixels
           cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir target/stock-reference -- /tmp/typst-stock-pixels
           python3 spikes/typst-main-editor/compare.py /tmp/typst-fork-pixels /tmp/typst-stock-pixels > /tmp/typst-stock-comparison.json
+      - name: Compare with bundled fonts only (no system font scan)
+        env:
+          SCHOLIUM_TEST_FONTS: bundled
+        run: |
+          cargo run --locked -p scholium-typst --features editor --example typst-main-fork-check -- /tmp/typst-fork-bundled-pixels
+          cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir target/stock-reference -- /tmp/typst-stock-bundled-pixels
+          python3 spikes/typst-main-editor/compare.py /tmp/typst-fork-bundled-pixels /tmp/typst-stock-bundled-pixels > /tmp/typst-stock-bundled-comparison.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -56,3 +63,4 @@ jobs:
           path: |
             /tmp/typst-fork-source.json
             /tmp/typst-stock-comparison.json
+            /tmp/typst-stock-bundled-comparison.json

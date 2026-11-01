@@ -41,6 +41,23 @@ impl World for SourceWorld<'_> {
     }
 }
 
+fn font_list(world: &super::kernel::ProbeWorld, names: &[&str]) -> String {
+    names
+        .iter()
+        // Source compilation warns about absent preferences even when a later
+        // fallback exists; Content layout already skips these absent families.
+        .filter(|name| {
+            world
+                .book()
+                .select_family(&name.to_lowercase())
+                .next()
+                .is_some()
+        })
+        .map(|name| format!("\"{name}\""))
+        .collect::<Vec<_>>()
+        .join(", ")
+}
+
 pub(super) fn page(
     fonts: &super::kernel::ProbeWorld,
     name: &str,
@@ -60,10 +77,12 @@ pub(super) fn page(
     // Same column and margins as the continuous editor, without a footer.
     let source = format!(
         "#set page(width: 21cm, height: auto, margin: (x: 2.5cm, y: 2.54cm))\n\
-         #set text(font: (\"Times New Roman\", \"Liberation Serif\", \"SimSun\", \"Noto Sans CJK SC\"), size: 12pt, lang: \"zh\", region: \"cn\")\n\
-         #show heading: set text(font: (\"Times New Roman\", \"Liberation Serif\", \"SimHei\", \"Noto Sans CJK SC\"), weight: \"bold\")\n\
+         #set text(font: ({body}), size: 12pt, lang: \"zh\", region: \"cn\")\n\
+         #show heading: set text(font: ({heading}), weight: \"bold\")\n\
          #set par(justify: true, leading: 1em, first-line-indent: (amount: 2em, all: true))\n\n{}\n",
-        blocks.join("\n\n")
+        blocks.join("\n\n"),
+        body = font_list(fonts, &super::BODY_FONTS),
+        heading = font_list(fonts, &super::HEADING_FONTS),
     );
     let id = RootedPath::new(
         VirtualRoot::Project,
