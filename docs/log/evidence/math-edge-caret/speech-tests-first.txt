@@ -1,0 +1,33 @@
+   Compiling typst-layout v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst-layout)
+   Compiling scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-document)
+   Compiling typst-svg v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst-svg)
+   Compiling typst-render v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst-render)
+   Compiling typst-html v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst-html)
+   Compiling typst-realize v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst-realize)
+   Compiling typst v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst)
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-typst)
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-session)
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 13.66s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-e60d2f25afc3d060)
+
+running 1 test
+test typst_editor::access::tests::compound_edges_announce_their_side_without_changing_body_text_offsets ... FAILED
+
+failures:
+
+---- typst_editor::access::tests::compound_edges_announce_their_side_without_changing_body_text_offsets stdout ----
+
+thread 'typst_editor::access::tests::compound_edges_announce_their_side_without_changing_body_text_offsets' (801216) panicked at crates/scholium-app/src/typst_editor/access/tests.rs:441:9:
+assertion `left == right` failed
+  left: Some("公式：分数（分子：12；分母：空）")
+ right: Some("公式内，分数前")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    typst_editor::access::tests::compound_edges_announce_their_side_without_changing_body_text_offsets
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 310 filtered out; finished in 0.50s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`

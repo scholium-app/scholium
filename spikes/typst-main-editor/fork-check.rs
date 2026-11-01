@@ -16,6 +16,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let worker = EditorWorker::spawn(|| {})?;
     for name in [
         "full",
+        "edge-root",
+        "edge-row",
         "scripts",
         "styles",
         "heading",

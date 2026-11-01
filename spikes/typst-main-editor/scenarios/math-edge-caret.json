@@ -1,0 +1,281 @@
+{
+  "name": "math-edge-caret",
+  "inputs": [
+    {
+      "text": "x"
+    },
+    {
+      "text": "$"
+    },
+    {
+      "key": "Slash",
+      "mods": {
+        "command": true
+      }
+    },
+    {
+      "text": "aaa"
+    },
+    {
+      "key": "Character",
+      "value": "m",
+      "mods": {
+        "command": true
+      }
+    },
+    {
+      "text": "dad"
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/2",
+          "byte": 2,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 5
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/2",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 5
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/2",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 5
+      }
+    },
+    {
+      "key": "Backspace",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 5
+      }
+    },
+    {
+      "key": "Backspace",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/denominator",
+          "byte": 3,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 5
+      }
+    },
+    {
+      "key": "Backspace",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/denominator",
+          "byte": 2,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/denominator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/denominator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/denominator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/denominator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/denominator",
+          "byte": 2,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/2",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    }
+  ],
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "text": "x",
+                "style": "plain"
+              }
+            },
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "kind": "fraction",
+                    "numerator": {
+                      "body": {
+                        "kind": "hole"
+                      }
+                    },
+                    "denominator": {
+                      "body": {
+                        "kind": "text",
+                        "text": "aa"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "text": "dad",
+                "style": "plain"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/2",
+      "byte": 0,
+      "affinity": "Downstream"
+    },
+    "anchor": null,
+    "undo_depth": 6
+  }
+}

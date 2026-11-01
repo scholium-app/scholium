@@ -438,3 +438,10 @@ diag-input-line_geometry = No verified line geometry is available here; use Left
 diag-input-math_selection = Selection endpoints must be in body text; selection inside math slots is not yet supported.
 
 diag-input-read_only = The structure view is read-only; return to the editor before editing body text.
+
+# Math structure edge announcements never contribute to body Text offsets.
+a11y-math-edge-fraction-before = In formula, before fraction
+a11y-math-edge-fraction-after = In formula, after fraction
+a11y-math-edge-attach-before = In formula, before scripts
+a11y-math-edge-attach-after = In formula, after scripts
+a11y-math-edge-nested = { $path }, { $edge }

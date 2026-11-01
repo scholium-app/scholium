@@ -1,0 +1,24 @@
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-session)
+    Finished `test` profile [unoptimized] target(s) in 0.90s
+     Running unittests src/lib.rs (target/debug/deps/scholium_session-2c8345755d416c14)
+
+running 1 test
+test typst::math_edge_tests::math_edges_at_imported_block_boundaries_still_merge_blocks ... FAILED
+
+failures:
+
+---- typst::math_edge_tests::math_edges_at_imported_block_boundaries_still_merge_blocks stdout ----
+
+thread 'typst::math_edge_tests::math_edges_at_imported_block_boundaries_still_merge_blocks' (809997) panicked at crates/scholium-session/src/typst/math_edge_tests.rs:286:9:
+assertion `left == right` failed
+  left: 2
+ right: 1
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    typst::math_edge_tests::math_edges_at_imported_block_boundaries_still_merge_blocks
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-session --lib`

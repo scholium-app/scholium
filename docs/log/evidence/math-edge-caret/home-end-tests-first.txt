@@ -1,0 +1,25 @@
+   Compiling scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-document)
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-session)
+    Finished `test` profile [unoptimized] target(s) in 1.58s
+     Running unittests src/lib.rs (target/debug/deps/scholium_session-2c8345755d416c14)
+
+running 1 test
+test typst::math_edge_tests::home_end_from_an_edge_use_the_containing_row_without_inventing_hidden_stops ... FAILED
+
+failures:
+
+---- typst::math_edge_tests::home_end_from_an_edge_use_the_containing_row_without_inventing_hidden_stops stdout ----
+
+thread 'typst::math_edge_tests::home_end_from_an_edge_use_the_containing_row_without_inventing_hidden_stops' (823325) panicked at crates/scholium-session/src/typst/math_edge_tests.rs:342:9:
+assertion `left == right` failed
+  left: (NodeId(d5c6fc52-7da0-487d-8167-527fd36af4d2), 1)
+ right: (NodeId(34535cc4-0d02-45f2-b4ca-545417343972), 1)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    typst::math_edge_tests::home_end_from_an_edge_use_the_containing_row_without_inventing_hidden_stops
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-session --lib`

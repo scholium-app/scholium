@@ -109,7 +109,8 @@ LocalSession 内部共享 accepted snapshot 与 action journal；`rollback_check
 和叶内 UTF-8 字素边界，RawMath 不可穿透。InsertMath/InsertMathAt/WrapFraction、SplitBlock/
 MergeWithNext、整叶 SetTextStyle、SetRangeStyle 和 SetKind 先在临时规划副本验证，再一次接受。存活节点
 身份不变；新分数 wrapper、新分母 Hole、新拆块/右叶才分配新 ID。删除数学叶最后文字
-恢复同 ID Hole。无效/重复/过期请求和 no-op 不追加动作。临时规划仍复制快照，不能据此
+恢复同 ID Hole；若该叶是 Row 中紧邻 Fraction/Attach 的文字，清空时直接摘除并返回结构边缘，
+单子 Row 折叠。无效/重复/过期请求和 no-op 不追加动作。临时规划仍复制快照，不能据此
 承诺逐键时延与全文大小无关。
 `SetRangeStyle { start, end, style }` 取与 `ReplaceBodyRange` 相同的两个 `BodyTextPosition`：
 在两端拆分正文 Text 叶，给范围内每个 Text 叶设样式（数学/Raw inline 不变，可跨块），再合并紧邻
@@ -155,3 +156,15 @@ Raw 目标拒绝，不部分拆文字。这是一个动作，不能在 UI 拆成
 snapshot restore 语义，但必须新 epoch；不实现协作 undo。主程序 worker 必须按完整
 SceneStamp 采纳，类型本身不构成窗口竞态验收。裁决见
 [ADR 0033](../adr/ADR-0033-structured-local-session-migration.md)、[ADR 0034](../adr/ADR-0034-typst-main-app-candidate.md)。
+
+## 数学边缘编辑
+
+`InsertMathSibling { node, after, sibling }` 只接受 Fraction/Attach 目标，在已有父 Row 中插入兄弟，
+目标为公式根或必填槽根时包成新 Row；原结构和后代身份保留。结果 cursor 指向新兄弟；边缘文字、
+分数及空 base 的 Attach 共用这一原子规划。`RemoveEmptyMath` 只移除全空 Fraction/Attach：Row 中
+摘除并选择相邻边界，其他位置替换为新 Hole；`RemoveEmptyFormula` 只移除全空 inline 公式，返回正文
+边界，无正文叶时创建空正文。非法目标或非空删除拒绝且无部分修改。
+
+这些命令及 ReplaceText 的清空归一化复用既有临时规划、结构验证、唯一请求及历史契约，不增加持久化
+字段。结果的数学边缘位置用结构 ID、byte 0/1 表示前/后，不解释成文字偏移；见
+[ADR 0045](../adr/ADR-0045-math-edge-caret.md)。

@@ -7,6 +7,8 @@ use super::*;
 use scholium_model::NodeId;
 use std::collections::HashMap;
 use unicode_segmentation::UnicodeSegmentation;
+
+const MATH_EDGE_HIT_PT: f64 = 0.5;
 impl EditorCore {
     pub(super) fn pointer_input(
         &mut self,
@@ -62,9 +64,27 @@ impl EditorCore {
         {
             return Some(position);
         }
+        if self.inside_formula(geometry, point)
+            && let Some(edge) = geometry.carets.iter().find(|c| {
+                (c.top[0] - point[0]).abs() <= MATH_EDGE_HIT_PT
+                    && c.top[1] <= point[1]
+                    && point[1] <= c.bottom[1]
+                    && self.math_node_at(c.position.leaf).is_some_and(|n| {
+                        matches!(n.body, MathBody::Fraction { .. } | MathBody::Attach { .. })
+                    })
+            })
+        {
+            return Some(edge.position);
+        }
         let caret = geometry.hit(point)?;
         // Proportional intra-ligature stops are display estimates, not pointer proof.
-        (caret.exact && known.contains_key(&caret.position.leaf)).then_some(caret.position)
+        (caret.exact
+            && (known.contains_key(&caret.position.leaf)
+                || self.math_node_at(caret.position.leaf).is_some_and(|n| {
+                    matches!(n.body, MathBody::Fraction { .. } | MathBody::Attach { .. })
+                        && caret.position.byte <= 1
+                })))
+        .then_some(caret.position)
     }
 
     /// Begin a pointer gesture at page pt, optionally extending a body selection.
@@ -139,7 +159,10 @@ impl EditorCore {
                 InlineBody::Math { root } => indicator::formula_bounds_in(geometry, root),
                 _ => None,
             })
-            .any(|[x0, y0, x1, y1]| (x0..=x1).contains(&point[0]) && (y0..=y1).contains(&point[1]))
+            .any(|[x0, y0, x1, y1]| {
+                (x0 - MATH_EDGE_HIT_PT..=x1 + MATH_EDGE_HIT_PT).contains(&point[0])
+                    && (y0..=y1).contains(&point[1])
+            })
     }
 
     /// Select at a page point, including a completed multi-click without preceding presses.

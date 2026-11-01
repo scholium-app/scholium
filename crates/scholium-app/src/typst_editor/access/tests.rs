@@ -429,3 +429,43 @@ fn composition_publishes_only_authoritative_text_without_split_run_geometry() {
             .any(|(_, n)| n.bounds().is_some())
     );
 }
+
+#[test]
+fn compound_edges_announce_their_side_without_changing_body_text_offsets() {
+    let mut f = Fixture::new();
+    f.events(vec![
+        text("A "),
+        text("$"),
+        text("12"),
+        key(egui::Key::Slash, true),
+    ]);
+    let root = match &f.editor.snapshot.blocks[0].content[1].body {
+        InlineBody::Math { root } => root.node,
+        _ => panic!("math"),
+    };
+    for (byte, locale, label) in [
+        (0, crate::i18n::LocaleSetting::ZhHans, "公式内，分数前"),
+        (1, crate::i18n::LocaleSetting::ZhHans, "公式内，分数后"),
+        (
+            0,
+            crate::i18n::LocaleSetting::En,
+            "In formula, before fraction",
+        ),
+        (
+            1,
+            crate::i18n::LocaleSetting::En,
+            "In formula, after fraction",
+        ),
+    ] {
+        f.state.locale = locale;
+        f.editor.cursor = Position {
+            leaf: root,
+            byte,
+            affinity: Affinity::Downstream,
+        };
+        let tree = settled(&mut f);
+        assert_eq!(tree.children(Role::Status)[0].1.label(), Some(label));
+        assert_eq!(tree.text(), "A ");
+        assert!(tree.body().text_selection().is_some());
+    }
+}

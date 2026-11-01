@@ -16,6 +16,29 @@ pub(super) fn apply(
 ) -> Result<Landing, EditError> {
     let cursor = |cursor| (cursor, None);
     match edit {
+        StructuralEdit::InsertMathSibling {
+            node,
+            after,
+            sibling,
+        } => super::math_edge::insert(doc, node, after, sibling).map(|c| cursor(Some(c))),
+        StructuralEdit::RemoveEmptyMath { node } => {
+            super::math_edge::remove(doc, node).map(|c| cursor(Some(c)))
+        }
+        StructuralEdit::RemoveEmptyFormula { root } => {
+            super::math_edge::remove_formula(doc, root).map(|c| cursor(Some(c)))
+        }
+        StructuralEdit::ReplaceText {
+            leaf,
+            start,
+            end,
+            text,
+        } => {
+            replace(doc, leaf, start, end, &text)?;
+            let landing = (start < end && text.is_empty())
+                .then(|| super::math_edge::prune_erased(doc, leaf))
+                .flatten();
+            Ok(cursor(landing))
+        }
         StructuralEdit::ReplaceBodyRange { start, end, text } => {
             super::range::replace(doc, start, end, &text).map(|c| cursor(Some(c)))
         }
@@ -39,13 +62,11 @@ fn apply_single(doc: &mut StructuredDocument, edit: StructuralEdit) -> Result<()
         | StructuralEdit::SetRangeStyle { .. }
         | StructuralEdit::Attach { .. }
         | StructuralEdit::LeaveSlot { .. }
-        | StructuralEdit::RemoveSlot { .. } => unreachable!("dispatched above"),
-        StructuralEdit::ReplaceText {
-            leaf,
-            start,
-            end,
-            text,
-        } => replace(doc, leaf, start, end, &text),
+        | StructuralEdit::RemoveSlot { .. }
+        | StructuralEdit::ReplaceText { .. }
+        | StructuralEdit::InsertMathSibling { .. }
+        | StructuralEdit::RemoveEmptyMath { .. }
+        | StructuralEdit::RemoveEmptyFormula { .. } => unreachable!("dispatched above"),
         StructuralEdit::WrapFraction { node } => {
             let target = math_node(doc, node).ok_or(EditError::WrongTarget)?;
             let old = std::mem::replace(target, MathNode::hole());
@@ -207,7 +228,7 @@ fn split(
     Ok(())
 }
 
-fn math_node(doc: &mut StructuredDocument, id: NodeId) -> Option<&mut MathNode> {
+pub(super) fn math_node(doc: &mut StructuredDocument, id: NodeId) -> Option<&mut MathNode> {
     doc.blocks
         .iter_mut()
         .flat_map(|b| &mut b.content)

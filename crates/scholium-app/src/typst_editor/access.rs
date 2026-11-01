@@ -62,7 +62,7 @@ impl EditorSession {
         for run in &published.runs {
             run.publish(ui, placement);
         }
-        self.publish_math(ui, focused);
+        self.publish_math(ui, focused, state.locale.resolve());
     }
 
     fn refresh_runs(&mut self) {
@@ -221,13 +221,13 @@ impl EditorSession {
         Ok(())
     }
 
-    fn publish_math(&self, ui: &mut egui::Ui, focused: bool) {
+    fn publish_math(&self, ui: &mut egui::Ui, focused: bool, locale: crate::i18n::Locale) {
         let mut context = None;
         for inline in self.snapshot.blocks.iter().flat_map(|b| &b.content) {
             let (id, label) = match &inline.body {
                 InlineBody::Math { root } => {
                     if focused && context.is_none() {
-                        context = speech::slot_context(root, self.cursor.leaf);
+                        context = speech::caret_context(root, self.cursor, locale);
                     }
                     (root.node, format!("公式：{}", speech::describe(root)))
                 }

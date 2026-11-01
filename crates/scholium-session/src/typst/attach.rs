@@ -41,6 +41,9 @@ impl EditorCore {
 
     /// Attach `slot` at the caret in math; the one path typing and the focus bar share.
     pub(super) fn attach_slot(&mut self, slot: AttachSlot, state: &mut EditState) {
+        if self.command_at_edge(CommandId::Attach(slot), state) {
+            return;
+        }
         let edit = StructuralEdit::Attach {
             leaf: self.cursor.leaf,
             at: self.cursor.byte,

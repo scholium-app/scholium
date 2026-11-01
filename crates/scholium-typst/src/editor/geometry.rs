@@ -16,11 +16,11 @@ pub enum Affinity {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-/// Semantic insertion point in a stable leaf, measured in UTF-8 bytes.
+/// Semantic text/Hole insertion point or a compound edge (ADR 0045).
 pub struct Position {
-    /// Text or Hole leaf identity.
+    /// Text/Hole identity, or Fraction/Attach identity at an edge.
     pub leaf: NodeId,
-    /// Leaf-local UTF-8 grapheme boundary.
+    /// Leaf-local UTF-8 grapheme boundary; compound edges use 0 before, 1 after.
     pub byte: usize,
     /// Preferred side at a shared visual boundary.
     pub affinity: Affinity,

@@ -178,6 +178,25 @@ impl EditorCore {
         }
         if math && matches!(motion, Motion::LineStart | Motion::LineEnd) {
             // Inside a slot Home/End stay slot-local, matching structural math editors.
+            if self.at_math_edge() {
+                let Some(root) = self.formula_root() else {
+                    return false;
+                };
+                let row = indicator::slot_of(root, self.cursor.leaf).unwrap_or(root);
+                if let Some((leaf, byte)) =
+                    block_merge::math_boundary(row, motion == Motion::LineEnd)
+                {
+                    self.move_to(
+                        Position {
+                            leaf,
+                            byte,
+                            affinity: Affinity::Downstream,
+                        },
+                        false,
+                    );
+                }
+                return true;
+            }
             let end = input::leaves(&self.snapshot)
                 .into_iter()
                 .find(|l| l.id == self.cursor.leaf)

@@ -184,7 +184,7 @@ fn up_and_down_move_between_base_subscript_and_superscript() {
 }
 
 #[test]
-fn left_enters_the_base_end_and_right_leaves_to_just_after_the_attach() {
+fn arrows_visit_base_sub_sup_then_the_attach_edge() {
     let mut f = Fixture::new();
     f.events(vec![
         text("$"),
@@ -200,21 +200,25 @@ fn left_enters_the_base_end_and_right_leaves_to_just_after_the_attach() {
     f.editor.cursor.leaf = ids.2;
     f.editor.cursor.byte = 0;
     f.events(vec![press(egui::Key::ArrowLeft, false)]);
-    assert_eq!(caret(&f), (ids.0, 1), "left of the superscript start");
+    assert_eq!(
+        caret(&f),
+        (ids.1, 1),
+        "left of superscript enters the subscript end"
+    );
     f.editor.cursor.leaf = ids.1;
     f.editor.cursor.byte = 1;
     f.events(vec![press(egui::Key::ArrowRight, false)]);
-    let after = root(&f);
-    let MathBody::Row { children } = &after.body else {
-        panic!("a placeholder follows the attach: {after:?}");
-    };
-    assert_eq!(caret(&f), (children[1].node, 0));
-    assert_eq!(children[1].body, MathBody::Hole);
-    f.events(vec![press(egui::Key::ArrowRight, false)]);
-    assert!(
-        matches!(root(&f).body, MathBody::Attach { .. }),
-        "the placeholder is gone once the caret leaves it"
+    assert_eq!(
+        caret(&f),
+        (ids.2, 0),
+        "subscript end enters superscript start"
     );
+    f.editor.cursor.byte = 1;
+    f.events(vec![press(egui::Key::ArrowRight, false)]);
+    assert_eq!(caret(&f), (formula.node, 1));
+    assert_eq!(root(&f), formula, "navigation never appends a placeholder");
+    f.events(vec![press(egui::Key::ArrowRight, false)]);
+    assert!(f.editor.body_leaf(f.editor.cursor.leaf));
 }
 
 #[test]
@@ -306,12 +310,14 @@ fn body_leaf(f: &Fixture) -> NodeId {
         .id
 }
 
-/// `$x^2`, Right: the caret sits in a placeholder; returns the state and undo depth before it.
-fn into_placeholder(f: &mut Fixture) -> (StructuredDocument, usize) {
+/// `$x^2`, Right reaches a session edge without editing the document.
+fn into_edge(f: &mut Fixture) -> (StructuredDocument, usize) {
     f.events(vec![text("$"), text("x"), text("^"), text("2")]);
     let typed = ((*f.editor.snapshot).clone(), f.editor.undo.len());
     f.events(vec![press(egui::Key::ArrowRight, false)]);
-    assert!(matches!(root(f).body, MathBody::Row { .. }), "placeholder");
+    assert_eq!(caret(f), (root(f).node, 1));
+    assert_eq!(*f.editor.snapshot, typed.0);
+    assert_eq!(f.editor.undo.len(), typed.1);
     typed
 }
 
@@ -322,9 +328,9 @@ fn click_body(f: &mut Fixture) {
 }
 
 #[test]
-fn clicking_away_from_an_empty_placeholder_restores_the_state_after_the_script() {
+fn clicking_away_from_an_edge_preserves_the_state_after_the_script() {
     let mut f = Fixture::new();
-    let (typed, depth) = into_placeholder(&mut f);
+    let (typed, depth) = into_edge(&mut f);
     click_body(&mut f);
     assert_eq!(*f.editor.snapshot, typed);
     assert_eq!(holes(&f), 0);
@@ -332,23 +338,23 @@ fn clicking_away_from_an_empty_placeholder_restores_the_state_after_the_script()
 }
 
 #[test]
-fn leaving_a_placeholder_by_left_or_ctrl_home_end_removes_it() {
+fn leaving_an_edge_by_left_or_ctrl_home_end_preserves_content() {
     for leave in [
         press(egui::Key::ArrowLeft, false),
         key(egui::Key::End, true),
         key(egui::Key::Home, true),
     ] {
         let mut f = Fixture::new();
-        let (typed, _) = into_placeholder(&mut f);
+        let (typed, _) = into_edge(&mut f);
         f.events(vec![leave]);
         assert_eq!(*f.editor.snapshot, typed);
     }
 }
 
 #[test]
-fn one_undo_after_leaving_a_placeholder_undoes_the_users_last_action() {
+fn one_undo_after_leaving_an_edge_undoes_the_users_last_action() {
     let mut f = Fixture::new();
-    into_placeholder(&mut f);
+    into_edge(&mut f);
     click_body(&mut f);
     f.editor.history(false, &mut f.state);
     let formula = root(&f);
@@ -356,18 +362,18 @@ fn one_undo_after_leaving_a_placeholder_undoes_the_users_last_action() {
 }
 
 #[test]
-fn right_from_an_empty_placeholder_exits_the_formula() {
+fn right_from_an_attach_edge_exits_the_formula() {
     let mut f = Fixture::new();
-    let (typed, _) = into_placeholder(&mut f);
+    let (typed, _) = into_edge(&mut f);
     f.events(vec![press(egui::Key::ArrowRight, false)]);
     assert!(f.editor.body_leaf(f.editor.cursor.leaf), "left the formula");
     assert_eq!(*f.editor.snapshot, typed);
 }
 
 #[test]
-fn typing_into_a_placeholder_keeps_it_as_content() {
+fn typing_at_an_edge_inserts_sibling_content() {
     let mut f = Fixture::new();
-    into_placeholder(&mut f);
+    into_edge(&mut f);
     f.events(vec![text("+y")]);
     let typed = (*f.editor.snapshot).clone();
     click_body(&mut f);
@@ -380,25 +386,25 @@ fn typing_into_a_placeholder_keeps_it_as_content() {
 }
 
 #[test]
-fn grouped_typing_into_a_placeholder_keeps_it_and_undoes_in_one_step() {
+fn grouped_typing_at_an_edge_undoes_in_one_step() {
     let mut f = Fixture::new();
-    let (_, depth) = into_placeholder(&mut f);
-    let with_placeholder = (*f.editor.snapshot).clone();
+    let (_, depth) = into_edge(&mut f);
+    let before_typing = (*f.editor.snapshot).clone();
     f.events(vec![text("+")]);
     f.events(vec![text("y")]);
     click_body(&mut f);
     assert_eq!(
         holes(&f),
         0,
-        "the typed text keeps the placeholder as content"
+        "typing creates real content without empty anchors"
     );
     assert_eq!(
         f.editor.undo.len(),
-        depth + 2,
-        "LeaveSlot step plus one typing group"
+        depth + 1,
+        "one typing group, with no navigation step"
     );
     f.editor.history(false, &mut f.state);
-    assert_eq!(*f.editor.snapshot, with_placeholder);
+    assert_eq!(*f.editor.snapshot, before_typing);
 }
 
 #[test]

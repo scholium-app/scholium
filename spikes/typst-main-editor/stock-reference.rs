@@ -77,6 +77,11 @@ fn scripts(base: Content, sub: Option<Content>, sup: Option<Content>) -> Content
 fn fixture(name: &str) -> Content {
     let paragraph = |body| ParElem::new(body).pack();
     let block = match name {
+        "edge-root" | "edge-row" => {
+            let fraction=FracElem::new(symbol("a"),symbol("b")).pack();
+            let math=if name=="edge-row" {Content::sequence([symbol("l"),fraction,symbol("r")])}else{fraction};
+            paragraph(Content::sequence([kernel::text("edge "),EquationElem::new(math).pack(),kernel::text(" tail")]))
+        }
         "preedit" => paragraph(Content::sequence([
             kernel::text("ab"), typst::text::UnderlineElem::new(kernel::text("中文")).pack(),
             kernel::text("ZZ"),
@@ -153,6 +158,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let world = reference_world();
     for name in [
         "full",
+        "edge-root",
+        "edge-row",
         "scripts",
         "styles",
         "heading",

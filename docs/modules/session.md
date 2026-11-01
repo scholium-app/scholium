@@ -30,7 +30,9 @@ src/typst/command/checkpoint.rs  执行前 checkpoint、错误/panic 回滚
 src/typst/edit.rs             StructuralRequest、存活光标、历史与投影发布
 src/typst/persistence.rs      open/restore/save、空白文档、只读旧 head 迁移
 src/typst/history.rs          本地撤销/重做、输入/删除分组、可注入单调时钟
-src/typst/input.rs            抽象输入分发，以及字面文字、公式进出、分数、删除与拆段
+src/typst/input.rs            抽象输入分发，以及字面文字、公式进出、分数与拆段
+src/typst/math_caret.rs       结构边缘导航、边缘输入及空 base 结构命令
+src/typst/structural_delete.rs  字素删除、空结构/公式移除与无编辑的逐停点进入
 src/typst/events.rs           工具包无关的 Input、Key、Pointer 词汇与原子分发测试
 src/typst/key.rs              工具包无关的按键映射与 caret-follow 意图
 src/typst/runtime.rs          worker、完整 Scene identity 采纳与 raster/strip 交付
@@ -93,13 +95,23 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
   不逐命令复制全文或重建/验证请求日志。接受结构编辑仍在独立规划副本上验证，提交时 action journal 写时复制。
 - 错误与 panic 恢复 checkpoint；已接受权威的回滚副本无需再次验证，恢复不执行可失败校验。失败前没有文档修改时保留 epoch；
   已部分修改的 authority 用 restore 换新 epoch，再请求 Scene，旧几何不得恢复命中权限。
-- 正文/数学位置是稳定叶 ID、叶内 UTF-8 字素边界与 affinity。插入/删除后按已接受内容重新验证字素边界。
+- 正文/数学文字位置是稳定叶 ID、叶内 UTF-8 字素边界与 affinity；Fraction/Attach 边缘以结构 ID 和
+  byte 0/1 表示前/后（[ADR 0045](../adr/ADR-0045-math-edge-caret.md)），不进入模型或存储。
+  左右顺序为结构前、各槽、结构后，嵌套递归；同一 Row 的邻接 Text/Hole 已提供的边界不重复添加。
+  Attach 槽按 base、sub、sup 遍历。Tab 仍循环叶，Shift 数学选区仍明确拒绝。
+  边缘上的 Home/End 到包含它的槽 Row（无槽则整个公式）的首末规范停点，不能制造已被邻接文字替代的边缘。
+- 边缘 Typed/Commit/Paste 创建数学 Text 兄弟，必要时把根/槽包成 Row；最后一个字素删除后移除空兄弟，
+  折叠单子 Row 并回到边缘。边缘分数/Attach 命令创建空分子/base，进入新分母或上下标槽；同一步撤销。
+  插入/删除后按已接受内容重新验证字素边界；undo/redo 保留边缘 Position。
+- Backspace/Delete 先删同叶对应方向字素；空 optional Attach 槽 RemoveSlot 优先；槽位对应边界的全空
+  结构移除为 Hole（Row 中则摘除），空公式移除。其余只按左右方向移动一个停点，不写动作/历史或重置 run。
 - 本地历史最多 512 个分组；同叶、连续位置、间隔 <1 秒的键入与 IME 提交按词合并（含词尾空白）；
   连续删除单独合并，粘贴单独一步，保存不打断分组。app 将导航和命令键的分组中断传给 core。
 - 无选区时，正文块首 Backspace 合入前块、块尾 Delete 拉入后块；前块保留身份与类型，光标留在拼接点。
   合并独立一步撤销，undo 恢复原块与原光标；首块块首/末块块尾的对应删除为空操作，不写历史或请求。
   相邻正文端点通过空文字 `ReplaceBodyRange` 合并；若边界直接是公式而无正文叶，复用 `MergeWithNext`，
-  以存活的正文叶边界表示拼接点，不删除公式。数学空槽的 `RemoveSlot` 优先；同块公式后正文叶 byte 0 的 Backspace 保持原行为。
+  保留已有 caret 所指身份，不删除公式；块直接以公式边缘开始/结束时同样适用。
+  数学空槽的 `RemoveSlot` 优先；同块公式后正文叶 byte 0 的 Backspace 逐停点进入公式。
 - 选区替换保持范围外身份；多行文字走 `ReplaceBodyRange`。RawMath 范围明确拒绝；纯文本复制拒绝公式与原串。
   当前 Scene 的选区几何完整性由 app 检查；pending 时语义端点有效即可编辑，不使用旧几何。
 - 选区文字样式切换保持同一文字范围；无选区仅武装下一次输入样式。插入与其样式同一步撤销。

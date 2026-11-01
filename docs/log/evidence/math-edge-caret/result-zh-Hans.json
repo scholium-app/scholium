@@ -1,0 +1,109 @@
+{
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "text": "x",
+                "style": "plain"
+              }
+            },
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "kind": "fraction",
+                    "numerator": {
+                      "body": {
+                        "kind": "hole"
+                      }
+                    },
+                    "denominator": {
+                      "body": {
+                        "kind": "text",
+                        "text": "aa"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "text": "dad",
+                "style": "plain"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/2",
+      "byte": 0,
+      "affinity": "Downstream"
+    },
+    "anchor": null,
+    "undo_depth": 6
+  },
+  "actual": {
+    "anchor": null,
+    "cursor": {
+      "affinity": "Downstream",
+      "byte": 0,
+      "path": "blocks/0/content/2"
+    },
+    "snapshot": {
+      "blocks": [
+        {
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "x"
+              }
+            },
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "denominator": {
+                      "body": {
+                        "kind": "text",
+                        "text": "aa"
+                      }
+                    },
+                    "kind": "fraction",
+                    "numerator": {
+                      "body": {
+                        "kind": "hole"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "dad"
+              }
+            }
+          ],
+          "kind": "Paragraph"
+        }
+      ]
+    },
+    "undo_depth": 6
+  },
+  "diff": {}
+}

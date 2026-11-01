@@ -98,3 +98,5 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0043](ADR-0043-rtex-live-preview.md)：LaTeX 实时预览采用沙箱内的 rtex 子进程，宿主兜底已知缺陷；上游 2026-11-14 前无回应则按 Typst fork 的方式建立补丁式 fork。2026-11-01 修订：上游已在 v0.0.6 修复报告的问题，健壮性不再需要 fork；L3 公式补丁先提交上游。
 
 [ADR 0044](ADR-0044-transient-ime-layout.md)：IME 预编辑作为独立的 Typst 派生排版输入，不进入权威文档、历史或保存；组合期间暂停文档几何查询。
+
+[ADR 0045](ADR-0045-math-edge-caret.md)：会话层数学结构前后停点、对称结构删除与同源 Scene 边缘几何，不添加持久化锚点叶。

@@ -116,6 +116,19 @@ fn every_shared_scenario_replays_through_abstract_inputs() {
 // Intermediate expectations are shared with the window runner, not inferred from its result.
 fn check_step(core: &EditorCore, event: &serde_json::Value, points: &[Option<[f64; 2]>]) {
     let actual = core.semantic_projection();
+    if core.at_math_edge() {
+        let scene = core.current_scene().expect("current edge Scene");
+        let caret = scene
+            .geometry
+            .caret(core.cursor)
+            .expect("visible edge caret");
+        assert!(caret.exact);
+        assert!(core.math_indicator(scene).is_some());
+        assert_eq!(
+            core.pointer_hit([caret.top[0], (caret.top[1] + caret.bottom[1]) * 0.5]),
+            Some(core.cursor)
+        );
+    }
     if let Some(expected) = event["expected"].as_object() {
         for (field, expected) in expected {
             assert_eq!(

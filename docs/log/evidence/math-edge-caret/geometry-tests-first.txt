@@ -1,0 +1,22 @@
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-typst)
+    Finished `test` profile [unoptimized] target(s) in 1.16s
+     Running unittests src/lib.rs (target/debug/deps/scholium_typst-d81faec90bccf0ff)
+
+running 1 test
+test editor::parity::compound_edges_have_scene_bounds_without_changing_printed_lines ... FAILED
+
+failures:
+
+---- editor::parity::compound_edges_have_scene_bounds_without_changing_printed_lines stdout ----
+
+thread 'editor::parity::compound_edges_have_scene_bounds_without_changing_printed_lines' (798572) panicked at crates/scholium-typst/src/editor/parity.rs:305:119:
+edge caret
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    editor::parity::compound_edges_have_scene_bounds_without_changing_printed_lines
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 49 filtered out; finished in 0.83s
+
+error: test failed, to rerun pass `-p scholium-typst --lib`

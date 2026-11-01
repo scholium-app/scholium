@@ -56,6 +56,33 @@ pub(super) fn slot_context(root: &MathNode, leaf: NodeId) -> Option<String> {
     Some(format!("{path}：{content}"))
 }
 
+/// The edge announcement is separate from editable Text offsets.
+pub(super) fn caret_context(
+    root: &MathNode,
+    at: scholium_typst::editor::Position,
+    locale: crate::i18n::Locale,
+) -> Option<String> {
+    let mut path = Vec::new();
+    let node = locate(root, at.leaf, &mut path)?;
+    let key = match (&node.body, at.byte == 0) {
+        (MathBody::Fraction { .. }, true) => "a11y.math.edge.fraction.before",
+        (MathBody::Fraction { .. }, false) => "a11y.math.edge.fraction.after",
+        (MathBody::Attach { .. }, true) => "a11y.math.edge.attach.before",
+        (MathBody::Attach { .. }, false) => "a11y.math.edge.attach.after",
+        _ => return slot_context(root, at.leaf),
+    };
+    let edge = crate::i18n::text(locale, key);
+    Some(if path.is_empty() {
+        edge
+    } else {
+        crate::i18n::text_with(
+            locale,
+            "a11y.math.edge.nested",
+            &[("path", path.join(", ").into()), ("edge", edge.into())],
+        )
+    })
+}
+
 fn locate<'a>(
     node: &'a MathNode,
     leaf: NodeId,

@@ -277,7 +277,8 @@ fn render(
     let content = cache.document_with_preedit(&job.snapshot, job.preedit.clone())?;
     let frame = kernel::layout(world, &content)?;
     let page = kernel::page(&frame);
-    let geometry = EditGeometry::from_frame(&page.frame, &cache.reverse)?;
+    let mut geometry = EditGeometry::from_frame(&page.frame, &cache.reverse)?;
+    geometry.add_math_edges(&job.snapshot);
     let preedit = if job.preedit.is_some() {
         Some(
             cache

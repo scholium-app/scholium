@@ -126,7 +126,11 @@ Bundled 的两页中英混排测试固定每一行首个源 byte；外部字体�
 预览源码的块起点锚点对标题单独成行放在 `=` 之前，因为标题正文前的元素会改变标题块间距。
 
 `EditorScene` 的 raster 和 `EditGeometry` 都取同一个 padded Frame；caret 位置是 typed
-NodeId、叶内 UTF-8 byte 与 affinity，top/bottom 为该 Frame 的 pt。opaque ID 只在 adapter
+NodeId、叶内 UTF-8 byte 与 affinity；Fraction/Attach ID 上 byte 0/1 表示结构前/后。
+`editor/stops.rs` 共用结构停点规则，键盘导航仅扫描当前文字叶，遍历内存按节点数增长。
+worker 的 `edge_geometry` 从已有结构/后代 bounds 并集取左右界，以整公式高度生成边缘 caret；同 Row
+邻接 Text/Hole 供应的同侧边界不重复生成。边缘无 Content，也不参与打印或源码生成；
+top/bottom 为该 Frame 的 pt。opaque ID 只在 adapter
 注册/反查，不进入模型或存储。剪裁/未知 origin 拒绝；跨叶 derived cluster 不猜端点；合字
 内部按比例的 caret 保留 `exact=false`。调用方只用当前全 stamp 场景做命中/IME 锚点。
 `selection_text(leaf, range)` 从 shaped cluster 的变换后 stops 切分非打印 SelectionQuad，
