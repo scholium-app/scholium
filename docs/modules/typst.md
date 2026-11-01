@@ -114,7 +114,8 @@ System 下已安装的 Times New Roman/宋体/黑体优先；没有时使用打�
 Bundled 的两页中英混排测试固定每一行首个源 byte；外部字体度量比较是显式运行的本地测试，
 不让普通测试依赖商业字体或宿主中文字体。该断行契约不保证不同字体的字形外观或任意未覆盖字符的 fallback 一致。
 标题编号**不在** preamble 中：编辑面以空 introspector 布局，无法运行 counter；编号随文档模板回归。
-空块不设首行缩进：fork 以行文本锚定空行 caret，缩进占位字符会使该行失去 caret。
+空段落与非空段落遵循相同首行缩进（`all: true`）；fork 在空行全范围内寻找文本 origin，
+并将 caret 放在前置间距项之后，因此空段落 caret 与同样式首字的 x 一致；标题保持无缩进。
 预览源码的块起点锚点对标题单独成行放在 `=` 之前，因为标题正文前的元素会改变标题块间距。
 
 `EditorScene` 的 raster 和 `EditGeometry` 都取同一个 padded Frame；caret 位置是 typed
@@ -143,7 +144,7 @@ SceneStats 记录 built/reused/source_reads/elapsed，不能作为物理刷新�
   不阻塞 PR，也不自动开 issue。上游不接受 AI 编写的代码，跟进只在本仓库内进行，不向 typst/typst 提交任何内容。
 - 新版本发布时，以 drift job 最近一次绿灯运行的状态为起点做 rebase。只要结果还停在 conflict，就以结果表列出的冲突文件和上游提交为准，
   并参照最近一次试 rebase 留下的补丁序列和 adapter 改动（见下方开发日志）。
-- 补丁规模预算：13 个库相对上游的净新增少于 600 行。当前净新增 592 行，删除 16 行，涉及 21 个文件。
+- 补丁规模预算：13 个库相对上游的净新增少于 600 行。当前净新增 593 行，删除 16 行，涉及 21 个文件。
   会超出预算的新能力，优先放在 adapter 里实现。2026-10-31 的试 rebase 见[开发日志](../log/2026-10-31-typst-upstream-tracking.md)。
 
 ## 不变量

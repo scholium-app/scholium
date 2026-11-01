@@ -147,11 +147,6 @@ impl ContentCache {
             BlockKind::Heading1 => super::style::heading(1, body, self.fonts),
             BlockKind::Heading2 => super::style::heading(2, body, self.fonts),
         };
-        let body = if block_is_empty(block) {
-            super::style::without_indent(body)
-        } else {
-            body
-        };
         Ok(self.keep(block.node, value, body, false))
     }
 
@@ -294,13 +289,6 @@ pub(super) fn display(grapheme: &str) -> String {
         _ => None,
     };
     shown.map_or_else(|| grapheme.to_owned(), String::from)
-}
-
-fn block_is_empty(block: &StructuredBlock) -> bool {
-    block
-        .content
-        .iter()
-        .all(|inline| matches!(&inline.body, InlineBody::Text { text, .. } if text.is_empty()))
 }
 
 /// The origin sits on the innermost `TextElem`: inline layout only maps carets for a text
