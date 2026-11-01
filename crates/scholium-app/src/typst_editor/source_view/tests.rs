@@ -46,6 +46,126 @@ fn structure_view_shows_the_generated_typst_of_the_snapshot() {
 }
 
 #[test]
+fn source_layout_is_rebuilt_when_the_theme_changes() {
+    let mut f = Fixture::new();
+    let snapshot = f.editor.snapshot.clone();
+    crate::theme::install(&f.ctx);
+
+    let layout = |f: &mut Fixture| {
+        let mut result = None;
+        let mut output = f.ctx.run_ui(egui::RawInput::default(), |ui| {
+            egui::Area::new("source-layout-test".into()).show(ui, |ui| {
+                result = Some(f.editor.source_view.galley(ui, &snapshot, None));
+            });
+        });
+        output.textures_delta.clear();
+        result.expect("source layout")
+    };
+
+    f.ctx.set_theme(egui::Theme::Dark);
+    let (dark, _) = layout(&mut f);
+    let dark_color = dark.job.sections[0].format.color;
+    f.ctx.set_theme(egui::Theme::Light);
+    let (light, moved) = layout(&mut f);
+    let light_color = light.job.sections[0].format.color;
+
+    assert!(
+        !Arc::ptr_eq(&dark, &light),
+        "theme changes invalidate the galley"
+    );
+    assert!(!moved, "theme changes do not scroll the source pane");
+    assert_ne!(
+        dark_color, light_color,
+        "text adopts the active theme color"
+    );
+    let (stable, _) = layout(&mut f);
+    assert!(Arc::ptr_eq(&light, &stable), "egui reuses a valid galley");
+}
+
+fn pane_texts(f: &mut Fixture, locale: Locale) -> Vec<String> {
+    let mut output = f.ctx.run_ui(egui::RawInput::default(), |ui| {
+        f.editor.show_source(ui, locale);
+    });
+    output.textures_delta.clear();
+    output
+        .shapes
+        .iter()
+        .filter_map(|s| match &s.shape {
+            egui::Shape::Text(t) => Some(t.galley.text().to_owned()),
+            _ => None,
+        })
+        .collect()
+}
+
+#[test]
+fn source_headers_and_warnings_follow_the_locale_without_changing_the_document() {
+    let mut f = Fixture::new();
+    f.events(vec![text("$"), text("x"), key(egui::Key::Slash, true)]);
+    shown(&mut f);
+    let snapshot = f.editor.snapshot.clone();
+    for (locale, header, warning, preview) in [
+        (
+            Locale::En,
+            "Generated Typst source · read-only · body r3",
+            "Empty slots: 1",
+            "A4 preview · page 1/1 ·",
+        ),
+        (
+            Locale::ZhHans,
+            "生成 Typst 源码 · 只读 · 正文 r3",
+            "1 个空槽",
+            "A4 预览 · 第 1/1 页 ·",
+        ),
+        (
+            Locale::En,
+            "Generated Typst source · read-only · body r3",
+            "Empty slots: 1",
+            "A4 preview · page 1/1 ·",
+        ),
+    ] {
+        let texts = pane_texts(&mut f, locale);
+        assert!(texts.iter().any(|t| t == header), "{texts:?}");
+        assert!(
+            texts
+                .iter()
+                .any(|t| t.starts_with(warning) && t.contains('0')),
+            "{texts:?}"
+        );
+        assert!(
+            texts
+                .iter()
+                .any(|t| t.starts_with(preview) && t.ends_with(" ms")),
+            "{texts:?}"
+        );
+        assert!(Arc::ptr_eq(&snapshot, &f.editor.snapshot));
+    }
+}
+
+#[test]
+fn preview_progress_and_failure_use_the_requested_locale() {
+    let mut f = Fixture::new();
+    assert_eq!(f.editor.source_view.status(Locale::En), "Compiling preview");
+    assert_eq!(f.editor.source_view.status(Locale::ZhHans), "预览编译中");
+    shown(&mut f);
+    f.editor
+        .source_view
+        .compiled
+        .as_mut()
+        .expect("compiled")
+        .error = Some("detail".into());
+    assert_eq!(
+        f.editor.source_view.status(Locale::En),
+        "Preview failed: detail"
+    );
+    assert_eq!(
+        f.editor.source_view.status(Locale::ZhHans),
+        "预览失败：detail"
+    );
+    f.editor.source_view.generation += 1;
+    assert_eq!(f.editor.source_view.status(Locale::En), "Compiling preview");
+}
+
+#[test]
 fn preview_compiles_and_opens_on_the_page_of_the_cursor_block() {
     let mut f = Fixture::new();
     let long = (0..80)

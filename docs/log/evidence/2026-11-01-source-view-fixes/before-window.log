@@ -1,0 +1,7 @@
+{'mean_delta': 1.0801214515657007, 'changed_fraction': 0.00800409716125256, 'region': (8, 150, 620, 820), 'pass': False}
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/source-theme-check.py", line 96, in <module>
+    assert result["pass"], "theme-switched source pane differs from fresh light source pane"
+           ~~~~~~^^^^^^^^
+AssertionError: theme-switched source pane differs from fresh light source pane
+X connection to :99 broken (explicit kill or server shutdown).

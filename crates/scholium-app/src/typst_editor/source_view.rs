@@ -4,6 +4,8 @@
 //! The preview worker starts on first use and keys results by a monotonic generation,
 //! because undo can return to an earlier revision in a new epoch.
 use super::*;
+use crate::i18n::Locale;
+use fluent_bundle::FluentValue;
 use scholium_model::NodeId;
 use scholium_typst::{
     CompileOutcome, GeneratedSource, PreviewCompiler, PreviewEvent, SourceMode, generate_source,
@@ -35,8 +37,8 @@ pub(super) struct SourceView {
     generation: u64,
     submitted: Option<Arc<StructuredDocument>>,
     view: Option<(Arc<StructuredDocument>, Arc<GeneratedSource>)>,
-    /// Laid-out source for (snapshot, highlighted range); avoids re-hashing it every frame.
-    galley: Option<SourceGalley>,
+    /// Source layout input; egui owns galleys so they cannot outlive its font atlas.
+    layout: Option<SourceLayout>,
     /// Block ids in preview order for the submitted generation.
     blocks: Vec<NodeId>,
     compiled: Option<CompileOutcome>,
@@ -49,12 +51,12 @@ pub(super) struct SourceView {
     settle: raster::Settle,
 }
 
-/// Laid-out source keyed by snapshot identity and highlighted byte range.
-type SourceGalley = (
-    Arc<StructuredDocument>,
-    Option<std::ops::Range<usize>>,
-    Arc<egui::Galley>,
-);
+struct SourceLayout {
+    snapshot: Arc<StructuredDocument>,
+    highlight: Option<std::ops::Range<usize>>,
+    colors: [egui::Color32; 2],
+    job: egui::text::LayoutJob,
+}
 
 /// One displayed preview page; `size_pt` is the page size in Typst pt.
 struct Page {
@@ -96,17 +98,32 @@ impl SourceView {
         snapshot: &Arc<StructuredDocument>,
         highlight: Option<std::ops::Range<usize>>,
     ) -> (Arc<egui::Galley>, bool) {
-        if let Some((s, h, galley)) = &self.galley
-            && Arc::ptr_eq(s, snapshot)
-            && *h == highlight
-        {
-            return (galley.clone(), false);
+        let colors = [
+            ui.visuals().text_color(),
+            crate::theme::tokens(ui.ctx()).active_bg,
+        ];
+        let moved = self
+            .layout
+            .as_ref()
+            .is_none_or(|l| !Arc::ptr_eq(&l.snapshot, snapshot) || l.highlight != highlight);
+        if moved || self.layout.as_ref().is_none_or(|l| l.colors != colors) {
+            let generated = self.source(snapshot);
+            self.layout = Some(SourceLayout {
+                snapshot: snapshot.clone(),
+                highlight: highlight.clone(),
+                colors,
+                job: source_job(ui, &generated.source, highlight),
+            });
         }
-        let generated = self.source(snapshot);
-        let job = source_job(ui, &generated.source, highlight.clone());
-        let galley = ui.fonts_mut(|fonts| fonts.layout_job(job));
-        self.galley = Some((snapshot.clone(), highlight, galley.clone()));
-        (galley, true)
+        // Theme text options recreate egui's font atlas at the next pass. A retained
+        // galley would keep UVs into the old atlas even if its colors were refreshed.
+        let job = self
+            .layout
+            .as_ref()
+            .expect("layout initialized above")
+            .job
+            .clone();
+        (ui.fonts_mut(|fonts| fonts.layout_job(job)), moved)
     }
 
     /// Submit a changed snapshot and take finished results; `focus_block` picks the page.
@@ -266,17 +283,26 @@ impl SourceView {
             .then_some((self.page + 1, compiled.page_count))
     }
 
-    fn status(&self) -> String {
+    fn status(&self, locale: Locale) -> String {
         match &self.compiled {
-            None => "预览编译中".into(),
-            Some(c) if c.revision != self.generation => "预览编译中".into(),
+            None => crate::i18n::text(locale, "source.preview.compiling"),
+            Some(c) if c.revision != self.generation => {
+                crate::i18n::text(locale, "source.preview.compiling")
+            }
             Some(c) => match &c.error {
-                Some(error) => format!("预览失败：{error}"),
-                None => format!(
-                    "A4 预览 · 第 {}/{} 页 · {} ms",
-                    self.page + 1,
-                    c.page_count,
-                    c.elapsed_ms
+                Some(error) => crate::i18n::text_with(
+                    locale,
+                    "source.preview.failed",
+                    &[("error", FluentValue::from(error.as_str()))],
+                ),
+                None => crate::i18n::text_with(
+                    locale,
+                    "source.preview.ready",
+                    &[
+                        ("page", ((self.page + 1) as i64).into()),
+                        ("pages", (c.page_count as i64).into()),
+                        ("ms", (c.elapsed_ms as i64).into()),
+                    ],
                 ),
             },
         }
@@ -285,7 +311,7 @@ impl SourceView {
 
 impl EditorSession {
     /// Source workspace: generated Typst (read-only) and its quick preview.
-    pub(super) fn show_source(&mut self, ui: &mut egui::Ui) {
+    pub(super) fn show_source(&mut self, ui: &mut egui::Ui, locale: Locale) {
         let focus_block = self.cursor_block();
         let snapshot = self.snapshot.clone();
         self.source_view.sync(ui.ctx(), &snapshot, focus_block);
@@ -298,14 +324,14 @@ impl EditorSession {
                     .fill(t.canvas)
                     .inner_margin(egui::Margin::same(8)),
             )
-            .show(ui, |ui| self.preview_pane(ui));
+            .show(ui, |ui| self.preview_pane(ui, locale));
         egui::CentralPanel::default()
             .frame(
                 egui::Frame::new()
                     .fill(t.field)
                     .inner_margin(egui::Margin::same(8)),
             )
-            .show(ui, |ui| self.source_pane(ui, focus_block));
+            .show(ui, |ui| self.source_pane(ui, focus_block, locale));
     }
 
     fn cursor_block(&self) -> Option<NodeId> {
@@ -315,18 +341,22 @@ impl EditorSession {
             .map(|l| l.block)
     }
 
-    fn source_pane(&mut self, ui: &mut egui::Ui, focus_block: Option<NodeId>) {
+    fn source_pane(&mut self, ui: &mut egui::Ui, focus_block: Option<NodeId>, locale: Locale) {
         let snapshot = self.snapshot.clone();
         let generated = self.source_view.source(&snapshot);
-        ui.label(format!(
-            "生成 Typst 源码 · 只读 · 正文 r{}",
-            snapshot.revision.0
+        ui.label(crate::i18n::text_with(
+            locale,
+            "source.header",
+            &[("revision", (snapshot.revision.0 as i64).into())],
         ));
         if generated.holes > 0 || !generated.raw.is_empty() {
-            ui.weak(format!(
-                "{} 个空槽显示为 □，严格输出会拒绝；{} 个原串公式只显示、不在预览中执行。",
-                generated.holes,
-                generated.raw.len()
+            ui.weak(crate::i18n::text_with(
+                locale,
+                "source.warning",
+                &[
+                    ("holes", (generated.holes as i64).into()),
+                    ("raw", (generated.raw.len() as i64).into()),
+                ],
             ));
         }
         let highlight = focus_block
@@ -349,7 +379,7 @@ impl EditorSession {
             });
     }
 
-    fn preview_pane(&mut self, ui: &mut egui::Ui) {
+    fn preview_pane(&mut self, ui: &mut egui::Ui, locale: Locale) {
         let document = self.snapshot.document;
         ui.horizontal(|ui| {
             let pages = self
@@ -369,7 +399,7 @@ impl EditorSession {
                 self.source_view.page += 1;
                 self.source_view.request_page(document);
             }
-            ui.label(self.source_view.status());
+            ui.label(self.source_view.status(locale));
         });
         let ppp = ui.ctx().pixels_per_point();
         let max_side = ui.ctx().input(|i| i.max_texture_side) as u32;

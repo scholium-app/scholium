@@ -372,6 +372,18 @@ chrome-dialog-cancel = Cancel
 
 chrome-dialog-discard = Discard and Continue
 
+# Source view
+
+source-header = Generated Typst source · read-only · body r{ $revision }
+
+source-warning = Empty slots: { $holes } (shown as □; rejected by strict output). Raw formulas: { $raw } (display only; not executed in the preview).
+
+source-preview-compiling = Compiling preview
+
+source-preview-failed = Preview failed: { $error }
+
+source-preview-ready = A4 preview · page { $page }/{ $pages } · { $ms } ms
+
 diag-severity-error = Error
 
 diag-severity-warning = Warning

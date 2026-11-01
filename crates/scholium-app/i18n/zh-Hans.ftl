@@ -369,6 +369,18 @@ chrome-dialog-cancel = 取消
 
 chrome-dialog-discard = 丢弃并继续
 
+# Source view
+
+source-header = 生成 Typst 源码 · 只读 · 正文 r{ $revision }
+
+source-warning = { $holes } 个空槽显示为 □，严格输出会拒绝；{ $raw } 个原串公式只显示、不在预览中执行。
+
+source-preview-compiling = 预览编译中
+
+source-preview-failed = 预览失败：{ $error }
+
+source-preview-ready = A4 预览 · 第 { $page }/{ $pages } 页 · { $ms } ms
+
 diag-severity-error = 错误
 
 diag-severity-warning = 警告

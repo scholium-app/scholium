@@ -1,0 +1,48 @@
+{
+  "command": "python3 scripts/window-checks.py --locale zh-Hans en --out target/t24-windows",
+  "result": "32/32 passed",
+  "locales": {
+    "zh-Hans": {
+      "a4-surface": "pass",
+      "caret-follow": "pass",
+      "chrome": "pass",
+      "default-launch": "pass",
+      "diagnostics": "pass",
+      "inline-style": "pass",
+      "interaction": "pass",
+      "math-attach": "pass",
+      "math-enter": "pass",
+      "native": "pass",
+      "parity": "pass",
+      "sharp-raster": "pass",
+      "source-theme": "pass",
+      "source-view": "pass",
+      "undo-group": "pass",
+      "a11y": "pass"
+    },
+    "en": {
+      "a4-surface": "pass",
+      "caret-follow": "pass",
+      "chrome": "pass",
+      "default-launch": "pass",
+      "diagnostics": "pass",
+      "inline-style": "pass",
+      "interaction": "pass",
+      "math-attach": "pass",
+      "math-enter": "pass",
+      "native": "pass",
+      "parity": "pass",
+      "sharp-raster": "pass",
+      "source-theme": "pass",
+      "source-view": "pass",
+      "undo-group": "pass",
+      "a11y": "pass"
+    }
+  },
+  "final_source_theme": {
+    "command": "python3 scripts/window-checks.py --only source-theme --locale zh-Hans en --out target/t24-source-theme-final",
+    "result": "2/2 passed",
+    "mean_delta": 0.0,
+    "changed_fraction": 0.0
+  }
+}
