@@ -7,7 +7,8 @@ import sys
 
 fork, stock = map(Path, sys.argv[1:3])
 results = []
-for name in ("full", "scripts", "styles", "heading"):
+for name in ("full", "scripts", "styles", "heading", "empty-start", "empty-middle",
+             "empty-three", "empty-end", "empty-heading", "empty-between-headings", "empty-only"):
     candidate = json.loads((fork / f"{name}.json").read_text())
     reference = json.loads((stock / f"{name}.json").read_text())
     a = (fork / f"{name}.rgba").read_bytes()

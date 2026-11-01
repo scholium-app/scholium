@@ -1,0 +1,6 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.20s
+     Running `target/stock-reference/debug/typst-main-stock-reference /tmp/t29-fonts-before-stock`
+
+thread 'main' (586813) panicked at ../stock_empty.rs:78:5:
+stock compile warnings
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

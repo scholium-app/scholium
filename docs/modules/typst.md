@@ -54,6 +54,9 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 裸写，其余加引号），分数为 `(a)/(b)`，必填空槽显示为 `□` 并计入 `holes`（严格输出须拒绝）。
 `View` 模式给用户看，原串公式逐字显示；`Preview` 模式加预览 preamble 与 `blkstart{i}`/`blk{i}`
 块锚点，原串公式换成可见占位、**从不在进程内编译**，其 ID 计入 `raw`。`blocks` 给出每块的源码区间。
+空段落在两种模式中均显式生成 `#par[#text("")]`：空文本提供与编辑面相同的字体行高，
+并保留 leading、段间距和每一个连续空段落（包括开头、结尾与标题旁）；单独的 `#par[]` 不具有相同的行高。
+空段落的 `SourceBlock` 范围包含整个构造和 Preview 模式的两端块锚点，源码高亮仍对应独立的非空范围。
 
 `PreviewCompiler::submit(document, generation, source, block_count)` 编译预览模式源码，
 `request_page(document, generation, page, px_per_pt)` 按需栅格，`poll() -> PreviewEvent` 非阻塞。
@@ -68,6 +71,10 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 `editor` feature 由 `scholium-app` 启用，并打开 `typst-layout/editor`；它要求根 workspace
 统一 patch 的锁定 fork 13 个库（[ADR 0036](../adr/ADR-0036-typst-default-editor.md)）。
 `typst-main-fork-check` 示例按同一 fixture 输出 fork 像素，供与独立 stock 参照逐像素比较。
+独立 stock 参照对空段落夹具编译普通 Typst 源码，以自动页高同时验证文本位置与末尾空行高度；
+覆盖开头、中间一行/三行、结尾、标题旁及纯空段落，尺寸与 RGBA 字节必须完全相同。
+源码参照按自身 FontBook 过滤正文/标题字体偏好中的缺失家族并保留原顺序，与 Content 的 fallback 选择一致；
+stock 对照同时覆盖默认字体集和仅打包字体集，两者都要求源码编译零警告。
 `EditorWorker::spawn(wake)` 在 CPU 线程驻留 World/字体和 Content cache；默认使用 `FontProfile::System`：始终加载打包的 Noto Sans CJK SC、Liberation Serif 2.1.5
 （Regular/Italic/Bold/BoldItalic）及 Typst embedded，并额外扫描宿主字体。
 `FontProfile::Bundled` 使用相同字体列表与打包集合，但完全跳过宿主扫描；共享场景 headless worker 显式选择它，
@@ -114,7 +121,8 @@ System 下已安装的 Times New Roman/宋体/黑体优先；没有时使用打�
 Bundled 的两页中英混排测试固定每一行首个源 byte；外部字体度量比较是显式运行的本地测试，
 不让普通测试依赖商业字体或宿主中文字体。该断行契约不保证不同字体的字形外观或任意未覆盖字符的 fallback 一致。
 标题编号**不在** preamble 中：编辑面以空 introspector 布局，无法运行 counter；编号随文档模板回归。
-空块不设首行缩进：fork 以行文本锚定空行 caret，缩进占位字符会使该行失去 caret。
+空段落与非空段落遵循相同首行缩进（`all: true`）；fork 在空行全范围内寻找文本 origin，
+并将 caret 放在前置间距项之后，因此空段落 caret 与同样式首字的 x 一致；标题保持无缩进。
 预览源码的块起点锚点对标题单独成行放在 `=` 之前，因为标题正文前的元素会改变标题块间距。
 
 `EditorScene` 的 raster 和 `EditGeometry` 都取同一个 padded Frame；caret 位置是 typed
@@ -143,7 +151,7 @@ SceneStats 记录 built/reused/source_reads/elapsed，不能作为物理刷新�
   不阻塞 PR，也不自动开 issue。上游不接受 AI 编写的代码，跟进只在本仓库内进行，不向 typst/typst 提交任何内容。
 - 新版本发布时，以 drift job 最近一次绿灯运行的状态为起点做 rebase。只要结果还停在 conflict，就以结果表列出的冲突文件和上游提交为准，
   并参照最近一次试 rebase 留下的补丁序列和 adapter 改动（见下方开发日志）。
-- 补丁规模预算：13 个库相对上游的净新增少于 600 行。当前净新增 592 行，删除 16 行，涉及 21 个文件。
+- 补丁规模预算：13 个库相对上游的净新增少于 600 行。当前新增 593 行、删除 16 行（净增 577 行），涉及 21 个文件。
   会超出预算的新能力，优先放在 adapter 里实现。2026-10-31 的试 rebase 见[开发日志](../log/2026-10-31-typst-upstream-tracking.md)。
 
 ## 不变量

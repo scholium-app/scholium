@@ -11,6 +11,9 @@ use scholium_model::{
 use std::ops::Range;
 use unicode_segmentation::UnicodeSegmentation;
 
+#[cfg(test)]
+mod empty_tests;
+
 /// Which consumer the source is for.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SourceMode {
@@ -97,6 +100,11 @@ pub fn generate_source(doc: &StructuredDocument, mode: SourceMode) -> GeneratedS
                     }
                 }
             }
+        }
+        if heading_marker.is_empty() && out.source.len() == content_start {
+            // An empty Par alone has no text metrics. Keep an empty TextElem so
+            // stock Typst reserves the same line height as the editing surface.
+            out.source.push_str("#par[#text(\"\")]");
         }
         if mode == SourceMode::Preview {
             // Headings end their block at the line break, like their start anchor.

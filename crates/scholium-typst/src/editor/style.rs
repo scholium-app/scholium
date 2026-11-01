@@ -48,10 +48,3 @@ pub(super) fn heading(level: usize, body: Content, profile: crate::FontProfile) 
         .styled(TextElem::font.set(fonts(profile.body(HEADING_FONTS))))
         .styled(TextElem::weight.set(FontWeight::BOLD))
 }
-
-/// Drops the first-line indent. The fork anchors the caret of an empty line on
-/// the line's text, and the indent's placeholder character would hide it, so
-/// empty blocks are laid out without indent.
-pub(super) fn without_indent(content: Content) -> Content {
-    content.styled(ParElem::first_line_indent.set(FirstLineIndent::default()))
-}

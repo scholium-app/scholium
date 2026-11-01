@@ -146,10 +146,10 @@ index 0000000..06b39ea
 +        .collect()
 +}
 diff --git a/crates/typst-layout/src/inline/line.rs b/crates/typst-layout/src/inline/line.rs
-index a88b7c1..9d83d63 100644
+index a88b7c1..fd0fa4b 100644
 --- a/crates/typst-layout/src/inline/line.rs
 +++ b/crates/typst-layout/src/inline/line.rs
-@@ -29,6 +29,8 @@ const LINE_SEPARATOR: char = '\u{2028}'; // We use LS to distinguish justified b
+@@ -29,6 +29,8 @@
  /// line, respectively. But even those can partially reuse previous results when
  /// the break index is safe-to-break per rustybuzz.
  pub struct Line<'a> {
@@ -158,7 +158,7 @@ index a88b7c1..9d83d63 100644
      /// The items the line is made of.
      pub items: Items<'a>,
      /// The exact natural width of the line.
-@@ -44,6 +46,8 @@ impl Line<'_> {
+@@ -44,6 +46,8 @@
      /// Create an empty line.
      pub fn empty() -> Self {
          Self {
@@ -167,7 +167,7 @@ index a88b7c1..9d83d63 100644
              items: Items::new(),
              width: Abs::zero(),
              justify: false,
-@@ -131,6 +135,8 @@ pub fn line<'a>(
+@@ -131,6 +135,8 @@
      pred: Option<&Line<'a>>,
  ) -> Line<'a> {
      // The line's full text.
@@ -176,7 +176,7 @@ index a88b7c1..9d83d63 100644
      let full = &p.text[range.clone()];
  
      // Whether the line is justified.
-@@ -190,7 +196,14 @@ pub fn line<'a>(
+@@ -190,7 +196,14 @@
      // Compute the line's width.
      let width = items.iter().map(Item::natural_width).sum();
  
@@ -192,7 +192,7 @@ index a88b7c1..9d83d63 100644
  }
  
  /// Collects / reshapes all items for the line with the given `range`.
-@@ -632,6 +645,28 @@ pub fn commit(
+@@ -632,6 +645,29 @@
          output.push_frame(Point::new(x, y), frame);
      }
  
@@ -200,14 +200,15 @@ index a88b7c1..9d83d63 100644
 +    if p.text
 +        .get(line.edit_range.clone())
 +        .is_some_and(|text| text.trim().is_empty())
-+        && let Some((origin, range)) =
-+            p.spans.edit_at(&(line.edit_range.start..line.edit_range.start))
++        // The empty text origin can follow an indent's spacing placeholder.
++        && let Some((origin, range)) = (line.edit_range.start..=line.edit_range.end)
++            .find_map(|at| p.spans.edit_at(&(at..at)))
 +    {
 +        use typst_library::editor::{EditCaret, EditCluster};
 +        output.attach_edit_cluster(EditCluster {
 +            origin,
 +            range: range.clone(),
-+            position: Point::with_x(p.config.align.position(remaining)),
++            position: Point::with_x(offset + p.config.align.position(remaining)),
 +            size: Size::new(Abs::zero(), output.height()),
 +            baseline: output.baseline(),
 +            rtl: p.config.dir == Dir::RTL,

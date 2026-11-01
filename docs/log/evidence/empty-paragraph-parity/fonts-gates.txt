@@ -1,0 +1,22 @@
+PASS cargo fmt --all -- --check
+PASS cargo clippy --locked --workspace --all-targets -- -D warnings
+PASS cargo test --locked --workspace (456 passed, 4 existing ignored, 0 failed)
+PASS RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps
+PASS python3 scripts/check-rust-size.py
+PASS python3 scripts/check-doc-links.py
+PASS python3 scripts/check-ui-strings.py
+PASS python3 scripts/check-layers.py
+PASS cargo deny --locked check licenses bans sources
+PASS cargo build --locked -p scholium-app -p scholium-storage --bins
+PASS python3 scripts/window-checks.py --locale zh-Hans en --out target/t29-fonts-window (32/32)
+PASS python3 scripts/verify-typst-fork.py /tmp/typst-origin
+PASS cargo run --locked -p scholium-typst --features editor --example typst-main-fork-check -- /tmp/t29-fonts-system-fork
+PASS cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir target/stock-reference -- /tmp/t29-fonts-system-stock
+PASS python3 spikes/typst-main-editor/compare.py /tmp/t29-fonts-system-fork /tmp/t29-fonts-system-stock (11/11)
+PASS SCHOLIUM_TEST_FONTS=bundled cargo run --locked -p scholium-typst --features editor --example typst-main-fork-check -- /tmp/t29-fonts-bundled-fork
+PASS SCHOLIUM_TEST_FONTS=bundled cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir target/stock-reference -- /tmp/t29-fonts-bundled-stock
+PASS python3 spikes/typst-main-editor/compare.py /tmp/t29-fonts-bundled-fork /tmp/t29-fonts-bundled-stock (11/11)
+Both stock source runs pass the unchanged zero-warnings assertion. All dimensions and RGBA bytes match exactly.
+Default SCHOLIUM_TEST_FONTS is unset. Bundled explicitly disables system font scanning in both processes.
+Expected pre-fix reproduction: bundled stock run exits 101 at the zero-warnings assertion (fonts-before.txt).
+NOTE cargo deny reports the existing unmatched Unicode-DFS-2016 license allowance; all three policies pass.

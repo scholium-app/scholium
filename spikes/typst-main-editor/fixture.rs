@@ -42,6 +42,9 @@ fn row(children: Vec<MathNode>) -> MathNode {
 }
 /// Identified input for the formal adapter, with complete math slots.
 pub fn fixture(name: &str) -> StructuredDocument {
+    if name.starts_with("empty-") {
+        return empty_fixture(name);
+    }
     let (kind, content) = match name {
         "full" => (
             BlockKind::Paragraph,
@@ -97,5 +100,31 @@ pub fn fixture(name: &str) -> StructuredDocument {
             kind,
             content,
         }],
+    }
+}
+
+fn empty_fixture(name: &str) -> StructuredDocument {
+    use BlockKind::{Heading1 as H, Paragraph as P};
+    let blocks: &[(BlockKind, &str)] = match name {
+        "empty-start" => &[(P, ""), (P, "alpha")],
+        "empty-middle" => &[(P, "alpha"), (P, ""), (P, "omega")],
+        "empty-three" => &[(P, "alpha"), (P, ""), (P, ""), (P, ""), (P, "omega")],
+        "empty-end" => &[(P, "alpha"), (P, "")],
+        "empty-heading" => &[(P, ""), (H, "Heading"), (P, ""), (P, "omega")],
+        "empty-between-headings" => &[(H, "Heading"), (P, ""), (H, "Second"), (P, "omega")],
+        "empty-only" => &[(P, ""), (P, ""), (P, "")],
+        _ => panic!("named empty paragraph fixture"),
+    };
+    StructuredDocument {
+        document: DocumentId::fresh(),
+        revision: Revision(0),
+        blocks: blocks
+            .iter()
+            .map(|(kind, value)| StructuredBlock {
+                node: NodeId::fresh(),
+                kind: *kind,
+                content: vec![text(value, TextStyle::Plain)],
+            })
+            .collect(),
     }
 }

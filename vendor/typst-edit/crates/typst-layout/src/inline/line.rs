@@ -649,14 +649,15 @@ pub fn commit(
     if p.text
         .get(line.edit_range.clone())
         .is_some_and(|text| text.trim().is_empty())
-        && let Some((origin, range)) =
-            p.spans.edit_at(&(line.edit_range.start..line.edit_range.start))
+        // The empty text origin can follow an indent's spacing placeholder.
+        && let Some((origin, range)) = (line.edit_range.start..=line.edit_range.end)
+            .find_map(|at| p.spans.edit_at(&(at..at)))
     {
         use typst_library::editor::{EditCaret, EditCluster};
         output.attach_edit_cluster(EditCluster {
             origin,
             range: range.clone(),
-            position: Point::with_x(p.config.align.position(remaining)),
+            position: Point::with_x(offset + p.config.align.position(remaining)),
             size: Size::new(Abs::zero(), output.height()),
             baseline: output.baseline(),
             rtl: p.config.dir == Dir::RTL,
