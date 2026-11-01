@@ -1,0 +1,33 @@
+check                     result      seconds
+a4-surface [zh-Hans]      pass            7.6
+caret-follow [zh-Hans]    pass           35.0
+chrome [zh-Hans]          pass           29.0
+default-launch [zh-Hans]  pass            7.7
+diagnostics [zh-Hans]     pass           16.9
+inline-style [zh-Hans]    pass            6.6
+interaction [zh-Hans]     pass            9.7
+math-attach [zh-Hans]     pass            6.4
+math-enter [zh-Hans]      pass           13.4
+native [zh-Hans]          pass           23.4
+parity [zh-Hans]          pass           19.8
+sharp-raster [zh-Hans]    pass           59.3
+source-view [zh-Hans]     pass            7.6
+undo-group [zh-Hans]      pass            5.5
+a11y [zh-Hans]            pass            8.6
+a4-surface [en]           pass            7.7
+caret-follow [en]         pass           34.7
+chrome [en]               pass           29.1
+default-launch [en]       pass            7.7
+diagnostics [en]          pass           16.7
+inline-style [en]         pass            7.0
+interaction [en]          pass           10.0
+math-attach [en]          pass            6.3
+math-enter [en]           pass           13.1
+native [en]               pass           23.9
+parity [en]               pass           20.1
+sharp-raster [en]         pass           59.0
+source-view [en]          pass            7.4
+undo-group [en]           pass            5.4
+a11y [en]                 pass            8.7
+
+30/30 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t23-final-window

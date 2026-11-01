@@ -1,0 +1,26 @@
+     Running unittests src/main.rs (target/debug/deps/scholium_app-e60d2f25afc3d060)
+test result: ok. 302 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.03s
+     Running unittests src/lib.rs (target/debug/deps/scholium_document-66e505f8d4f93919)
+test result: ok. 58 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+     Running unittests src/lib.rs (target/debug/deps/scholium_model-beb7348445301e53)
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+     Running unittests src/lib.rs (target/debug/deps/scholium_session-b11526fbdaf5aa72)
+test result: ok. 12 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.11s
+     Running unittests src/lib.rs (target/debug/deps/scholium_storage-4a0b37a7e0f88c70)
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+     Running unittests src/bin/hammer.rs (target/debug/deps/hammer-8d8929ab3bdbd803)
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+     Running tests/recovery.rs (target/debug/deps/recovery-03ead1bf9c7249a7)
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+     Running unittests src/lib.rs (target/debug/deps/scholium_typst-789e216f0ed2af82)
+test result: ok. 39 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 7.14s
+   Doc-tests scholium_document
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+   Doc-tests scholium_model
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+   Doc-tests scholium_session
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+   Doc-tests scholium_storage
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+   Doc-tests scholium_typst
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

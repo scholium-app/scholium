@@ -68,9 +68,13 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 `editor` feature 由 `scholium-app` 启用，并打开 `typst-layout/editor`；它要求根 workspace
 统一 patch 的锁定 fork 13 个库（[ADR 0036](../adr/ADR-0036-typst-default-editor.md)）。
 `typst-main-fork-check` 示例按同一 fixture 输出 fork 像素，供与独立 stock 参照逐像素比较。
-`EditorWorker::spawn(wake)` 在 CPU 线程驻留 World/字体和 Content cache；默认使用嵌入字体加宿主扫描，
-共享场景 headless worker 与 parity 窗口子进程通过 `SCHOLIUM_TEST_FONTS=bundled` 固定为应用打包 Noto Sans CJK 与 Typst embedded，禁止扫描宿主字体。
-World 创建后字体集不再改变；该验收 profile 不改变普通产品启动策略。
+`EditorWorker::spawn(wake)` 在 CPU 线程驻留 World/字体和 Content cache；默认使用 `FontProfile::System`：始终加载打包的 Noto Sans CJK SC、Liberation Serif 2.1.5
+（Regular/Italic/Bold/BoldItalic）及 Typst embedded，并额外扫描宿主字体。
+`FontProfile::Bundled` 使用相同字体列表与打包集合，但完全跳过宿主扫描；共享场景 headless worker 显式选择它，
+parity 窗口子进程通过 `SCHOLIUM_TEST_FONTS=bundled` 选择它。World 创建后字体集不再改变。
+五个打包字体以 Brotli-11 无损字节嵌入；纯 Rust 解压器在进程内首次加载时解压一次并缓存，
+`bundled_cjk_font_bytes()` 让界面复用同一 Noto 原始字节，无文件读取或网络下载。
+来源、版本、原始 SHA-256、许可与压缩再生成命令见[字体资产说明](../../crates/scholium-app/assets/fonts/README.md)。
 `submit(Arc<StructuredDocument>, SceneStamp, RasterSpec, ViewRange)` 传递完整已接受快照、栅格分辨率与页面可见范围（pt），`poll()` 非阻塞返回
 带 stamp 的结果。队列和结果分别只保留最新一份派生工作；关闭不在 UI join。
 Scene 有两层：`base` 是整页、倍率不超过 1 px/pt（受页宽 ≤ `max_side` 与 `MAX_RASTER_PIXELS` = 64 MP 限制，仅作缺条带时的底图）；
@@ -104,6 +108,11 @@ World 的 source/file 均拒绝，today 无环境求值。RawMath 返回明确�
 文档样式只有一处定义：`style.rs` 的常量（字体、字号、行距、首行缩进、语言、页边距）同时生成
 预览 preamble 和编辑面的 Content 样式，二者的断行与垂直节奏必须一致（`editor/parity.rs` 以
 同一夹具逐行比对）。标题在编辑面使用真正的 `HeadingElem`，与预览同套默认字号、间距与标题字体。
+正文字体顺序固定为 Times New Roman → Liberation Serif → SimSun → Noto Sans CJK SC，
+标题为 Times New Roman → Liberation Serif → SimHei → Noto Sans CJK SC；两种 profile 都直接使用这两份列表。
+System 下已安装的 Times New Roman/宋体/黑体优先；没有时使用打包的度量兼容 Liberation Serif 与全宽 Noto CJK。
+Bundled 的两页中英混排测试固定每一行首个源 byte；外部字体度量比较是显式运行的本地测试，
+不让普通测试依赖商业字体或宿主中文字体。该断行契约不保证不同字体的字形外观或任意未覆盖字符的 fallback 一致。
 标题编号**不在** preamble 中：编辑面以空 introspector 布局，无法运行 counter；编号随文档模板回归。
 空块不设首行缩进：fork 以行文本锚定空行 caret，缩进占位字符会使该行失去 caret。
 预览源码的块起点锚点对标题单独成行放在 `=` 之前，因为标题正文前的元素会改变标题块间距。

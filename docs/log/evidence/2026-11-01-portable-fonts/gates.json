@@ -1,0 +1,271 @@
+[
+  {
+    "name": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 0.46
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--workspace",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 0.33
+  },
+  {
+    "name": "tests",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--workspace"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 27.87
+  },
+  {
+    "name": "rustdoc",
+    "command": [
+      "cargo",
+      "doc",
+      "--locked",
+      "--workspace",
+      "--no-deps"
+    ],
+    "environment": {
+      "RUSTDOCFLAGS": "-D warnings"
+    },
+    "returncode": 0,
+    "seconds": 2.61
+  },
+  {
+    "name": "rust-size",
+    "command": [
+      "python3",
+      "scripts/check-rust-size.py"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 0.07
+  },
+  {
+    "name": "doc-links",
+    "command": [
+      "python3",
+      "scripts/check-doc-links.py"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 0.18
+  },
+  {
+    "name": "ui-strings",
+    "command": [
+      "python3",
+      "scripts/check-ui-strings.py"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 0.09
+  },
+  {
+    "name": "layers",
+    "command": [
+      "python3",
+      "scripts/check-layers.py"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 0.47
+  },
+  {
+    "name": "deny",
+    "command": [
+      "cargo",
+      "deny",
+      "--locked",
+      "check",
+      "licenses",
+      "bans",
+      "sources"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 0.82
+  },
+  {
+    "name": "build",
+    "command": [
+      "cargo",
+      "build",
+      "--locked",
+      "-p",
+      "scholium-app",
+      "-p",
+      "scholium-storage",
+      "--bins"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 0.27
+  },
+  {
+    "name": "fork-source",
+    "command": [
+      "python3",
+      "scripts/verify-typst-fork.py",
+      "target/t23-typst-origin"
+    ],
+    "environment": {
+      "GIT_CEILING_DIRECTORIES": "/home/ation_ciger/Projects/Mogan/scholium-wt1/target"
+    },
+    "returncode": 0,
+    "seconds": 0.32
+  },
+  {
+    "name": "fork-pixels",
+    "command": [
+      "cargo",
+      "run",
+      "--locked",
+      "-p",
+      "scholium-typst",
+      "--features",
+      "editor",
+      "--example",
+      "typst-main-fork-check",
+      "--",
+      "/home/ation_ciger/Projects/Mogan/scholium-wt1/target/t23-final/fork-pixels"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 1.65
+  },
+  {
+    "name": "stock-pixels",
+    "command": [
+      "cargo",
+      "run",
+      "--locked",
+      "--manifest-path",
+      "spikes/typst-main-editor/reference/Cargo.toml",
+      "--target-dir",
+      "target/stock-reference",
+      "--",
+      "/home/ation_ciger/Projects/Mogan/scholium-wt1/target/t23-final/stock-pixels"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 4.66
+  },
+  {
+    "name": "stock-comparison",
+    "command": [
+      "python3",
+      "spikes/typst-main-editor/compare.py",
+      "/home/ation_ciger/Projects/Mogan/scholium-wt1/target/t23-final/fork-pixels",
+      "/home/ation_ciger/Projects/Mogan/scholium-wt1/target/t23-final/stock-pixels"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 0.03
+  },
+  {
+    "name": "bundled-fork-pixels",
+    "command": [
+      "cargo",
+      "run",
+      "--locked",
+      "-p",
+      "scholium-typst",
+      "--features",
+      "editor",
+      "--example",
+      "typst-main-fork-check",
+      "--",
+      "/home/ation_ciger/Projects/Mogan/scholium-wt1/target/t23-final/bundled-fork-pixels"
+    ],
+    "environment": {
+      "SCHOLIUM_TEST_FONTS": "bundled"
+    },
+    "returncode": 0,
+    "seconds": 0.75
+  },
+  {
+    "name": "bundled-stock-pixels",
+    "command": [
+      "cargo",
+      "run",
+      "--locked",
+      "--manifest-path",
+      "spikes/typst-main-editor/reference/Cargo.toml",
+      "--target-dir",
+      "target/stock-reference",
+      "--",
+      "/home/ation_ciger/Projects/Mogan/scholium-wt1/target/t23-final/bundled-stock-pixels"
+    ],
+    "environment": {
+      "SCHOLIUM_TEST_FONTS": "bundled"
+    },
+    "returncode": 0,
+    "seconds": 1.11
+  },
+  {
+    "name": "bundled-stock-comparison",
+    "command": [
+      "python3",
+      "spikes/typst-main-editor/compare.py",
+      "/home/ation_ciger/Projects/Mogan/scholium-wt1/target/t23-final/bundled-fork-pixels",
+      "/home/ation_ciger/Projects/Mogan/scholium-wt1/target/t23-final/bundled-stock-pixels"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 0.06
+  },
+  {
+    "name": "release",
+    "command": [
+      "cargo",
+      "build",
+      "--locked",
+      "--release",
+      "-p",
+      "scholium-app"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 0.35
+  },
+  {
+    "name": "window",
+    "command": [
+      "python3",
+      "scripts/window-checks.py",
+      "--locale",
+      "zh-Hans",
+      "en",
+      "--out",
+      "target/t23-final-window"
+    ],
+    "environment": {},
+    "returncode": 0,
+    "seconds": 782.74
+  }
+]

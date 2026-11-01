@@ -1,0 +1,17 @@
+{
+  "original_bytes": 17953440,
+  "brotli_version": "1.2.1",
+  "brotli_level": 11,
+  "brotli_bytes": 11833855,
+  "brotli_saved_bytes": 6119585,
+  "zstd_version": "1.5.7",
+  "zstd_19_bytes": 12749228,
+  "zstd_22_bytes": 12636017,
+  "containers": {
+    "LiberationSerif-Bold.ttf.br": 166862,
+    "LiberationSerif-BoldItalic.ttf.br": 175277,
+    "LiberationSerif-Italic.ttf.br": 175187,
+    "LiberationSerif-Regular.ttf.br": 173370,
+    "NotoSansCJKsc-Regular.otf.br": 11143159
+  }
+}

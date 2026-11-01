@@ -1,0 +1,5 @@
+crates/scholium-app/assets/fonts/NotoSansCJKsc-Regular.otf 16437364 11902473
+crates/scholium-app/assets/fonts/LiberationSerif-Bold.ttf 370096 177628
+crates/scholium-app/assets/fonts/LiberationSerif-BoldItalic.ttf 376772 185495
+crates/scholium-app/assets/fonts/LiberationSerif-Italic.ttf 375632 185885
+crates/scholium-app/assets/fonts/LiberationSerif-Regular.ttf 393576 184536

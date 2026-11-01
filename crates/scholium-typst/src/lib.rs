@@ -14,7 +14,7 @@ use typst::{Library, LibraryExt};
 use typst_kit::fonts::FontStore;
 
 mod fonts;
-pub use fonts::FontProfile;
+pub use fonts::{FontProfile, bundled_cjk_font_bytes};
 use typst_layout::{PagedDocument, PagedIntrospector};
 
 mod compiler;
@@ -64,7 +64,11 @@ pub(crate) struct PreviewWorld {
 
 impl PreviewWorld {
     fn new() -> Self {
-        let fonts = FontProfile::from_environment().load();
+        Self::with_fonts(FontProfile::from_environment())
+    }
+
+    fn with_fonts(profile: FontProfile) -> Self {
+        let fonts = profile.load();
         let path = RootedPath::new(
             VirtualRoot::Project,
             VirtualPath::new("main.typ").expect("fixed path is always valid"),
