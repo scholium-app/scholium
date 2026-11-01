@@ -146,9 +146,23 @@ fn keep_ime(ui: &egui::Ui, rect: Rect, focused: bool, session: &mut EditorSessio
         .ime_anchor
         .unwrap_or_else(|| Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(1.0, 16.0)))
         .translate(rect.min.to_vec2());
+    publish_ime(ui, rect, anchor);
+}
+
+/// egui-winit 0.36 uses `rect` (not `cursor_rect`) for set_ime_cursor_area.
+/// Both rectangles are window logical pixels, clamped to the visible page so a
+/// scrolled-off caret cannot anchor candidates over the chrome.
+fn publish_ime(ui: &egui::Ui, page: Rect, caret: Rect) {
+    let visible = page.intersect(ui.clip_rect());
+    let visible = if visible.is_negative() {
+        ui.clip_rect()
+    } else {
+        visible
+    };
+    let anchor = Rect::from_min_max(visible.clamp(caret.min), visible.clamp(caret.max));
     ui.ctx().output_mut(|output| {
         output.ime = Some(egui::output::IMEOutput {
-            rect,
+            rect: anchor,
             cursor_rect: anchor,
             purpose: egui::IMEPurpose::Normal,
             should_interrupt_composition: false,
@@ -183,14 +197,7 @@ pub(super) fn body(
     let top = map(caret.top);
     let bottom = map(caret.bottom);
     painter.line_segment([top, bottom], Stroke::new(1.5, theme::Tokens::PAPER_ACCENT));
-    ui.ctx().output_mut(|output| {
-        output.ime = Some(egui::output::IMEOutput {
-            rect,
-            cursor_rect: Rect::from_two_pos(top, bottom),
-            purpose: egui::IMEPurpose::Normal,
-            should_interrupt_composition: false,
-        });
-    });
+    publish_ime(ui, rect, Rect::from_two_pos(top, bottom));
     if let Some(preedit) = &state.composition {
         painter.text(
             top,
@@ -229,6 +236,34 @@ const FORMULA_ALPHA: f32 = 0.28;
 const FORMULA_PADDING_PT: f32 = 1.5;
 const SLOT_PADDING_PT: f32 = 2.0;
 const FORMULA_CORNER: f32 = 3.0;
+
+#[cfg(test)]
+mod ime_tests {
+    use super::*;
+
+    #[test]
+    fn ime_area_tracks_the_caret_and_pending_scene_anchor() {
+        let mut f = tests::Fixture::new();
+        f.events(vec![tests::text("middle of a line")]);
+        f.settle();
+        let rect = Rect::from_min_size(egui::pos2(80.0, 100.0), egui::vec2(600.0, 700.0));
+        let mut output = f.ctx.run_ui(Default::default(), |ui| {
+            body(ui, rect, 1.0, &f.editor, &f.state);
+            keep_ime(ui, rect, true, &mut f.editor);
+        });
+        output.textures_delta.clear();
+        let ime = output.platform_output.ime.expect("current caret IME");
+        assert_eq!(ime.rect, ime.cursor_rect);
+        f.editor.core.submit_layout();
+        let mut output = f.ctx.run_ui(Default::default(), |ui| {
+            keep_ime(ui, rect, true, &mut f.editor);
+        });
+        output.textures_delta.clear();
+        let pending = output.platform_output.ime.expect("pending caret IME");
+        assert_eq!(pending.rect, pending.cursor_rect);
+        assert_eq!(pending.rect, ime.rect);
+    }
+}
 
 /// Tinted rounded rectangle behind the formula that holds the caret, plus a fainter
 /// outline for the current Fraction/Attach slot. Shapes only: Typst still draws the text.

@@ -76,6 +76,8 @@ impl EditorSession {
             "saved": !self.core.dirty(),
             "snapshot": self.snapshot.as_ref(), "carets": carets, "page_text_draws": text_shapes,
             "semantic": self.core.semantic_projection(),
+            "ime_area": ctx.output(|o| o.ime.as_ref().map(|i| [i.rect.left(), i.rect.top(), i.rect.right(), i.rect.bottom()])),
+            "ime_caret": ctx.output(|o| o.ime.as_ref().map(|i| [i.cursor_rect.left(), i.cursor_rect.top(), i.cursor_rect.right(), i.cursor_rect.bottom()])),
             "source_reads": self.scene().map(|s| s.stats.source_reads),
             "layout_error": self.layout_error,
             "selection": selection, "selection_quads": quads.as_ref().map(|q| q.len()).ok(),
