@@ -1,0 +1,41 @@
+python3 scripts/window-checks.py --locale zh-Hans en --out target/t28-followup-window
+
+check                            result      seconds
+a4-surface [zh-Hans]             pass            6.7
+backspace-block-merge [zh-Hans]  pass            7.2
+caret-follow [zh-Hans]           pass           34.1
+chrome [zh-Hans]                 pass           28.9
+default-launch [zh-Hans]         pass            7.4
+diagnostics [zh-Hans]            pass           16.3
+ime-inline [zh-Hans]             pass            4.8
+inline-style [zh-Hans]           pass            6.4
+interaction [zh-Hans]            pass            9.3
+math-attach [zh-Hans]            pass            6.0
+math-enter [zh-Hans]             pass           12.9
+native [zh-Hans]                 pass           23.1
+parity [zh-Hans]                 pass           24.9
+sharp-raster [zh-Hans]           pass           59.7
+source-theme [zh-Hans]           pass           10.7
+source-view [zh-Hans]            pass            7.2
+undo-group [zh-Hans]             pass            5.5
+a11y [zh-Hans]                   pass            8.6
+a4-surface [en]                  pass            7.5
+backspace-block-merge [en]       pass            7.4
+caret-follow [en]                pass           34.6
+chrome [en]                      pass           28.2
+default-launch [en]              pass            7.7
+diagnostics [en]                 pass           15.9
+ime-inline [en]                  pass            5.1
+inline-style [en]                pass            6.5
+interaction [en]                 pass           10.0
+math-attach [en]                 pass            6.3
+math-enter [en]                  pass           13.6
+native [en]                      pass           23.1
+parity [en]                      pass           24.3
+sharp-raster [en]                pass           59.1
+source-theme [en]                pass           10.6
+source-view [en]                 pass            7.0
+undo-group [en]                  pass            5.6
+a11y [en]                        pass            8.8
+
+36/36 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t28-followup-window

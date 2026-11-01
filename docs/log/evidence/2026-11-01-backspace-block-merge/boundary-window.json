@@ -1,0 +1,1040 @@
+{
+  "zh-Hans": {
+    "result": {
+      "expected": {
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "left"
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "right"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 4,
+          "affinity": "Downstream"
+        },
+        "anchor": null,
+        "undo_depth": 4
+      },
+      "actual": {
+        "anchor": null,
+        "cursor": {
+          "affinity": "Downstream",
+          "byte": 4,
+          "path": "blocks/0/content/0"
+        },
+        "snapshot": {
+          "blocks": [
+            {
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "left"
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "right"
+                  }
+                }
+              ],
+              "kind": "Paragraph"
+            }
+          ]
+        },
+        "undo_depth": 4
+      },
+      "diff": {}
+    },
+    "steps": [
+      {
+        "step": "input 1: {'text': 'left'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        }
+      },
+      {
+        "step": "input 2: {'key': 'Enter'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 0,
+            "path": "blocks/1/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              },
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 2
+        }
+      },
+      {
+        "step": "input 3: {'text': 'right'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 5,
+            "path": "blocks/1/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              },
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 3
+        }
+      },
+      {
+        "step": "input 4: {'key': 'Home'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/1/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              },
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 3
+        }
+      },
+      {
+        "step": "input 5: {'key': 'Backspace', 'expected': {'snapshot': {'blocks': [{'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': 'left'}}, {'body': {'kind': 'text', 'style': 'plain', 'text': 'right'}}]}]}, 'cursor': {'path': 'blocks/0/content/0', 'byte': 4, 'affinity': 'Upstream'}, 'anchor': None, 'undo_depth': 4}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 4
+        }
+      },
+      {
+        "step": "input 6: {'key': 'Character', 'value': 'z', 'mods': {'command': True}, 'expected': {'snapshot': {'blocks': [{'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': 'left'}}]}, {'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': 'right'}}]}]}, 'cursor': {'path': 'blocks/1/content/0', 'byte': 0, 'affinity': 'Downstream'}, 'anchor': None, 'undo_depth': 3}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/1/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              },
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 3
+        }
+      },
+      {
+        "step": "input 7: {'key': 'Character', 'value': 'z', 'mods': {'command': True, 'shift': True}, 'expected': {'snapshot': {'blocks': [{'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': 'left'}}, {'body': {'kind': 'text', 'style': 'plain', 'text': 'right'}}]}]}, 'cursor': {'path': 'blocks/0/content/0', 'byte': 4, 'affinity': 'Upstream'}, 'anchor': None, 'undo_depth': 4}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 4
+        }
+      },
+      {
+        "step": "input 8: {'key': 'Character', 'value': 'z', 'mods': {'command': True}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/1/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              },
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 3
+        }
+      },
+      {
+        "step": "input 9: {'key': 'ArrowLeft'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              },
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 3
+        }
+      },
+      {
+        "step": "input 10: {'key': 'Delete', 'expected': {'snapshot': {'blocks': [{'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': 'left'}}, {'body': {'kind': 'text', 'style': 'plain', 'text': 'right'}}]}]}, 'cursor': {'path': 'blocks/0/content/0', 'byte': 4, 'affinity': 'Downstream'}, 'anchor': None, 'undo_depth': 4}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 4
+        }
+      },
+      {
+        "step": "input 11: {'key': 'Character', 'value': 'z', 'mods': {'command': True}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              },
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 3
+        }
+      },
+      {
+        "step": "input 12: {'key': 'Character', 'value': 'z', 'mods': {'command': True, 'shift': True}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 4
+        }
+      }
+    ]
+  },
+  "en": {
+    "result": {
+      "expected": {
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "left"
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "right"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 4,
+          "affinity": "Downstream"
+        },
+        "anchor": null,
+        "undo_depth": 4
+      },
+      "actual": {
+        "anchor": null,
+        "cursor": {
+          "affinity": "Downstream",
+          "byte": 4,
+          "path": "blocks/0/content/0"
+        },
+        "snapshot": {
+          "blocks": [
+            {
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "left"
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "right"
+                  }
+                }
+              ],
+              "kind": "Paragraph"
+            }
+          ]
+        },
+        "undo_depth": 4
+      },
+      "diff": {}
+    },
+    "steps": [
+      {
+        "step": "input 1: {'text': 'left'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 1
+        }
+      },
+      {
+        "step": "input 2: {'key': 'Enter'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 0,
+            "path": "blocks/1/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              },
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": ""
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 2
+        }
+      },
+      {
+        "step": "input 3: {'text': 'right'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 5,
+            "path": "blocks/1/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              },
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 3
+        }
+      },
+      {
+        "step": "input 4: {'key': 'Home'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/1/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              },
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 3
+        }
+      },
+      {
+        "step": "input 5: {'key': 'Backspace', 'expected': {'snapshot': {'blocks': [{'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': 'left'}}, {'body': {'kind': 'text', 'style': 'plain', 'text': 'right'}}]}]}, 'cursor': {'path': 'blocks/0/content/0', 'byte': 4, 'affinity': 'Upstream'}, 'anchor': None, 'undo_depth': 4}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 4
+        }
+      },
+      {
+        "step": "input 6: {'key': 'Character', 'value': 'z', 'mods': {'command': True}, 'expected': {'snapshot': {'blocks': [{'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': 'left'}}]}, {'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': 'right'}}]}]}, 'cursor': {'path': 'blocks/1/content/0', 'byte': 0, 'affinity': 'Downstream'}, 'anchor': None, 'undo_depth': 3}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/1/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              },
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 3
+        }
+      },
+      {
+        "step": "input 7: {'key': 'Character', 'value': 'z', 'mods': {'command': True, 'shift': True}, 'expected': {'snapshot': {'blocks': [{'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': 'left'}}, {'body': {'kind': 'text', 'style': 'plain', 'text': 'right'}}]}]}, 'cursor': {'path': 'blocks/0/content/0', 'byte': 4, 'affinity': 'Upstream'}, 'anchor': None, 'undo_depth': 4}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Upstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 4
+        }
+      },
+      {
+        "step": "input 8: {'key': 'Character', 'value': 'z', 'mods': {'command': True}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 0,
+            "path": "blocks/1/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              },
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 3
+        }
+      },
+      {
+        "step": "input 9: {'key': 'ArrowLeft'}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              },
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 3
+        }
+      },
+      {
+        "step": "input 10: {'key': 'Delete', 'expected': {'snapshot': {'blocks': [{'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': 'left'}}, {'body': {'kind': 'text', 'style': 'plain', 'text': 'right'}}]}]}, 'cursor': {'path': 'blocks/0/content/0', 'byte': 4, 'affinity': 'Downstream'}, 'anchor': None, 'undo_depth': 4}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 4
+        }
+      },
+      {
+        "step": "input 11: {'key': 'Character', 'value': 'z', 'mods': {'command': True}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              },
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 3
+        }
+      },
+      {
+        "step": "input 12: {'key': 'Character', 'value': 'z', 'mods': {'command': True, 'shift': True}}",
+        "actual": {
+          "anchor": null,
+          "cursor": {
+            "affinity": "Downstream",
+            "byte": 4,
+            "path": "blocks/0/content/0"
+          },
+          "snapshot": {
+            "blocks": [
+              {
+                "content": [
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "left"
+                    }
+                  },
+                  {
+                    "body": {
+                      "kind": "text",
+                      "style": "plain",
+                      "text": "right"
+                    }
+                  }
+                ],
+                "kind": "Paragraph"
+              }
+            ]
+          },
+          "undo_depth": 4
+        }
+      }
+    ]
+  }
+}

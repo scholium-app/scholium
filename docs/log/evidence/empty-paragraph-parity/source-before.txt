@@ -1,0 +1,32 @@
+running 6 tests
+
+thread 'structured_source::empty_tests::empty_paragraph_source_is_explicit_and_each_range_includes_its_anchors' (509378) panicked at crates/scholium-typst/src/structured_source/empty_tests.rs:18:5:
+assertion `left == right` failed
+  left: "alpha\n\n\n\n\n\nomega\n\n\n"
+ right: "alpha\n\n#par[#text(\"\")]\n\n#par[#text(\"\")]\n\nomega\n\n#par[#text(\"\")]\n"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test structured_source::empty_tests::empty_paragraph_source_is_explicit_and_each_range_includes_its_anchors ... FAILED
+editor [("alpha", Point(94.86614173228347pt, 79.857421875pt)), ("omega", Point(94.86614173228347pt, 124.372265625pt))]
+"": [("alpha", Point(94.86614173228347pt, 79.857421875pt)), ("omega", Point(94.86614173228347pt, 102.11484374999999pt)), ("1", Point(294.6377952755906pt, 799.3471856545275pt))]
+
+thread 'editor::empty_paragraphs::empty_paragraphs_preserve_every_text_position_in_preview' (509375) panicked at crates/scholium-typst/src/editor/empty_paragraphs.rs:140:13:
+[(Paragraph, ""), (Paragraph, "alpha")], alpha: editor 102.11484374999999 vs preview 79.857421875
+test editor::empty_paragraphs::empty_paragraphs_preserve_every_text_position_in_preview ... FAILED
+"#par[]": [("alpha", Point(94.86614173228347pt, 79.857421875pt)), ("omega", Point(94.86614173228347pt, 116.51484375pt)), ("1", Point(294.6377952755906pt, 799.3471856545275pt))]
+test editor::empty_paragraphs::empty_paragraph_caret_starts_where_the_first_glyph_would_start ... ok
+"#par[#text(\"\")]": [("alpha", Point(94.86614173228347pt, 79.857421875pt)), ("omega", Point(94.86614173228347pt, 124.372265625pt)), ("1", Point(294.6377952755906pt, 799.3471856545275pt))]
+"#text(\"\")": [("alpha", Point(94.86614173228347pt, 79.857421875pt)), ("omega", Point(94.86614173228347pt, 124.372265625pt)), ("1", Point(294.6377952755906pt, 799.3471856545275pt))]
+"#box(width: 0pt)": [("alpha", Point(94.86614173228347pt, 79.857421875pt)), ("omega", Point(94.86614173228347pt, 116.51484375pt)), ("1", Point(294.6377952755906pt, 799.3471856545275pt))]
+test editor::empty_paragraphs::measure_empty_constructs ... ok
+test editor::empty_paragraphs::empty_heading_caret_stays_at_the_unindented_text_start ... ok
+test editor::tests::empty_script_slots_and_hole_bases_are_addressable ... ok
+
+failures:
+
+failures:
+    editor::empty_paragraphs::empty_paragraphs_preserve_every_text_position_in_preview
+    structured_source::empty_tests::empty_paragraph_source_is_explicit_and_each_range_includes_its_anchors
+
+test result: FAILED. 4 passed; 2 failed; 0 ignored; 0 measured; 41 filtered out; finished in 0.73s
+
+error: test failed, to rerun pass `-p scholium-typst --lib`

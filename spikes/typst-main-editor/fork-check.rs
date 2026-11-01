@@ -14,7 +14,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let output = std::path::PathBuf::from(std::env::args().nth(1).ok_or("output path required")?);
     std::fs::create_dir_all(&output)?;
     let worker = EditorWorker::spawn(|| {})?;
-    for name in ["full", "scripts", "styles", "heading", "preedit"] {
+    for name in [
+        "full",
+        "scripts",
+        "styles",
+        "heading",
+        "preedit",
+        "empty-start",
+        "empty-middle",
+        "empty-three",
+        "empty-end",
+        "empty-heading",
+        "empty-between-headings",
+        "empty-only",
+    ] {
         let snapshot = std::sync::Arc::new(fixture::fixture(name));
         let stamp = SceneStamp {
             document: snapshot.document,

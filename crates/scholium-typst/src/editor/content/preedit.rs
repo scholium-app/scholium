@@ -46,34 +46,6 @@ impl ContentCache {
             .cloned()
     }
 
-    pub(super) fn preedit_block(
-        &mut self,
-        block: &StructuredBlock,
-    ) -> Result<Content, EditorError> {
-        let composing_empty = block_is_empty(block)
-            && self
-                .preedit
-                .as_ref()
-                .is_some_and(|p| block.content.iter().any(|i| i.node == p.at.leaf));
-        if !composing_empty || block.kind != BlockKind::Paragraph {
-            return self.block(block);
-        }
-        let value = Value::Block(block.clone());
-        if let Some(content) = self.cached(block.node, &value) {
-            return Ok(content);
-        }
-        // An empty authoritative paragraph still has visible preedit. Build the
-        // normal indented paragraph so committing it will not shift the line.
-        let body = sequence(
-            block
-                .content
-                .iter()
-                .map(|i| self.inline(i))
-                .collect::<Result<_, _>>()?,
-        );
-        Ok(self.keep(block.node, value, ParElem::new(body).pack(), false))
-    }
-
     pub(super) fn body_text(&self, leaf: NodeId, text: &str, style: TextStyle) -> Content {
         let id = self.ids[&leaf];
         let Some(preedit) = self.preedit.as_ref().filter(|p| p.at.leaf == leaf) else {

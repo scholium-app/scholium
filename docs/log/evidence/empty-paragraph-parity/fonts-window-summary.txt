@@ -1,0 +1,35 @@
+check                     result      seconds
+a4-surface [zh-Hans]      pass            7.8
+caret-follow [zh-Hans]    pass           34.7
+chrome [zh-Hans]          pass           29.0
+default-launch [zh-Hans]  pass            7.6
+diagnostics [zh-Hans]     pass           16.3
+inline-style [zh-Hans]    pass            6.9
+interaction [zh-Hans]     pass            9.9
+math-attach [zh-Hans]     pass            5.9
+math-enter [zh-Hans]      pass           13.4
+native [zh-Hans]          pass           23.6
+parity [zh-Hans]          pass           19.6
+sharp-raster [zh-Hans]    pass           58.7
+source-theme [zh-Hans]    pass           11.7
+source-view [zh-Hans]     pass            7.1
+undo-group [zh-Hans]      pass            5.3
+a11y [zh-Hans]            pass            8.6
+a4-surface [en]           pass            7.3
+caret-follow [en]         pass           34.6
+chrome [en]               pass           29.0
+default-launch [en]       pass            7.6
+diagnostics [en]          pass           16.6
+inline-style [en]         pass            6.7
+interaction [en]          pass            9.6
+math-attach [en]          pass            5.9
+math-enter [en]           pass           12.7
+native [en]               pass           24.0
+parity [en]               pass           20.0
+sharp-raster [en]         pass           59.2
+source-theme [en]         pass           10.6
+source-view [en]          pass            7.0
+undo-group [en]           pass            5.4
+a11y [en]                 pass            8.5
+
+32/32 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t29-fonts-window

@@ -1,0 +1,16 @@
+running 2 tests
+
+thread 'editor::empty_paragraphs::empty_paragraph_caret_starts_where_the_first_glyph_would_start' (493966) panicked at crates/scholium-typst/src/editor/empty_paragraphs.rs:90:9:
+Paragraph, later=false: caret 0 vs glyph 24
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test editor::empty_paragraphs::empty_paragraph_caret_starts_where_the_first_glyph_would_start ... FAILED
+test editor::empty_paragraphs::empty_heading_caret_stays_at_the_unindented_text_start ... ok
+
+failures:
+
+failures:
+    editor::empty_paragraphs::empty_paragraph_caret_starts_where_the_first_glyph_would_start
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 42 filtered out; finished in 0.37s
+
+error: test failed, to rerun pass `-p scholium-typst --lib`

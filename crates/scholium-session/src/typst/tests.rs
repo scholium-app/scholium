@@ -290,3 +290,6 @@ fn script_slot(core: &EditorCore, slot: scholium_document::AttachSlot) -> &MathN
 
 #[path = "checkpoint_bench.rs"]
 pub(super) mod checkpoint_bench;
+
+#[path = "block_merge_tests.rs"]
+mod block_merge_tests;

@@ -42,6 +42,7 @@ src/typst/selection.rs        正文端点顺序、纯文本复制、范围替�
 src/typst/style.rs            待输入样式与选区样式、active styles
 src/typst/attach.rs           上下标、槽位出口和临时 Hole 生命周期
 src/typst/math_enter.rs       公式后拆段的一步撤销
+src/typst/block_merge.rs      正文块边界 Backspace/Delete 的一步合并
 src/typst/indicator.rs        调用方证明当前的 Scene → Frame pt 指示框
 src/typst/diagnose.rs         段落文字与公式溢出目标
 ```
@@ -95,6 +96,10 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
 - 正文/数学位置是稳定叶 ID、叶内 UTF-8 字素边界与 affinity。插入/删除后按已接受内容重新验证字素边界。
 - 本地历史最多 512 个分组；同叶、连续位置、间隔 <1 秒的键入与 IME 提交按词合并（含词尾空白）；
   连续删除单独合并，粘贴单独一步，保存不打断分组。app 将导航和命令键的分组中断传给 core。
+- 无选区时，正文块首 Backspace 合入前块、块尾 Delete 拉入后块；前块保留身份与类型，光标留在拼接点。
+  合并独立一步撤销，undo 恢复原块与原光标；首块块首/末块块尾的对应删除为空操作，不写历史或请求。
+  相邻正文端点通过空文字 `ReplaceBodyRange` 合并；若边界直接是公式而无正文叶，复用 `MergeWithNext`，
+  以存活的正文叶边界表示拼接点，不删除公式。数学空槽的 `RemoveSlot` 优先；同块公式后正文叶 byte 0 的 Backspace 保持原行为。
 - 选区替换保持范围外身份；多行文字走 `ReplaceBodyRange`。RawMath 范围明确拒绝；纯文本复制拒绝公式与原串。
   当前 Scene 的选区几何完整性由 app 检查；pending 时语义端点有效即可编辑，不使用旧几何。
 - 选区文字样式切换保持同一文字范围；无选区仅武装下一次输入样式。插入与其样式同一步撤销。

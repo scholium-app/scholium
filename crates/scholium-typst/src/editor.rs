@@ -2,6 +2,8 @@
 //! No source evaluation or UI types cross this boundary. Scenes are derived data.
 
 mod content;
+#[cfg(test)]
+mod empty_paragraphs;
 mod geometry;
 mod kernel;
 #[cfg(test)]

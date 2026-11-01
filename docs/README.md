@@ -17,14 +17,19 @@
 8. [格式系统](FORMATS.md)：LaTeX、Typst、Markdown、BibTeX、导入导出和复制。
 9. [安全模型](SECURITY.md)：不可信项目、构建隔离、服务端权限。
 10. [测试策略](TESTING.md)：属性测试、夹具、收敛、恢复和兼容性。
-11. [路线图](plan/ROADMAP.md)：阶段、交付物、出口条件和依赖关系。
-    [P1 排版工作区规划](plan/P1_UI.md)：桌面布局实施基准、两种模式参考图、允许调整的细节与评审检查。
-    [ArtCraft / PhotoCraft / WordCraft 借鉴计划](plan/ARTCRAFT_REFERENCE.md)：命令注册表、菜单栏与工具栏、设计令牌、无界面编辑核心、分层门禁与控制通道的落地顺序。
-    [界面多语言计划](plan/I18N.md)：界面语言与文档语言的区分、目录与 key、硬编码门禁、zh-Hans/en 首批与分期。
-    [渲染与编辑改进计划](plan/RENDER_EDIT_REWORK.md)：预览渲染质量与页面编辑体验的阶段 1 改进顺序与验收判据。
-    [Typst 编辑内核改造](plan/TYPST_EDIT_KERNEL.md)：结构 Content 输入、稳定身份、数学空槽、同源几何与增量分页的 fork 验证路线。
-    [Typst 内核接入主程序](plan/TYPST_MAIN_APP_INTEGRATION.md)：稳定结构/旧会话迁移、主程序候选闭环、日常编辑与默认替换门禁。
-    [LaTeX 工作区计划](plan/LATEX_WORKSPACE.md)：LaTeX 内核的范围、rtex 实时预览评估项与 L1–L3 出口。
+11. [路线图](plan/ROADMAP.md)：阶段、交付物、出口条件和依赖关系；从阶段 1 起 Typst 与 LaTeX 两个内核同阶段同步推进。
+    各阶段的执行计划：
+    - [LaTeX 工作区计划](plan/LATEX_WORKSPACE.md)：LaTeX 轨的范围、rtex 评估项与 L1–L3 出口（对应阶段 1–3）。
+    - [P1 排版工作区规划](plan/P1_UI.md)：桌面布局实施基准、两种模式参考图、允许调整的细节与评审检查。
+    - [ArtCraft / PhotoCraft / WordCraft 借鉴计划](plan/ARTCRAFT_REFERENCE.md)：命令注册表、菜单栏与工具栏、设计令牌、无界面编辑核心、分层门禁与控制通道的落地顺序。
+    - [界面多语言计划](plan/I18N.md)：界面语言与文档语言的区分、目录与 key、硬编码门禁、zh-Hans/en 首批与分期。
+
+    Typst 编辑内核的前序计划，已由 [ADR 0031](adr/ADR-0031-structural-cursor.md)、[ADR 0036](adr/ADR-0036-typst-default-editor.md)、
+    [ADR 0037](adr/ADR-0037-remove-legacy-editor.md) 收口，只作追溯；其中未交付的分页与增量显示并入路线图阶段 2 的 Typst 轨：
+    - [渲染与编辑改进计划](plan/RENDER_EDIT_REWORK.md)：预览渲染质量与页面编辑体验的改进顺序与验收判据。
+    - [E1 结构光标实施计划](plan/E1_STRUCTURAL_CURSOR.md)：结构光标取代全局字节偏移。
+    - [Typst 编辑内核改造](plan/TYPST_EDIT_KERNEL.md)：结构 Content 输入、稳定身份、数学空槽、同源几何与增量分页的 fork 验证路线。
+    - [Typst 内核接入主程序](plan/TYPST_MAIN_APP_INTEGRATION.md)：稳定结构/旧会话迁移、主程序候选闭环、日常编辑与默认替换门禁。
 12. [模块索引](modules/README.md)：每个 crate、应用和服务的内部设计。
 13. [ADR 索引](adr/README.md)：经过验证的技术选择与替代方案。
     [原生依赖登记](NATIVE_DEPENDENCIES.md)：C/C++/Zig 与需编译本地代码的依赖（ABI / 所有权 / 线程 / 销毁顺序）。

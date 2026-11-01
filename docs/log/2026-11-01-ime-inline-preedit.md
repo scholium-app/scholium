@@ -68,3 +68,39 @@ native 检查的 IME 矩形断言，还新增自动发现的 `ime-inline-check.p
 [窗口截图](evidence/2026-11-01-ime-inline-preedit/inline-preedit.png)、
 [stock 逐像素对照](evidence/2026-11-01-ime-inline-preedit/stock-comparison.json) 和
 [变更文件清单](evidence/2026-11-01-ime-inline-preedit/changed-files.txt)。
+
+## 合入 main 的空段落一致性修复
+
+协调者要求 PR #83 合入已合并的 PR #82。抓取后 main 为 `033ce8a`，同时包含 PR #81 的跨段退格修复。
+合并时复现了 `content/preedit.rs` 对已移除 `block_is_empty` 的编译错误（E0425）。
+删除了仅用于覆盖旧 `without_indent` 行为的 `preedit_block()`，`document()` 恢复直接调用 `self.block()`；
+不再对组合中的空段落特殊构造段落。保留其余 preedit 的独立输入、缓存失效、Scene identity 和几何暂停机制。
+原有“空段落组合提交不跳位”的测试保持原断言，通过新 main 的正常首行缩进语义通过。
+
+解决了 `compare.py`、`fork-check.rs`、`stock-reference.rs` 的冲突；fixture 自动合并后逐项核对，
+保留 preedit 和全部七个空段落案例，总共 12 个场景。工作流保留 main 新增的 bundled-only
+对照步骤、相关触发路径和 artifact。按协调者要求补充了 ADR 0044 的索引入口。
+
+全量非窗口门禁重新通过：fmt、clippy、workspace test（473 passed、4 ignored）、rustdoc、
+Rust 文件规模、相对链接、UI 字串、分层、cargo deny 和 app/storage binary build。
+独立 stock 默认字体和 `SCHOLIUM_TEST_FONTS=bundled` 两套对照分别为 12/12，所有尺寸和 RGBA
+byte 完全相同；锁定 fork 的源码补丁重建验证也通过。未降低断言或阈值。
+证据保存在本主题的 `main-parity-followup/` 子目录，窗口结果在完整运行结束后记录。
+
+
+两套 stock 对照均按 [typst-fork 工作流](../../.github/workflows/typst-fork.yml) 执行：
+默认环境中运行 formal adapter 与 stock reference，再执行 compare；bundled-only 对两个 cargo
+命令都设置 `SCHOLIUM_TEST_FONTS=bundled`，使用独立输出目录再执行同一 compare。
+默认对照的环境变量已确认未设置，避免误把第二次 bundled 运行当成系统字体证据。
+
+
+最终双语言窗口结果为 **36/36 通过**（每种语言 18 项，包含跨段退格、行内 IME、native、
+parity、sharp-raster、源码与 AccessKit/AT-SPI）。执行命令为
+`python3 scripts/window-checks.py --locale zh-Hans en --out target/t28-followup-window`，
+全程由标准脚本持有机器级锁并使用私有 Xvfb。
+复核远端仍为 `033ce8a`，无需再次合入；完成签署 merge commit 并推送原 PR 分支，不合并 PR、不轮询 CI。
+跟进证据：[非窗口门禁](evidence/2026-11-01-ime-inline-preedit/main-parity-followup/gate-summary.json)、
+[窗口汇总](evidence/2026-11-01-ime-inline-preedit/main-parity-followup/window-summary.txt)、
+[默认字体 stock](evidence/2026-11-01-ime-inline-preedit/main-parity-followup/stock-default.json)、
+[bundled stock](evidence/2026-11-01-ime-inline-preedit/main-parity-followup/stock-bundled.json)、
+[空段落无跳位测试](evidence/2026-11-01-ime-inline-preedit/main-parity-followup/empty-paragraph-test.txt)。

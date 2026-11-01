@@ -2,6 +2,7 @@
 #[path = "../typst-edit-session/src/kernel.rs"]
 #[allow(dead_code)]
 mod kernel;
+mod stock_empty;
 use std::num::NonZeroUsize;
 use std::str::FromStr;
 use typst::foundations::{Content, Dict, FromValue, IntoValue, NativeElement, Smart, Value};
@@ -150,13 +151,32 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let output = std::path::PathBuf::from(std::env::args().nth(1).ok_or("output path required")?);
     std::fs::create_dir_all(&output)?;
     let world = reference_world();
-    for name in ["full", "scripts", "styles", "heading", "preedit"] {
-        let frame = kernel::layout_in(
-            &world,
-            &fixture(name),
-            Size::new(Abs::pt(TEXT_WIDTH_PT), Abs::pt(HEIGHT_PT)),
-        )?;
-        let pixels = typst_render::render(&sheet(&frame), &kernel::render_options());
+    for name in [
+        "full",
+        "scripts",
+        "styles",
+        "heading",
+        "preedit",
+        "empty-start",
+        "empty-middle",
+        "empty-three",
+        "empty-end",
+        "empty-heading",
+        "empty-between-headings",
+        "empty-only",
+    ] {
+        let page = if name.starts_with("empty-") {
+            stock_empty::page(&world, name)?
+        } else {
+            let frame = kernel::layout_in(
+                &world,
+                &fixture(name),
+                Size::new(Abs::pt(TEXT_WIDTH_PT), Abs::pt(HEIGHT_PT)),
+            )?;
+            sheet(&frame)
+        };
+        let pixels = typst_render::render(&page, &kernel::render_options());
+
         std::fs::write(output.join(format!("{name}.rgba")), pixels.data())?;
         std::fs::write(
             output.join(format!("{name}.json")),
@@ -194,7 +214,9 @@ fn reference_world() -> kernel::ProbeWorld {
             "d754ba427cfe0bca54ae052384baa8f842da5bd6550ad4da024ac441e7a7d5ce",
         ),
         (
-            include_bytes!("../../crates/scholium-app/assets/fonts/LiberationSerif-BoldItalic.ttf.br"),
+            include_bytes!(
+                "../../crates/scholium-app/assets/fonts/LiberationSerif-BoldItalic.ttf.br"
+            ),
             "f17db8af71e24d2066b587546021d4f0b296be389512b658dec3c09affeb11a7",
         ),
     ];
