@@ -1,0 +1,37 @@
+check                            result      seconds
+a4-surface [zh-Hans]             pass            6.7
+backspace-block-merge [zh-Hans]  pass            7.3
+caret-follow [zh-Hans]           pass           34.4
+chrome [zh-Hans]                 pass           27.9
+default-launch [zh-Hans]         pass            7.5
+diagnostics [zh-Hans]            pass           16.0
+inline-style [zh-Hans]           pass            5.9
+interaction [zh-Hans]            pass            8.6
+math-attach [zh-Hans]            pass            5.8
+math-enter [zh-Hans]             pass           13.1
+native [zh-Hans]                 pass           24.2
+parity [zh-Hans]                 pass           24.8
+sharp-raster [zh-Hans]           pass           60.4
+source-theme [zh-Hans]           pass           11.3
+source-view [zh-Hans]            pass            6.6
+undo-group [zh-Hans]             pass            5.5
+a11y [zh-Hans]                   pass            8.5
+a4-surface [en]                  pass            6.7
+backspace-block-merge [en]       pass            7.2
+caret-follow [en]                pass           34.7
+chrome [en]                      pass           27.4
+default-launch [en]              pass            7.4
+diagnostics [en]                 pass           16.9
+inline-style [en]                pass            6.7
+interaction [en]                 pass           10.2
+math-attach [en]                 pass            6.3
+math-enter [en]                  pass           13.4
+native [en]                      pass           20.1
+parity [en]                      pass           24.4
+sharp-raster [en]                pass           59.8
+source-theme [en]                pass           10.4
+source-view [en]                 pass            7.1
+undo-group [en]                  pass            5.5
+a11y [en]                        pass            7.7
+
+34/34 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t27-window

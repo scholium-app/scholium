@@ -1,0 +1,30 @@
+test typst::block_merge_tests::delete_preserves_a_next_block_starting_with_a_formula ... FAILED
+test typst::block_merge_tests::deleting_an_empty_middle_paragraph_preserves_its_neighbors ... FAILED
+test typst::block_merge_tests::backspace_in_an_empty_math_slot_removes_the_slot_before_any_block_merge ... ok
+test typst::block_merge_tests::document_edges_are_noops_without_history_or_requests ... ok
+test typst::block_merge_tests::backspace_merges_after_a_formula_with_or_without_a_trailing_body_leaf ... FAILED
+test typst::block_merge_tests::heading_paragraph_merges_keep_the_previous_kind_and_identity ... FAILED
+test typst::block_merge_tests::backspace_and_delete_merge_paragraphs_at_the_join_in_one_undo_step ... FAILED
+test typst::block_merge_tests::backspace_after_a_formula_in_the_same_block_keeps_existing_behavior ... ok
+test result: FAILED. 3 passed; 5 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.01s
+
+Initial fixture failure: formula-starting fixture: Edit(Capacity) (missing request journal; corrected).
+
+Shared headless scenario before fix:
+assertion `left == right` failed: step 5: cursor
+  left: Object {"affinity": String("Downstream"), "byte": Number(0), "path": String("blocks/1/content/0")}
+ right: Object {"affinity": String("Upstream"), "byte": Number(4), "path": String("blocks/0/content/0")}
+
+Final fixtures with only the boundary dispatch temporarily removed:
+test typst::tests::block_merge_tests::backspace_and_delete_merge_paragraphs_at_the_join_in_one_undo_step ... FAILED
+test typst::tests::block_merge_tests::heading_paragraph_merges_keep_the_previous_kind_and_identity ... FAILED
+test typst::tests::block_merge_tests::backspace_after_a_formula_in_the_same_block_keeps_existing_behavior ... ok
+test typst::tests::block_merge_tests::document_edges_are_noops_without_history_or_requests ... ok
+test typst::tests::block_merge_tests::backspace_merges_after_a_formula_with_or_without_a_trailing_body_leaf ... FAILED
+test typst::tests::block_merge_tests::deleting_an_empty_middle_paragraph_preserves_its_neighbors ... FAILED
+test typst::tests::block_merge_tests::backspace_in_an_empty_math_slot_removes_the_slot_before_any_block_merge ... ok
+test typst::tests::block_merge_tests::delete_preserves_a_next_block_starting_with_a_formula ... FAILED
+test result: FAILED. 3 passed; 5 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.01s
+
+Restored fix:
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s

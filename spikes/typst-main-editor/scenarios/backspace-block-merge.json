@@ -1,0 +1,228 @@
+{
+  "name": "backspace-block-merge",
+  "inputs": [
+    {
+      "text": "left"
+    },
+    {
+      "key": "Enter"
+    },
+    {
+      "text": "right"
+    },
+    {
+      "key": "Home"
+    },
+    {
+      "key": "Backspace",
+      "expected": {
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "left"
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "right"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 4,
+          "affinity": "Upstream"
+        },
+        "anchor": null,
+        "undo_depth": 4
+      }
+    },
+    {
+      "key": "Character",
+      "value": "z",
+      "mods": {
+        "command": true
+      },
+      "expected": {
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "left"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "right"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cursor": {
+          "path": "blocks/1/content/0",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "anchor": null,
+        "undo_depth": 3
+      }
+    },
+    {
+      "key": "Character",
+      "value": "z",
+      "mods": {
+        "command": true,
+        "shift": true
+      },
+      "expected": {
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "left"
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "right"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 4,
+          "affinity": "Upstream"
+        },
+        "anchor": null,
+        "undo_depth": 4
+      }
+    },
+    {
+      "key": "Character",
+      "value": "z",
+      "mods": {
+        "command": true
+      }
+    },
+    {
+      "key": "ArrowLeft"
+    },
+    {
+      "key": "Delete",
+      "expected": {
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "left"
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "text",
+                    "style": "plain",
+                    "text": "right"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 4,
+          "affinity": "Downstream"
+        },
+        "anchor": null,
+        "undo_depth": 4
+      }
+    },
+    {
+      "key": "Character",
+      "value": "z",
+      "mods": {
+        "command": true
+      }
+    },
+    {
+      "key": "Character",
+      "value": "z",
+      "mods": {
+        "command": true,
+        "shift": true
+      }
+    }
+  ],
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "left"
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "style": "plain",
+                "text": "right"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/0",
+      "byte": 4,
+      "affinity": "Downstream"
+    },
+    "anchor": null,
+    "undo_depth": 4
+  }
+}
