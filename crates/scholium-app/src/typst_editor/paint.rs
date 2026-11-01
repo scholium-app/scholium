@@ -102,7 +102,8 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
             )
         });
         if !session.confirm_new && !session.confirm_close {
-            let events = page_events(ui, visible);
+            let mut events = page_events(ui, visible);
+            events.extend(ime_check::events(ui.ctx()));
             if let Some(text) = session.events(events, state) {
                 ui.ctx().copy_text(text);
             }
@@ -175,7 +176,7 @@ pub(super) fn body(
     rect: Rect,
     scale: f32,
     session: &EditorSession,
-    state: &WorkspaceState,
+    _state: &WorkspaceState,
 ) -> usize {
     let painter = ui.painter().with_clip_rect(rect.intersect(ui.clip_rect()));
     painter.rect_filled(rect, 0.0, theme::tokens(ui.ctx()).page);
@@ -185,12 +186,15 @@ pub(super) fn body(
     if !session.current() {
         return 0;
     }
-    selection_overlay(&painter, rect, scale, session);
-    math_overlay(ui, &painter, rect, scale, session);
-    let Some(caret) = session
-        .scene()
-        .and_then(|s| s.geometry.caret(session.cursor))
-    else {
+    if session.core.document_scene_is_current() {
+        selection_overlay(&painter, rect, scale, session);
+        math_overlay(ui, &painter, rect, scale, session);
+    }
+    let Some(caret) = session.scene().and_then(|s| {
+        s.preedit
+            .as_ref()
+            .or_else(|| s.geometry.caret(session.cursor))
+    }) else {
         return 0;
     };
     let map = |point: [f64; 2]| rect.min + egui::vec2(point[0] as f32, point[1] as f32) * scale;
@@ -198,16 +202,6 @@ pub(super) fn body(
     let bottom = map(caret.bottom);
     painter.line_segment([top, bottom], Stroke::new(1.5, theme::Tokens::PAPER_ACCENT));
     publish_ime(ui, rect, Rect::from_two_pos(top, bottom));
-    if let Some(preedit) = &state.composition {
-        painter.text(
-            top,
-            egui::Align2::LEFT_TOP,
-            preedit,
-            egui::FontId::proportional(16.0),
-            theme::Tokens::PAPER_ACCENT,
-        );
-        return 1;
-    }
     0
 }
 
@@ -236,34 +230,6 @@ const FORMULA_ALPHA: f32 = 0.28;
 const FORMULA_PADDING_PT: f32 = 1.5;
 const SLOT_PADDING_PT: f32 = 2.0;
 const FORMULA_CORNER: f32 = 3.0;
-
-#[cfg(test)]
-mod ime_tests {
-    use super::*;
-
-    #[test]
-    fn ime_area_tracks_the_caret_and_pending_scene_anchor() {
-        let mut f = tests::Fixture::new();
-        f.events(vec![tests::text("middle of a line")]);
-        f.settle();
-        let rect = Rect::from_min_size(egui::pos2(80.0, 100.0), egui::vec2(600.0, 700.0));
-        let mut output = f.ctx.run_ui(Default::default(), |ui| {
-            body(ui, rect, 1.0, &f.editor, &f.state);
-            keep_ime(ui, rect, true, &mut f.editor);
-        });
-        output.textures_delta.clear();
-        let ime = output.platform_output.ime.expect("current caret IME");
-        assert_eq!(ime.rect, ime.cursor_rect);
-        f.editor.core.submit_layout();
-        let mut output = f.ctx.run_ui(Default::default(), |ui| {
-            keep_ime(ui, rect, true, &mut f.editor);
-        });
-        output.textures_delta.clear();
-        let pending = output.platform_output.ime.expect("pending caret IME");
-        assert_eq!(pending.rect, pending.cursor_rect);
-        assert_eq!(pending.rect, ime.rect);
-    }
-}
 
 /// Tinted rounded rectangle behind the formula that holds the caret, plus a fainter
 /// outline for the current Fraction/Attach slot. Shapes only: Typst still draws the text.
@@ -305,5 +271,33 @@ fn math_overlay(
             Stroke::new(1.0, accent.gamma_multiply(0.35)),
             egui::StrokeKind::Outside,
         );
+    }
+}
+
+#[cfg(test)]
+mod ime_tests {
+    use super::*;
+
+    #[test]
+    fn ime_area_tracks_the_caret_and_pending_scene_anchor() {
+        let mut f = tests::Fixture::new();
+        f.events(vec![tests::text("middle of a line")]);
+        f.settle();
+        let rect = Rect::from_min_size(egui::pos2(80.0, 100.0), egui::vec2(600.0, 700.0));
+        let mut output = f.ctx.run_ui(Default::default(), |ui| {
+            body(ui, rect, 1.0, &f.editor, &f.state);
+            keep_ime(ui, rect, true, &mut f.editor);
+        });
+        output.textures_delta.clear();
+        let ime = output.platform_output.ime.expect("current caret IME");
+        assert_eq!(ime.rect, ime.cursor_rect);
+        f.editor.core.submit_layout();
+        let mut output = f.ctx.run_ui(Default::default(), |ui| {
+            keep_ime(ui, rect, true, &mut f.editor);
+        });
+        output.textures_delta.clear();
+        let pending = output.platform_output.ime.expect("pending caret IME");
+        assert_eq!(pending.rect, pending.cursor_rect);
+        assert_eq!(pending.rect, ime.rect);
     }
 }

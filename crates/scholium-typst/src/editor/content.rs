@@ -1,4 +1,5 @@
 //! Persistent derived Content, keyed by typed identity and semantic subtree value.
+mod preedit;
 
 use super::geometry::atom_key;
 use super::{EditorError, EditorStats};
@@ -28,6 +29,8 @@ pub(super) struct ContentCache {
     next_id: u128,
     live: std::collections::HashSet<NodeId>,
     pub stats: EditorStats,
+    preedit: Option<super::Preedit>,
+    preedit_node: Option<NodeId>,
 }
 
 impl ContentCache {
@@ -42,11 +45,15 @@ impl ContentCache {
         doc.validate()?;
         self.stats = EditorStats::default();
         self.live.clear();
+        if self.preedit.is_some() {
+            let node = *self.preedit_node.get_or_insert_with(NodeId::fresh);
+            self.register(node);
+        }
         self.register_document(doc);
         let children = doc
             .blocks
             .iter()
-            .map(|b| self.block(b))
+            .map(|b| self.preedit_block(b))
             .collect::<Result<Vec<_>, _>>()?;
         self.cache.retain(|id, _| self.live.contains(id));
         self.ids.retain(|id, _| self.live.contains(id));
@@ -161,7 +168,7 @@ impl ContentCache {
             return Ok(content);
         }
         let body = match &inline.body {
-            InlineBody::Text { text, style } => style_text(text, *style, self.ids[&inline.node]),
+            InlineBody::Text { text, style } => self.body_text(inline.node, text, *style),
             InlineBody::Math { root } => EquationElem::new(self.math(root)?).pack(),
             InlineBody::RawMath { .. } => return Err(EditorError::Raw(inline.node)),
         };

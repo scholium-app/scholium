@@ -63,7 +63,7 @@ impl EditorSession {
             })
         });
         let (wanted, shown) = self.core.scene_identities();
-        let value = json!({
+        let mut value = json!({
             "backend": "Typst Content main app", "current": self.current(),
             "revision": self.snapshot.revision.0, "wanted": wanted,
             "shown": shown,
@@ -92,8 +92,21 @@ impl EditorSession {
             "fonts": crate::theme::fonts::chosen().map(|f| json!({
                 "ui": f.ui, "latin": f.latin, "mono": f.mono,
             })),
-        })
-        .to_string();
+        });
+        value.as_object_mut().expect("audit is an object").extend(
+            json!({
+            "document_geometry": self.core.document_scene_is_current(),
+            "preedit_caret": self.scene().and_then(|s| s.preedit.as_ref()).map(|c| json!({
+                "leaf": format!("{:?}", c.position.leaf), "byte": c.position.byte,
+                "x": rect.left() + c.top[0] as f32 * scale,
+                "y": rect.top() + c.top[1] as f32 * scale,
+            })),
+            })
+            .as_object()
+            .expect("composition audit is an object")
+            .clone(),
+        );
+        let value = value.to_string();
         if self.last_audit.as_ref() != Some(&value) {
             println!("AUDIT {value}");
             self.last_audit = Some(value);

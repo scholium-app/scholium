@@ -6,6 +6,7 @@ mod geometry;
 mod kernel;
 #[cfg(test)]
 mod parity;
+mod preedit;
 mod raster;
 mod selection;
 mod style;
@@ -13,6 +14,7 @@ mod style;
 mod tests;
 mod worker;
 pub use geometry::{Affinity, Caret, EditGeometry, Position};
+pub use preedit::Preedit;
 pub use raster::{
     BASE_MAX_PX_PER_PT, MAX_RASTER_PIXELS, MAX_STRIP_PX, Raster, RasterSpec, RasterStrip,
     SHARP_STRIP_PX, StripWindow, ViewRange, page_px, strip_count, strip_ranges, strip_rows,
@@ -37,6 +39,9 @@ pub struct EditorScene {
     pub sharp: Raster,
     /// Typed leaf insertion stops in frame pt, never markup offsets.
     pub geometry: EditGeometry,
+    /// Display-only composition caret. While present, `geometry` describes split
+    /// display runs and must not answer document pointer/selection/navigation queries.
+    pub preedit: Option<Caret>,
     /// Observable adapter work for this result.
     pub stats: EditorStats,
 }

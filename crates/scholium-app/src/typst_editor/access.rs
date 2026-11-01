@@ -66,7 +66,7 @@ impl EditorSession {
     }
 
     fn refresh_runs(&mut self) {
-        let current = self.current();
+        let current = self.core.document_scene_is_current();
         if self
             .published
             .as_ref()

@@ -1,0 +1,52 @@
+[
+  {
+    "command": "cargo fmt --all -- --check",
+    "result": "pass",
+    "seconds": 0.47
+  },
+  {
+    "command": "cargo clippy --locked --workspace --all-targets -- -D warnings",
+    "result": "pass",
+    "seconds": 1.81
+  },
+  {
+    "command": "cargo test --locked --workspace",
+    "result": "pass",
+    "seconds": 30.25
+  },
+  {
+    "command": "RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps",
+    "result": "pass",
+    "seconds": 2.19
+  },
+  {
+    "command": "python3 scripts/check-rust-size.py",
+    "result": "pass",
+    "seconds": 0.07
+  },
+  {
+    "command": "python3 scripts/check-doc-links.py",
+    "result": "pass",
+    "seconds": 0.17
+  },
+  {
+    "command": "python3 scripts/check-ui-strings.py",
+    "result": "pass",
+    "seconds": 0.23
+  },
+  {
+    "command": "python3 scripts/check-layers.py",
+    "result": "pass",
+    "seconds": 0.7
+  },
+  {
+    "command": "cargo deny --locked check licenses bans sources",
+    "result": "pass",
+    "seconds": 0.67
+  },
+  {
+    "command": "cargo build --locked -p scholium-app -p scholium-storage --bins",
+    "result": "pass",
+    "seconds": 1.29
+  }
+]

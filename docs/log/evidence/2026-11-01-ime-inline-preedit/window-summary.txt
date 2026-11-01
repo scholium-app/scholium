@@ -1,0 +1,39 @@
+python3 scripts/window-checks.py --locale zh-Hans en --out target/t28-window
+
+check                     result      seconds
+a4-surface [zh-Hans]      pass            7.7
+caret-follow [zh-Hans]    pass           34.3
+chrome [zh-Hans]          pass           29.0
+default-launch [zh-Hans]  pass            7.6
+diagnostics [zh-Hans]     pass           16.6
+ime-inline [zh-Hans]      pass            5.1
+inline-style [zh-Hans]    pass            6.5
+interaction [zh-Hans]     pass            9.3
+math-attach [zh-Hans]     pass            5.3
+math-enter [zh-Hans]      pass           12.1
+native [zh-Hans]          pass           18.0
+parity [zh-Hans]          pass           20.0
+sharp-raster [zh-Hans]    pass           59.7
+source-theme [zh-Hans]    pass           10.4
+source-view [zh-Hans]     pass            6.1
+undo-group [zh-Hans]      pass            5.1
+a11y [zh-Hans]            pass            7.2
+a4-surface [en]           pass            6.5
+caret-follow [en]         pass           33.9
+chrome [en]               pass           29.0
+default-launch [en]       pass            7.6
+diagnostics [en]          pass           16.6
+ime-inline [en]           pass            4.8
+inline-style [en]         pass            6.8
+interaction [en]          pass            9.4
+math-attach [en]          pass            6.1
+math-enter [en]           pass           13.5
+native [en]               pass           23.0
+parity [en]               pass           19.8
+sharp-raster [en]         pass           58.8
+source-theme [en]         pass           10.4
+source-view [en]          pass            7.0
+undo-group [en]           pass            5.6
+a11y [en]                 pass            8.8
+
+34/34 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t28-window

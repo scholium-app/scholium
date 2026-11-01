@@ -76,6 +76,10 @@ fn scripts(base: Content, sub: Option<Content>, sup: Option<Content>) -> Content
 fn fixture(name: &str) -> Content {
     let paragraph = |body| ParElem::new(body).pack();
     let block = match name {
+        "preedit" => paragraph(Content::sequence([
+            kernel::text("ab"), typst::text::UnderlineElem::new(kernel::text("中文")).pack(),
+            kernel::text("ZZ"),
+        ])),
         "full" => paragraph(Content::sequence([
             kernel::text("English 中文 空格"),
             EquationElem::new(
@@ -146,7 +150,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let output = std::path::PathBuf::from(std::env::args().nth(1).ok_or("output path required")?);
     std::fs::create_dir_all(&output)?;
     let world = reference_world();
-    for name in ["full", "scripts", "styles", "heading"] {
+    for name in ["full", "scripts", "styles", "heading", "preedit"] {
         let frame = kernel::layout_in(
             &world,
             &fixture(name),

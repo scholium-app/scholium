@@ -5,12 +5,14 @@ mod audit;
 mod clipboard;
 #[cfg(test)]
 mod command_keys_tests;
+mod composition;
 mod confirm;
 mod core_adapter;
 mod deferred;
 mod diagnose;
 mod follow;
 mod history;
+mod ime_check;
 mod indicator;
 mod input;
 mod math_enter;

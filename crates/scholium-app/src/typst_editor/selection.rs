@@ -218,7 +218,7 @@ impl EditorSession {
     }
 
     pub(super) fn selection_quads(&self) -> Result<Vec<SelectionQuad>, SessionError> {
-        if !self.current() {
+        if !self.core.document_scene_is_current() {
             return Ok(Vec::new());
         }
         let Some((start, end)) = self.range()? else {

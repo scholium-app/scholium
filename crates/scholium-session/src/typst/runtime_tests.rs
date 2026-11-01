@@ -107,3 +107,82 @@ fn worker_adoption_releases_visual_keys_and_rasters_without_transferring_scene_o
     drop(core);
     let _ = std::fs::remove_file(path);
 }
+
+#[test]
+fn composition_layout_never_changes_snapshot_source_history_or_saved_session() {
+    use scholium_typst::{SourceMode, editor::Preedit, generate_source};
+    let path = std::env::temp_dir().join(format!("t28-preedit-{:?}.db", RequestId::fresh()));
+    let mut core = EditorCore::open_with_wake(&path, || {}).expect("fixture");
+    core.input(Input::Text("abZZ".into())).expect("text");
+    core.cursor.byte = 2;
+    settle(&mut core);
+    core.save().expect("baseline saved");
+    let before = core.snapshot.clone();
+    let source = generate_source(&before, SourceMode::Preview).source;
+    let history = core.undo.len();
+    let requests = core.session().actions().len();
+    core.set_preedit(Some(Preedit {
+        at: core.cursor,
+        text: "中文".into(),
+        cursor: None,
+    }));
+    settle(&mut core);
+    assert_eq!(core.snapshot, before);
+    assert_eq!(
+        generate_source(&core.snapshot, SourceMode::Preview).source,
+        source
+    );
+    assert_eq!(core.undo.len(), history);
+    assert_eq!(core.session().actions().len(), requests);
+    assert!(!core.dirty());
+    assert!(
+        core.geometry.is_none(),
+        "composition geometry cannot answer document queries"
+    );
+    core.save().expect("even explicit save contains no preedit");
+    let reopened = EditorCore::open(&path).expect("saved session");
+    assert_eq!(reopened.snapshot, before);
+    core.set_preedit(None);
+    settle(&mut core);
+    assert!(
+        core.geometry.is_some(),
+        "document queries resume after cancellation"
+    );
+    assert_eq!(core.snapshot, before);
+    drop(reopened);
+    drop(core);
+    let _ = std::fs::remove_file(path);
+}
+
+#[test]
+fn stale_preedit_scene_cannot_replace_a_cancelled_composition() {
+    use scholium_typst::editor::Preedit;
+    let path = std::env::temp_dir().join(format!("t28-stale-{:?}.db", RequestId::fresh()));
+    let mut core = EditorCore::open_with_wake(&path, || {}).expect("fixture");
+    core.input(Input::Text("abZZ".into())).expect("text");
+    core.cursor.byte = 2;
+    core.set_preedit(Some(Preedit {
+        at: core.cursor,
+        text: "中文".into(),
+        cursor: None,
+    }));
+    settle(&mut core);
+    let old = core.scene.take().expect("composition scene");
+    let stamp = old.stamp;
+    core.set_preedit(None);
+    assert_ne!(
+        stamp, core.wanted,
+        "cancellation has its own request identity"
+    );
+    assert!(!core.adopt_scene(stamp, Ok(old)));
+    settle(&mut core);
+    assert!(
+        core.current_scene()
+            .expect("cancel scene")
+            .preedit
+            .is_none()
+    );
+    assert!(core.pointer_hit([100.0, 76.0]).is_some());
+    drop(core);
+    let _ = std::fs::remove_file(path);
+}

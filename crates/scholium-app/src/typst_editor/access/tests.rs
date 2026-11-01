@@ -393,3 +393,39 @@ fn scripts_in_a_live_formula_are_spoken_in_the_math_object_and_status() {
     let status = tree.children(Role::Status);
     assert_eq!(status[0].1.label(), Some("上标：2"));
 }
+
+#[test]
+fn composition_publishes_only_authoritative_text_without_split_run_geometry() {
+    let mut f = Fixture::new();
+    f.events(vec![
+        text("abZZ"),
+        key(egui::Key::ArrowLeft, false),
+        key(egui::Key::ArrowLeft, false),
+    ]);
+    let tree = settled(&mut f);
+    assert_eq!(tree.text(), "abZZ");
+    f.events(vec![egui::Event::Ime(egui::ImeEvent::Preedit {
+        text: "中文".into(),
+        active_range_chars: None,
+    })]);
+    let tree = settled(&mut f);
+    assert_eq!(
+        tree.text(),
+        "abZZ",
+        "preedit never enters the accessible document"
+    );
+    assert!(
+        tree.children(Role::TextRun)
+            .iter()
+            .all(|(_, n)| n.bounds().is_none()),
+        "composition split-run geometry is not published"
+    );
+    f.events(vec![key(egui::Key::Escape, false)]);
+    let tree = settled(&mut f);
+    assert_eq!(tree.text(), "abZZ");
+    assert!(
+        tree.children(Role::TextRun)
+            .iter()
+            .any(|(_, n)| n.bounds().is_some())
+    );
+}

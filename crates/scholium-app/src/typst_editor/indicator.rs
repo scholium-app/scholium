@@ -7,7 +7,7 @@ impl EditorSession {
     pub(super) fn math_indicator(
         &self,
     ) -> Option<scholium_session::typst::indicator::MathIndicator> {
-        if !self.current() {
+        if !self.core.document_scene_is_current() {
             return None;
         }
         self.core.math_indicator(self.scene()?)

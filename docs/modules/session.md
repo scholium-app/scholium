@@ -118,3 +118,12 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
 `python3 scripts/benchmark-session-checkpoint.py --label <name> --out <json>` 运行显式 ignored 计时测试：
 Typst 确认的 26 页夹具、512 步历史、8 次预热、100 次实际 Text 中的 checkpoint 采样，输出原始纳秒和 p50/p95。
 此计时不包含命令执行或 checkpoint 析构；检测到机器休眠则废弃本轮，不设置依赖机器速度的测试阈值。
+
+## 临时组合排版
+
+`set_preedit(Option<Preedit>)` 只向派生 runtime 保存正文显示输入，分配新的完整 SceneStamp 并请求
+既有 worker；不改 authority、快照、history、请求日志或保存基线。平台 IME 生命周期和字符索引转换
+仍由 app 持有。`scene_is_current` 表示显示场景最新；`document_scene_is_current` 额外要求不含 preedit。
+组合 Scene 采纳时不安装文档 geometry，`sync_scene_geometry` 也不安装 split-run 几何；取消或提交的
+正常场景到达后恢复。持久化只读取 authority，即使显式保存也不包含临时串。见
+[ADR 0044](../adr/ADR-0044-transient-ime-layout.md)。

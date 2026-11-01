@@ -32,7 +32,7 @@ impl EditorSession {
         if let Some(notice) = &self.notice {
             list.push(Diagnostic::new(Severity::Info, "diag.notice").arg("detail", notice.clone()));
         }
-        if self.current() && state.mode != ViewMode::Source {
+        if self.core.document_scene_is_current() && state.mode != ViewMode::Source {
             self.page_problems(&mut list);
         }
         diagnostics::ordered(list)

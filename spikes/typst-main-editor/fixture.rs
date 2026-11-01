@@ -43,6 +43,7 @@ fn row(children: Vec<MathNode>) -> MathNode {
 /// Identified input for the formal adapter, with complete math slots.
 pub fn fixture(name: &str) -> StructuredDocument {
     let (kind, content) = match name {
+        "preedit" => (BlockKind::Paragraph, vec![text("abZZ", TextStyle::Plain)]),
         "full" => (
             BlockKind::Paragraph,
             vec![
