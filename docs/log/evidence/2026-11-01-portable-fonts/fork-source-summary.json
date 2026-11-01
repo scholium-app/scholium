@@ -1,0 +1,28 @@
+{
+  "upstream_commit": "9dfd3a08500b7896045f907433cf7b4b02434fad",
+  "upstream_tag": "v0.15.1",
+  "crate_group": [
+    "typst",
+    "typst-eval",
+    "typst-html",
+    "typst-kit",
+    "typst-layout",
+    "typst-library",
+    "typst-macros",
+    "typst-realize",
+    "typst-render",
+    "typst-svg",
+    "typst-syntax",
+    "typst-timing",
+    "typst-utils"
+  ],
+  "source_sha256": "b50215804be78acfef10057b77eaa67179b621d92c89e8bc142c6b5c02a46c36",
+  "file_count": 438,
+  "patches": {
+    "0001-structural-math-origin-and-holes.patch": "422b501eacfb041789a9b494dc850a20d0491d0f4b630c53ae3c26789f23f46a",
+    "0002-composite-slots-and-fraction-rule-owners.patch": "f9ffcd1a956cc796653eae60d9cb16eee967c682bc7f4eb0e541061c6f86907a",
+    "0003-shaped-text-caret-geometry.patch": "f6850a1ce81d403fa87384cdad7b2cba15dfd8ea5e1aba7fdd5e13e7d2526241",
+    "0004-editor-paragraph-computation-counters.patch": "315a2aec1e43c740f6cf8bd8a045d3a67fcc3ceee1474a94198477c45f7219bb"
+  },
+  "workspace_scope": "13 libraries only; no upstream CLI/docs/tests/fuzz"
+}

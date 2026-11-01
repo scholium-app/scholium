@@ -61,9 +61,12 @@ Ctrl+F1 与“视图 → 显示工具栏”调用同一命令，同时显示或�
 配色变更不修改布局、不影响文档内容。界面字体在启动时从系统字体库（fontdb，与 Typst 内核扫描同一来源）按序选择：
 HarmonyOS Sans SC → MiSans → 苹方 → 微软雅黑 UI → 微软雅黑；西文优先 Inter，等宽优先 JetBrains Mono；随程序打包的
 Noto Sans CJK 只作最后回退。所选字体写入 AUDIT 的 `fonts`。
-Typst 编辑页与源码预览目前另会按正文的 Times New Roman/SimSun 字体族请求系统字体，并扫描宿主字体库；
-因此同一文档可能因机器安装的字体及字宽不同而采用不同断行。场景与窗口验收固定使用应用打包字体，
-这项测试隔离不改变普通产品启动策略。
+Typst 编辑页与源码预览使用同一字体策略（见 [typst.md](typst.md)）：正文为 Times New Roman → Liberation Serif →
+SimSun → Noto Sans CJK SC，标题将 SimSun 换为 SimHei。System 始终载入打包的四种 Liberation Serif 与 Noto，
+并扫描宿主字体，使已安装的 TNR/宋体/黑体优先；Bundled 完全跳过宿主扫描，场景与 parity 验收使用它。
+打包字体以 Brotli 无损字节嵌入，纯 Rust 解压器在进程内首次加载时解压一次；界面 Noto 回退经
+`scholium_typst::bundled_cjk_font_bytes()` 复用同一缓存，避免再嵌入未压缩的 Noto。首次离线启动不下载字体。
+界面字体偏好与文档字体列表相互独立；不同字体的外观可不同，混排断行与原始字节哈希由字体回归测试约束。
 
 ## 诊断
 

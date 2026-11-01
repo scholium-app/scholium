@@ -75,10 +75,7 @@ fn definitions(db: &fontdb::Database) -> (FontDefinitions, Chosen) {
     let mut fonts = FontDefinitions::default();
     fonts.font_data.insert(
         BUNDLED.into(),
-        FontData::from_static(include_bytes!(
-            "../../assets/fonts/NotoSansCJKsc-Regular.otf"
-        ))
-        .into(),
+        FontData::from_static(scholium_typst::bundled_cjk_font_bytes()).into(),
     );
     let ui = load_first(db, &UI_FONTS, &mut fonts);
     let latin = load_first(db, &LATIN_FONTS, &mut fonts);

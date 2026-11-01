@@ -12,6 +12,8 @@ name = "typst-main-stock-reference"
 path = "../stock-reference.rs"
 
 [dependencies]
+brotli-decompressor = "=6.2.0"
+sha2 = "=0.10.9"
 comemo = "=0.5.1"
 serde_json = "=1.0.151"
 typst = "=0.15.1"

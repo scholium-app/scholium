@@ -4,12 +4,20 @@
 
 use std::fmt::Write;
 
-/// Latin serif plus the classic Chinese thesis pairing for body text. Taken
-/// from system-installed fonts; typst-kit embedded fonts are the fallback
-/// when a family is missing.
-pub const BODY_FONTS: &[&str] = &["Times New Roman", "SimSun"];
+/// Latin serif plus the classic Chinese thesis pairing for body text.
+pub const BODY_FONTS: &[&str] = &[
+    "Times New Roman",
+    "Liberation Serif",
+    "SimSun",
+    "Noto Sans CJK SC",
+];
 /// Heading pairing: Latin serif with the Chinese heading face.
-pub const HEADING_FONTS: &[&str] = &["Times New Roman", "SimHei"];
+pub const HEADING_FONTS: &[&str] = &[
+    "Times New Roman",
+    "Liberation Serif",
+    "SimHei",
+    "Noto Sans CJK SC",
+];
 
 /// Body text size in pt.
 pub const BODY_SIZE_PT: f64 = 12.0;

@@ -12,8 +12,18 @@ use typst::text::{FontFamily, FontList, FontWeight, Lang, Region, TextElem, Text
 
 // Document style, duplicated on purpose so this path stays independent of the adapter.
 // Keep in sync with crates/scholium-typst/src/style.rs.
-const BODY_FONTS: [&str; 2] = ["Times New Roman", "SimSun"];
-const HEADING_FONTS: [&str; 2] = ["Times New Roman", "SimHei"];
+const BODY_FONTS: [&str; 4] = [
+    "Times New Roman",
+    "Liberation Serif",
+    "SimSun",
+    "Noto Sans CJK SC",
+];
+const HEADING_FONTS: [&str; 4] = [
+    "Times New Roman",
+    "Liberation Serif",
+    "SimHei",
+    "Noto Sans CJK SC",
+];
 const BODY_SIZE_PT: f64 = 12.0;
 const LEADING_EM: f64 = 1.0;
 const FIRST_LINE_INDENT_EM: f64 = 2.0;
@@ -135,7 +145,7 @@ fn sheet(frame: &Frame) -> typst_layout::Page {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let output = std::path::PathBuf::from(std::env::args().nth(1).ok_or("output path required")?);
     std::fs::create_dir_all(&output)?;
-    let world = kernel::ProbeWorld::new();
+    let world = reference_world();
     for name in ["full", "scripts", "styles", "heading"] {
         let frame = kernel::layout_in(
             &world,
@@ -152,4 +162,63 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )?;
     }
     Ok(())
+}
+
+// Independent stock path: the repository keeps only the lossless `.br` containers, so this
+// decodes them itself and proves the bytes are the original font files by their recorded
+// SHA-256 (crates/scholium-app/assets/fonts/README.md), never reusing the adapter's decoder.
+fn reference_world() -> kernel::ProbeWorld {
+    use sha2::{Digest, Sha256};
+    use std::io::Read;
+    use typst::foundations::Bytes;
+    use typst::text::Font;
+    let assets: [(&[u8], &str); 5] = [
+        (
+            include_bytes!("../../crates/scholium-app/assets/fonts/NotoSansCJKsc-Regular.otf.br"),
+            "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b",
+        ),
+        (
+            include_bytes!("../../crates/scholium-app/assets/fonts/LiberationSerif-Regular.ttf.br"),
+            "058ea80864aef09a23f45cbec2bb5400bc3dfbdea01c3f10538a21fcb497fb74",
+        ),
+        (
+            include_bytes!("../../crates/scholium-app/assets/fonts/LiberationSerif-Italic.ttf.br"),
+            "0e3dea9f8d613e006ccfa62201f33e265d19167bd0907725c3e145368b04fc2e",
+        ),
+        (
+            include_bytes!("../../crates/scholium-app/assets/fonts/LiberationSerif-Bold.ttf.br"),
+            "d754ba427cfe0bca54ae052384baa8f842da5bd6550ad4da024ac441e7a7d5ce",
+        ),
+        (
+            include_bytes!("../../crates/scholium-app/assets/fonts/LiberationSerif-BoldItalic.ttf.br"),
+            "f17db8af71e24d2066b587546021d4f0b296be389512b658dec3c09affeb11a7",
+        ),
+    ];
+    let data: Vec<Vec<u8>> = assets
+        .iter()
+        .map(|(compressed, expected)| {
+            let mut bytes = Vec::new();
+            brotli_decompressor::Decompressor::new(*compressed, 16 * 1024)
+                .read_to_end(&mut bytes)
+                .expect("bundled font container must decompress");
+            assert_eq!(
+                format!("{:x}", Sha256::digest(&bytes)),
+                *expected,
+                "decompressed font differs from the recorded original"
+            );
+            bytes
+        })
+        .collect();
+    let mut fonts = typst_kit::fonts::FontStore::new();
+    for bytes in data {
+        fonts.extend(Font::iter(Bytes::new(bytes)).map(|font| {
+            let info = font.info().clone();
+            (font, info)
+        }));
+    }
+    fonts.extend(typst_kit::fonts::embedded());
+    if std::env::var_os("SCHOLIUM_TEST_FONTS").is_none_or(|v| v != "bundled") {
+        fonts.extend(typst_kit::fonts::system());
+    }
+    kernel::ProbeWorld::with_fonts(fonts)
 }

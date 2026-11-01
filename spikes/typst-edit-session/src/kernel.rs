@@ -30,6 +30,10 @@ impl ProbeWorld {
         let mut fonts = FontStore::new();
         fonts.extend(typst_kit::fonts::embedded());
         fonts.extend(typst_kit::fonts::system());
+        Self::with_fonts(fonts)
+    }
+
+    pub(crate) fn with_fonts(fonts: FontStore) -> Self {
         let main = RootedPath::new(
             VirtualRoot::Project,
             VirtualPath::new("unused.typ").expect("fixed virtual path"),
