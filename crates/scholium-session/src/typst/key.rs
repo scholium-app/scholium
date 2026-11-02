@@ -110,6 +110,7 @@ impl EditorCore {
             }
             Key::Character('m') | Key::Character('M') if !mods.shift => Some(CommandId::Math),
             Key::Slash if !mods.shift => Some(CommandId::Fraction),
+            Key::Character('r') | Key::Character('R') if mods.shift => Some(CommandId::Root),
             Key::Num(0) if !mods.shift => Some(CommandId::Kind(BlockKind::Paragraph)),
             Key::Num(1) if !mods.shift => Some(CommandId::Kind(BlockKind::Heading1)),
             Key::Num(2) if !mods.shift => Some(CommandId::Kind(BlockKind::Heading2)),

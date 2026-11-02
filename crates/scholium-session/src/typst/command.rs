@@ -9,6 +9,14 @@ pub enum CommandId {
     Math,
     /// `insert.fraction`.
     Fraction,
+    /// `insert.root`.
+    Root,
+    /// `insert.delimiter` with the default `()` pair.
+    Delimiter,
+    /// Add or enter the containing root's index.
+    RootIndex,
+    /// Cycle the containing delimiter through the supported pairs.
+    CycleDelimiter,
     /// `insert.superscript` / `insert.subscript`.
     Attach(scholium_document::AttachSlot),
     /// `format.bold`, `format.italic`, `format.clear`.
@@ -220,7 +228,18 @@ impl EditorCore {
         use CommandArgs as A;
         use CommandId as C;
         let applied = match (id, args) {
-            (C::Math | C::Fraction | C::Attach(_) | C::Style(_) | C::Kind(_), A::None) => {
+            (
+                C::Math
+                | C::Fraction
+                | C::Root
+                | C::Delimiter
+                | C::RootIndex
+                | C::CycleDelimiter
+                | C::Attach(_)
+                | C::Style(_)
+                | C::Kind(_),
+                A::None,
+            ) => {
                 self.command(id, state);
                 true
             }

@@ -25,18 +25,18 @@ fn plain(value: &str) -> StructuredInline {
     text(value, TextStyle::Plain)
 }
 
-fn leaf(body: MathBody) -> MathNode {
+pub(crate) fn leaf(body: MathBody) -> MathNode {
     MathNode {
         node: NodeId::fresh(),
         body,
     }
 }
 
-fn math(root: MathNode) -> StructuredInline {
+pub(crate) fn math(root: MathNode) -> StructuredInline {
     inline(InlineBody::Math { root })
 }
 
-fn doc(blocks: Vec<(BlockKind, Vec<StructuredInline>)>) -> StructuredDocument {
+pub(crate) fn doc(blocks: Vec<(BlockKind, Vec<StructuredInline>)>) -> StructuredDocument {
     StructuredDocument {
         document: DocumentId::fresh(),
         revision: Revision(1),
@@ -399,7 +399,7 @@ fn in_word_styles_parentheses_list_markers_and_unicode_newlines_stay_literal() {
     );
 }
 
-fn text_node(value: &str) -> MathNode {
+pub(crate) fn text_node(value: &str) -> MathNode {
     leaf(MathBody::Text { text: value.into() })
 }
 
@@ -420,7 +420,7 @@ fn view_of(root: MathNode) -> String {
 }
 
 /// Text of every shaped run in the first page, as Typst laid it out.
-fn rendered_text(source: &str) -> String {
+pub(crate) fn rendered_text(source: &str) -> String {
     use typst::layout::{Frame, FrameItem};
     fn walk(frame: &Frame, out: &mut String) {
         for (_, item) in frame.items() {

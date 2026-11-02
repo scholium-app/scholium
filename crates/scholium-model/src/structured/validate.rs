@@ -24,6 +24,9 @@ pub enum StructureError {
     /// Required mathematical content is not yet filled.
     #[error("required math slot is unfilled: {0:?}")]
     Unfilled(NodeId),
+    /// A delimiter pair is not one of the explicitly supported Typst pairs.
+    #[error("unsupported math delimiter pair")]
+    Delimiter,
 }
 
 #[derive(Default)]
@@ -138,6 +141,28 @@ impl Validator {
                     self.math(slot, depth + 1)?;
                 }
             }
+            MathBody::Root { index, radicand } => {
+                if let Some(index) = index {
+                    self.math(index, depth + 1)?;
+                }
+                self.math(radicand, depth + 1)?;
+            }
+            MathBody::Delimited { open, close, body } => {
+                if !matches!(
+                    (open, close),
+                    ('(', ')')
+                        | ('[', ']')
+                        | ('{', '}')
+                        | ('|', '|')
+                        | ('‖', '‖')
+                        | ('⟨', '⟩')
+                        | ('⌊', '⌋')
+                        | ('⌈', '⌉')
+                ) {
+                    return Err(StructureError::Delimiter);
+                }
+                self.math(body, depth + 1)?;
+            }
         }
         Ok(())
     }
@@ -158,6 +183,13 @@ fn filled(node: &MathNode) -> Result<(), StructureError> {
             filled(base)?;
             [sub, sup].into_iter().flatten().try_for_each(|s| filled(s))
         }
+        MathBody::Root { index, radicand } => {
+            if let Some(index) = index {
+                filled(index)?;
+            }
+            filled(radicand)
+        }
+        MathBody::Delimited { body, .. } => filled(body),
         _ => Ok(()),
     }
 }

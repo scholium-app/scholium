@@ -1,0 +1,176 @@
+{
+  "name": "math-root-delimiter",
+  "inputs": [
+    {
+      "text": "$"
+    },
+    {
+      "command": "Root",
+      "surface": "menu"
+    },
+    {
+      "command": "RootIndex"
+    },
+    {
+      "text": "3"
+    },
+    {
+      "key": "Tab"
+    },
+    {
+      "command": "Delimiter"
+    },
+    {
+      "text": "x"
+    },
+    {
+      "command": "CycleDelimiter"
+    },
+    {
+      "key": "ArrowLeft"
+    },
+    {
+      "key": "ArrowLeft"
+    },
+    {
+      "key": "ArrowLeft"
+    },
+    {
+      "key": "ArrowLeft"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "text": "",
+                    "style": "plain"
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "math",
+                    "root": {
+                      "body": {
+                        "kind": "root",
+                        "index": {
+                          "body": {
+                            "kind": "text",
+                            "text": "3"
+                          }
+                        },
+                        "radicand": {
+                          "body": {
+                            "kind": "delimited",
+                            "open": "[",
+                            "close": "]",
+                            "body": {
+                              "body": {
+                                "kind": "text",
+                                "text": "x"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "text",
+                    "text": "",
+                    "style": "plain"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/radicand/body/body",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "anchor": null,
+        "undo_depth": 7
+      }
+    }
+  ],
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "text": "",
+                "style": "plain"
+              }
+            },
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "kind": "root",
+                    "index": {
+                      "body": {
+                        "kind": "text",
+                        "text": "3"
+                      }
+                    },
+                    "radicand": {
+                      "body": {
+                        "kind": "delimited",
+                        "open": "[",
+                        "close": "]",
+                        "body": {
+                          "body": {
+                            "kind": "text",
+                            "text": "x"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "text": "",
+                "style": "plain"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/1/body/root/body/radicand/body/body",
+      "byte": 1,
+      "affinity": "Downstream"
+    },
+    "anchor": null,
+    "undo_depth": 7
+  }
+}

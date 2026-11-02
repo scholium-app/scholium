@@ -165,6 +165,12 @@ fn math(ui: &mut Ui, state: &mut WorkspaceState) {
     );
     ui.add_space(Tokens::PAD_BAR);
     for spec in registry::focus_items(FocusKind::Math) {
+        if spec.id == "insert.root_index" && !state.editor.as_ref().is_some_and(|v| v.in_root)
+            || spec.id == "insert.cycle_delimiter"
+                && !state.editor.as_ref().is_some_and(|v| v.in_delimiter)
+        {
+            continue;
+        }
         let resolved = command_ui::resolve_spec(state, spec);
         let button = TextButton {
             label: resolved.title(state),

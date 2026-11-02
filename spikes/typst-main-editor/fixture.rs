@@ -40,12 +40,68 @@ fn row(children: Vec<MathNode>) -> MathNode {
         body: MathBody::Row { children },
     }
 }
+fn root_delimiter_fixture(name: &str) -> (BlockKind, Vec<StructuredInline>) {
+    let body = if name.ends_with("root") || name == "root-delimiter" {
+        let radicand = frac(math("a"), math("b"));
+        let radicand = if name == "root-delimiter" {
+            MathNode {
+                node: NodeId::fresh(),
+                body: MathBody::Delimited {
+                    open: '(',
+                    close: ')',
+                    body: Box::new(radicand),
+                },
+            }
+        } else {
+            radicand
+        };
+        MathBody::Root {
+            index: (name == "indexed-root").then(|| Box::new(math("3"))),
+            radicand: Box::new(radicand),
+        }
+    } else {
+        let (open, close) = match name {
+            "delim-paren" => ('(', ')'),
+            "delim-bracket" => ('[', ']'),
+            "delim-brace" => ('{', '}'),
+            "delim-abs" => ('|', '|'),
+            "delim-norm" => ('‖', '‖'),
+            "delim-angle" => ('⟨', '⟩'),
+            "delim-floor" => ('⌊', '⌋'),
+            "delim-ceil" => ('⌈', '⌉'),
+            _ => unreachable!(),
+        };
+        MathBody::Delimited {
+            open,
+            close,
+            body: Box::new(frac(math("a"), math("b"))),
+        }
+    };
+    (
+        BlockKind::Paragraph,
+        vec![
+            text("root ", TextStyle::Plain),
+            StructuredInline {
+                node: NodeId::fresh(),
+                body: InlineBody::Math {
+                    root: MathNode {
+                        node: NodeId::fresh(),
+                        body,
+                    },
+                },
+            },
+        ],
+    )
+}
 /// Identified input for the formal adapter, with complete math slots.
 pub fn fixture(name: &str) -> StructuredDocument {
     if name.starts_with("empty-") {
         return empty_fixture(name);
     }
     let (kind, content) = match name {
+        "square-root" | "indexed-root" | "root-delimiter" | "delim-paren" | "delim-bracket"
+        | "delim-brace" | "delim-abs" | "delim-norm" | "delim-angle" | "delim-floor"
+        | "delim-ceil" => root_delimiter_fixture(name),
         "edge-root" | "edge-row" => {
             let fraction = frac(math("a"), math("b"));
             let root = if name == "edge-row" {

@@ -158,9 +158,13 @@ try:
     xdo("key", "--clearmodifiers", "ctrl+slash")
     root = app_root()
     math = wait(lambda: find(app_root(), lambda n: n.get_role_name() == "math"), "math object")
-    status = wait(lambda: find(app_root(), lambda n: (n.get_name() or "").startswith("分数分母")), "slot status")
+    expected_math, expected_status = {
+        "zh-Hans": ("公式：分数（分子：12；分母：空）", "分数分母：空"),
+        "en": ("Formula: Fraction (numerator: 12; denominator: empty)", "Fraction denominator: empty"),
+    }[locale]
+    status = wait(lambda: find(app_root(), lambda n: n.get_name() == expected_status), "slot status")
     record("08-math-object-and-slot-status",
-           math.get_name() == "公式：分数（分子：12；分母：空）" and status.get_name() == "分数分母：空",
+           math.get_name() == expected_math and status.get_name() == expected_status,
            math=math.get_name(), status=status.get_name(), status_role=status.get_role_name())
 
     # Every control exposes its catalog title (in the run's language) as its AT-SPI name.

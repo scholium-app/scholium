@@ -118,6 +118,38 @@ pub enum StructuralEdit {
         /// Other endpoint; equal to start for insertion without a selection.
         end: BodyTextPosition,
     },
+    /// Insert a square root at a math caret or wrap a same-row selection as its radicand.
+    RootAt {
+        /// First endpoint (order is normalized).
+        start: BodyTextPosition,
+        /// Other endpoint; equal means an empty radicand is inserted at that position.
+        end: BodyTextPosition,
+    },
+    /// Add an index Hole to a square root, or enter its existing index.
+    RootIndex {
+        /// Root owner identity.
+        node: NodeId,
+    },
+    /// Change a delimiter pair without replacing its body or identity.
+    SetDelimiter {
+        /// Delimited owner identity.
+        node: NodeId,
+        /// Supported opening delimiter.
+        open: char,
+        /// Matching closing delimiter.
+        close: char,
+    },
+    /// Insert an auto-sized delimiter at a math caret or wrap a same-row selection.
+    DelimitedAt {
+        /// First endpoint (order is normalized).
+        start: BodyTextPosition,
+        /// Other endpoint; equal means an empty body is inserted at that position.
+        end: BodyTextPosition,
+        /// Supported delimiter pair; validated again with the document.
+        open: char,
+        /// Matching closing delimiter.
+        close: char,
+    },
     /// Wrap a math subtree as numerator and create an addressed empty denominator.
     WrapFraction {
         /// Surviving numerator subtree identity.
