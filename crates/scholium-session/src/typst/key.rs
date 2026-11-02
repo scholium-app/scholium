@@ -13,6 +13,10 @@ impl EditorCore {
             return result;
         }
         let math = !self.body_leaf(self.cursor.leaf);
+        if mods.shift && math && matches!(key, Key::ArrowLeft | Key::ArrowRight) {
+            self.extend_math_horizontal(key == Key::ArrowRight)?;
+            return Ok(self.followed(key, mods, before, old_follow, true));
+        }
         if mods.shift && math && is_navigation(key) {
             return Err(CommandError::Rejected(Rejection::MathSelection));
         }
@@ -138,7 +142,10 @@ impl EditorCore {
                 CommandArgs::Text("\n".into(), Origin::Paste),
             )),
             Key::ArrowLeft | Key::ArrowRight if !mods.shift => {
-                if let Ok(Some((start, end))) = self.range() {
+                let range = self
+                    .range()
+                    .or_else(|_| self.math_range().map(|r| r.map(|r| (r.start, r.end))));
+                if let Ok(Some((start, end))) = range {
                     let at = if key == Key::ArrowLeft { start } else { end };
                     self.move_to(
                         Position {

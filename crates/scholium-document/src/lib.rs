@@ -14,8 +14,8 @@ use scholium_model::layout_identity::{
     LayoutEpoch, LayoutRequestId, ProfileGeneration, ResourceGeneration, SceneStamp,
 };
 pub use structured_session::{
-    AttachSlot, BodyTextPosition, MigrationFailure, StructuralEdit, StructuralOutcome,
-    StructuralRequest, base_before_slot, range_has_style,
+    AttachSlot, BodyTextPosition, MathRowRange, MigrationFailure, StructuralEdit,
+    StructuralOutcome, StructuralRequest, base_before_slot, math_row_range, range_has_style,
 };
 
 /// Maximum UTF-8 text bytes accepted per block edit.

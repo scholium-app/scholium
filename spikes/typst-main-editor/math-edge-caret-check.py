@@ -20,7 +20,7 @@ def main():
     scenario = ROOT / "scenarios" / "math-edge-caret.json"
     # The scenario's intermediate cursor and undo_depth assertions are immutable inputs.
     def capture(replay, state, step):
-        if step not in (10, 16, 18, 23):
+        if step not in (11, 17, 19, 24):
             return
         caret = parity.cursor_caret(state)
         assert caret and caret["exact"], f"no exact edge caret at step {step}"
@@ -31,7 +31,7 @@ def main():
     parity.scenario(binary, scenario, output / "replay", on_step=capture)
     import json
     rows = json.loads((output / "replay" / "steps.json").read_text())
-    edge_steps = [10, 16, 18, 23]
+    edge_steps = [11, 17, 19, 24]
     for step in edge_steps:
         caret = rows[step - 1]["caret"]
         assert caret and caret["exact"], f"missing exact Scene caret at edge step {step}"

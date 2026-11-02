@@ -129,7 +129,8 @@ Bundled 的两页中英混排测试固定每一行首个源 byte；外部字体�
 NodeId、叶内 UTF-8 byte 与 affinity；Fraction/Attach ID 上 byte 0/1 表示结构前/后。
 `editor/stops.rs` 共用结构停点规则，键盘导航仅扫描当前文字叶，遍历内存按节点数增长。
 worker 的 `edge_geometry` 从已有结构/后代 bounds 并集取左右界，以整公式高度生成边缘 caret；同 Row
-邻接 Text/Hole 供应的同侧边界不重复生成。边缘无 Content，也不参与打印或源码生成；
+邻接 Text/Hole 供应的同侧边界不重复生成。空正文 Text 在公式前后没有独立 shaped caret 时，由相邻公式已记录 bounds 的对应边界提供正文 caret，
+与公式内边缘保留不同身份；不插入 Content 或改变栅格。边缘无 Content，也不参与打印或源码生成；
 top/bottom 为该 Frame 的 pt。opaque ID 只在 adapter
 注册/反查，不进入模型或存储。剪裁/未知 origin 拒绝；跨叶 derived cluster 不猜端点；合字
 内部按比例的 caret 保留 `exact=false`。调用方只用当前全 stamp 场景做命中/IME 锚点。
@@ -137,6 +138,7 @@ top/bottom 为该 Frame 的 pt。opaque ID 只在 adapter
 保留逐行/双向 cluster 的独立四角，验证范围完整覆盖；缺边界或映射即报 Geometry。
 空范围返回 1 pt 的边界标识，不冒充字形宽度。比例合字边界保留 exact=false。
 `selection_node(math_root)` 使用真正数学根的结构 bounds，包含分数横线和各槽位；
+`selection_math` 对无自身 bounds 的 Row/Attach 递归收集各子树已记录 bounds，供正文整公式和数学行选区使用；
 inline 包装身份没有对应 bounds 时不得猜矩形。所有四角与 raster 共用 padded Frame pt。
 端点选择与编辑请求仍由 app/core 负责，adapter 不修改权威或从 markup 偏移猜选框。
 SceneStats 记录 built/reused/source_reads/elapsed，不能作为物理刷新或分页性能证明。

@@ -210,6 +210,8 @@ fn formula_is_a_math_object_and_slot_context_is_a_live_status() {
         text("A "),
         text("$"),
         text("12"),
+        crate::typst_editor::tests::shift_left(),
+        crate::typst_editor::tests::shift_left(),
         key(egui::Key::Slash, true),
     ]);
     let tree = settled(&mut f);
@@ -437,6 +439,8 @@ fn compound_edges_announce_their_side_without_changing_body_text_offsets() {
         text("A "),
         text("$"),
         text("12"),
+        crate::typst_editor::tests::shift_left(),
+        crate::typst_editor::tests::shift_left(),
         key(egui::Key::Slash, true),
     ]);
     let root = match &f.editor.snapshot.blocks[0].content[1].body {

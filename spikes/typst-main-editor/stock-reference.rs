@@ -82,6 +82,12 @@ fn fixture(name: &str) -> Content {
             let math=if name=="edge-row" {Content::sequence([symbol("l"),fraction,symbol("r")])}else{fraction};
             paragraph(Content::sequence([kernel::text("edge "),EquationElem::new(math).pack(),kernel::text(" tail")]))
         }
+        // The completed result of inserting at byte 2 of `abc`; both remainders stay outside.
+        "fraction-at-caret" => paragraph(Content::sequence([
+            kernel::text("caret "), EquationElem::new(Content::sequence([
+                symbol("a"), symbol("b"), FracElem::new(symbol("n"), symbol("d")).pack(), symbol("c"),
+            ])).pack(),
+        ])),
         "preedit" => paragraph(Content::sequence([
             kernel::text("ab"), typst::text::UnderlineElem::new(kernel::text("中文")).pack(),
             kernel::text("ZZ"),
@@ -160,6 +166,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "full",
         "edge-root",
         "edge-row",
+        "fraction-at-caret",
         "scripts",
         "styles",
         "heading",

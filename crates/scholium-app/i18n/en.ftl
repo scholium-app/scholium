@@ -68,7 +68,7 @@ command-insert-display_formula =
 
 command-insert-fraction =
     .title = Fraction
-    .tooltip = Insert a fraction; Tab moves between slots
+    .tooltip = Insert an empty fraction at the caret, or wrap the selected math; Tab changes slots
 
 command-insert-root =
     .title = Radical

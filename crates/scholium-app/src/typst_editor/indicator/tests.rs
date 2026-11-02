@@ -43,6 +43,8 @@ fn indicator_covers_the_whole_fraction_and_outlines_the_current_slot() {
     f.events(vec![
         text("$"),
         text("12"),
+        crate::typst_editor::tests::shift_left(),
+        crate::typst_editor::tests::shift_left(),
         key(egui::Key::Slash, true),
         text("3"),
     ]);

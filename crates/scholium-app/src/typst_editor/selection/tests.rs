@@ -101,6 +101,8 @@ fn body_shift_crosses_whole_fraction_and_selection_includes_its_rule_extent() {
         text("A"),
         text("$"),
         text("12"),
+        crate::typst_editor::tests::shift_left(),
+        crate::typst_editor::tests::shift_left(),
         key(egui::Key::Slash, true),
         text("2"),
         text("$"),
@@ -302,11 +304,12 @@ fn rejected_capacity_preserves_selection_and_copyable_paste() {
 }
 
 #[test]
-fn math_shift_is_rejected_and_selection_styles_only_the_text_around_a_formula() {
+fn math_vertical_shift_is_rejected_and_selection_styles_only_the_text_around_a_formula() {
     let mut f = Fixture::new();
     f.events(vec![text("A"), text("$"), text("12")]);
+    f.settle();
     let before = f.editor.snapshot.clone();
-    f.events(vec![shift(egui::Key::ArrowLeft)]);
+    f.events(vec![shift(egui::Key::ArrowUp)]);
     assert!(f.state.edit_error.is_some());
     assert!(!f.editor.selected());
     assert_eq!(f.editor.snapshot, before);
@@ -464,4 +467,54 @@ fn copy_and_cut_reject_formula_selection_without_mutating_authority() {
     assert!(f.editor.cut_selection(&mut f.state).is_none());
     assert_eq!(f.editor.snapshot, before);
     assert_eq!(f.editor.range().expect("preserved range"), range);
+}
+
+#[test]
+fn selected_math_text_has_scene_highlight_and_fraction_wraps_only_that_text() {
+    let mut f = Fixture::new();
+    f.events(vec![text("$"), text("abc")]);
+    f.settle();
+    f.events(vec![shift(egui::Key::ArrowLeft)]);
+    assert!(f.editor.selected());
+    let quads = f.editor.selection_quads().expect("math selection geometry");
+    assert!(!quads.is_empty());
+    assert!(quads.iter().all(|q| q.points[1][0] > q.points[0][0]));
+    f.editor.command(Command::Fraction, &mut f.state);
+    f.settle();
+    let InlineBody::Math { root } = &f.editor.snapshot.blocks[0].content[1].body else {
+        panic!("formula")
+    };
+    let MathBody::Row { children } = &root.body else {
+        panic!("row")
+    };
+    assert!(matches!(&children[0].body, MathBody::Text { text } if text == "ab"));
+    let MathBody::Fraction {
+        numerator,
+        denominator,
+    } = &children[1].body
+    else {
+        panic!("fraction")
+    };
+    assert!(matches!(&numerator.body, MathBody::Text { text } if text == "c"));
+    assert_eq!(f.editor.cursor.leaf, denominator.node);
+}
+
+#[test]
+fn body_selection_of_a_formula_row_includes_text_and_the_inserted_fraction() {
+    let mut f = Fixture::new();
+    f.events(vec![
+        text("A"),
+        text("$"),
+        text("abc"),
+        key(egui::Key::Slash, true),
+        key(egui::Key::M, true),
+        text("Z"),
+    ]);
+    f.settle();
+    f.events(vec![key(egui::Key::A, true)]);
+    let quads = f
+        .editor
+        .selection_quads()
+        .expect("complete formula row geometry");
+    assert!(quads.len() >= 3, "body and formula content all highlighted");
 }

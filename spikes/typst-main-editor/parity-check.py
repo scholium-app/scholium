@@ -14,7 +14,7 @@ import subprocess
 import sys
 import time
 
-from chrome_ui import keycode
+from chrome_ui import Chrome, keycode
 
 ROOT = Path(__file__).resolve().parent
 TIMEOUT = 20
@@ -161,6 +161,12 @@ class Replay:
             self.key(event)
         elif "pointer" in event:
             self.pointer(event["pointer"], state)
+        elif event.get("command") == "Fraction":
+            chrome = Chrome(self.state, self.xdo, self.window)
+            if event.get("surface") == "menu":
+                chrome.menu("ui.menu.insert", "insert.fraction")
+            else:
+                chrome.click("insert.fraction", "focus")
         elif event.get("command") == "Bold":
             self.key({"key": "Character", "value": "b", "mods": {"command": True}})
         else:

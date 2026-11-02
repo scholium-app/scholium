@@ -17,6 +17,7 @@ fn fraction(
     f.run(CommandId::Math);
     let numerator = f.core.cursor.leaf;
     f.run(CommandId::Fraction);
+    key(f, Key::ArrowRight); // No selection now enters the numerator; fixture edits the denominator.
     f.text(denominator);
     let root = match &f.core.snapshot.blocks[0].content[1].body {
         InlineBody::Math { root } => root.node,

@@ -1,0 +1,28 @@
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 1.66s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-e60d2f25afc3d060)
+
+running 1 test
+POINTER-DIAG "alpha one" math=false leaf=NodeId(63a419a4-4fda-4198-8bcd-adb7480d1aab) carets=[Caret { position: Position { leaf: NodeId(63a419a4-4fda-4198-8bcd-adb7480d1aab), byte: 0, affinity: Downstream }, top: [94.86614173228347, 72.0], bottom: [94.86614173228347, 79.857421875], exact: true }]
+POINTER-DIAG "beta " math=false leaf=NodeId(38213136-6bf3-42dd-aa8d-ebbf1629ca9b) carets=[Caret { position: Position { leaf: NodeId(38213136-6bf3-42dd-aa8d-ebbf1629ca9b), byte: 0, affinity: Downstream }, top: [94.86614173228347, 94.59599999999999], bottom: [94.86614173228347, 102.45342187499999], exact: true }]
+POINTER-DIAG "12" math=true leaf=NodeId(5548117c-6e52-4466-90fb-4a086b34e3ef) carets=[Caret { position: Position { leaf: NodeId(5548117c-6e52-4466-90fb-4a086b34e3ef), byte: 0, affinity: Downstream }, top: [119.05246985728346, 92.14782187499999], bottom: [119.05246985728346, 97.725421875], exact: true }]
+POINTER-DIAG "3" math=true leaf=NodeId(bcb75b51-2441-49b6-816d-2b696ea8a9e5) carets=[Caret { position: Position { leaf: NodeId(bcb75b51-2441-49b6-816d-2b696ea8a9e5), byte: 0, affinity: Downstream }, top: [121.44226985728346, 101.015821875], bottom: [121.44226985728346, 106.761421875], exact: true }]
+POINTER-DIAG "" math=false leaf=NodeId(911a2990-4818-4562-97ad-3d4d147e0dbc) carets=[Caret { position: Position { leaf: NodeId(911a2990-4818-4562-97ad-3d4d147e0dbc), byte: 0, affinity: Downstream }, top: [129.81166985728348, 92.14782187499999], bottom: [129.81166985728348, 106.761421875], exact: true }]
+POINTER-DIAG "gamma delta" math=false leaf=NodeId(5c6b9191-ddcf-4631-b011-44ba3c5a8989) carets=[Caret { position: Position { leaf: NodeId(5c6b9191-ddcf-4631-b011-44ba3c5a8989), byte: 0, affinity: Downstream }, top: [94.86614173228347, 116.853421875], bottom: [94.86614173228347, 124.71084375], exact: true }]
+POINTER-DIAG upper-click=[109.62629798228346, 84.9287109375]; lower-click=[94.86614173228347, 111.7821328125]
+
+thread 'typst_editor::selection::pointer_tests::click_between_lines_picks_the_nearest_line_then_the_nearest_stop' (120265) panicked at crates/scholium-app/src/typst_editor/selection/pointer_tests.rs:116:5:
+assertion `left == right` failed
+  left: NodeId(38213136-6bf3-42dd-aa8d-ebbf1629ca9b)
+ right: NodeId(5c6b9191-ddcf-4631-b011-44ba3c5a8989)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test typst_editor::selection::pointer_tests::click_between_lines_picks_the_nearest_line_then_the_nearest_stop ... FAILED
+
+failures:
+
+failures:
+    typst_editor::selection::pointer_tests::click_between_lines_picks_the_nearest_line_then_the_nearest_stop
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 312 filtered out; finished in 0.22s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`

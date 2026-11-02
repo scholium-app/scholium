@@ -68,7 +68,7 @@ command-insert-display_formula =
 
 command-insert-fraction =
     .title = 分数
-    .tooltip = 插入分数，Tab 切换槽位
+    .tooltip = 在光标处插入空分数；有数学选区时将选区放入分子，Tab 切换槽位
 
 command-insert-root =
     .title = 根式

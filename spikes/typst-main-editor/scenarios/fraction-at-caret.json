@@ -1,0 +1,747 @@
+{
+  "name": "fraction-at-caret",
+  "inputs": [
+    {
+      "text": "$"
+    },
+    {
+      "text": "abc"
+    },
+    {
+      "key": "ArrowLeft"
+    },
+    {
+      "command": "Fraction",
+      "surface": "focus",
+      "expected": {
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "text": "",
+                    "style": "plain"
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "math",
+                    "root": {
+                      "body": {
+                        "kind": "row",
+                        "children": [
+                          {
+                            "body": {
+                              "kind": "text",
+                              "text": "ab"
+                            }
+                          },
+                          {
+                            "body": {
+                              "kind": "fraction",
+                              "numerator": {
+                                "body": {
+                                  "kind": "hole"
+                                }
+                              },
+                              "denominator": {
+                                "body": {
+                                  "kind": "hole"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "body": {
+                              "kind": "text",
+                              "text": "c"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "text",
+                    "text": "",
+                    "style": "plain"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/1/body/numerator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "anchor": null,
+        "undo_depth": 3
+      }
+    },
+    {
+      "key": "Character",
+      "mods": {
+        "command": true
+      },
+      "value": "z",
+      "expected": {
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "text": "",
+                    "style": "plain"
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "math",
+                    "root": {
+                      "body": {
+                        "kind": "text",
+                        "text": "abc"
+                      }
+                    }
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "text",
+                    "text": "",
+                    "style": "plain"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cursor": {
+          "path": "blocks/0/content/1/body/root",
+          "byte": 2,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 2
+      }
+    },
+    {
+      "key": "Character",
+      "mods": {
+        "command": true
+      },
+      "value": "y",
+      "expected": {
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "text": "",
+                    "style": "plain"
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "math",
+                    "root": {
+                      "body": {
+                        "kind": "row",
+                        "children": [
+                          {
+                            "body": {
+                              "kind": "text",
+                              "text": "ab"
+                            }
+                          },
+                          {
+                            "body": {
+                              "kind": "fraction",
+                              "numerator": {
+                                "body": {
+                                  "kind": "hole"
+                                }
+                              },
+                              "denominator": {
+                                "body": {
+                                  "kind": "hole"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "body": {
+                              "kind": "text",
+                              "text": "c"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "text",
+                    "text": "",
+                    "style": "plain"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/1/body/numerator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 3
+      }
+    },
+    {
+      "text": "n"
+    },
+    {
+      "key": "Tab"
+    },
+    {
+      "text": "d"
+    },
+    {
+      "key": "Escape"
+    },
+    {
+      "text": "z"
+    },
+    {
+      "key": "Home",
+      "mods": {
+        "command": true
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/0",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/0",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/0",
+          "byte": 2,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/1/body/numerator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/1/body/numerator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/1/body/denominator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/1/body/denominator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/2",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/2",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/2",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/2",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/2",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/2",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/2",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/1/body/denominator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/1/body/denominator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/1/body/numerator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/1/body/numerator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/0",
+          "byte": 2,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/0",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/0",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 6
+      }
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "ArrowRight",
+      "mods": {
+        "shift": true
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "mods": {
+        "shift": true
+      }
+    },
+    {
+      "command": "Fraction",
+      "surface": "menu",
+      "expected": {
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "text": "",
+                    "style": "plain"
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "math",
+                    "root": {
+                      "body": {
+                        "kind": "row",
+                        "children": [
+                          {
+                            "body": {
+                              "kind": "text",
+                              "text": "a"
+                            }
+                          },
+                          {
+                            "body": {
+                              "kind": "fraction",
+                              "numerator": {
+                                "body": {
+                                  "kind": "row",
+                                  "children": [
+                                    {
+                                      "body": {
+                                        "kind": "text",
+                                        "text": "b"
+                                      }
+                                    },
+                                    {
+                                      "body": {
+                                        "kind": "fraction",
+                                        "numerator": {
+                                          "body": {
+                                            "kind": "text",
+                                            "text": "n"
+                                          }
+                                        },
+                                        "denominator": {
+                                          "body": {
+                                            "kind": "text",
+                                            "text": "d"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              "denominator": {
+                                "body": {
+                                  "kind": "hole"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "body": {
+                              "kind": "text",
+                              "text": "c"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "text",
+                    "text": "z",
+                    "style": "plain"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/children/1/body/denominator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "anchor": null,
+        "undo_depth": 7
+      }
+    },
+    {
+      "key": "Character",
+      "mods": {
+        "command": true
+      },
+      "value": "z",
+      "expected": {
+        "snapshot": {
+          "blocks": [
+            {
+              "kind": "Paragraph",
+              "content": [
+                {
+                  "body": {
+                    "kind": "text",
+                    "text": "",
+                    "style": "plain"
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "math",
+                    "root": {
+                      "body": {
+                        "kind": "row",
+                        "children": [
+                          {
+                            "body": {
+                              "kind": "text",
+                              "text": "ab"
+                            }
+                          },
+                          {
+                            "body": {
+                              "kind": "fraction",
+                              "numerator": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "n"
+                                }
+                              },
+                              "denominator": {
+                                "body": {
+                                  "kind": "text",
+                                  "text": "d"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "body": {
+                              "kind": "text",
+                              "text": "c"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "body": {
+                    "kind": "text",
+                    "text": "z",
+                    "style": "plain"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "undo_depth": 6
+      }
+    }
+  ],
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "text": "",
+                "style": "plain"
+              }
+            },
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "kind": "row",
+                    "children": [
+                      {
+                        "body": {
+                          "kind": "text",
+                          "text": "ab"
+                        }
+                      },
+                      {
+                        "body": {
+                          "kind": "fraction",
+                          "numerator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "n"
+                            }
+                          },
+                          "denominator": {
+                            "body": {
+                              "kind": "text",
+                              "text": "d"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "body": {
+                          "kind": "text",
+                          "text": "c"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "text": "z",
+                "style": "plain"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/1/body/root/body/children/2",
+      "byte": 0,
+      "affinity": "Downstream"
+    },
+    "anchor": {
+      "path": "blocks/0/content/1/body/root/body/children/0",
+      "byte": 1,
+      "affinity": "Downstream"
+    },
+    "undo_depth": 6
+  }
+}

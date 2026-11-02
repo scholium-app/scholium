@@ -18,6 +18,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "full",
         "edge-root",
         "edge-row",
+        "fraction-at-caret",
         "scripts",
         "styles",
         "heading",

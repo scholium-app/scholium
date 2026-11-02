@@ -1,0 +1,23 @@
+   Compiling scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-document)
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 3.29s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-e60d2f25afc3d060)
+
+running 1 test
+
+thread 'typst_editor::selection::pointer_tests::click_between_lines_picks_the_nearest_line_then_the_nearest_stop' (118250) panicked at crates/scholium-app/src/typst_editor/selection/pointer_tests.rs:110:5:
+assertion `left == right` failed
+  left: NodeId(8eb1ef2d-2728-4718-807a-b93469d03463)
+ right: NodeId(5e44a5b5-4a5a-4b6e-8f25-136534cd15aa)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test typst_editor::selection::pointer_tests::click_between_lines_picks_the_nearest_line_then_the_nearest_stop ... FAILED
+
+failures:
+
+failures:
+    typst_editor::selection::pointer_tests::click_between_lines_picks_the_nearest_line_then_the_nearest_stop
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 312 filtered out; finished in 0.27s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`

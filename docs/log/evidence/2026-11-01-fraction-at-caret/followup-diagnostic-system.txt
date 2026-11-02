@@ -1,0 +1,14 @@
+    Finished `test` profile [unoptimized] target(s) in 0.20s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-e60d2f25afc3d060)
+
+running 1 test
+POINTER-DIAG "alpha one" math=false leaf=NodeId(70f6c68d-84c1-4290-972a-bd88106ccab7) carets=[Caret { position: Position { leaf: NodeId(70f6c68d-84c1-4290-972a-bd88106ccab7), byte: 0, affinity: Downstream }, top: [94.86614173228347, 72.0], bottom: [94.86614173228347, 80.3203125], exact: true }]
+POINTER-DIAG "beta " math=false leaf=NodeId(482fb276-ddd8-47e0-aeaf-eb30020b17da) carets=[Caret { position: Position { leaf: NodeId(482fb276-ddd8-47e0-aeaf-eb30020b17da), byte: 0, affinity: Downstream }, top: [94.86614173228347, 94.72031249999999], bottom: [94.86614173228347, 103.04062499999999], exact: true }]
+POINTER-DIAG "12" math=true leaf=NodeId(8afc04ce-ed6b-43f2-8e46-c87a07a384c7) carets=[Caret { position: Position { leaf: NodeId(8afc04ce-ed6b-43f2-8e46-c87a07a384c7), byte: 0, affinity: Downstream }, top: [119.05246985728346, 92.735025], bottom: [119.05246985728346, 98.312625], exact: true }]
+POINTER-DIAG "3" math=true leaf=NodeId(9dbe0b30-f9ef-4a08-9be6-d38998560fa4) carets=[Caret { position: Position { leaf: NodeId(9dbe0b30-f9ef-4a08-9be6-d38998560fa4), byte: 0, affinity: Downstream }, top: [121.44226985728346, 101.603025], bottom: [121.44226985728346, 107.348625], exact: true }]
+POINTER-DIAG "" math=false leaf=NodeId(d3aff860-01ee-450b-9ec4-e8b761ceb61c) carets=[Caret { position: Position { leaf: NodeId(d3aff860-01ee-450b-9ec4-e8b761ceb61c), byte: 0, affinity: Downstream }, top: [129.81166985728348, 92.735025], bottom: [129.81166985728348, 107.348625], exact: true }]
+POINTER-DIAG "gamma delta" math=false leaf=NodeId(492298f5-5076-4f08-8565-6b03d1d0c014) carets=[Caret { position: Position { leaf: NodeId(492298f5-5076-4f08-8565-6b03d1d0c014), byte: 0, affinity: Downstream }, top: [94.86614173228347, 117.440625], bottom: [94.86614173228347, 125.7609375], exact: true }]
+POINTER-DIAG upper-click=[109.62629798228346, 85.16015625]; lower-click=[94.86614173228347, 112.60078125]
+test typst_editor::selection::pointer_tests::click_between_lines_picks_the_nearest_line_then_the_nearest_stop ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 312 filtered out; finished in 0.49s

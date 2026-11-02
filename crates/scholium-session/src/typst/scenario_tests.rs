@@ -124,10 +124,22 @@ fn check_step(core: &EditorCore, event: &serde_json::Value, points: &[Option<[f6
             .expect("visible edge caret");
         assert!(caret.exact);
         assert!(core.math_indicator(scene).is_some());
-        assert_eq!(
-            core.pointer_hit([caret.top[0], (caret.top[1] + caret.bottom[1]) * 0.5]),
-            Some(core.cursor)
-        );
+        let hit = core.pointer_hit([caret.top[0], (caret.top[1] + caret.bottom[1]) * 0.5]);
+        if event["shared_edge_hit"] == true {
+            // ADR 0045 uses full-formula height and a 0.5 pt edge hit radius.
+            // Nested edges can share a hit region; retain the existing first-hit policy.
+            let picked = scene
+                .geometry
+                .caret(hit.expect("shared edge hit"))
+                .expect("hit caret");
+            assert_eq!(
+                (picked.top[1], picked.bottom[1]),
+                (caret.top[1], caret.bottom[1])
+            );
+            assert!((picked.top[0] - caret.top[0]).abs() <= 0.5);
+        } else {
+            assert_eq!(hit, Some(core.cursor));
+        }
     }
     if let Some(expected) = event["expected"].as_object() {
         for (field, expected) in expected {
@@ -218,6 +230,9 @@ fn replay_input(core: &mut EditorCore, event: &serde_json::Value) {
     } else if event["pointer"].is_object() {
         let input = scenario_pointer(core, &event["pointer"]);
         core.input(input).expect("pointer input");
+    } else if event["command"] == "Fraction" {
+        core.input(Input::Command(CommandId::Fraction, CommandArgs::None))
+            .expect("fraction command");
     } else if event["command"] == "Bold" {
         core.input(Input::Command(
             CommandId::Style(TextStyle::Strong),

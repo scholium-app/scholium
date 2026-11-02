@@ -98,10 +98,10 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
 - 正文/数学文字位置是稳定叶 ID、叶内 UTF-8 字素边界与 affinity；Fraction/Attach 边缘以结构 ID 和
   byte 0/1 表示前/后（[ADR 0045](../adr/ADR-0045-math-edge-caret.md)），不进入模型或存储。
   左右顺序为结构前、各槽、结构后，嵌套递归；同一 Row 的邻接 Text/Hole 已提供的边界不重复添加。
-  Attach 槽按 base、sub、sup 遍历。Tab 仍循环叶，Shift 数学选区仍明确拒绝。
+  Attach 槽按 base、sub、sup 遍历。Tab 仍循环叶；Shift+左右只扩展同一数学行的选区，完整结构按原子选择，跨槽/公式仍拒绝。
   边缘上的 Home/End 到包含它的槽 Row（无槽则整个公式）的首末规范停点，不能制造已被邻接文字替代的边缘。
 - 边缘 Typed/Commit/Paste 创建数学 Text 兄弟，必要时把根/槽包成 Row；最后一个字素删除后移除空兄弟，
-  折叠单子 Row 并回到边缘。边缘分数/Attach 命令创建空分子/base，进入新分母或上下标槽；同一步撤销。
+  折叠单子 Row 并回到边缘。边缘分数/Attach 命令创建空分子/base，进入新分子或上下标槽；同一步撤销。
   插入/删除后按已接受内容重新验证字素边界；undo/redo 保留边缘 Position。
 - Backspace/Delete 先删同叶对应方向字素；空 optional Attach 槽 RemoveSlot 优先；槽位对应边界的全空
   结构移除为 Hole（Row 中则摘除），空公式移除。其余只按左右方向移动一个停点，不写动作/历史或重置 run。
@@ -144,3 +144,13 @@ Typst 确认的 26 页夹具、512 步历史、8 次预热、100 次实际 Text 
 组合 Scene 采纳时不安装文档 geometry，`sync_scene_geometry` 也不安装 split-run 几何；取消或提交的
 正常场景到达后恢复。持久化只读取 authority，即使显式保存也不包含临时串。见
 [ADR 0044](../adr/ADR-0044-transient-ime-layout.md)。
+
+## 分数命令与同一数学行选区
+
+工具栏、菜单和 Ctrl+/ 都调用 `CommandId::Fraction` → `FractionAt`。
+无选区时在数学 Text 光标字素边界插入空分数，已输入内容留在前后同一行；Hole 和结构边缘也进入空分子。
+有同一数学行选区时只将该范围放入分子并进入空分母。一次 Undo 恢复完整内容、caret 和 anchor。
+Shift+左右按字素扩展数学文字、按原子扩展完整结构；Shift+上下/Home/End、跨槽及跨公式范围仍拒绝。
+数学选区显示使用同一当前 Scene 的 cluster/结构 bounds；Row/Attach 无 wrapper bounds 时递归使用子节点记录，
+不猜矩形。普通选区文字替换、样式与纯文本剪贴板仍遵循正文限制；数学行选区当前供分数包装使用。
+RawMath 参与语义跳过和删除导航审计，排版保持 `EditorError::Raw` 显式拒绝，不执行原串。

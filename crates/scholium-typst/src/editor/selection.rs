@@ -1,6 +1,6 @@
 //! Selection extents are cut from shaped cluster stops, never markup coordinates.
 use super::{EditGeometry, EditorError, Position};
-use scholium_model::NodeId;
+use scholium_model::{NodeId, structured::MathNode};
 use std::ops::Range;
 
 /// A nonprinting interaction overlay in the same padded Frame pt as the raster.
@@ -69,6 +69,26 @@ impl EditGeometry {
             return Err(EditorError::Geometry);
         }
         Ok(quads)
+    }
+
+    /// Whole math content from recorded bounds, recursively covering Rows and Attach wrappers.
+    /// Children supply geometry only when the wrapper has no Frame bounds of its own.
+    ///
+    /// # Errors
+    /// Rejects a subtree with missing mapped geometry; never guesses a bounding rectangle.
+    pub fn selection_math(&self, node: &MathNode) -> Result<Vec<SelectionQuad>, EditorError> {
+        if let Ok(quads) = self.selection_node(node.node) {
+            return Ok(quads);
+        }
+        let children = super::math_children(node);
+        if children.is_empty() {
+            return Err(EditorError::Geometry);
+        }
+        children
+            .into_iter()
+            .map(|child| self.selection_math(child))
+            .collect::<Result<Vec<_>, _>>()
+            .map(|parts| parts.into_iter().flatten().collect())
     }
 
     fn selection_break(&self, leaf: NodeId, byte: usize) -> Result<SelectionQuad, EditorError> {

@@ -1,0 +1,25 @@
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
+    Finished `test` profile [unoptimized] target(s) in 1.30s
+     Running unittests src/lib.rs (target/debug/deps/scholium_session-2c8345755d416c14)
+
+running 1 test
+test typst::structure_audit_tests::structure_audit_every_renderable_stop_has_nonempty_scene_geometry ... FAILED
+
+failures:
+
+---- typst::structure_audit_tests::structure_audit_every_renderable_stop_has_nonempty_scene_geometry stdout ----
+
+thread 'typst::structure_audit_tests::structure_audit_every_renderable_stop_has_nonempty_scene_geometry' (64460) panicked at crates/scholium-session/src/typst/structure_audit_tests.rs:483:5:
+empty-body-boundaries: (NodeId(decf2cac-ab53-456e-84c9-f5f5b0a424de), 0): None
+empty-body-boundaries: (NodeId(b34405c8-c929-43fa-aca2-7591e909c589), 0): None
+empty-body-row-boundaries: (NodeId(7a32b1c5-3fef-4a44-bdf0-1e1715a35bb8), 0): None
+empty-body-row-boundaries: (NodeId(8a0be676-1bbb-4aa3-86a6-01f5b518f2c8), 0): None
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    typst::structure_audit_tests::structure_audit_every_renderable_stop_has_nonempty_scene_geometry
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 42 filtered out; finished in 0.97s
+
+error: test failed, to rerun pass `-p scholium-session --lib`

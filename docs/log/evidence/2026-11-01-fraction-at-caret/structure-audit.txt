@@ -1,0 +1,21 @@
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
+    Finished `test` profile [unoptimized] target(s) in 0.72s
+     Running unittests src/lib.rs (target/debug/deps/scholium_session-2c8345755d416c14)
+
+running 3 tests
+test typst::structure_audit_tests::structure_audit_visits_every_stop_once_in_exact_reverse_order ... ok
+test typst::structure_audit_tests::structure_audit_deletion_only_edits_deletable_units_otherwise_matches_arrows ... ok
+
+thread 'typst::structure_audit_tests::structure_audit_every_stop_has_nonempty_scene_geometry' (24044) panicked at crates/scholium-session/src/typst/structure_audit_tests.rs:451:5:
+raw-next-to-structure: no Scene: "RawMath NodeId(0c484eb9-81e5-4aa6-82b0-22bf30d19366) requires a separate supported import/source path"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test typst::structure_audit_tests::structure_audit_every_stop_has_nonempty_scene_geometry ... FAILED
+
+failures:
+
+failures:
+    typst::structure_audit_tests::structure_audit_every_stop_has_nonempty_scene_geometry
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 37 filtered out; finished in 1.01s
+
+error: test failed, to rerun pass `-p scholium-session --lib`

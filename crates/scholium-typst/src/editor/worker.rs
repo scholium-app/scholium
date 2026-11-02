@@ -279,6 +279,7 @@ fn render(
     let page = kernel::page(&frame);
     let mut geometry = EditGeometry::from_frame(&page.frame, &cache.reverse)?;
     geometry.add_math_edges(&job.snapshot);
+    geometry.add_empty_body_carets(&job.snapshot);
     let preedit = if job.preedit.is_some() {
         Some(
             cache

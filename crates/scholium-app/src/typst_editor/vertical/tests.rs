@@ -237,6 +237,8 @@ fn numerator_down_enters_denominator_then_leaves_the_formula_by_lines() {
     f.events(vec![
         text("$"),
         text("12"),
+        crate::typst_editor::tests::shift_left(),
+        crate::typst_editor::tests::shift_left(),
         key(egui::Key::Slash, true),
         text("3"),
     ]);

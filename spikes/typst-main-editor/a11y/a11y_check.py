@@ -153,6 +153,8 @@ try:
     xdo("key", "--clearmodifiers", "ctrl+End")
     xdo("type", " $")
     xdo("type", "12")
+    # Preserve the populated-numerator speech fixture by explicitly selecting it.
+    xdo("key", "--clearmodifiers", "shift+Left", "shift+Left")
     xdo("key", "--clearmodifiers", "ctrl+slash")
     root = app_root()
     math = wait(lambda: find(app_root(), lambda n: n.get_role_name() == "math"), "math object")

@@ -221,6 +221,11 @@ impl EditorSession {
         if !self.core.document_scene_is_current() {
             return Ok(Vec::new());
         }
+        if self.in_math() && self.selected() {
+            return Ok(self
+                .core
+                .math_selection_quads(self.scene().expect("current scene checked"))?);
+        }
         let Some((start, end)) = self.range()? else {
             return Ok(Vec::new());
         };
@@ -258,9 +263,7 @@ impl EditorSession {
                         quads.extend(scene.geometry.selection_text(inline.node, from..to)?);
                     }
                 }
-                InlineBody::Math { root } => {
-                    quads.extend(scene.geometry.selection_node(root.node)?)
-                }
+                InlineBody::Math { root } => quads.extend(scene.geometry.selection_math(root)?),
                 InlineBody::RawMath { .. } => return Err(EditError::WrongTarget.into()),
             }
         }
