@@ -1,6 +1,6 @@
 # 项目语言、跨格式转换与文件操作
 
-状态：产品方向已由 [ADR 0041](adr/ADR-0041-separate-latex-typst-kernels.md) 确认；LaTeX 实时预览引擎待评估，
+状态：产品方向已由 [ADR 0041](adr/ADR-0041-separate-latex-typst-kernels.md) 确认；LaTeX 实时预览采用沙箱内的 rtex（[ADR 0043](adr/ADR-0043-rtex-live-preview.md)），
 见 [LaTeX 工作区计划](plan/LATEX_WORKSPACE.md)。本文取代原《混合源码、团队编辑与文件操作》；原设计
 （团队语言切换、ForeignSource 混合与混合构建）见 [ADR 0001](adr/ADR-0001-mixed-source-team-editing.md)、
 本文件的 git 历史及阶段 0 报告 0009、0010、0035，已推迟，不再是实现依据。

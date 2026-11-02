@@ -85,7 +85,7 @@ catcode 警告、include 循环、动态路径、label rename 和 log 映射。f
 ## 项目语言合约
 
 本模块属于 LaTeX 内核，创建/导入时固定项目语言，以 .tex 源码为权威；预览与最终输出使用同一 LaTeX 引擎。
-实时预览适配层以 LuaLaTeX + rtex 为候选（待评估），对上只暴露段落更新/页面更新/定位/诊断事件；pdfLaTeX/XeLaTeX 标明整编预览。
+实时预览适配层采用 LuaLaTeX + 沙箱内的 rtex（[ADR 0043](../adr/ADR-0043-rtex-live-preview.md)），对上只暴露段落更新/页面更新/定位/诊断事件；pdfLaTeX/XeLaTeX 标明整编预览。
 引擎与常驻管道须经 build 的 OS 沙箱、运行时白名单及资源预算约束，未隔离不得接入。
 跨语言只经转换或导出及逐节点报告；混合组件、跨引擎桥接与团队语言切换已推迟。
 共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。

@@ -49,7 +49,7 @@
 - 同语言多人在线/离线编辑收敛；权限撤销、IME、草稿恢复与幂等回执保持既有要求。
 - 「转换为…」建立新项目并返回逐节点报告，原项目与历史保留，运行时不切换项目语言。
 - Typst 与 LaTeX 各自验证预览与最终输出同一引擎、旧 revision 淘汰、定位与诊断。
-- LuaLaTeX + rtex 实时预览待评估中文、逐字形一致性、沙箱、绘制、定位与稳定性；pdfLaTeX/XeLaTeX 标明整编预览。
+- LuaLaTeX + rtex 实时预览（[ADR 0043](adr/ADR-0043-rtex-live-preview.md)）在每次升级锁定提交时复验沙箱负对照与故障注入，并覆盖中文、逐字形一致性、绘制、定位与稳定性；pdfLaTeX/XeLaTeX 标明整编预览。
 
 混合组件、跨引擎桥接、混合重建包与团队语言切换已按
 [ADR 0041](adr/ADR-0041-separate-latex-typst-kernels.md) 推迟，阶段 0 报告仅作追溯。

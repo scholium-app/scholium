@@ -32,8 +32,8 @@ SDG 是权威状态。Typst 源码由 generator 产生并保存 generation map�
 ### SourceAuthority(format)
 
 指定格式源码是权威状态，CST lossless。Typst 源码项目有 SDG 投影，视觉编辑只对带 reversible capability
-的节点启用，并通过 adapter 写最小 source patch。LaTeX 项目首发以源码编辑为主，页面用于定位与诊断；
-页面内直接编辑须按 [LaTeX 工作区计划](plan/LATEX_WORKSPACE.md) 另行评估。另一方言的生成结果不能回写
+的节点启用，并通过 adapter 写最小 source patch。LaTeX 项目以源码编辑为主，页面用于定位与诊断；
+页面上编辑公式经共享数学输入引擎写回最小源码补丁，正文的页面内编辑范围按 [LaTeX 工作区计划](plan/LATEX_WORKSPACE.md) L3 的 ADR 裁决。另一方言的生成结果不能回写
 原项目；切换项目语言需迁移或另存为。
 
 ## 3. Raw 节点
@@ -109,7 +109,7 @@ SourceMap 同时记录 generated range → NodeId 和 NodeId → ranges；生成
 - **LuaLaTeX**：常驻引擎在已加载导言区的状态下重排被编辑的段落/环境，返回该单元的行与字形位置；
   后台整编经去抖后运行至辅助文件收敛，返回整页。宿主绘制最近一次整页结果并叠加段落更新，新整页到达后整体替换。
   无法证明实时结果精确的单元（导言区、目录、依赖页面状态的内容等）只随整编更新，并向 UI 说明原因。
-  候选实现为 rtex，选型待评估。
+  实现采用沙箱内的 rtex 子进程（[ADR 0043](adr/ADR-0043-rtex-live-preview.md)）。
 - **pdfLaTeX / XeLaTeX**：没有实时段落路径，后台整编结果即预览，UI 标明“整编预览”及其时延。
 - 实时引擎与整编都运行在 OS 沙箱内，与 Typst 编译同等对待不可信输入；超时、崩溃的单元退回整编路径。
 - 两种来源都按 revision 采纳，旧结果丢弃；实时结果与整编不一致时以整编为准。
