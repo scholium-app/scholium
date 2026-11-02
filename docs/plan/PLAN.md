@@ -1,7 +1,9 @@
 # Scholium 项目总览
 
-Scholium 是面向研究写作的本地优先协作工作区，以即时排版的结构化编辑为默认体验，同时直接编辑
-LaTeX、Typst、Markdown 和 BibTeX，提供非线性历史、多人协作、同引擎预览、格式转换和“复制为”。
+Scholium 是面向论文、技术文档与研究笔记的本地优先 LaTeX 写作工作区：已有 `.tex` 项目原样打开，rtex 只重排
+被修改的段落，后台用同一引擎整编校准。Typst 项目（原生结构与 `.typ` 源码）是同阶段交付的第二个内核。
+两种项目都有页面编辑与源码预览、共用的 Liii 式数学输入，并提供非线性历史、多人协作、格式转换和“复制为”
+（[产品定义](../PRODUCT.md)）。
 
 本文件只回答“做什么”和“从哪里开始”。详细设计见 [设计文档索引](../README.md)。
 
@@ -25,7 +27,7 @@ LaTeX、Typst、Markdown 和 BibTeX，提供非线性历史、多人协作、同
 
 按 Iced → GPUI → C++ EUI-NEO → Slint 或 egui 依次验证。应用以 Rust 为主，必要原生组件通过 C/C++/Zig 接口接入。
 旧 ProseMirror、CodeMirror/Monaco、Tauri/WebView 方向废止，npm 实验不能作为新路线通过证据。
-共同验收见 [原生 UI 验证计划](NATIVE_UI_VALIDATION.md)，最终框架需实测后另立选型 ADR。
+共同验收见 [原生 UI 验证计划](NATIVE_UI_VALIDATION.md)；验证后选定 egui/eframe（[ADR 0006](../adr/ADR-0006-native-ui-framework.md)）。
 
 ## 实现模块
 
@@ -41,7 +43,8 @@ render、build、app 和 sync-server 组成。职责与 API 见 [模块索引](.
 
 阶段 0 已验证结构编辑、源码 reconcile、CRDT 与安全恢复。此后 Typst 与 LaTeX 两个内核**按同一阶段同步推进**：
 每个阶段同时交付共享底座、Typst 轨与 LaTeX 轨，三部分都通过才算出口。顺序为打开—编辑—预览—保存—输出闭环，
-定位、诊断与高效输入，源码项目双向编辑与跨格式转换，然后是历史、协作和产品化。源码打开保存不推迟到最后。
+定位、诊断、高效输入与魔法粘贴，页面公式编辑与源码项目双向编辑，然后是历史、协作，最后是跨格式转换、扩展导出与产品化。
+每个阶段 LaTeX 轨在前、Typst 轨同步。数学输入与键位见[数学输入计划](MATH_INPUT.md)。源码打开保存不推迟到最后。
 每个阶段必须通过出口条件，详见 [路线图](ROADMAP.md) 与 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md)。
 
 ## 废弃原型处理

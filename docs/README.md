@@ -20,6 +20,7 @@
 11. [路线图](plan/ROADMAP.md)：阶段、交付物、出口条件和依赖关系；从阶段 1 起 Typst 与 LaTeX 两个内核同阶段同步推进。
     各阶段的执行计划：
     - [LaTeX 工作区计划](plan/LATEX_WORKSPACE.md)：LaTeX 轨的范围、rtex 评估项与 L1–L3 出口（对应阶段 1–3）。
+    - [数学输入计划](plan/MATH_INPUT.md)：两种项目共用的数学输入引擎与键位表，Liii STEM 数学能力的逐项归属阶段与验收。
     - [P1 排版工作区规划](plan/P1_UI.md)：桌面布局实施基准、两种模式参考图、允许调整的细节与评审检查。
     - [ArtCraft / PhotoCraft / WordCraft 借鉴计划](plan/ARTCRAFT_REFERENCE.md)：命令注册表、菜单栏与工具栏、设计令牌、无界面编辑核心、分层门禁与控制通道的落地顺序。
     - [界面多语言计划](plan/I18N.md)：界面语言与文档语言的区分、目录与 key、硬编码门禁、zh-Hans/en 首批与分期。
@@ -57,7 +58,8 @@
 
 ## 当前基本假设
 
-- 默认体验是即时排版的结构编辑；源码模式是完整、可写的第一等工作台。
+- 产品以 LaTeX 写作为主场景：已有 `.tex` 项目原样打开，rtex 实时预览与同引擎整编；Typst 项目是同阶段交付的第二个内核。
+- 页面编辑与源码预览都显示真实排版结果；源码模式是完整、可写的第一等工作台；两种项目共用 Liii 式数学输入。
 - 原生结构项目以语义文档图为真；外部源码项目以 lossless CST/source 为真。
 - 项目语言（Typst 或 LaTeX）固定，两个编辑内核分离；预览与最终输出使用项目语言的同一引擎（[ADR 0041](adr/ADR-0041-separate-latex-typst-kernels.md)）。
 - 桌面 UI、核心与服务端优先 Rust，必要时使用 C/C++/Zig；采用原生窗口/文本/绘制，不采用 npm 或 WebView。

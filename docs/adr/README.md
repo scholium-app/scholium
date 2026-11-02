@@ -104,3 +104,5 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0046](ADR-0046-math-root-delimiter.md)：structured v1 加性根式和自动定界符节点、槽位编辑与 Typst 几何。
 
 [ADR 0047](ADR-0047-display-formula-block.md)：Typst 独立公式使用只含一个数学树的 Equation 块，并定义其块边界编辑及源码形式。
+
+[ADR 0048](ADR-0048-shared-math-input-keymap.md)：两种项目语言共用的数学输入引擎（组合符号、Tab 循环、结构模板与变体），快捷键改为数据驱动的键位表并以 Liii/Mogan 习惯为基线；只实现影响排版结果的数学语义。

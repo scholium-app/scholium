@@ -69,7 +69,7 @@ sync-server → collab protocol + storage DTO
 4. 可逆修改自动转为 SemanticPatch；Raw/Degraded 修改要求确认；无法安全映射的修改拒绝并保留草稿。
 5. 接受后的语义或文本动作与视觉输入进入同一 history/collab/storage/render 管线。
 
-同语言源码与结构编辑通过 CRDT 协作。LaTeX 实时适配层以 LuaLaTeX + rtex 为候选（待评估），
+同语言源码与结构编辑通过 CRDT 协作。LaTeX 实时适配层采用 LuaLaTeX + 沙箱内的 rtex（[ADR 0043](adr/ADR-0043-rtex-live-preview.md)），
 仅向上暴露段落更新、页面更新、定位与诊断；pdfLaTeX/XeLaTeX 使用后台整编并标明预览来源与延迟。
 混合组件、跨引擎桥接和团队语言切换已按 ADR 0041 推迟，文件操作见
 [项目语言、跨格式转换与文件操作](MIXED_SOURCE_EDITING.md)。
