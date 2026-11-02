@@ -1,0 +1,155 @@
+[
+  {
+    "name": "fmt",
+    "argv": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "env": {},
+    "exit": 0,
+    "wall_s": 0.38,
+    "log": "fmt.log.gz"
+  },
+  {
+    "name": "clippy",
+    "argv": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--workspace",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "env": {},
+    "exit": 0,
+    "wall_s": 22.887,
+    "log": "clippy.log.gz"
+  },
+  {
+    "name": "tests",
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--workspace"
+    ],
+    "env": {},
+    "exit": 0,
+    "wall_s": 74.723,
+    "log": "tests.log.gz"
+  },
+  {
+    "name": "doc",
+    "argv": [
+      "cargo",
+      "doc",
+      "--locked",
+      "--workspace",
+      "--no-deps"
+    ],
+    "env": {
+      "RUSTDOCFLAGS": "-D warnings"
+    },
+    "exit": 0,
+    "wall_s": 4.097,
+    "log": "doc.log.gz"
+  },
+  {
+    "name": "size",
+    "argv": [
+      "python3",
+      "scripts/check-rust-size.py"
+    ],
+    "env": {},
+    "exit": 0,
+    "wall_s": 0.078,
+    "log": "size.log.gz"
+  },
+  {
+    "name": "links",
+    "argv": [
+      "python3",
+      "scripts/check-doc-links.py"
+    ],
+    "env": {},
+    "exit": 0,
+    "wall_s": 0.373,
+    "log": "links.log.gz"
+  },
+  {
+    "name": "ui-strings",
+    "argv": [
+      "python3",
+      "scripts/check-ui-strings.py"
+    ],
+    "env": {},
+    "exit": 0,
+    "wall_s": 0.265,
+    "log": "ui-strings.log.gz"
+  },
+  {
+    "name": "layers",
+    "argv": [
+      "python3",
+      "scripts/check-layers.py"
+    ],
+    "env": {},
+    "exit": 0,
+    "wall_s": 0.65,
+    "log": "layers.log.gz"
+  },
+  {
+    "name": "deny",
+    "argv": [
+      "cargo",
+      "deny",
+      "--locked",
+      "check",
+      "licenses",
+      "bans",
+      "sources"
+    ],
+    "env": {},
+    "exit": 0,
+    "wall_s": 1.146,
+    "log": "deny.log.gz"
+  },
+  {
+    "name": "build",
+    "argv": [
+      "cargo",
+      "build",
+      "--locked",
+      "-p",
+      "scholium-app",
+      "-p",
+      "scholium-storage",
+      "--bins"
+    ],
+    "env": {},
+    "exit": 0,
+    "wall_s": 3.294,
+    "log": "build.log.gz"
+  },
+  {
+    "name": "windows",
+    "argv": [
+      "python3",
+      "scripts/window-checks.py",
+      "--locale",
+      "zh-Hans",
+      "en",
+      "--out",
+      "spikes/rtex-eval/.work/t34-gates-main/windows"
+    ],
+    "env": {},
+    "exit": 0,
+    "wall_s": 1103.778,
+    "log": "windows.log.gz"
+  }
+]

@@ -16,19 +16,19 @@ spec.loader.exec_module(drift)
 
 class DriftReporting(unittest.TestCase):
     def test_external_failure_stays_visible_in_summary(self):
-        report = drift.table('v0.0.6', 'abc', 'v0.0.7', 'def', [('build', 'FAIL', 'exit 1')])
+        report = drift.table('main', 'abc', 'main', 'def', [('build', 'FAIL', 'exit 1')])
         self.assertIn('FAIL', report)
-        self.assertIn('v0.0.7', report)
-        self.assertIn('v0.0.6', report)
+        self.assertIn('`abc`', report)
+        self.assertIn('`def`', report)
 
     def test_summary_lists_commits_since_pin(self):
-        report = drift.table('v0.0.6', 'abc', 'v0.0.7', 'def', [], ['1234 upstream change'])
+        report = drift.table('main', 'abc', 'main', 'def', [], ['1234 upstream change'])
         self.assertIn('1234 upstream change', report)
 
-    def test_moved_pin_tag_is_reported_as_drift(self):
-        self.assertEqual(drift.tag_status('v0.0.6', 'abc', 'v0.0.6', 'abc'), 'same')
-        self.assertEqual(drift.tag_status('v0.0.6', 'abc', 'v0.0.6', 'def'), 'tag moved')
-        self.assertEqual(drift.tag_status('v0.0.6', 'abc', 'v0.0.7', 'def'), 'new tag')
+    def test_main_commit_comparison_needs_no_release_tag(self):
+        report = drift.table('main', 'abc', 'main', 'def', [])
+        self.assertIn('upstream `main`', report)
+        self.assertNotIn('latest tag', report)
 
     def test_dispatch_ref_can_name_a_remote_branch(self):
         with patch.object(drift, 'git', side_effect=[subprocess.CalledProcessError(128, 'git'), 'abc']) as git:

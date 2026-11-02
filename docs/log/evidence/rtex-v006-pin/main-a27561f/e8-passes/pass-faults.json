@@ -1,0 +1,221 @@
+[
+  {
+    "scenario": "background kill",
+    "pass_timeout_ms": 8000,
+    "host_watchdog": false,
+    "killed": [
+      {
+        "pid": 467186,
+        "comm": "lualatex",
+        "cmdline": "/usr/bin/lualatex -interaction=nonstopmode -file-line-error --jobname=main --output-directory=/work/build/bg/pass-0 \\directlua{local d=os.getenv(\"RTEX_PROJECT_DIR\") local m=os.getenv(\"RTEX_MAIN_DIR\") local p=\"\" if m then p=\"{\"..m..\"/}\" if d then p=p..\"{\"..d..\"/\"..m..\"/}\" end end if d then p=p..\"{\"..",
+        "cpu": 1.91
+      }
+    ],
+    "recovered": true,
+    "layouts": [
+      {
+        "t": 0.004,
+        "event": "LayoutUpdate",
+        "compile": {
+          "state": "Failed"
+        },
+        "convergence": {
+          "passes": 0,
+          "reasons": [
+            "background pass: lualatex was killed (signal: 9 (SIGKILL))"
+          ],
+          "state": "PassLimitReached"
+        },
+        "wall_ms": 1565,
+        "pages_total": 0,
+        "source_revision": 3,
+        "engine_generation": 0
+      }
+    ],
+    "timeout_seen": false,
+    "events": [
+      {
+        "t": 4.665,
+        "event": "EngineState",
+        "state": "Restarting",
+        "reason": "engine watchdog: no response within 5s; server killed"
+      },
+      {
+        "t": 4.665,
+        "event": "Diagnostics",
+        "source": "fast:ParaId(3)",
+        "items": [
+          {
+            "severity": "error",
+            "line": null,
+            "message": "engine watchdog: no response within 5s; server killed"
+          }
+        ]
+      },
+      {
+        "t": 4.665,
+        "event": "BackgroundScheduled",
+        "par_id": 3,
+        "edit_id": 1,
+        "reasons": [
+          "engine restarted"
+        ]
+      },
+      {
+        "t": 4.665,
+        "event": "EngineState",
+        "state": "Starting",
+        "reason": null
+      },
+      {
+        "t": 5.002,
+        "event": "EngineState",
+        "state": "Ready",
+        "reason": null
+      },
+      {
+        "t": 0.004,
+        "event": "Diagnostics",
+        "source": "background",
+        "items": [
+          {
+            "severity": "error",
+            "line": null,
+            "message": "background pass: lualatex was killed (signal: 9 (SIGKILL))"
+          }
+        ]
+      },
+      {
+        "t": 0.004,
+        "event": "LayoutUpdate",
+        "compile": {
+          "state": "Failed"
+        },
+        "convergence": {
+          "passes": 0,
+          "reasons": [
+            "background pass: lualatex was killed (signal: 9 (SIGKILL))"
+          ],
+          "state": "PassLimitReached"
+        },
+        "wall_ms": 1565,
+        "pages_total": 0,
+        "source_revision": 3,
+        "engine_generation": 0
+      }
+    ],
+    "other_unit_update": null,
+    "other_sent_after_loop_s": 0.5,
+    "recovered_after_fix_s": 0.469,
+    "verdict": {
+      "pass": true,
+      "scenario": "background kill"
+    }
+  },
+  {
+    "scenario": "upstream timeout",
+    "pass_timeout_ms": 8000,
+    "host_watchdog": false,
+    "killed": [],
+    "recovered": true,
+    "layouts": [
+      {
+        "t": 6.504,
+        "event": "LayoutUpdate",
+        "compile": {
+          "state": "Failed"
+        },
+        "convergence": {
+          "passes": 0,
+          "reasons": [
+            "background pass: lualatex was stopped after 8 s, the time limit of a pass (does the document loop forever?)"
+          ],
+          "state": "PassLimitReached"
+        },
+        "wall_ms": 8004,
+        "pages_total": 0,
+        "source_revision": 3,
+        "engine_generation": 0
+      }
+    ],
+    "timeout_seen": true,
+    "events": [
+      {
+        "t": 4.699,
+        "event": "EngineState",
+        "state": "Restarting",
+        "reason": "engine watchdog: no response within 5s; server killed"
+      },
+      {
+        "t": 4.699,
+        "event": "Diagnostics",
+        "source": "fast:ParaId(3)",
+        "items": [
+          {
+            "severity": "error",
+            "line": null,
+            "message": "engine watchdog: no response within 5s; server killed"
+          }
+        ]
+      },
+      {
+        "t": 4.699,
+        "event": "BackgroundScheduled",
+        "par_id": 3,
+        "edit_id": 1,
+        "reasons": [
+          "engine restarted"
+        ]
+      },
+      {
+        "t": 4.699,
+        "event": "EngineState",
+        "state": "Starting",
+        "reason": null
+      },
+      {
+        "t": 5.004,
+        "event": "EngineState",
+        "state": "Ready",
+        "reason": null
+      },
+      {
+        "t": 6.504,
+        "event": "Diagnostics",
+        "source": "background",
+        "items": [
+          {
+            "severity": "error",
+            "line": null,
+            "message": "background pass: lualatex was stopped after 8 s, the time limit of a pass (does the document loop forever?)"
+          }
+        ]
+      },
+      {
+        "t": 6.504,
+        "event": "LayoutUpdate",
+        "compile": {
+          "state": "Failed"
+        },
+        "convergence": {
+          "passes": 0,
+          "reasons": [
+            "background pass: lualatex was stopped after 8 s, the time limit of a pass (does the document loop forever?)"
+          ],
+          "state": "PassLimitReached"
+        },
+        "wall_ms": 8004,
+        "pages_total": 0,
+        "source_revision": 3,
+        "engine_generation": 0
+      }
+    ],
+    "other_unit_update": null,
+    "other_sent_after_loop_s": 0.5,
+    "recovered_after_fix_s": 0.468,
+    "verdict": {
+      "pass": true,
+      "scenario": "upstream timeout"
+    }
+  }
+]

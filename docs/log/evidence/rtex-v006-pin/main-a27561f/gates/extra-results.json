@@ -1,0 +1,48 @@
+[
+  {
+    "name": "pin-script-tests",
+    "argv": [
+      "python3",
+      "scripts/test-rtex-pin.py"
+    ],
+    "exit": 0,
+    "wall_s": 0.12
+  },
+  {
+    "name": "drift-script-tests",
+    "argv": [
+      "python3",
+      "scripts/test-rtex-upstream-drift.py"
+    ],
+    "exit": 0,
+    "wall_s": 0.334
+  },
+  {
+    "name": "e8-contract-tests",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "spikes/rtex-eval",
+      "-p",
+      "test_v006_contracts.py"
+    ],
+    "exit": 0,
+    "wall_s": 0.1
+  },
+  {
+    "name": "workflow-actionlint",
+    "argv": [
+      "go",
+      "run",
+      "github.com/rhysd/actionlint/cmd/actionlint@v1.7.7",
+      "-config-file",
+      "spikes/rtex-eval/.work/t34-actionlint.yaml",
+      ".github/workflows/rtex-upstream.yml"
+    ],
+    "exit": 0,
+    "wall_s": 2.518
+  }
+]

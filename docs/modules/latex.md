@@ -96,10 +96,13 @@ Rust 容错解析器配 Rowan CST 待验证；Tree-sitter 仅作可选高亮/导
 
 ## 上游跟进
 
-- 实时预览候选锁定于 [`rtex` v0.0.6](../../spikes/rtex-eval/PIN)，只作为 `rtex` OS 沙箱中的独立子进程；不加入 Scholium Rust 依赖图。
-  发布 tag 与 commit 由该 pin 记录唯一维护，评估 checkout 和构建留在仓库外。
+- 实时预览候选锁定于 [经评审的 upstream main commit](../../spikes/rtex-eval/PIN)，只作为 `rtex` OS 沙箱中的独立子进程；不加入 Scholium Rust 依赖图。
+  repository、branch main 与精确 commit 由该 pin 记录唯一维护，评估 checkout 和构建留在仓库外。
 - 每周一 03:37 UTC，`.github/workflows/rtex-upstream.yml` 调用 `scripts/rtex-upstream-drift.py`；也可手动指定上游 ref。
-  它报告最新 tag、pin 之后的提交、锁定构建、未过滤的 cargo-deny 结果，以及 `rtex serve` 启动/编辑/段落更新/布局冒烟。
+  它比较 upstream main 与 pin 的精确 commit，报告 pin 之后的提交、锁定构建、未过滤的 cargo-deny 结果，以及 `rtex serve` 启动/编辑/段落更新/布局冒烟。
   只有当前 Ubuntu runner 的真实 bubblewrap namespace 探测通过时，才运行 TeX 冒烟、E8 范围/路径拒绝子集与 E2 外部文件读取对照；
   否则将 TeX 检查标为未运行。此 job 只作外部监测，不在 push/PR 触发、不阻塞 PR、不自动开 issue；表格写入 job summary，原始日志作为 artifact。
-- 定时监测不替代本地 E2 全负对照、E3/E5/E6 回归、完整 E8 故障注入或真实窗口 L1 验收。上游版本变化须在独立任务中按 ADR 0043 复验后才移动 pin。
+- 定时监测不替代本地 E2 全负对照、E3/E5/E6 回归、完整 E8 故障注入或真实窗口 L1 验收。上游变化须按 ADR 0043 复验后才移动 pin。
+- `python3 scripts/rtex-pin.py [完整 commit SHA]` 一条命令在仓库外 clone/build、顺序跑 E1/E2/完整 E8，输出 Pass/Fail；无参数取当前 main head。
+  仅三项均通过才原子更新 PIN，失败保留旧 pin；不提交或推送。E3/E5/E6、文档评审与仓库门禁仍在提交前执行。
+  main pin 用于保留尚未发布的上游合并补丁（math owners、unicode-math 空根指数），并不自动追踪每次 main 变更；构建和 driver 均按完整 commit 取源码。

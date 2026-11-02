@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: Upstream rtex branch, tag or commit
+        description: Upstream ref to compare with the reviewed main commit pin
         default: main
 permissions:
   contents: read

@@ -1,0 +1,499 @@
+[
+ {
+  "scenario": "live engine SIGKILL",
+  "baseline": {
+   "routed": "fast",
+   "edit_id": 1,
+   "update": "ParagraphUpdate",
+   "status": "ok",
+   "reasons": [],
+   "latency_s": 0.256
+  },
+  "killed": [
+   "lualatex"
+  ],
+  "recovered_live_s": 15.082,
+  "layout_after": {
+   "event": "LayoutUpdate",
+   "compile": {
+    "state": "Ok"
+   },
+   "convergence": {
+    "state": "Converged"
+   },
+   "wall_ms": 334,
+   "pages_total": 1,
+   "source_revision": 6,
+   "engine_generation": 0
+  },
+  "sandbox_alive": true,
+  "engine_states": [
+   {
+    "t": 0.013,
+    "state": "Restarting",
+    "reason": "set_context: server closed the response channel"
+   },
+   {
+    "t": 0.014,
+    "state": "Starting",
+    "reason": null
+   },
+   {
+    "t": 0.653,
+    "state": "Ready",
+    "reason": null
+   }
+  ],
+  "edit_after_kill": {
+   "edit_id": 3,
+   "routed": "fast",
+   "own_update": null
+  },
+  "first_ok_update_after_kill_s": 15.08
+ },
+ {
+  "scenario": "live and background hang",
+  "watchdog_s": null,
+  "upstream_pass_timeout_ms": 8000,
+  "tex_processes_at_end": [
+   0.19,
+   0.27
+  ],
+  "loop_removed_at_s": 8.159,
+  "other_unit_edit": null,
+  "engine_states": [
+   {
+    "t": -0.537,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": -0.157,
+    "state": "Ready",
+    "reason": ""
+   },
+   {
+    "t": 5.158,
+    "state": "Restarting",
+    "reason": "engine watchdog: no response within 5s; server killed"
+   },
+   {
+    "t": 5.158,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 5.417,
+    "state": "Ready",
+    "reason": ""
+   }
+  ],
+  "follow_up_edit": {
+   "routed": "fast",
+   "reasons": []
+  },
+  "layouts": [
+   {
+    "t": -0.0,
+    "t_after_fix": -8.16,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Converged",
+    "wall_ms": 534,
+    "source_revision": 1
+   },
+   {
+    "t": 13.464,
+    "t_after_fix": 5.3,
+    "compile": {
+     "state": "Failed"
+    },
+    "convergence": "PassLimitReached",
+    "wall_ms": 8005,
+    "source_revision": 3
+   },
+   {
+    "t": 13.943,
+    "t_after_fix": 5.78,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Converged",
+    "wall_ms": 179,
+    "source_revision": 6
+   }
+  ],
+  "diagnostics": [
+   {
+    "t": 5.158,
+    "event": "Diagnostics",
+    "source": "fast:ParaId(3)",
+    "items": [
+     {
+      "severity": "error",
+      "line": null,
+      "message": "engine watchdog: no response within 5s; server killed"
+     }
+    ]
+   },
+   {
+    "t": 13.464,
+    "event": "Diagnostics",
+    "source": "background",
+    "items": [
+     {
+      "severity": "error",
+      "line": null,
+      "message": "background pass: lualatex was stopped after 8 s, the time limit of a pass (does the document loop forever?)"
+     }
+    ]
+   },
+   {
+    "t": 13.942,
+    "event": "Diagnostics",
+    "source": "fast:ParaId(3)",
+    "items": []
+   },
+   {
+    "t": 13.943,
+    "event": "Diagnostics",
+    "source": "background",
+    "items": []
+   }
+  ],
+  "layout_recovered_after_fix_s": 5.78
+ },
+ {
+  "scenario": "preamble error: missing-package",
+  "body_edit_while_broken": {
+   "routed": "fast",
+   "edit_id": 2,
+   "update": "timeout"
+  },
+  "recovered_live_s": 0.817,
+  "fixed_at_s": 19.162,
+  "engine_states": [
+   {
+    "t": 0.301,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 1.153,
+    "state": "Failed",
+    "reason": "lualatex server exited during startup with exit status: 1; TeX log: ! LaTeX Error: File `scholiumnosuchpkg.sty' not foun"
+   },
+   {
+    "t": 19.164,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 19.938,
+    "state": "Ready",
+    "reason": ""
+   }
+  ],
+  "layouts": [
+   {
+    "t": 1.161,
+    "compile": {
+     "state": "Failed"
+    },
+    "convergence": "PassLimitReached",
+    "pages_total": 0
+   },
+   {
+    "t": 20.431,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Stale",
+    "pages_total": 1
+   },
+   {
+    "t": 21.065,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Converged",
+    "pages_total": 1
+   }
+  ],
+  "diagnostics": [
+   [
+    {
+     "severity": "error",
+     "line": null,
+     "message": "background pass: capture run produced no /work/build/bg/pass-0/main.rtex.json; lualatex exit Some(1)\nlatex/base/tuenc.def)\n(/usr/share/texmf-dist/tex/luatex/chinese-jfm/jfm-zh_CN.lua)) (/usr/share/texmf-dist/tex/latex/zhnumber/zhnumber.sty (/usr/share/texmf-dist/tex/latex/zhnumber/zhnumber-utf8.cfg)) (/usr/share/texmf-dist/tex/latex/ctex/scheme/ctex-scheme-chinese-article.def (/usr/share/texmf-dist/tex/latex/ctex/config/ctex-name-utf8.cfg)) (/usr/share/texmf-dist/tex/latex/ctex/ctex-c5size.clo) (/usr/share/texmf-dist/tex/latex/ctex/fontset/ctex-fontset-fandol.def)) (/usr/share/texmf-dist/tex/latex/ctex/config/ctex.cfg) (/usr/share/texmf-dist/tex/latex/amsmath/amsmath.sty\nFor additional information on amsmath, use the `?' option.\n(/usr/share/texmf-dist/tex/latex/amsmath/amstext.sty (/usr/share/texmf-dist/tex/latex/amsmath/amsgen.sty)) (/usr/share/texmf-dist/tex/latex/amsmath/amsbsy.sty) (/usr/share/texmf-dist/tex/latex/amsmath/amsopn.sty)) (/usr/share/texmf-dist/tex/latex/amsfonts/amssymb.sty (/usr/share/texmf-dist/tex/latex/amsfonts/amsfonts.sty)) (/usr/share/texmf-dist/tex/latex/amscls/amsthm.sty))\n\n! LaTeX Error: File `scholiumnosuchpkg.sty' not found.\n\nType X to quit or <RETURN> to proceed,\nor enter new name. (Default extension: sty)\n\nEnter file name: \n! Emergency stop.\n<read *> \n         \n<*> ...\"..m..\"/\"..e..\"}\" if d then post=post..\"{\"..d..\"/\"..m..\"/\"..e..\"}\" end end if d then post=post..\"{\"..d..\"/\"..e..\"}\" end end end token.set_macro(\"Ginput@path\",pre..g..post) end}}\\RequirePackage{rtex-capture}\\input{rtex-preamble.tex}\n                                                                                                                                                                                                                                              \\directlua{do...\n 551 words of node memory still in use:\n   4 hlist, 1 rule, 1 dir, 3 kern, 1 glyph, 47 attribute, 54 glue_spec, 11 attribute_list, 1 write, 6 user_defined nodes\n   avail lists: 2:39,3:4,5:5,7:5,9:2,10:1\n!  ==> Fatal error occurred, no output PDF file produced!\nTranscript written on main.log.\n"
+    }
+   ],
+   [],
+   []
+  ],
+  "layout_ok_after_fix_s": 1.269
+ },
+ {
+  "scenario": "preamble error: undefined-command",
+  "body_edit_while_broken": {
+   "routed": "fast",
+   "edit_id": 2,
+   "update": "ParagraphUpdate",
+   "status": "ok",
+   "reasons": [],
+   "latency_s": 0.135
+  },
+  "recovered_live_s": 1.217,
+  "fixed_at_s": 9.459,
+  "engine_states": [
+   {
+    "t": 0.418,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 1.128,
+    "state": "Ready",
+    "reason": ""
+   },
+   {
+    "t": 9.808,
+    "state": "Starting",
+    "reason": ""
+   },
+   {
+    "t": 10.635,
+    "state": "Ready",
+    "reason": ""
+   }
+  ],
+  "layouts": [
+   {
+    "t": 1.323,
+    "compile": {
+     "count": 1,
+     "state": "CompiledWithErrors"
+    },
+    "convergence": "Converging",
+    "pages_total": 1
+   },
+   {
+    "t": 11.074,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Stale",
+    "pages_total": 1
+   },
+   {
+    "t": 11.72,
+    "compile": {
+     "state": "Ok"
+    },
+    "convergence": "Converged",
+    "pages_total": 1
+   }
+  ],
+  "diagnostics": [
+   [
+    {
+     "severity": "error",
+     "line": 5,
+     "message": "Undefined control sequence."
+    }
+   ],
+   [],
+   []
+  ],
+  "layout_ok_after_fix_s": 1.615
+ },
+ {
+  "scenario": "malformed host commands",
+  "cases": [
+   {
+    "case": "start>end",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": 442,
+     "end": 440,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "bad edit range 442..440 in main.tex: the file has 2507 bytes and offsets must fall on UTF-8 character boundaries"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "end beyond file",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": 2504,
+     "end": 3507,
+     "text": ""
+    },
+    "reply": {
+     "reply": "error",
+     "message": "bad edit range 2504..3507 in main.tex: the file has 2507 bytes and offsets must fall on UTF-8 character boundaries"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "start beyond file",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": 2607,
+     "end": 2607,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "bad edit range 2607..2607 in main.tex: the file has 2507 bytes and offsets must fall on UTF-8 character boundaries"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "negative start",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": -5,
+     "end": -5,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "bad start"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "unknown file",
+    "command": {
+     "cmd": "edit",
+     "path": "nope.tex",
+     "start": 0,
+     "end": 0,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "unknown file nope.tex"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "path traversal edit",
+    "command": {
+     "cmd": "edit",
+     "path": "../../etc/passwd",
+     "start": 0,
+     "end": 0,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "unknown file ../../etc/passwd"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "set_document outside project",
+    "command": {
+     "cmd": "set_document",
+     "path": "../../e8-escape.tex",
+     "text": "escape\n"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "../../e8-escape.tex is outside the project"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "set_document absolute",
+    "command": {
+     "cmd": "set_document",
+     "path": "/tmp/e8-escape-abs.tex",
+     "text": "escape\n"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "/tmp/e8-escape-abs.tex is outside the project"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "invalid json",
+    "command": "{not json",
+    "reply": {
+     "reply": "error",
+     "message": "key must be a string at line 1 column 2"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "unknown cmd",
+    "command": {
+     "cmd": "format_disk"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "unknown evaluation command"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "mid-codepoint",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": 166,
+     "end": 166,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "bad edit range 166..166 in main.tex: the file has 2507 bytes and offsets must fall on UTF-8 character boundaries"
+    },
+    "events": [],
+    "alive": true
+   }
+  ],
+  "written_outside_snapshot": [],
+  "exit": 0
+ },
+ {
+  "scenario": "rtex serve SIGKILL",
+  "first_layout_s": 1.544,
+  "killed": [
+   466626
+  ],
+  "events": [
+   {
+    "t": 0.001,
+    "harness": "{'harness_eof': True}"
+   }
+  ],
+  "eof_after_s": 0.001,
+  "sandbox_exit": 137,
+  "detected_s": 0.001,
+  "stray_processes": [],
+  "restart_warm-cache_first_layout_s": 1.611,
+  "restart_cache-copy_first_layout_s": 1.546
+ }
+]

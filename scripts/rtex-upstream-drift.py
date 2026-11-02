@@ -45,14 +45,8 @@ def resolve(clone, ref):
     raise ValueError(f"unknown upstream ref: {ref}")
 
 
-def tag_status(pin_tag, pin_sha, latest_tag, latest_sha):
-    if latest_tag != pin_tag:
-        return "new tag"
-    return "same" if latest_sha == pin_sha else "tag moved"
-
-
-def table(pin_tag, pin_sha, latest_tag, sha, rows, commits=()):
-    lines = [f"rtex upstream `{sha}`; latest tag `{latest_tag}`; pin `{pin_tag}` (`{pin_sha}`)", "",
+def table(pin_branch, pin_sha, upstream_ref, sha, rows, commits=()):
+    lines = [f"rtex upstream `{upstream_ref}` (`{sha}`); pin `{pin_branch}` (`{pin_sha}`)", "",
              "| stage | result | detail |", "| --- | --- | --- |"]
     lines += [f"| {name} | {status} | {detail.replace('|', '/').replace(chr(10), ' ')} |"
               for name, status, detail in rows]
@@ -152,17 +146,15 @@ def main():
     logs.mkdir()
     pin=json.loads((EVAL/'PIN').read_text())
     rows=[]
-    latest=sha='unresolved'
+    sha='unresolved'
     commits=[]
     try:
-        latest=git(clone, 'tag', '--sort=-version:refname').splitlines()[0]
-        latest_sha=git(clone, 'rev-parse', '--verify', f'{latest}^{{commit}}')
         sha=resolve(clone, args.ref)
         if run(['git','-C',str(clone),'checkout','--detach',sha], clone, logs/'checkout.log', 30):
             raise RuntimeError('upstream checkout failed')
         commits=git(clone,'log','--oneline',f"{pin['commit']}..{sha}").splitlines()
         (logs/'commits.log').write_text('\n'.join(commits)+'\n')
-        rows += [('latest tag vs pin', tag_status(pin['tag'], pin['commit'], latest, latest_sha), f'{latest} ({latest_sha})'),
+        rows += [('upstream commit vs pin', 'same' if sha == pin['commit'] else 'different', sha),
                  ('commits since pin', 'info', f"{len(commits)}; see below and commits.log")]
         built=run(['cargo','build','--release','--locked'],clone,logs/'build.log',1200)
         rows.append(('build', 'ok' if built==0 else 'FAIL', f'exit {built}'))
@@ -178,7 +170,7 @@ def main():
             rows.append(('TeX/sandbox checks','not run','requires --tex, successful build and real bubblewrap namespace probe; full E2/E8/E3/E5/E6 remain local'))
     except Exception as error:
         rows.append(('setup', 'FAIL', repr(error)))
-    report=table(pin['tag'],pin['commit'],latest,sha,rows,commits)
+    report=table(pin.get('branch', 'main'),pin['commit'],args.ref,sha,rows,commits)
     (logs/'summary.md').write_text(report)
     if args.summary:
         with args.summary.open('a') as out: out.write(report)
