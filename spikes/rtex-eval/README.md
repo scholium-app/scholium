@@ -6,6 +6,9 @@
 `docs/log/evidence/rtex-evaluation/` 与 `docs/log/evidence/rtex-evaluation-2/`。这里只有评估用的驱动、夹具与
 栅格化原型，不是产品代码，不进入根 workspace（`raster/` 有自己的 `[workspace]`）。
 
+v0.0.6 的升级复验因 E1 失败停止，默认版本保留 v0.0.5；失败原因、原始证据与未执行项见
+[升级复验记录](../../docs/log/2026-11-02-rtex-v006-pin.md)。
+
 ## 前提
 
 - 上游 rtex 视为不受信下载代码：只在仓库外克隆、构建，绝不复制进仓库，也不运行它的 `scripts/install-texlive.sh`。

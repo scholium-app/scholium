@@ -1,0 +1,92 @@
+{
+  "task": "T34",
+  "executed_local_date": "2026-11-01",
+  "timezone": "America/Los_Angeles",
+  "upstream": {
+    "url": "https://github.com/HenryXiaoYang/realtime-tex",
+    "tag": "v0.0.6",
+    "sha": "98b40be29ef517918ce707869e6fe0316685b3dd",
+    "checkout": "/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.6",
+    "git_status_porcelain": "",
+    "lockfile_sha256": "5e1bd629a20b66c53b214f4fad9e00a776c0b087b252122c72f483e713c5ceb5"
+  },
+  "deny_config_sha256": "3cfe3b5936fb82606bede9c9456b6ffbd42738de0785935ed6483289adb5f0e8",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--depth",
+        "1",
+        "--branch",
+        "v0.0.6",
+        "https://github.com/HenryXiaoYang/realtime-tex",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.6"
+      ],
+      "exit": 0
+    },
+    {
+      "argv": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked"
+      ],
+      "cwd": "/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.6",
+      "exit": 0,
+      "observation": "Finished release profile in 13.41s; output observed in executor transcript, no raw build log retained"
+    },
+    {
+      "argv": [
+        "cargo",
+        "deny",
+        "--locked",
+        "--manifest-path",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.6/Cargo.toml",
+        "--config",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml",
+        "check",
+        "--show-stats",
+        "licenses",
+        "bans",
+        "sources"
+      ],
+      "cwd": "/home/ation_ciger/Projects/Mogan/scholium-wt3",
+      "exit": 2,
+      "log": "e1/policy.log"
+    },
+    {
+      "argv": [
+        "cargo",
+        "deny",
+        "--locked",
+        "--manifest-path",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.6/Cargo.toml",
+        "--config",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml",
+        "check",
+        "--show-stats",
+        "advisories"
+      ],
+      "cwd": "/home/ation_ciger/Projects/Mogan/scholium-wt3",
+      "exit": 1,
+      "log": "e1/advisories.log"
+    }
+  ],
+  "decision": "stop at E1 failure; keep v0.0.5 pin",
+  "not_run": [
+    "E2",
+    "E8",
+    "E3",
+    "E5",
+    "E6",
+    "ubuntu-26.04 feasibility"
+  ],
+  "not_implemented": [
+    "pin move",
+    "ADR pin revision",
+    "upstream workflow",
+    "upstream script",
+    "latex tracking section"
+  ]
+}
