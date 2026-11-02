@@ -15,6 +15,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     std::fs::create_dir_all(&output)?;
     let worker = EditorWorker::spawn(|| {})?;
     for name in [
+        "square-root",
+        "indexed-root",
+        "root-delimiter",
+        "delim-paren",
+        "delim-bracket",
+        "delim-brace",
+        "delim-abs",
+        "delim-norm",
+        "delim-angle",
+        "delim-floor",
+        "delim-ceil",
         "full",
         "edge-root",
         "edge-row",

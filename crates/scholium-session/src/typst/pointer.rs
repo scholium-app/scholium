@@ -70,7 +70,13 @@ impl EditorCore {
                     && c.top[1] <= point[1]
                     && point[1] <= c.bottom[1]
                     && self.math_node_at(c.position.leaf).is_some_and(|n| {
-                        matches!(n.body, MathBody::Fraction { .. } | MathBody::Attach { .. })
+                        matches!(
+                            n.body,
+                            MathBody::Fraction { .. }
+                                | MathBody::Attach { .. }
+                                | MathBody::Root { .. }
+                                | MathBody::Delimited { .. }
+                        )
                     })
             })
         {
@@ -81,8 +87,13 @@ impl EditorCore {
         (caret.exact
             && (known.contains_key(&caret.position.leaf)
                 || self.math_node_at(caret.position.leaf).is_some_and(|n| {
-                    matches!(n.body, MathBody::Fraction { .. } | MathBody::Attach { .. })
-                        && caret.position.byte <= 1
+                    matches!(
+                        n.body,
+                        MathBody::Fraction { .. }
+                            | MathBody::Attach { .. }
+                            | MathBody::Root { .. }
+                            | MathBody::Delimited { .. }
+                    ) && caret.position.byte <= 1
                 })))
         .then_some(caret.position)
     }

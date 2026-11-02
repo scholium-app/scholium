@@ -16,9 +16,35 @@ pub(super) fn apply(
 ) -> Result<Landing, EditError> {
     let cursor = |cursor| (cursor, None);
     match edit {
+        StructuralEdit::RootIndex { node } => {
+            let target = math_node(doc, node).ok_or(EditError::WrongTarget)?;
+            let MathBody::Root { index, .. } = &mut target.body else {
+                return Err(EditError::WrongTarget);
+            };
+            let index = index.get_or_insert_with(|| Box::new(MathNode::hole()));
+            Ok(cursor(
+                first_edit_stop(index).map(|leaf| BodyTextPosition { leaf, byte: 0 }),
+            ))
+        }
         StructuralEdit::FractionAt { start, end } => {
             super::fraction::insert(doc, start, end).map(|c| cursor(Some(c)))
         }
+        StructuralEdit::RootAt { start, end } => {
+            super::fraction::wrap(doc, start, end, super::fraction::Wrapper::Root)
+                .map(|c| cursor(Some(c)))
+        }
+        StructuralEdit::DelimitedAt {
+            start,
+            end,
+            open,
+            close,
+        } => super::fraction::wrap(
+            doc,
+            start,
+            end,
+            super::fraction::Wrapper::Delimited(open, close),
+        )
+        .map(|c| cursor(Some(c))),
         StructuralEdit::InsertMathSibling {
             node,
             after,
@@ -58,10 +84,21 @@ pub(super) fn apply(
     }
 }
 
+fn first_edit_stop(node: &MathNode) -> Option<NodeId> {
+    match &node.body {
+        MathBody::Row { children } => children.iter().find_map(first_edit_stop),
+        MathBody::Symbol { .. } => None,
+        _ => Some(node.node),
+    }
+}
+
 fn apply_single(doc: &mut StructuredDocument, edit: StructuralEdit) -> Result<(), EditError> {
     match edit {
         // The dispatcher handles ranges and attach edits (which return carets) separately.
         StructuralEdit::FractionAt { .. }
+        | StructuralEdit::RootIndex { .. }
+        | StructuralEdit::RootAt { .. }
+        | StructuralEdit::DelimitedAt { .. }
         | StructuralEdit::ReplaceBodyRange { .. }
         | StructuralEdit::SetRangeStyle { .. }
         | StructuralEdit::Attach { .. }
@@ -78,6 +115,20 @@ fn apply_single(doc: &mut StructuredDocument, edit: StructuralEdit) -> Result<()
                 numerator: Box::new(old),
                 denominator: Box::new(MathNode::hole()),
             };
+            Ok(())
+        }
+        StructuralEdit::SetDelimiter { node, open, close } => {
+            let target = math_node(doc, node).ok_or(EditError::WrongTarget)?;
+            let MathBody::Delimited {
+                open: old_open,
+                close: old_close,
+                ..
+            } = &mut target.body
+            else {
+                return Err(EditError::WrongTarget);
+            };
+            *old_open = open;
+            *old_close = close;
             Ok(())
         }
         StructuralEdit::InsertMath { block, at } => insert_math(doc, block, at),
@@ -258,6 +309,11 @@ fn find(node: &mut MathNode, id: NodeId) -> Option<&mut MathNode> {
         MathBody::Attach { base, sub, sup } => find(base, id)
             .or_else(|| sub.as_deref_mut().and_then(|n| find(n, id)))
             .or_else(|| sup.as_deref_mut().and_then(|n| find(n, id))),
+        MathBody::Root { index, radicand } => index
+            .as_deref_mut()
+            .and_then(|n| find(n, id))
+            .or_else(|| find(radicand, id)),
+        MathBody::Delimited { body, .. } => find(body, id),
         _ => None,
     }
 }

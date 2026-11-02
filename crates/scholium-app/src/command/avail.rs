@@ -27,6 +27,22 @@ pub(super) fn in_formula(c: &CommandContext) -> Availability {
     }
 }
 
+pub(super) fn in_root(c: &CommandContext) -> Availability {
+    match in_formula(c) {
+        Availability::Enabled if !c.in_root => Availability::Disabled("reason.not_in_root"),
+        other => other,
+    }
+}
+
+pub(super) fn in_delimiter(c: &CommandContext) -> Availability {
+    match in_formula(c) {
+        Availability::Enabled if !c.in_delimiter => {
+            Availability::Disabled("reason.not_in_delimiter")
+        }
+        other => other,
+    }
+}
+
 /// Copy and cut also need a selection.
 pub(super) fn page_selection(c: &CommandContext) -> Availability {
     match page_write(c) {

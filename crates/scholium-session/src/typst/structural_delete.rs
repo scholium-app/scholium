@@ -20,7 +20,10 @@ fn empty_owner(node: &MathNode, leaf: scholium_model::NodeId) -> Option<scholium
     inner.or_else(|| {
         (matches!(
             node.body,
-            MathBody::Fraction { .. } | MathBody::Attach { .. }
+            MathBody::Fraction { .. }
+                | MathBody::Attach { .. }
+                | MathBody::Root { .. }
+                | MathBody::Delimited { .. }
         ) && node.node != leaf
             && empty(node))
         .then_some(node.node)

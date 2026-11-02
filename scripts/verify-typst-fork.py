@@ -33,7 +33,7 @@ def main():
     upstream = Path(sys.argv[1]).resolve()
     archive = subprocess.check_output(["git", "-C", str(upstream), "archive", commit, *paths])
     patches = sorted(patch_dir.glob("*.patch"))
-    assert len(patches) == 4
+    assert len(patches) == 5
     with tempfile.TemporaryDirectory(prefix="scholium-fork-check-") as directory:
         rebuilt = Path(directory)
         with tarfile.open(fileobj=io.BytesIO(archive)) as source:

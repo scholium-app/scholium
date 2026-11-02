@@ -72,6 +72,8 @@ pub(crate) struct EditorView {
     pub selected: bool,
     /// The caret is inside an inline formula (status bar mode segment).
     pub in_math: bool,
+    pub in_root: bool,
+    pub in_delimiter: bool,
     /// Bold / emphasis state of the caret leaf, pending typing style or whole selection.
     pub active: style::ActiveStyles,
     pub can_undo: bool,
@@ -297,6 +299,8 @@ impl EditorSession {
             view.dirty = self.core.dirty();
             view.selected = self.selected();
             view.in_math = self.in_math();
+            view.in_root = self.core.root_owner().is_some();
+            view.in_delimiter = self.core.delimiter_owner().is_some();
             view.active = self.active_styles();
             view.can_undo = !self.undo.is_empty();
             view.can_redo = !self.redo.is_empty();

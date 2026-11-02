@@ -89,7 +89,10 @@ pub(super) fn math_boundary(node: &MathNode, end: bool) -> Option<(scholium_mode
             }
         }
         MathBody::Hole => 0,
-        MathBody::Fraction { .. } | MathBody::Attach { .. } => usize::from(end),
+        MathBody::Fraction { .. }
+        | MathBody::Attach { .. }
+        | MathBody::Root { .. }
+        | MathBody::Delimited { .. } => usize::from(end),
         MathBody::Row { children } => {
             return if end {
                 children.iter().rev().find_map(|c| math_boundary(c, end))

@@ -159,9 +159,9 @@ SceneStamp 采纳，类型本身不构成窗口竞态验收。裁决见
 
 ## 数学边缘编辑
 
-`InsertMathSibling { node, after, sibling }` 只接受 Fraction/Attach 目标，在已有父 Row 中插入兄弟，
+`InsertMathSibling { node, after, sibling }` 接受 Fraction/Attach/Root/Delimited 目标，在已有父 Row 中插入兄弟，
 目标为公式根或必填槽根时包成新 Row；原结构和后代身份保留。结果 cursor 指向新兄弟；边缘文字、
-分数及空 base 的 Attach 共用这一原子规划。`RemoveEmptyMath` 只移除全空 Fraction/Attach：Row 中
+分数及空 base 的 Attach 共用这一原子规划。`RemoveEmptyMath` 只移除全空复合结构：Row 中
 摘除并选择相邻边界，其他位置替换为新 Hole；`RemoveEmptyFormula` 只移除全空 inline 公式，返回正文
 边界，无正文叶时创建空正文。非法目标或非空删除拒绝且无部分修改。
 
@@ -180,3 +180,7 @@ SceneStamp 采纳，类型本身不构成窗口竞态验收。裁决见
 单子 Row 归一化为其唯一子节点，不为插入制造嵌套 Row；仅首次创建 Row 时分配新身份。Text 拆分的首个非空片段保留旧身份。
 `StructuralOutcome.cursor` 是命令落点；一次编辑只产生一个动作。底层显式 `WrapFraction`
 仍保留整子树包装合约，用户分数命令使用 `FractionAt`。
+
+`RootAt` 和 `DelimitedAt` 共用同一行范围规划：无选区时保留前后文字并进入空内容槽，
+有选区时仅包装所选内容并进入该槽。`RootIndex` 增加空 index 或进入已有 index 的首个可编辑停点；
+`SetDelimiter` 更换配对，最终结构验证拒绝不支持的组合。它们遵守相同的原子动作、撤销和无效范围合约。

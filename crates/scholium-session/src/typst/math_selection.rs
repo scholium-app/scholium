@@ -54,7 +54,10 @@ impl EditorCore {
         let compound = &row[i];
         if !matches!(
             compound.body,
-            MathBody::Fraction { .. } | MathBody::Attach { .. }
+            MathBody::Fraction { .. }
+                | MathBody::Attach { .. }
+                | MathBody::Root { .. }
+                | MathBody::Delimited { .. }
         ) {
             return None;
         }
@@ -117,6 +120,8 @@ impl EditorCore {
                     }
                     MathBody::Fraction { .. }
                     | MathBody::Attach { .. }
+                    | MathBody::Root { .. }
+                    | MathBody::Delimited { .. }
                     | MathBody::Symbol { .. } => quads.extend(scene.geometry.selection_math(node)?),
                     _ => return Err(EditorError::Geometry.into()),
                 }

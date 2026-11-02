@@ -137,6 +137,25 @@ pub enum MathBody {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         sup: Option<Box<MathNode>>,
     },
+    /// Square or indexed root with addressed radicand and optional index slots.
+    /// Additive to schema v1: older builds reject documents that contain it.
+    Root {
+        /// Optional root index (slot 1 when present).
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        index: Option<Box<MathNode>>,
+        /// Required content under the radical.
+        radicand: Box<MathNode>,
+    },
+    /// Auto-sized paired delimiters around one addressed body slot.
+    /// Additive to schema v1: older builds reject documents that contain it.
+    Delimited {
+        /// Supported opening delimiter.
+        open: char,
+        /// Matching supported closing delimiter.
+        close: char,
+        /// Content between the delimiters.
+        body: Box<MathNode>,
+    },
     /// Required unfilled slot. Display hints are not stored characters.
     Hole,
 }

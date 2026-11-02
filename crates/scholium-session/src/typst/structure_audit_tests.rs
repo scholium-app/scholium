@@ -29,6 +29,19 @@ fn attach(base: MathNode, sub: Option<MathNode>, sup: Option<MathNode>) -> MathN
         sup: sup.map(Box::new),
     })
 }
+fn root(index: Option<MathNode>, radicand: MathNode) -> MathNode {
+    node(MathBody::Root {
+        index: index.map(Box::new),
+        radicand: Box::new(radicand),
+    })
+}
+fn delimited(body: MathNode) -> MathNode {
+    node(MathBody::Delimited {
+        open: '(',
+        close: ')',
+        body: Box::new(body),
+    })
+}
 fn inline(body: InlineBody) -> StructuredInline {
     StructuredInline {
         node: NodeId::fresh(),
@@ -52,6 +65,29 @@ struct Case {
 }
 fn roots() -> Vec<(&'static str, MathNode)> {
     vec![
+        ("root", root(None, text("x"))),
+        ("indexed-root", root(Some(text("3")), text("x"))),
+        ("delimiter", delimited(text("x"))),
+        ("empty-root", root(None, MathNode::hole())),
+        (
+            "empty-indexed-root",
+            root(Some(MathNode::hole()), MathNode::hole()),
+        ),
+        ("empty-delimiter", delimited(MathNode::hole())),
+        (
+            "delimiter-fraction",
+            delimited(fraction(text("a"), text("b"))),
+        ),
+        (
+            "root-in-attach",
+            attach(text("x"), None, Some(root(None, text("y")))),
+        ),
+        (
+            "adjacent-root-delimiter",
+            node(MathBody::Row {
+                children: vec![root(None, text("x")), delimited(text("y"))],
+            }),
+        ),
         ("superscript", attach(text("x"), None, Some(text("2")))),
         ("subscript", attach(text("x"), Some(text("i")), None)),
         (
@@ -261,6 +297,27 @@ fn math_stops(root: &MathNode, before: bool, after: bool, out: &mut Vec<Stop>) {
                 out.push((root.node, 1));
             }
         }
+        MathBody::Root { index, radicand } => {
+            if !before {
+                out.push((root.node, 0));
+            }
+            if let Some(index) = index {
+                math_stops(index, false, false, out);
+            }
+            math_stops(radicand, false, false, out);
+            if !after {
+                out.push((root.node, 1));
+            }
+        }
+        MathBody::Delimited { body, .. } => {
+            if !before {
+                out.push((root.node, 0));
+            }
+            math_stops(body, false, false, out);
+            if !after {
+                out.push((root.node, 1));
+            }
+        }
         MathBody::Symbol { .. } => {}
     }
 }
@@ -345,7 +402,10 @@ fn removable(root: &MathNode, at: NodeId) -> bool {
     if empty(root)
         && matches!(
             root.body,
-            MathBody::Fraction { .. } | MathBody::Attach { .. }
+            MathBody::Fraction { .. }
+                | MathBody::Attach { .. }
+                | MathBody::Root { .. }
+                | MathBody::Delimited { .. }
         )
     {
         return true;
