@@ -66,8 +66,18 @@ pub(super) fn key(key: egui::Key, command: bool) -> egui::Event {
     }
 }
 
+pub(super) fn shift_left() -> egui::Event {
+    egui::Event::Key {
+        key: egui::Key::ArrowLeft,
+        physical_key: None,
+        pressed: true,
+        repeat: false,
+        modifiers: egui::Modifiers::SHIFT,
+    }
+}
+
 #[test]
-fn empty_inline_formula_and_empty_fraction_denominator_have_current_geometry() {
+fn empty_inline_formula_and_inserted_fraction_numerator_have_current_geometry() {
     let mut f = Fixture::new();
     f.events(vec![text("$")]);
     f.settle();
@@ -86,7 +96,7 @@ fn empty_inline_formula_and_empty_fraction_denominator_have_current_geometry() {
         f.editor
             .scene
             .as_ref()
-            .expect("empty denominator")
+            .expect("empty numerator")
             .geometry
             .caret(f.editor.cursor)
             .is_some()
@@ -94,7 +104,7 @@ fn empty_inline_formula_and_empty_fraction_denominator_have_current_geometry() {
 }
 
 #[test]
-fn multi_event_frame_enters_fraction_and_nested_denominator_without_losing_input() {
+fn multi_event_frame_inserts_fractions_without_moving_prior_text_into_numerators() {
     let mut f = Fixture::new();
     f.events(vec![
         text("中文 English "),
@@ -109,7 +119,7 @@ fn multi_event_frame_enters_fraction_and_nested_denominator_without_losing_input
         .into_iter()
         .map(|l| l.text.to_owned())
         .collect();
-    assert_eq!(values, ["中文 English ", "12", "3", "4", ""]);
+    assert_eq!(values, ["中文 English ", "12", "3", "4", "", "", ""]);
     assert_eq!(f.editor.snapshot.revision.0, 7);
     f.settle();
     let scene = f.editor.scene.as_ref().expect("settled scene");

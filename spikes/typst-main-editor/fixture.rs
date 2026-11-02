@@ -65,6 +65,18 @@ pub fn fixture(name: &str) -> StructuredDocument {
                 ],
             )
         }
+        "fraction-at-caret" => (
+            BlockKind::Paragraph,
+            vec![
+                text("caret ", TextStyle::Plain),
+                StructuredInline {
+                    node: NodeId::fresh(),
+                    body: InlineBody::Math {
+                        root: row(vec![math("ab"), frac(math("n"), math("d")), math("c")]),
+                    },
+                },
+            ],
+        ),
         "preedit" => (BlockKind::Paragraph, vec![text("abZZ", TextStyle::Plain)]),
         "full" => (
             BlockKind::Paragraph,

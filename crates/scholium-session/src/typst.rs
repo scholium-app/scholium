@@ -15,6 +15,7 @@ mod math_caret;
 #[cfg(test)]
 mod math_edge_tests;
 mod math_enter;
+mod math_selection;
 mod persistence;
 pub mod pointer;
 mod projection;
@@ -209,3 +210,9 @@ impl ReadAuthority {
         Self { inner }
     }
 }
+
+#[cfg(test)]
+mod structure_audit_tests;
+
+#[cfg(test)]
+mod fraction_caret_tests;

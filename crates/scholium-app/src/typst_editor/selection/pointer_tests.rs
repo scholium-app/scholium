@@ -8,6 +8,8 @@ fn three_paragraphs() -> Fixture {
         egui::Event::Paste("alpha one\nbeta ".into()),
         text("$"),
         text("12"),
+        crate::typst_editor::tests::shift_left(),
+        crate::typst_editor::tests::shift_left(),
         key(egui::Key::Slash, true),
         text("3"),
         key(egui::Key::M, true),

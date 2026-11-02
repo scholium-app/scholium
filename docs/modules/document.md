@@ -106,7 +106,7 @@ LocalSession 内部共享 accepted snapshot 与 action journal；`rollback_check
 结构规划仍复制一次当前文档。`restore_structured_shared` 复用 Arc 文档，但和 owned 恢复入口一样验证结构与请求日志。
 
 `StructuralRequest` 带文档、base revision、唯一请求身份；ReplaceText 使用 leaf NodeId
-和叶内 UTF-8 字素边界，RawMath 不可穿透。InsertMath/InsertMathAt/WrapFraction、SplitBlock/
+和叶内 UTF-8 字素边界，RawMath 不可穿透。InsertMath/InsertMathAt/FractionAt/WrapFraction、SplitBlock/
 MergeWithNext、整叶 SetTextStyle、SetRangeStyle 和 SetKind 先在临时规划副本验证，再一次接受。存活节点
 身份不变；新分数 wrapper、新分母 Hole、新拆块/右叶才分配新 ID。删除数学叶最后文字
 恢复同 ID Hole；若该叶是 Row 中紧邻 Fraction/Attach 的文字，清空时直接摘除并返回结构边缘，
@@ -168,3 +168,15 @@ SceneStamp 采纳，类型本身不构成窗口竞态验收。裁决见
 这些命令及 ReplaceText 的清空归一化复用既有临时规划、结构验证、唯一请求及历史契约，不增加持久化
 字段。结果的数学边缘位置用结构 ID、byte 0/1 表示前/后，不解释成文字偏移；见
 [ADR 0045](../adr/ADR-0045-math-edge-caret.md)。
+
+## 光标处分数与数学行选区
+
+`FractionAt { start, end }` 在同一个数学 Row 或隐式单节点槽行内原子规划。
+端点相同表示在 UTF-8 字素边界插入空分数：Text 的前后片段留在同一 Row，Hole 直接成为分数，
+存活光标进入空分子。在复合结构 0/1 边缘同样插入空分数兄弟，不收取原结构内容。
+端点不同则仅把所选范围作为分子，进入空分母；端点可逆序，部分 Text 拆分，完整覆盖的结构保留身份。
+`math_row_range` 返回验证并排序后的 `MathRowRange`（行身份及起止端点）；跨槽、跨公式、
+非法字素端点和部分复合结构选区拒绝，不更改 revision/journal。仍有多个子节点的 Row 保留原身份，直接拼接新片段，
+单子 Row 归一化为其唯一子节点，不为插入制造嵌套 Row；仅首次创建 Row 时分配新身份。Text 拆分的首个非空片段保留旧身份。
+`StructuralOutcome.cursor` 是命令落点；一次编辑只产生一个动作。底层显式 `WrapFraction`
+仍保留整子树包装合约，用户分数命令使用 `FractionAt`。

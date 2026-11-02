@@ -59,10 +59,6 @@ impl EditorCore {
         let target = MathNode::hole();
         let caret = target.node;
         let body = match command {
-            CommandId::Fraction => MathBody::Fraction {
-                numerator: Box::new(base),
-                denominator: Box::new(target),
-            },
             CommandId::Attach(slot) => MathBody::Attach {
                 base: Box::new(base),
                 sub: (slot == scholium_document::AttachSlot::Sub).then(|| Box::new(target.clone())),

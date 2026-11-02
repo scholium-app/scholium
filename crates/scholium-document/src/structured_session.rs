@@ -2,6 +2,9 @@
 
 mod attach;
 mod edit;
+mod fraction;
+#[cfg(test)]
+mod fraction_tests;
 mod math_edge;
 mod range;
 mod style;
@@ -21,13 +24,14 @@ pub struct MigrationFailure {
 }
 
 pub use attach::{AttachSlot, base_before_slot};
+pub use fraction::{MathRowRange, math_row_range};
 pub use style::range_has_style;
 
 /// Stable endpoint, independent of layout and source projection.
-/// Body-range inputs accept Text only; structural outcomes can also address math edges.
+/// Body ranges accept body Text; fraction ranges and structural outcomes also address math edges.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct BodyTextPosition {
-    /// Body Text identity for range inputs; math node identity in structural outcomes.
+    /// Body Text identity for body ranges; math node identity for fractions and outcomes.
     pub leaf: NodeId,
     /// Leaf-local UTF-8 extended-grapheme boundary; compound outcomes use 0/1 before/after.
     pub byte: usize,
@@ -39,7 +43,7 @@ pub struct StructuralOutcome {
     /// Whether one revision and action were added.
     pub changed: bool,
     /// Surviving body cursor for a range replacement, including newly split leaves, or the
-    /// math caret an attach/leave/remove edit asks for (even when unchanged). Other edits
+    /// math caret a fraction/attach/leave/remove edit asks for (even when unchanged). Other edits
     /// return None; no-op body ranges still return a legal cursor.
     pub cursor: Option<BodyTextPosition>,
     /// Surviving (start, end) of a range style edit, on the same text; None for other edits.
@@ -104,6 +108,15 @@ pub enum StructuralEdit {
         leaf: NodeId,
         /// UTF-8 grapheme boundary in that leaf.
         at: usize,
+    },
+    /// Insert an empty fraction at a math caret, or wrap only the selected range in one row.
+    /// Equal endpoints enter the empty numerator; a selection enters the empty denominator.
+    /// Text outside the range stays in the same row; cross-slot ranges are rejected.
+    FractionAt {
+        /// First endpoint (order is normalized); UTF-8 grapheme boundary or compound edge.
+        start: BodyTextPosition,
+        /// Other endpoint; equal to start for insertion without a selection.
+        end: BodyTextPosition,
     },
     /// Wrap a math subtree as numerator and create an addressed empty denominator.
     WrapFraction {

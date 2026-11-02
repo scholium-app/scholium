@@ -347,3 +347,9 @@ split-run offset；辅助技术继续读取权威正文。正常 Scene 到达后
 窗口测试可同时设置 `SCHOLIUM_EDITOR_AUDIT=1` 与 `SCHOLIUM_IME_CHECK_FILE`，通过原子写入
 JSON `preedit`/`commit`（可选 `cursor_chars`）给同一 egui 输入路径送事件；正常应用不读取此文件。
 该私有 Xvfb 测试验证 X11 窗口中排版与 IME 输出，不替代 fcitx5/Wayland 协议验收。
+
+## 数学分数选区呈现
+
+分数按钮、插入菜单与 Ctrl+/ 经同一 session 命令，在光标处插入空分数或包装同一数学行选区。
+数学行的 Shift+左右选择和折叠由 core 决定；app 的 `selection_quads` 从当前 Scene 读取 core 的数学选区几何。
+正文跨公式选择使用 `selection_math`，因此包含 Text 与 Fraction 的 Row 不依赖不存在的 wrapper bounds。

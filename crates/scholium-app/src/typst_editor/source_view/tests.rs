@@ -31,6 +31,7 @@ fn structure_view_shows_the_generated_typst_of_the_snapshot() {
         egui::Event::Paste("标题行\n正文 a*b".into()),
         text("$"),
         text("1"),
+        crate::typst_editor::tests::shift_left(),
         key(egui::Key::Slash, true),
     ]);
     let snapshot = f.editor.snapshot.clone();
@@ -100,7 +101,12 @@ fn pane_texts(f: &mut Fixture, locale: Locale) -> Vec<String> {
 #[test]
 fn source_headers_and_warnings_follow_the_locale_without_changing_the_document() {
     let mut f = Fixture::new();
-    f.events(vec![text("$"), text("x"), key(egui::Key::Slash, true)]);
+    f.events(vec![
+        text("$"),
+        text("x"),
+        crate::typst_editor::tests::shift_left(),
+        key(egui::Key::Slash, true),
+    ]);
     shown(&mut f);
     let snapshot = f.editor.snapshot.clone();
     for (locale, header, warning, preview) in [

@@ -3,6 +3,7 @@
 
 mod content;
 mod edge_geometry;
+mod empty_body_geometry;
 #[cfg(test)]
 mod empty_paragraphs;
 mod geometry;

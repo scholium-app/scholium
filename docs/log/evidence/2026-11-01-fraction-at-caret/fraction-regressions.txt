@@ -1,0 +1,24 @@
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
+    Finished `test` profile [unoptimized] target(s) in 0.94s
+     Running unittests src/lib.rs (target/debug/deps/scholium_session-2c8345755d416c14)
+
+running 2 tests
+
+thread 'typst::fraction_caret_tests::fraction_wraps_only_the_selected_math_text_and_enters_denominator' (20749) panicked at crates/scholium-session/src/typst/tests.rs:26:46:
+command: Rejected(StructuralSelection)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test typst::fraction_caret_tests::fraction_wraps_only_the_selected_math_text_and_enters_denominator ... FAILED
+
+thread 'typst::fraction_caret_tests::fraction_without_selection_splits_text_at_start_middle_and_end_and_undo_restores_caret' (20748) panicked at crates/scholium-session/src/typst/fraction_caret_tests.rs:31:17:
+text must stay outside the fraction: MathNode { node: NodeId(ff238dda-1354-46d7-8c7d-4e65d790112f), body: Fraction { numerator: MathNode { node: NodeId(5a295053-ee89-48d7-827d-5a4d2fc0f6bc), body: Text { text: "abc" } }, denominator: MathNode { node: NodeId(12ad836d-a5ae-426c-87eb-97114fecfb9e), body: Hole } } }
+test typst::fraction_caret_tests::fraction_without_selection_splits_text_at_start_middle_and_end_and_undo_restores_caret ... FAILED
+
+failures:
+
+failures:
+    typst::fraction_caret_tests::fraction_without_selection_splits_text_at_start_middle_and_end_and_undo_restores_caret
+    typst::fraction_caret_tests::fraction_wraps_only_the_selected_math_text_and_enters_denominator
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 38 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-session --lib`

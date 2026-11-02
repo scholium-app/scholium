@@ -16,6 +16,9 @@ pub(super) fn apply(
 ) -> Result<Landing, EditError> {
     let cursor = |cursor| (cursor, None);
     match edit {
+        StructuralEdit::FractionAt { start, end } => {
+            super::fraction::insert(doc, start, end).map(|c| cursor(Some(c)))
+        }
         StructuralEdit::InsertMathSibling {
             node,
             after,
@@ -58,7 +61,8 @@ pub(super) fn apply(
 fn apply_single(doc: &mut StructuredDocument, edit: StructuralEdit) -> Result<(), EditError> {
     match edit {
         // The dispatcher handles ranges and attach edits (which return carets) separately.
-        StructuralEdit::ReplaceBodyRange { .. }
+        StructuralEdit::FractionAt { .. }
+        | StructuralEdit::ReplaceBodyRange { .. }
         | StructuralEdit::SetRangeStyle { .. }
         | StructuralEdit::Attach { .. }
         | StructuralEdit::LeaveSlot { .. }

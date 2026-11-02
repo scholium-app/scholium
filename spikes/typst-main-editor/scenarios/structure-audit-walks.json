@@ -1,0 +1,665 @@
+{
+  "name": "structure-audit-walks",
+  "inputs": [
+    {
+      "text": "L"
+    },
+    {
+      "text": "$"
+    },
+    {
+      "key": "Slash",
+      "mods": {
+        "command": true
+      }
+    },
+    {
+      "text": "x"
+    },
+    {
+      "key": "Character",
+      "value": "^"
+    },
+    {
+      "text": "q"
+    },
+    {
+      "key": "Character",
+      "value": "_"
+    },
+    {
+      "text": "i"
+    },
+    {
+      "key": "ArrowRight"
+    },
+    {
+      "key": "Delete"
+    },
+    {
+      "key": "Slash",
+      "mods": {
+        "command": true
+      }
+    },
+    {
+      "text": "a"
+    },
+    {
+      "key": "Tab"
+    },
+    {
+      "text": "b"
+    },
+    {
+      "key": "Tab"
+    },
+    {
+      "text": "d"
+    },
+    {
+      "key": "Escape"
+    },
+    {
+      "text": "R"
+    },
+    {
+      "key": "Home",
+      "mods": {
+        "command": true
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/base",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/base",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sub",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sub",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sup",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sup/body/numerator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sup/body/numerator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sup/body/denominator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sup/body/denominator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sup",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      },
+      "shared_edge_hit": true
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/denominator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/denominator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/2",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowRight",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/2",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/2",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/denominator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/denominator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      },
+      "shared_edge_hit": true
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sup",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sup/body/denominator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sup/body/denominator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sup/body/numerator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sup/body/numerator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sup",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sub",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/sub",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/base",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/base",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "ArrowLeft",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 14
+      }
+    },
+    {
+      "key": "Delete",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/0",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 15
+      }
+    },
+    {
+      "key": "Delete",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 15
+      }
+    },
+    {
+      "key": "Delete",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 15
+      }
+    },
+    {
+      "key": "Delete",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/numerator/body/base",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 15
+      }
+    },
+    {
+      "key": "Character",
+      "mods": {
+        "command": true
+      },
+      "value": "z"
+    },
+    {
+      "key": "End",
+      "mods": {
+        "command": true
+      }
+    },
+    {
+      "key": "Backspace",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/2",
+          "byte": 0,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 15
+      }
+    },
+    {
+      "key": "Backspace",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 15
+      }
+    },
+    {
+      "key": "Backspace",
+      "expected": {
+        "cursor": {
+          "path": "blocks/0/content/1/body/root/body/denominator",
+          "byte": 1,
+          "affinity": "Downstream"
+        },
+        "undo_depth": 15
+      }
+    }
+  ],
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "text": "L",
+                "style": "plain"
+              }
+            },
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "kind": "fraction",
+                    "numerator": {
+                      "body": {
+                        "kind": "attach",
+                        "base": {
+                          "body": {
+                            "kind": "text",
+                            "text": "x"
+                          }
+                        },
+                        "sub": {
+                          "body": {
+                            "kind": "text",
+                            "text": "i"
+                          }
+                        },
+                        "sup": {
+                          "body": {
+                            "kind": "fraction",
+                            "numerator": {
+                              "body": {
+                                "kind": "text",
+                                "text": "a"
+                              }
+                            },
+                            "denominator": {
+                              "body": {
+                                "kind": "text",
+                                "text": "b"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "denominator": {
+                      "body": {
+                        "kind": "text",
+                        "text": "d"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "body": {
+                "kind": "text",
+                "text": "",
+                "style": "plain"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/1/body/root/body/denominator",
+      "byte": 1,
+      "affinity": "Downstream"
+    },
+    "anchor": null,
+    "undo_depth": 15
+  }
+}

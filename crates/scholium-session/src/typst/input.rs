@@ -139,7 +139,10 @@ impl EditorCore {
             node: self.cursor.leaf,
             byte: self.cursor.byte,
         });
-        outcome.selection = self.range().ok().flatten().map(|(start, end)| {
+        let range = self
+            .range()
+            .or_else(|_| self.math_range().map(|r| r.map(|r| (r.start, r.end))));
+        outcome.selection = range.ok().flatten().map(|(start, end)| {
             (
                 Target {
                     node: start.leaf,
@@ -338,6 +341,10 @@ impl EditorCore {
             self.style_command(style, state);
             return;
         }
+        if matches!(command, CommandId::Fraction) && self.in_math() {
+            self.fraction(state);
+            return;
+        }
         if self.selected() {
             state.edit_error = Some(CommandError::Rejected(Rejection::StructuralSelection));
             return;
@@ -421,25 +428,16 @@ impl EditorCore {
     }
 
     fn fraction(&mut self, state: &mut EditState) {
-        let leaf = self.cursor.leaf;
-        if !self.apply(StructuralEdit::WrapFraction { node: leaf }, state) {
-            return;
-        }
-        let target = self
-            .snapshot
-            .blocks
-            .iter()
-            .flat_map(|b| &b.content)
-            .find_map(|i| match &i.body {
-                InlineBody::Math { root } => denominator_of(root, leaf),
-                _ => None,
-            });
-        if let Some(leaf) = target {
-            self.cursor = Position {
-                leaf,
-                byte: 0,
-                affinity: Affinity::Downstream,
-            };
+        let end = BodyTextPosition {
+            leaf: self.cursor.leaf,
+            byte: self.cursor.byte,
+        };
+        let start = self.anchor.map_or(end, |at| BodyTextPosition {
+            leaf: at.leaf,
+            byte: at.byte,
+        });
+        if self.apply(StructuralEdit::FractionAt { start, end }, state) {
+            self.cursor.affinity = Affinity::Downstream;
         }
     }
     pub(super) fn split(&mut self, state: &mut EditState) {
@@ -448,21 +446,5 @@ impl EditorCore {
             return;
         }
         self.replace_range("\n".into(), state);
-    }
-}
-fn denominator_of(node: &MathNode, leaf: NodeId) -> Option<NodeId> {
-    match &node.body {
-        MathBody::Fraction {
-            numerator,
-            denominator,
-        } if numerator.node == leaf => Some(denominator.node),
-        MathBody::Fraction {
-            numerator,
-            denominator,
-        } => denominator_of(numerator, leaf).or_else(|| denominator_of(denominator, leaf)),
-        MathBody::Row { .. } | MathBody::Attach { .. } => math_children(node)
-            .into_iter()
-            .find_map(|c| denominator_of(c, leaf)),
-        _ => None,
     }
 }
