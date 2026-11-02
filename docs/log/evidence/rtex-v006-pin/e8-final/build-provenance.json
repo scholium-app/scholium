@@ -1,0 +1,17 @@
+{
+  "tag": "v0.0.6",
+  "upstream_commit": "98b40be29ef517918ce707869e6fe0316685b3dd",
+  "upstream_git_status": "",
+  "upstream_lock_sha256": "5e1bd629a20b66c53b214f4fad9e00a776c0b087b252122c72f483e713c5ceb5",
+  "evaluation_lock_sha256": "5e1bd629a20b66c53b214f4fad9e00a776c0b087b252122c72f483e713c5ceb5",
+  "helper_source_sha256": "b6f7d4e8121e1790055d34274f36c21904e273d25cd09c98da6be387141b093d",
+  "helper_binary_sha256": "993d827ca44f57c657b580228f4f6ab5f38bc7c84c60a58096019e6481d9455c",
+  "cli_binary_sha256": "510e9db70d2c57de7e5e78b5ae0bd571f971caac7144ababab78ddbc8f3ce2b1",
+  "evaluation_manifest_diff": "diff --git a/crates/rtex-cli/Cargo.toml b/crates/rtex-cli/Cargo.toml\nindex df077a2..36e5ddc 100644\n--- a/crates/rtex-cli/Cargo.toml\n+++ b/crates/rtex-cli/Cargo.toml\n@@ -10,6 +10,10 @@ repository.workspace = true\n name = \"rtex\"\n path = \"src/main.rs\"\n \n+[[bin]]\n+name = \"rtex-pass-config-eval\"\n+path = \"/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/rtex-eval/pass-config.rs\"\n+\n [dependencies]\n rtex-core = { path = \"../rtex-core\" }\n rtex-dl = { path = \"../rtex-dl\" }\n",
+  "command": "CARGO_TARGET_DIR=~/.cache/scholium-eval/rtex-v0.0.6/target cargo +1.99.0 build --release --locked --offline --manifest-path ~/.cache/scholium-eval/t34-pass-config-src/Cargo.toml --bin rtex-pass-config-eval",
+  "config": {
+    "pass_timeout_ms": 8000,
+    "host_per_pass_watchdog": false
+  },
+  "scope": "evaluation-only external subprocess; upstream engine source unchanged; no Scholium application linkage"
+}

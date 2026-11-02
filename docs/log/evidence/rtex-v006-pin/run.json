@@ -1,0 +1,100 @@
+{
+  "task": "T34",
+  "upstream": {
+    "url": "https://github.com/HenryXiaoYang/realtime-tex",
+    "tag": "v0.0.6",
+    "sha": "98b40be29ef517918ce707869e6fe0316685b3dd",
+    "checkout": "/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.6",
+    "git_status_porcelain": "",
+    "lockfile_sha256": "5e1bd629a20b66c53b214f4fad9e00a776c0b087b252122c72f483e713c5ceb5"
+  },
+  "deny_config_sha256": "3cfe3b5936fb82606bede9c9456b6ffbd42738de0785935ed6483289adb5f0e8",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "clone",
+        "--depth",
+        "1",
+        "--branch",
+        "v0.0.6",
+        "https://github.com/HenryXiaoYang/realtime-tex",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.6"
+      ],
+      "exit": 0
+    },
+    {
+      "argv": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked"
+      ],
+      "cwd": "/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.6",
+      "exit": 0,
+      "observation": "Finished release profile in 13.41s; output observed in executor transcript, no raw build log retained"
+    },
+    {
+      "argv": [
+        "cargo",
+        "deny",
+        "--locked",
+        "--manifest-path",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.6/Cargo.toml",
+        "--config",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml",
+        "check",
+        "--show-stats",
+        "licenses",
+        "bans",
+        "sources"
+      ],
+      "cwd": "/home/ation_ciger/Projects/Mogan/scholium-wt3",
+      "exit": 2,
+      "log": "e1/policy.log.gz"
+    },
+    {
+      "argv": [
+        "cargo",
+        "deny",
+        "--locked",
+        "--manifest-path",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-v0.0.6/Cargo.toml",
+        "--config",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml",
+        "check",
+        "--show-stats",
+        "advisories"
+      ],
+      "cwd": "/home/ation_ciger/Projects/Mogan/scholium-wt3",
+      "exit": 1,
+      "log": "e1/advisories.log.gz"
+    }
+  ],
+  "decision": "E1 passes under the coordinator's round-one standard; E2, E8, E3, E5 and E6 pass with documented limitations; move pin to v0.0.6",
+  "e1_interpretation": {
+    "licenses": "pass (0 errors)",
+    "sources": "pass (0 errors)",
+    "bans": "three upstream internal workspace wildcard findings, recorded as in round one; not a gate for the sandboxed subprocess",
+    "advisories": "one unfiltered unmaintained notice, RUSTSEC-2026-0192; project-wide follow-up; not an E1 gate",
+    "v005_to_v006_advisory_count": "2 to 1; lopdf advisory no longer reported"
+  },
+  "evidence": {
+    "e2": [
+      "e2-sequential/negative-abcde-summary.json",
+      "e2-sequential/negative-summary.json"
+    ],
+    "e8": [
+      "e8-final/e8-summary-t34-v006-e8-final.json",
+      "e8-pass-final/pass-faults.json",
+      "e8-cli-warm/e8-summary-t34-v006-e8-cli-warm.json"
+    ],
+    "regressions": [
+      "e3/e3-summary.json",
+      "e5/e5-summary.json",
+      "e6-serial/e6-summary.json"
+    ],
+    "feasibility": "feasibility/scope.json",
+    "timeout": "configured upstream pass_timeout=8000ms, no host per-pass watchdog; v0.0.6 CLI default is 300000ms"
+  }
+}

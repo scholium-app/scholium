@@ -1,0 +1,161 @@
+{
+  "E1": true,
+  "E2": true,
+  "E8": true,
+  "pin_updated": true,
+  "candidate": "a27561fdd6ec913f2a80d5b264f8fa7aaa228478",
+  "previous_pin": {
+    "repository": "https://github.com/HenryXiaoYang/realtime-tex",
+    "tag": "v0.0.6",
+    "commit": "98b40be29ef517918ce707869e6fe0316685b3dd"
+  },
+  "clone": "/home/ation_ciger/.cache/scholium-eval/rtex-a27561fdd6ec913f2a80d5b264f8fa7aaa228478",
+  "lock_sha256": "5e1bd629a20b66c53b214f4fad9e00a776c0b087b252122c72f483e713c5ceb5",
+  "commands": [
+    {
+      "name": "build",
+      "argv": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-a27561fdd6ec913f2a80d5b264f8fa7aaa228478/Cargo.toml"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "e1-licenses-sources",
+      "argv": [
+        "cargo",
+        "deny",
+        "--locked",
+        "--manifest-path",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-a27561fdd6ec913f2a80d5b264f8fa7aaa228478/Cargo.toml",
+        "--config",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml",
+        "check",
+        "--show-stats",
+        "licenses",
+        "sources"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "e1-bans",
+      "argv": [
+        "cargo",
+        "deny",
+        "--locked",
+        "--manifest-path",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-a27561fdd6ec913f2a80d5b264f8fa7aaa228478/Cargo.toml",
+        "--config",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml",
+        "check",
+        "--show-stats",
+        "bans"
+      ],
+      "exit": 2
+    },
+    {
+      "name": "e1-advisories",
+      "argv": [
+        "cargo",
+        "deny",
+        "--locked",
+        "--manifest-path",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-a27561fdd6ec913f2a80d5b264f8fa7aaa228478/Cargo.toml",
+        "--config",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml",
+        "check",
+        "--show-stats",
+        "advisories"
+      ],
+      "exit": 1
+    },
+    {
+      "name": "e2",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/rtex-eval/negative.py",
+        "--clone",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-a27561fdd6ec913f2a80d5b264f8fa7aaa228478",
+        "--evidence",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/docs/log/evidence/rtex-v006-pin/main-a27561f/e2",
+        "--run-id",
+        "t34-main-a27561f-e2"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "config-build",
+      "argv": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/home/ation_ciger/.cache/scholium-eval/t34-main-a27561f-config-src/Cargo.toml",
+        "--target-dir",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-a27561fdd6ec913f2a80d5b264f8fa7aaa228478/target",
+        "--bin",
+        "rtex-pass-config-eval"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "e8",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/rtex-eval/e8_faults.py",
+        "--clone",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-a27561fdd6ec913f2a80d5b264f8fa7aaa228478",
+        "--evidence",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/docs/log/evidence/rtex-v006-pin/main-a27561f/e8",
+        "--run-id",
+        "t34-main-a27561f-e8",
+        "--binary",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-a27561fdd6ec913f2a80d5b264f8fa7aaa228478/target/release/rtex-pass-config-eval",
+        "--pass-timeout-ms",
+        "8000"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "e8-passes",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/rtex-eval/v006_pass_faults.py",
+        "--clone",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-a27561fdd6ec913f2a80d5b264f8fa7aaa228478",
+        "--evidence",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/docs/log/evidence/rtex-v006-pin/main-a27561f/e8-passes",
+        "--binary",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-a27561fdd6ec913f2a80d5b264f8fa7aaa228478/target/release/rtex-pass-config-eval",
+        "--work",
+        "/home/ation_ciger/.cache/scholium-eval/t34-main-a27561f-passes"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "e8-cli",
+      "argv": [
+        "/usr/bin/python3",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/rtex-eval/e8_faults.py",
+        "--clone",
+        "/home/ation_ciger/.cache/scholium-eval/rtex-a27561fdd6ec913f2a80d5b264f8fa7aaa228478",
+        "--evidence",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt3/docs/log/evidence/rtex-v006-pin/main-a27561f/e8-cli",
+        "--run-id",
+        "t34-main-a27561f-cli",
+        "--only",
+        "malformed"
+      ],
+      "exit": 0
+    }
+  ],
+  "config_lock_sha256": "5e1bd629a20b66c53b214f4fad9e00a776c0b087b252122c72f483e713c5ceb5",
+  "helper_source_sha256": "b6f7d4e8121e1790055d34274f36c21904e273d25cd09c98da6be387141b093d",
+  "helper_binary_sha256": "d0f2b503aab090909b2e87e696b10ffc11c0093d979d746ead14bf16a2f255fc"
+}

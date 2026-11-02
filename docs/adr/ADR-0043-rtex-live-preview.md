@@ -76,6 +76,24 @@ LuaLaTeX 只重排被编辑的单元，全局版面交给后台整编，输出�
    L3 开工时若仍未进入上游，再按上文 Typst fork 的方式维护补丁。
 4. **尚待上游的需求**：二进制 display list 通道、引擎崩溃时在途编辑的事件。在此之前宿主继续使用 JSON 行并自行补发。
 
+## 修订（2026-11-02）
+
+按第一轮 E1 标准重审后，v0.0.6 许可与来源通过；三条 rtex workspace 内部 wildcard path 依赖照录但不作阻断，
+因为 rtex 仅作为沙箱子进程运行且不链接进应用。未过滤公告中，`RUSTSEC-2026-0192` 是 Scholium 自身也经 Typst 使用的
+`ttf-parser 0.25.1` 不维护通知，列为项目级跟进；v0.0.5 的 `lopdf` 公告已消失，总公告从两条减少至一条。
+当前 pin 策略按用户决定改为**经评审的 upstream main commit**，而非 release tag；当前为
+`a27561fdd6ec913f2a80d5b264f8fa7aaa228478`（Merge pull request #32）。main 已合并用户贡献的
+#31 opt-in math owners 与 #32 unicode-math 空根指数补丁，但尚未发布，锁定 tag 会阻塞开发。
+`PIN` 记录 repository / branch main / 精确 commit，不浮动跟随分支；driver 与构建按 commit 取源码。
+v0.0.6 的复验作为历史保留，a27561f 重新通过同标准 E1、E2、upstream `pass_timeout` 无宿主单次编译看门狗完整 E8，
+并执行 E3/E5/E6 快速回归。`scripts/rtex-pin.py` 对指定 commit（默认当前 main head）完成仓库外构建与 E1/E2/E8，
+仅全部通过才更新 PIN；新 pin 提交前仍须人工评审回归和仓库门禁。具体证据见
+[T34 开发日志](../log/2026-11-02-rtex-v006-pin.md)。
+
+E8 仍观察到在途段落更新可能丢失：挂起的 live engine 由 rtex 自身 watchdog 重启，后台 pass 在 8 秒后报告 `Failed`，
+但挂起期间提交的另一段编辑没有独立 `ParagraphUpdate`。宿主仍须在 `Restarting/Failed` 后请求布局并恢复输入状态，
+同时保留 heartbeat/restart 以及 offset/path 校验作为纵深防御。
+
 ## 后果
 
 正面：LuaLaTeX 项目获得毫秒级、与最终构建逐字形一致的实时预览；中文 ctex 与 luatexja 文档可走实时路径。

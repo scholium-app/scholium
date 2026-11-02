@@ -1,0 +1,51 @@
+[
+  {
+    "name": "drift-tests",
+    "argv": [
+      "python3",
+      "scripts/test-rtex-upstream-drift.py"
+    ],
+    "cwd": "/home/ation_ciger/Projects/Mogan/scholium-wt3",
+    "exit": 0,
+    "wall_s": 0.416
+  },
+  {
+    "name": "fault-tests",
+    "argv": [
+      "python3",
+      "-m",
+      "unittest",
+      "test_v006_contracts.py"
+    ],
+    "cwd": "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/rtex-eval",
+    "exit": 0,
+    "wall_s": 0.132
+  },
+  {
+    "name": "helper-fmt",
+    "argv": [
+      "rustfmt",
+      "--check",
+      "--edition",
+      "2024",
+      "spikes/rtex-eval/pass-config.rs"
+    ],
+    "cwd": "/home/ation_ciger/Projects/Mogan/scholium-wt3",
+    "exit": 0,
+    "wall_s": 0.059
+  },
+  {
+    "name": "workflow-actionlint",
+    "argv": [
+      "go",
+      "run",
+      "github.com/rhysd/actionlint/cmd/actionlint@v1.7.7",
+      "-config-file",
+      "spikes/rtex-eval/.work/t34-actionlint.yaml",
+      ".github/workflows/rtex-upstream.yml"
+    ],
+    "cwd": "/home/ation_ciger/Projects/Mogan/scholium-wt3",
+    "exit": 0,
+    "wall_s": 2.496
+  }
+]

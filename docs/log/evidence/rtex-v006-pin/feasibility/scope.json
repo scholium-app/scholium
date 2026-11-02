@@ -1,0 +1,8 @@
+{
+  "runner_image_source_commit": "4da2307112a0fad2fd2ecaca8ba7d08683b8c581",
+  "source_url": "https://github.com/actions/runner-images/blob/4da2307112a0fad2fd2ecaca8ba7d08683b8c581/images/ubuntu/Ubuntu2604-Readme.md",
+  "container_image": "ubuntu:26.04@sha256:6a06111c3b0a8600feadb270aec771dc239bf407b25625f93f44ab00e11f4d3c",
+  "package_probe": "119 packages, 134 MB archives, 385 MB installed; minimal TeX Live install and format generation completed in 45 s",
+  "namespace_probe": "default Docker denied unshare; seccomp/AppArmor-unconfined container permitted unprivileged unshare and bwrap --unshare-all as nobody",
+  "limits": "container uses Arch host kernel; not proof of hosted ubuntu-26.04 acceptance; workflow must probe real bwrap and report skip if unavailable, without sysctl changes"
+}

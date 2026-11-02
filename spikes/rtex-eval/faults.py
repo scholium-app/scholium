@@ -45,7 +45,8 @@ def live_engine(root_pid):
 
 
 def rtex_server(root_pid):
-    return [p for p in processes(root_pid) if p["comm"] == "rtex"]
+    return [p for p in processes(root_pid) if p["comm"] in ("rtex", "rtex-pass-confi")
+            or "rtex-pass-config-eval serve" in p["cmdline"]]
 
 
 def kill(pid):

@@ -10,7 +10,8 @@ import time
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 RASTER_BIN = HERE / "raster/target/release/rtex-eval-raster"
-CLONE_DEFAULT = Path.home() / ".cache/scholium-eval/rtex-v0.0.5"
+PIN = json.loads((HERE / "PIN").read_text())
+CLONE_DEFAULT = Path.home() / ".cache/scholium-eval" / f"rtex-{PIN['commit']}"
 
 
 def percentiles(values):

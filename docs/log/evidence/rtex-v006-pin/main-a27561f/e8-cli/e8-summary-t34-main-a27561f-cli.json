@@ -1,0 +1,171 @@
+[
+ {
+  "scenario": "malformed host commands",
+  "cases": [
+   {
+    "case": "start>end",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": 442,
+     "end": 440,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "bad edit range 442..440 in main.tex: the file has 2507 bytes and offsets must fall on UTF-8 character boundaries"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "end beyond file",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": 2504,
+     "end": 3507,
+     "text": ""
+    },
+    "reply": {
+     "reply": "error",
+     "message": "bad edit range 2504..3507 in main.tex: the file has 2507 bytes and offsets must fall on UTF-8 character boundaries"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "start beyond file",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": 2607,
+     "end": 2607,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "bad edit range 2607..2607 in main.tex: the file has 2507 bytes and offsets must fall on UTF-8 character boundaries"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "negative start",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": -5,
+     "end": -5,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "bad start offset -5"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "unknown file",
+    "command": {
+     "cmd": "edit",
+     "path": "nope.tex",
+     "start": 0,
+     "end": 0,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "unknown file nope.tex"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "path traversal edit",
+    "command": {
+     "cmd": "edit",
+     "path": "../../etc/passwd",
+     "start": 0,
+     "end": 0,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "unknown file ../../etc/passwd"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "set_document outside project",
+    "command": {
+     "cmd": "set_document",
+     "path": "../../e8-escape.tex",
+     "text": "escape\n"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "../../e8-escape.tex is outside the project"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "set_document absolute",
+    "command": {
+     "cmd": "set_document",
+     "path": "/tmp/e8-escape-abs.tex",
+     "text": "escape\n"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "/tmp/e8-escape-abs.tex is outside the project"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "invalid json",
+    "command": "{not json",
+    "reply": {
+     "reply": "error",
+     "message": "bad json: key must be a string at line 1 column 2"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "unknown cmd",
+    "command": {
+     "cmd": "format_disk"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "unknown cmd format_disk"
+    },
+    "events": [],
+    "alive": true
+   },
+   {
+    "case": "mid-codepoint",
+    "command": {
+     "cmd": "edit",
+     "path": "main.tex",
+     "start": 166,
+     "end": 166,
+     "text": "x"
+    },
+    "reply": {
+     "reply": "error",
+     "message": "bad edit range 166..166 in main.tex: the file has 2507 bytes and offsets must fall on UTF-8 character boundaries"
+    },
+    "events": [],
+    "alive": true
+   }
+  ],
+  "written_outside_snapshot": [],
+  "exit": 0
+ }
+]

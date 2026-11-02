@@ -1,0 +1,44 @@
+name: rtex upstream drift
+# External monitoring only: no push/PR triggers, no issue creation, never a required check.
+on:
+  schedule:
+    - cron: '37 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Upstream ref to compare with the reviewed main commit pin
+        default: main
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+jobs:
+  drift:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 40
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clone upstream outside repository (never run its install script)
+        run: git clone --quiet https://github.com/HenryXiaoYang/realtime-tex.git /tmp/rtex-upstream
+      - uses: ./.github/actions/setup
+        with:
+          cache-key: rtex-upstream
+          cache-workspaces: /tmp/rtex-upstream -> target
+          packages: bubblewrap texlive-luatex texlive-latex-base texlive-latex-recommended poppler-utils
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-deny@0.20.2
+      - name: Report drift, dependency findings and feasible sandbox checks
+        env:
+          UPSTREAM_REF: ${{ inputs.ref || 'main' }}
+          RUSTUP_TOOLCHAIN: 1.99.0
+        run: |
+          python3 scripts/rtex-upstream-drift.py /tmp/rtex-upstream --ref "$UPSTREAM_REF" \
+            --work /tmp/rtex-upstream-work --summary "$GITHUB_STEP_SUMMARY" --tex
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rtex-upstream-drift
+          path: /tmp/rtex-upstream-work/logs

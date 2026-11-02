@@ -1,0 +1,10 @@
+a27561f Merge pull request #32 from ACG-j/unicode-empty-degree
+4f783e5 test(math-owners): read page 1 from any layout update before convergence
+fec6e10 docs: link the Open VSX listing next to the Marketplace
+8cd5537 fix(engine): report empty unicode-math radical degrees
+6c11a6a Merge pull request #31 from ACG-j/math-owner-attribute
+c1c23ea docs: describe opt-in math ownership and its limits
+37e0d9e test: cover math owners, empty fields and output identity
+4dfd7ef feat(engine): observe opt-in math owners and empty fields
+846febc feat(dl): add optional math ownership metadata
+d57047c docs: link the Realtime TeX extension's Marketplace listing
