@@ -17,8 +17,10 @@
 1. 根 workspace 保留 registry Typst。`dev/typst-editor` 是独立开发 manifest，二进制仍为
    `scholium-app`，直接使用 `crates/scholium-app/src/main.rs`。它统一 patch 13 个 Typst
    库到跟踪的 `vendor/typst-edit`，不依赖被忽略的实验 checkout。普通 root 构建拒绝开发选项。
-2. vendored 库由上游 v0.15.1 提交 `9dfd3a08500b7896045f907433cf7b4b02434fad` 和四份
-   已跟踪的编辑补丁重建，保留 Apache-2.0 LICENSE。上游 workspace 仅裁剪成员/默认成员到
+2. vendored 库由上游 v0.15.1 提交 `9dfd3a08500b7896045f907433cf7b4b02434fad` 和
+   已跟踪的编辑补丁序列重建，保留 Apache-2.0 LICENSE。当前序列为 `0001`–`0005` 五份，
+   新增的 `0005-delimiter-body-slot-origin.patch` 见 [ADR 0046](ADR-0046-math-root-delimiter.md)。
+   上游 workspace 仅裁剪成员/默认成员到
    这 13 个库。验证脚本从 Git 对象重建并逐文件比较，不接受 checkout 中未记账的修改。
 3. 开发候选必须显式传 `--typst-editor`，并指定 `SCHOLIUM_SESSION_FILE`。已有文件只按
    v1 打开；缺失文件原子创建；旧 schema 或坏库启动失败，不自动迁移、另建权威或覆盖。

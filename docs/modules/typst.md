@@ -153,7 +153,8 @@ SceneStats 记录 built/reused/source_reads/elapsed，不能作为物理刷新�
   `vendor/typst-edit` 只随新版本发布整体移动，并作为单独任务完成。
 - 每周一 03:17 UTC，`.github/workflows/typst-upstream.yml` 运行 `scripts/typst-upstream-drift.py`（也可手动触发），
   对上游 main 依次检查三个阶段：
-  1. 四份补丁能否应用：clean 表示直接应用，merged 表示 git 三方合并成功，conflict 表示需要人工解决。
+  1. `0001`–`0005` 五份补丁能否应用；其中 `0005-delimiter-body-slot-origin.patch` 保留定界符 body 的编辑槽 origin。
+     clean 表示直接应用，merged 表示 git 三方合并成功，conflict 表示需要人工解决。
   2. `scholium-typst --features editor` 能否针对打补丁的树编译。
   3. 打补丁的树与同一提交、未打补丁的上游是否逐像素一致。
 

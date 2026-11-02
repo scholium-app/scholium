@@ -22,7 +22,9 @@ bincode、paste 为“停止维护且无安全升级”，短期不可清零。�
 ## 决定
 
 1. 根 workspace 以 `[patch.crates-io]` 统一使用已跟踪的 `vendor/typst-edit` 13 个库，与
-   `dev/typst-editor` 同一版本组；来源仍由 `verify-fork.py` 从上游对象与四份补丁逐文件重建。
+   `dev/typst-editor` 同一版本组；来源仍从上游对象与已跟踪的补丁序列逐文件重建。
+   当前由 `scripts/verify-typst-fork.py` 校验 `0001`–`0005` 五份补丁；新增的
+   `0005-delimiter-body-slot-origin.patch` 见 [ADR 0046](ADR-0046-math-root-delimiter.md)。
    `scholium-app` 默认启用 `typst-editor`，`scholium-typst` 的 `editor` 特性同时打开
    `typst-layout/editor`。
 2. 普通启动进入 Typst Content 编辑器。旧编辑器只在显式 `--legacy` 时启动；默认路径失败
