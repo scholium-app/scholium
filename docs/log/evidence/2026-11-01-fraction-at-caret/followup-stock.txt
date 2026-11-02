@@ -1,0 +1,26 @@
+$ [system] cargo run --locked -p scholium-typst --features editor --example typst-main-fork-check -- target/t31-followup-stock/system/fork
+    Finished `dev` profile [unoptimized] target(s) in 0.29s
+     Running `target/debug/examples/typst-main-fork-check target/t31-followup-stock/system/fork`
+EXIT 0
+$ [system] cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir target/stock-reference -- target/t31-followup-stock/system/stock
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.21s
+     Running `target/stock-reference/debug/typst-main-stock-reference target/t31-followup-stock/system/stock`
+EXIT 0
+$ [system] python3 spikes/typst-main-editor/compare.py target/t31-followup-stock/system/fork target/t31-followup-stock/system/stock
+EXIT 0
+$ [bundled] cargo run --locked -p scholium-typst --features editor --example typst-main-fork-check -- target/t31-followup-stock/bundled/fork
+    Finished `dev` profile [unoptimized] target(s) in 0.29s
+     Running `target/debug/examples/typst-main-fork-check target/t31-followup-stock/bundled/fork`
+EXIT 0
+$ [bundled] cargo run --locked --manifest-path spikes/typst-main-editor/reference/Cargo.toml --target-dir target/stock-reference -- target/t31-followup-stock/bundled/stock
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running `target/stock-reference/debug/typst-main-stock-reference target/t31-followup-stock/bundled/stock`
+EXIT 0
+$ [bundled] python3 spikes/typst-main-editor/compare.py target/t31-followup-stock/bundled/fork target/t31-followup-stock/bundled/stock
+EXIT 0
+
+system: EXIT 0; 15/15 byte-identical RGBA; comparison JSON identical to stock-system.json
+SHA256 5904b15ed50635e7f0f85a350419cc3f714332c9559eb90e3526de1806a9a73c
+
+bundled: EXIT 0; 15/15 byte-identical RGBA; comparison JSON identical to stock-bundled.json
+SHA256 c570d377f07b3ab38aa24e8edb354774a3bf29b63cafe54ea28f74394ab7830b

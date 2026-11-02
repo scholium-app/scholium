@@ -32,6 +32,13 @@ docs/log/2026-11-01-fraction-at-caret.md
 docs/log/evidence/2026-11-01-fraction-at-caret/changed-files.txt
 docs/log/evidence/2026-11-01-fraction-at-caret/code-gates.txt
 docs/log/evidence/2026-11-01-fraction-at-caret/empty-body-before.txt
+docs/log/evidence/2026-11-01-fraction-at-caret/followup-code-gates.txt
+docs/log/evidence/2026-11-01-fraction-at-caret/followup-diagnostic-bundled.txt
+docs/log/evidence/2026-11-01-fraction-at-caret/followup-diagnostic-system.txt
+docs/log/evidence/2026-11-01-fraction-at-caret/followup-pointer-before.txt
+docs/log/evidence/2026-11-01-fraction-at-caret/followup-stock.txt
+docs/log/evidence/2026-11-01-fraction-at-caret/followup-windows.txt
+docs/log/evidence/2026-11-01-fraction-at-caret/followup-workspace-tests.txt
 docs/log/evidence/2026-11-01-fraction-at-caret/fraction-at-caret-39.png
 docs/log/evidence/2026-11-01-fraction-at-caret/fraction-at-caret-4.png
 docs/log/evidence/2026-11-01-fraction-at-caret/fraction-regressions.txt

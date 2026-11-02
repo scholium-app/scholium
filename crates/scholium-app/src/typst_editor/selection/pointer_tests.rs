@@ -98,16 +98,60 @@ fn click_right_of_a_line_goes_to_that_lines_end_even_beside_a_formula() {
     assert_ne!(f.editor.cursor.leaf, first);
 }
 
+/// Body caret extents for one paragraph, including its empty formula-exit Text.
+fn body_band(f: &Fixture, leaf: NodeId) -> [f64; 2] {
+    let block = f
+        .editor
+        .snapshot
+        .blocks
+        .iter()
+        .find(|b| b.content.iter().any(|i| i.node == leaf))
+        .expect("paragraph");
+    let geometry = &f.editor.scene.as_ref().expect("scene").geometry;
+    let band = geometry
+        .carets
+        .iter()
+        .filter(|c| {
+            c.exact
+                && block
+                    .content
+                    .iter()
+                    .any(|i| i.node == c.position.leaf && matches!(i.body, InlineBody::Text { .. }))
+        })
+        .fold([f64::INFINITY, f64::NEG_INFINITY], |[top, bottom], c| {
+            [top.min(c.top[1]), bottom.max(c.bottom[1])]
+        });
+    assert!(band[0].is_finite() && band[1].is_finite() && band[0] < band[1]);
+    band
+}
+
 #[test]
 fn click_between_lines_picks_the_nearest_line_then_the_nearest_stop() {
     let mut f = three_paragraphs();
-    let (first, last) = (leaf_with(&f, "alpha"), leaf_with(&f, "gamma"));
-    let upper = caret_point(&f, first, 3);
-    let lower = caret_point(&f, last, 0);
-    click(&mut f, [upper[0] + 0.1, upper[1] + 9.0]);
-    assert_eq!((f.editor.cursor.leaf, f.editor.cursor.byte), (first, 3));
-    click(&mut f, [lower[0], lower[1] - 9.0]);
-    assert_eq!(f.editor.cursor.leaf, last);
+    let lines = [
+        leaf_with(&f, "alpha"),
+        leaf_with(&f, "beta"),
+        leaf_with(&f, "gamma"),
+    ];
+    for pair in lines.windows(2) {
+        let (upper, lower) = (body_band(&f, pair[0]), body_band(&f, pair[1]));
+        let gap = lower[0] - upper[1];
+        assert!(
+            gap > 0.0,
+            "fixture needs whitespace between paragraph bands"
+        );
+        // A fixed offset from a glyph's center can cross the gap midpoint when fonts
+        // change. Probe both halves of the actual gap, outside either caret band.
+        for (leaf, byte, y) in [
+            (pair[0], 3, upper[1] + gap * 0.25),
+            (pair[1], 0, lower[0] - gap * 0.25),
+        ] {
+            assert!(upper[1] < y && y < lower[0]);
+            let [x, _] = caret_point(&f, leaf, byte);
+            click(&mut f, [x + 0.1, y]);
+            assert_eq!((f.editor.cursor.leaf, f.editor.cursor.byte), (leaf, byte));
+        }
+    }
 }
 
 #[test]

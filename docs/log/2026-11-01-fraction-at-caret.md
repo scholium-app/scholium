@@ -126,3 +126,49 @@ python3 spikes/typst-main-editor/compare.py target/t31-stock-final/system/fork t
 - 跨槽/跨公式数学选区、通用数学选区替换、数学拖选与协作光标不在本次范围。
 
 完整[改动文件清单](evidence/2026-11-01-fraction-at-caret/changed-files.txt)随证据保存。
+
+
+## PR #85 CI 字体条件回归修正
+
+协调者报告 CI run `41400466390` / job `125130978860` 的 `test` 任务失败于
+`click_between_lines_picks_the_nearest_line_then_the_nearest_stop`。在当前提交以
+`SCHOLIUM_TEST_FONTS=bundled cargo test --locked -p scholium-app click_between_lines_picks_the_nearest_line_then_the_nearest_stop -- --nocapture`
+复现了相同的第 110 行 NodeId 断言失败；Bundled 不扫描宿主字体，确实没有 Times New Roman/SimSun。
+[修正前失败输出](evidence/2026-11-01-fraction-at-caret/followup-pointer-before.txt)保留。
+
+根因是测试固定从最后一行的字形 caret 中心上移 9 pt，却假定仍距最后一行最近。
+T31 补全的空正文公式出口 caret 属于中间段落，其高度覆盖整个分数，扩展了该视觉行的 bounds。
+Bundled 下中间行下界为 106.761421875 pt，最后一行上界为 116.853421875 pt；
+测试点击 y=111.7821328125 pt，距中间行 5.0207109375 pt，距最后一行 5.0712890625 pt。
+命中中间行严格符合“先选纵向距离最近的行，再选 x 最近的 stop”合约；不是产品命中算法错误。
+System 下同一旧规则的点击 y=112.60078125 pt，距中间行 5.25215625 pt，
+距最后一行 4.83984375 pt，因而本地通过。两组真实 Scene 测量输出分别保存在
+[Bundled](evidence/2026-11-01-fraction-at-caret/followup-diagnostic-bundled.txt)和
+[System](evidence/2026-11-01-fraction-at-caret/followup-diagnostic-system.txt)。
+
+测试现在从每个段落实际的正文 caret bounds 求出相邻行之间的空白，明确断言两行不重叠，
+并点击空白的 1/4 和 3/4 位置。使用独立的段落身份分组，不调用生产命中或视觉行分组算法来计算预期答案。
+两个行间空白各验证上下两侧，共四次点击；全部断言确切 NodeId 与 byte，
+保留原首行 byte 3 和末行 byte 0 的覆盖，并加强原来只断言末行 NodeId 的情况。
+不修改生产逻辑、字体策略、容差或断言期望，不强制测试使用某个字体来掩盖差异。
+
+本次重新执行全部规定门禁：
+
+- `env -u SCHOLIUM_TEST_FONTS cargo test --locked --workspace`：**502 passed / 4 existing ignored**。
+- `SCHOLIUM_TEST_FONTS=bundled cargo test --locked --workspace`：**502 passed / 4 existing ignored**。
+- `cargo fmt --all -- --check`、`cargo clippy --locked --workspace --all-targets -- -D warnings`、
+  `RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps`：全部退出码 0。
+- `python3 scripts/check-rust-size.py`、`python3 scripts/check-doc-links.py`、
+  `python3 scripts/check-ui-strings.py`、`python3 scripts/check-layers.py`：全部退出码 0。
+- `cargo deny --locked check licenses bans sources`、
+  `cargo build --locked -p scholium-app -p scholium-storage --bins`：全部退出码 0。
+- `python3 scripts/window-checks.py --out target/t31-followup-window --locale zh-Hans en`：
+  **40/40 通过，退出码 0**。
+- 上述 System / Bundled 两组 fork/reference/compare 命令全部重新执行：各 **15/15 RGBA 逐字节一致**，
+  comparison JSON 与原有 stock 证据完全相同，保留 SHA256 校验。
+
+[双字体 workspace 摘要](evidence/2026-11-01-fraction-at-caret/followup-workspace-tests.txt)、
+[代码门禁](evidence/2026-11-01-fraction-at-caret/followup-code-gates.txt)、
+[stock 重跑](evidence/2026-11-01-fraction-at-caret/followup-stock.txt)、
+[双语言窗口](evidence/2026-11-01-fraction-at-caret/followup-windows.txt)保存了本次结果。
+所有窗口沿用私有 Xvfb 和全机锁；未修改 Git 配置、未合并 PR、未轮询 CI。
