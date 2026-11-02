@@ -1,7 +1,5 @@
 {
   "task": "T34",
-  "executed_local_date": "2026-11-01",
-  "timezone": "America/Los_Angeles",
   "upstream": {
     "url": "https://github.com/HenryXiaoYang/realtime-tex",
     "tag": "v0.0.6",
@@ -53,7 +51,7 @@
       ],
       "cwd": "/home/ation_ciger/Projects/Mogan/scholium-wt3",
       "exit": 2,
-      "log": "e1/policy.log"
+      "log": "e1/policy.log.gz"
     },
     {
       "argv": [
@@ -70,7 +68,7 @@
       ],
       "cwd": "/home/ation_ciger/Projects/Mogan/scholium-wt3",
       "exit": 1,
-      "log": "e1/advisories.log"
+      "log": "e1/advisories.log.gz"
     }
   ],
   "decision": "stop at E1 failure; keep v0.0.5 pin",
