@@ -292,3 +292,53 @@ fn maximum_depth_is_readable_inside_the_versioned_envelope() {
         doc
     );
 }
+
+#[test]
+fn root_index_and_all_delimiter_pairs_survive_the_v1_storage_codec() {
+    let path = Fixture::fresh();
+    let store = SessionStore::create_structured(&path.0).expect("store");
+    let mut document = sample();
+    let children = [
+        ('(', ')'),
+        ('[', ']'),
+        ('{', '}'),
+        ('|', '|'),
+        ('‖', '‖'),
+        ('⟨', '⟩'),
+        ('⌊', '⌋'),
+        ('⌈', '⌉'),
+    ]
+    .into_iter()
+    .map(|(open, close)| MathNode {
+        node: NodeId::fresh(),
+        body: MathBody::Delimited {
+            open,
+            close,
+            body: Box::new(MathNode {
+                node: NodeId::fresh(),
+                body: MathBody::Root {
+                    index: Some(Box::new(MathNode::hole())),
+                    radicand: Box::new(MathNode::hole()),
+                },
+            }),
+        },
+    })
+    .collect();
+    document.blocks[0].content[0].body = InlineBody::Math {
+        root: MathNode {
+            node: NodeId::fresh(),
+            body: MathBody::Row { children },
+        },
+    };
+    store.save_structured(&document, &[]).expect("save");
+    drop(store);
+    let reopened = SessionStore::open_structured(&path.0).expect("open");
+    assert_eq!(
+        reopened
+            .load_structured()
+            .expect("load")
+            .expect("head")
+            .snapshot,
+        document
+    );
+}

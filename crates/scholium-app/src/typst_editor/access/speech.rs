@@ -8,30 +8,68 @@ use scholium_model::{
 };
 
 /// Whole-formula description; empty slots are spoken, never skipped.
+#[cfg(test)]
 pub(super) fn describe(node: &MathNode) -> String {
+    describe_in(node, crate::i18n::Locale::ZhHans)
+}
+
+pub(super) fn describe_in(node: &MathNode, locale: crate::i18n::Locale) -> String {
     match &node.body {
         MathBody::Text { text } => text.clone(),
         MathBody::Symbol { symbol } => symbol.to_string(),
-        MathBody::Hole => "空".into(),
-        MathBody::Row { children } => children.iter().map(describe).collect::<Vec<_>>().join("，"),
+        MathBody::Hole => crate::i18n::text(locale, "a11y.math.empty"),
+        MathBody::Row { children } => children
+            .iter()
+            .map(|n| describe_in(n, locale))
+            .collect::<Vec<_>>()
+            .join(separator(locale)),
         MathBody::Fraction {
             numerator,
             denominator,
-        } => format!(
-            "分数（分子：{}；分母：{}）",
-            describe(numerator),
-            describe(denominator)
+        } => crate::i18n::text_with(
+            locale,
+            "a11y.math.fraction",
+            &[
+                ("numerator", describe_in(numerator, locale).into()),
+                ("denominator", describe_in(denominator, locale).into()),
+            ],
         ),
         MathBody::Attach { base, sub, sup } => {
-            let slots = [("下标", sub), ("上标", sup)]
+            let slots = [("a11y.math.attach.sub", sub), ("a11y.math.attach.sup", sup)]
                 .into_iter()
-                .filter_map(|(name, slot)| Some(format!("；{name}：{}", describe(slot.as_ref()?))));
-            format!(
-                "上下标（底数：{}{}）",
-                describe(base),
-                slots.collect::<String>()
+                .filter_map(|(key, slot)| {
+                    Some(crate::i18n::text_with(
+                        locale,
+                        key,
+                        &[("content", describe_in(slot.as_ref()?, locale).into())],
+                    ))
+                });
+            crate::i18n::text_with(
+                locale,
+                "a11y.math.attach",
+                &[
+                    ("base", describe_in(base, locale).into()),
+                    ("scripts", slots.collect::<String>().into()),
+                ],
             )
         }
+        MathBody::Root { index, radicand } => {
+            let radicand = describe_in(radicand, locale);
+            let (key, index) = match index {
+                Some(index) => ("a11y.math.root.indexed", describe_in(index, locale)),
+                None => ("a11y.math.root.square", String::new()),
+            };
+            crate::i18n::text_with(
+                locale,
+                key,
+                &[("index", index.into()), ("radicand", radicand.into())],
+            )
+        }
+        MathBody::Delimited { body, .. } => crate::i18n::text_with(
+            locale,
+            "a11y.math.delimited",
+            &[("body", describe_in(body, locale).into())],
+        ),
     }
 }
 
@@ -40,20 +78,38 @@ pub(super) fn describe(node: &MathNode) -> String {
 /// A leaf directly in the formula (no slot ancestor) reads as `公式：…`; `None` when
 /// `leaf` is not inside `root`.
 pub(super) fn slot_context(root: &MathNode, leaf: NodeId) -> Option<String> {
+    slot_context_in(root, leaf, crate::i18n::Locale::ZhHans)
+}
+
+fn slot_context_in(root: &MathNode, leaf: NodeId, locale: crate::i18n::Locale) -> Option<String> {
     let mut path = Vec::new();
     let found = locate(root, leaf, &mut path)?;
-    let content = describe(found);
+    let content = describe_in(found, locale);
     let content = if content.is_empty() {
-        "空".into()
+        crate::i18n::text(locale, "a11y.math.empty")
     } else {
         content
     };
     let path = if path.is_empty() {
-        "公式".to_owned()
+        crate::i18n::text(locale, "a11y.math.formula.name")
     } else {
-        path.join("，")
+        path.iter()
+            .map(|name| slot_name(name, locale))
+            .collect::<Vec<_>>()
+            .join(separator(locale))
     };
-    Some(format!("{path}：{content}"))
+    Some(crate::i18n::text_with(
+        locale,
+        "a11y.math.context",
+        &[("path", path.into()), ("content", content.into())],
+    ))
+}
+
+fn separator(locale: crate::i18n::Locale) -> &'static str {
+    match locale {
+        crate::i18n::Locale::ZhHans => "，",
+        crate::i18n::Locale::En => ", ",
+    }
 }
 
 /// The edge announcement is separate from editable Text offsets.
@@ -65,11 +121,15 @@ pub(super) fn caret_context(
     let mut path = Vec::new();
     let node = locate(root, at.leaf, &mut path)?;
     let key = match (&node.body, at.byte == 0) {
+        (MathBody::Root { .. }, true) => "a11y.math.edge.root.before",
+        (MathBody::Root { .. }, false) => "a11y.math.edge.root.after",
+        (MathBody::Delimited { .. }, true) => "a11y.math.edge.delimited.before",
+        (MathBody::Delimited { .. }, false) => "a11y.math.edge.delimited.after",
         (MathBody::Fraction { .. }, true) => "a11y.math.edge.fraction.before",
         (MathBody::Fraction { .. }, false) => "a11y.math.edge.fraction.after",
         (MathBody::Attach { .. }, true) => "a11y.math.edge.attach.before",
         (MathBody::Attach { .. }, false) => "a11y.math.edge.attach.after",
-        _ => return slot_context(root, at.leaf),
+        _ => return slot_context_in(root, at.leaf, locale),
     };
     let edge = crate::i18n::text(locale, key);
     Some(if path.is_empty() {
@@ -78,7 +138,17 @@ pub(super) fn caret_context(
         crate::i18n::text_with(
             locale,
             "a11y.math.edge.nested",
-            &[("path", path.join(", ").into()), ("edge", edge.into())],
+            &[
+                (
+                    "path",
+                    path.iter()
+                        .map(|name| slot_name(name, locale))
+                        .collect::<Vec<_>>()
+                        .join(separator(locale))
+                        .into(),
+                ),
+                ("edge", edge.into()),
+            ],
         )
     })
 }
@@ -97,21 +167,37 @@ fn locate<'a>(
             numerator,
             denominator,
         } => in_slots(
-            [(numerator, "分数分子"), (denominator, "分数分母")],
+            [
+                (numerator, "a11y.math.slot.numerator"),
+                (denominator, "a11y.math.slot.denominator"),
+            ],
             leaf,
             path,
         ),
         MathBody::Attach { base, sub, sup } => in_slots(
             [
-                (Some(base), "底数"),
-                (sub.as_ref(), "下标"),
-                (sup.as_ref(), "上标"),
+                (Some(base), "a11y.math.slot.base"),
+                (sub.as_ref(), "a11y.math.slot.sub"),
+                (sup.as_ref(), "a11y.math.slot.sup"),
             ]
             .into_iter()
             .filter_map(|(slot, name)| Some((slot?, name))),
             leaf,
             path,
         ),
+        MathBody::Root { index, radicand } => in_slots(
+            [
+                (index.as_ref(), "a11y.math.slot.root_index"),
+                (Some(radicand), "a11y.math.slot.radicand"),
+            ]
+            .into_iter()
+            .filter_map(|(slot, name)| Some((slot?, name))),
+            leaf,
+            path,
+        ),
+        MathBody::Delimited { body, .. } => {
+            in_slots([(body, "a11y.math.slot.delimited")], leaf, path)
+        }
         _ => None,
     }
 }
@@ -130,4 +216,12 @@ fn in_slots<'a>(
         }
         found
     })
+}
+
+fn slot_name(name: &str, locale: crate::i18n::Locale) -> String {
+    if name.starts_with("a11y.") {
+        crate::i18n::text(locale, name)
+    } else {
+        name.to_owned()
+    }
 }

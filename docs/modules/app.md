@@ -149,7 +149,8 @@ app 的导航、点击、Esc 与选区变化解除待输入样式，并在导航
 占位创建、撤销及字素重锚由 session 执行。数学朗读为 `上下标（底数：…；下标：…；上标：…）`，
 槽路径名为 底数/下标/上标。普通左右键按 base、sub、sup 顺序进入槽，再经过 Attach 边缘，不创建
 临时 Hole；显式 LeaveSlot API 保留兼容生命周期。结构边缘继续显示公式指示底色，AccessKit 状态
-播报「公式内，分数前/后」或「公式内，上下标前/后」，不增加正文 Text 偏移。
+播报「公式内，分数/上下标/根式/括号前/后」，不增加正文 Text 偏移。根式的槽路径为根指数、被开方数，
+定界符播报为括号及其内容；中英文均提供对应文案。
 
 上下方向键与 Home/End 只读当前 Scene 的精确正文 caret（padded Frame pt）推出视觉行：
 行内公式的槽位与正文行纵向重叠，不参与划行。上下键取纵向最近的相邻行、再取最接近目标
@@ -179,7 +180,7 @@ anchor/cursor 选区，复制、剪切、输入替换沿用同一路径。点击
 与会话自记的“位置相近（≤6 px）且间隔 <300 ms 的连续按下数”中较小者（egui 只比时间），在释放时生效
 （按下时已按单击放好光标）；数学槽内双击保持光标并提示“数学槽位选区尚未接入”。
 
-光标在行内公式内时，页面在公式整体 bounds 后画淡色圆角矩形、在当前 Fraction/Attach 槽外画更淡的描边
+光标在行内公式内时，页面在公式整体 bounds 后画淡色圆角矩形、在当前 Fraction/Attach/Root/Delimited 槽外画更淡的描边
 （均为形状，不画文字，几何取自当前 Scene），状态栏显示“公式”。Esc 在无选区、无组合时离开公式；末尾右键/开头左键同样可以离开。
 公式内 Enter 的语义拆段由 session 执行。无运算符长串的溢出由 session 按当前 Scene 推导目标，
 app 显示每个公式的“公式超出行宽”诊断，不改写内容。AUDIT 的 `formula_overflow` 只表示光标所在公式。
@@ -188,7 +189,7 @@ app 显示每个公式的“公式超出行宽”诊断，不改写内容。AUDI
 文字。缺几何的当前选区拒绝替换；pending 时可按有效语义端点继续键盘编辑，禁止使用旧
 几何判断位置。范围内 RawMath 明确拒绝，失败保留正文、端点和可复制输入草稿。
 范围替换、存活叶/字素位置、撤销端点与纯文本复制/剪切的拒绝规则由 [session](session.md) 定义；
-app 只检查当前选区几何和交付原生剪贴板。数学内部槽位选区与选区结构命令尚未接入。
+app 只检查当前选区几何和交付原生剪贴板。数学行选区支持分数、根式和定界符包装；跨槽选区尚未接入。
 见 [ADR 0035](../adr/ADR-0035-typst-page-selection.md)。
 与其他行内内容相邻的空 Text 叶在 Typst 中不成 cluster、没有可绘范围；选框跳过它，
 语义范围仍包含它。视觉行导航见[开发日志《Typst 主程序候选的视觉行导航与几何键有序排队》](../log/2026-10-10-typst-vertical-navigation.md)。
@@ -228,15 +229,15 @@ core 交付已采纳 Scene 的位图与已验证身份的条带，app 上传为�
   以及“主题”（浅色/深色）与“语言”（跟随系统/简体中文/English）子菜单，后两者同样是注册表里的命令。
 - **快捷键**：`shortcuts::shortcuts` 遍历注册表中 `App` 路由的和弦，带 Shift 的先于不带的；某键存在带 Shift 的孪生和弦时，
   不带 Shift 的和弦在 Shift 按住时让位（Ctrl+Shift+Z 重做不会同时触发撤销）。`Unimplemented` 的命令不消费按键。
-  页面路由的和弦（Ctrl+B/I/M、Ctrl+/、Ctrl+0/1/2）由页面按注册表解析，字母、数字、功能键精确匹配，标点另可匹配
+  页面路由的和弦（Ctrl+B/I/M、Ctrl+/、Ctrl+Shift+R、Ctrl+0/1/2）由页面按注册表解析，字母、数字、功能键精确匹配，标点另可匹配
   不带 Shift 的和弦。测试断言没有两个命令共用一个和弦。
 - **默认快捷键**：Ctrl+0 / Ctrl+1 / Ctrl+2 = 正文 / 标题 1 / 标题 2；Ctrl+Shift+M 在页面编辑与源码预览之间切换
   （Ctrl+1/2 不再切换工作方式；Ctrl+0 不再是实际大小，实际大小只在菜单与按钮里）；Ctrl+B/I 粗体/斜体、Ctrl+M 公式、
-  Ctrl+/ 分数、Ctrl+Z/Ctrl+Shift+Z/Ctrl+Y、Ctrl+S、Ctrl+N、Ctrl+J、Ctrl+Shift+B、Ctrl+F1、Ctrl+加号/等号/减号缩放不变。
+  Ctrl+/ 分数、Ctrl+Shift+R 根式、Ctrl+Z/Ctrl+Shift+Z/Ctrl+Y、Ctrl+S、Ctrl+N、Ctrl+J、Ctrl+Shift+B、Ctrl+F1、Ctrl+加号/等号/减号缩放。
 - **文字目录**：命令标题、提示、菜单名与不可用原因经 `i18n` 的 Fluent 目录（`i18n/zh-Hans.ftl`、`en.ftl`，
   见 [ADR 0040](../adr/ADR-0040-ui-string-catalog.md)）渲染；界面语言 `WorkspaceState.locale`（`auto` 按 `SCHOLIUM_LOCALE`、`LC_ALL`、
   `LC_MESSAGES`、`LANG` 的第一个非空值，否则英语；窗口检查按 `--locale` 在 zh-Hans 与 en 下各跑一遍，控件按命令 id 经 AUDIT 的 `controls` 映射点击，不依赖标签文字或坐标）可在“视图 → 语言”里运行时切换，下一帧生效，不影响文档与历史。窗口外壳的全部可见文字（菜单、工具栏提示、焦点栏、标签、状态栏、
-  窗口标题、丢弃确认框）都走目录；源码窗格标题、预览状态和源码警告也使用带命名参数的目录 key。新增的数学结构边缘播报使用 `a11y.math.edge.*` 完整句子目录；其余既有编辑面状态消息与数学朗读仍列在
+  窗口标题、丢弃确认框）都走目录；源码窗格标题、预览状态和源码警告也使用带命名参数的目录 key。数学结构、槽位与边缘播报使用 `a11y.math.*` 目录；其余既有编辑面状态消息仍列在
   `scripts/ui-strings-allowlist.txt`，由 `scripts/check-ui-strings.py` 保证只减不增。
 - 源码窗格只按快照、高亮范围和实际文字/高亮颜色缓存布局输入；`egui::Galley` 由 egui 缓存，随字体图集重建而失效。
   主题切换更新文字颜色与图集坐标，稳定帧复用有效布局，不强制刷新帧，也不因主题变化滚动源码。
@@ -353,3 +354,6 @@ JSON `preedit`/`commit`（可选 `cursor_chars`）给同一 egui 输入路径送
 分数按钮、插入菜单与 Ctrl+/ 经同一 session 命令，在光标处插入空分数或包装同一数学行选区。
 数学行的 Shift+左右选择和折叠由 core 决定；app 的 `selection_quads` 从当前 Scene 读取 core 的数学选区几何。
 正文跨公式选择使用 `selection_math`，因此包含 Text 与 Fraction 的 Row 不依赖不存在的 wrapper bounds。
+
+根式和定界符的菜单、焦点工具栏入口共享 session 命令。光标在根式内时焦点栏提供“添加根指数”，
+已存在时进入该槽；在定界符内时提供循环配对的命令。两项针对最内层包含光标的对应结构。

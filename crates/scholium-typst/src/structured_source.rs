@@ -13,6 +13,8 @@ use unicode_segmentation::UnicodeSegmentation;
 
 #[cfg(test)]
 mod empty_tests;
+#[cfg(test)]
+mod root_delimiter_tests;
 
 /// Which consumer the source is for.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -210,14 +212,55 @@ fn math(out: &mut GeneratedSource, node: &MathNode) {
                 }
             }
         }
+        MathBody::Root { index, radicand } => {
+            if let Some(index) = index {
+                out.source.push_str("root(");
+                argument(out, index);
+                out.source.push_str(", ");
+                argument(out, radicand);
+                out.source.push(')');
+            } else {
+                out.source.push_str("sqrt(");
+                argument(out, radicand);
+                out.source.push(')');
+            }
+        }
+        MathBody::Delimited { open, close, body } => {
+            out.source.push_str("lr(");
+            out.source.push(*open);
+            out.source.push(' ');
+            math(out, body);
+            out.source.push(' ');
+            out.source.push(*close);
+            out.source.push(')');
+        }
     }
+}
+
+fn argument(out: &mut GeneratedSource, node: &MathNode) {
+    let mut value = GeneratedSource::default();
+    math(&mut value, node);
+    // A literal comma must not become a call argument separator. Grouping consumes
+    // parentheses in Typst math without printing them; other literals stay quoted.
+    let group = value.source.contains(',');
+    if group {
+        out.source.push('(');
+    }
+    out.source.push_str(&value.source);
+    if group {
+        out.source.push(')');
+    }
+    out.holes += value.holes;
 }
 
 fn atom_count(node: &MathNode) -> usize {
     match &node.body {
         MathBody::Text { text } => text.graphemes(true).count(),
         MathBody::Row { children } => children.iter().map(atom_count).sum(),
-        MathBody::Fraction { .. } | MathBody::Attach { .. } => 2,
+        MathBody::Fraction { .. }
+        | MathBody::Attach { .. }
+        | MathBody::Root { .. }
+        | MathBody::Delimited { .. } => 2,
         MathBody::Symbol { .. } | MathBody::Hole => 1,
     }
 }

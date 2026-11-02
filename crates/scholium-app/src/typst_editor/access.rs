@@ -229,7 +229,14 @@ impl EditorSession {
                     if focused && context.is_none() {
                         context = speech::caret_context(root, self.cursor, locale);
                     }
-                    (root.node, format!("公式：{}", speech::describe(root)))
+                    (
+                        root.node,
+                        crate::i18n::text_with(
+                            locale,
+                            "a11y.math.formula",
+                            &[("body", speech::describe_in(root, locale).into())],
+                        ),
+                    )
                 }
                 InlineBody::RawMath { source } => {
                     (inline.node, format!("原串公式（不可编辑）：{source}"))

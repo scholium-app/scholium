@@ -206,6 +206,7 @@ fn assistive_selection_inside_a_grapheme_is_rejected() {
 #[test]
 fn formula_is_a_math_object_and_slot_context_is_a_live_status() {
     let mut f = Fixture::new();
+    f.state.locale = crate::i18n::LocaleSetting::ZhHans;
     f.events(vec![
         text("A "),
         text("$"),
@@ -388,6 +389,7 @@ fn speech_names_script_slots_like_fraction_slots() {
 #[test]
 fn scripts_in_a_live_formula_are_spoken_in_the_math_object_and_status() {
     let mut f = Fixture::new();
+    f.state.locale = crate::i18n::LocaleSetting::ZhHans;
     f.events(vec![text("A"), text("$"), text("x"), text("^"), text("2")]);
     let tree = settled(&mut f);
     let math = tree.children(Role::Math);
@@ -473,3 +475,6 @@ fn compound_edges_announce_their_side_without_changing_body_text_offsets() {
         assert!(tree.body().text_selection().is_some());
     }
 }
+
+#[path = "root_delimiter_tests.rs"]
+mod root_delimiter_tests;

@@ -31,7 +31,7 @@ Apache-2.0 使用；新探针代码按 MIT OR Apache-2.0。补丁维持上游原
 已经应用的补丁会跳过；版本不符或有冲突会停止并保留现有文件。只在本探针的
 Cargo.toml 使用 path patch；`reference/` 独立 workspace 使用未修改的 registry 依赖。
 新增 `editor` feature 默认只在本探针启用，`Library.editing` 默认 false。
-补丁依次为身份/Hole、组合槽位/分数线、shaping/空行插入点、段落实际计算计数；bootstrap 校验完整补丁前缀，
+补丁依次为身份/Hole、组合槽位/分数线、shaping/空行插入点、段落实际计算计数、定界符 body 槽 origin；bootstrap 校验完整补丁前缀，
 拒绝覆盖任何与这些状态不符的本地修改。路径补丁覆盖同一版本组，避免混用 Typst 类型。
 
 ```sh

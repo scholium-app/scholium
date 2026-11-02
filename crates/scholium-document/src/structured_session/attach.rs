@@ -26,6 +26,9 @@ enum Step {
     Base,
     Sub,
     Sup,
+    RootIndex,
+    RootRadicand,
+    DelimitedBody,
 }
 
 fn child(node: &MathNode, step: Step) -> Option<&MathNode> {
@@ -36,6 +39,9 @@ fn child(node: &MathNode, step: Step) -> Option<&MathNode> {
         (MathBody::Attach { base, .. }, Step::Base) => Some(base),
         (MathBody::Attach { sub, .. }, Step::Sub) => sub.as_deref(),
         (MathBody::Attach { sup, .. }, Step::Sup) => sup.as_deref(),
+        (MathBody::Root { index, .. }, Step::RootIndex) => index.as_deref(),
+        (MathBody::Root { radicand, .. }, Step::RootRadicand) => Some(radicand),
+        (MathBody::Delimited { body, .. }, Step::DelimitedBody) => Some(body),
         _ => None,
     }
 }
@@ -48,6 +54,9 @@ fn child_mut(node: &mut MathNode, step: Step) -> Option<&mut MathNode> {
         (MathBody::Attach { base, .. }, Step::Base) => Some(base),
         (MathBody::Attach { sub, .. }, Step::Sub) => sub.as_deref_mut(),
         (MathBody::Attach { sup, .. }, Step::Sup) => sup.as_deref_mut(),
+        (MathBody::Root { index, .. }, Step::RootIndex) => index.as_deref_mut(),
+        (MathBody::Root { radicand, .. }, Step::RootRadicand) => Some(radicand),
+        (MathBody::Delimited { body, .. }, Step::DelimitedBody) => Some(body),
         _ => None,
     }
 }
@@ -57,6 +66,9 @@ fn steps(node: &MathNode) -> Vec<Step> {
         MathBody::Row { children } => (0..children.len()).map(Step::Row).collect(),
         MathBody::Fraction { .. } => vec![Step::Num, Step::Den],
         MathBody::Attach { .. } => vec![Step::Base, Step::Sub, Step::Sup],
+        MathBody::Root { index: Some(_), .. } => vec![Step::RootIndex, Step::RootRadicand],
+        MathBody::Root { index: None, .. } => vec![Step::RootRadicand],
+        MathBody::Delimited { .. } => vec![Step::DelimitedBody],
         _ => vec![],
     }
 }
@@ -103,6 +115,8 @@ fn end_of(node: &MathNode) -> Option<BodyTextPosition> {
             .flatten()
             .find_map(|slot| end_of(slot))
             .or_else(|| end_of(base)),
+        MathBody::Root { radicand, .. } => end_of(radicand),
+        MathBody::Delimited { body, .. } => end_of(body),
         MathBody::Symbol { .. } => None,
     }
 }
@@ -113,6 +127,11 @@ fn first_leaf(node: &MathNode) -> Option<NodeId> {
         MathBody::Row { children } => children.iter().find_map(first_leaf),
         MathBody::Fraction { numerator, .. } => first_leaf(numerator),
         MathBody::Attach { base, .. } => first_leaf(base),
+        MathBody::Root { index, radicand } => index
+            .as_deref()
+            .and_then(first_leaf)
+            .or_else(|| first_leaf(radicand)),
+        MathBody::Delimited { body, .. } => first_leaf(body),
         MathBody::Symbol { .. } => None,
     }
 }

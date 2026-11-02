@@ -36,7 +36,10 @@ fn compounds(
 ) {
     if matches!(
         node.body,
-        MathBody::Fraction { .. } | MathBody::Attach { .. }
+        MathBody::Fraction { .. }
+            | MathBody::Attach { .. }
+            | MathBody::Root { .. }
+            | MathBody::Delimited { .. }
     ) && let Some(bounds) = bounds.get(&node.node)
     {
         out.insert(node.node, (*bounds, formula));

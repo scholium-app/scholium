@@ -105,3 +105,22 @@ fn the_page_keeps_keyboard_focus_through_esc() {
     let source = include_str!("paint.rs");
     assert!(source.contains("escape: true"));
 }
+
+#[test]
+fn ctrl_shift_r_inserts_a_root_and_plain_ctrl_r_does_not() {
+    let mut f = Fixture::new();
+    f.events(vec![text("$"), text("x")]);
+    let before = f.editor.snapshot.clone();
+    f.events(vec![key(egui::Key::R, true)]);
+    assert_eq!(f.editor.snapshot, before);
+    f.events(vec![press(
+        egui::Key::R,
+        egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
+    )]);
+    let InlineBody::Math { root } = &f.editor.snapshot.blocks[0].content[1].body else {
+        panic!("math")
+    };
+    assert!(
+        matches!(&root.body, MathBody::Row { children } if matches!(children[1].body, MathBody::Root { .. }))
+    );
+}

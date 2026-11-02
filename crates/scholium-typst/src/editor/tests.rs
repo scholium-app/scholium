@@ -27,6 +27,36 @@ fn attach(base: MathNode, sub: Option<MathNode>, sup: Option<MathNode>) -> MathN
     })
 }
 
+#[test]
+fn root_and_delimited_slots_have_carets() {
+    let (index, radicand, body) = (MathNode::hole(), text("x"), MathNode::hole());
+    let ids = [index.node, radicand.node, body.node];
+    let root = node(MathBody::Root {
+        index: Some(Box::new(index)),
+        radicand: Box::new(radicand),
+    });
+    let root_laid = lay_out(root);
+    for id in &ids[..2] {
+        assert_slot_hit(&root_laid.geometry, *id);
+    }
+    let delimited = node(MathBody::Delimited {
+        open: '(',
+        close: ')',
+        body: Box::new(body),
+    });
+    let delimited_laid = lay_out(delimited);
+    assert_slot_hit(&delimited_laid.geometry, ids[2]);
+}
+
+fn assert_slot_hit(geometry: &EditGeometry, id: NodeId) {
+    let caret = geometry
+        .caret(at(id, 0, Affinity::Downstream))
+        .expect("slot caret");
+    assert!(caret.exact);
+    let midpoint = [caret.top[0], (caret.top[1] + caret.bottom[1]) / 2.0];
+    assert_eq!(geometry.hit(midpoint).expect("slot hit").position.leaf, id);
+}
+
 struct Laid {
     geometry: EditGeometry,
     runs: Vec<String>,
@@ -354,4 +384,108 @@ fn view_and_scale_changes_render_strips_without_a_new_layout() {
     let scaled: Vec<_> = updates.iter().filter(|u| u.px_per_pt == 2.0).collect();
     assert!(!scaled.is_empty());
     assert!(scaled.iter().all(|u| u.page_height < height));
+}
+
+#[test]
+fn root_index_radicand_and_delimiter_body_publish_named_slot_bounds() {
+    let structures = [
+        (
+            node(MathBody::Root {
+                index: Some(Box::new(text("3"))),
+                radicand: Box::new(text("xy")),
+            }),
+            vec![1, 2],
+        ),
+        (
+            node(MathBody::Delimited {
+                open: '(',
+                close: ')',
+                body: Box::new(text("xy")),
+            }),
+            vec![1],
+        ),
+    ];
+    for (root, expected) in structures {
+        let kind = format!("{:?}", root.body);
+        let owner = root.node;
+        let doc = StructuredDocument {
+            document: DocumentId::fresh(),
+            revision: Revision(0),
+            blocks: vec![StructuredBlock {
+                node: NodeId::fresh(),
+                kind: BlockKind::Paragraph,
+                content: vec![scholium_model::structured::StructuredInline {
+                    node: NodeId::fresh(),
+                    body: InlineBody::Math { root },
+                }],
+            }],
+        };
+        let mut cache = ContentCache::default();
+        let content = cache.document(&doc).expect("content");
+        let frame = kernel::layout(&kernel::EditWorld::new(), &content).expect("layout");
+        let mut slots = Vec::new();
+        collect_slots(&frame, &mut slots);
+        let slots: Vec<_> = slots
+            .into_iter()
+            .filter_map(|origin| {
+                (cache.reverse.get(&origin.node) == Some(&owner))
+                    .then_some(origin.slot)
+                    .flatten()
+            })
+            .collect();
+        for slot in expected {
+            assert!(
+                slots.contains(&slot),
+                "{kind}: missing slot {slot}: {slots:?}"
+            );
+        }
+    }
+}
+fn collect_slots(frame: &Frame, slots: &mut Vec<typst::editor::EditOrigin>) {
+    slots.extend(frame.edit_bounds().iter().map(|bound| bound.origin));
+    for (_, item) in frame.items() {
+        if let FrameItem::Group(group) = item {
+            collect_slots(&group.frame, slots);
+        }
+    }
+}
+
+#[test]
+fn nested_delimiter_keeps_its_body_slot_beside_the_parent_root_slot() {
+    let delimited = node(MathBody::Delimited {
+        open: '(',
+        close: ')',
+        body: Box::new(text("xy")),
+    });
+    let delimiter_id = delimited.node;
+    let root = node(MathBody::Root {
+        index: None,
+        radicand: Box::new(delimited),
+    });
+    let root_id = root.node;
+    let doc = StructuredDocument {
+        document: DocumentId::fresh(),
+        revision: Revision(0),
+        blocks: vec![StructuredBlock {
+            node: NodeId::fresh(),
+            kind: BlockKind::Paragraph,
+            content: vec![scholium_model::structured::StructuredInline {
+                node: NodeId::fresh(),
+                body: InlineBody::Math { root },
+            }],
+        }],
+    };
+    let mut cache = ContentCache::default();
+    let content = cache.document(&doc).expect("content");
+    let frame = kernel::layout(&kernel::EditWorld::new(), &content).expect("layout");
+    let mut origins = Vec::new();
+    collect_slots(&frame, &mut origins);
+    for (owner, slot) in [(root_id, 2), (delimiter_id, 1)] {
+        assert!(
+            origins
+                .iter()
+                .any(|o| cache.reverse.get(&o.node) == Some(&owner) && o.slot == Some(slot)),
+            "missing nested slot {owner:?}/{slot}: {origins:?}"
+        );
+    }
 }

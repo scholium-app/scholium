@@ -25,6 +25,12 @@ fn children(node: &MathNode) -> Vec<&MathNode> {
             .chain(sup)
             .map(Box::as_ref)
             .collect(),
+        MathBody::Root { index, radicand } => index
+            .iter()
+            .map(Box::as_ref)
+            .chain(std::iter::once(radicand.as_ref()))
+            .collect(),
+        MathBody::Delimited { body, .. } => vec![body],
         _ => Vec::new(),
     }
 }
@@ -38,7 +44,10 @@ fn valid(node: &MathNode, byte: usize) -> bool {
     match &node.body {
         MathBody::Text { text } => boundary(text, byte),
         MathBody::Hole => byte == 0,
-        MathBody::Fraction { .. } | MathBody::Attach { .. } => byte <= 1,
+        MathBody::Fraction { .. }
+        | MathBody::Attach { .. }
+        | MathBody::Root { .. }
+        | MathBody::Delimited { .. } => byte <= 1,
         _ => false,
     }
 }
@@ -102,6 +111,22 @@ pub(super) fn insert(
     a: BodyTextPosition,
     b: BodyTextPosition,
 ) -> Result<BodyTextPosition, EditError> {
+    wrap(doc, a, b, Wrapper::Fraction)
+}
+
+#[derive(Clone, Copy)]
+pub(super) enum Wrapper {
+    Fraction,
+    Root,
+    Delimited(char, char),
+}
+
+pub(super) fn wrap(
+    doc: &mut StructuredDocument,
+    a: BodyTextPosition,
+    b: BodyTextPosition,
+    wrapper: Wrapper,
+) -> Result<BodyTextPosition, EditError> {
     let range = math_row_range(doc, a, b)?;
     let owner = super::edit::math_node(doc, range.row).ok_or(EditError::WrongTarget)?;
     let row = row_nodes(owner);
@@ -123,7 +148,7 @@ pub(super) fn insert(
         split(node, from, to, &mut left, &mut selected, &mut right);
     }
     right.extend_from_slice(&row[j + 1..]);
-    let numerator = if selected.is_empty() {
+    let selected_slot = if selected.is_empty() {
         if matches!(row[i].body, MathBody::Hole) {
             row[i].clone()
         } else {
@@ -132,18 +157,30 @@ pub(super) fn insert(
     } else {
         pack(selected)
     };
-    let denominator = MathNode::hole();
-    let caret = if a == b {
-        numerator.node
+    let other = MathNode::hole();
+    let caret = if a != b && matches!(wrapper, Wrapper::Fraction) {
+        other.node
     } else {
-        denominator.node
+        first_stop(&selected_slot)
+    };
+    let body = match wrapper {
+        Wrapper::Fraction => MathBody::Fraction {
+            numerator: Box::new(selected_slot),
+            denominator: Box::new(other),
+        },
+        Wrapper::Root => MathBody::Root {
+            index: None,
+            radicand: Box::new(selected_slot),
+        },
+        Wrapper::Delimited(open, close) => MathBody::Delimited {
+            open,
+            close,
+            body: Box::new(selected_slot),
+        },
     };
     left.push(MathNode {
         node: NodeId::fresh(),
-        body: MathBody::Fraction {
-            numerator: Box::new(numerator),
-            denominator: Box::new(denominator),
-        },
+        body,
     });
     left.extend(right);
     if matches!(owner.body, MathBody::Row { .. }) && left.len() > 1 {
@@ -155,6 +192,13 @@ pub(super) fn insert(
         leaf: caret,
         byte: 0,
     })
+}
+fn first_stop(node: &MathNode) -> NodeId {
+    if let MathBody::Row { children } = &node.body {
+        children.first().map_or(node.node, first_stop)
+    } else {
+        node.node
+    }
 }
 fn end(node: &MathNode) -> usize {
     match &node.body {

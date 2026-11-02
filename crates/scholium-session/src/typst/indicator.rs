@@ -24,7 +24,10 @@ pub(super) fn slot_of(node: &MathNode, leaf: NodeId) -> Option<&MathNode> {
         .find(|c| math_contains(c, leaf))?;
     let deeper = slot_of(child, leaf);
     match node.body {
-        MathBody::Fraction { .. } | MathBody::Attach { .. } => deeper.or(Some(child)),
+        MathBody::Fraction { .. }
+        | MathBody::Attach { .. }
+        | MathBody::Root { .. }
+        | MathBody::Delimited { .. } => deeper.or(Some(child)),
         _ => deeper,
     }
 }

@@ -100,3 +100,5 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0044](ADR-0044-transient-ime-layout.md)：IME 预编辑作为独立的 Typst 派生排版输入，不进入权威文档、历史或保存；组合期间暂停文档几何查询。
 
 [ADR 0045](ADR-0045-math-edge-caret.md)：会话层数学结构前后停点、对称结构删除与同源 Scene 边缘几何，不添加持久化锚点叶。
+
+[ADR 0046](ADR-0046-math-root-delimiter.md)：structured v1 加性根式和自动定界符节点、槽位编辑与 Typst 几何。

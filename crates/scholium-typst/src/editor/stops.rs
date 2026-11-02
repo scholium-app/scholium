@@ -16,6 +16,12 @@ pub fn math_children(node: &MathNode) -> Vec<&MathNode> {
             .chain(sup)
             .map(Box::as_ref)
             .collect(),
+        MathBody::Root { index, radicand } => index
+            .iter()
+            .map(Box::as_ref)
+            .chain(std::iter::once(radicand.as_ref()))
+            .collect(),
+        MathBody::Delimited { body, .. } => vec![body],
         _ => Vec::new(),
     }
 }
@@ -117,7 +123,10 @@ fn walk<'a>(node: &'a MathNode, left: bool, right: bool, out: &mut Vec<Unit<'a>>
                 walk(child, before, after, out);
             }
         }
-        MathBody::Fraction { .. } | MathBody::Attach { .. } => {
+        MathBody::Fraction { .. }
+        | MathBody::Attach { .. }
+        | MathBody::Root { .. }
+        | MathBody::Delimited { .. } => {
             if !left {
                 edge(node.node, 0, out);
             }

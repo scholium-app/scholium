@@ -213,6 +213,7 @@ fn abstract_key(key: egui::Key) -> Option<Key> {
         egui::Key::B => Key::Character('b'),
         egui::Key::I => Key::Character('i'),
         egui::Key::M => Key::Character('m'),
+        egui::Key::R => Key::Character('r'),
         egui::Key::Y => Key::Character('y'),
         egui::Key::Z => Key::Character('z'),
         _ => return None,
