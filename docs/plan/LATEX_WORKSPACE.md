@@ -92,9 +92,10 @@ E2 不通过则不得接入，退回自研或纯整编预览；E3 不通过时�
 ## L3：页面内编辑（路线图阶段 3，范围由 ADR 决定）
 
 在 E5 证明定位粒度足够后，单独评估页面内直接编辑正文与公式的可行性与范围，结论写入新 ADR。
-公式编辑依赖 rtex 的公式源码归属与空字段标记（上游 [rtex#31](https://github.com/HenryXiaoYang/realtime-tex/pull/31)，
+公式编辑使用与 Typst 项目相同的[共享数学输入引擎](MATH_INPUT.md)（[ADR 0048](../adr/ADR-0048-shared-math-input-keymap.md)），
+同一按键序列得到等价公式；它依赖 rtex 的公式源码归属与空字段标记（上游 [rtex#31](https://github.com/HenryXiaoYang/realtime-tex/pull/31)，
 验证记录见[评估日志](../log/2026-10-31-rtex-math-edit.md)）。编辑结果以最小源码 patch 写回，未触及字节不变。
-不承诺与 Typst 原生结构项目同等的结构编辑能力。
+正文的结构编辑（列表、定理等）不承诺与 Typst 原生结构项目同等。
 
 ## 与路线图的关系
 

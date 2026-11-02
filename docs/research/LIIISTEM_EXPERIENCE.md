@@ -79,3 +79,12 @@ Scholium 首发先实现确定性剪贴板路由：HTML/MathML、LaTeX、Markdow
 6. 结构搜索、双后端比较、剪贴板格式路由。
 
 模板中心、OCR、AI 自动排版、脚本会话、绘图和幻灯片不因竞品具备就自动进入首发。
+
+## 4. 2026-11-02 复核
+
+重读[数学模式完全指南](https://liiistem.cn/docs/guide-equation)、[数学编辑快速入门](https://liiistem.cn/docs/tutorial/tuto-math-edit)
+与[高效编辑指南](https://liiistem.cn/docs/guide-tab)。公开文档现在给出了完整的按键约定：公式内 Tab/Shift+Tab 只做符号循环，
+槽位移动靠方向键与 Alt+方向键；结构键多为 Alt 组合（分数、根式、矩阵、上置/下置标注），Alt+Shift+↑/↓ 循环结构变体，
+Ctrl+Backspace 拆除最内层结构；键入括号即自动配对并可伸缩；另有“语义编辑”（隐形运算符、合法性着色、复制到 CAS）
+和数学符号参考页（`/docs/math-ref/…`）。逐项归属阶段与取舍见[数学输入计划](../plan/MATH_INPUT.md)，决策见
+[ADR 0048](../adr/ADR-0048-shared-math-input-keymap.md)。

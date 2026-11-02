@@ -20,6 +20,7 @@
 11. [路线图](plan/ROADMAP.md)：阶段、交付物、出口条件和依赖关系；从阶段 1 起 Typst 与 LaTeX 两个内核同阶段同步推进。
     各阶段的执行计划：
     - [LaTeX 工作区计划](plan/LATEX_WORKSPACE.md)：LaTeX 轨的范围、rtex 评估项与 L1–L3 出口（对应阶段 1–3）。
+    - [数学输入计划](plan/MATH_INPUT.md)：两种项目共用的数学输入引擎与键位表，Liii STEM 数学能力的逐项归属阶段与验收。
     - [P1 排版工作区规划](plan/P1_UI.md)：桌面布局实施基准、两种模式参考图、允许调整的细节与评审检查。
     - [ArtCraft / PhotoCraft / WordCraft 借鉴计划](plan/ARTCRAFT_REFERENCE.md)：命令注册表、菜单栏与工具栏、设计令牌、无界面编辑核心、分层门禁与控制通道的落地顺序。
     - [界面多语言计划](plan/I18N.md)：界面语言与文档语言的区分、目录与 key、硬编码门禁、zh-Hans/en 首批与分期。
