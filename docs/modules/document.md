@@ -181,6 +181,12 @@ SceneStamp 采纳，类型本身不构成窗口竞态验收。裁决见
 `StructuralOutcome.cursor` 是命令落点；一次编辑只产生一个动作。底层显式 `WrapFraction`
 仍保留整子树包装合约，用户分数命令使用 `FractionAt`。
 
+## 独立公式块
+
+`DisplayMath { start, end }` 在正文 caret 处分割块、插入 Equation，或将同一数学行的选区移入 Equation；非空两侧内容保留，空余正文不生成新段落。非法选区和字素边界原子拒绝。`LeaveEquation` 创建下方正文并返回其起点；`RemoveEquation` 只删除全空 Equation，最后一个块退化为可编辑空段。`MergeWithNext` 拒绝 Equation 相邻块，段落文字不拼入数学块。所有操作共用结构校验、请求去重及单动作接受流程。
+
 `RootAt` 和 `DelimitedAt` 共用同一行范围规划：无选区时保留前后文字并进入空内容槽，
 有选区时仅包装所选内容并进入该槽。`RootIndex` 增加空 index 或进入已有 index 的首个可编辑停点；
 `SetDelimiter` 更换配对，最终结构验证拒绝不支持的组合。它们遵守相同的原子动作、撤销和无效范围合约。
+
+Equation 的空树判断、选区提取目标查找和新块落点递归覆盖 Root 的 index/radicand 以及 Delimited 的 body；嵌套根式与定界符遵守同一块边界合约。

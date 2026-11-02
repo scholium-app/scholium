@@ -40,9 +40,12 @@ fn math() -> Vec<CommandSpec> {
         command! {
             "insert.display_formula",
             icon: IconId::DisplayFormula,
+            shortcuts: keys![KeyChord { ctrl: true, shift: true, key: ChordKey::Letter('E') }],
+            routing: Routing::Editor,
             menu: menu!(Insert, 0, 1),
             writes: true,
-            availability: avail::unimplemented,
+            availability: avail::page_write,
+            action: Action::Editor(Command::DisplayMath),
         },
         command! {
             "insert.fraction",

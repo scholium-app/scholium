@@ -216,6 +216,9 @@ mod structure_audit_tests;
 
 #[cfg(test)]
 mod fraction_caret_tests;
+
+#[cfg(test)]
+mod display_tests;
 mod root_delimiter;
 #[cfg(test)]
 mod root_delimiter_tests;

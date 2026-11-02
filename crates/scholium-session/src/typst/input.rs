@@ -363,6 +363,24 @@ impl EditorCore {
             .unwrap_or(leaf.text.len());
     }
     pub(super) fn command(&mut self, command: CommandId, state: &mut EditState) {
+        if matches!(command, CommandId::DisplayMath) {
+            let end = BodyTextPosition {
+                leaf: self.cursor.leaf,
+                byte: self.cursor.byte,
+            };
+            let start = self.anchor.map_or(end, |at| BodyTextPosition {
+                leaf: at.leaf,
+                byte: at.byte,
+            });
+            if self.selected()
+                && scholium_document::math_row_range(&self.snapshot, start, end).is_err()
+            {
+                state.edit_error = Some(CommandError::Rejected(Rejection::StructuralSelection));
+                return;
+            }
+            self.apply(StructuralEdit::DisplayMath { start, end }, state);
+            return;
+        }
         if matches!(command, CommandId::RootIndex) {
             self.root_index(state);
             return;

@@ -445,6 +445,8 @@ a11y-math-edge-fraction-after = In formula, after fraction
 a11y-math-edge-attach-before = In formula, before scripts
 a11y-math-edge-attach-after = In formula, after scripts
 a11y-math-edge-nested = { $path }, { $edge }
+
+a11y-display-formula = Display formula: { $body }
 a11y-math-empty = empty
 a11y-math-formula-name = Formula
 a11y-math-formula = Formula: { $body }

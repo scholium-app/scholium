@@ -7,6 +7,8 @@ use std::panic::{AssertUnwindSafe, catch_unwind};
 pub enum CommandId {
     /// `insert.formula` / `insert.exit_formula`.
     Math,
+    /// `insert.display_formula`.
+    DisplayMath,
     /// `insert.fraction`.
     Fraction,
     /// `insert.root`.
@@ -229,7 +231,8 @@ impl EditorCore {
         use CommandId as C;
         let applied = match (id, args) {
             (
-                C::Math
+                C::DisplayMath
+                | C::Math
                 | C::Fraction
                 | C::Root
                 | C::Delimiter

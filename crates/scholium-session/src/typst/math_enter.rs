@@ -20,6 +20,22 @@ impl EditorCore {
     /// that step restores the caret to where the key was pressed.
     pub(super) fn split_after_formula(&mut self, state: &mut EditState) {
         let origin = self.cursor;
+        let equation = self
+            .snapshot
+            .blocks
+            .iter()
+            .find(|b| {
+                b.kind == scholium_model::BlockKind::Equation
+                    && b.content.iter().any(|i| {
+                        matches!(&i.body,
+                    InlineBody::Math { root } if math_contains(root, origin.leaf))
+                    })
+            })
+            .map(|b| b.node);
+        if let Some(block) = equation {
+            self.leave_equation(block, state);
+            return;
+        }
         let Some(target) = self.leaf_after_formula(origin.leaf) else {
             state.edit_error = Some(CommandError::Rejected(Rejection::MissingBody));
             return;
@@ -54,6 +70,19 @@ impl EditorCore {
             entry.cursor = caret;
             entry.anchor = None;
         }
+    }
+
+    fn leave_equation(&mut self, block: scholium_model::NodeId, state: &mut EditState) {
+        if let Some(caret) = self
+            .placeholder
+            .as_ref()
+            .filter(|held| held.leaf() == self.cursor.leaf)
+            .map(|held| held.caret())
+        {
+            self.cursor = caret;
+            self.settle_placeholder(state);
+        }
+        self.apply(StructuralEdit::LeaveEquation { block }, state);
     }
 }
 

@@ -386,3 +386,30 @@ fn attach_counts_toward_the_depth_limit() {
     let extra = attach(root, None, Some(MathNode::hole()));
     assert_eq!(native(extra).validate(), Err(StructureError::Capacity));
 }
+
+#[test]
+fn display_equation_requires_exactly_one_structured_formula() {
+    let mut doc = native(MathNode::hole());
+    doc.blocks.truncate(1);
+    doc.blocks[0].kind = BlockKind::Equation;
+    doc.blocks[0].content.truncate(1);
+    doc.validate().expect("one equation body");
+    let encoded = serde_json::to_string(&doc).expect("serialize");
+    assert_eq!(
+        serde_json::from_str::<StructuredDocument>(&encoded).expect("deserialize"),
+        doc
+    );
+    assert!(
+        serde_json::from_str::<StructuredDocument>(&encoded.replace("Equation", "FutureEquation"))
+            .is_err()
+    );
+    doc.blocks[0].content[0].body = InlineBody::RawMath { source: "x".into() };
+    assert!(doc.validate().is_err());
+    doc.blocks[0].content.clear();
+    assert!(doc.validate().is_err());
+}
+
+#[test]
+fn display_equation_uses_the_chinese_block_label() {
+    assert_eq!(BlockKind::Equation.label(), "独立公式");
+}

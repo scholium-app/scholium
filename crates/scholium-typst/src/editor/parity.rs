@@ -360,3 +360,32 @@ fn edge_scene(doc: StructuredDocument) -> super::EditorScene {
         std::thread::sleep(std::time::Duration::from_millis(10));
     }
 }
+
+#[test]
+fn display_equations_and_generated_source_keep_the_same_vertical_rhythm() {
+    for (before, after) in [(false, false), (true, false), (false, true), (true, true)] {
+        let mut doc = math_doc(attach_sup("x", "2"));
+        doc.blocks[0].kind = BlockKind::Equation;
+        doc.blocks[0]
+            .content
+            .retain(|i| matches!(i.body, InlineBody::Math { .. }));
+        let paragraph = |value| StructuredBlock {
+            node: NodeId::fresh(),
+            kind: BlockKind::Paragraph,
+            content: vec![plain(value)],
+        };
+        if before {
+            doc.blocks.insert(0, paragraph("before"));
+        }
+        if after {
+            doc.blocks.push(paragraph("after"));
+        }
+        let editor = editor_lines(&doc);
+        let preview = preview_lines(&doc);
+        assert_eq!(editor.len(), preview.len());
+        for ((a, text), (b, source)) in editor.iter().zip(&preview) {
+            assert_eq!(text, source);
+            assert!((a - b).abs() < 0.01, "{before}/{after}: {a} versus {b}");
+        }
+    }
+}

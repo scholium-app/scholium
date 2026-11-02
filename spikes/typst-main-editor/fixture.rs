@@ -95,6 +95,9 @@ fn root_delimiter_fixture(name: &str) -> (BlockKind, Vec<StructuredInline>) {
 }
 /// Identified input for the formal adapter, with complete math slots.
 pub fn fixture(name: &str) -> StructuredDocument {
+    if name.starts_with("display-") {
+        return display_fixture(name);
+    }
     if name.starts_with("empty-") {
         return empty_fixture(name);
     }
@@ -214,5 +217,58 @@ fn empty_fixture(name: &str) -> StructuredDocument {
                 content: vec![text(value, TextStyle::Plain)],
             })
             .collect(),
+    }
+}
+
+fn display_fixture(name: &str) -> StructuredDocument {
+    let root = if name == "display-root-delimiter" {
+        MathNode {
+            node: NodeId::fresh(),
+            body: MathBody::Root {
+                index: Some(Box::new(math("3"))),
+                radicand: Box::new(MathNode {
+                    node: NodeId::fresh(),
+                    body: MathBody::Delimited {
+                        open: '(',
+                        close: ')',
+                        body: Box::new(frac(math("a"), math("b"))),
+                    },
+                }),
+            },
+        }
+    } else {
+        frac(attach(math("x"), None, Some(math("2"))), math("b"))
+    };
+    let equation = StructuredBlock {
+        node: NodeId::fresh(),
+        kind: BlockKind::Equation,
+        content: vec![StructuredInline {
+            node: NodeId::fresh(),
+            body: InlineBody::Math { root },
+        }],
+    };
+    let paragraph = |value| StructuredBlock {
+        node: NodeId::fresh(),
+        kind: BlockKind::Paragraph,
+        content: vec![text(value, TextStyle::Plain)],
+    };
+    let mut blocks = Vec::new();
+    if matches!(
+        name,
+        "display-middle" | "display-end" | "display-root-delimiter"
+    ) {
+        blocks.push(paragraph("alpha"));
+    }
+    blocks.push(equation);
+    if matches!(
+        name,
+        "display-middle" | "display-start" | "display-root-delimiter"
+    ) {
+        blocks.push(paragraph("omega"));
+    }
+    StructuredDocument {
+        document: DocumentId::fresh(),
+        revision: Revision(0),
+        blocks,
     }
 }

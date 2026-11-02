@@ -439,6 +439,8 @@ a11y-math-edge-fraction-after = 公式内，分数后
 a11y-math-edge-attach-before = 公式内，上下标前
 a11y-math-edge-attach-after = 公式内，上下标后
 a11y-math-edge-nested = { $path }，{ $edge }
+
+a11y-display-formula = 独立公式：{ $body }
 a11y-math-empty = 空
 a11y-math-formula-name = 公式
 a11y-math-formula = 公式：{ $body }

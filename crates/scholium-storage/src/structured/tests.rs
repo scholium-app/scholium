@@ -342,3 +342,28 @@ fn root_index_and_all_delimiter_pairs_survive_the_v1_storage_codec() {
         document
     );
 }
+
+#[test]
+fn display_equation_round_trips_and_rejects_body_text() {
+    let mut doc = sample();
+    doc.blocks[0].kind = BlockKind::Equation;
+    let path = Fixture::fresh();
+    let store = SessionStore::create_structured(&path.0).expect("store");
+    store.save_structured(&doc, &[]).expect("save equation");
+    assert_eq!(
+        store
+            .load_structured()
+            .expect("load")
+            .expect("head")
+            .snapshot,
+        doc
+    );
+    doc.blocks[0].content.push(StructuredInline {
+        node: NodeId::fresh(),
+        body: InlineBody::Text {
+            text: String::new(),
+            style: TextStyle::Plain,
+        },
+    });
+    assert!(doc.validate().is_err());
+}

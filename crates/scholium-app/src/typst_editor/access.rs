@@ -223,7 +223,12 @@ impl EditorSession {
 
     fn publish_math(&self, ui: &mut egui::Ui, focused: bool, locale: crate::i18n::Locale) {
         let mut context = None;
-        for inline in self.snapshot.blocks.iter().flat_map(|b| &b.content) {
+        for (block, inline) in self
+            .snapshot
+            .blocks
+            .iter()
+            .flat_map(|b| b.content.iter().map(move |i| (b, i)))
+        {
             let (id, label) = match &inline.body {
                 InlineBody::Math { root } => {
                     if focused && context.is_none() {
@@ -233,7 +238,11 @@ impl EditorSession {
                         root.node,
                         crate::i18n::text_with(
                             locale,
-                            "a11y.math.formula",
+                            if block.kind == scholium_model::BlockKind::Equation {
+                                "a11y.display.formula"
+                            } else {
+                                "a11y.math.formula"
+                            },
                             &[("body", speech::describe_in(root, locale).into())],
                         ),
                     )
