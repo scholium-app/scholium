@@ -135,17 +135,18 @@ class Session:
 
 
 def launch(clone, project, build, evidence, name, sandbox, extra_env=None, texbin=None, seconds=150,
-           serve_args=(), **session_options):
+           serve_args=(), binary=None, **session_options):
     """Start `rtex serve`; `texbin` replaces the TeX binary directory (evaluation launcher).
 
     `extra_env` reaches the sandbox script (e.g. `SCHOLIUM_RTEX_FONT_CACHE`), never the document.
     """
     root = Path(__file__).resolve().parents[2]
+    binary = binary or clone / "target/release/rtex"
     env = dict(os.environ, RTEX_TEXLIVE_BIN="/usr/bin", RTEX_TEXDIR=str(clone / "tex"))
     env.update(extra_env or {})
     build.mkdir(parents=True)
     if sandbox:
-        env.update(SCHOLIUM_SANDBOX_PROFILE="rtex", SCHOLIUM_RTEX_BIN=str(clone / "target/release/rtex"),
+        env.update(SCHOLIUM_SANDBOX_PROFILE="rtex", SCHOLIUM_RTEX_BIN=str(binary),
                    SCHOLIUM_RTEX_TEXDIR=str(clone / "tex"))
         if texbin:
             env["SCHOLIUM_RTEX_EVAL_TEXBIN"] = str(texbin)
@@ -155,6 +156,6 @@ def launch(clone, project, build, evidence, name, sandbox, extra_env=None, texbi
     else:
         if texbin:
             env["RTEX_TEXLIVE_BIN"] = str(texbin)
-        command = [str(clone / "target/release/rtex"), "serve", "--project", str(project),
+        command = [str(binary), "serve", "--project", str(project),
                    "--build", str(build / "build"), *serve_args]
     return Session(command, env, root, evidence, name, sandboxed=sandbox, **session_options)

@@ -2,8 +2,8 @@
 """E8 faults, all in the `rtex` sandbox: what the host observes, whether editing continues, and
 how long recovery takes.
 
-Scenarios: live engine killed (SIGKILL), live and background hang (round-1 runaway fixture) with
-and without a host-side per-pass watchdog, preamble errors (missing package, undefined command),
+Scenarios: live engine killed (SIGKILL), live and background hang with upstream pass_timeout and no
+host-side per-pass watchdog, preamble errors (missing package, undefined command),
 malformed host commands, and `rtex serve` itself killed. Times are host monotonic seconds; event
 timelines are rebuilt from the session transcripts (they keep every message with its receipt time).
 """
@@ -15,18 +15,30 @@ import shutil
 import time
 
 from common import stray_processes, write_project
-from faults import PassWatchdog, brief, drain, first, kill, live_engine, processes, rtex_server, timeline
+from faults import brief, drain, first, kill, live_engine, processes, rtex_server, timeline
 from gen_fixtures import write as generate
-from measure import CLONE_DEFAULT, HERE, body_units, edit_offset
+from measure import CLONE_DEFAULT, HERE, body_units, edit_offset, warm_font_cache
 from session import launch
 
 LOOP = "\\directlua{while true do end}"
 
 
+def timeout_args(pass_timeout_ms):
+    """Only an explicitly selected evaluation process accepts this upstream config field."""
+    return () if pass_timeout_ms is None else ("--pass-timeout-ms", str(pass_timeout_ms))
+
+
 def open_session(args, name, project, seconds=400, cache=None):
+    if cache is None:
+        cache = args.work / f"{name}-font-cache"
+    if not cache.exists() or not any(cache.iterdir()):
+        warm = warm_font_cache(cache, project, args.work, args.clone)
+        if warm["exit"] != 0:
+            raise RuntimeError(f"font warm-up failed: {warm}")
     extra = {"SCHOLIUM_RTEX_FONT_CACHE": str(cache)} if cache else {}
+    serve_args = timeout_args(args.pass_timeout_ms)
     session = launch(args.clone, project, args.work / name, args.evidence, name, True, seconds=seconds,
-                     redact=True, extra_env=extra)
+                     redact=True, extra_env=extra, binary=args.binary, serve_args=serve_args)
     layout = session.wait(lambda e: e.get("event") == "LayoutUpdate", 120)
     first_layout_s = round(session.received_at - session.started_at, 3)
     while layout["convergence"]["state"] not in ("Converged", "PassLimitReached"):
@@ -118,21 +130,19 @@ def crash(args):
     return result
 
 
-def hang(args, limit):
-    """Round-1 runaway fixture; `limit` is the host watchdog's per-pass wall clock (None: off)."""
-    tag = f"watchdog{limit}" if limit else "nowatchdog"
+def hang(args):
+    """Run the runaway fixture with no host-side per-pass watchdog."""
+    tag = "hostwatchdog-off"
     name = f"e8-hang-{tag}"
     project = args.work / "projects" / f"hang-{tag}"
     text = write_project(project, "f-runaway.tex", {})
     session, _ = open_session(args, name, project, seconds=600)
-    watchdog = PassWatchdog(session.process.pid, limit) if limit else None
-    result = {"scenario": "live and background hang", "watchdog_s": limit}
+    result = {"scenario": "live and background hang", "watchdog_s": None,
+              "upstream_pass_timeout_ms": args.pass_timeout_ms or 300000}
     loop_at = len(text[:text.index("LOOPHERE")].encode())
     after_at = len(text[:text.index("AFTERHERE") + len("AFTERHERE")].encode())
     other_at = len(text[:text.index("untouched")].encode())
     try:
-        if watchdog:
-            watchdog.start()
         _, looped = send_edit(session, loop_at, loop_at, LOOP)
         time.sleep(0.5)
         other, other_sent = send_edit(session, other_at, other_at, "x")
@@ -148,9 +158,6 @@ def hang(args, limit):
         result["tex_processes_at_end"] = [round(p["cpu"], 2) for p in processes(session.process.pid)
                                           if p["comm"].startswith("lua")]
     finally:
-        if watchdog:
-            watchdog.stop()
-            result["watchdog_kills"] = watchdog.kills
         session.close()
     events = timeline(args.evidence, name, looped)
     fix_t = round(fixed - looped, 3)
@@ -286,7 +293,7 @@ def serve_killed(args):
         session.close()
     time.sleep(1)
     result["stray_processes"] = stray_processes([str(args.work / "e8-killed"), "/rtex/bin/rtex"])
-    for label, extra in (("tmpfs", None), ("cache-copy", "copy")):
+    for label, extra in (("warm-cache", None), ("cache-copy", "copy")):
         copy = None
         if extra:
             copy = args.work / "killed-cache-copy"
@@ -303,12 +310,18 @@ def main():
     parser.add_argument("--evidence", type=Path, required=True)
     parser.add_argument("--run-id", default="e8")
     parser.add_argument("--only", default="crash,hang,preamble,malformed,killed")
+    parser.add_argument("--binary", type=Path)
+    parser.add_argument("--pass-timeout-ms", type=int,
+                        help="explicit upstream config, only with --binary evaluation process")
     args = parser.parse_args()
     args.clone, args.evidence = args.clone.resolve(), args.evidence.resolve()
+    args.binary = (args.binary or args.clone / "target/release/rtex").resolve()
+    if args.pass_timeout_ms is not None and (args.pass_timeout_ms <= 0 or args.binary.name == "rtex"):
+        parser.error("positive --pass-timeout-ms requires an evaluation --binary; upstream CLI has no flag")
     args.evidence.mkdir(parents=True, exist_ok=True)
     args.work = HERE / ".work" / args.run_id
     args.work.mkdir(parents=True, exist_ok=False)
-    runs = {"crash": lambda: [crash(args)], "hang": lambda: [hang(args, None), hang(args, 8)],
+    runs = {"crash": lambda: [crash(args)], "hang": lambda: [hang(args)],
             "preamble": lambda: [preamble(args, "missing-package"), preamble(args, "undefined-command")],
             "malformed": lambda: [malformed(args)], "killed": lambda: [serve_killed(args)]}
     results = []

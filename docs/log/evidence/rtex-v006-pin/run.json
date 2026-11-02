@@ -71,20 +71,30 @@
       "log": "e1/advisories.log.gz"
     }
   ],
-  "decision": "stop at E1 failure; keep v0.0.5 pin",
-  "not_run": [
-    "E2",
-    "E8",
-    "E3",
-    "E5",
-    "E6",
-    "ubuntu-26.04 feasibility"
-  ],
-  "not_implemented": [
-    "pin move",
-    "ADR pin revision",
-    "upstream workflow",
-    "upstream script",
-    "latex tracking section"
-  ]
+  "decision": "E1 passes under the coordinator's round-one standard; E2, E8, E3, E5 and E6 pass with documented limitations; move pin to v0.0.6",
+  "e1_interpretation": {
+    "licenses": "pass (0 errors)",
+    "sources": "pass (0 errors)",
+    "bans": "three upstream internal workspace wildcard findings, recorded as in round one; not a gate for the sandboxed subprocess",
+    "advisories": "one unfiltered unmaintained notice, RUSTSEC-2026-0192; project-wide follow-up; not an E1 gate",
+    "v005_to_v006_advisory_count": "2 to 1; lopdf advisory no longer reported"
+  },
+  "evidence": {
+    "e2": [
+      "e2-sequential/negative-abcde-summary.json",
+      "e2-sequential/negative-summary.json"
+    ],
+    "e8": [
+      "e8-final/e8-summary-t34-v006-e8-final.json",
+      "e8-pass-final/pass-faults.json",
+      "e8-cli-warm/e8-summary-t34-v006-e8-cli-warm.json"
+    ],
+    "regressions": [
+      "e3/e3-summary.json",
+      "e5/e5-summary.json",
+      "e6-serial/e6-summary.json"
+    ],
+    "feasibility": "feasibility/scope.json",
+    "timeout": "configured upstream pass_timeout=8000ms, no host per-pass watchdog; v0.0.6 CLI default is 300000ms"
+  }
 }

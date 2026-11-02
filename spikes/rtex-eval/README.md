@@ -6,8 +6,8 @@
 `docs/log/evidence/rtex-evaluation/` 与 `docs/log/evidence/rtex-evaluation-2/`。这里只有评估用的驱动、夹具与
 栅格化原型，不是产品代码，不进入根 workspace（`raster/` 有自己的 `[workspace]`）。
 
-v0.0.6 的升级复验因 E1 失败停止，默认版本保留 v0.0.5；失败原因、原始证据与未执行项见
-[升级复验记录](../../docs/log/2026-11-02-rtex-v006-pin.md)。
+当前评估 pin 为 v0.0.6（提交 `98b40be`）；E1/E2/E8 与 E3/E5/E6 复验和 pin 变更记录见
+[升级复验记录](../../docs/log/2026-11-02-rtex-v006-pin.md)。唯一版本来源是 [`PIN`](PIN)。
 
 ## 前提
 
@@ -19,9 +19,10 @@ v0.0.6 的升级复验因 E1 失败停止，默认版本保留 v0.0.5；失败�
 
 ```bash
 mkdir -p ~/.cache/scholium-eval
-git clone --depth 1 --branch v0.0.5 https://github.com/HenryXiaoYang/realtime-tex ~/.cache/scholium-eval/rtex-v0.0.5
-git -C ~/.cache/scholium-eval/rtex-v0.0.5 rev-parse HEAD   # e0ad11765ec016846b6e07619081f0528621636b
-(cd ~/.cache/scholium-eval/rtex-v0.0.5 && cargo build --release --locked)
+PIN_TAG=$(python3 -c 'import json; print(json.load(open("spikes/rtex-eval/PIN"))["tag"])')
+git clone --depth 1 --branch "$PIN_TAG" https://github.com/HenryXiaoYang/realtime-tex "$HOME/.cache/scholium-eval/rtex-$PIN_TAG"
+git -C "$HOME/.cache/scholium-eval/rtex-$PIN_TAG" rev-parse HEAD   # 98b40be29ef517918ce707869e6fe0316685b3dd
+(cd "$HOME/.cache/scholium-eval/rtex-$PIN_TAG" && cargo build --release --locked)
 ```
 
 ## 复现（在仓库根目录执行）
@@ -30,7 +31,7 @@ git -C ~/.cache/scholium-eval/rtex-v0.0.5 rev-parse HEAD   # e0ad11765ec016846b6
 证据写到 `--evidence` 指定的目录。从干净状态复现时先删除 `spikes/rtex-eval/.work/`。
 
 ```bash
-CLONE=~/.cache/scholium-eval/rtex-v0.0.5
+CLONE="$HOME/.cache/scholium-eval/rtex-$(python3 -c 'import json; print(json.load(open("spikes/rtex-eval/PIN"))["tag"])')"
 EV=docs/log/evidence/rtex-evaluation
 # 冒烟（沙箱外）：doctor、gen-book --pages 10、一次 edit、verify；生成正对照用的 10 页夹具
 python3 spikes/rtex-eval/smoke.py --clone $CLONE --evidence $EV
@@ -63,9 +64,29 @@ python3 spikes/rtex-eval/e5_locate.py --evidence $EV2/e5 --run-id e5
 python3 spikes/rtex-eval/e6_latency.py --evidence $EV2/e6 --run-id e6
 # E7：XeLaTeX（ctex）与 pdfLaTeX 夹具 1/10/50 页在 full 配置内的冷/热整编时间
 python3 spikes/rtex-eval/e7_fallback.py --evidence $EV2/e7 --run-id e7
-# E8：实时引擎被杀、实时/后台挂起（有无宿主看门狗）、导言区错误、畸形命令、rtex serve 被杀
+# E8：实时引擎被杀、实时/后台挂起、导言区错误、畸形命令、rtex serve 被杀
 python3 spikes/rtex-eval/e8_faults.py --evidence $EV2/e8 --run-id e8
 ```
+
+v0.0.6 CLI 没有暴露 `SessionConfig.pass_timeout`。E8 的配置超时复验用 [`pass-config.rs`](pass-config.rs)
+作为仓库外评估进程目标，链接精确 tag 的 `rtex-core` 并通过 JSON 行协议驱动；它将 `pass_timeout` 设为 8000 ms，
+不启动宿主单次编译看门狗。普通 CLI 覆盖 malformed、引擎恢复和整编行为，完整配置故障矩阵记录在升级日志中。
+
+以下从仓库根目录执行，将精确 tag 的源码导出到新的仓库外目录，并只在那里追加一个评估 binary target；`Cargo.lock` 不变：
+
+```bash
+CONFIG_SRC="$HOME/.cache/scholium-eval/rtex-v006-pass-config-src"
+mkdir "$CONFIG_SRC"
+git -C "$CLONE" archive HEAD | tar -xf - -C "$CONFIG_SRC"
+printf '\n[[bin]]\nname = "rtex-pass-config-eval"\npath = "%s/spikes/rtex-eval/pass-config.rs"\n' "$PWD" >> "$CONFIG_SRC/crates/rtex-cli/Cargo.toml"
+CARGO_TARGET_DIR="$CONFIG_SRC/target" cargo build --release --locked --offline --manifest-path "$CONFIG_SRC/Cargo.toml" --bin rtex-pass-config-eval
+EVAL_BIN="$CONFIG_SRC/target/release/rtex-pass-config-eval"
+python3 spikes/rtex-eval/e8_faults.py --clone "$CLONE" --binary "$EVAL_BIN" --pass-timeout-ms 8000 --evidence "$EV2/e8-config" --run-id e8-config
+python3 spikes/rtex-eval/v006_pass_faults.py --clone "$CLONE" --binary "$EVAL_BIN" --evidence "$EV2/e8-pass" --work "$HOME/.cache/scholium-eval/e8-pass-work"
+```
+
+`--offline` 需要先完成上面的锁定构建以备齐依赖；二进制只用于实验沙箱。CLI 直接运行 E8 时使用上游默认 300 秒，
+不能把它当作显式 8 秒配置；真实宿主必须使用能配置该字段的上游接口或等待 CLI 暴露参数。
 
 `spikes/toolchain-sandbox.sh` 的 `rtex` 配置新增仅供可信驱动使用的 `SCHOLIUM_RTEX_FONT_CACHE=<目录>`：把该目录可写挂到
 `/rtex/texmf-var` 并设为 `TEXMFVAR`（luaotfload 字体缓存跨会话保留）；不设置时行为不变（每会话 tmpfs）。E4–E6 与 E8 的会话
@@ -90,6 +111,9 @@ python3 spikes/rtex-eval/e8_faults.py --evidence $EV2/e8 --run-id e8
 | `measure.py` | 分位数、脚本化击键（插入/删除交替）、栅格化工作进程、单次沙箱命令、字体缓存预热 |
 | `e3_cjk.py` … `e8_faults.py` | 第二轮各评估项驱动，见上方命令 |
 | `faults.py` | E8：从主机 `/proc` 找实时引擎、后台 pass 与 rtex 进程；宿主侧单次 pass 墙钟看门狗原型；带时间戳的事件收集 |
+| `PIN` | 上游正式发布 tag 与精确 commit；评估 driver 默认 clone 路径从此文件读取 |
+| `pass-config.rs` | 仅评估用子进程，为缺少 CLI 参数的 `SessionConfig.pass_timeout` 设值；不进入产品依赖图 |
+| `v006_contracts.py`、`test_v006_contracts.py` | v0.0.6 E8 超时/杀进程/畸形输入结果的 fail-closed 判定测试 |
 | `raster/` | E4/E6 原型（独立 Cargo 清单）：skrifa 取字形轮廓（OpenType/CFF，TFM 字体经 `pdftex.map` 找 Type 1），tiny-skia 填充；hayro 渲染 PDF 回退；与上游 `rtex verify --raster` 同口径的墨迹比较（1 像素容差）|
 
 `lift/lualatex.c` 只通过可信驱动设置的 `SCHOLIUM_RTEX_EVAL_TEXBIN` 进入沙箱，文档内容无法选择它；产品代码不得设置该变量。

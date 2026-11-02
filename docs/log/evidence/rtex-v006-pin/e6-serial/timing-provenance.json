@@ -1,0 +1,8 @@
+{
+  "command": "python3 e6_latency.py --clone ~/.cache/scholium-eval/rtex-v0.0.6 --evidence docs/log/evidence/rtex-v006-pin/e6-serial --run-id t34-v006-e6-serial --pages 10,100",
+  "suspend_guard": "CLOCK_BOOTTIME elapsed minus CLOCK_MONOTONIC elapsed around full run",
+  "observed_delta_seconds": 0.0,
+  "reject_above_seconds": 1.0,
+  "accepted": true,
+  "serialization": "E2/E8 completed; no concurrent rtex evaluation workload in this slot; unrelated machine activity is not controlled"
+}

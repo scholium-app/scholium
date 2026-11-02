@@ -93,3 +93,13 @@ catcode 警告、include 循环、动态路径、label rename 和 log 映射。f
 ## 候选与参考实现
 
 Rust 容错解析器配 Rowan CST 待验证；Tree-sitter 仅作可选高亮/导航，不承担完整宏语义。纯解析/投影优先兼容 WASM。参考[Mogan 源码调研](../research/MOGAN_LATEX.md)拆分上下文、模板适配、宏包规划、序列化和 source provenance；独立实现，不复制其源码。不确定区域仍遵守本模块保留原文规则。
+
+## 上游跟进
+
+- 实时预览候选锁定于 [`rtex` v0.0.6](../../spikes/rtex-eval/PIN)，只作为 `rtex` OS 沙箱中的独立子进程；不加入 Scholium Rust 依赖图。
+  发布 tag 与 commit 由该 pin 记录唯一维护，评估 checkout 和构建留在仓库外。
+- 每周一 03:37 UTC，`.github/workflows/rtex-upstream.yml` 调用 `scripts/rtex-upstream-drift.py`；也可手动指定上游 ref。
+  它报告最新 tag、pin 之后的提交、锁定构建、未过滤的 cargo-deny 结果，以及 `rtex serve` 启动/编辑/段落更新/布局冒烟。
+  只有当前 Ubuntu runner 的真实 bubblewrap namespace 探测通过时，才运行 TeX 冒烟、E8 范围/路径拒绝子集与 E2 外部文件读取对照；
+  否则将 TeX 检查标为未运行。此 job 只作外部监测，不在 push/PR 触发、不阻塞 PR、不自动开 issue；表格写入 job summary，原始日志作为 artifact。
+- 定时监测不替代本地 E2 全负对照、E3/E5/E6 回归、完整 E8 故障注入或真实窗口 L1 验收。上游版本变化须在独立任务中按 ADR 0043 复验后才移动 pin。

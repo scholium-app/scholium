@@ -1,0 +1,201 @@
+[
+  {
+    "verdict": {
+      "control": "f",
+      "config": "default",
+      "result": "Pass",
+      "host_effective": true,
+      "sandbox_effective": false
+    },
+    "runs": [
+      {
+        "name": "negative-f-default-host",
+        "control": "f",
+        "config": "default",
+        "mode": "host",
+        "timeline": [
+          {
+            "t": 0.7,
+            "label": "initial layout",
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          {
+            "t": 0.7,
+            "label": "edit reply",
+            "reply": "edit"
+          },
+          {
+            "t": 5.7,
+            "label": "live unit cut",
+            "event": "EngineState",
+            "state": "Restarting",
+            "reason": "engine watchdog: no response within 5s; server killed"
+          },
+          {
+            "t": 5.7,
+            "label": "background scheduled",
+            "event": "BackgroundScheduled",
+            "edit_id": 1
+          },
+          {
+            "t": 10.7,
+            "label": "edit reply",
+            "reply": "edit"
+          },
+          {
+            "t": 10.7,
+            "label": "edit reply",
+            "reply": "edit"
+          },
+          {
+            "t": 10.7,
+            "label": "follow-up paragraph",
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 3
+          },
+          {
+            "t": 160.7,
+            "label": "layout after fix",
+            "harness_wait": "no matching worker message within 150s"
+          },
+          {
+            "t": 220.7,
+            "label": "export",
+            "harness_wait": "no matching worker message within 60s"
+          }
+        ],
+        "processes_before_export": [
+          {
+            "pid": 232955,
+            "comm": "lualatex",
+            "cpu_seconds": 0.26
+          },
+          {
+            "pid": 232947,
+            "comm": "lualatex",
+            "cpu_seconds": 0.31
+          },
+          {
+            "pid": 232833,
+            "comm": "lualatex",
+            "cpu_seconds": 154.7
+          }
+        ],
+        "stray_processes": [],
+        "followup_ok": true,
+        "layout_recovered": false,
+        "export_ok": false,
+        "max_tex_cpu_seconds": 154.7,
+        "attack_effective": true
+      },
+      {
+        "name": "negative-f-default-sandbox",
+        "control": "f",
+        "config": "default",
+        "mode": "sandbox",
+        "timeline": [
+          {
+            "t": 9.4,
+            "label": "initial layout",
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          {
+            "t": 9.4,
+            "label": "edit reply",
+            "reply": "edit"
+          },
+          {
+            "t": 14.6,
+            "label": "live unit cut",
+            "event": "EngineState",
+            "state": "Restarting",
+            "reason": "engine watchdog: no response within 5s; server killed"
+          },
+          {
+            "t": 14.6,
+            "label": "background scheduled",
+            "event": "BackgroundScheduled",
+            "edit_id": 1
+          },
+          {
+            "t": 19.6,
+            "label": "edit reply",
+            "reply": "edit"
+          },
+          {
+            "t": 19.6,
+            "label": "edit reply",
+            "reply": "edit"
+          },
+          {
+            "t": 19.6,
+            "label": "follow-up paragraph",
+            "event": "ParagraphUpdate",
+            "status": "ok",
+            "edit_id": 3
+          },
+          {
+            "t": 40.1,
+            "label": "layout after fix",
+            "event": "LayoutUpdate",
+            "compile": {
+              "state": "Ok"
+            },
+            "pages_total": 1
+          },
+          {
+            "t": 41.2,
+            "label": "export",
+            "event": "PdfExported",
+            "status": {
+              "state": "Ok"
+            },
+            "converged": true
+          }
+        ],
+        "processes_before_export": [
+          {
+            "pid": 244155,
+            "comm": "bwrap",
+            "cpu_seconds": 0.0
+          },
+          {
+            "pid": 244156,
+            "comm": "bwrap",
+            "cpu_seconds": 0.0
+          },
+          {
+            "pid": 244157,
+            "comm": "rtex",
+            "cpu_seconds": 0.05
+          },
+          {
+            "pid": 244977,
+            "comm": "lualatex",
+            "cpu_seconds": 0.14
+          },
+          {
+            "pid": 244541,
+            "comm": "lualatex",
+            "cpu_seconds": 0.36
+          }
+        ],
+        "stray_processes": [],
+        "followup_ok": true,
+        "layout_recovered": true,
+        "export_ok": true,
+        "max_tex_cpu_seconds": 0.36,
+        "attack_effective": false
+      }
+    ]
+  }
+]
