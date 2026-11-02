@@ -77,6 +77,30 @@ fn scripts(base: Content, sub: Option<Content>, sup: Option<Content>) -> Content
 fn fixture(name: &str) -> Content {
     let paragraph = |body| ParElem::new(body).pack();
     let block = match name {
+        "display-root-delimiter" => {
+            let fraction = FracElem::new(symbol("a"), symbol("b")).pack();
+            let brackets = typst::math::LrElem::new(Content::sequence([
+                kernel::text("("), fraction, kernel::text(")"),
+            ])).pack();
+            let mut root = typst::math::RootElem::new(brackets);
+            root.index.set(Some(symbol("3")));
+            let mut equation = EquationElem::new(root.pack());
+            equation.block.set(true);
+            Content::sequence([
+                paragraph(kernel::text("alpha")), equation.pack(), paragraph(kernel::text("omega")),
+            ])
+        }
+        "display-only" | "display-start" | "display-middle" | "display-end" => {
+            let mut equation = EquationElem::new(FracElem::new(
+                scripts(symbol("x"), None, Some(kernel::text("2"))), symbol("b"),
+            ).pack());
+            equation.block.set(true);
+            let mut blocks = Vec::new();
+            if matches!(name, "display-middle" | "display-end") { blocks.push(paragraph(kernel::text("alpha"))); }
+            blocks.push(equation.pack());
+            if matches!(name, "display-middle" | "display-start") { blocks.push(paragraph(kernel::text("omega"))); }
+            Content::sequence(blocks)
+        },
         "square-root" | "indexed-root" | "root-delimiter" | "delim-paren" | "delim-bracket" | "delim-brace" | "delim-abs" | "delim-norm" | "delim-angle" | "delim-floor" | "delim-ceil" => {
             let fraction = FracElem::new(symbol("a"), symbol("b")).pack();
             let body = if name.ends_with("root") || name == "root-delimiter" {
@@ -188,6 +212,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     std::fs::create_dir_all(&output)?;
     let world = reference_world();
     for name in [
+        "display-root-delimiter", "display-only", "display-start", "display-middle", "display-end",
         "square-root", "indexed-root", "root-delimiter", "delim-paren", "delim-bracket", "delim-brace",
         "delim-abs", "delim-norm", "delim-angle", "delim-floor", "delim-ceil",
         "full",

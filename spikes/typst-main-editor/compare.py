@@ -7,7 +7,7 @@ import sys
 
 fork, stock = map(Path, sys.argv[1:3])
 results = []
-for name in ("square-root", "indexed-root", "root-delimiter", "delim-paren", "delim-bracket", "delim-brace",
+for name in ("display-root-delimiter", "display-only", "display-start", "display-middle", "display-end", "square-root", "indexed-root", "root-delimiter", "delim-paren", "delim-bracket", "delim-brace",
              "delim-abs", "delim-norm", "delim-angle", "delim-floor", "delim-ceil", "full", "edge-root", "edge-row", "fraction-at-caret", "scripts", "styles", "heading", "preedit", "empty-start", "empty-middle",
              "empty-three", "empty-end", "empty-heading", "empty-between-headings", "empty-only"):
     candidate = json.loads((fork / f"{name}.json").read_text())

@@ -75,6 +75,13 @@ impl EditorCore {
         })
     }
     fn empty_deletion(&self) -> Option<StructuralEdit> {
+        for block in &self.snapshot.blocks {
+            if block.kind == scholium_model::BlockKind::Equation
+                && block.content.iter().any(|i| matches!(&i.body, InlineBody::Math { root } if math_contains(root, self.cursor.leaf) && empty(root)))
+            {
+                return Some(StructuralEdit::RemoveEquation { block: block.node });
+            }
+        }
         for inline in self.snapshot.blocks.iter().flat_map(|b| &b.content) {
             let InlineBody::Math { root } = &inline.body else {
                 continue;

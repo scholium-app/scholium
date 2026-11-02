@@ -113,6 +113,7 @@ fn the_catalog_has_no_key_that_nothing_uses() {
             "a11y.math.slot.radicand",
             "a11y.math.slot.delimited",
             "a11y.math.edge.nested",
+            "a11y.display.formula",
             "a11y.math.empty",
             "a11y.math.formula.name",
             "a11y.math.formula",

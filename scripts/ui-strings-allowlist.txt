@@ -38,6 +38,8 @@ crates/scholium-document/src/lib.rs	"选区位置无效；未应用此次修改"
 crates/scholium-model/src/lib.rs	"一级标题"
 crates/scholium-model/src/lib.rs	"二级标题"
 crates/scholium-model/src/lib.rs	"正文"
+# T33 coordinator requires the canonical model label to match the existing Chinese block labels.
+crates/scholium-model/src/lib.rs	"独立公式"
 crates/scholium-storage/src/bin/hammer.rs	"内容 {revision}"
 crates/scholium-typst/src/compiler.rs	"预览最多支持 {MAX_PREVIEW_PAGES} 页"
 crates/scholium-typst/src/editor/parity.rs	"1.1 Line breaking 与断行"

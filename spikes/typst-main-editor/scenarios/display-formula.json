@@ -1,0 +1,66 @@
+{
+  "name": "display-formula",
+  "inputs": [
+    {
+      "command": "DisplayMath",
+      "surface": "menu"
+    },
+    {
+      "text": "x"
+    },
+    {
+      "key": "Enter",
+      "expected": {
+        "cursor": {
+          "path": "blocks/1/content/0",
+          "byte": 0,
+          "affinity": "Upstream"
+        }
+      }
+    },
+    {
+      "key": "Backspace"
+    }
+  ],
+  "expected": {
+    "snapshot": {
+      "blocks": [
+        {
+          "kind": "Equation",
+          "content": [
+            {
+              "body": {
+                "kind": "math",
+                "root": {
+                  "body": {
+                    "kind": "text",
+                    "text": "x"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Paragraph",
+          "content": [
+            {
+              "body": {
+                "kind": "text",
+                "text": "",
+                "style": "plain"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "cursor": {
+      "path": "blocks/0/content/0/body/root",
+      "byte": 1,
+      "affinity": "Downstream"
+    },
+    "anchor": null,
+    "undo_depth": 3
+  }
+}

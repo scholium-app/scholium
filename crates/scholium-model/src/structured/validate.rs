@@ -50,6 +50,12 @@ impl StructuredDocument {
             if block.content.is_empty() {
                 return Err(StructureError::Empty(block.node));
             }
+            if block.kind == BlockKind::Equation
+                && !(block.content.len() == 1
+                    && matches!(block.content[0].body, InlineBody::Math { .. }))
+            {
+                return Err(StructureError::Text(block.node));
+            }
             for inline in &block.content {
                 validator.id(inline.node)?;
                 match &inline.body {

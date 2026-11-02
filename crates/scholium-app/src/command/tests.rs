@@ -163,6 +163,7 @@ fn every_p1_menu_lists_its_commands() {
             MenuId::Insert,
             &[
                 "insert.formula",
+                "insert.display_formula",
                 "insert.fraction",
                 "insert.root",
                 "insert.superscript",
@@ -256,6 +257,7 @@ fn source_mode_disables_every_writing_command_with_a_reason() {
         "format.bold",
         "format.paragraph.heading1",
         "insert.formula",
+        "insert.display_formula",
         "edit.paste",
     ] {
         assert_eq!(
@@ -356,6 +358,7 @@ fn page_chords_are_registered_for_the_page_and_app_chords_for_the_app() {
         Some("format.paragraph.heading2")
     );
     assert_eq!(routed(ctrl(ChordKey::Letter('M'))), Some("insert.formula"));
+    assert_eq!(routed(ctrl_shift('E')), Some("insert.display_formula"));
     assert_eq!(
         routed(ctrl_shift('M')),
         None,

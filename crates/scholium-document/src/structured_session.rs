@@ -2,6 +2,7 @@
 
 mod attach;
 mod edit;
+mod equation;
 mod fraction;
 #[cfg(test)]
 mod fraction_tests;
@@ -53,6 +54,23 @@ pub struct StructuralOutcome {
 /// One local identified edit, accepted as a single revision and journal entry.
 #[derive(Debug, Clone)]
 pub enum StructuralEdit {
+    /// Insert a display equation at a body caret or extract a same-row math selection.
+    DisplayMath {
+        /// Caret or first selected math endpoint.
+        start: BodyTextPosition,
+        /// Caret or second selected math endpoint.
+        end: BodyTextPosition,
+    },
+    /// Create a body paragraph after an equation.
+    LeaveEquation {
+        /// Equation block identity.
+        block: NodeId,
+    },
+    /// Remove an empty equation, keeping at least one editable block.
+    RemoveEquation {
+        /// Equation block identity.
+        block: NodeId,
+    },
     /// Replace a forward body range across inline nodes and blocks atomically.
     /// Fully covered math/Raw inlines are removed; their interiors cannot be endpoints.
     /// LF, CRLF and CR create blocks, inheriting the first block's kind.
