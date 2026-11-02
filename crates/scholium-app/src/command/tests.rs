@@ -29,7 +29,7 @@ pub(crate) fn submenu_keys() -> Vec<String> {
 /// Every reason key any command can report in any combination of facts.
 pub(crate) fn reason_keys() -> BTreeSet<String> {
     let mut reasons = BTreeSet::new();
-    for bits in 0..64u32 {
+    for bits in 0..512u32 {
         let context = context_from(bits);
         for spec in registry::all() {
             if let Some(reason) = (spec.availability)(&context).reason() {
@@ -50,7 +50,9 @@ fn context_from(bits: u32) -> CommandContext {
             ViewMode::Page
         },
         composing: bit(2),
-        in_math: false,
+        in_math: bit(6),
+        in_root: bit(7),
+        in_delimiter: bit(8),
         selected: bit(3),
         can_undo: bit(4),
         can_redo: bit(5),
@@ -297,7 +299,6 @@ fn unimplemented_commands_are_greyed_with_a_reason() {
         "file.open",
         "edit.find",
         "format.underline",
-        "insert.root",
         "document.page_size",
     ] {
         assert_eq!(

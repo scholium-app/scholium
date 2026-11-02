@@ -136,3 +136,22 @@ fn display_formula_accepts_one_ime_commit_and_keeps_current_caret_and_indicator(
     assert!(scene.geometry.caret(f.editor.cursor).expect("caret").exact);
     assert!(f.editor.math_indicator().is_some());
 }
+
+#[test]
+fn ctrl_shift_r_inserts_a_root_and_plain_ctrl_r_does_not() {
+    let mut f = Fixture::new();
+    f.events(vec![text("$"), text("x")]);
+    let before = f.editor.snapshot.clone();
+    f.events(vec![key(egui::Key::R, true)]);
+    assert_eq!(f.editor.snapshot, before);
+    f.events(vec![press(
+        egui::Key::R,
+        egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
+    )]);
+    let InlineBody::Math { root } = &f.editor.snapshot.blocks[0].content[1].body else {
+        panic!("math")
+    };
+    assert!(
+        matches!(&root.body, MathBody::Row { children } if matches!(children[1].body, MathBody::Root { .. }))
+    );
+}

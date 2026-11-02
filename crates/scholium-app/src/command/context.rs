@@ -10,6 +10,8 @@ impl CommandContext {
             mode: state.mode,
             composing: state.composition.is_some(),
             in_math: view.is_some_and(|v| v.in_math),
+            in_root: view.is_some_and(|v| v.in_root),
+            in_delimiter: view.is_some_and(|v| v.in_delimiter),
             selected: view.is_some_and(|v| v.selected),
             can_undo: view.is_some_and(|v| v.can_undo),
             can_redo: view.is_some_and(|v| v.can_redo),

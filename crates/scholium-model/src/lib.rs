@@ -71,7 +71,7 @@ impl BlockKind {
             Self::Paragraph => "正文",
             Self::Heading1 => "一级标题",
             Self::Heading2 => "二级标题",
-            Self::Equation => "Equation",
+            Self::Equation => "独立公式",
         }
     }
 }

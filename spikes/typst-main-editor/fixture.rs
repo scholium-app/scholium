@@ -40,6 +40,59 @@ fn row(children: Vec<MathNode>) -> MathNode {
         body: MathBody::Row { children },
     }
 }
+fn root_delimiter_fixture(name: &str) -> (BlockKind, Vec<StructuredInline>) {
+    let body = if name.ends_with("root") || name == "root-delimiter" {
+        let radicand = frac(math("a"), math("b"));
+        let radicand = if name == "root-delimiter" {
+            MathNode {
+                node: NodeId::fresh(),
+                body: MathBody::Delimited {
+                    open: '(',
+                    close: ')',
+                    body: Box::new(radicand),
+                },
+            }
+        } else {
+            radicand
+        };
+        MathBody::Root {
+            index: (name == "indexed-root").then(|| Box::new(math("3"))),
+            radicand: Box::new(radicand),
+        }
+    } else {
+        let (open, close) = match name {
+            "delim-paren" => ('(', ')'),
+            "delim-bracket" => ('[', ']'),
+            "delim-brace" => ('{', '}'),
+            "delim-abs" => ('|', '|'),
+            "delim-norm" => ('‖', '‖'),
+            "delim-angle" => ('⟨', '⟩'),
+            "delim-floor" => ('⌊', '⌋'),
+            "delim-ceil" => ('⌈', '⌉'),
+            _ => unreachable!(),
+        };
+        MathBody::Delimited {
+            open,
+            close,
+            body: Box::new(frac(math("a"), math("b"))),
+        }
+    };
+    (
+        BlockKind::Paragraph,
+        vec![
+            text("root ", TextStyle::Plain),
+            StructuredInline {
+                node: NodeId::fresh(),
+                body: InlineBody::Math {
+                    root: MathNode {
+                        node: NodeId::fresh(),
+                        body,
+                    },
+                },
+            },
+        ],
+    )
+}
 /// Identified input for the formal adapter, with complete math slots.
 pub fn fixture(name: &str) -> StructuredDocument {
     if name.starts_with("display-") {
@@ -49,6 +102,9 @@ pub fn fixture(name: &str) -> StructuredDocument {
         return empty_fixture(name);
     }
     let (kind, content) = match name {
+        "square-root" | "indexed-root" | "root-delimiter" | "delim-paren" | "delim-bracket"
+        | "delim-brace" | "delim-abs" | "delim-norm" | "delim-angle" | "delim-floor"
+        | "delim-ceil" => root_delimiter_fixture(name),
         "edge-root" | "edge-row" => {
             let fraction = frac(math("a"), math("b"));
             let root = if name == "edge-row" {
@@ -165,14 +221,30 @@ fn empty_fixture(name: &str) -> StructuredDocument {
 }
 
 fn display_fixture(name: &str) -> StructuredDocument {
+    let root = if name == "display-root-delimiter" {
+        MathNode {
+            node: NodeId::fresh(),
+            body: MathBody::Root {
+                index: Some(Box::new(math("3"))),
+                radicand: Box::new(MathNode {
+                    node: NodeId::fresh(),
+                    body: MathBody::Delimited {
+                        open: '(',
+                        close: ')',
+                        body: Box::new(frac(math("a"), math("b"))),
+                    },
+                }),
+            },
+        }
+    } else {
+        frac(attach(math("x"), None, Some(math("2"))), math("b"))
+    };
     let equation = StructuredBlock {
         node: NodeId::fresh(),
         kind: BlockKind::Equation,
         content: vec![StructuredInline {
             node: NodeId::fresh(),
-            body: InlineBody::Math {
-                root: frac(attach(math("x"), None, Some(math("2"))), math("b")),
-            },
+            body: InlineBody::Math { root },
         }],
     };
     let paragraph = |value| StructuredBlock {
@@ -181,11 +253,17 @@ fn display_fixture(name: &str) -> StructuredDocument {
         content: vec![text(value, TextStyle::Plain)],
     };
     let mut blocks = Vec::new();
-    if matches!(name, "display-middle" | "display-end") {
+    if matches!(
+        name,
+        "display-middle" | "display-end" | "display-root-delimiter"
+    ) {
         blocks.push(paragraph("alpha"));
     }
     blocks.push(equation);
-    if matches!(name, "display-middle" | "display-start") {
+    if matches!(
+        name,
+        "display-middle" | "display-start" | "display-root-delimiter"
+    ) {
         blocks.push(paragraph("omega"));
     }
     StructuredDocument {

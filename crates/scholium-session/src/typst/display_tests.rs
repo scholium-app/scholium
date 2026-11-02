@@ -189,3 +189,28 @@ fn same_row_selection_in_a_display_equation_can_be_moved_to_another_equation() {
     );
     f.core.snapshot.validate().expect("valid equations");
 }
+
+#[test]
+fn roots_and_delimiters_in_display_equations_support_selection_extraction_and_undo() {
+    let mut f = Fixture::new();
+    f.run(CommandId::DisplayMath);
+    f.run(CommandId::Root);
+    f.run(CommandId::Delimiter);
+    f.text("abc");
+    f.core.anchor = Some(Position {
+        byte: 1,
+        ..f.core.cursor
+    });
+    f.core.cursor.byte = 2;
+    let before = f.core.record();
+    f.run(CommandId::DisplayMath);
+    assert_eq!(f.core.snapshot.blocks.len(), 2);
+    let InlineBody::Math { root } = &f.core.snapshot.blocks[1].content[0].body else {
+        panic!("equation");
+    };
+    assert!(matches!(&root.body, MathBody::Text { text } if text == "b"));
+    f.run(CommandId::Undo);
+    assert_eq!(*f.core.snapshot, before.snapshot);
+    assert_eq!(f.core.cursor, before.cursor);
+    assert_eq!(f.core.anchor, before.anchor);
+}

@@ -216,6 +216,76 @@ fn complete_rows_symbols_and_fixed_slots_round_trip_without_holes() {
 }
 
 #[test]
+fn roots_and_supported_delimiter_pairs_round_trip_and_validate() {
+    let root = MathNode {
+        node: NodeId::fresh(),
+        body: MathBody::Root {
+            index: Some(Box::new(MathNode {
+                node: NodeId::fresh(),
+                body: MathBody::Text { text: "3".into() },
+            })),
+            radicand: Box::new(MathNode {
+                node: NodeId::fresh(),
+                body: MathBody::Text { text: "x".into() },
+            }),
+        },
+    };
+    let pairs = [
+        ('(', ')'),
+        ('[', ']'),
+        ('{', '}'),
+        ('|', '|'),
+        ('‖', '‖'),
+        ('⟨', '⟩'),
+        ('⌊', '⌋'),
+        ('⌈', '⌉'),
+    ];
+    let children: Vec<_> = pairs
+        .into_iter()
+        .map(|(open, close)| MathNode {
+            node: NodeId::fresh(),
+            body: MathBody::Delimited {
+                open,
+                close,
+                body: Box::new(MathNode {
+                    node: NodeId::fresh(),
+                    body: MathBody::Hole,
+                }),
+            },
+        })
+        .collect();
+    let document = native(MathNode {
+        node: NodeId::fresh(),
+        body: MathBody::Row {
+            children: std::iter::once(root).chain(children).collect(),
+        },
+    });
+    document.validate().expect("supported structures");
+    let json = serde_json::to_string(&document).expect("encode");
+    assert_eq!(
+        serde_json::from_str::<StructuredDocument>(&json).expect("decode"),
+        document
+    );
+    assert!(json.contains("\"kind\":\"root\""));
+    assert!(json.contains("\"kind\":\"delimited\""));
+}
+
+#[test]
+fn unsupported_or_mismatched_delimiter_pairs_are_rejected() {
+    for (open, close) in [('(', ']'), ('<', '>'), ('/', '/')] {
+        let document = native(MathNode {
+            node: NodeId::fresh(),
+            body: MathBody::Delimited {
+                open,
+                close,
+                body: Box::new(MathNode::hole()),
+            },
+        });
+        assert!(document.validate().is_err(), "accepted {open}{close}");
+    }
+}
+
+#[test]
 fn aggregate_text_and_node_caps_reject_many_individually_valid_leaves() {
     let mut old = legacy();
     old.blocks[0].content = (0..16)
@@ -337,4 +407,9 @@ fn display_equation_requires_exactly_one_structured_formula() {
     assert!(doc.validate().is_err());
     doc.blocks[0].content.clear();
     assert!(doc.validate().is_err());
+}
+
+#[test]
+fn display_equation_uses_the_chinese_block_label() {
+    assert_eq!(BlockKind::Equation.label(), "独立公式");
 }

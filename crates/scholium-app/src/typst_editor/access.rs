@@ -236,15 +236,15 @@ impl EditorSession {
                     }
                     (
                         root.node,
-                        if block.kind == scholium_model::BlockKind::Equation {
-                            crate::i18n::text_with(
-                                locale,
-                                "a11y-display-formula",
-                                &[("body", speech::describe(root).into())],
-                            )
-                        } else {
-                            format!("公式：{}", speech::describe(root))
-                        },
+                        crate::i18n::text_with(
+                            locale,
+                            if block.kind == scholium_model::BlockKind::Equation {
+                                "a11y.display.formula"
+                            } else {
+                                "a11y.math.formula"
+                            },
+                            &[("body", speech::describe_in(root, locale).into())],
+                        ),
                     )
                 }
                 InlineBody::RawMath { source } => {

@@ -233,6 +233,15 @@ fn replay_input(core: &mut EditorCore, event: &serde_json::Value) {
     } else if event["command"] == "DisplayMath" {
         core.input(Input::Command(CommandId::DisplayMath, CommandArgs::None))
             .expect("display command");
+    } else if let Some(command) = event["command"].as_str().and_then(|command| match command {
+        "Root" => Some(CommandId::Root),
+        "Delimiter" => Some(CommandId::Delimiter),
+        "RootIndex" => Some(CommandId::RootIndex),
+        "CycleDelimiter" => Some(CommandId::CycleDelimiter),
+        _ => None,
+    }) {
+        core.input(Input::Command(command, CommandArgs::None))
+            .expect("root/delimiter command");
     } else if event["command"] == "Fraction" {
         core.input(Input::Command(CommandId::Fraction, CommandArgs::None))
             .expect("fraction command");

@@ -1,0 +1,19 @@
+diff --git a/crates/typst-library/src/math/ir/resolve.rs b/crates/typst-library/src/math/ir/resolve.rs
+--- a/crates/typst-library/src/math/ir/resolve.rs
++++ b/crates/typst-library/src/math/ir/resolve.rs
+@@ -1026,6 +1026,15 @@
+             ctx.items.splice(insert_pos..insert_pos, items);
+         }
+         GroupResult::Flat(items) => {
++            // Fenced layout emits body fragments directly, bypassing a group frame.
++            // Bind its slot to each inner component without replacing node origins.
++            #[cfg(feature = "editor")]
++            let items = items.into_iter().map(|mut item| {
++                if let MathItem::Component(comp) = &mut item {
++                    comp.props.edit_slot = elem.pack_ref().edit_slot();
++                }
++                item
++            }).collect();
+             let body = GroupItem::create(items, styles);
+             let item = FencedItem::create(open, close, body, true, styles, elem.span());
+             ctx.items.insert(insert_pos, item.into());

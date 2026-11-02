@@ -25,6 +25,11 @@ fn caret(node: &MathNode) -> BodyTextPosition {
         MathBody::Row { children } => caret(&children[0]),
         MathBody::Fraction { numerator, .. } => caret(numerator),
         MathBody::Attach { base, .. } => caret(base),
+        MathBody::Root { index, radicand } => index
+            .as_deref()
+            .map(caret)
+            .unwrap_or_else(|| caret(radicand)),
+        MathBody::Delimited { body, .. } => caret(body),
         _ => BodyTextPosition {
             leaf: node.node,
             byte: 0,
@@ -116,6 +121,10 @@ fn contains(node: &MathNode, id: NodeId) -> bool {
         MathBody::Attach { base, sub, sup } => {
             contains(base, id) || [sub, sup].into_iter().flatten().any(|c| contains(c, id))
         }
+        MathBody::Root { index, radicand } => {
+            contains(radicand, id) || index.as_deref().is_some_and(|c| contains(c, id))
+        }
+        MathBody::Delimited { body, .. } => contains(body, id),
         _ => false,
     }
 }
@@ -186,6 +195,8 @@ fn empty(node: &MathNode) -> bool {
         MathBody::Attach { base, sub, sup } => {
             empty(base) && [sub, sup].into_iter().flatten().all(|c| empty(c))
         }
+        MathBody::Root { index, radicand } => index.as_deref().is_none_or(empty) && empty(radicand),
+        MathBody::Delimited { body, .. } => empty(body),
         _ => false,
     }
 }

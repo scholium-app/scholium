@@ -97,7 +97,7 @@ Scene 有两层：`base` 是整页、倍率不超过 1 px/pt（受页宽 ≤ `ma
 未裁剪时条带耗时随页长增长（typst-render 不按边界跳过项目），裁剪后与页长基本无关。`EditorStats.raster_ms` 为底图加可见条带耗时。
 节点/子树未变则保留 Content，变动的祖先重建；传输与快照复制仍有全文成本。
 
-结构直接构造正文/样式、Par、Equation、Frac、Attach 与 EditHole；字串不作为 source 执行。
+结构直接构造正文/样式、Par、Equation、Frac、Attach、Root、Lr 与 EditHole；字串不作为 source 执行。
 Attach 为 `AttachElem`（t=sup、b=sub），槽编号 base 1、sub 2、sup 3。数学 Text 逐字素成原子：
 每个字素一个 `ClassElem`（Typst 默认数学类）包一个带原子 origin 的 `TextElem`，ASCII 字母用数学
 斜体码位显示；原子 origin 编码 叶/字节范围，几何把原子两端 caret 映回叶内字节，故每个字素边界
@@ -108,6 +108,10 @@ Attach 为 `AttachElem`（t=sup、b=sub），槽编号 base 1、sub 2、sup 3。
 （见[开发日志《公式内回车与长行内公式》](../log/2026-10-13-math-enter-wrap.md)）。无运算符的长串（含上标内）在 Typst 与 TeX 中都不可断。
 生成源码（`structured_source`）对数学文字同样逐原子输出：ASCII 字母与数字串裸写并以空格分隔，
 白名单运算符裸写，其余为转义引号串；Attach 写为 `base^(sup)_(sub)`，多原子 base 加括号。
+Root 使用 `RootElem`，index 槽 1、radicand 槽 2；`LrElem` 的 body 为槽 1，fork 为展开后的
+内部组件传播该槽 origin 而不替换节点 origin。源码分别生成 `sqrt(x)`、`root(n, x)` 和
+`lr(( x ))` 等配对；带逗号的根式参数加数学分组以保留字面含义。
+定界符作为另一结构的槽时，用不打印的单子 Sequence 隔离父槽 metadata，保留它自身的 body 槽标记。
 World 的 source/file 均拒绝，today 无环境求值。RawMath 返回明确节点错误，既不改变模型
 也不走旧输入期文字替代。受控 flow 宽为 A4 版心宽（210 mm − 2×2.5 cm，约 453.5 pt）、
 高度预算 2400 pt（约 3.4 个 A4 版心高），超过预算拒绝而非截断；画面四周补 A4 页边距
@@ -127,7 +131,7 @@ Bundled 的两页中英混排测试固定每一行首个源 byte；外部字体�
 预览源码的块起点锚点对标题单独成行放在 `=` 之前，因为标题正文前的元素会改变标题块间距。
 
 `EditorScene` 的 raster 和 `EditGeometry` 都取同一个 padded Frame；caret 位置是 typed
-NodeId、叶内 UTF-8 byte 与 affinity；Fraction/Attach ID 上 byte 0/1 表示结构前/后。
+NodeId、叶内 UTF-8 byte 与 affinity；Fraction/Attach/Root/Delimited ID 上 byte 0/1 表示结构前/后。
 `editor/stops.rs` 共用结构停点规则，键盘导航仅扫描当前文字叶，遍历内存按节点数增长。
 worker 的 `edge_geometry` 从已有结构/后代 bounds 并集取左右界，以整公式高度生成边缘 caret；同 Row
 邻接 Text/Hole 供应的同侧边界不重复生成。空正文 Text 在公式前后没有独立 shaped caret 时，由相邻公式已记录 bounds 的对应边界提供正文 caret，
@@ -150,7 +154,8 @@ SceneStats 记录 built/reused/source_reads/elapsed，不能作为物理刷新�
   `vendor/typst-edit` 只随新版本发布整体移动，并作为单独任务完成。
 - 每周一 03:17 UTC，`.github/workflows/typst-upstream.yml` 运行 `scripts/typst-upstream-drift.py`（也可手动触发），
   对上游 main 依次检查三个阶段：
-  1. 四份补丁能否应用：clean 表示直接应用，merged 表示 git 三方合并成功，conflict 表示需要人工解决。
+  1. `0001`–`0005` 五份补丁能否应用；其中 `0005-delimiter-body-slot-origin.patch` 保留定界符 body 的编辑槽 origin。
+     clean 表示直接应用，merged 表示 git 三方合并成功，conflict 表示需要人工解决。
   2. `scholium-typst --features editor` 能否针对打补丁的树编译。
   3. 打补丁的树与同一提交、未打补丁的上游是否逐像素一致。
 

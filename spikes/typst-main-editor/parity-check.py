@@ -163,6 +163,14 @@ class Replay:
             self.pointer(event["pointer"], state)
         elif event.get("command") == "DisplayMath":
             Chrome(self.state, self.xdo, self.window).menu("ui.menu.insert", "insert.display_formula")
+        elif event.get("command") in ("Root", "Delimiter", "RootIndex", "CycleDelimiter"):
+            command = {"Root": "insert.root", "Delimiter": "insert.delimiter",
+                       "RootIndex": "insert.root_index", "CycleDelimiter": "insert.cycle_delimiter"}[event["command"]]
+            chrome = Chrome(self.state, self.xdo, self.window)
+            if event.get("surface") == "menu":
+                chrome.menu("ui.menu.insert", command)
+            else:
+                chrome.click(command, "focus")
         elif event.get("command") == "Fraction":
             chrome = Chrome(self.state, self.xdo, self.window)
             if event.get("surface") == "menu":

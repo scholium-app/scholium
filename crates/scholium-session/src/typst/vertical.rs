@@ -154,6 +154,21 @@ fn across(node: &MathNode, leaf: NodeId, down: bool) -> Option<&MathNode> {
             let in_target = to.is_some_and(|t| contains(t, leaf));
             inner.or(to.filter(|_| !in_target))
         }
+        MathBody::Root { index, radicand } => {
+            let slot = input::math_children(node)
+                .into_iter()
+                .find(|c| contains(c, leaf))?;
+            across(slot, leaf, down).or_else(|| {
+                if down && index.as_ref().is_some_and(|n| contains(n, leaf)) {
+                    Some(radicand.as_ref())
+                } else if !down && contains(radicand, leaf) {
+                    index.as_deref()
+                } else {
+                    None
+                }
+            })
+        }
+        MathBody::Delimited { body, .. } => across(body, leaf, down),
         _ => None,
     }
 }

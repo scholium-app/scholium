@@ -269,6 +269,8 @@ pub(crate) struct CommandContext {
     pub(crate) mode: ViewMode,
     pub(crate) composing: bool,
     pub(crate) in_math: bool,
+    pub(crate) in_root: bool,
+    pub(crate) in_delimiter: bool,
     pub(crate) selected: bool,
     pub(crate) can_undo: bool,
     pub(crate) can_redo: bool,

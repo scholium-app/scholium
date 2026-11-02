@@ -8,6 +8,7 @@ use scholium_document::AttachSlot;
 
 pub(super) fn specs() -> Vec<CommandSpec> {
     let mut specs = math();
+    specs.extend(math_focus());
     specs.extend(objects());
     specs
 }
@@ -61,10 +62,13 @@ fn math() -> Vec<CommandSpec> {
         command! {
             "insert.root",
             icon: IconId::Root,
+            shortcuts: keys![KeyChord::ctrl_shift(ChordKey::Letter('R'))],
+            routing: Routing::Editor,
             menu: menu!(Insert, 0, 3),
             focus: Some(FocusKind::Math),
             writes: true,
-            availability: avail::unimplemented,
+            availability: avail::in_formula,
+            action: Action::Editor(Command::Root),
         },
         command! {
             "insert.superscript",
@@ -94,7 +98,8 @@ fn math() -> Vec<CommandSpec> {
             menu: menu!(Insert, 0, 6),
             focus: Some(FocusKind::Math),
             writes: true,
-            availability: avail::unimplemented,
+            availability: avail::in_formula,
+            action: Action::Editor(Command::Delimiter),
         },
         command! {
             "insert.matrix",
@@ -103,6 +108,27 @@ fn math() -> Vec<CommandSpec> {
             focus: Some(FocusKind::Math),
             writes: true,
             availability: avail::unimplemented,
+        },
+    ]
+}
+
+fn math_focus() -> Vec<CommandSpec> {
+    vec![
+        command! {
+            "insert.root_index",
+            icon: IconId::Root,
+            focus: Some(FocusKind::Math),
+            writes: true,
+            availability: avail::in_root,
+            action: Action::Editor(Command::RootIndex),
+        },
+        command! {
+            "insert.cycle_delimiter",
+            icon: IconId::Delimiter,
+            focus: Some(FocusKind::Math),
+            writes: true,
+            availability: avail::in_delimiter,
+            action: Action::Editor(Command::CycleDelimiter),
         },
     ]
 }

@@ -4,7 +4,8 @@
 （[ADR 0036](../docs/adr/ADR-0036-typst-default-editor.md)）。来源为 Typst v0.15.1 提交
 `9dfd3a08500b7896045f907433cf7b4b02434fad`（Apache-2.0），保留目录内上游 LICENSE。
 
-修改仅为 `spikes/typst-edit-session/patches/0001`–`0004` 四份补丁和上游 workspace 成员裁剪。
+修改仅为 `spikes/typst-edit-session/patches/0001`–`0005` 五份补丁和上游 workspace 成员裁剪。
+其中 `0005-delimiter-body-slot-origin.patch` 保留定界符 body 的编辑槽 origin。
 逐文件来源校验（从上游 Git 对象重建并比较，不接受未记账修改）：
 
 ```sh

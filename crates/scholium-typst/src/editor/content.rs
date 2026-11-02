@@ -6,7 +6,7 @@ use super::{EditorError, EditorStats};
 use scholium_model::{BlockKind, NodeId, structured::*};
 use std::collections::HashMap;
 use typst::editor::{EditHoleElem, EditOrigin};
-use typst::foundations::{Content, NativeElement};
+use typst::foundations::{Content, NativeElement, SequenceElem};
 use typst::layout::Length;
 use typst::math::{AttachElem, ClassElem, EquationElem, FracElem};
 use typst::model::{EmphElem, ParElem, StrongElem};
@@ -97,6 +97,13 @@ impl ContentCache {
                     self.register_math(slot);
                 }
             }
+            MathBody::Root { index, radicand } => {
+                if let Some(index) = index {
+                    self.register_math(index);
+                }
+                self.register_math(radicand);
+            }
+            MathBody::Delimited { body, .. } => self.register_math(body),
             _ => {}
         }
     }
@@ -213,6 +220,12 @@ impl ContentCache {
             MathBody::Attach { base, sub, sup } => {
                 self.attach(node.node, base, sub.as_deref(), sup.as_deref())?
             }
+            MathBody::Root { index, radicand } => {
+                self.root(node.node, index.as_deref(), radicand)?
+            }
+            MathBody::Delimited { open, close, body } => {
+                self.delimited(node.node, *open, *close, body)?
+            }
         };
         Ok(self.keep(node.node, value, body, matches!(node.body, MathBody::Hole)))
     }
@@ -244,13 +257,56 @@ impl ContentCache {
         Ok(elem.pack())
     }
 
+    fn root(
+        &mut self,
+        owner: NodeId,
+        index: Option<&MathNode>,
+        radicand: &MathNode,
+    ) -> Result<Content, EditorError> {
+        let mut elem = typst::math::RootElem::new(self.slot(owner, radicand, 2)?);
+        if let Some(index) = index {
+            elem.index.set(Some(self.slot(owner, index, 1)?));
+        }
+        Ok(elem.pack())
+    }
+
+    fn delimited(
+        &mut self,
+        owner: NodeId,
+        open: char,
+        close: char,
+        body: &MathNode,
+    ) -> Result<Content, EditorError> {
+        let body = self.math(body)?;
+        let content = sequence(vec![
+            super::kernel::text(&open.to_string()),
+            body,
+            super::kernel::text(&close.to_string()),
+        ]);
+        Ok(typst::math::LrElem::new(content)
+            .pack()
+            .with_edit_slot(EditOrigin {
+                node: self.ids[&owner],
+                slot: Some(1),
+                hole: false,
+            }))
+    }
+
     fn slot(
         &mut self,
         owner: NodeId,
         node: &MathNode,
         number: u128,
     ) -> Result<Content, EditorError> {
-        Ok(self.math(node)?.with_edit_slot(EditOrigin {
+        // A delimiter carries its own body-slot metadata. A non-printing sequence
+        // keeps the containing slot independent rather than replacing that metadata.
+        let content = self.math(node)?;
+        let content = if matches!(node.body, MathBody::Delimited { .. }) {
+            Content::from(SequenceElem::new(vec![content]))
+        } else {
+            content
+        };
+        Ok(content.with_edit_slot(EditOrigin {
             node: self.ids[&owner],
             slot: Some(number),
             hole: false,

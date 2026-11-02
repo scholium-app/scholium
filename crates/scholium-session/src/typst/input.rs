@@ -237,6 +237,32 @@ impl EditorCore {
         if all.is_empty() {
             return;
         }
+        if self.at_math_edge() {
+            let mut at = self.cursor;
+            while let Some(next) = scholium_typst::editor::next_caret(&self.snapshot, at, !previous)
+            {
+                if all.iter().any(|leaf| leaf.id == next.leaf) {
+                    self.cursor = Position {
+                        byte: 0,
+                        affinity: Affinity::Downstream,
+                        ..next
+                    };
+                    return;
+                }
+                at = next;
+            }
+            let target = if previous {
+                &all[all.len() - 1]
+            } else {
+                &all[0]
+            };
+            self.cursor = Position {
+                leaf: target.id,
+                byte: 0,
+                affinity: Affinity::Downstream,
+            };
+            return;
+        }
         let at = all
             .iter()
             .position(|leaf| leaf.id == self.cursor.leaf)
@@ -355,12 +381,24 @@ impl EditorCore {
             self.apply(StructuralEdit::DisplayMath { start, end }, state);
             return;
         }
+        if matches!(command, CommandId::RootIndex) {
+            self.root_index(state);
+            return;
+        }
+        if matches!(command, CommandId::CycleDelimiter) {
+            self.cycle_delimiter(state);
+            return;
+        }
         if let CommandId::Style(style) = command {
             self.style_command(style, state);
             return;
         }
-        if matches!(command, CommandId::Fraction) && self.in_math() {
-            self.fraction(state);
+        if matches!(
+            command,
+            CommandId::Fraction | CommandId::Root | CommandId::Delimiter
+        ) && self.in_math()
+        {
+            self.wrap_math(command, state);
             return;
         }
         if self.selected() {
@@ -385,7 +423,8 @@ impl EditorCore {
             CommandId::Math if math => self.exit_math(),
             CommandId::Math => self.insert_math(state),
             CommandId::Fraction if math => self.fraction(state),
-            CommandId::Fraction => {
+            CommandId::Root | CommandId::Delimiter if math => self.wrap_math(command, state),
+            CommandId::Fraction | CommandId::Root | CommandId::Delimiter => {
                 state.edit_error = Some(CommandError::Rejected(Rejection::NotMath))
             }
             CommandId::Attach(slot) if math => self.attach_slot(slot, state),
@@ -446,6 +485,9 @@ impl EditorCore {
     }
 
     fn fraction(&mut self, state: &mut EditState) {
+        self.wrap_math(CommandId::Fraction, state);
+    }
+    fn wrap_math(&mut self, command: CommandId, state: &mut EditState) {
         let end = BodyTextPosition {
             leaf: self.cursor.leaf,
             byte: self.cursor.byte,
@@ -454,7 +496,18 @@ impl EditorCore {
             leaf: at.leaf,
             byte: at.byte,
         });
-        if self.apply(StructuralEdit::FractionAt { start, end }, state) {
+        let edit = match command {
+            CommandId::Fraction => StructuralEdit::FractionAt { start, end },
+            CommandId::Root => StructuralEdit::RootAt { start, end },
+            CommandId::Delimiter => StructuralEdit::DelimitedAt {
+                start,
+                end,
+                open: '(',
+                close: ')',
+            },
+            _ => unreachable!("math wrappers only"),
+        };
+        if self.apply(edit, state) {
             self.cursor.affinity = Affinity::Downstream;
         }
     }

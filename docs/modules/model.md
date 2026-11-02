@@ -72,11 +72,15 @@ revision 下的有序范围原子替换，可跨块。请求仍携带文档身�
 
 [ADR 0033](../adr/ADR-0033-structured-local-session-migration.md) 定义 `structured`：
 `StructuredDocument` 的块、inline、MathNode 共享全文唯一 NodeId；数学 Text/Symbol/Row/
-Fraction/Attach/Hole 有显式序列化 tag，固定分子/分母由拥有者及槽名识别。`Attach` 带 base 与可选
+Fraction/Attach/Root/Delimited/Hole 有显式序列化 tag，固定分子/分母由拥有者及槽名识别。`Attach` 带 base 与可选
 sub/sup，至少一个槽存在，缺席的槽不序列化；它是 v1 信封内的加性变更，不升版本，旧构建会拒绝含
 `attach` 的文档（[ADR 0039](../adr/ADR-0039-math-attach.md)）。必填空槽使用 Hole，
 不持久化提示文字。`validate` 检查身份/容量/叶/容器，`ensure_filled` 拒绝 Hole，但不能
 证明 RawMath 可以严格编译。树深上限 24，单叶 1 MiB、合计内容 16 MiB、节点 100000。
+
+`Root` 有可选 index 和必填 radicand，`Delimited` 有 body 与严格匹配的八种配对：`()`、`[]`、
+`{}`、`||`、`‖‖`、`⟨⟩`、`⌊⌋`、`⌈⌉`。两者为 v1 加性 tag，旧构建遇到新节点会拒绝；
+空槽与存在的 index 递归参与验证和 `ensure_filled`。见 [ADR 0046](../adr/ADR-0046-math-root-delimiter.md)。
 
 `StructuredDocument::migrate` 保留文档/块身份、样式和原值，首次为 inline 分配身份；
 所有旧 Typst 数学原串作为 RawMath 保留，报告包含其节点 ID，无解析/执行/槽位编辑承诺。
@@ -87,3 +91,5 @@ sub/sup，至少一个槽存在，缺席的槽不序列化；它是 v1 信封内
 ResourceGeneration/SceneStamp；场景采纳比较全部字段，不能仅比较语义 revision。
 
 `BlockKind::Equation` 是 v1 信封内的加性块标签，块内容严格为一个 `InlineBody::Math`。旧构建拒绝未知标签，不按段落解释；当前 validator 同时检查唯一内容、节点身份及既有限额。Equation 复用现存 MathNode，见 [ADR 0047](../adr/ADR-0047-display-formula-block.md)。
+
+`BlockKind::Equation.label()` 与现有块类型统一使用中文 `独立公式`；具体界面命令和无障碍名称继续经语言目录本地化。

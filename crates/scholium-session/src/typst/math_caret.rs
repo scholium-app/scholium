@@ -22,9 +22,15 @@ impl EditorCore {
             })
     }
     pub(super) fn at_math_edge(&self) -> bool {
-        self.math_node_at(self.cursor.leaf)
-            .is_some_and(|n| matches!(n.body, MathBody::Fraction { .. } | MathBody::Attach { .. }))
-            && self.cursor.byte <= 1
+        self.math_node_at(self.cursor.leaf).is_some_and(|n| {
+            matches!(
+                n.body,
+                MathBody::Fraction { .. }
+                    | MathBody::Attach { .. }
+                    | MathBody::Root { .. }
+                    | MathBody::Delimited { .. }
+            )
+        }) && self.cursor.byte <= 1
     }
     pub(super) fn move_horizontal(&mut self, right: bool, extend: bool) {
         if let Some(target) = scholium_typst::editor::next_caret(&self.snapshot, self.cursor, right)

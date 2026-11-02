@@ -5,7 +5,10 @@ use scholium_model::{NodeId, structured::*};
 fn compound(node: &MathNode) -> bool {
     matches!(
         node.body,
-        MathBody::Fraction { .. } | MathBody::Attach { .. }
+        MathBody::Fraction { .. }
+            | MathBody::Attach { .. }
+            | MathBody::Root { .. }
+            | MathBody::Delimited { .. }
     )
 }
 fn empty(node: &MathNode) -> bool {
@@ -28,6 +31,12 @@ fn children(node: &MathNode) -> Vec<&MathNode> {
             .chain(sup)
             .map(Box::as_ref)
             .collect(),
+        MathBody::Root { index, radicand } => index
+            .iter()
+            .map(Box::as_ref)
+            .chain(std::iter::once(radicand.as_ref()))
+            .collect(),
+        MathBody::Delimited { body, .. } => vec![body],
         _ => Vec::new(),
     }
 }
@@ -43,6 +52,12 @@ fn children_mut(node: &mut MathNode) -> Vec<&mut MathNode> {
             .chain(sup)
             .map(Box::as_mut)
             .collect(),
+        MathBody::Root { index, radicand } => index
+            .iter_mut()
+            .map(Box::as_mut)
+            .chain(std::iter::once(radicand.as_mut()))
+            .collect(),
+        MathBody::Delimited { body, .. } => vec![body],
         _ => Vec::new(),
     }
 }
