@@ -60,6 +60,8 @@ pub enum BlockKind {
     Heading1,
     /// Second-level heading.
     Heading2,
+    /// Centred block equation containing exactly one structured math inline.
+    Equation,
 }
 
 impl BlockKind {
@@ -69,6 +71,7 @@ impl BlockKind {
             Self::Paragraph => "正文",
             Self::Heading1 => "一级标题",
             Self::Heading2 => "二级标题",
+            Self::Equation => "Equation",
         }
     }
 }

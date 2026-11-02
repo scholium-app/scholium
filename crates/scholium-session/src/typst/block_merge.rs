@@ -16,6 +16,34 @@ impl EditorCore {
         let Some(left) = left.filter(|left| left + 1 < blocks.len()) else {
             return Some(Ok(Outcome::default()));
         };
+        if blocks[left].kind == scholium_model::BlockKind::Equation
+            || blocks[left + 1].kind == scholium_model::BlockKind::Equation
+        {
+            let block = &blocks[if forward { left + 1 } else { left }];
+            let inline = if forward {
+                block.content.first()
+            } else {
+                block.content.last()
+            }?;
+            let target = match &inline.body {
+                InlineBody::Math { root } => math_boundary(root, !forward),
+                InlineBody::Text { text, .. } => {
+                    Some((inline.node, if forward { 0 } else { text.len() }))
+                }
+                _ => None,
+            };
+            if let Some((leaf, byte)) = target {
+                self.cursor = Position {
+                    leaf,
+                    byte,
+                    affinity: Affinity::Downstream,
+                };
+            }
+            return Some(Ok(Outcome {
+                applied: true,
+                ..Outcome::default()
+            }));
+        }
         // Only the adjacent edge inlines qualify: skipping math to find another Text
         // would delete that formula along with the paragraph break.
         let start = blocks[left]

@@ -103,6 +103,7 @@ fn the_catalog_has_no_key_that_nothing_uses() {
             "a11y.math.edge.attach.before",
             "a11y.math.edge.attach.after",
             "a11y.math.edge.nested",
+            "a11y.display.formula",
             "source.header",
             "source.warning",
             "source.preview.compiling",

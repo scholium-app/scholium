@@ -59,3 +59,57 @@ fn empty_paragraph_source_is_explicit_and_each_range_includes_its_anchors() {
         }
     }
 }
+
+#[test]
+fn display_equation_source_is_spaced_standalone_and_range_covers_anchors() {
+    let equation = StructuredBlock {
+        node: NodeId::fresh(),
+        kind: BlockKind::Equation,
+        content: vec![StructuredInline {
+            node: NodeId::fresh(),
+            body: InlineBody::Math {
+                root: MathNode {
+                    node: NodeId::fresh(),
+                    body: MathBody::Text { text: "x".into() },
+                },
+            },
+        }],
+    };
+    let doc = StructuredDocument {
+        document: DocumentId::fresh(),
+        revision: Revision(1),
+        blocks: vec![
+            StructuredBlock {
+                node: NodeId::fresh(),
+                kind: BlockKind::Paragraph,
+                content: vec![StructuredInline {
+                    node: NodeId::fresh(),
+                    body: InlineBody::Text {
+                        text: "before".into(),
+                        style: TextStyle::Plain,
+                    },
+                }],
+            },
+            equation,
+            StructuredBlock {
+                node: NodeId::fresh(),
+                kind: BlockKind::Paragraph,
+                content: vec![StructuredInline {
+                    node: NodeId::fresh(),
+                    body: InlineBody::Text {
+                        text: "after".into(),
+                        style: TextStyle::Plain,
+                    },
+                }],
+            },
+        ],
+    };
+    let view = generate_source(&doc, SourceMode::View);
+    assert_eq!(&view.source[view.blocks[1].range.clone()], "$ x $");
+    assert_eq!(view.source, "before\n\n$ x $\n\nafter\n");
+    let preview = generate_source(&doc, SourceMode::Preview);
+    let range = &preview.source[preview.blocks[1].range.clone()];
+    assert!(range.contains("$ x $"));
+    assert!(range.contains("<blkstart1>"));
+    assert!(range.contains("<blk1>"));
+}

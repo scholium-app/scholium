@@ -180,3 +180,7 @@ SceneStamp 采纳，类型本身不构成窗口竞态验收。裁决见
 单子 Row 归一化为其唯一子节点，不为插入制造嵌套 Row；仅首次创建 Row 时分配新身份。Text 拆分的首个非空片段保留旧身份。
 `StructuralOutcome.cursor` 是命令落点；一次编辑只产生一个动作。底层显式 `WrapFraction`
 仍保留整子树包装合约，用户分数命令使用 `FractionAt`。
+
+## 独立公式块
+
+`DisplayMath { start, end }` 在正文 caret 处分割块、插入 Equation，或将同一数学行的选区移入 Equation；非空两侧内容保留，空余正文不生成新段落。非法选区和字素边界原子拒绝。`LeaveEquation` 创建下方正文并返回其起点；`RemoveEquation` 只删除全空 Equation，最后一个块退化为可编辑空段。`MergeWithNext` 拒绝 Equation 相邻块，段落文字不拼入数学块。所有操作共用结构校验、请求去重及单动作接受流程。

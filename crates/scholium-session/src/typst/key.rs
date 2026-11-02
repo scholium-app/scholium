@@ -108,6 +108,7 @@ impl EditorCore {
             Key::Character('i') | Key::Character('I') if !mods.shift => {
                 Some(CommandId::Style(TextStyle::Emphasis))
             }
+            Key::Character('e') | Key::Character('E') if mods.shift => Some(CommandId::DisplayMath),
             Key::Character('m') | Key::Character('M') if !mods.shift => Some(CommandId::Math),
             Key::Slash if !mods.shift => Some(CommandId::Fraction),
             Key::Num(0) if !mods.shift => Some(CommandId::Kind(BlockKind::Paragraph)),

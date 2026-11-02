@@ -193,3 +193,46 @@ fn split(
         left.push(node.clone());
     }
 }
+
+/// Move only a validated row selection out, preserving all unselected math identities.
+pub(super) fn extract(
+    doc: &mut StructuredDocument,
+    a: BodyTextPosition,
+    b: BodyTextPosition,
+) -> Result<MathNode, EditError> {
+    let range = math_row_range(doc, a, b)?;
+    let owner = super::edit::math_node(doc, range.row).ok_or(EditError::WrongTarget)?;
+    let row = row_nodes(owner);
+    let i = row
+        .iter()
+        .position(|n| n.node == range.start.leaf)
+        .expect("validated start");
+    let j = row
+        .iter()
+        .position(|n| n.node == range.end.leaf)
+        .expect("validated end");
+    let mut left = row[..i].to_vec();
+    let mut selected = Vec::new();
+    let mut right = Vec::new();
+    for (k, node) in row.iter().enumerate().take(j + 1).skip(i) {
+        split(
+            node,
+            if k == i { range.start.byte } else { 0 },
+            if k == j { range.end.byte } else { end(node) },
+            &mut left,
+            &mut selected,
+            &mut right,
+        );
+    }
+    if selected.is_empty() {
+        return Err(EditError::InvalidRange);
+    }
+    right.extend_from_slice(&row[j + 1..]);
+    left.extend(right);
+    *owner = if left.is_empty() {
+        MathNode::hole()
+    } else {
+        pack(left)
+    };
+    Ok(pack(selected))
+}

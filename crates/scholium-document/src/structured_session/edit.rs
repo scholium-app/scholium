@@ -16,6 +16,15 @@ pub(super) fn apply(
 ) -> Result<Landing, EditError> {
     let cursor = |cursor| (cursor, None);
     match edit {
+        StructuralEdit::DisplayMath { start, end } => {
+            super::equation::insert(doc, start, end).map(|c| cursor(Some(c)))
+        }
+        StructuralEdit::LeaveEquation { block } => {
+            super::equation::leave(doc, block).map(|c| cursor(Some(c)))
+        }
+        StructuralEdit::RemoveEquation { block } => {
+            super::equation::remove(doc, block).map(|c| cursor(Some(c)))
+        }
         StructuralEdit::FractionAt { start, end } => {
             super::fraction::insert(doc, start, end).map(|c| cursor(Some(c)))
         }
@@ -60,6 +69,9 @@ pub(super) fn apply(
 
 fn apply_single(doc: &mut StructuredDocument, edit: StructuralEdit) -> Result<(), EditError> {
     match edit {
+        StructuralEdit::DisplayMath { .. }
+        | StructuralEdit::LeaveEquation { .. }
+        | StructuralEdit::RemoveEquation { .. } => unreachable!("dispatched above"),
         // The dispatcher handles ranges and attach edits (which return carets) separately.
         StructuralEdit::FractionAt { .. }
         | StructuralEdit::ReplaceBodyRange { .. }
@@ -290,6 +302,11 @@ fn merge(doc: &mut StructuredDocument, block: NodeId) -> Result<(), EditError> {
         .position(|b| b.node == block)
         .ok_or(EditError::WrongTarget)?;
     if index + 1 >= doc.blocks.len() {
+        return Err(EditError::WrongTarget);
+    }
+    if doc.blocks[index].kind == scholium_model::BlockKind::Equation
+        || doc.blocks[index + 1].kind == scholium_model::BlockKind::Equation
+    {
         return Err(EditError::WrongTarget);
     }
     let next = doc.blocks.remove(index + 1);

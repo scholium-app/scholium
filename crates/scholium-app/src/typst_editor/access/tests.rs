@@ -230,6 +230,24 @@ fn formula_is_a_math_object_and_slot_context_is_a_live_status() {
 }
 
 #[test]
+fn display_formula_has_a_localized_math_object_name() {
+    let mut f = Fixture::new();
+    f.editor
+        .command(crate::typst_editor::Command::DisplayMath, &mut f.state);
+    for (locale, label) in [
+        (crate::i18n::LocaleSetting::ZhHans, "独立公式：空"),
+        (crate::i18n::LocaleSetting::En, "Display formula: 空"),
+    ] {
+        f.state.locale = locale;
+        let tree = settled(&mut f);
+        let math = tree.children(Role::Math);
+        assert_eq!(math.len(), 1);
+        assert_eq!(math[0].1.label(), Some(label));
+        assert_eq!(tree.text(), "");
+    }
+}
+
+#[test]
 fn speech_reads_nested_fractions_outside_in_and_empty_slots_as_empty() {
     let inner = MathNode {
         node: NodeId::fresh(),

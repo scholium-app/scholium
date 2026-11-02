@@ -59,7 +59,7 @@ pub fn generate_source(doc: &StructuredDocument, mode: SourceMode) -> GeneratedS
         }
         let start = out.source.len();
         let heading_marker = match block.kind {
-            BlockKind::Paragraph => "",
+            BlockKind::Paragraph | BlockKind::Equation => "",
             BlockKind::Heading1 => "= ",
             BlockKind::Heading2 => "== ",
         };
@@ -82,8 +82,16 @@ pub fn generate_source(doc: &StructuredDocument, mode: SourceMode) -> GeneratedS
                     push_text(&mut out.source, text, *style, block_start);
                 }
                 InlineBody::Math { root } => {
-                    out.source.push('$');
+                    let delimiter = if block.kind == BlockKind::Equation {
+                        "$ "
+                    } else {
+                        "$"
+                    };
+                    out.source.push_str(delimiter);
                     math(&mut out, root);
+                    if block.kind == BlockKind::Equation {
+                        out.source.push(' ');
+                    }
                     out.source.push('$');
                 }
                 InlineBody::RawMath { source } => {

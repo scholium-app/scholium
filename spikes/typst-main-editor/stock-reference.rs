@@ -77,6 +77,17 @@ fn scripts(base: Content, sub: Option<Content>, sup: Option<Content>) -> Content
 fn fixture(name: &str) -> Content {
     let paragraph = |body| ParElem::new(body).pack();
     let block = match name {
+        "display-only" | "display-start" | "display-middle" | "display-end" => {
+            let mut equation = EquationElem::new(FracElem::new(
+                scripts(symbol("x"), None, Some(kernel::text("2"))), symbol("b"),
+            ).pack());
+            equation.block.set(true);
+            let mut blocks = Vec::new();
+            if matches!(name, "display-middle" | "display-end") { blocks.push(paragraph(kernel::text("alpha"))); }
+            blocks.push(equation.pack());
+            if matches!(name, "display-middle" | "display-start") { blocks.push(paragraph(kernel::text("omega"))); }
+            Content::sequence(blocks)
+        },
         "edge-root" | "edge-row" => {
             let fraction=FracElem::new(symbol("a"),symbol("b")).pack();
             let math=if name=="edge-row" {Content::sequence([symbol("l"),fraction,symbol("r")])}else{fraction};
@@ -163,6 +174,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     std::fs::create_dir_all(&output)?;
     let world = reference_world();
     for name in [
+        "display-only", "display-start", "display-middle", "display-end",
         "full",
         "edge-root",
         "edge-row",

@@ -216,3 +216,6 @@ mod structure_audit_tests;
 
 #[cfg(test)]
 mod fraction_caret_tests;
+
+#[cfg(test)]
+mod display_tests;

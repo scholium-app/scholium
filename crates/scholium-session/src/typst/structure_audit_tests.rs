@@ -129,6 +129,26 @@ fn fixtures() -> Vec<Case> {
             content,
         });
     }
+    cases.extend(roots().into_iter().map(|(name, root)| Case {
+        name,
+        kind: BlockKind::Equation,
+        content: vec![math(root)],
+    }));
+    for name in [
+        "equation-alone",
+        "equation-start",
+        "equation-middle",
+        "equation-end",
+    ] {
+        cases.push(Case {
+            name,
+            kind: BlockKind::Equation,
+            content: vec![math(fraction(
+                attach(text("x"), None, Some(text("2"))),
+                text("b"),
+            ))],
+        });
+    }
     cases.extend(empty_body_cases());
     cases.extend(inline_context_cases());
     cases
@@ -284,6 +304,17 @@ fn fixture(case: Case) -> Fixture {
         kind: case.kind,
         content: case.content,
     }];
+    let paragraph = |value| StructuredBlock {
+        node: NodeId::fresh(),
+        kind: BlockKind::Paragraph,
+        content: vec![body(value, TextStyle::Plain)],
+    };
+    if matches!(case.name, "equation-middle" | "equation-end") {
+        doc.blocks.insert(0, paragraph("before"));
+    }
+    if matches!(case.name, "equation-middle" | "equation-start") {
+        doc.blocks.push(paragraph("after"));
+    }
     f.core
         .restore_document(doc, vec![])
         .expect("valid audit fixture");
@@ -378,7 +409,12 @@ fn can_delete(core: &EditorCore, forward: bool) -> bool {
                 at.byte > 0
             }
     });
-    grapheme
+    let merge = core.snapshot.blocks.windows(2).any(|pair| {
+        if pair.iter().any(|b| b.kind == BlockKind::Equation) { return false; }
+        let inline = if forward { pair[0].content.last() } else { pair[1].content.first() };
+        inline.is_some_and(|i| matches!(&i.body, InlineBody::Text { text, .. } if i.node == at.leaf && at.byte == if forward { text.len() } else { 0 }))
+    });
+    grapheme || merge
         || core
             .snapshot
             .blocks

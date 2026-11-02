@@ -230,6 +230,9 @@ fn replay_input(core: &mut EditorCore, event: &serde_json::Value) {
     } else if event["pointer"].is_object() {
         let input = scenario_pointer(core, &event["pointer"]);
         core.input(input).expect("pointer input");
+    } else if event["command"] == "DisplayMath" {
+        core.input(Input::Command(CommandId::DisplayMath, CommandArgs::None))
+            .expect("display command");
     } else if event["command"] == "Fraction" {
         core.input(Input::Command(CommandId::Fraction, CommandArgs::None))
             .expect("fraction command");

@@ -231,7 +231,7 @@ core 交付已采纳 Scene 的位图与已验证身份的条带，app 上传为�
   页面路由的和弦（Ctrl+B/I/M、Ctrl+/、Ctrl+0/1/2）由页面按注册表解析，字母、数字、功能键精确匹配，标点另可匹配
   不带 Shift 的和弦。测试断言没有两个命令共用一个和弦。
 - **默认快捷键**：Ctrl+0 / Ctrl+1 / Ctrl+2 = 正文 / 标题 1 / 标题 2；Ctrl+Shift+M 在页面编辑与源码预览之间切换
-  （Ctrl+1/2 不再切换工作方式；Ctrl+0 不再是实际大小，实际大小只在菜单与按钮里）；Ctrl+B/I 粗体/斜体、Ctrl+M 公式、
+  （Ctrl+1/2 不再切换工作方式；Ctrl+0 不再是实际大小，实际大小只在菜单与按钮里）；Ctrl+B/I 粗体/斜体、Ctrl+M 行内公式、Ctrl+Shift+E 独立公式、
   Ctrl+/ 分数、Ctrl+Z/Ctrl+Shift+Z/Ctrl+Y、Ctrl+S、Ctrl+N、Ctrl+J、Ctrl+Shift+B、Ctrl+F1、Ctrl+加号/等号/减号缩放不变。
 - **文字目录**：命令标题、提示、菜单名与不可用原因经 `i18n` 的 Fluent 目录（`i18n/zh-Hans.ftl`、`en.ftl`，
   见 [ADR 0040](../adr/ADR-0040-ui-string-catalog.md)）渲染；界面语言 `WorkspaceState.locale`（`auto` 按 `SCHOLIUM_LOCALE`、`LC_ALL`、

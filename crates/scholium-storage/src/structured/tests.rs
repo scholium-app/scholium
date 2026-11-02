@@ -292,3 +292,28 @@ fn maximum_depth_is_readable_inside_the_versioned_envelope() {
         doc
     );
 }
+
+#[test]
+fn display_equation_round_trips_and_rejects_body_text() {
+    let mut doc = sample();
+    doc.blocks[0].kind = BlockKind::Equation;
+    let path = Fixture::fresh();
+    let store = SessionStore::create_structured(&path.0).expect("store");
+    store.save_structured(&doc, &[]).expect("save equation");
+    assert_eq!(
+        store
+            .load_structured()
+            .expect("load")
+            .expect("head")
+            .snapshot,
+        doc
+    );
+    doc.blocks[0].content.push(StructuredInline {
+        node: NodeId::fresh(),
+        body: InlineBody::Text {
+            text: String::new(),
+            style: TextStyle::Plain,
+        },
+    });
+    assert!(doc.validate().is_err());
+}

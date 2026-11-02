@@ -17,6 +17,7 @@ use unicode_segmentation::UnicodeSegmentation;
 enum Value {
     Block(StructuredBlock),
     Inline(StructuredInline),
+    DisplayInline(StructuredInline),
     Math(MathNode),
 }
 
@@ -142,6 +143,21 @@ impl ContentCache {
         if let Some(content) = self.cached(block.node, &value) {
             return Ok(content);
         }
+        if block.kind == BlockKind::Equation {
+            let inline = &block.content[0];
+            let InlineBody::Math { root } = &inline.body else {
+                unreachable!("validated equation")
+            };
+            let mut equation = EquationElem::new(self.math(root)?);
+            equation.block.set(true);
+            let body = self.keep(
+                inline.node,
+                Value::DisplayInline(inline.clone()),
+                equation.pack(),
+                false,
+            );
+            return Ok(self.keep(block.node, value, body, false));
+        }
         let body = sequence(
             block
                 .content
@@ -150,6 +166,7 @@ impl ContentCache {
                 .collect::<Result<_, _>>()?,
         );
         let body = match block.kind {
+            BlockKind::Equation => unreachable!("handled above"),
             BlockKind::Paragraph => ParElem::new(body).pack(),
             BlockKind::Heading1 => super::style::heading(1, body, self.fonts),
             BlockKind::Heading2 => super::style::heading(2, body, self.fonts),

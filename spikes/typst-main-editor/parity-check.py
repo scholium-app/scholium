@@ -161,6 +161,8 @@ class Replay:
             self.key(event)
         elif "pointer" in event:
             self.pointer(event["pointer"], state)
+        elif event.get("command") == "DisplayMath":
+            Chrome(self.state, self.xdo, self.window).menu("ui.menu.insert", "insert.display_formula")
         elif event.get("command") == "Fraction":
             chrome = Chrome(self.state, self.xdo, self.window)
             if event.get("surface") == "menu":

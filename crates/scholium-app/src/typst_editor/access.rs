@@ -223,13 +223,29 @@ impl EditorSession {
 
     fn publish_math(&self, ui: &mut egui::Ui, focused: bool, locale: crate::i18n::Locale) {
         let mut context = None;
-        for inline in self.snapshot.blocks.iter().flat_map(|b| &b.content) {
+        for (block, inline) in self
+            .snapshot
+            .blocks
+            .iter()
+            .flat_map(|b| b.content.iter().map(move |i| (b, i)))
+        {
             let (id, label) = match &inline.body {
                 InlineBody::Math { root } => {
                     if focused && context.is_none() {
                         context = speech::caret_context(root, self.cursor, locale);
                     }
-                    (root.node, format!("公式：{}", speech::describe(root)))
+                    (
+                        root.node,
+                        if block.kind == scholium_model::BlockKind::Equation {
+                            crate::i18n::text_with(
+                                locale,
+                                "a11y-display-formula",
+                                &[("body", speech::describe(root).into())],
+                            )
+                        } else {
+                            format!("公式：{}", speech::describe(root))
+                        },
+                    )
                 }
                 InlineBody::RawMath { source } => {
                     (inline.node, format!("原串公式（不可编辑）：{source}"))

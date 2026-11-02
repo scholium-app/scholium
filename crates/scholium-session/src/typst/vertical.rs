@@ -246,7 +246,21 @@ impl EditorCore {
                 Some(((key, c), math))
             })
             .collect();
-        let body: Vec<Stop<'_>> = stops.iter().filter(|(_, m)| !m).map(|(s, _)| *s).collect();
+        let equation_leaves: Vec<_> = input::leaves(&self.snapshot)
+            .into_iter()
+            .filter(|l| {
+                self.snapshot
+                    .blocks
+                    .iter()
+                    .any(|b| b.node == l.block && b.kind == scholium_model::BlockKind::Equation)
+            })
+            .map(|l| l.id)
+            .collect();
+        let body: Vec<Stop<'_>> = stops
+            .iter()
+            .filter(|((_, c), m)| !m || equation_leaves.contains(&c.position.leaf))
+            .map(|(s, _)| *s)
+            .collect();
         let down = motion == Motion::Down;
         let from = if math {
             self.formula_span(geometry)

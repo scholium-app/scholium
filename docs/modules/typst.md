@@ -52,6 +52,7 @@ markup、heading、list、emphasis、link、label/ref/cite、静态 figure/table
 `generate_source(&StructuredDocument, SourceMode)` 从结构文档派生 Typst 文本，不回读：
 正文按字面转义，粗体/强调为 `*…*`/`_…_`，一二级标题为 `=`/`==`；数学文字作字面量（单个字母/数字
 裸写，其余加引号），分数为 `(a)/(b)`，必填空槽显示为 `□` 并计入 `holes`（严格输出须拒绝）。
+`Equation` 块恰含一个 Math inline，编辑面映射为 `EquationElem(block: true)`；源码以 `$ … $` 独立成段生成，块范围包括公式分隔符与预览锚点。
 `View` 模式给用户看，原串公式逐字显示；`Preview` 模式加预览 preamble 与 `blkstart{i}`/`blk{i}`
 块锚点，原串公式换成可见占位、**从不在进程内编译**，其 ID 计入 `raw`。`blocks` 给出每块的源码区间。
 空段落在两种模式中均显式生成 `#par[#text("")]`：空文本提供与编辑面相同的字体行高，
@@ -215,3 +216,5 @@ Content cache 只使前后受影响正文叶及其段落失效；未变的段落
 真实文档的命中、导航、选区或 AccessKit 几何查询。取消/提交后正常 Scene 恢复该权限。
 数学预编辑暂不注入 Content；数学 Commit 保持原有字面提交与撤销语义。
 边界决策见 [ADR 0044](../adr/ADR-0044-transient-ime-layout.md)。
+
+`BlockKind::Equation` 的内容严格为一个 `InlineBody::Math`，直接构造为 `EquationElem` 并开启 `block`。源码生成 `$ … $` 独立段落；SourceBlock 范围覆盖分隔符以及 Preview 锚点，使源码视图能准确高亮。Equation 结构进入 math indicator，并由 AccessKit 以本地化独立公式名称暴露。

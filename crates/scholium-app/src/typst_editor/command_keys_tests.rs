@@ -56,6 +56,18 @@ fn ctrl_shift_m_does_not_toggle_a_formula_in_the_page() {
 }
 
 #[test]
+fn ctrl_shift_e_inserts_a_display_equation_through_the_page_translator() {
+    let mut f = Fixture::new();
+    f.events(vec![press(
+        egui::Key::E,
+        egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
+    )]);
+    assert_eq!(kind(&f), BlockKind::Equation);
+    assert!(in_formula(&f));
+    assert_eq!(f.editor.undo.len(), 1);
+}
+
+#[test]
 fn esc_in_a_formula_without_selection_leaves_it_after_the_formula() {
     let mut f = Fixture::new();
     f.events(vec![text("a"), text("$"), text("12")]);
@@ -104,4 +116,23 @@ fn the_page_keeps_keyboard_focus_through_esc() {
     // that filter is what keeps focus, and the Esc handler must not request anything else.
     let source = include_str!("paint.rs");
     assert!(source.contains("escape: true"));
+}
+
+#[test]
+fn display_formula_accepts_one_ime_commit_and_keeps_current_caret_and_indicator() {
+    let mut f = Fixture::new();
+    f.editor.command(Command::DisplayMath, &mut f.state);
+    f.events(vec![
+        egui::Event::Ime(egui::ImeEvent::Commit("中".into())),
+        text("中"),
+    ]);
+    f.settle();
+    let scene = f.editor.scene.as_ref().expect("scene");
+    let InlineBody::Math { root } = &f.editor.snapshot.blocks[0].content[0].body else {
+        panic!("math")
+    };
+    assert!(matches!(&root.body, MathBody::Text { text } if text == "中"));
+    assert_eq!(f.editor.snapshot.revision.0, 2);
+    assert!(scene.geometry.caret(f.editor.cursor).expect("caret").exact);
+    assert!(f.editor.math_indicator().is_some());
 }

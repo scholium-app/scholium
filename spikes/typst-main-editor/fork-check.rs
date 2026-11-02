@@ -15,6 +15,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     std::fs::create_dir_all(&output)?;
     let worker = EditorWorker::spawn(|| {})?;
     for name in [
+        "display-only",
+        "display-start",
+        "display-middle",
+        "display-end",
         "full",
         "edge-root",
         "edge-row",

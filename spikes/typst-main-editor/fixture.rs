@@ -42,6 +42,9 @@ fn row(children: Vec<MathNode>) -> MathNode {
 }
 /// Identified input for the formal adapter, with complete math slots.
 pub fn fixture(name: &str) -> StructuredDocument {
+    if name.starts_with("display-") {
+        return display_fixture(name);
+    }
     if name.starts_with("empty-") {
         return empty_fixture(name);
     }
@@ -158,5 +161,36 @@ fn empty_fixture(name: &str) -> StructuredDocument {
                 content: vec![text(value, TextStyle::Plain)],
             })
             .collect(),
+    }
+}
+
+fn display_fixture(name: &str) -> StructuredDocument {
+    let equation = StructuredBlock {
+        node: NodeId::fresh(),
+        kind: BlockKind::Equation,
+        content: vec![StructuredInline {
+            node: NodeId::fresh(),
+            body: InlineBody::Math {
+                root: frac(attach(math("x"), None, Some(math("2"))), math("b")),
+            },
+        }],
+    };
+    let paragraph = |value| StructuredBlock {
+        node: NodeId::fresh(),
+        kind: BlockKind::Paragraph,
+        content: vec![text(value, TextStyle::Plain)],
+    };
+    let mut blocks = Vec::new();
+    if matches!(name, "display-middle" | "display-end") {
+        blocks.push(paragraph("alpha"));
+    }
+    blocks.push(equation);
+    if matches!(name, "display-middle" | "display-start") {
+        blocks.push(paragraph("omega"));
+    }
+    StructuredDocument {
+        document: DocumentId::fresh(),
+        revision: Revision(0),
+        blocks,
     }
 }

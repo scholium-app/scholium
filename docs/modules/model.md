@@ -85,3 +85,5 @@ sub/sup，至少一个槽存在，缺席的槽不序列化；它是 v1 信封内
 
 `layout_identity` 定义不序列化的 LayoutEpoch/LayoutRequestId/ProfileGeneration/
 ResourceGeneration/SceneStamp；场景采纳比较全部字段，不能仅比较语义 revision。
+
+`BlockKind::Equation` 是 v1 信封内的加性块标签，块内容严格为一个 `InlineBody::Math`。旧构建拒绝未知标签，不按段落解释；当前 validator 同时检查唯一内容、节点身份及既有限额。Equation 复用现存 MathNode，见 [ADR 0047](../adr/ADR-0047-display-formula-block.md)。
