@@ -18,8 +18,10 @@ The independent stock Typst reference matched all 19 fork fixtures pixel-for-pix
 and all 19 under bundled fonts, including display equations alone, at document start/end, and between
 paragraphs. No fork/vendor patch was needed and comparison thresholds were unchanged. The full private
 Xvfb window suite passed 42/42 checks across `zh-Hans` and `en`, including display insertion, shortcut,
-menu, Enter/Backspace, and shared parity replay. Screenshot and run evidence is in the ignored
-`target/t33-window/` output.
+menu, Enter/Backspace, and shared parity replay. That full run used the binary built before the final
+same-row selection guard adjustment; after rebuilding the final source, the focused display-formula
+window workflow passed again in both locales (2/2). Screenshot and run evidence is in the ignored
+`target/t33-window/` and `target/t33-window-current-focused/` outputs.
 
 The shortcut is Ctrl+Shift+E because Ctrl+Shift+M already switches page/source mode. Inline/display
 focus-toolbar conversion remains deferred, as permitted by the task spec; the block-boundary policy for
