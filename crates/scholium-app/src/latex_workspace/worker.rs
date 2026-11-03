@@ -200,7 +200,7 @@ async fn live_loop(
             repaint.request_repaint();
         }
     });
-    let mut revisions = BTreeMap::from([(0, 0)]);
+    let mut revisions = BTreeMap::from([(source.revision(), 0)]);
     loop {
         tokio::select! {
             result=edits.changed()=>{

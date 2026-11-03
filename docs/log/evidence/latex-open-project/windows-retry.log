@@ -1,0 +1,10 @@
+waiting for another window-check run
+output: /home/ation_ciger/Projects/Mogan/scholium-wt3/target/latex-open-retry
+running caret-follow [zh-Hans] ...
+running latex-view [zh-Hans] ...
+
+check                   result      seconds
+caret-follow [zh-Hans]  pass           31.8
+latex-view [zh-Hans]    pass           10.4
+
+2/2 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt3/target/latex-open-retry

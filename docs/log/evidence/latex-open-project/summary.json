@@ -1,0 +1,14 @@
+{
+  "workspace_passed": 627,
+  "workspace_ignored": 13,
+  "stock_equal_pixels": {
+    "system": 31,
+    "bundled": 31
+  },
+  "window_initial_passed": 52,
+  "window_initial_total": 54,
+  "window_retry_passed": 2,
+  "window_effective_passed": 54,
+  "native_lualatex": true,
+  "native_xelatex": true
+}

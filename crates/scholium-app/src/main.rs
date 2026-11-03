@@ -89,13 +89,6 @@ fn main() -> eframe::Result {
         "Scholium",
         options,
         Box::new(|cc| {
-            if let Some(project) = std::env::var_os("SCHOLIUM_LATEX_PROJECT") {
-                theme::install(&cc.egui_ctx);
-                return Ok(Box::new(latex_workspace::Workspace::open(
-                    project.into(),
-                    &cc.egui_ctx,
-                )));
-            }
             let mut app = ScholiumApp::default();
             theme::install(&cc.egui_ctx);
             app.files.initialize(&mut app.state);

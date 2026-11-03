@@ -491,7 +491,6 @@ math-input-tab-cycle = Tab: cycle symbol
 math-input-tab-slot = Tab: next slot
 
 # Project files and formal storage
-project-latex-pending = LaTeX preview is under development
 project-source-authority = Typst source · source file authority
 project-locked = This project is already open in another window or process. Close it there first.
 project-conflict = Modified externally

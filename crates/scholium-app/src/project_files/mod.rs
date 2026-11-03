@@ -71,7 +71,7 @@ impl ProjectFiles {
         if std::mem::take(&mut state.close_requested) {
             self.request(Operation::Close(false), ctx, state, project);
         }
-        if let Some(ProjectWorkspace::Source(_)) = project {
+        if project.as_mut().is_some_and(|p| p.source_mut().is_some()) {
             if std::mem::take(&mut state.save_requested) {
                 self.save_source(project, state);
             }
@@ -122,7 +122,10 @@ impl ProjectFiles {
         }
     }
     fn save_source(&mut self, project: &mut Option<ProjectWorkspace>, state: &mut WorkspaceState) {
-        let Some(ProjectWorkspace::Source(source)) = project else {
+        if project.as_ref().is_some_and(|p| p.pending_input()) {
+            return;
+        }
+        let Some(source) = project.as_mut().and_then(ProjectWorkspace::source_mut) else {
             return;
         };
         match source.save() {
@@ -143,7 +146,10 @@ impl ProjectFiles {
         state: &mut WorkspaceState,
         project: &mut Option<ProjectWorkspace>,
     ) {
-        if project.as_ref().is_some_and(|p| p.dirty()) {
+        if project
+            .as_ref()
+            .is_some_and(|p| p.dirty() || p.pending_input())
+        {
             self.pending = Some(op);
         } else {
             self.execute(op, ctx, state, project);
@@ -173,6 +179,7 @@ impl ProjectFiles {
                 *project = None;
                 state.editor = None;
                 state.source_language = None;
+                state.composition = None;
                 if window {
                     ctx.send_viewport_cmd(egui::ViewportCommand::Close);
                 }
@@ -193,6 +200,7 @@ impl ProjectFiles {
                 *project = Some(next);
                 state.storage_error = None;
                 state.edit_error = None;
+                state.composition = None;
                 state.mode = crate::state::ViewMode::Page;
                 if let Some(p) = project {
                     p.metadata(state);
@@ -228,7 +236,7 @@ impl ProjectFiles {
                     )
                     .clicked()
                 {
-                    if matches!(project, Some(ProjectWorkspace::Source(_))) {
+                    if project.as_mut().is_some_and(|p| p.source_mut().is_some()) {
                         self.save_source(project, state);
                     } else {
                         state.storage_error = project.as_mut().and_then(|p| p.save().err());
@@ -296,7 +304,6 @@ impl ProjectFiles {
 
 #[cfg(test)]
 pub(crate) const CATALOG_KEYS: &[&str] = &[
-    "project.latex.pending",
     "project.source.authority",
     "project.locked",
     "project.conflict",

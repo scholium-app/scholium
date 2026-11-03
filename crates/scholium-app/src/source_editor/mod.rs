@@ -33,6 +33,9 @@ pub(crate) struct SourceEditor {
     ime_undo: Option<egui::util::undoer::Undoer<(egui::text::CCursorRange, String)>>,
 }
 impl SourceEditor {
+    pub(crate) fn composing(&self) -> bool {
+        self.composing
+    }
     pub(crate) fn show(
         &mut self,
         ui: &mut egui::Ui,
@@ -42,7 +45,9 @@ impl SourceEditor {
         locale: crate::i18n::Locale,
     ) -> bool {
         let before = text.clone();
-        if ui.input_mut(|i| i.consume_key(egui::Modifiers::COMMAND, egui::Key::F)) {
+        if ui.is_enabled()
+            && ui.input_mut(|i| i.consume_key(egui::Modifiers::COMMAND, egui::Key::F))
+        {
             self.find_open = !self.find_open;
         }
         if self.find_open {
@@ -51,7 +56,9 @@ impl SourceEditor {
                 ui.text_edit_singleline(&mut self.query);
             });
         }
-        self.completion_input(ui);
+        if ui.is_enabled() {
+            self.completion_input(ui);
+        }
         if self.composing
             && self.draft.is_none()
             && let Some(state) =
@@ -81,6 +88,7 @@ impl SourceEditor {
                     ui.fonts_mut(|fonts| fonts.layout_job(job))
                 };
                 egui::TextEdit::multiline(&mut buffer)
+                    .interactive(ui.is_enabled())
                     .id(egui::Id::new("source-editor"))
                     .font(egui::TextStyle::Monospace)
                     .code_editor()
@@ -90,7 +98,7 @@ impl SourceEditor {
                     .show(ui)
             })
             .inner;
-        if !self.focus {
+        if !self.focus && ui.is_enabled() {
             output.response.request_focus();
             self.focus = true;
         }
@@ -111,7 +119,9 @@ impl SourceEditor {
                 ui.colored_label(mark.color, message);
             }
         }
-        self.completion_popup(ui, &output);
+        if ui.is_enabled() {
+            self.completion_popup(ui, &output);
+        }
         *text != before
     }
 }

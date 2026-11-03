@@ -2,7 +2,7 @@
 
 ## 职责
 
-当前实现源码权威 session、无 UI 的 live 预览监督、内核图元栅格化与整编预览。其余解析/转换接口为后续规划：提供容错、无损 LaTeX token/CST，项目 include graph，符号与引用索引，常用论文子集到转换 IR 的投影、
+当前实现源码权威 session、无 UI 的 live 预览监督、内核图元栅格化与整编预览，app 将其接入项目工作台。其余解析/转换接口为后续规划：提供容错、无损 LaTeX token/CST，项目 include graph，符号与引用索引，常用论文子集到转换 IR 的投影、
 IR 到 LaTeX 的导出生成、语义编辑降级为最小源码 patch、TeX 日志位置解析与实时预览适配。
 
 ## 非职责
@@ -120,6 +120,10 @@ Rust 容错解析器配 Rowan CST 待验证；Tree-sitter 仅作可选高亮/导
 `SourceSession::open(root, entry)` 保持 `.tex` 为权威，识别前 20 行的 `% !TeX program = ...`，默认 LuaLaTeX；
 XeLaTeX/pdfLaTeX 使用 `PreviewMode::FullCompilation` 与 `full::compile`。入口与通过 `load` 加载的资源
 保存在同一源码会话，`edit` 只修改内存快照并递增宿主 revision，不改磁盘。未保存源码可由 `snapshot` 取回。
+app 工作台以存储层 SourceProject 为唯一可写权威；入口来自项目声明，编辑保存 draft，显式 Save 才物化源文件。
+本模块的 SourceSession 是派生预览快照：重开时先载入声明入口，再应用恢复的 draft；宿主初始 revision 与 UI revision
+显式映射，恢复草稿也能采纳初始预览。存储错误、外部冲突与文件操作由 app 的既有项目文件 UI 处理，
+重新载入/另存为时重建预览会话，不能用旧页面冒充新项目的最新结果。
 
 `LiveSession::start(source, Arc<Sandbox>, work, LiveConfig)` 消费该权威，只通过 `scholium-build` 沙箱启动
 `rtex serve`。公共接口为 edit、snapshot、request_layout、locate、next_event、cancel；私有假 launcher 仅用于测试。

@@ -70,8 +70,8 @@ def run(name, source, native=False):
     root = out / name
     project = root / "project"
     project.mkdir(parents=True)
-    (project / "main.tex").write_text(source)
-    env = dict(os.environ, SCHOLIUM_LATEX_PROJECT=str(project),
+    (project / "paper.tex").write_text(source)
+    env = dict(os.environ, SCHOLIUM_PROJECT_PATH=str(project), SCHOLIUM_RECENT_FILE=str(root / "recent.json"),
                SCHOLIUM_EDITOR_AUDIT="1", WINIT_UNIX_BACKEND="x11", WINIT_X11_SCALE_FACTOR="1")
     env.pop("WAYLAND_DISPLAY", None)
     if not native:
@@ -80,7 +80,7 @@ def run(name, source, native=False):
     log_path = root / "app.log"
 
     def state():
-        lines = [l for l in log_path.read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
+        lines = [l for l in log_path.read_text().split("\n")[:-1] if l.startswith("AUDIT ") and json.loads(l[6:]).get("kind") == "latex"]
         return json.loads(lines[-1][6:]) if lines else None
 
     def wait(predicate, what, timeout=80):

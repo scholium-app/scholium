@@ -1,0 +1,16 @@
+{
+  "unavailable-state": {
+    "pass": true,
+    "error": "missing SCHOLIUM_RTEX_BIN"
+  },
+  "source-completion": {
+    "pass": true
+  },
+  "source-completion-undo": {
+    "pass": true
+  },
+  "native-preview": {
+    "status": "not-run",
+    "reason": "optional local toolchain acceptance; CI asserts unavailable state"
+  }
+}

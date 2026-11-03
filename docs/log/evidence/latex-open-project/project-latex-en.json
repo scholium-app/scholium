@@ -1,0 +1,12 @@
+{
+  "latex_workbench": true,
+  "toolchain_unavailable": true,
+  "declared_entry": "paper.tex",
+  "edit_draft_without_materialize": true,
+  "save_materialized": true,
+  "sigkill_draft_recovered": true,
+  "external_conflict_reload": true,
+  "new_latex_workbench": true,
+  "file_open_tex_and_folder": true,
+  "typst_worker": false
+}

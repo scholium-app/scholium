@@ -121,7 +121,7 @@ pub(super) fn revisions(state: &WorkspaceState, view: &EditorView) -> String {
 fn backend(ui: &mut Ui, state: &WorkspaceState, view: &EditorView, tip: &str) {
     if let Some(language) = state.source_language {
         let key = match language {
-            scholium_storage::project::ProjectLanguage::Latex => "project.latex.pending",
+            scholium_storage::project::ProjectLanguage::Latex => "latex.workspace",
             _ => "project.source.authority",
         };
         status_text(ui, &command_ui::text(state, key), None, None);
