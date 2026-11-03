@@ -155,7 +155,7 @@ try:
     xdo("type", "12")
     # Preserve the populated-numerator speech fixture by explicitly selecting it.
     xdo("key", "--clearmodifiers", "shift+Left", "shift+Left")
-    xdo("key", "--clearmodifiers", "ctrl+slash")
+    xdo("key", "--clearmodifiers", "alt+f")
     root = app_root()
     math = wait(lambda: find(app_root(), lambda n: n.get_role_name() == "math"), "math object")
     expected_math, expected_status = {
