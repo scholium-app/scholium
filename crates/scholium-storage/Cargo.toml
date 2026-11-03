@@ -12,6 +12,12 @@ serde = { version = "1", features = ["derive"] }
 thiserror = "=2.0.20"
 # 系统库链接（非 bundled），登记见 docs/NATIVE_DEPENDENCIES.md
 rusqlite = "0.37"
+sha2 = "0.10"
+cap-std = "3"
 
 [lints]
 workspace = true
+
+[dev-dependencies]
+redb = "=3.1.3"
+tempfile = "3"

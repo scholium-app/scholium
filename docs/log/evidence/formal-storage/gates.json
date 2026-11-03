@@ -1,0 +1,66 @@
+[
+  {
+    "command": "cargo fmt --all -- --check",
+    "exit_code": 0,
+    "seconds": 0.583,
+    "log": "target/t35-final-gates/0.log"
+  },
+  {
+    "command": "cargo clippy --locked --workspace --all-targets -- -D warnings",
+    "exit_code": 0,
+    "seconds": 2.112,
+    "log": "target/t35-final-gates/1.log"
+  },
+  {
+    "command": "cargo test --locked --workspace",
+    "exit_code": 0,
+    "seconds": 71.173,
+    "log": "target/t35-final-gates/2.log"
+  },
+  {
+    "command": "RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps",
+    "exit_code": 0,
+    "seconds": 7.597,
+    "log": "target/t35-final-gates/3.log"
+  },
+  {
+    "command": "cargo deny --locked check licenses bans sources",
+    "exit_code": 0,
+    "seconds": 1.056,
+    "log": "target/t35-final-gates/4.log"
+  },
+  {
+    "command": "cargo build --locked -p scholium-app -p scholium-storage --bins",
+    "exit_code": 0,
+    "seconds": 1.566,
+    "log": "target/t35-final-gates/5.log"
+  },
+  {
+    "command": "python3 scripts/check-rust-size.py",
+    "exit_code": 0,
+    "output": "Rust file sizes: OK\n"
+  },
+  {
+    "command": "python3 scripts/check-doc-links.py",
+    "exit_code": 0,
+    "output": "all relative links resolve\n"
+  },
+  {
+    "command": "python3 scripts/check-ui-strings.py",
+    "exit_code": 0,
+    "output": "UI strings: OK (47 allowlisted literals remain)\n"
+  },
+  {
+    "command": "python3 scripts/check-layers.py",
+    "exit_code": 0,
+    "output": "Layers: OK (all workspace crates registered; no upward edges or UI below app)\n"
+  },
+  {
+    "command": "python3 scripts/window-checks.py --locale zh-Hans en --out target/t35-final-window",
+    "exit_code": 0,
+    "summary": "44/44 passed",
+    "binary_sha256": "64b3ae58727935a447a46a43af95fd321acb4b10692428a4024e6a2676762b58",
+    "log": "target/t35-final-gates/window.log",
+    "evidence": "target/t35-final-window"
+  }
+]
