@@ -1,0 +1,19 @@
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-latex)
+    Finished `test` profile [unoptimized] target(s) in 1.26s
+     Running unittests src/lib.rs (target/debug/deps/scholium_latex-799202e31c8ebc78)
+
+running 1 test
+
+thread 'tests::mailbox::diagnostic_and_location_eviction_is_explicit' (518047) panicked at crates/scholium-latex/src/tests/mailbox.rs:109:5:
+lost responses must be counted and reported: [Diagnostic { message: "diagnostic 84" }, Location { path: "main.tex", bytes: 84..85 }, Diagnostic { message: "diagnostic 85" }, Location { path: "main.tex", bytes: 85..86 }, Diagnostic { message: "diagnostic 86" }, Location { path: "main.tex", bytes: 86..87 }, Diagnostic { message: "diagnostic 87" }, Location { path: "main.tex", bytes: 87..88 }, Diagnostic { message: "diagnostic 88" }, Location { path: "main.tex", bytes: 88..89 }, Diagnostic { message: "diagnostic 89" }, Location { path: "main.tex", bytes: 89..90 }, Diagnostic { message: "diagnostic 90" }, Location { path: "main.tex", bytes: 90..91 }, Diagnostic { message: "diagnostic 91" }, Location { path: "main.tex", bytes: 91..92 }, Diagnostic { message: "diagnostic 92" }, Location { path: "main.tex", bytes: 92..93 }, Diagnostic { message: "diagnostic 93" }, Location { path: "main.tex", bytes: 93..94 }, Diagnostic { message: "diagnostic 94" }, Location { path: "main.tex", bytes: 94..95 }, Diagnostic { message: "diagnostic 95" }, Location { path: "main.tex", bytes: 95..96 }, Diagnostic { message: "diagnostic 96" }, Location { path: "main.tex", bytes: 96..97 }, Diagnostic { message: "diagnostic 97" }, Location { path: "main.tex", bytes: 97..98 }, Diagnostic { message: "diagnostic 98" }, Location { path: "main.tex", bytes: 98..99 }, Diagnostic { message: "diagnostic 99" }, Location { path: "main.tex", bytes: 99..100 }]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test tests::mailbox::diagnostic_and_location_eviction_is_explicit ... FAILED
+
+failures:
+
+failures:
+    tests::mailbox::diagnostic_and_location_eviction_is_explicit
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 22 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-latex --lib`

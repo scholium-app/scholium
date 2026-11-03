@@ -2,9 +2,9 @@
 
 ## 职责
 
-提供层级 1、无 UI 的受控工具链执行路径。当前实现 Linux `BuildProfile::Rtex`：固定运行时白名单、
+提供层级 1、无 UI 的受控工具链执行路径。当前实现 Linux `BuildProfile::Rtex` 与 `FullCompilation`：固定运行时白名单、
 bubblewrap 文件/网络隔离、systemd 用户 cgroup、会话进程树取消、受信字体缓存预热与每会话副本。
-Typst 接入、构建规划、产物缓存、整编与导出属于后续扩展。
+Typst 接入、构建规划、产物缓存与导出属于后续扩展。
 
 ## 非职责
 
@@ -55,3 +55,12 @@ ignored 原生测试读取 `SCHOLIUM_RTEX_BIN`、`SCHOLIUM_RTEX_TEXDIR`、`SCHOL
 真 rtex + LuaLaTeX + 产品 launcher 执行 E2 文件读取、绝对 input、shell、Lua/openout 写出及网络对照，
 每项要求先在宿主生效、再在沙箱阻断；检查实际 cgroup/rlimit 值。shell/网络使用仅测试内部的放大 helper，
 产品没有对应环境变量或配置入口。缺工具或沙箱失败必须输出“未运行”及原因，并以失败退出，不计通过。
+
+## 一次性整编 profile
+
+`Sandbox::prepare_full` 不需要 rtex 二进制/支持树，使用相同 namespace/cgroup、可信缓存副本和固定动态库解析。
+额外白名单为 XeLaTeX/XeTeX、pdfLaTeX/pdfTeX、xdvipdfmx 以及发行版 libpaper 的 `/etc/paperspecs`、`/etc/papersize`（存在时只读）。
+基础 LuaLaTeX 仍用于固定可信字体缓存预热，安装环境需具有这些引擎。
+每个进程额外受 60 CPU 秒限制；调用者为完整操作计算剩余 wall-clock deadline，再传 `run`。
+非零退出包含有界 stdout/stderr，超时通过 RAII 取消 scope 全树，不允许 shell、网络或项目写入。
+资源快照与 revision 淘汰属于 latex，build 不识别 TeX 内容。

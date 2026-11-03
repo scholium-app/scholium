@@ -511,3 +511,14 @@ project-migrated-body = An independent project was created. The original session
 project-source-context = Source authority
 project-import = Migrate an old session…
 project-import-target = New project folder for the imported session
+
+# LaTeX source workbench
+latex-workspace = LaTeX source workbench
+latex-source = LaTeX source · unsaved edits
+latex-preview = Same-engine preview
+latex-unavailable = Toolchain unavailable
+latex-building = Compiling preview
+latex-stale = Preview updating · source changed
+latex-full = Full compilation preview · { $ms } ms
+latex-live = Live preview · { $ms } ms
+source-editor-find = Find

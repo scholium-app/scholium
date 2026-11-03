@@ -1,0 +1,1 @@
+Rules reference: independently drawn with Pillow, MIT OR Apache-2.0, 300 dpi, two 10 TeX-point squares on a 72 bp page. Coordinates in view/tests.rs; E4 ink threshold 96, one-pixel neighbourhood, <=1% unmatched ink.

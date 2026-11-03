@@ -82,3 +82,11 @@ LaTeX 构建慢于连续编辑、同引擎实时/整编状态与定位诊断。
 Typst 展示 SDG/源码的 Typst 排版；LaTeX 展示适配层的段落/页面更新与定位/诊断，整编结果明确标识。
 跨语言只经转换或导出及报告；混合组件、双后端差异诊断与团队语言切换已推迟。
 共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。
+
+## LaTeX 当前实现
+
+LaTeX 页面图元、字体解析和 hayro PDF 栅格属于 `scholium-latex::view`，不依赖 Typst 或 UI。
+app 的 `latex_workspace` 在独立协议/栅格线程接收完整场景；共享 RGBA 页使丢弃旧 revision 后仍可重建全部页面。
+UI 只为当前 revision 上传纹理；段落更新只重画受影响页面，未变页面共享像素。
+`RasterOrigin` 区分 display list、PDF fallback、full compilation，页、引擎、来源、更新中状态和耗时可审计。
+E4 使用 300 dpi、墨迹阈值 96、1 像素邻域、未匹配墨迹 ≤1%，以独立 Poppler 为参考，不放宽阈值。

@@ -25,10 +25,12 @@ pub enum EngineState {
     Stopped,
 }
 /// Live-preview events. No upstream protocol types or display lists cross this boundary.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum LiveEvent {
     /// An updated paragraph. Identity is scoped to `generation`.
     Paragraph {
+        /// Kernel-owned drawing primitives and live row placements.
+        drawing: std::sync::Arc<crate::view::Drawing>,
         /// Host process generation, incremented after a whole-session restart.
         generation: u64,
         /// Host revision; `None` means the tool revision could not be safely matched.
@@ -39,8 +41,10 @@ pub enum LiveEvent {
         /// Unknown revision mappings also have unknown latency; excludes rasterization and UI.
         elapsed: Option<Duration>,
     },
-    /// Whole-page layout metadata; rasterization is a later integration step.
+    /// Complete retained page drawings and the current layout outcome.
     Pages {
+        /// Kernel-owned complete page primitives and optional current fallback PDF.
+        drawing: std::sync::Arc<crate::view::Drawing>,
         /// Host process generation.
         generation: u64,
         /// Host revision, or unknown/stale if no acknowledgement has established it.

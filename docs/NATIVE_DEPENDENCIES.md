@@ -113,3 +113,7 @@ WASM 路线不链接本依赖；浏览器存储适配另行验证（ADR 0028 保
 内存和管道由 Rust RAII 所有；actor 在 Tokio runtime 上持有进程，取消先杀 scope 全体及进程组、回收直接子进程，
 再释放会话字体缓存；Drop 也发起整树清理。systemd 用户 cgroup 和 namespace 不可用时拒绝启动，见
 [ADR 0050](adr/ADR-0050-linux-live-session-cgroups.md)。测试专用 shell 限制放大 helper 为 Rust 独立进程，不随应用分发。
+
+LaTeX `FullCompilation` profile 另以独立进程调用 XeLaTeX/XeTeX、pdfLaTeX/pdfTeX 和 xdvipdfmx，
+同样不链接/分发；xdvipdfmx 的 libpaper 配置只读挂载。图元与 PDF 路径新增的 hayro 0.8、skrifa 0.46、tiny-skia 0.12
+均为 Rust 实现，不新增项目 C ABI、所有权或线程约束。PNG/PDF 缓冲由内核 RAII 所有，栅格工作在线程内完成后以不可变 RGBA 交给 UI。

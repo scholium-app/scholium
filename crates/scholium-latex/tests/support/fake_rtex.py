@@ -32,10 +32,16 @@ def emit(value):
     print(json.dumps(value), flush=True)
 
 
+def fragments():
+    return [{'page':1,'first_line':1,'last_line':1,'xs':[655360],'baselines':[1310720]}]
+
 def layout(failed=False):
-    emit({'event': 'LayoutUpdate', 'versions': {'source_revision': revision},
+    value = {'event': 'LayoutUpdate', 'versions': {'source_revision': revision},
           'pages_total': 1, 'compile': {'state': 'Failed' if failed else 'Ok'},
-          'unknown_future_field': {'ignored': True}})
+          'unknown_future_field': {'ignored': True}}
+    if args.mode == 'drawing':
+        value.update(pages_changed=[{'page':1,'exact':True,'dl':{'page_width':4736287,'page_height':4736287,'lines':[{'x':655360,'y':1310720,'items':[['r',655360,655360,655360,655360]]}]}}], placements=[{'par_id':1,'fragments':fragments()}])
+    emit(value)
 
 
 for raw in sys.stdin:
@@ -75,7 +81,10 @@ for raw in sys.stdin:
                   'reason': 'injected upstream pass timeout' if args.mode == 'pass-timeout' else 'injected live failure'})
             # Deliberately lose the in-flight paragraph update, as observed in E8.
         else:
-            emit({'event': 'ParagraphUpdate', 'par_id': revision if args.mode == 'distinct-paragraphs' else 1, 'versions': {'source_revision': revision}})
+            value = {'event': 'ParagraphUpdate', 'par_id': revision if args.mode == 'distinct-paragraphs' else 1, 'versions': {'source_revision': revision}}
+            if args.mode == 'drawing':
+                value.update(dl={'lines':[{'x':0,'y':0,'items':[['r',0,-655360,1310720,655360]]}]}, fragments=fragments())
+            emit(value)
     elif cmd == 'status':
         emit({'reply': 'status', 'versions': {'source_revision': revision}})
     elif cmd == 'request_layout':

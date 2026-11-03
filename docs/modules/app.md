@@ -320,6 +320,21 @@ core 交付已采纳 Scene 的位图与已验证身份的条带，app 上传为�
 混合编辑与团队语言切换已推迟；源码错误、离线草稿和同语言多人协作沿用现有恢复与权限规则。
 共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。
 
+## 共享源码编辑器与 LaTeX 开发工作台
+
+`source_editor` 提供本地 TextEdit、双向滚动、选区、原生撤销/重做、Ctrl+F 查找、诊断与高亮 byte-range 接口。
+语言内核提供高亮内容，编辑器仅提供样式与标记；IME 使用独立预编辑缓冲，提交后才更新权威源码，整次提交为独立撤销点。
+共享 `ReadOnlySource` 提供布局缓存与跟随滚动，Typst source_view 保持生成源码只读、块高亮、主题更新和预览定位行为。
+LaTeX 源码键入反斜线启动 scholium-math-input 的同一候选引擎，Tab/Enter 接受、方向键选择、Esc 取消；
+插入源码符号/结构片段，经 TextEdit 原生输入路径保证选区与撤销。粘贴与 IME 提交保持字面文本，不触发补全。
+
+启动环境变量 `SCHOLIUM_LATEX_PROJECT=<dir>` 打开 main.tex 的左右源码/预览工作台；此开发入口不接入文件菜单、保存或存储。
+未保存文本只在内存中编辑，源码权威由 SourceSession/LiveSession 校验；缺工具链显示明确不可用状态，源码仍可编辑。
+工具链准备、协议、编译、字体与栅格工作全部离开 UI 线程，输入 watch 保留最新版本、队列有界。
+LuaLaTeX 经 LiveSession 转发最小 UTF-8 patch；显示段落更新。非 Lua 引擎使用一次性整编并丢弃旧 revision。
+UI 始终标明项目引擎、实时/整编来源、耗时及更新中状态。审计 submitted_ms 只代表 UI 提交阶段；
+真实窗口 E6 通过私有 Xvfb 的 XGetImage 检测预览像素变化，不把协议回调或 UI 提交当作呈现。
+
 ## 已删除的旧页面编辑器
 
 2026-09 至 2026-10 的旧编辑面（`page_editor`、`SessionBridge`、`workspace`/`preview`/`paper`、

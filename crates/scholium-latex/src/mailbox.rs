@@ -15,6 +15,8 @@ const EVENT_CAPACITY: usize = 32;
 struct State {
     events: VecDeque<LiveEvent>,
     layout_required: Option<u64>,
+    lost_diagnostics: u64,
+    lost_locations: u64,
     sender_closed: bool,
     receiver_closed: bool,
 }
@@ -111,6 +113,13 @@ fn supersedes(new: &LiveEvent, old: &LiveEvent) -> bool {
     }
 }
 fn mark_missing(state: &mut State, event: &LiveEvent) {
+    match event {
+        LiveEvent::Diagnostic { .. } => {
+            state.lost_diagnostics = state.lost_diagnostics.saturating_add(1)
+        }
+        LiveEvent::Location { .. } => state.lost_locations = state.lost_locations.saturating_add(1),
+        _ => {}
+    }
     if let LiveEvent::Pages { generation, .. } | LiveEvent::Paragraph { generation, .. } = event {
         state.layout_required = Some(state.layout_required.unwrap_or(0).max(*generation));
     }
@@ -131,6 +140,15 @@ impl EventReceiver {
                 if let Some(generation) = state.layout_required.take() {
                     return Some(LiveEvent::LayoutRequired { generation });
                 }
+                if state.lost_diagnostics > 0 || state.lost_locations > 0 {
+                    let message = format!(
+                        "event overflow: {} diagnostics and {} locations omitted; request diagnostics/location again",
+                        state.lost_diagnostics, state.lost_locations
+                    );
+                    state.lost_diagnostics = 0;
+                    state.lost_locations = 0;
+                    return Some(LiveEvent::Diagnostic { message });
+                }
                 if state.sender_closed {
                     return None;
                 }
@@ -141,7 +159,9 @@ impl EventReceiver {
     #[cfg(test)]
     pub(crate) fn pending(&self) -> usize {
         let state = self.0.lock();
-        state.events.len() + usize::from(state.layout_required.is_some())
+        state.events.len()
+            + usize::from(state.layout_required.is_some())
+            + usize::from(state.lost_diagnostics > 0 || state.lost_locations > 0)
     }
 }
 impl Drop for EventSender {

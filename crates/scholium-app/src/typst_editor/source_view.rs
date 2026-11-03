@@ -38,7 +38,7 @@ pub(super) struct SourceView {
     submitted: Option<Arc<StructuredDocument>>,
     view: Option<(Arc<StructuredDocument>, Arc<GeneratedSource>)>,
     /// Source layout input; egui owns galleys so they cannot outlive its font atlas.
-    layout: Option<SourceLayout>,
+    layout: crate::source_editor::layout::ReadOnlySource,
     /// Block ids in preview order for the submitted generation.
     blocks: Vec<NodeId>,
     compiled: Option<CompileOutcome>,
@@ -49,13 +49,6 @@ pub(super) struct SourceView {
     /// Bitmap px per pt that shows the page 1:1 in the pane; page requests use it.
     px_per_pt: f64,
     settle: raster::Settle,
-}
-
-struct SourceLayout {
-    snapshot: Arc<StructuredDocument>,
-    highlight: Option<std::ops::Range<usize>>,
-    colors: [egui::Color32; 2],
-    job: egui::text::LayoutJob,
 }
 
 /// One displayed preview page; `size_pt` is the page size in Typst pt.
@@ -98,32 +91,13 @@ impl SourceView {
         snapshot: &Arc<StructuredDocument>,
         highlight: Option<std::ops::Range<usize>>,
     ) -> (Arc<egui::Galley>, bool) {
-        let colors = [
-            ui.visuals().text_color(),
-            crate::theme::tokens(ui.ctx()).active_bg,
-        ];
-        let moved = self
-            .layout
-            .as_ref()
-            .is_none_or(|l| !Arc::ptr_eq(&l.snapshot, snapshot) || l.highlight != highlight);
-        if moved || self.layout.as_ref().is_none_or(|l| l.colors != colors) {
-            let generated = self.source(snapshot);
-            self.layout = Some(SourceLayout {
-                snapshot: snapshot.clone(),
-                highlight: highlight.clone(),
-                colors,
-                job: source_job(ui, &generated.source, highlight),
-            });
-        }
-        // Theme text options recreate egui's font atlas at the next pass. A retained
-        // galley would keep UVs into the old atlas even if its colors were refreshed.
-        let job = self
-            .layout
-            .as_ref()
-            .expect("layout initialized above")
-            .job
-            .clone();
-        (ui.fonts_mut(|fonts| fonts.layout_job(job)), moved)
+        let generated = self.source(snapshot);
+        self.layout.galley(
+            ui,
+            Arc::as_ptr(snapshot) as usize,
+            &generated.source,
+            highlight,
+        )
     }
 
     /// Submit a changed snapshot and take finished results; `focus_block` picks the page.
@@ -363,20 +337,12 @@ impl EditorSession {
             .and_then(|b| generated.blocks.iter().find(|s| s.node == b))
             .map(|s| s.range.clone());
         let (galley, moved) = self.source_view.galley(ui, &snapshot, highlight.clone());
-        egui::ScrollArea::both()
-            .id_salt("generated-source")
-            .auto_shrink([false, false])
-            .show(ui, |ui| {
-                let response = ui.add(egui::Label::new(galley.clone()));
-                if moved && let Some(range) = highlight {
-                    let chars = generated.source[..range.start].chars().count();
-                    let row = galley.pos_from_cursor(egui::text::CCursor::new(chars));
-                    ui.scroll_to_rect(
-                        row.translate(response.rect.min.to_vec2()),
-                        Some(egui::Align::Center),
-                    );
-                }
-            });
+        crate::source_editor::layout::ReadOnlySource::show(
+            ui,
+            &generated.source,
+            galley,
+            if moved { highlight } else { None },
+        );
     }
 
     fn preview_pane(&mut self, ui: &mut egui::Ui, locale: Locale) {
@@ -464,30 +430,6 @@ impl EditorSession {
         );
         self.drag = None;
     }
-}
-
-fn source_job(
-    ui: &egui::Ui,
-    source: &str,
-    highlight: Option<std::ops::Range<usize>>,
-) -> egui::text::LayoutJob {
-    let font = egui::FontId::monospace(13.0);
-    let color = ui.visuals().text_color();
-    let plain = egui::TextFormat::simple(font.clone(), color);
-    let marked = egui::TextFormat {
-        background: crate::theme::tokens(ui.ctx()).active_bg,
-        ..egui::TextFormat::simple(font, color)
-    };
-    let mut job = egui::text::LayoutJob::default();
-    match highlight.filter(|r| source.get(r.clone()).is_some()) {
-        Some(range) => {
-            job.append(&source[..range.start], 0.0, plain.clone());
-            job.append(&source[range.clone()], 0.0, marked);
-            job.append(&source[range.end..], 0.0, plain);
-        }
-        None => job.append(source, 0.0, plain),
-    }
-    job
 }
 
 #[cfg(test)]

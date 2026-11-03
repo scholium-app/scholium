@@ -1,0 +1,39 @@
+warning: method `complete` is never used
+  --> crates/scholium-latex/src/view/scene.rs:30:19
+   |
+23 | impl Drawing {
+   | ------------ method in this implementation
+...
+30 |     pub(crate) fn complete(mut self, previous:&Self)->Self {
+   |                   ^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-latex)
+warning: `scholium-latex` (lib) generated 1 warning
+    Finished `test` profile [unoptimized] target(s) in 8.29s
+     Running unittests src/lib.rs (target/debug/deps/scholium_latex-11f791831e407937)
+
+running 4 tests
+test view::tests::coalesced_layout_retains_unchanged_page_payloads ... ok
+test view::tests::paragraph_replaces_only_owned_column_and_failed_update_is_transactional ... FAILED
+test view::tests::excessive_page_and_pdf_dimensions_fail_before_allocation ... ok
+test view::tests::display_list_matches_independent_reference_png_with_e4_threshold ... ok
+
+failures:
+
+---- view::tests::paragraph_replaces_only_owned_column_and_failed_update_is_transactional stdout ----
+
+thread 'view::tests::paragraph_replaces_only_owned_column_and_failed_update_is_transactional' (559087) panicked at crates/scholium-latex/src/view/tests.rs:17:5:
+assertion `left == right` failed: other column survives
+  left: 255
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    view::tests::paragraph_replaces_only_owned_column_and_failed_update_is_transactional
+
+test result: FAILED. 3 passed; 1 failed; 0 ignored; 0 measured; 23 filtered out; finished in 0.03s
+
+error: test failed, to rerun pass `-p scholium-latex --lib`

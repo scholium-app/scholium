@@ -3,6 +3,7 @@ use std::time::Duration;
 
 fn paragraph(paragraph: u64, revision: u64) -> LiveEvent {
     LiveEvent::Paragraph {
+        drawing: Default::default(),
         generation: 0,
         revision: Some(revision),
         paragraph,
@@ -20,6 +21,7 @@ async fn superseded_previews_merge_and_distinct_overflow_is_explicit_and_bounded
             .expect("paragraph");
         sender
             .send(LiveEvent::Pages {
+                drawing: Default::default(),
                 generation: 0,
                 revision: Some(revision),
                 count: 1,
@@ -94,4 +96,31 @@ async fn lifecycle_backpressure_preserves_every_state_and_terminal_reason() {
     }
     producer.await.expect("producer");
     assert_eq!(receiver.recv().await, None);
+}
+
+#[tokio::test]
+async fn diagnostic_and_location_eviction_is_explicit() {
+    let (sender, mut receiver) = mailbox::channel();
+    for index in 0..100 {
+        sender
+            .send(LiveEvent::Diagnostic {
+                message: format!("diagnostic {index}"),
+            })
+            .await
+            .expect("diagnostic");
+        sender
+            .send(LiveEvent::Location {
+                path: "main.tex".into(),
+                bytes: index..index + 1,
+            })
+            .await
+            .expect("location");
+    }
+    drop(sender);
+    let mut messages = Vec::new();
+    while let Some(event) = receiver.recv().await {
+        messages.push(event);
+    }
+    assert!(messages.iter().any(|event| matches!(event, LiveEvent::Diagnostic { message } if message.contains("event overflow") && message.contains("84 diagnostics") && message.contains("84 locations"))), "lost responses must be counted and reported: {messages:?}");
+    assert!(messages.len() <= 33);
 }
