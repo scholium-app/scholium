@@ -1,0 +1,15 @@
+[package]
+name = "scholium-math-input"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+serde = { version = "=1.0.229", features = ["derive"] }
+toml = "=0.8.23"
+thiserror = "=2.0.20"
+
+[lints]
+workspace = true

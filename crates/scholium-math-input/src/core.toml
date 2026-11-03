@@ -1,0 +1,581 @@
+# Independently authored from Unicode character names and public Typst/LaTeX references.
+# No GPL keymaps, Scheme files or implementation tables were consulted.
+# References: https://www.unicode.org/charts/ ; https://typst.app/docs/reference/symbols/sym/
+
+[[symbol]]
+unicode = "⩽"
+category = "math"
+latex = "leqslant"
+typst = "lt.eq.slant"
+
+[[symbol]]
+unicode = "⩾"
+category = "math"
+latex = "geqslant"
+typst = "gt.eq.slant"
+
+[[symbol]]
+unicode = "≠"
+category = "math"
+latex = "ne"
+typst = "eq.not"
+
+[[symbol]]
+unicode = "→"
+category = "math"
+latex = "to"
+typst = "arrow.r"
+
+[[symbol]]
+unicode = "⇒"
+category = "math"
+latex = "Rightarrow"
+typst = "arrow.r.double"
+
+[[symbol]]
+unicode = "∞"
+category = "math"
+latex = "infty"
+typst = "infinity"
+
+[[symbol]]
+unicode = "ℝ"
+category = "math"
+latex = "mathbbR"
+typst = "RR"
+
+[[symbol]]
+unicode = "ℤ"
+category = "math"
+latex = "mathbbZ"
+typst = "ZZ"
+
+[[symbol]]
+unicode = "ℕ"
+category = "math"
+latex = "mathbbN"
+typst = "NN"
+
+[[symbol]]
+unicode = "ℚ"
+category = "math"
+latex = "mathbbQ"
+typst = "QQ"
+
+[[symbol]]
+unicode = "ℂ"
+category = "math"
+latex = "mathbbC"
+typst = "CC"
+
+[[symbol]]
+unicode = "ℛ"
+category = "math"
+latex = "mathcalR"
+typst = "cal(R)"
+
+[[symbol]]
+unicode = "ℜ"
+category = "math"
+latex = "Re"
+typst = "Re"
+
+[[symbol]]
+unicode = "≤"
+category = "math"
+latex = "leq"
+typst = "lt.eq"
+
+[[symbol]]
+unicode = "≥"
+category = "math"
+latex = "geq"
+typst = "gt.eq"
+
+[[symbol]]
+unicode = "←"
+category = "math"
+latex = "leftarrow"
+typst = "arrow.l"
+
+[[symbol]]
+unicode = "↔"
+category = "math"
+latex = "leftrightarrow"
+typst = "arrow.l.r"
+
+[[symbol]]
+unicode = "⇔"
+category = "math"
+latex = "Leftrightarrow"
+typst = "arrow.l.r.double"
+
+[[symbol]]
+unicode = "∈"
+category = "math"
+latex = "in"
+typst = "in"
+
+[[symbol]]
+unicode = "∉"
+category = "math"
+latex = "notin"
+typst = "in.not"
+
+[[symbol]]
+unicode = "α"
+category = "math"
+latex = "alpha"
+typst = "alpha"
+
+[[symbol]]
+unicode = "β"
+category = "math"
+latex = "beta"
+typst = "beta"
+
+[[symbol]]
+unicode = "γ"
+category = "math"
+latex = "gamma"
+typst = "gamma"
+
+[[symbol]]
+unicode = "π"
+category = "math"
+latex = "pi"
+typst = "pi"
+
+[[symbol]]
+unicode = "φ"
+category = "math"
+latex = "phi"
+typst = "phi"
+
+[[symbol]]
+unicode = "ϕ"
+category = "math"
+latex = "varphi"
+typst = "phi.alt"
+
+[[symbol]]
+unicode = "ε"
+category = "math"
+latex = "epsilon"
+typst = "epsilon"
+
+[[symbol]]
+unicode = "ϵ"
+category = "math"
+latex = "varepsilon"
+typst = "epsilon.alt"
+
+[[symbol]]
+unicode = "′"
+category = "math"
+latex = "prime"
+typst = "prime"
+
+[[symbol]]
+unicode = "∅"
+category = "math"
+latex = "emptyset"
+typst = "emptyset"
+
+[[symbol]]
+unicode = "≡"
+category = "math"
+latex = "equiv"
+typst = "eq.triple"
+
+[[symbol]]
+unicode = "∣"
+category = "math"
+latex = "mid"
+typst = "divides"
+
+[[compose]]
+sequence = "<="
+result = "⩽"
+
+[[compose]]
+sequence = ">="
+result = "⩾"
+
+[[compose]]
+sequence = "!="
+result = "≠"
+
+[[compose]]
+sequence = "->"
+result = "→"
+
+[[compose]]
+sequence = "=>"
+result = "⇒"
+
+[[compose]]
+sequence = "@@"
+result = "∞"
+
+[[compose]]
+sequence = "RR"
+result = "ℝ"
+
+[[compose]]
+sequence = "ZZ"
+result = "ℤ"
+
+[[compose]]
+sequence = "NN"
+result = "ℕ"
+
+[[compose]]
+sequence = "QQ"
+result = "ℚ"
+
+[[compose]]
+sequence = "CC"
+result = "ℂ"
+
+[[compose]]
+sequence = "=/"
+result = "≠"
+
+[[compose]]
+sequence = "∈/"
+result = "∉"
+
+[[cycle]]
+items = ["R", "ℝ", "ℛ", "ℜ"]
+
+[[cycle]]
+items = ["<", "⩽", "≤"]
+
+[[cycle]]
+items = [">", "⩾", "≥"]
+
+[[cycle]]
+items = ["→", "⇒", "←", "↔", "⇔"]
+
+[[cycle]]
+items = ["φ", "ϕ"]
+
+[[cycle]]
+items = ["ε", "ϵ"]
+
+[[cycle]]
+items = ["a", "α"]
+
+[[cycle]]
+items = ["b", "β"]
+
+[[cycle]]
+items = ["g", "γ"]
+
+[[cycle]]
+items = ["p", "π"]
+
+[[template]]
+id = "fraction"
+slots = ["numerator", "denominator"]
+
+[[command]]
+name = "frac"
+template = "fraction"
+
+[[command]]
+name = "fraction"
+template = "fraction"
+
+[[template]]
+id = "root"
+slots = ["radicand"]
+
+[[command]]
+name = "sqrt"
+template = "root"
+
+[[command]]
+name = "root"
+template = "root"
+
+[[template]]
+id = "inline"
+slots = ["body"]
+
+[[command]]
+name = "math"
+template = "inline"
+
+[[template]]
+id = "display"
+slots = ["body"]
+
+[[command]]
+name = "equation"
+template = "display"
+
+[[template]]
+id = "sup"
+slots = ["sup"]
+
+[[command]]
+name = "sup"
+template = "sup"
+
+[[template]]
+id = "sub"
+slots = ["sub"]
+
+[[command]]
+name = "sub"
+template = "sub"
+
+[[template]]
+id = "paren"
+slots = ["body"]
+
+[[command]]
+name = "left"
+template = "paren"
+
+[[command]]
+name = "paren"
+template = "paren"
+
+[[template]]
+id = "bracket"
+slots = ["body"]
+
+[[command]]
+name = "bracket"
+template = "bracket"
+
+[[template]]
+id = "brace"
+slots = ["body"]
+
+[[command]]
+name = "brace"
+template = "brace"
+
+[[template]]
+id = "abs"
+slots = ["body"]
+
+[[command]]
+name = "abs"
+template = "abs"
+
+[[command]]
+name = "leqslant"
+symbol = "⩽"
+
+[[command]]
+name = "lt.eq.slant"
+symbol = "⩽"
+
+[[command]]
+name = "geqslant"
+symbol = "⩾"
+
+[[command]]
+name = "gt.eq.slant"
+symbol = "⩾"
+
+[[command]]
+name = "ne"
+symbol = "≠"
+
+[[command]]
+name = "eq.not"
+symbol = "≠"
+
+[[command]]
+name = "to"
+symbol = "→"
+
+[[command]]
+name = "arrow.r"
+symbol = "→"
+
+[[command]]
+name = "Rightarrow"
+symbol = "⇒"
+
+[[command]]
+name = "arrow.r.double"
+symbol = "⇒"
+
+[[command]]
+name = "infty"
+symbol = "∞"
+
+[[command]]
+name = "infinity"
+symbol = "∞"
+
+[[command]]
+name = "mathbbR"
+symbol = "ℝ"
+
+[[command]]
+name = "RR"
+symbol = "ℝ"
+
+[[command]]
+name = "mathbbZ"
+symbol = "ℤ"
+
+[[command]]
+name = "ZZ"
+symbol = "ℤ"
+
+[[command]]
+name = "mathbbN"
+symbol = "ℕ"
+
+[[command]]
+name = "NN"
+symbol = "ℕ"
+
+[[command]]
+name = "mathbbQ"
+symbol = "ℚ"
+
+[[command]]
+name = "QQ"
+symbol = "ℚ"
+
+[[command]]
+name = "mathbbC"
+symbol = "ℂ"
+
+[[command]]
+name = "CC"
+symbol = "ℂ"
+
+[[command]]
+name = "mathcalR"
+symbol = "ℛ"
+
+[[command]]
+name = "Re"
+symbol = "ℜ"
+
+[[command]]
+name = "leq"
+symbol = "≤"
+
+[[command]]
+name = "lt.eq"
+symbol = "≤"
+
+[[command]]
+name = "geq"
+symbol = "≥"
+
+[[command]]
+name = "gt.eq"
+symbol = "≥"
+
+[[command]]
+name = "leftarrow"
+symbol = "←"
+
+[[command]]
+name = "arrow.l"
+symbol = "←"
+
+[[command]]
+name = "leftrightarrow"
+symbol = "↔"
+
+[[command]]
+name = "arrow.l.r"
+symbol = "↔"
+
+[[command]]
+name = "Leftrightarrow"
+symbol = "⇔"
+
+[[command]]
+name = "arrow.l.r.double"
+symbol = "⇔"
+
+[[command]]
+name = "in"
+symbol = "∈"
+
+[[command]]
+name = "notin"
+symbol = "∉"
+
+[[command]]
+name = "in.not"
+symbol = "∉"
+
+[[command]]
+name = "alpha"
+symbol = "α"
+
+[[command]]
+name = "beta"
+symbol = "β"
+
+[[command]]
+name = "gamma"
+symbol = "γ"
+
+[[command]]
+name = "pi"
+symbol = "π"
+
+[[command]]
+name = "phi"
+symbol = "φ"
+
+[[command]]
+name = "varphi"
+symbol = "ϕ"
+
+[[command]]
+name = "phi.alt"
+symbol = "ϕ"
+
+[[command]]
+name = "epsilon"
+symbol = "ε"
+
+[[command]]
+name = "varepsilon"
+symbol = "ϵ"
+
+[[command]]
+name = "epsilon.alt"
+symbol = "ϵ"
+
+[[command]]
+name = "prime"
+symbol = "′"
+
+[[command]]
+name = "emptyset"
+symbol = "∅"
+
+[[command]]
+name = "equiv"
+symbol = "≡"
+
+[[command]]
+name = "eq.triple"
+symbol = "≡"
+
+[[command]]
+name = "mid"
+symbol = "∣"
+
+[[command]]
+name = "divides"
+symbol = "∣"
