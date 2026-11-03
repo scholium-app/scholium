@@ -1,0 +1,13 @@
+$ git rev-parse origin/main
+891be743767a4ddd0b68d703cefac7153a3e7cf6
+$ rustc --version
+rustc 1.99.0 (b940084d7 2026-09-28)
+$ uname -sr
+Linux 7.2.11-arch1-1
+$ pkg-config --modversion sqlite3
+3.54.0
+$ findmnt -no FSTYPE,SOURCE --target .
+btrfs /dev/nvme1n1p2[/@home]
+CPU: 13th Gen Intel(R) Core(TM) i7-13650HX
+benchmark: test profile, dependencies opt-level=2; single sequential run; OS cache warm
+benchmark fixture root: <slot>/target/t35-bench (Btrfs on NVMe; not /tmp tmpfs)

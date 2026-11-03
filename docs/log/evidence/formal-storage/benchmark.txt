@@ -1,0 +1,40 @@
+btrfs /dev/nvme1n1p2[/@home]
+   Compiling scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-storage)
+    Finished `test` profile [unoptimized] target(s) in 0.43s
+     Running tests/formal_benchmark.rs (target/debug/deps/formal_benchmark-43eecdcffcee31d9)
+
+running 1 test
+writes=1000; opens=100; independent_transactions=true; engine_cache=cold; os_cache=warm; crash_fixture_restored_before_each_open=true
+fixture_root=/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-storage/../../target/t35-bench
+sqlite,Action,n=1000,p50_us=665.785,p99_us=1403.697
+sqlite,crash_open_scan,action,n=100,p50_us=5972.765,p99_us=15207.226
+redb,Action,n=1000,p50_us=913.356,p99_us=1848.156
+redb,crash_open_scan,action,n=100,p50_us=8944.804,p99_us=18396.671
+sqlite,Draft(1024),n=1000,p50_us=922.079,p99_us=1538.449
+sqlite,crash_open_scan,1024,n=100,p50_us=2277.162,p99_us=3889.555
+redb,Draft(1024),n=1000,p50_us=686.656,p99_us=1342.605
+redb,crash_open_scan,1024,n=100,p50_us=5283.548,p99_us=7883.248
+sqlite,Draft(102400),n=1000,p50_us=756.422,p99_us=1658.462
+sqlite,crash_open_scan,102400,n=100,p50_us=2351.441,p99_us=3466.144
+redb,Draft(102400),n=1000,p50_us=1005.284,p99_us=1676.179
+redb,crash_open_scan,102400,n=100,p50_us=5412.989,p99_us=7510.440
+sqlite,Draft(1048576),n=1000,p50_us=1371.467,p99_us=3302.800
+sqlite,crash_open_scan,1048576,n=100,p50_us=3466.741,p99_us=5113.465
+redb,Draft(1048576),n=1000,p50_us=2917.975,p99_us=5779.243
+redb,crash_open_scan,1048576,n=100,p50_us=8167.018,p99_us=10630.940
+sqlite,Blob(false),n=1000,p50_us=738.068,p99_us=1508.968
+sqlite,crash_open_scan,unique,n=100,p50_us=6259.405,p99_us=9213.720
+redb,Blob(false),n=1000,p50_us=874.245,p99_us=1677.844
+redb,crash_open_scan,unique,n=100,p50_us=8864.976,p99_us=12381.341
+sqlite,Blob(true),n=1000,p50_us=5.783,p99_us=26.904
+sqlite,crash_open_scan,dedup,n=100,p50_us=2015.489,p99_us=3368.924
+redb,Blob(true),n=1000,p50_us=543.035,p99_us=1038.437
+redb,crash_open_scan,dedup,n=100,p50_us=5498.641,p99_us=7930.073
+test compare_formal_durable_workloads ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 23.13s
+
+
+clock_monotonic_elapsed_s=23.607490
+clock_boottime_elapsed_s=23.607491
+suspend_difference_s=0.000001

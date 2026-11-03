@@ -1,91 +1,96 @@
 # scholium-storage
 
-## 职责
+## 职责与边界
 
-打开两类权威项目、资源目录、追加 WAL、共享树/文本快照、原生正文或源码原子物化、外部文件观察、恢复、内容寻址 blob、
-本地索引缓存和 schema migration。
+正式项目存储位于 `project/`，提供项目锁、版本化 SQLite schema、追加 Action、内核快照、独立源码草稿、
+内容寻址 blob、单资源原子物化及非破坏性恢复计划。它不解释 LaTeX/Typst，不决定撤销，不合并 CRDT，
+不切换项目语言，不上传网络，也不展示冲突 UI。
 
-## 非职责
-
-不解释 LaTeX/Typst/Markdown，不决定撤销目标，不合并 CRDT，不上传网络，不展示冲突 UI。
+[ADR 0049](../adr/ADR-0049-formal-project-storage.md) 是正式布局、永久 schema、版本迁移和持久性裁决。
+`SessionStore` 是单独的 legacy/structured 会话格式；app/session 的保存尚不接入 `ProjectStore`。
+两种项目语言共用该存储边界，标准 `.tex`/`.typ` 保持源码权威；项目语言与 authority 的声明配置不由数据库推断。
 
 ## 内部结构
 
 ```text
-src/
-├── project_store.rs   项目打开/关闭与锁
-├── catalog.rs         ResourceId ↔ path
-├── wal.rs             长度前缀记录、校验和、fsync 策略
-├── snapshot.rs        快照写入、验证、压缩协调
-├── materialize.rs     temp + fsync + atomic rename
-├── transaction.rs     多文件 write-ahead manifest
-├── watcher.rs         去抖、稳定读取、self-write 识别
-├── blob.rs            附件 hash 存储
-├── recovery.rs        启动扫描与恢复报告
-└── migration.rs       元数据版本迁移
+src/project/
+├── mod.rs          ProjectStore/OpenReport、项目打开与 typed error
+├── types.rs        版本信封、稳定资源身份、revision/hash 与恢复 DTO
+├── schema.sql      永久 v1 STRICT schema 与不可变触发器
+├── schema.rs       不覆盖创建、先校验后 writer、完整性验证
+├── data.rs         Action、快照、草稿、内容寻址 blob
+├── files.rs        capability-relative 文件操作、同目录临时发布
+├── materialize.rs  revision/manifest、恢复检查与显式继续
+└── io.rs           可注入 I/O/事务边界
 ```
 
-## 公共接口
-
-- `ProjectStore::open(root, policy) -> OpenReport`，不在发现异常时擅自修复。
-- `append_action(record) -> DurableSequence`；返回前记录已达到配置的持久性级别。
-- `materialize(resource, revision, bytes)`；旧 revision 的请求自动丢弃。
-- `begin_workspace_write(group)` / `commit_workspace_write` 实现跨文件恢复语义。
-- 以事件报告 ExternalCreated/Modified/Renamed/Removed，携带观察到的 content hash。
-- `recover() -> RecoveryPlan` 先给计划，破坏性截断需保留损坏副本。
-
-## 持久化布局
+## 持久化布局与 schema
 
 ```text
 .scholium/history/
-├── schema.json
-├── wal/00000001.log
-├── snapshots/<hash>.snap
-├── refs/branches.json
-├── manifests/
-└── blobs/<prefix>/<hash>
+├── project.sqlite3                 正式项目库；application_id=1396919378，user_version=1
+├── project.sqlite3-wal             SQLite 自有 WAL，存在时不可单独删除
+├── project.sqlite3-shm             SQLite 管理的共享索引
+├── project.lock                    OS 锁文件，文件存在不表示持锁
+└── project.sqlite3.initializing     仅新建时的相邻临时库；异常遗留拒绝自动修复
 ```
 
-日志和快照格式独立版本。索引可以删除重建；WAL、快照和 refs 不可被当缓存清理。
+不另建权威 WAL 或 WAL 目录。Action envelope 和权威 update 在一个 SQLite 事务里提交。
+`resources(id,path)` 保存 16-byte 稳定身份和唯一相对路径；`actions(sequence,version,payload,hash)` 连续只追加；
+`blobs(hash,bytes)` 使用 SHA-256 不可变内容键；`drafts(resource,version,base_hash,bytes,hash)` 是独立私人草稿；
+`manifests(resource,version,revision,old_hash,new_hash,pending)` 协调数据库与文件；
+`snapshots(sequence,version,bytes,hash)` 保存不可变内核快照，sequence 外键指向已提交 Action。
+所有 envelope version=1，hash 是 32-byte SHA-256；资源、blob 与 Action 引用由 FK 约束。
 
-候选窗口的可丢弃恢复 DTO 见 [ADR 0015](../adr/ADR-0015-ui-session-recovery-spike.md)，
-只验证单文件内容/草稿闭环，不是上述持久化布局、历史实现或正式格式依赖。
+未知版本、schema 漂移、内容校验失败、断裂 Action 序列/引用均拒绝，不补表、不自动迁移。
+新增永久 schema/envelope 必须提升版本，经一致备份和独立目标迁移验证后显式发布，保留失败目标及旧库。
+Unix 新库以 0600 创建，SQLite WAL/SHM 继承私有权限，不扩大已有库权限。
+SQLite 连接不跨线程共享。浏览器存储另行适配，不将宿主持久性回调冒充本机 fsync。
 
-## 不变量
+## 公共接口
 
-- 先 WAL 后对 UI 宣称 durable，先完整临时文件后替换源文件。
-- 目标数据库打不开或已有数据恢复失败时，保存不得退到临时库并宣称成功；已有会话无法确认完整时阻止覆盖。
-- watcher 通过写入 token/hash 识别自身物化，不能只靠时间窗口；生成源码外部变更进入 reconcile 草稿。
-- 多文件操作恢复后只能全部处于 old 或 new 语义状态；中间物理状态必须可继续完成。
-- 不覆盖未知的外部修改；content hash 不匹配时返回 conflict。
-- 项目锁只防同机进程踩踏，不代替协作协议。
+- `ProjectStore::open(root, OpenPolicy::Full) -> Result<OpenReport, StoreError>`：现有项目根内创建或校验库；
+  持锁，未知格式在 writer/WAL 配置前拒绝；`OpenReport { store, recovery }` 不自动改源文件。
+- `append_action(&ActionRecord) -> DurableSequence`：version=1 的 Action/update 在 SQLite WAL/FULL 事务提交后返回；
+  序号与语义 revision 不混用。`actions_after(sequence)` 供内核重放，零表示完整日志。
+- `save_snapshot(sequence, bytes)` / `latest_snapshot()`：由内核保证领域一致性的版本化 checkpoint。
+  接入方在累计 1024 动作或 8 MiB 更新后请求快照，加载后重放其后的 Actions；不自动删日志/快照。
+- `save_draft(resource, base_hash, bytes)` / `load_draft` / `discard_draft`：接受无效语法，保留原始基线，
+  不触碰源文件、不生成 Action；草稿可先于文件目录存在。默认不进发布包，物化不自动清草稿。
+- `put_blob(bytes)` / `get_blob(hash)`：SHA-256 去重，读写验证内容，不按路径或 mtime 判等。
+- `materialize(resource, revision, bytes, expected_disk_hash)`：返回 Written 或 Discarded；
+  旧 revision 与已完成的相等 revision 不读盘；当前或更高 revision 遇 pending 返回 RecoveryRequired，不覆盖上一个意图。
+- `recover() -> RecoveryPlan`：只读检查 pending 和遗留临时文件。
+  `resume_materialization(resource)` 显式继续，重新检查磁盘而不信任旧计划。
+- `open_with_io(root, policy, Arc<dyn IoHooks>)`：注入打开、源读取、临时文件创建/写入/fsync、rename、
+  目录同步、事务提交及意图提交后/rename 后的故障边界。
 
-## 失败处理
+`Resource::new(id,path)` 校验唯一词法形式的 UTF-8 相对路径，拒绝重复分隔符、`.` 和尾部分隔符等别名；身份不得隐式绑定新 path，path 不得绑定另一身份。
+重命名需要后续显式 catalog 操作。本骨架没有 watcher、跨文件 write group、history refs/branch、自动 GC 或浏览器存储。
 
-- content hash 不匹配时返回 conflict，不覆盖未知的外部修改。
-- WAL 尾部半写可截断；中部损坏停止自动恢复并生成恢复报告，保留损坏数据副本。
-- 磁盘满、权限变化或 rename 失败时，多文件操作必须停在 old 或 new 语义状态，并可继续完成。
-- 旧 revision 的物化请求直接丢弃，不覆盖较新内容。
-- watcher 通过写入 token/hash 识别自身物化；无法确认归属时按外部变更处理。
-- schema migration 失败时保留备份并保持幂等；项目锁冲突明确报错，不代替协作协议。
+## 物化与恢复不变量
+
+1. 返回 durable 前达到 Full 策略；失败不转用临时库冒充成功。SQLite 关闭后才释放 OS 项目锁。
+2. 物化先检查 expected content hash（None 表示预期不存在），同一 FULL 事务存 blob + revision/manifest 意图；
+   同目录独占临时文件完整写入并 fsync、保持现有权限、再次比对 hash，atomic rename 后 fsync 目录；最后提交完成标记。
+3. open/recover 不物化、不清理异常文件。磁盘 hash=old 时计划 CompleteFromOld；hash=new 时 FinalizeNew；
+   两者均不等则 Conflict。显式恢复前再验证，冲突保留磁盘、草稿、blob、manifest 与临时证据。
+4. ENOSPC、rename、fsync 或末次提交失败都不宣称成功；源文件保持完整 old/new，pending 可显式继续。
+   不提供破坏性截断/修复；将来引入 salvage 时须先保全损坏数据库/WAL/SHM 的副本。
+5. 源文件访问经 capability-relative 目录，拒绝 symlink/绝对路径/父目录跳转和 `.scholium` 资源；
+   元数据及 SQLite sidecar 打开前也拒绝 symlink。锁的参与者不得移动/替换项目元数据或源文件父目录。
+6. 外部修改按 exact-byte hash 判冲突，不按 mtime。最后 hash 校验与 rename 不构成跨不合作外部 writer 的
+   原子 CAS；同 UID 恶意篡改 metadata 不在该锁协议的沙箱保证内。watcher/reconcile 接入不能掩盖此边界。
+7. 私人草稿、已提交源码、内核权威 update 各有明确状态；数据库的恢复 blob 不成为另一个可独立提交的源码权威。
+   固定项目语言/转换约束见 [项目语言与文件操作](../MIXED_SOURCE_EDITING.md)。
 
 ## 测试门禁
 
-对每个 I/O 边界注入失败；断尾日志、校验和损坏、磁盘满、权限变化、rename 失败、symlink 逃逸、
-watcher 风暴、外部编辑与内存编辑竞态。恢复测试必须保留原损坏数据副本。
-
-## 项目语言合约
-
-存储与恢复属于共享底座，保存创建/导入时固定的 ProjectLanguage、权威正文、资源依赖与独立源码草稿。
-普通 .tex/.typ 无元数据也可打开，语法错误不阻止保存；跨语言只经转换创建新项目及报告。
-混合包与团队语言切换已推迟；私人草稿默认不进入共享/发布包，发布失败保留原项目及前次成功产物。
-共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。
-
-## 后端候选与宿主边界
-
-按 SQLite/rusqlite → redb 验证；上文日志目录与内部文件列表是逻辑草案，物理编码待恢复试验和持久化 ADR 决定。若采用数据库事务日志，不再另设独立权威 WAL；应用 Action 记录纳入同一提交边界。标准源文件依旧保持源码权威，通过带 revision 的恢复 manifest 协调数据库与多文件物化。
-
-浏览器 IndexedDB/OPFS 适配单独验证，不假定本机数据库可直接运行；导入/下载导出为文件能力基线，配额、驱逐及异常关闭见[WASM 计划](../plan/WASM.md)。宿主持久性确认不能冒充本机 fsync 语义。
+常规 CI 运行项目 round-trip、独立草稿、blob 去重/校验、快照 Action 边界、schema/未知版本拒绝、
+同进程和跨进程锁、旧 revision、symlink 逃逸、外部 hash 冲突、ENOSPC/rename/fsync/commit 注入。
+真实 SIGKILL 在大 Action 提交前以及意图提交后、rename 前后、目录同步前、完成事务提交前验证 old/new 与显式恢复。
+引擎基准单独 opt-in，复现命令与 p50/p99 见 [ADR 0049](../adr/ADR-0049-formal-project-storage.md)。
+真实断电、其他 OS/文件系统、多文件原子组、watcher 风暴在相应接入批次验证，当前不宣称通过。
 
 ## 本地候选 v1 与 legacy 独立迁移
 

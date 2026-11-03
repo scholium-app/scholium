@@ -2,6 +2,8 @@
 //! 单事务保存快照与动作日志；WAL 模式下未提交事务崩溃后不可见，恢复即丢弃。
 //! libsqlite3 以系统库经 rusqlite 链接，登记见 docs/NATIVE_DEPENDENCIES.md。
 
+pub mod project;
+
 mod migration;
 mod structured;
 pub use migration::{FileMigrationReport, legacy_has_head, migrate_legacy_file};
