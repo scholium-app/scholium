@@ -10,6 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 LAYERS = {
     "scholium-model": 0,
     "scholium-document": 1,
+    "scholium-build": 1,
+    "scholium-latex": 2,
     "scholium-typst": 2,
     "scholium-storage": 2,
     "scholium-session": 3,

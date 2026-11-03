@@ -39,7 +39,9 @@ Typst 内核包含 model 中的 SDG 类型、document 与 typst；LaTeX 内核�
 |---|---|---|
 | 0 | scholium-model | 无 |
 | 1 | scholium-document | model |
+| 1 | scholium-build | 无 |
 | 2 | scholium-typst | model、document |
+| 2 | scholium-latex | build |
 | 2 | scholium-storage | model、document |
 | 3 | scholium-session | model、document、typst、storage |
 | 4 | scholium-app | 所有下层 |

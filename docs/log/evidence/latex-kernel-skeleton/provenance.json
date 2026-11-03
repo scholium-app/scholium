@@ -1,0 +1,21 @@
+{
+  "base": "891be743767a4ddd0b68d703cefac7153a3e7cf6",
+  "uname": "Linux 7.2.11-arch1-1",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "bwrap": "bubblewrap 0.13.1",
+  "tex": "This is LuaHBTeX, Version 1.24.0 (TeX Live 2026/Arch Linux)",
+  "pin": {
+    "root": "/home/ation_ciger/.cache/scholium-eval/rtex-a27561fdd6ec913f2a80d5b264f8fa7aaa228478",
+    "commit": "a27561fdd6ec913f2a80d5b264f8fa7aaa228478",
+    "status": "",
+    "binary_sha256": "9a94bc783e229b9fd3bde754ba671f9546af46ba71c9700eac282ea93e301ba8",
+    "lock_sha256": "5e1bd629a20b66c53b214f4fad9e00a776c0b087b252122c72f483e713c5ceb5"
+  },
+  "pr36_read_only": {
+    "root": "/home/ation_ciger/Projects/realtime-tex",
+    "commit": "5c7ee8e604418453136a474b495b246c98bb4aaf",
+    "status": "",
+    "binary_sha256": "574b4d4d0e22114f2c3f851968a3abb286d2bf2b173b227d1cc0cbc7a1021400",
+    "lock_sha256": "5e1bd629a20b66c53b214f4fad9e00a776c0b087b252122c72f483e713c5ceb5"
+  }
+}

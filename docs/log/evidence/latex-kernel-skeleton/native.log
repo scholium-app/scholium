@@ -1,0 +1,40 @@
+    Finished `test` profile [unoptimized] target(s) in 0.12s
+     Running tests/real.rs (target/debug/deps/real-9ecedd189df21891)
+
+running 3 tests
+test native_capability_probe_and_supported_upstream_pass_timeout ... Diagnostic { message: "upstream timeout capability missing: compile_timeout=false, pass_timeout=false; unsupported limits retain upstream defaults" }
+未运行：当前二进制没有 PR #36 的 timeout flags；仅能力缺失诊断验证通过，未执行上游超时故障。
+ok
+test native_killed_and_stopped_serve_restarts_and_resynchronizes ... Diagnostic { message: "upstream timeout capability missing: compile_timeout=false, pass_timeout=false; unsupported limits retain upstream defaults" }
+Engine { generation: 0, state: Starting, reason: None }
+Engine { generation: 0, state: Ready, reason: None }
+Engine { generation: 0, state: Starting, reason: None }
+Pages { generation: 0, revision: Some(0), count: 1, outcome: Complete, elapsed: 915.340068ms }
+Engine { generation: 0, state: Ready, reason: None }
+Paragraph { generation: 0, revision: Some(1), paragraph: 6, elapsed: Some(154.346387ms) }
+Engine { generation: 1, state: Recovering, reason: Some("serve EOF") }
+Engine { generation: 1, state: Starting, reason: None }
+Engine { generation: 1, state: Ready, reason: None }
+Engine { generation: 1, state: Starting, reason: None }
+Pages { generation: 1, revision: Some(1), count: 1, outcome: Complete, elapsed: 584.754978ms }
+Diagnostic { message: "upstream timeout capability missing: compile_timeout=false, pass_timeout=false; unsupported limits retain upstream defaults" }
+Engine { generation: 0, state: Starting, reason: None }
+Engine { generation: 0, state: Ready, reason: None }
+Engine { generation: 0, state: Starting, reason: None }
+Pages { generation: 0, revision: Some(0), count: 1, outcome: Complete, elapsed: 822.151253ms }
+Engine { generation: 0, state: Ready, reason: None }
+Paragraph { generation: 0, revision: Some(1), paragraph: 6, elapsed: Some(199.083519ms) }
+Engine { generation: 1, state: Recovering, reason: Some("session heartbeat timeout") }
+Engine { generation: 1, state: Starting, reason: None }
+Engine { generation: 1, state: Ready, reason: None }
+Pages { generation: 1, revision: Some(1), count: 1, outcome: Complete, elapsed: 582.465677ms }
+ok
+test native_start_edit_paragraph_update_and_host_input_rejection ... Diagnostic { message: "upstream timeout capability missing: compile_timeout=false, pass_timeout=false; unsupported limits retain upstream defaults" }
+Engine { generation: 0, state: Starting, reason: None }
+Engine { generation: 0, state: Ready, reason: None }
+Pages { generation: 0, revision: Some(0), count: 1, outcome: Complete, elapsed: 639.491747ms }
+Paragraph { generation: 0, revision: Some(1), paragraph: 6, elapsed: Some(183.040365ms) }
+ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.79s
+
