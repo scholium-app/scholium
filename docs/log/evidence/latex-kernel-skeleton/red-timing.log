@@ -1,0 +1,9 @@
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-latex)
+error[E0026]: variant `event::LiveEvent::Paragraph` does not have a field named `elapsed`
+   --> crates/scholium-latex/src/tests/supervision.rs:359:52
+    |
+359 |     assert!(matches!(event, LiveEvent::Paragraph { elapsed: Some(elapsed), .. } if elapsed < Duration::from_secs(5)));
+    |                                                    ^^^^^^^ variant `event::LiveEvent::Paragraph` does not have this field
+
+For more information about this error, try `rustc --explain E0026`.
+error: could not compile `scholium-latex` (lib test) due to 1 previous error

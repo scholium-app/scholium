@@ -103,3 +103,13 @@ WASM 路线不链接本依赖；浏览器存储适配另行验证（ADR 0028 保
 候选本地格式 v1 的 snapshot CHECK 使用系统 SQLite `json_valid/json_extract`；宿主必须
 具备 JSON 函数，否则创建/迁移返回错误，不以去掉约束退化。硬链接发布限定同一目录/文件
 系统，关闭连接和语句后同步主文件及目录；不新增 C ABI 或跨线程所有权。
+
+## Linux 产品构建沙箱（rtex profile）
+
+`scholium-build` 经独立子进程调用系统 bubblewrap、systemd-run/systemctl、prlimit、ldd 与 LuaLaTeX/kpsewhich；
+不链接或分发这些工具。systemd 工具由发行版提供（LGPL-2.1-or-later；独立进程），rtex 为 MIT，按
+[PIN](../spikes/rtex-eval/PIN) 在仓库外构建；TeX/bubblewrap 的分发义务沿用上表。
+`nix`/Tokio 使用既有系统 libc 的整数 PID/signal 接口，没有自研 C 源码或项目类型跨 ABI。
+内存和管道由 Rust RAII 所有；actor 在 Tokio runtime 上持有进程，取消先杀 scope 全体及进程组、回收直接子进程，
+再释放会话字体缓存；Drop 也发起整树清理。systemd 用户 cgroup 和 namespace 不可用时拒绝启动，见
+[ADR 0050](adr/ADR-0050-linux-live-session-cgroups.md)。测试专用 shell 限制放大 helper 为 Rust 独立进程，不随应用分发。
