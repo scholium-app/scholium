@@ -478,3 +478,14 @@ a11y-math-edge-root-before = In formula, before root
 a11y-math-edge-root-after = In formula, after root
 a11y-math-edge-delimited-before = In formula, before brackets
 a11y-math-edge-delimited-after = In formula, after brackets
+
+command-edit-select_all =
+    .title = Select all
+    .tooltip = Select all body text
+
+math-input-command = Math command
+math-input-no_candidates = No matching commands
+math-input-accept_hint = Enter / Tab: insert · ↑↓: choose · Esc: cancel
+math-input-tab-complete = Tab: complete
+math-input-tab-cycle = Tab: cycle symbol
+math-input-tab-slot = Tab: next slot

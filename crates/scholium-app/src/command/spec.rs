@@ -11,70 +11,6 @@ pub(crate) type CommandId = &'static str;
 /// Catalog key of a title, tooltip or reason (see `crate::i18n`).
 pub(crate) type CatalogKey = &'static str;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub(crate) enum ChordKey {
-    /// Upper-case ASCII letter.
-    Letter(char),
-    Digit(u8),
-    Function(u8),
-    Plus,
-    Equals,
-    Minus,
-    Slash,
-    /// `^` and `_` are typed characters, not chords; listed only so menus can show them.
-    Caret,
-    Underscore,
-}
-
-/// A key combination; `ctrl` means the platform command key (Ctrl, or Cmd on macOS).
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub(crate) struct KeyChord {
-    pub(crate) ctrl: bool,
-    pub(crate) shift: bool,
-    pub(crate) key: ChordKey,
-}
-
-impl KeyChord {
-    pub(crate) const fn ctrl(key: ChordKey) -> Self {
-        Self {
-            ctrl: true,
-            shift: false,
-            key,
-        }
-    }
-
-    pub(crate) const fn ctrl_shift(key: ChordKey) -> Self {
-        Self {
-            ctrl: true,
-            shift: true,
-            key,
-        }
-    }
-
-    /// Menu text such as `Ctrl+Shift+B`; key names are not translated.
-    pub(crate) fn display(&self) -> String {
-        let mut text = String::new();
-        if self.ctrl {
-            text.push_str("Ctrl+");
-        }
-        if self.shift {
-            text.push_str("Shift+");
-        }
-        match self.key {
-            ChordKey::Letter(c) => text.push(c),
-            ChordKey::Digit(d) => text.push_str(&d.to_string()),
-            ChordKey::Function(n) => text.push_str(&format!("F{n}")),
-            ChordKey::Plus => text.push('+'),
-            ChordKey::Equals => text.push('='),
-            ChordKey::Minus => text.push('-'),
-            ChordKey::Slash => text.push('/'),
-            ChordKey::Caret => text.push('^'),
-            ChordKey::Underscore => text.push('_'),
-        }
-        text
-    }
-}
-
 /// Who receives a chord. `App` chords are consumed before any widget sees them; `Editor`
 /// chords stay in the page's event stream so they run in keystroke order with typing.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -295,7 +231,6 @@ pub(crate) struct CommandSpec {
     #[allow(dead_code)] // the longer description; read by the command search (next task)
     pub(crate) tooltip: CatalogKey,
     pub(crate) icon: IconId,
-    pub(crate) shortcuts: &'static [KeyChord],
     pub(crate) routing: Routing,
     pub(crate) menu: Option<MenuPlacement>,
     pub(crate) toolbar: Option<ToolbarPlacement>,
@@ -314,7 +249,6 @@ impl CommandSpec {
         title: "",
         tooltip: "",
         icon: IconId::None,
-        shortcuts: &[],
         routing: Routing::App,
         menu: None,
         toolbar: None,

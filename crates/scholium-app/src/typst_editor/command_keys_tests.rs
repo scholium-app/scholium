@@ -1,5 +1,6 @@
 //! Registry-routed keys in the page: paragraph styles and layered Esc.
 use super::*;
+use crate::typst_editor::tests::press_alt;
 use crate::typst_editor::tests::{Fixture, key, text};
 use scholium_model::BlockKind;
 
@@ -51,7 +52,7 @@ fn ctrl_shift_m_does_not_toggle_a_formula_in_the_page() {
     let both = egui::Modifiers::COMMAND | egui::Modifiers::SHIFT;
     f.events(vec![press(egui::Key::M, both)]);
     assert!(!in_formula(&f));
-    f.events(vec![key(egui::Key::M, true)]);
+    f.events(vec![press_alt(egui::Key::M, false)]);
     assert!(in_formula(&f));
 }
 
@@ -59,8 +60,8 @@ fn ctrl_shift_m_does_not_toggle_a_formula_in_the_page() {
 fn ctrl_shift_e_inserts_a_display_equation_through_the_page_translator() {
     let mut f = Fixture::new();
     f.events(vec![press(
-        egui::Key::E,
-        egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
+        egui::Key::M,
+        egui::Modifiers::ALT | egui::Modifiers::SHIFT,
     )]);
     assert_eq!(kind(&f), BlockKind::Equation);
     assert!(in_formula(&f));
@@ -144,10 +145,7 @@ fn ctrl_shift_r_inserts_a_root_and_plain_ctrl_r_does_not() {
     let before = f.editor.snapshot.clone();
     f.events(vec![key(egui::Key::R, true)]);
     assert_eq!(f.editor.snapshot, before);
-    f.events(vec![press(
-        egui::Key::R,
-        egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
-    )]);
+    f.events(vec![press(egui::Key::R, egui::Modifiers::ALT)]);
     let InlineBody::Math { root } = &f.editor.snapshot.blocks[0].content[1].body else {
         panic!("math")
     };

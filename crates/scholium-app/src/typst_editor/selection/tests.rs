@@ -1,4 +1,5 @@
 use super::*;
+use crate::typst_editor::tests::press_alt;
 use crate::typst_editor::tests::{Fixture, key, text};
 
 fn shift(key: egui::Key) -> egui::Event {
@@ -103,7 +104,7 @@ fn body_shift_crosses_whole_fraction_and_selection_includes_its_rule_extent() {
         text("12"),
         crate::typst_editor::tests::shift_left(),
         crate::typst_editor::tests::shift_left(),
-        key(egui::Key::Slash, true),
+        press_alt(egui::Key::F, false),
         text("2"),
         text("$"),
         text("Z"),
@@ -506,8 +507,8 @@ fn body_selection_of_a_formula_row_includes_text_and_the_inserted_fraction() {
         text("A"),
         text("$"),
         text("abc"),
-        key(egui::Key::Slash, true),
-        key(egui::Key::M, true),
+        press_alt(egui::Key::F, false),
+        press_alt(egui::Key::M, false),
         text("Z"),
     ]);
     f.settle();

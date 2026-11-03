@@ -8,10 +8,8 @@
       "text": "$"
     },
     {
-      "key": "Slash",
-      "mods": {
-        "command": true
-      }
+      "command": "Fraction",
+      "via": "shortcut"
     },
     {
       "text": "x"
@@ -37,10 +35,8 @@
       "key": "Delete"
     },
     {
-      "key": "Slash",
-      "mods": {
-        "command": true
-      }
+      "command": "Fraction",
+      "via": "shortcut"
     },
     {
       "text": "a"
@@ -52,7 +48,8 @@
       "text": "b"
     },
     {
-      "key": "Tab"
+      "key": "Tab",
+      "times": 3
     },
     {
       "text": "d"
@@ -534,11 +531,8 @@
       }
     },
     {
-      "key": "Character",
-      "mods": {
-        "command": true
-      },
-      "value": "z"
+      "command": "Undo",
+      "via": "shortcut"
     },
     {
       "key": "End",

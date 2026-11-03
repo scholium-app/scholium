@@ -45,7 +45,7 @@ try:
     run("windowfocus", window)
     run("type", "--delay", "20", "alpha")
     wait(lambda current: current["current"] and "alpha" in json.dumps(blocks(current)), "body text")
-    run("key", "ctrl+shift+e")
+    run("key", "alt+shift+m")
     equation = wait(lambda current: current["current"] and any(block["kind"] == "Equation" for block in blocks(current)),
                     "display equation command")
     assert len(blocks(equation)) == 2, blocks(equation)

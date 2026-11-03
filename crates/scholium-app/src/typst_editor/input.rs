@@ -36,6 +36,20 @@ impl EditorSession {
         event: egui::Event,
         state: &mut WorkspaceState,
     ) -> Option<String> {
+        if let egui::Event::Text(text) = &event
+            && self
+                .shortcut_text
+                .take()
+                .is_some_and(|key| text.eq_ignore_ascii_case(key.name()))
+        {
+            return None;
+        }
+        if matches!(
+            &event,
+            egui::Event::Key { .. } | egui::Event::PointerButton { .. } | egui::Event::Ime(_)
+        ) {
+            self.shortcut_text = None;
+        }
         if Self::breaks_run(&event) {
             self.run = None;
         }
@@ -85,22 +99,7 @@ impl EditorSession {
                 pressed: true,
                 ..
             } if state.composition.is_none() => {
-                if modifiers.command && modifiers.shift && key == egui::Key::M {
-                    return None;
-                }
-                if let Some(key) = abstract_key(key) {
-                    self.submit(
-                        Input::Key {
-                            key,
-                            mods: Modifiers {
-                                command: modifiers.command,
-                                shift: modifiers.shift,
-                                alt: modifiers.alt,
-                            },
-                        },
-                        state,
-                    );
-                }
+                self.key_event(key, modifiers, state);
             }
             event @ (egui::Event::PointerButton { .. }
             | egui::Event::PointerMoved(_)
@@ -112,6 +111,39 @@ impl EditorSession {
             self.pending_style = None;
         }
         None
+    }
+
+    fn key_event(
+        &mut self,
+        key: egui::Key,
+        modifiers: egui::Modifiers,
+        state: &mut WorkspaceState,
+    ) {
+        let focus = self.core.math_focus_type();
+        if let Some(spec) =
+            crate::command::registry::editor_command(key, modifiers, self.in_math(), focus)
+        {
+            if modifiers.alt {
+                self.shortcut_text = Some(key);
+            }
+            if let crate::command::spec::Action::Editor(command) = spec.action {
+                self.command(command, state);
+            }
+            return;
+        }
+        if let Some(key) = abstract_key(key) {
+            self.submit(
+                Input::Key {
+                    key,
+                    mods: Modifiers {
+                        command: modifiers.command,
+                        shift: modifiers.shift,
+                        alt: modifiers.alt,
+                    },
+                },
+                state,
+            );
+        }
     }
 
     pub(super) fn submit(&mut self, input: Input, state: &mut WorkspaceState) {

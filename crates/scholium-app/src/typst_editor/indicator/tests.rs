@@ -1,5 +1,6 @@
 use super::*;
-use crate::typst_editor::tests::{Fixture, key, text};
+use crate::typst_editor::tests::press_alt;
+use crate::typst_editor::tests::{Fixture, text};
 
 fn contains(outer: Bounds, inner: Bounds) -> bool {
     outer[0] <= inner[0] && outer[1] <= inner[1] && outer[2] >= inner[2] && outer[3] >= inner[3]
@@ -45,7 +46,7 @@ fn indicator_covers_the_whole_fraction_and_outlines_the_current_slot() {
         text("12"),
         crate::typst_editor::tests::shift_left(),
         crate::typst_editor::tests::shift_left(),
-        key(egui::Key::Slash, true),
+        press_alt(egui::Key::F, false),
         text("3"),
     ]);
     f.settle();

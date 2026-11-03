@@ -16,6 +16,25 @@ fn owner(node: &MathNode, caret: NodeId, root: bool) -> Option<NodeId> {
         })
 }
 impl EditorCore {
+    /// Stable focus scope name of the innermost containing math structure.
+    pub fn math_focus_type(&self) -> Option<&'static str> {
+        fn focus(node: &MathNode, caret: NodeId) -> Option<&'static str> {
+            if !math_contains(node, caret) {
+                return None;
+            }
+            input::math_children(node)
+                .into_iter()
+                .find_map(|c| focus(c, caret))
+                .or(match node.body {
+                    MathBody::Fraction { .. } => Some("fraction"),
+                    MathBody::Attach { .. } => Some("attach"),
+                    MathBody::Root { .. } => Some("root"),
+                    MathBody::Delimited { .. } => Some("delimiter"),
+                    _ => None,
+                })
+        }
+        focus(self.formula_root()?, self.cursor.leaf)
+    }
     /// Innermost root containing the caret, including either structural edge.
     pub fn root_owner(&self) -> Option<NodeId> {
         owner(self.formula_root()?, self.cursor.leaf, true)

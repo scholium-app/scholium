@@ -46,11 +46,3 @@ macro_rules! toolbar {
         })
     };
 }
-
-/// A `'static` chord list; the const item lets the slice outlive the expression.
-macro_rules! keys {
-    ($($chord:expr),* $(,)?) => {{
-        const KEYS: &[$crate::command::spec::KeyChord] = &[$($chord),*];
-        KEYS
-    }};
-}

@@ -13,14 +13,8 @@ fn fraction_without_selection_splits_text_at_start_middle_and_end_and_undo_resto
             let undo = f.core.undo.len();
             if chord {
                 f.core
-                    .input(Input::Key {
-                        key: Key::Slash,
-                        mods: Modifiers {
-                            command: true,
-                            ..Modifiers::default()
-                        },
-                    })
-                    .expect("Ctrl+/");
+                    .input(Input::Command(CommandId::Fraction, CommandArgs::None))
+                    .expect("abstract fraction command");
             } else {
                 f.run(CommandId::Fraction);
             }

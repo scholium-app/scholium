@@ -573,3 +573,27 @@ fn no_text_wraps_or_overflows_and_no_controls_overlap() {
 fn words_count_cjk_characters_and_latin_words() {
     assert_eq!(count_words("中文 English 3"), 4);
 }
+
+#[test]
+fn mathematical_focus_commands_fit_beside_the_mode_switch_in_both_locales() {
+    for locale in [ZH, EN] {
+        for width in [640.0, 1024.0, 1280.0] {
+            let mut w = Window::new(width, locale);
+            w.editor().in_math = true;
+            w.editor().in_root = true;
+            w.editor().in_delimiter = true;
+            w.settle();
+            let on = w.on("focus");
+            for (i, a) in on.iter().enumerate() {
+                for b in &on[i + 1..] {
+                    assert!(
+                        !a.rect.shrink(0.5).intersects(b.rect.shrink(0.5)),
+                        "{locale:?} {width}: {} overlaps {}",
+                        a.id,
+                        b.id
+                    );
+                }
+            }
+        }
+    }
+}

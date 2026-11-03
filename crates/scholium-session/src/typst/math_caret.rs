@@ -61,6 +61,29 @@ impl EditorCore {
         if !self.at_math_edge() {
             return false;
         }
+        if let CommandId::Attach(slot) = command
+            && self.cursor.byte == 1
+            && let Some(MathBody::Attach { sub, sup, .. }) =
+                self.math_node_at(self.cursor.leaf).map(|n| &n.body)
+            && let Some(last) = sup.as_deref().or(sub.as_deref())
+        {
+            let leaf = last_math_leaf(last);
+            let leaf = leaf.node;
+            let byte = input::leaves(&self.snapshot)
+                .into_iter()
+                .find(|l| l.id == leaf)
+                .map_or(0, |l| l.text.len());
+            self.apply(
+                StructuralEdit::Attach {
+                    leaf,
+                    at: byte,
+                    slot,
+                },
+                state,
+            );
+            self.cursor.affinity = Affinity::Downstream;
+            return true;
+        }
         let base = MathNode::hole();
         let target = MathNode::hole();
         let caret = target.node;
@@ -92,4 +115,11 @@ impl EditorCore {
         }
         true
     }
+}
+
+fn last_math_leaf(node: &MathNode) -> &MathNode {
+    input::math_children(node)
+        .into_iter()
+        .last()
+        .map_or(node, last_math_leaf)
 }

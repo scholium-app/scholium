@@ -97,6 +97,11 @@ fn the_catalog_has_no_key_that_nothing_uses() {
     );
     used.insert("reason.document_properties".to_owned());
     used.extend(
+        crate::typst_editor::math_input::CATALOG_KEYS
+            .iter()
+            .map(|k| (*k).to_owned()),
+    );
+    used.extend(
         [
             "a11y.math.edge.fraction.before",
             "a11y.math.edge.fraction.after",

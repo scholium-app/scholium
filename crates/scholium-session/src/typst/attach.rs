@@ -24,21 +24,6 @@ impl Placeholder {
 }
 
 impl EditorCore {
-    /// Typed `^` / `_` in math attach a slot instead of inserting a literal character.
-    /// Returns whether the key was consumed; body text and paste keep the literal character.
-    pub(super) fn attach_key(&mut self, typed: &str, state: &mut EditState) -> bool {
-        let slot = match typed {
-            "^" => AttachSlot::Sup,
-            "_" => AttachSlot::Sub,
-            _ => return false,
-        };
-        if self.body_leaf(self.cursor.leaf) {
-            return false;
-        }
-        self.attach_slot(slot, state);
-        true
-    }
-
     /// Attach `slot` at the caret in math; the one path typing and the focus bar share.
     pub(super) fn attach_slot(&mut self, slot: AttachSlot, state: &mut EditState) {
         if self.command_at_edge(CommandId::Attach(slot), state) {

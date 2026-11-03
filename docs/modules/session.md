@@ -34,7 +34,7 @@ src/typst/input.rs            抽象输入分发，以及字面文字、公式�
 src/typst/math_caret.rs       结构边缘导航、边缘输入及空 base 结构命令
 src/typst/structural_delete.rs  字素删除、空结构/公式移除与无编辑的逐停点进入
 src/typst/events.rs           工具包无关的 Input、Key、Pointer 词汇与原子分发测试
-src/typst/key.rs              工具包无关的按键映射与 caret-follow 意图
+src/typst/key.rs              工具包无关的导航按键与 caret-follow 意图
 src/typst/runtime.rs          worker、完整 Scene identity 采纳与 raster/strip 交付
 src/typst/deferred.rs         抽象事件的等待、顺序、拒绝与上限
 src/typst/raster.rs           编辑与预览适配共用的栅格稳定策略
@@ -148,7 +148,7 @@ Typst 确认的 26 页夹具、512 步历史、8 次预热、100 次实际 Text 
 
 ## 分数命令与同一数学行选区
 
-工具栏、菜单和 Ctrl+/ 都调用 `CommandId::Fraction` → `FractionAt`。
+工具栏、菜单和键位表分派都调用 `CommandId::Fraction` → `FractionAt`。
 无选区时在数学 Text 光标字素边界插入空分数，已输入内容留在前后同一行；Hole 和结构边缘也进入空分子。
 有同一数学行选区时只将该范围放入分子并进入空分母。一次 Undo 恢复完整内容、caret 和 anchor。
 Shift+左右按字素扩展数学文字、按原子扩展完整结构；Shift+上下/Home/End、跨槽及跨公式范围仍拒绝。
@@ -164,5 +164,20 @@ RawMath 参与语义跳过和删除导航审计，排版保持 `EditorError::Raw
 
 `CommandId::Root` 与 `Delimiter` 使用同一行包装规划，默认空平方根或 `()`，光标进入内容槽。
 `RootIndex` 对光标所在最内层根式增加或进入 index；`CycleDelimiter` 循环最内层定界符的八种合法配对。
-无选区时两侧原文字保持原位；同一行选区成为槽内容。Undo 恢复原文、光标和选区；字面 `(` 不触发配对。
+无选区时两侧原文字保持原位；同一行选区成为槽内容。Undo 恢复原文、光标和选区；数学中键入 `(`、`[`、`{`、`|` 经共享引擎生成配对，粘贴和 IME 提交保持字面内容。
 方向键、Tab、全空删除与边缘输入使用 ADR 0045 的规则，index 与 radicand 之间支持上下导航。
+
+
+## 共享数学输入适配
+
+`math_input` 将 [共享引擎](math-input.md) 的文档无关意图映射到现有结构命令与 StructuralEdit；
+分数、根式、定界符、上下标和独立公式的菜单/键盘入口都经过这一层。
+组合替换只作用于当前叶光标前的 UTF-8 范围，不拼接或执行用户源码；同一批普通文字仍合并为一次字面插入。
+Tab 优先接受命令，其次循环刚输入的候选，否则在最内层结构的槽位间前进/后退；末槽之后停在结构 after edge。
+Attach 的 after edge 输入另一个脚本扩展同一 Attach，不制造空底脚本。
+
+临时 query 和候选状态参与 checkpoint，错误/panic 同时恢复它们与文档、光标、历史；它们不持久化。
+`tab_action` 公开同一判定供焦点栏提示。移动、指针、其它命令、粘贴和 IME 提交中断候选，
+命令框 Esc 只丢弃未提交 query，原文与 revision 不变。
+共享 `accept::cases()` 通过真实 Typst 会话执行并比较归一化公式树；冻结窗口场景对快捷键使用稳定语义命令 id，
+窗口 runner 从默认键位文件解析实际组合，核心 runner 直接执行命令。嵌套 Tab 场景显式走结构 after edge。

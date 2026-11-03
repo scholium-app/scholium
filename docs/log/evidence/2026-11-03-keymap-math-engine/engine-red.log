@@ -1,0 +1,227 @@
+   Compiling syn v2.0.119
+   Compiling serde_derive v1.0.228
+   Compiling serde v1.0.228
+   Compiling serde_spanned v0.6.9
+   Compiling toml_datetime v0.6.11
+   Compiling toml_edit v0.22.27
+   Compiling toml v0.8.23
+   Compiling scholium-math-input v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-math-input)
+error[E0425]: cannot find type `Context` in this scope
+ --> crates/scholium-math-input/src/tests.rs:3:29
+  |
+3 | fn context(before: &str) -> Context<'_> {
+  |                             ^^^^^^^ not found in this scope
+  |
+help: consider importing this struct
+  |
+1 + use std::task::Context;
+  |
+
+error[E0422]: cannot find struct, variant or union type `Context` in this scope
+ --> crates/scholium-math-input/src/tests.rs:4:5
+  |
+4 |     Context { math: true, before, selected: false }
+  |     ^^^^^^^ not found in this scope
+  |
+help: consider importing this struct
+  |
+1 + use std::task::Context;
+  |
+
+error[E0422]: cannot find struct, variant or union type `Context` in this scope
+  --> crates/scholium-math-input/src/tests.rs:36:46
+   |
+36 |     assert_eq!(engine.feed(Event::Text('='), Context { math: false, before: "<", selected: false }), Intent::Literal("=".into()));
+   |                                              ^^^^^^^ not found in this scope
+   |
+help: consider importing this struct
+   |
+ 1 + use std::task::Context;
+   |
+
+warning: unused import: `super::*`
+ --> crates/scholium-math-input/src/tests.rs:1:5
+  |
+1 | use super::*;
+  |     ^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+error[E0433]: cannot find type `Engine` in this scope
+ --> crates/scholium-math-input/src/tests.rs:9:22
+  |
+9 |     let mut engine = Engine::default();
+  |                      ^^^^^^ use of undeclared type `Engine`
+
+error[E0433]: cannot find type `Event` in this scope
+  --> crates/scholium-math-input/src/tests.rs:10:28
+   |
+10 |     assert_eq!(engine.feed(Event::Text('='), context("x<")), Intent::Replace { bytes: 1, text: "⩽".into() });
+   |                            ^^^^^ use of undeclared type `Event`
+
+error[E0433]: cannot find type `Event` in this scope
+  --> crates/scholium-math-input/src/tests.rs:11:17
+   |
+11 |     engine.feed(Event::Text('R'), context(""));
+   |                 ^^^^^ use of undeclared type `Event`
+
+error[E0433]: cannot find type `Event` in this scope
+  --> crates/scholium-math-input/src/tests.rs:12:28
+   |
+12 |     assert_eq!(engine.feed(Event::Text('R'), context("R")), Intent::Replace { bytes: 1, text: "ℝ".into() });
+   |                            ^^^^^ use of undeclared type `Event`
+
+error[E0433]: cannot find type `TabAction` in this scope
+  --> crates/scholium-math-input/src/tests.rs:13:49
+   |
+13 |     assert_eq!(engine.tab_action(context("ℝ")), TabAction::Cycle);
+   |                                                 ^^^^^^^^^ use of undeclared type `TabAction`
+
+error[E0433]: cannot find type `TabAction` in this scope
+  --> crates/scholium-math-input/src/tests.rs:17:49
+   |
+17 |     assert_eq!(engine.tab_action(context("ℝ")), TabAction::NextSlot);
+   |                                                 ^^^^^^^^^ use of undeclared type `TabAction`
+
+error[E0433]: cannot find type `Engine` in this scope
+  --> crates/scholium-math-input/src/tests.rs:22:22
+   |
+22 |     let mut engine = Engine::default();
+   |                      ^^^^^^ use of undeclared type `Engine`
+
+error[E0433]: cannot find type `Event` in this scope
+  --> crates/scholium-math-input/src/tests.rs:23:17
+   |
+23 |     engine.feed(Event::Text('\\'), context("α"));
+   |                 ^^^^^ use of undeclared type `Event`
+
+error[E0433]: cannot find type `Event` in this scope
+  --> crates/scholium-math-input/src/tests.rs:24:17
+   |
+24 |     engine.feed(Event::Text('f'), context("α"));
+   |                 ^^^^^ use of undeclared type `Event`
+
+error[E0433]: cannot find type `Event` in this scope
+  --> crates/scholium-math-input/src/tests.rs:25:17
+   |
+25 |     engine.feed(Event::Text('r'), context("α"));
+   |                 ^^^^^ use of undeclared type `Event`
+
+error[E0433]: cannot find type `TabAction` in this scope
+  --> crates/scholium-math-input/src/tests.rs:26:49
+   |
+26 |     assert_eq!(engine.tab_action(context("α")), TabAction::Complete);
+   |                                                 ^^^^^^^^^ use of undeclared type `TabAction`
+
+error[E0433]: cannot find type `Intent` in this scope
+  --> crates/scholium-math-input/src/tests.rs:27:74
+   |
+27 |     assert_eq!(engine.feed(Event::Tab { reverse: false }, context("α")), Intent::Structure(Template::Fraction));
+   |                                                                          ^^^^^^ use of undeclared type `Intent`
+
+error[E0433]: cannot find type `Template` in this scope
+  --> crates/scholium-math-input/src/tests.rs:27:92
+   |
+27 |     assert_eq!(engine.feed(Event::Tab { reverse: false }, context("α")), Intent::Structure(Template::Fraction));
+   |                                                                                            ^^^^^^^^ use of undeclared type `Template`
+
+error[E0433]: cannot find type `Event` in this scope
+  --> crates/scholium-math-input/src/tests.rs:28:17
+   |
+28 |     engine.feed(Event::Text('\\'), context("α"));
+   |                 ^^^^^ use of undeclared type `Event`
+
+error[E0433]: cannot find type `Event` in this scope
+  --> crates/scholium-math-input/src/tests.rs:29:28
+   |
+29 |     assert_eq!(engine.feed(Event::Cancel, context("α")), Intent::None);
+   |                            ^^^^^ use of undeclared type `Event`
+
+error[E0433]: cannot find type `Intent` in this scope
+  --> crates/scholium-math-input/src/tests.rs:29:58
+   |
+29 |     assert_eq!(engine.feed(Event::Cancel, context("α")), Intent::None);
+   |                                                          ^^^^^^ use of undeclared type `Intent`
+
+error[E0433]: cannot find type `Engine` in this scope
+  --> crates/scholium-math-input/src/tests.rs:35:22
+   |
+35 |     let mut engine = Engine::default();
+   |                      ^^^^^^ use of undeclared type `Engine`
+
+error[E0433]: cannot find type `Event` in this scope
+  --> crates/scholium-math-input/src/tests.rs:36:28
+   |
+36 |     assert_eq!(engine.feed(Event::Text('='), Context { math: false, before: "<", selected: false }), Intent::Literal("=".into()));
+   |                            ^^^^^ use of undeclared type `Event`
+
+error[E0433]: cannot find type `Intent` in this scope
+  --> crates/scholium-math-input/src/tests.rs:36:102
+   |
+36 |     assert_eq!(engine.feed(Event::Text('='), Context { math: false, before: "<", selected: false }), Intent::Literal("=".into()));
+   |                                                                                                      ^^^^^^ use of undeclared type `Intent`
+
+error[E0433]: cannot find type `Event` in this scope
+  --> crates/scholium-math-input/src/tests.rs:37:28
+   |
+37 |     assert_eq!(engine.feed(Event::Text('('), context("")), Intent::Structure(Template::Delimiter('(', ')')));
+   |                            ^^^^^ use of undeclared type `Event`
+
+error[E0433]: cannot find type `Intent` in this scope
+  --> crates/scholium-math-input/src/tests.rs:37:60
+   |
+37 |     assert_eq!(engine.feed(Event::Text('('), context("")), Intent::Structure(Template::Delimiter('(', ')')));
+   |                                                            ^^^^^^ use of undeclared type `Intent`
+
+error[E0433]: cannot find type `Template` in this scope
+  --> crates/scholium-math-input/src/tests.rs:37:78
+   |
+37 |     assert_eq!(engine.feed(Event::Text('('), context("")), Intent::Structure(Template::Delimiter('(', ')')));
+   |                                                                              ^^^^^^^^ use of undeclared type `Template`
+
+error[E0433]: cannot find type `Event` in this scope
+  --> crates/scholium-math-input/src/tests.rs:14:28
+   |
+14 |     assert_eq!(engine.feed(Event::Tab { reverse: false }, context("ℝ")), Intent::Replace { bytes: 3, text: "ℛ".into() });
+   |                            ^^^^^ use of undeclared type `Event`
+
+error[E0433]: cannot find type `Intent` in this scope
+  --> crates/scholium-math-input/src/tests.rs:14:74
+   |
+14 |     assert_eq!(engine.feed(Event::Tab { reverse: false }, context("ℝ")), Intent::Replace { bytes: 3, text: "ℛ".into() });
+   |                                                                          ^^^^^^ use of undeclared type `Intent`
+
+error[E0433]: cannot find type `Intent` in this scope
+  --> crates/scholium-math-input/src/tests.rs:10:62
+   |
+10 |     assert_eq!(engine.feed(Event::Text('='), context("x<")), Intent::Replace { bytes: 1, text: "⩽".into() });
+   |                                                              ^^^^^^ use of undeclared type `Intent`
+
+error[E0433]: cannot find type `Event` in this scope
+  --> crates/scholium-math-input/src/tests.rs:15:28
+   |
+15 |     assert_eq!(engine.feed(Event::Tab { reverse: true }, context("ℛ")), Intent::Replace { bytes: 3, text: "ℝ".into() });
+   |                            ^^^^^ use of undeclared type `Event`
+
+error[E0433]: cannot find type `Intent` in this scope
+  --> crates/scholium-math-input/src/tests.rs:15:73
+   |
+15 |     assert_eq!(engine.feed(Event::Tab { reverse: true }, context("ℛ")), Intent::Replace { bytes: 3, text: "ℝ".into() });
+   |                                                                         ^^^^^^ use of undeclared type `Intent`
+
+error[E0433]: cannot find type `Intent` in this scope
+  --> crates/scholium-math-input/src/tests.rs:12:61
+   |
+12 |     assert_eq!(engine.feed(Event::Text('R'), context("R")), Intent::Replace { bytes: 1, text: "ℝ".into() });
+   |                                                             ^^^^^^ use of undeclared type `Intent`
+
+error[E0433]: cannot find type `Event` in this scope
+  --> crates/scholium-math-input/src/tests.rs:27:28
+   |
+27 |     assert_eq!(engine.feed(Event::Tab { reverse: false }, context("α")), Intent::Structure(Template::Fraction));
+   |                            ^^^^^ use of undeclared type `Event`
+
+Some errors have detailed explanations: E0422, E0425, E0433.
+For more information about an error, try `rustc --explain E0422`.
+warning: `scholium-math-input` (lib test) generated 1 warning
+error: could not compile `scholium-math-input` (lib test) due to 32 previous errors; 1 warning emitted

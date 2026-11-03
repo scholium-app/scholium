@@ -26,13 +26,11 @@
       }
     },
     {
-      "key": "Slash",
-      "mods": {
-        "command": true
-      },
       "expected": {
         "undo_depth": 3
-      }
+      },
+      "command": "Fraction",
+      "via": "shortcut"
     },
     {
       "text": "3",
@@ -116,14 +114,11 @@
       }
     },
     {
-      "key": "Character",
-      "value": "m",
-      "mods": {
-        "command": true
-      },
       "expected": {
         "undo_depth": 6
-      }
+      },
+      "command": "Math",
+      "via": "shortcut"
     },
     {
       "text": ".",

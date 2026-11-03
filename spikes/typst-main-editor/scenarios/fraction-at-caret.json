@@ -86,11 +86,6 @@
       }
     },
     {
-      "key": "Character",
-      "mods": {
-        "command": true
-      },
-      "value": "z",
       "expected": {
         "snapshot": {
           "blocks": [
@@ -132,14 +127,11 @@
           "affinity": "Downstream"
         },
         "undo_depth": 2
-      }
+      },
+      "command": "Undo",
+      "via": "shortcut"
     },
     {
-      "key": "Character",
-      "mods": {
-        "command": true
-      },
-      "value": "y",
       "expected": {
         "snapshot": {
           "blocks": [
@@ -209,7 +201,9 @@
           "affinity": "Downstream"
         },
         "undo_depth": 3
-      }
+      },
+      "command": "Redo",
+      "via": "shortcut"
     },
     {
       "text": "n"
@@ -593,11 +587,6 @@
       }
     },
     {
-      "key": "Character",
-      "mods": {
-        "command": true
-      },
-      "value": "z",
       "expected": {
         "snapshot": {
           "blocks": [
@@ -664,7 +653,9 @@
           ]
         },
         "undo_depth": 6
-      }
+      },
+      "command": "Undo",
+      "via": "shortcut"
     }
   ],
   "expected": {

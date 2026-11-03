@@ -1,7 +1,7 @@
 //! 视图 menu: work mode, panels, zoom. View commands never write the document.
 use super::{
     avail,
-    spec::{Action, ChordKey, CommandSpec, IconId, KeyChord},
+    spec::{Action, CommandSpec, IconId},
 };
 use crate::{commands::ViewCommand, i18n::LocaleSetting, theme::ThemeKind};
 
@@ -32,7 +32,6 @@ fn workspace() -> Vec<CommandSpec> {
         },
         command! {
             "view.mode.toggle",
-            shortcuts: keys![KeyChord::ctrl_shift(ChordKey::Letter('M'))],
             menu: menu!(View, WorkMode, 0, 2),
             availability: avail::not_composing,
             action: Action::View(ViewCommand::ToggleMode),
@@ -40,7 +39,6 @@ fn workspace() -> Vec<CommandSpec> {
         command! {
             "view.navigation",
             icon: IconId::Navigation,
-            shortcuts: keys![KeyChord::ctrl_shift(ChordKey::Letter('B'))],
             menu: menu!(View, 1, 0),
             checked: Some(avail::navigation),
             action: Action::View(ViewCommand::Navigation),
@@ -48,7 +46,6 @@ fn workspace() -> Vec<CommandSpec> {
         command! {
             "view.diagnostics",
             icon: IconId::Diagnostics,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Letter('J'))],
             menu: menu!(View, 1, 1),
             checked: Some(avail::diagnostics),
             action: Action::View(ViewCommand::Diagnostics),
@@ -60,7 +57,6 @@ fn workspace() -> Vec<CommandSpec> {
         },
         command! {
             "view.toolbars",
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Function(1))],
             menu: menu!(View, 3, 0),
             checked: Some(avail::toolbars_visible),
             action: Action::View(ViewCommand::ToggleToolbars),
@@ -86,16 +82,11 @@ fn zoom() -> Vec<CommandSpec> {
         },
         command! {
             "view.zoom.in",
-            shortcuts: keys![
-                KeyChord::ctrl(ChordKey::Plus),
-                KeyChord::ctrl(ChordKey::Equals),
-            ],
             menu: menu!(View, Zoom, 2, 2),
             action: Action::View(ViewCommand::ZoomIn),
         },
         command! {
             "view.zoom.out",
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Minus)],
             menu: menu!(View, Zoom, 2, 3),
             action: Action::View(ViewCommand::ZoomOut),
         },

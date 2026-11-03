@@ -1,0 +1,22 @@
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 2.42s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-d29802bc76e29308)
+
+running 1 test
+test chrome::tests::mathematical_focus_commands_fit_beside_the_mode_switch_in_both_locales ... FAILED
+
+failures:
+
+---- chrome::tests::mathematical_focus_commands_fit_beside_the_mode_switch_in_both_locales stdout ----
+
+thread 'chrome::tests::mathematical_focus_commands_fit_beside_the_mode_switch_in_both_locales' (175425) panicked at crates/scholium-app/src/chrome/tests.rs:590:21:
+ZhHans 640: insert.delimiter overlaps view.mode.page
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    chrome::tests::mathematical_focus_commands_fit_beside_the_mode_switch_in_both_locales
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 329 filtered out; finished in 0.28s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`

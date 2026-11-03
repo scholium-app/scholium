@@ -77,7 +77,7 @@ try:
     paste("第一段 alpha\n第二段 beta\n第三段 gamma")
     xdo("type", "--delay", "20", " $")
     xdo("type", "x")
-    xdo("key", "--clearmodifiers", "ctrl+slash")
+    xdo("key", "--clearmodifiers", "alt+f")
     edited = wait(lambda s: s["current"] and texts(s)[:3] == ["第一段 alpha", "第二段 beta", "第三段 gamma "],
                   "edited document")
     record("01-document-edited", True, texts=texts(edited))

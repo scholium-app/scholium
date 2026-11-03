@@ -45,6 +45,7 @@ impl EditorCore {
             .map(|l| l.id)
             .ok_or(SessionError::NoInputLeaf)?;
         Ok(Self {
+            math_input: Default::default(),
             runtime: None,
             deferred: Default::default(),
             wanted: session.scene_stamp(ProfileGeneration(0), ResourceGeneration(0)),
@@ -133,6 +134,7 @@ impl EditorCore {
     }
 
     pub(super) fn new_document(&mut self) -> Result<(), CommandError> {
+        self.math_input.reset();
         self.session = ReadAuthority::new(blank()?);
         self.anchor = None;
         self.placeholder = None;

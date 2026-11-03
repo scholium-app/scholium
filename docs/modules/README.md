@@ -6,6 +6,7 @@
 | 模块 | 设计 | 主要责任 |
 |---|---|---|
 | `scholium-model` | [model.md](model.md) | 稳定领域类型、IR、位置、诊断 |
+| `scholium-math-input` | [math-input.md](math-input.md) | 共享数学输入意图与声明式规则 |
 | `scholium-document` | [document.md](document.md) | 语义文档图、焦点、结构编辑、源码绑定 |
 | `scholium-storage` | [storage.md](storage.md) | 项目、WAL、快照、原子物化、恢复 |
 | `scholium-history` | [history.md](history.md) | Action、checkpoint DAG、撤回与合并 |
@@ -40,10 +41,11 @@ Typst 内核包含 model 中的 SDG 类型、document 与 typst；LaTeX 内核�
 | 0 | scholium-model | 无 |
 | 1 | scholium-document | model |
 | 1 | scholium-build | 无 |
+| 1 | scholium-math-input | 无 |
 | 2 | scholium-typst | model、document |
 | 2 | scholium-latex | build |
 | 2 | scholium-storage | model、document |
-| 3 | scholium-session | model、document、typst、storage |
+| 3 | scholium-session | model、document、math-input、typst、storage |
 | 4 | scholium-app | 所有下层 |
 
 `scripts/check-layers.py` 解析锁定 metadata 的完整依赖图：未登记 crate、向上依赖和 app 以下

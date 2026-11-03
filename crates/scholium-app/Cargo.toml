@@ -7,6 +7,9 @@ rust-version.workspace = true
 publish = false
 
 [dependencies]
+scholium-math-input = { path = "../scholium-math-input", version = "0.1.0" }
+toml = "=0.8.23"
+serde = { version = "=1.0.229", features = ["derive"] }
 scholium-session = { path = "../scholium-session", version = "0.1.0" }
 eframe.workspace = true
 unicode-segmentation = "=1.13.3"

@@ -1,0 +1,107 @@
+{
+  "01-body-text-object": {
+    "pass": true,
+    "role": "entry",
+    "states": {
+      "ENABLED": true,
+      "SENSITIVE": true,
+      "FOCUSED": true,
+      "EDITABLE": true,
+      "MULTI_LINE": true
+    },
+    "interfaces": [
+      "Accessible",
+      "Action",
+      "Component",
+      "Text"
+    ]
+  },
+  "02-typed-text-and-caret": {
+    "pass": true,
+    "text": "Hello 中文 👩‍🔬",
+    "caret": 12
+  },
+  "03-paragraph-breaks": {
+    "pass": true,
+    "text": "Hello 中文 👩‍🔬\nsecond line\n\nfourth"
+  },
+  "04-assistive-selection": {
+    "pass": true,
+    "selection": {
+      "end_byte": 5,
+      "end_leaf": "NodeId(25bf5b95-09ea-4723-9346-e02930046f21)",
+      "start_byte": 0,
+      "start_leaf": "NodeId(25bf5b95-09ea-4723-9346-e02930046f21)"
+    },
+    "read_back": [
+      0,
+      5
+    ]
+  },
+  "05-selection-replaced-once": {
+    "pass": true,
+    "text": "Q 中文 👩‍🔬\nsecond line\n\nfourth"
+  },
+  "06-text-survives-pending-layout": {
+    "pass": true,
+    "samples": 93,
+    "failures": 0,
+    "pending_frames": 35
+  },
+  "07-character-extents": {
+    "pass": true,
+    "extents": [
+      234,
+      295,
+      17,
+      16
+    ]
+  },
+  "08-math-object-and-slot-status": {
+    "pass": true,
+    "math": "Formula: Fraction (numerator: 12; denominator: empty)",
+    "status": "Fraction denominator: empty",
+    "status_role": "status bar"
+  },
+  "09-disabled-controls-are-not-enabled": {
+    "pass": true,
+    "strike": {
+      "ENABLED": false,
+      "SENSITIVE": false,
+      "FOCUSED": false,
+      "EDITABLE": false,
+      "MULTI_LINE": false
+    },
+    "redo": {
+      "ENABLED": false,
+      "SENSITIVE": false,
+      "FOCUSED": false,
+      "EDITABLE": false,
+      "MULTI_LINE": false
+    },
+    "bold": {
+      "ENABLED": true,
+      "SENSITIVE": true,
+      "FOCUSED": false,
+      "EDITABLE": false,
+      "MULTI_LINE": false
+    }
+  },
+  "10-only-checkable-commands-are-toggles": {
+    "pass": true,
+    "bold": "check box",
+    "undo": "button",
+    "strike": "button"
+  },
+  "11-every-control-is-named-by-its-catalog-title": {
+    "pass": true,
+    "locale": "en",
+    "missing": {
+      "menubar": [],
+      "toolbar": [],
+      "focus": [],
+      "tab": [],
+      "status": []
+    }
+  }
+}

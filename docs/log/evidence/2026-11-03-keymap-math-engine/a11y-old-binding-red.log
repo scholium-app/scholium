@@ -1,0 +1,16 @@
+
+(process:209210): atspi-WARNING **: 02:12:14.314: AT-SPI: Error in GetItems, sender=:1.1, error=Unknown object '/org/a11y/atspi/cache'
+PASS 01-body-text-object
+PASS 02-typed-text-and-caret
+PASS 03-paragraph-breaks
+PASS 04-assistive-selection
+PASS 05-selection-replaced-once
+PASS 06-text-survives-pending-layout
+PASS 07-character-extents
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/a11y/a11y_check.py", line 165, in <module>
+    status = wait(lambda: find(app_root(), lambda n: n.get_name() == expected_status), "slot status")
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/a11y/a11y_check.py", line 43, in wait
+    raise RuntimeError(f"timeout: {what}")
+RuntimeError: timeout: slot status
+X connection to :99 broken (explicit kill or server shutdown).

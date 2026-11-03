@@ -1,7 +1,7 @@
 //! 插入 menu.
 use super::{
     avail,
-    spec::{Action, ChordKey, CommandSpec, FocusKind, IconId, KeyChord, Routing},
+    spec::{Action, CommandSpec, FocusKind, IconId, Routing},
 };
 use crate::typst_editor::Command;
 use scholium_document::AttachSlot;
@@ -19,7 +19,6 @@ fn math() -> Vec<CommandSpec> {
         command! {
             "insert.formula",
             icon: IconId::Formula,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Letter('M'))],
             routing: Routing::Editor,
             menu: menu!(Insert, 0, 0),
             toolbar: toolbar!(Insert, 0),
@@ -28,7 +27,7 @@ fn math() -> Vec<CommandSpec> {
             checked: Some(avail::in_formula_now),
             action: Action::Editor(Command::Math),
         },
-        // Ctrl+M already toggles the formula; this entry is the focus toolbar's way out.
+        // The focus toolbar also offers an explicit way out.
         command! {
             "insert.exit_formula",
             icon: IconId::ExitFormula,
@@ -40,7 +39,6 @@ fn math() -> Vec<CommandSpec> {
         command! {
             "insert.display_formula",
             icon: IconId::DisplayFormula,
-            shortcuts: keys![KeyChord { ctrl: true, shift: true, key: ChordKey::Letter('E') }],
             routing: Routing::Editor,
             menu: menu!(Insert, 0, 1),
             writes: true,
@@ -50,7 +48,6 @@ fn math() -> Vec<CommandSpec> {
         command! {
             "insert.fraction",
             icon: IconId::Fraction,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Slash)],
             routing: Routing::Editor,
             menu: menu!(Insert, 0, 2),
             toolbar: toolbar!(Insert, 1),
@@ -62,7 +59,6 @@ fn math() -> Vec<CommandSpec> {
         command! {
             "insert.root",
             icon: IconId::Root,
-            shortcuts: keys![KeyChord::ctrl_shift(ChordKey::Letter('R'))],
             routing: Routing::Editor,
             menu: menu!(Insert, 0, 3),
             focus: Some(FocusKind::Math),
@@ -73,7 +69,6 @@ fn math() -> Vec<CommandSpec> {
         command! {
             "insert.superscript",
             icon: IconId::Attach,
-            shortcuts: keys![KeyChord { ctrl: false, shift: false, key: ChordKey::Caret }],
             routing: Routing::Platform,
             menu: menu!(Insert, 0, 4),
             focus: Some(FocusKind::Math),
@@ -84,7 +79,6 @@ fn math() -> Vec<CommandSpec> {
         command! {
             "insert.subscript",
             icon: IconId::Subscript,
-            shortcuts: keys![KeyChord { ctrl: false, shift: false, key: ChordKey::Underscore }],
             routing: Routing::Platform,
             menu: menu!(Insert, 0, 5),
             focus: Some(FocusKind::Math),

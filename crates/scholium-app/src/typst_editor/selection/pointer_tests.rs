@@ -1,4 +1,5 @@
 use super::*;
+use crate::typst_editor::tests::press_alt;
 use crate::typst_editor::tests::{Fixture, key, text};
 
 /// Three paragraphs; the middle one ends in a fraction formula.
@@ -10,9 +11,9 @@ fn three_paragraphs() -> Fixture {
         text("12"),
         crate::typst_editor::tests::shift_left(),
         crate::typst_editor::tests::shift_left(),
-        key(egui::Key::Slash, true),
+        press_alt(egui::Key::F, false),
         text("3"),
-        key(egui::Key::M, true),
+        press_alt(egui::Key::M, false),
         egui::Event::Paste("\ngamma delta".into()),
     ]);
     f.settle();

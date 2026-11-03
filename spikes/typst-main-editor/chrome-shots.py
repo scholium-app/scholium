@@ -196,7 +196,7 @@ def capture(chrome, env, state, xdo, window, work, config):
             xdo("key", "End")
             xdo("type", "--delay", "40", " $")
             xdo("type", "--delay", "40", "x")
-            xdo("key", "--clearmodifiers", "ctrl+slash")
+            xdo("key", "--clearmodifiers", "alt+f")
             xdo("type", "--delay", "40", "1")
             expect(state, "chrome.status.context.math", "formula focus")
         elif name == "source":

@@ -5,6 +5,8 @@ use std::panic::{AssertUnwindSafe, catch_unwind};
 /// Editing commands; the first six variants map directly to the app's registered ids.
 #[derive(Debug, Clone, Copy)]
 pub enum CommandId {
+    /// Shared mathematical input intent, including command completion and Tab.
+    MathInput,
     /// `insert.formula` / `insert.exit_formula`.
     Math,
     /// `insert.display_formula`.
@@ -60,6 +62,8 @@ pub enum CommandId {
 /// Typed command arguments; mismatched variants fail before mutation.
 #[derive(Debug, Clone, Default)]
 pub enum CommandArgs {
+    /// Abstract math engine event.
+    Math(scholium_math_input::Event),
     /// Command has no payload.
     #[default]
     None,
@@ -230,6 +234,10 @@ impl EditorCore {
         use CommandArgs as A;
         use CommandId as C;
         let applied = match (id, args) {
+            (C::MathInput, A::Math(event)) => {
+                self.math_event(event, state);
+                true
+            }
             (
                 C::DisplayMath
                 | C::Math

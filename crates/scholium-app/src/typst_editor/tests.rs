@@ -90,7 +90,7 @@ fn empty_inline_formula_and_inserted_fraction_numerator_have_current_geometry() 
             .caret(f.editor.cursor)
             .is_some()
     );
-    f.events(vec![text("12"), key(egui::Key::Slash, true)]);
+    f.events(vec![text("12"), press_alt(egui::Key::F, false)]);
     f.settle();
     assert!(
         f.editor
@@ -110,9 +110,9 @@ fn multi_event_frame_inserts_fractions_without_moving_prior_text_into_numerators
         text("中文 English "),
         text("$"),
         text("12"),
-        key(egui::Key::Slash, true),
+        press_alt(egui::Key::F, false),
         text("3"),
-        key(egui::Key::Slash, true),
+        press_alt(egui::Key::F, false),
         text("4"),
     ]);
     let values: Vec<_> = input::leaves(&f.editor.snapshot)
@@ -158,7 +158,7 @@ fn undo_redo_preserves_request_ids_and_rejects_old_scene_at_same_revision() {
 #[test]
 fn save_reopen_preserves_holes_and_can_continue_after_redo() {
     let mut f = Fixture::new();
-    f.events(vec![text("$"), text("n"), key(egui::Key::Slash, true)]);
+    f.events(vec![text("$"), text("n"), press_alt(egui::Key::F, false)]);
     let hole = f.editor.cursor;
     f.editor.history(false, &mut f.state);
     f.editor.history(true, &mut f.state);
@@ -509,4 +509,18 @@ fn scrolling_loads_visible_strips_and_evicts_those_outside_three_viewports() {
         strips < scholium_typst::editor::strip_count(height) as usize,
         "far strips were evicted"
     );
+}
+
+pub(super) fn press_alt(key: egui::Key, shift: bool) -> egui::Event {
+    egui::Event::Key {
+        key,
+        physical_key: None,
+        pressed: true,
+        repeat: false,
+        modifiers: egui::Modifiers {
+            alt: true,
+            shift,
+            ..egui::Modifiers::NONE
+        },
+    }
 }

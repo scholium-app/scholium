@@ -1,7 +1,7 @@
 //! 编辑 menu.
 use super::{
     avail,
-    spec::{Action, ChordKey, ClipboardOp, CommandSpec, IconId, KeyChord, Routing},
+    spec::{Action, ClipboardOp, CommandSpec, IconId, Routing},
 };
 
 pub(super) fn specs() -> Vec<CommandSpec> {
@@ -10,9 +10,14 @@ pub(super) fn specs() -> Vec<CommandSpec> {
     specs.push(command! {
         "edit.find",
         icon: IconId::Find,
-        shortcuts: keys![KeyChord::ctrl(ChordKey::Letter('F'))],
         menu: menu!(Edit, 2, 0),
         availability: avail::unimplemented,
+    });
+    specs.push(command! {
+        "edit.select_all",
+        routing: Routing::Editor,
+        availability: avail::page_write,
+        action: Action::Editor(crate::typst_editor::Command::SelectAll),
     });
     specs
 }
@@ -22,7 +27,6 @@ fn history() -> Vec<CommandSpec> {
         command! {
             "edit.undo",
             icon: IconId::Undo,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Letter('Z'))],
             menu: menu!(Edit, 0, 0),
             toolbar: toolbar!(History, 0),
             availability: avail::undo,
@@ -31,10 +35,6 @@ fn history() -> Vec<CommandSpec> {
         command! {
             "edit.redo",
             icon: IconId::Redo,
-            shortcuts: keys![
-                KeyChord::ctrl_shift(ChordKey::Letter('Z')),
-                KeyChord::ctrl(ChordKey::Letter('Y')),
-            ],
             menu: menu!(Edit, 0, 1),
             toolbar: toolbar!(History, 1),
             availability: avail::redo,
@@ -49,7 +49,6 @@ fn clipboard() -> Vec<CommandSpec> {
         command! {
             "edit.cut",
             icon: IconId::Cut,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Letter('X'))],
             routing: Routing::Platform,
             menu: menu!(Edit, 1, 0),
             writes: true,
@@ -59,7 +58,6 @@ fn clipboard() -> Vec<CommandSpec> {
         command! {
             "edit.copy",
             icon: IconId::Copy,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Letter('C'))],
             routing: Routing::Platform,
             menu: menu!(Edit, 1, 1),
             availability: avail::page_selection,
@@ -68,7 +66,6 @@ fn clipboard() -> Vec<CommandSpec> {
         command! {
             "edit.paste",
             icon: IconId::Paste,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Letter('V'))],
             routing: Routing::Platform,
             menu: menu!(Edit, 1, 2),
             writes: true,

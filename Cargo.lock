@@ -3856,12 +3856,15 @@ dependencies = [
  "fontdb",
  "resvg",
  "scholium-document",
+ "scholium-math-input",
  "scholium-model",
  "scholium-session",
  "scholium-storage",
  "scholium-typst",
+ "serde",
  "serde_json",
  "thiserror 2.0.20",
+ "toml",
  "unicode-segmentation",
 ]
 
@@ -3899,6 +3902,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "scholium-math-input"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "thiserror 2.0.20",
+ "toml",
+]
+
+[[package]]
 name = "scholium-model"
 version = "0.1.0"
 dependencies = [
@@ -3913,6 +3925,7 @@ name = "scholium-session"
 version = "0.1.0"
 dependencies = [
  "scholium-document",
+ "scholium-math-input",
  "scholium-model",
  "scholium-storage",
  "scholium-typst",
