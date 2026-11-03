@@ -11,6 +11,7 @@
 | `scholium-storage` | [storage.md](storage.md) | 项目、WAL、快照、原子物化、恢复 |
 | `scholium-history` | [history.md](history.md) | Action、checkpoint DAG、撤回与合并 |
 | `scholium-collab` | [collab.md](collab.md) | CRDT 封装、相对位置、update 协议 |
+| `scholium-sdg` | [collab.md](collab.md) | 共享 SDG 引擎比较边界；无生产 adapter API |
 | `scholium-format` | [format.md](format.md) | 适配器合约、IR 转换、导出报告 |
 | `scholium-latex` | [latex.md](latex.md) | LaTeX 内核、源码权威、预览适配与转换 |
 | `scholium-typst` | [typst.md](typst.md) | Typst CST、生成、reconcile 与编译桥接 |
@@ -45,6 +46,7 @@ Typst 内核包含 model 中的 SDG 类型、document 与 typst；LaTeX 内核�
 | 2 | scholium-typst | model、document |
 | 2 | scholium-latex | build |
 | 2 | scholium-storage | model、document |
+| 2 | scholium-sdg | 无；adapter 依赖限 model、document |
 | 3 | scholium-session | model、document、math-input、typst、storage |
 | 4 | scholium-app | 所有下层 |
 

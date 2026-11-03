@@ -51,6 +51,10 @@ StructuredAuthority 使用共享节点 map、children sequence 和文本 leaves�
 按 Loro → Yrs → Automerge 的顺序验证，候选必须比较 Unicode 位置、批量编辑、origin undo、快照大小、10 万次 update、线程模型、
 原生 Rust 线程/消息集成、可选 FFI 和长期维护；不以 JS/WASM 桥接作为桌面必要依赖。选择写 ADR；engine adapter 保留替换可能。
 
+`scholium-sdg` 是层 2 的引擎比较边界，当前只提供 `engine_bench` 可复现夹具，不暴露生产 adapter 或 Action API。
+生产映射、payload 版本与会话接入须先满足 [ADR 0009 的性能复审条件](../adr/ADR-0009-crdt-engine.md)。
+基准中的 parent/order 模型不作为 Yrs 并发移动正确性的合约，不能直接接替 Loro movable tree。
+
 ## 失败处理
 
 - update decoder 遇到超限、递归过深或畸形输入时拒绝本次更新，且不改变当前文档。

@@ -1,0 +1,22 @@
+   Compiling async-signal v0.2.14
+   Compiling x11rb v0.13.2
+   Compiling smithay-client-toolkit v0.19.2
+   Compiling smithay-client-toolkit v0.20.0
+   Compiling scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-storage)
+   Compiling async-process v2.5.0
+   Compiling zbus v5.19.0
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
+   Compiling smithay-clipboard v0.7.3
+   Compiling winit v0.30.13
+   Compiling arboard v3.6.1
+   Compiling glutin-winit v0.5.0
+   Compiling atspi-common v0.13.0
+   Compiling atspi-proxies v0.13.0
+   Compiling accesskit_atspi_common v0.18.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/accesskit_atspi_common)
+   Compiling atspi v0.29.0
+   Compiling accesskit_unix v0.21.1
+   Compiling accesskit_winit v0.32.2
+   Compiling egui-winit v0.36.2
+   Compiling eframe v0.36.2
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-app)
+    Finished `dev` profile [unoptimized] target(s) in 16.19s
