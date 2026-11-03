@@ -157,7 +157,8 @@ class Replay:
             table = tomllib.loads((ROOT.parents[1] / "crates/scholium-app/src/command/default-keymap.toml").read_text())
             chord = next(b["keys"][0] for b in table["binding"] if b["command"] == ids[event["command"]])
             self.xdo("key", "--clearmodifiers", chord.replace("Ctrl", "ctrl").replace("Alt", "alt").replace("Shift", "shift"))
-            return
+            time.sleep(0.15)
+            return self.ready()
         if "text" in event:
             text = event["text"]
             # One scenario Text is one commit; typing words separately creates undo groups.
