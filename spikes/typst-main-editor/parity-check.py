@@ -156,7 +156,16 @@ class Replay:
                    "Fraction": "insert.fraction", "Root": "insert.root", "DisplayMath": "insert.display_formula"}
             table = tomllib.loads((ROOT.parents[1] / "crates/scholium-app/src/command/default-keymap.toml").read_text())
             chord = next(b["keys"][0] for b in table["binding"] if b["command"] == ids[event["command"]])
-            self.xdo("key", "--clearmodifiers", chord.replace("Ctrl", "ctrl").replace("Alt", "alt").replace("Shift", "shift"))
+            # Uppercase display names imply Shift to xdotool; send the physical letter
+            # lowercase, leaving Shift exclusively controlled by the declared modifiers.
+            parts = chord.split("+")
+            symbol = parts[-1]
+            if re.fullmatch(r"F\d+", symbol):
+                symbol = str(keycode(self.env["DISPLAY"], symbol))
+            else:
+                symbol = symbol.lower()
+            native = "+".join([p.lower() for p in parts[:-1]] + [symbol])
+            self.xdo("key", "--clearmodifiers", native)
             time.sleep(0.15)
             return self.ready()
         if "text" in event:
