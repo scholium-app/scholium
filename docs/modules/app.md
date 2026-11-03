@@ -124,7 +124,7 @@ placement 的 scale 取量化后的值，故命中/caret 与绘制一致。页�
 因为 egui-winit 0.36 的候选窗定位读取前者；不能发布整页矩形。egui-winit 在缺少 IME 输出的帧关闭平台输入法，反复开关会让 fcitx5 停止送字。
 同帧 Text 仅在与 IME Commit 文字相同时视为重复丢弃；输入法透传的英文 Text 照常输入。
 Escape 分层取消，不释放页面焦点：先取消选区、IME 组合与拖动；三者都没有且光标在行内公式内时，离开该公式，
-光标落在公式之后的正文（与 Ctrl+M 离开同位；空占位槽由占位生命周期移除）；公式外无事可做。
+光标落在公式之后的正文（与公式切换命令离开同位；空占位槽由占位生命周期移除）；公式外无事可做。
 视图跟随光标由 session core 返回 page-pt 矩形意图，app 的 `typst_editor/follow.rs` 只负责将其转换为滚动区动作：键入/粘贴/提交、Enter、删除、方向键、Home/End、撤销重做与移动光标的工具栏命令
 引起光标移动后，滚动区最小幅度滚动，使光标矩形上下（放宽时左右）各留 2 行正文（`FOLLOW_MARGIN_LINES`）；
 Ctrl+Home/End 另外露出页面顶部（含外边距）与底部。只有输入引起的光标变化才触发；滚轮、滚动条与点击不触发，
@@ -345,7 +345,7 @@ JSON `preedit`/`commit`（可选 `cursor_chars`）给同一 egui 输入路径送
 
 ## 数学分数选区呈现
 
-分数按钮、插入菜单与 Ctrl+/ 经同一 session 命令，在光标处插入空分数或包装同一数学行选区。
+分数按钮、插入菜单与键位表分派经同一 session 命令，在光标处插入空分数或包装同一数学行选区。
 数学行的 Shift+左右选择和折叠由 core 决定；app 的 `selection_quads` 从当前 Scene 读取 core 的数学选区几何。
 正文跨公式选择使用 `selection_math`，因此包含 Text 与 Fraction 的 Row 不依赖不存在的 wrapper bounds。
 
@@ -365,3 +365,10 @@ macOS 为 Library/Application Support，Windows 为 APPDATA；测试可指定 SC
 每条 `(command, scope)` 替换该项全部 keys，空数组解除绑定；修改后重启生效。整份文件先验证再安装，
 解析、引用、冲突或读取失败保留默认表，诊断输出到 stderr 并显示在帮助→快捷键窗口。
 菜单右侧、工具提示、快捷键帮助均读取同一生效表。
+
+
+页面中的反斜线命令输入由共享引擎维护 query 与候选，app 在当前 Typst caret 下方绘制独立浮层；
+上下键选择，Enter/Tab 接受，Esc 取消。浮层只显示未提交 query 与候选，不回显已接受正文。
+焦点栏读取 `EditorCore::tab_action` 显示补全/循环/槽位提示，窄窗口把放不下的数学命令收进“»”菜单，保留模式切换。Linux Alt 快捷键同时产生的文字事件被消费，
+避免结构后夹入字母。原生剪贴板事件也重新经过生效键位表，解除或改键不会保留默认别名；
+菜单触发的原生剪贴板请求带一次性标记，避免被误当物理默认键重复过滤。

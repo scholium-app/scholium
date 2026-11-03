@@ -2,7 +2,7 @@
 mod access;
 mod attach;
 mod audit;
-mod clipboard;
+pub(crate) mod clipboard;
 #[cfg(test)]
 mod command_keys_tests;
 mod composition;
@@ -16,6 +16,7 @@ mod ime_check;
 mod indicator;
 mod input;
 mod math_enter;
+pub(crate) mod math_input;
 mod paint;
 mod raster;
 mod scene;
@@ -74,6 +75,9 @@ pub(crate) struct EditorView {
     pub in_math: bool,
     pub in_root: bool,
     pub in_delimiter: bool,
+    pub tab_action: scholium_math_input::TabAction,
+    pub command_open: bool,
+    pub focus_type: Option<&'static str>,
     /// Bold / emphasis state of the caret leaf, pending typing style or whole selection.
     pub active: style::ActiveStyles,
     pub can_undo: bool,
@@ -101,6 +105,7 @@ pub(crate) struct EditorView {
 /// UI client of EditorCore; owns textures, toolkit event storage and platform state.
 pub(crate) struct EditorSession {
     core: EditorCore,
+    shortcut_text: Option<egui::Key>,
     texture: Option<raster::Layers>,
     /// Last display scale, for diagnostics.
     pixels_per_point: f32,
@@ -190,6 +195,7 @@ impl EditorSession {
         core.submit_layout();
         let mut result = Self {
             core,
+            shortcut_text: None,
             drag: None,
             published: None,
             source_view: Default::default(),
@@ -224,6 +230,7 @@ impl EditorSession {
         }
         self.controls(ui.ctx(), state);
         paint::show(ui, state, self);
+        self.math_command_box(ui.ctx(), state);
         // A click inside paint may have moved the caret out of a placeholder.
         self.settle_placeholder(state);
         // Saving while input waits for layout would persist a state the user never saw.
@@ -264,7 +271,7 @@ impl EditorSession {
     fn metadata(&mut self, state: &mut WorkspaceState) -> bool {
         let shown = |v: &EditorView| {
             (
-                v.revision,
+                (v.revision, v.tab_action, v.command_open),
                 v.in_math,
                 v.active,
                 v.shown_revision,
@@ -299,8 +306,11 @@ impl EditorSession {
             view.dirty = self.core.dirty();
             view.selected = self.selected();
             view.in_math = self.in_math();
+            view.focus_type = self.core.math_focus_type();
             view.in_root = self.core.root_owner().is_some();
             view.in_delimiter = self.core.delimiter_owner().is_some();
+            view.tab_action = self.core.tab_action();
+            view.command_open = self.core.math_input.command().is_some();
             view.active = self.active_styles();
             view.can_undo = !self.undo.is_empty();
             view.can_redo = !self.redo.is_empty();
@@ -411,3 +421,6 @@ impl std::ops::DerefMut for EditorSession {
         &mut self.core
     }
 }
+
+#[cfg(test)]
+mod math_input_tests;

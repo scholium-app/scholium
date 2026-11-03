@@ -17,11 +17,16 @@ pub enum TabAction {
 pub struct Engine {
     command: Option<String>,
     recent: Option<String>,
+    selected: usize,
 }
 impl Engine {
     /// Current inline command query, excluding the backslash.
     pub fn command(&self) -> Option<&str> {
         self.command.as_deref()
+    }
+    /// Selected completion index, clamped to the currently visible candidate set.
+    pub fn selected(&self) -> usize {
+        self.selected.min(self.candidates().len().saturating_sub(1))
     }
     /// Sorted prefix candidates, from the shared command table.
     pub fn candidates(&self) -> Vec<&'static data::Command> {
@@ -43,6 +48,7 @@ impl Engine {
     /// Discard transient command input when authority/context is replaced.
     pub fn reset(&mut self) {
         self.command = None;
+        self.selected = 0;
         self.interrupt();
     }
     /// Resolve Tab using the same context supplied for execution and the focus hint.
@@ -141,16 +147,29 @@ impl Engine {
             Event::Text(c) if c.is_ascii_alphanumeric() || c == '.' => {
                 if let Some(query) = &mut self.command {
                     query.push(c);
+                    self.selected = 0;
                 }
             }
             Event::Backspace => {
                 if let Some(query) = &mut self.command {
                     query.pop();
+                    self.selected = 0;
                 }
             }
             Event::Cancel => self.reset(),
-            Event::Accept | Event::Tab { .. } => {
-                if let Some(c) = self.candidates().first() {
+            Event::Select(reverse) => {
+                let count = self.candidates().len();
+                if count > 0 {
+                    self.selected = (self.selected() + if reverse { count - 1 } else { 1 }) % count;
+                }
+            }
+            Event::Accept | Event::Tab { .. } | Event::Choose(_) => {
+                let index = if let Event::Choose(index) = event {
+                    index
+                } else {
+                    self.selected()
+                };
+                if let Some(c) = self.candidates().get(index) {
                     let intent = if let Some(symbol) = &c.symbol {
                         Intent::Symbol(symbol.clone())
                     } else if let Some(t) = c.template.as_deref().and_then(Template::named) {

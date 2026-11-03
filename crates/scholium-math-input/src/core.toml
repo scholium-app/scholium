@@ -4,193 +4,193 @@
 
 [[symbol]]
 unicode = "⩽"
-category = "math"
+category = "relation"
 latex = "leqslant"
 typst = "lt.eq.slant"
 
 [[symbol]]
 unicode = "⩾"
-category = "math"
+category = "relation"
 latex = "geqslant"
 typst = "gt.eq.slant"
 
 [[symbol]]
 unicode = "≠"
-category = "math"
+category = "relation"
 latex = "ne"
 typst = "eq.not"
 
 [[symbol]]
 unicode = "→"
-category = "math"
+category = "arrow"
 latex = "to"
 typst = "arrow.r"
 
 [[symbol]]
 unicode = "⇒"
-category = "math"
+category = "arrow"
 latex = "Rightarrow"
 typst = "arrow.r.double"
 
 [[symbol]]
 unicode = "∞"
-category = "math"
+category = "constant"
 latex = "infty"
 typst = "infinity"
 
 [[symbol]]
 unicode = "ℝ"
-category = "math"
-latex = "mathbbR"
+category = "letter"
+latex = "\\mathbb{R}"
 typst = "RR"
 
 [[symbol]]
 unicode = "ℤ"
-category = "math"
-latex = "mathbbZ"
+category = "letter"
+latex = "\\mathbb{Z}"
 typst = "ZZ"
 
 [[symbol]]
 unicode = "ℕ"
-category = "math"
-latex = "mathbbN"
+category = "letter"
+latex = "\\mathbb{N}"
 typst = "NN"
 
 [[symbol]]
 unicode = "ℚ"
-category = "math"
-latex = "mathbbQ"
+category = "letter"
+latex = "\\mathbb{Q}"
 typst = "QQ"
 
 [[symbol]]
 unicode = "ℂ"
-category = "math"
-latex = "mathbbC"
+category = "letter"
+latex = "\\mathbb{C}"
 typst = "CC"
 
 [[symbol]]
 unicode = "ℛ"
-category = "math"
-latex = "mathcalR"
+category = "letter"
+latex = "\\mathcal{R}"
 typst = "cal(R)"
 
 [[symbol]]
 unicode = "ℜ"
-category = "math"
+category = "letter"
 latex = "Re"
 typst = "Re"
 
 [[symbol]]
 unicode = "≤"
-category = "math"
+category = "relation"
 latex = "leq"
 typst = "lt.eq"
 
 [[symbol]]
 unicode = "≥"
-category = "math"
+category = "relation"
 latex = "geq"
 typst = "gt.eq"
 
 [[symbol]]
 unicode = "←"
-category = "math"
+category = "arrow"
 latex = "leftarrow"
 typst = "arrow.l"
 
 [[symbol]]
 unicode = "↔"
-category = "math"
+category = "arrow"
 latex = "leftrightarrow"
 typst = "arrow.l.r"
 
 [[symbol]]
 unicode = "⇔"
-category = "math"
+category = "arrow"
 latex = "Leftrightarrow"
 typst = "arrow.l.r.double"
 
 [[symbol]]
 unicode = "∈"
-category = "math"
+category = "relation"
 latex = "in"
 typst = "in"
 
 [[symbol]]
 unicode = "∉"
-category = "math"
+category = "relation"
 latex = "notin"
 typst = "in.not"
 
 [[symbol]]
 unicode = "α"
-category = "math"
+category = "letter"
 latex = "alpha"
 typst = "alpha"
 
 [[symbol]]
 unicode = "β"
-category = "math"
+category = "letter"
 latex = "beta"
 typst = "beta"
 
 [[symbol]]
 unicode = "γ"
-category = "math"
+category = "letter"
 latex = "gamma"
 typst = "gamma"
 
 [[symbol]]
 unicode = "π"
-category = "math"
+category = "letter"
 latex = "pi"
 typst = "pi"
 
 [[symbol]]
 unicode = "φ"
-category = "math"
+category = "letter"
 latex = "phi"
 typst = "phi"
 
 [[symbol]]
 unicode = "ϕ"
-category = "math"
+category = "letter"
 latex = "varphi"
 typst = "phi.alt"
 
 [[symbol]]
 unicode = "ε"
-category = "math"
+category = "letter"
 latex = "epsilon"
 typst = "epsilon"
 
 [[symbol]]
 unicode = "ϵ"
-category = "math"
+category = "letter"
 latex = "varepsilon"
 typst = "epsilon.alt"
 
 [[symbol]]
 unicode = "′"
-category = "math"
+category = "punctuation"
 latex = "prime"
 typst = "prime"
 
 [[symbol]]
 unicode = "∅"
-category = "math"
+category = "constant"
 latex = "emptyset"
 typst = "emptyset"
 
 [[symbol]]
 unicode = "≡"
-category = "math"
+category = "relation"
 latex = "equiv"
 typst = "eq.triple"
 
 [[symbol]]
 unicode = "∣"
-category = "math"
+category = "relation"
 latex = "mid"
 typst = "divides"
 
@@ -567,3 +567,33 @@ symbol = "∣"
 [[command]]
 name = "divides"
 symbol = "∣"
+
+[[symbol]]
+unicode = "R"
+category = "letter"
+latex = "R"
+typst = "R"
+
+[[command]]
+name = "R"
+symbol = "R"
+
+[[symbol]]
+unicode = "<"
+category = "relation"
+latex = "lt"
+typst = "lt"
+
+[[command]]
+name = "lt"
+symbol = "<"
+
+[[symbol]]
+unicode = ">"
+category = "relation"
+latex = "gt"
+typst = "gt"
+
+[[command]]
+name = "gt"
+symbol = ">"

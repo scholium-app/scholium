@@ -476,3 +476,10 @@ a11y-math-edge-delimited-after = 公式内，括号后
 command-edit-select_all =
     .title = 全选
     .tooltip = 选择全部正文
+
+math-input-command = 数学命令
+math-input-no_candidates = 没有匹配命令
+math-input-accept_hint = Enter / Tab：插入 · ↑↓：选择 · Esc：取消
+math-input-tab-complete = Tab：补全命令
+math-input-tab-cycle = Tab：循环符号
+math-input-tab-slot = Tab：下个槽位

@@ -32,7 +32,9 @@ pub(super) fn show(ui: &mut Ui, state: &mut WorkspaceState) {
     ui.with_layout(Layout::left_to_right(Align::Center), |ui| {
         ui.add_space(Tokens::ALIGN_LEFT - Tokens::PAD_BAR);
         if in_math(state) {
-            math(ui, state);
+            math(ui, state, room);
+        } else if state.editor.as_ref().is_some_and(|v| v.command_open) {
+            tag(ui, &crate::typst_editor::math_input::tab_hint(state), None);
         } else {
             properties(ui, state, room);
         }
@@ -156,14 +158,20 @@ fn language_name(state: &WorkspaceState) -> String {
 }
 
 /// 「公式」 tag, then the commands the registry marks for formulas.
-fn math(ui: &mut Ui, state: &mut WorkspaceState) {
+fn math(ui: &mut Ui, state: &mut WorkspaceState, room: f32) {
+    let left = ui.cursor().left();
     let tip = command_ui::text(state, "chrome.focus.math_hint");
     tag(
         ui,
-        &command_ui::text(state, "chrome.focus.math"),
+        &format!(
+            "{} · {}",
+            command_ui::text(state, "chrome.focus.math"),
+            crate::typst_editor::math_input::tab_hint(state)
+        ),
         Some(&tip),
     );
     ui.add_space(Tokens::PAD_BAR);
+    let mut hidden = Vec::new();
     for spec in registry::focus_items(FocusKind::Math) {
         if spec.id == "insert.root_index" && !state.editor.as_ref().is_some_and(|v| v.in_root)
             || spec.id == "insert.cycle_delimiter"
@@ -172,13 +180,69 @@ fn math(ui: &mut Ui, state: &mut WorkspaceState) {
             continue;
         }
         let resolved = command_ui::resolve_spec(state, spec);
+        let label = resolved.title(state);
+        let hint = resolved.shortcut();
+        let font = crate::theme::font(Tokens::SMALL_TEXT);
+        let width = 16.0
+            + crate::widgets::text_width(ui, &label, font.clone())
+            + hint
+                .as_ref()
+                .map_or(0.0, |s| 6.0 + crate::widgets::text_width(ui, s, font));
+        // Reserve one compact overflow button before the always-visible mode switch.
+        if !hidden.is_empty() || ui.cursor().left() - left + width + 32.0 > room {
+            hidden.push(spec);
+            continue;
+        }
         let button = TextButton {
-            label: resolved.title(state),
-            hint: resolved.shortcut(),
+            label,
+            hint,
             meta: resolved.meta(state, "focus"),
         };
         if text_button(ui, button).clicked() && resolved.enabled() {
             command_ui::invoke(&ui.ctx().clone(), state, spec.id);
         }
     }
+    if !hidden.is_empty() {
+        math_overflow(ui, state, &hidden);
+    }
+}
+
+fn math_overflow(
+    ui: &mut Ui,
+    state: &mut WorkspaceState,
+    hidden: &[&'static crate::command::spec::CommandSpec],
+) {
+    let name = command_ui::text(state, "chrome.overflow");
+    let button = TextButton {
+        label: "»".into(),
+        hint: None,
+        meta: Meta::new("ui.focus.overflow", "focus", name),
+    };
+    let response = text_button(ui, button);
+    crate::widgets::button_menu(&response, egui::RectAlign::BOTTOM_START, |ui| {
+        let rows: Vec<_> = hidden
+            .iter()
+            .map(|s| {
+                let resolved = command_ui::resolve_spec(state, s);
+                (resolved.title(state), resolved.shortcut())
+            })
+            .collect();
+        let borrowed: Vec<_> = rows
+            .iter()
+            .map(|(l, h)| (l.as_str(), h.as_deref(), false))
+            .collect();
+        ui.set_width(crate::widgets::menu_width(ui, &borrowed));
+        for spec in hidden {
+            let resolved = command_ui::resolve_spec(state, spec);
+            let item = crate::widgets::MenuItem {
+                label: resolved.title(state),
+                shortcut: resolved.shortcut(),
+                glyph: None,
+                meta: resolved.meta(state, "focus-overflow"),
+            };
+            if crate::widgets::menu_item(ui, item) {
+                command_ui::invoke(&ui.ctx().clone(), state, spec.id);
+            }
+        }
+    });
 }

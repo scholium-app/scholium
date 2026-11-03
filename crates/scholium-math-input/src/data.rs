@@ -87,7 +87,10 @@ impl Data {
                 return Err(fail("empty cycle"));
             }
             for item in &group.items {
-                if item.chars().count() != 1 || !cycled.insert(item) {
+                if item.chars().count() != 1
+                    || !symbols.contains(item.as_str())
+                    || !cycled.insert(item)
+                {
                     return Err(fail("ambiguous cycle"));
                 }
             }

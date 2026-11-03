@@ -94,7 +94,12 @@ pub(crate) fn editor_command(
         .iter()
         .filter(|b| b.scope.matches(true, math, focus))
         .filter(|b| b.keys.iter().any(|k| super::keys::matches(*k, key, mods)))
-        .max_by_key(|b| b.scope.priority())
+        .max_by_key(|b| {
+            (
+                b.scope.priority(),
+                b.keys.iter().any(|k| k.shift == mods.shift),
+            )
+        })
         .and_then(|b| get(&b.command))
         .filter(|s| s.routing == Routing::Editor)
 }

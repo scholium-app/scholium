@@ -149,6 +149,8 @@ fn tab_walks_base_sub_sup_and_then_out_of_the_formula() {
     ]);
     assert_eq!(caret(&f).0, ids.2);
     f.events(vec![press(egui::Key::Tab, false)]);
+    assert_eq!(caret(&f), (formula.node, 1), "after the last slot");
+    f.events(vec![press(egui::Key::Tab, false)]);
     assert!(
         f.editor.body_leaf(f.editor.cursor.leaf),
         "out of the formula"

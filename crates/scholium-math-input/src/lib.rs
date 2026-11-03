@@ -53,6 +53,8 @@ pub enum Event {
     Accept,
     Cancel,
     Backspace,
+    Choose(usize),
+    Select(bool),
     Structure(Template),
 }
 /// Document-free editing intent; `bytes` counts UTF-8 bytes immediately before the caret.

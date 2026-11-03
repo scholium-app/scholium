@@ -3739,6 +3739,7 @@ dependencies = [
  "fontdb",
  "resvg",
  "scholium-document",
+ "scholium-math-input",
  "scholium-model",
  "scholium-session",
  "scholium-storage",

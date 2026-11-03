@@ -262,10 +262,15 @@ fn user_path() -> Option<PathBuf> {
     base.map(|b| b.join("scholium/keymap.toml"))
 }
 
+pub(crate) fn defaults() -> &'static Keymap {
+    static DEFAULTS: OnceLock<Keymap> = OnceLock::new();
+    DEFAULTS.get_or_init(Keymap::defaults)
+}
+
 pub(crate) fn effective() -> &'static Keymap {
     static MAP: OnceLock<Keymap> = OnceLock::new();
     MAP.get_or_init(|| {
-        let defaults = Keymap::defaults();
+        let defaults = defaults().clone();
         let Some(path) = user_path() else {
             return defaults;
         };
