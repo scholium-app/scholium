@@ -30,6 +30,9 @@ pub(super) fn facts(state: &WorkspaceState) -> serde_json::Value {
 }
 
 fn context_key(state: &WorkspaceState) -> &'static str {
+    if state.source_language.is_some() {
+        return "project.source.context";
+    }
     if state.mode == ViewMode::Source {
         "chrome.status.context.source"
     } else if state.editor.as_ref().is_some_and(|e| e.in_math) {
@@ -116,6 +119,14 @@ pub(super) fn revisions(state: &WorkspaceState, view: &EditorView) -> String {
 /// The always-visible backend label; it reads "updating" while the picture is stale. Both
 /// texts get the wider one's width, so switching never moves the segments beside it.
 fn backend(ui: &mut Ui, state: &WorkspaceState, view: &EditorView, tip: &str) {
+    if let Some(language) = state.source_language {
+        let key = match language {
+            scholium_storage::project::ProjectLanguage::Latex => "project.latex.pending",
+            _ => "project.source.authority",
+        };
+        status_text(ui, &command_ui::text(state, key), None, None);
+        return;
+    }
     let font = theme::font(Tokens::SMALL_TEXT);
     let steady = command_ui::text(state, "chrome.status.backend");
     let updating = command_ui::text(state, "chrome.status.updating");

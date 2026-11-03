@@ -141,3 +141,34 @@ fn read_archive(db: &Connection) -> Result<Vec<(i64, String)>, StructuredStoreEr
     }
     Ok(archive)
 }
+
+pub(crate) fn read_project_head(
+    source: &Path,
+) -> Result<Option<super::PersistedStructuredSession>, StructuredStoreError> {
+    let mut db = Connection::open_with_flags(source, OpenFlags::SQLITE_OPEN_READ_ONLY)?;
+    let version: i64 = db.query_row("PRAGMA user_version", [], |r| r.get(0))?;
+    if version == 1 {
+        structured::validate_schema(&db)?;
+        return super::SessionStore { db }.load_structured();
+    }
+    structured::require_version(&db, 0)?;
+    let tx = db.transaction()?;
+    legacy::validate_schema(&tx)?;
+    let head: i64 = tx.query_row(
+        "SELECT value FROM meta WHERE key='head_revision'",
+        [],
+        |r| r.get(0),
+    )?;
+    if head == -1 {
+        return Ok(None);
+    }
+    let (head, requests) = read_head(&tx)?;
+    // Validate the original archive too; it remains in the retained read-only source.
+    read_archive(&tx)?;
+    let migrated = StructuredDocument::migrate(&head)?;
+    tx.commit()?;
+    Ok(Some(super::PersistedStructuredSession {
+        snapshot: migrated.document,
+        requests,
+    }))
+}

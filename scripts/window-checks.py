@@ -67,6 +67,7 @@ def run_one(name, binary, out, locale):
     env = {k: v for k, v in os.environ.items() if k not in ("DISPLAY", "WAYLAND_DISPLAY")}
     env.pop("XAUTHORITY", None)
     env["SCHOLIUM_LOCALE"] = locale
+    env["SCHOLIUM_RECENT_FILE"] = str(outdir / "recent-projects.json")
     timeout = EXCEPTIONS.get(name, {}).get("timeout", DEFAULT_TIMEOUT)
     start = time.monotonic()
     with open(log, "w") as fh:

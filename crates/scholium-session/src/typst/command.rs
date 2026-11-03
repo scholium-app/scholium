@@ -199,6 +199,10 @@ impl EditorCore {
         };
         match result {
             Ok(applied) => {
+                self.pending_persistence.extend(state.pending);
+                if let Err(error) = self.persist_pending() {
+                    self.persistence_error = Some(error.to_string());
+                }
                 if matches!(id, CommandId::Undo | CommandId::Redo) {
                     self.follow.pending = true;
                     self.follow.edge = None;

@@ -48,7 +48,7 @@ class Replay:
     def __init__(self, binary, output):
         self.output = output
         self.log = output / "app.log"
-        self.env = dict(os.environ, SCHOLIUM_SESSION_FILE=str(output / "doc.sqlite"),
+        self.env = dict(os.environ, SCHOLIUM_PROJECT_PATH=str(output / "project"),
                         SCHOLIUM_EDITOR_AUDIT="1", WINIT_UNIX_BACKEND="x11", WINIT_X11_SCALE_FACTOR="1")
         self.env["SCHOLIUM_TEST_FONTS"] = "bundled"
         self.env.pop("WAYLAND_DISPLAY", None)

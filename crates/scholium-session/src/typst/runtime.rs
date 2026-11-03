@@ -34,7 +34,29 @@ impl EditorCore {
         fonts: scholium_typst::FontProfile,
     ) -> Result<Self, SessionError> {
         let mut core = Self::open(path)?;
-        core.runtime = Some(Runtime {
+        core.start_runtime(wake, fonts)?;
+        Ok(core)
+    }
+
+    /// Open a formal project with the existing Typst page runtime.
+    ///
+    /// # Errors
+    /// Returns project/validation failures or failure to start the worker.
+    pub fn open_project_with_wake(
+        handle: scholium_storage::project::ProjectHandle,
+        wake: impl Fn() + Send + 'static,
+    ) -> Result<Self, SessionError> {
+        let mut core = Self::open_project(handle)?;
+        core.start_runtime(wake, scholium_typst::FontProfile::from_environment())?;
+        Ok(core)
+    }
+
+    fn start_runtime(
+        &mut self,
+        wake: impl Fn() + Send + 'static,
+        fonts: scholium_typst::FontProfile,
+    ) -> Result<(), SessionError> {
+        self.runtime = Some(Runtime {
             worker: EditorWorker::spawn_with_fonts(wake, fonts)?,
             token: 0,
             preedit: None,
@@ -42,7 +64,7 @@ impl EditorCore {
             sent: None,
             shown_scale: None,
         });
-        Ok(core)
+        Ok(())
     }
 
     /// Request display-only body preedit, without creating a semantic action.

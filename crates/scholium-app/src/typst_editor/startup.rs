@@ -1,54 +1,42 @@
-//! Default-launch document location; a legacy head is migrated once, never rewritten.
-use super::*;
-use std::path::Path;
+//! Default project startup. The old environment variable is no longer a writable authority.
+use scholium_storage::project::{ProjectHandle, ProjectLanguage, migrate_session};
+use std::path::PathBuf;
 
-/// Prepare `target` before the editor opens it.
-///
-/// Migrates only when `target` is absent and `legacy` holds a saved head. Both the
-/// probe and the migration open the legacy file read-only; it stays the user's copy.
-pub(super) fn prepare(
-    target: &Path,
-    legacy: &Path,
-) -> Result<Option<scholium_storage::FileMigrationReport>, SessionError> {
-    scholium_session::typst::prepare(target, legacy).map_err(|error| match error {
-        scholium_session::typst::SessionError::Io(error) => SessionError::Io(error),
-        _ => SessionError::Startup(format!(
-            "旧版会话 {} 无法迁移：{error}。旧文件未改动",
-            legacy.display()
-        )),
-    })
-}
-
-/// Shown instead of any editor when the default document cannot be opened.
-///
-/// Never starts an editor on a guessed document: that could write a second authority.
-pub(crate) fn show_error(ui: &mut egui::Ui, error: &str) {
-    egui::CentralPanel::default().show(ui, |ui| {
-        ui.heading("无法打开默认文档");
-        ui.colored_label(ui.visuals().error_fg_color, error);
-        ui.label("文件没有被修改。移走或改名上面的文件后重新启动，以空白文档开始；");
-        ui.label("旧版会话仍可用 0.1 系列早于 ADR 0037 的版本打开。");
-    });
-}
-
-/// Default-launch document, with a notice when it was just migrated.
-pub(super) fn default_document() -> Result<(PathBuf, Option<String>), SessionError> {
-    let target = scholium_storage::default_document_path().map_err(SessionError::Startup)?;
-    let legacy = scholium_storage::default_session_path().map_err(SessionError::Startup)?;
-    let notice = prepare(&target, &legacy)?.map(|report| {
-        let raw = report.content.raw_formulas.len();
-        let formulas = if raw == 0 {
-            String::new()
+pub(crate) fn default_project() -> Result<(ProjectHandle, bool), String> {
+    if let Some(path) = std::env::var_os("SCHOLIUM_PROJECT_PATH").filter(|p| !p.is_empty()) {
+        let path = PathBuf::from(path);
+        let handle = if path.exists() {
+            ProjectHandle::open(&path, None)
         } else {
-            format!("；{raw} 个旧公式保留为原串，转换前不可排版或编辑")
+            ProjectHandle::create(&path, ProjectLanguage::Typst)
         };
-        format!(
-            "已从旧版文档迁移，原文件保留在 {}{formulas}。",
-            legacy.display()
-        )
-    });
-    Ok((target, notice))
+        return handle.map(|p| (p, false)).map_err(|e| e.to_string());
+    }
+    let structured = scholium_storage::default_document_path()?;
+    let legacy = scholium_storage::default_session_path()?;
+    let root = structured.with_file_name("default-project");
+    if root.exists() {
+        return ProjectHandle::open(&root, None)
+            .map(|p| (p, false))
+            .map_err(|e| e.to_string());
+    }
+    let source = if structured.exists() {
+        scholium_storage::project::session_has_head(&structured)
+            .map_err(|e| e.to_string())?
+            .then_some(structured)
+    } else if legacy.exists()
+        && scholium_storage::legacy_has_head(&legacy).map_err(|e| e.to_string())?
+    {
+        Some(legacy)
+    } else {
+        None
+    };
+    match source {
+        Some(source) => migrate_session(&source, &root)
+            .map(|r| (r.project, true))
+            .map_err(|e| format!("{}: {e}", source.display())),
+        None => ProjectHandle::create(&root, ProjectLanguage::Typst)
+            .map(|p| (p, false))
+            .map_err(|e| e.to_string()),
+    }
 }
-
-#[cfg(test)]
-mod tests;

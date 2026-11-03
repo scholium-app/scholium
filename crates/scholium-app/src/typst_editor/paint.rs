@@ -81,7 +81,7 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
     session.track_raster(ui.ctx(), fit.px_per_pt, view);
     let response = ui.interact(rect, id(), Sense::click_and_drag());
     session.placement = Some((rect, scale));
-    if session.focus {
+    if session.focus && !state.file_modal {
         response.request_focus();
         session.focus = false;
     }
@@ -101,7 +101,7 @@ fn canvas(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut EditorSes
                 },
             )
         });
-        if !session.confirm_new && !session.confirm_close {
+        if !state.file_modal && !session.confirm_new && !session.confirm_close {
             let mut events = page_events(ui, visible);
             events.extend(ime_check::events(ui.ctx()));
             if let Some(text) = session.events(events, state) {

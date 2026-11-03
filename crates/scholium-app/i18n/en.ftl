@@ -490,6 +490,28 @@ math-input-tab-complete = Tab: complete
 math-input-tab-cycle = Tab: cycle symbol
 math-input-tab-slot = Tab: next slot
 
+# Project files and formal storage
+project-latex-pending = LaTeX preview is under development
+project-source-authority = Typst source · source file authority
+project-locked = This project is already open in another window or process. Close it there first.
+project-conflict = Modified externally
+project-conflict-help = The source file was preserved. Reload discards the local draft; Save As keeps the current input.
+project-entry-required = Choose an explicit .tex or .typ entry file.
+project-entry-optional = Entry (optional, relative to the project; required for ambiguous folders)
+project-open-failed = Project operation failed
+project-ok = OK
+project-reload = Reload
+project-recent-empty = No recent projects
+project-path-open = Project folder or .tex / .typ file path
+project-path-new = New project folder path (must not exist yet)
+project-language = Project language (fixed at creation)
+project-welcome = Create or open a project from the File menu
+project-migrated-title = Session migrated
+project-migrated-body = An independent project was created. The original session is retained. See .scholium/migration.json in the project; old history is not reconstructed as editing Actions.
+project-source-context = Source authority
+project-import = Migrate an old session…
+project-import-target = New project folder for the imported session
+
 # LaTeX source workbench
 latex-workspace = LaTeX source workbench
 latex-source = LaTeX source · unsaved edits

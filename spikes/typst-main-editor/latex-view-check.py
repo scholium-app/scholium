@@ -71,7 +71,7 @@ def run(name, source, native=False):
     project = root / "project"
     project.mkdir(parents=True)
     (project / "main.tex").write_text(source)
-    env = dict(os.environ, SCHOLIUM_LATEX_PROJECT=str(project), SCHOLIUM_SESSION_FILE=str(root / "doc.sqlite"),
+    env = dict(os.environ, SCHOLIUM_LATEX_PROJECT=str(project),
                SCHOLIUM_EDITOR_AUDIT="1", WINIT_UNIX_BACKEND="x11", WINIT_X11_SCALE_FACTOR="1")
     env.pop("WAYLAND_DISPLAY", None)
     if not native:

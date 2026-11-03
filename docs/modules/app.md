@@ -47,7 +47,7 @@ Rust 负责权威文档和业务；EUI-NEO 候选由 C++ 实现原生 UI，通�
 - `icons` 把 Lucide 图标（ISC，许可证在 `assets/icons/LICENSE`）以内嵌 SVG 经 resvg 按设备像素比光栅化并用令牌着色，
   纹理按（图标、尺寸、线宽、颜色、ppp）缓存；工具栏 18/1.5、菜单与溢出 14/1.25、状态栏与标签 12/1.25、箭头 8/1.25。
   `IconId` 来自注册表；不引入图标字体或新的光栅库。
-- `typst_editor` 是唯一编辑面（持有 session 的 EditorCore、Typst Content 场景、事件翻译、导航与迁移提示），`state` 只持有视图偏好
+- `typst_editor` 是原生 Typst 编辑面（持有 session 的 EditorCore、Typst Content 场景、事件翻译、导航与迁移提示），`state` 只持有视图偏好
   （工作方式、面板、缩放、主题、语言、工具栏显示）与编辑器元数据，`command` 是命令注册表，`commands` 保留视图命令的处理函数。
   未接入的写操作保持禁用，不以本地变量伪造保存、构建或 revision 状态。
 
@@ -90,12 +90,29 @@ SimSun → Noto Sans CJK SC，标题将 SimSun 换为 SimHei。System 始终载�
 
 ### Typst Content 编辑入口
 
-启动即打开 Typst Content 会话（[ADR 0036](../adr/ADR-0036-typst-default-editor.md)、
-[ADR 0037](../adr/ADR-0037-remove-legacy-editor.md)）；旧回显编辑器已删除，没有回退路径。未设 `SCHOLIUM_SESSION_FILE`
-时文档为 XDG 数据目录 `scholium/document.v1.sqlite`；它不存在而同目录旧版会话有已保存 head 时
-一次性迁移到新文件，旧文件只读、保持原样，页头显示迁移提示与转为原串的公式数。已有 v1
-文件不被迁移覆盖；显式 `SCHOLIUM_SESSION_FILE` 必须是 v1。没有可写副本对拷。旧文件只读探测；
-迁移或打开失败时窗口只显示原因与恢复方式，不运行编辑器。迁移只发生一次，此后不再读取旧文件。
+默认启动打开数据目录 `scholium/default-project`；显式路径由 `SCHOLIUM_PROJECT_PATH` 指定。
+正式项目通过 `ProjectHandle` 决定语言与 authority，由 `project_workspace` 装配：原生 Typst 接现有页面 EditorCore，
+普通 `.typ` 接最小源码输入与 SourceProject；LaTeX 通过 `open_latex_workspace(&ProjectHandle)` 接占位工作区，
+显示项目名、入口和“LaTeX 预览开发中”，不创建 Typst authority/worker。`source_view` 仍仅服务原生项目生成源码。
+默认项目不存在时，只读迁移旧 structured/legacy 会话当前 head，旧库保留，显示迁移提示与报告位置；
+失败或未完成迁移目标不能当空白文档打开。`SCHOLIUM_SESSION_FILE` 已退役，不再被主程序读取。
+项目声明与迁移边界见 [ADR 0051](../adr/ADR-0051-project-files-and-session-retirement.md)。
+
+### 文件命令与工作区装配
+
+`project_files` 处理新建、打开、最近项目、另存为与关闭请求，命令仍统一来自 `command/file.rs`；`file.export` 保持不可用。
+路径对话框为原生 egui 文本路径输入；新建先选 Typst/LaTeX，打开支持文件夹、单个 `.typ` / `.tex` 与显式相对入口。
+无元数据目录只有一个候选入口时直接导入，多候选要求用户填写主入口；不执行项目命令或重写原源码。
+“打开”中可选择迁移旧会话，指定独立新目标。所有新增文字由中英 Fluent catalog 提供。
+最近项目在用户配置目录 `scholium/recent-projects.json`，按成功打开的规范根路径去重，最多 12 个；
+`SCHOLIUM_RECENT_FILE` 仅用于隔离验收配置。记录错误可见，不撤销已打开项目。
+
+项目切换与文件关闭有保存/丢弃/取消确认；关闭释放项目锁，返回空工作区。原生窗口关闭沿用编辑器的确认流程。
+文件对话框打开时页面不接收键盘输入。另存为创建同语言新项目/资源身份并复制普通资源和当前内容，
+不复制私人历史或协作身份；已有目标或原目录内部目标拒绝。成功后切换至副本，原项目保留。
+源码输入写独立 draft，提交失败仍保留新输入并可见报错，保存由 materialize 比对磁盘 hash；冲突显示“外部已修改”，允许重新载入/另存为/取消。
+强杀后重开恢复 draft；LaTeX 占位只覆盖打开/保存/重开，源码编辑与预览由后续 LaTeX 工作区接入。
+锁冲突显示明确提示，不回退临时正文；保存失败不清未保存状态。空工作区仍能从文件菜单打开/新建。
 
 编辑器持有 [session](session.md) 的 `EditorCore`，将 egui 文字、可迁移按键、页面坐标和视口转换为 `Input`，由核心
 按事件顺序经唯一输入入口提交文字与命令；布局仅持有

@@ -21,7 +21,7 @@ output = Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
 if any(output.iterdir()):
     raise SystemExit("output directory must be empty")
-env = dict(os.environ, SCHOLIUM_SESSION_FILE=str(output / "doc.sqlite"), SCHOLIUM_EDITOR_AUDIT="1",
+env = dict(os.environ, SCHOLIUM_PROJECT_PATH=str(output / "project"), SCHOLIUM_EDITOR_AUDIT="1",
            WINIT_UNIX_BACKEND="x11", WINIT_X11_SCALE_FACTOR="1")
 env.pop("WAYLAND_DISPLAY", None)
 log_path = output / "app.log"
