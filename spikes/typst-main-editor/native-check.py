@@ -14,7 +14,7 @@ output = Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
 if any(output.iterdir()):
     raise SystemExit("output directory must be empty")
-env = dict(os.environ, SCHOLIUM_SESSION_FILE=str(output / "session.sqlite"), SCHOLIUM_EDITOR_AUDIT="1",
+env = dict(os.environ, SCHOLIUM_PROJECT_PATH=str(output / "project"), SCHOLIUM_EDITOR_AUDIT="1",
            WINIT_UNIX_BACKEND="x11", WINIT_X11_SCALE_FACTOR="1")
 env.pop("WAYLAND_DISPLAY", None)
 app = None
@@ -183,19 +183,13 @@ try:
     initial = start("first")
     record("01-initial", initial)
     command("key", "--clearmodifiers", "ctrl+n")
-    end = time.monotonic() + 10
-    # egui may move a modal after its initial sizing pass; act on stable observed geometry.
-    while True:
-        dialogs = entries("DIALOG ")
-        if len(dialogs) >= 3 and dialogs[-1] == dialogs[-2]:
-            break
-        if time.monotonic() > end:
-            raise RuntimeError("new document confirmation missing")
-        time.sleep(0.03)
-    subprocess.run(["import", "-window", str(window), str(output / "new-confirmation.png")], check=True, env=env)
-    x, y = entries("DIALOG ")[-1]["proceed"]
-    command("mousemove", "--window", window, round(x), round(y))
-    command("click", 1)
+    from project_ui import ProjectApp
+    controls = ProjectApp(binary, output, output / "new-project")
+    controls.app, controls.log, controls.window, controls.env = app, log_path, window, env
+    controls.control("path")
+    controls.type(str(output / "new-project"))
+    controls.control("submit")
+    env["SCHOLIUM_PROJECT_PATH"] = str(output / "new-project")
     state = wait(lambda s: s["current"] and s["snapshot"]["document"] != initial["snapshot"]["document"])
     record("02-new", state)
     click(state, state["cursor_leaf"], 0)

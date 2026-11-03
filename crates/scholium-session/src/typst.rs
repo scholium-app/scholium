@@ -78,7 +78,10 @@ pub struct EditorCore {
     pub session: ReadAuthority,
     /// Read-only accepted document projection; never an independent authority.
     pub snapshot: Arc<StructuredDocument>,
-    store: SessionStore,
+    store: persistence::Backing,
+    pending_persistence: std::collections::VecDeque<HistoryEntry>,
+    /// Durable commit failure; accepted input is retained and save retries the queue.
+    pub persistence_error: Option<String>,
     saved: Option<Arc<StructuredDocument>>,
     /// Caret in leaf-local UTF-8 bytes or at a compound edge.
     pub cursor: Position,
@@ -140,6 +143,7 @@ struct EditState {
     edit_error: Option<CommandError>,
     cleared_error: bool,
     reset_drag: bool,
+    pending: Vec<HistoryEntry>,
 }
 
 fn math_contains(node: &MathNode, leaf: scholium_model::NodeId) -> bool {

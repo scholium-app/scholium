@@ -23,7 +23,7 @@ env_base.pop("WAYLAND_DISPLAY", None)
 
 def run_case(folder, switch):
     folder.mkdir()
-    env = dict(env_base, SCHOLIUM_SESSION_FILE=str(folder / "doc.sqlite"))
+    env = dict(env_base, SCHOLIUM_PROJECT_PATH=str(folder / "project"))
     log_path = folder / "app.log"
 
     def state():

@@ -483,3 +483,25 @@ math-input-accept_hint = Enter / Tab：插入 · ↑↓：选择 · Esc：取消
 math-input-tab-complete = Tab：补全命令
 math-input-tab-cycle = Tab：循环符号
 math-input-tab-slot = Tab：下个槽位
+
+# Project files and formal storage
+project-latex-pending = LaTeX 预览开发中
+project-source-authority = Typst 源码 · 源文件为权威
+project-locked = 项目已由另一个窗口或进程打开，请先关闭该项目。
+project-conflict = 外部已修改
+project-conflict-help = 源文件没有被覆盖。重新载入会丢弃本地草稿；另存为会保留当前输入。
+project-entry-required = 请选择明确的 .tex 或 .typ 主入口文件。
+project-entry-optional = 主入口（可选，项目内相对路径；多入口目录须填写）
+project-open-failed = 项目操作失败
+project-ok = 确定
+project-reload = 重新载入
+project-recent-empty = 暂无最近项目
+project-path-open = 项目文件夹或 .tex / .typ 文件路径
+project-path-new = 新项目文件夹路径（必须尚不存在）
+project-language = 项目语言（创建后固定）
+project-welcome = 请从文件菜单新建或打开项目
+project-migrated-title = 旧会话已迁移
+project-migrated-body = 已创建独立项目。原会话文件完整保留；迁移报告位于项目的 .scholium/migration.json，旧历史不会伪装成新的编辑动作。
+project-source-context = 源码权威
+project-import = 迁移旧会话…
+project-import-target = 迁移目标（尚不存在的项目文件夹）

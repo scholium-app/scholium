@@ -162,6 +162,7 @@ fn failed_and_panicking_commands_restore_every_checkpoint_field_and_saved_head()
         let saved = f
             .core
             .store
+            .legacy()
             .load_structured()
             .expect("head")
             .expect("saved")
@@ -175,6 +176,7 @@ fn failed_and_panicking_commands_restore_every_checkpoint_field_and_saved_head()
         assert_eq!(
             f.core
                 .store
+                .legacy()
                 .load_structured()
                 .expect("head")
                 .expect("saved")

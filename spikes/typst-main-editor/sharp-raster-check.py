@@ -59,7 +59,7 @@ def gradient(png, box):
 def run(label, extra_env, scroll=False):
     folder = output / label
     folder.mkdir()
-    env = dict(os.environ, SCHOLIUM_SESSION_FILE=str(folder / "doc.sqlite"), SCHOLIUM_EDITOR_AUDIT="1",
+    env = dict(os.environ, SCHOLIUM_PROJECT_PATH=str(folder / "project"), SCHOLIUM_EDITOR_AUDIT="1",
                WINIT_UNIX_BACKEND="x11", WINIT_X11_SCALE_FACTOR=SCALE, **extra_env)
     env.pop("WAYLAND_DISPLAY", None)
     log_path = folder / "app.log"

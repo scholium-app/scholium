@@ -3,9 +3,9 @@
 ## 职责
 
 提供不依赖 UI 的本地编辑会话，公共入口为 `scholium_session::typst::EditorCore`。
-Typst 模块持有唯一 `LocalSession<StructuredDocument>`、不可变 `Arc` 投影、`SessionStore`、保存基线、
+Typst 模块持有唯一 `LocalSession<StructuredDocument>`、不可变 `Arc` 投影、正式项目 `NativeProject`（兼容 fixture 保留 `SessionStore`）、保存基线、
 光标/选区、撤销/重做与输入分组时钟、待输入样式、Attach 占位生命周期，以及纯数据诊断来源。
-默认文件的旧 head 迁移调用和显式文件的 restore/open/save 都在此层执行。
+项目路径与旧会话迁移选择由 app 决定；此层执行原生权威 restore、提交 Action 与 save。
 边界见 [ADR 0042](../adr/ADR-0042-session-editing-core.md)。
 
 ## 非职责
@@ -55,14 +55,19 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
 
 ## 公共接口
 
-- `EditorCore::open(path)` 打开/创建 v1 store；`prepare(target, legacy)` 只在目标不存在且旧文件有 head 时迁移。
+- `EditorCore::open_project(handle)` 持正式项目锁并恢复原生快照/Action；
+  `open_project_with_wake` 装配相同页面 worker。`open(path)` 保留兼容 v1 store；`prepare(target, legacy)` 只在目标不存在且旧文件有 head 时迁移。
   路径选择、迁移提示格式与启动失败页面由 app 提供。已有目标与旧文件从不覆盖。
 - `run(CommandId, CommandArgs) -> Result<Outcome, CommandError>` 是编辑命令的唯一执行入口。
   支持 app 注册表现有的公式、分数、上下标、文字样式、段落类型、undo/redo，以及 SelectAll、Delete 和
   `Text`（Typed、Commit、Paste）；语义替换、拆段、槽位离开/移除/收尾、新建和显式 StructuralEdit 同样经此入口。
   不匹配的参数形状返回错误。`Outcome` 告知投影是否变化、条件操作是否应用、旧 Scene 是否需要丢弃，
   以及 app 是否应清除旧编辑错误或拖选；不返回屏幕类型。
-- `save()` 只写已接受快照及请求日志，成功后更新保存基线；命令本身不自动保存，`dirty()` 比较完整保存内容。
+- `save()` 重试未提交队列后写已接受快照 checkpoint，成功后更新保存基线；`dirty()` 比较完整保存内容并计入待写队列/提交错误。
+  每个成功结构请求在命令内收集状态，整条命令成功后依序 append_action；失败/恐慌的命令不提交收集状态。
+  存储失败保留接纳输入和待写队列，`persistence_error` 交给 app 可见显示，不冒充保存成功。
+  `save_as_project(target)` 复制资源与当前内容至新身份，成功后切换持锁后端；
+  `discard_project` / 本地 undo/redo 追加恢复事件，不删除旧 Action；当前不是协作 undo。
   app 在 IME 组合和排队输入结束后才请求保存。
 - `session` 是不提供 `DerefMut` 和构造器的只读 authority 视图；`session()` 提供同一不可变引用。
   app 不能从此调用可变 document 方法。`restore_document` 在验证后恢复本地文档，供恢复入口和 fixture 使用。
@@ -88,9 +93,10 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
 - 只有一个权威文档；排版、源码与界面读取同一已接受投影。输入文字不会作为 Typst 代码执行。
 - 每个 `run` 在执行前保存快照、完整请求身份、光标/anchor、undo/redo、open run 与 clock、pending style、placeholder
   和保存/诊断基线。多次结构编辑（如插入后设置样式）同属一次命令事务。
-- 核心不包含 UI 或存储写入；注入时钟只读单调时间；`AssertUnwindSafe` 只包围可完整恢复的内存执行。存储不在 unwind 边界内。
+- 内存命令事务不包含 UI 或存储写入；注入时钟只读单调时间；`AssertUnwindSafe` 只包围可完整恢复的内存执行。存储不在 unwind 边界内。
 - 历史条目的 `HistorySnapshot` 包装 `Arc<StructuredDocument>`，请求日志为 `Arc<[RequestId]>`；
   克隆 undo/redo 只做 O(栈长) 的指针复制，占位持有的历史条目同样共享。`HistorySnapshot` 保留与 owned 文档的值比较。
+  正式存储的完整临时 payload 成本独立于 checkpoint；它将由 SDG adapter 增量 Action 替换。
   checkpoint 的权威直接保留 LocalSession 已验证的共享快照和 action journal，投影与 saved 基线也复用 Arc，
   不逐命令复制全文或重建/验证请求日志。接受结构编辑仍在独立规划副本上验证，提交时 action journal 写时复制。
 - 错误与 panic 恢复 checkpoint；已接受权威的回滚副本无需再次验证，恢复不执行可失败校验。失败前没有文档修改时保留 epoch；
