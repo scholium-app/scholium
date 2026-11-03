@@ -2,7 +2,7 @@
 
 ## 职责
 
-提供容错、无损 LaTeX token/CST，项目 include graph，符号与引用索引，常用论文子集到转换 IR 的投影、
+当前实现源码权威 session 与无 UI 的 live 预览监督。其余解析/转换接口为后续规划：提供容错、无损 LaTeX token/CST，项目 include graph，符号与引用索引，常用论文子集到转换 IR 的投影、
 IR 到 LaTeX 的导出生成、语义编辑降级为最小源码 patch、TeX 日志位置解析与实时预览适配。
 
 ## 非职责
@@ -22,7 +22,12 @@ src/
 ├── semantics.rs    常见命令/环境 capability
 ├── projection.rs   CST → IR + coverage
 ├── generate.rs     转换 IR → LaTeX + package requirements
-├── preview.rs      实时引擎适配与事件转换
+├── session.rs      源码权威、引擎识别、UTF-8/path 校验
+├── live.rs         公共异步会话与有界事件订阅
+├── supervisor.rs   心跳、重启、文档重同步与故障恢复
+├── transport.rs    仅经 build 沙箱启动与能力探测
+├── protocol.rs     私有、有界 JSON-lines 适配
+├── event.rs        Scholium 自有事件（无 rtex 类型）
 ├── edit.rs         rename/insert/wrap/math patch
 └── log.rs          TeX log → Diagnostic
 ```
@@ -51,6 +56,8 @@ lexer 不展开 catcode；首发假定常见 LaTeX catcode 语义。遇到可能
 字符串与解析结果。循环边形成诊断但不递归。动态拼接路径标记 unresolved，不能假装缺失或存在。
 
 ## 公共接口
+
+已实现的 session/live 合约见下节；以下 CST、projection、generate、log 接口为后续规划。
 
 - `parse(resource, revision, text) -> LatexCst`；`reparse(previous, edits) -> LatexCst`。
 - `symbols(cst) -> SymbolIndex`；`dependencies(cst) -> Vec<ResourceDependency>`（input/include、bibliography、
@@ -106,3 +113,35 @@ Rust 容错解析器配 Rowan CST 待验证；Tree-sitter 仅作可选高亮/导
 - `python3 scripts/rtex-pin.py [完整 commit SHA]` 一条命令在仓库外 clone/build、顺序跑 E1/E2/完整 E8，输出 Pass/Fail；无参数取当前 main head。
   仅三项均通过才原子更新 PIN，失败保留旧 pin；不提交或推送。E3/E5/E6、文档评审与仓库门禁仍在提交前执行。
   main pin 用于保留尚未发布的上游合并补丁（math owners、unicode-math 空根指数），并不自动追踪每次 main 变更；构建和 driver 均按完整 commit 取源码。
+
+## 源码会话与实时监督（当前实现）
+
+`SourceSession::open(root, entry)` 保持 `.tex` 为权威，识别前 20 行的 `% !TeX program = ...`，默认 LuaLaTeX；
+XeLaTeX/pdfLaTeX 标为 `PreviewMode::FullCompilation`，本 crate 不执行整编。入口与通过 `load` 加载的资源
+保存在同一源码会话，`edit` 只修改内存快照并递增宿主 revision，不改磁盘。未保存源码可由 `snapshot` 取回。
+
+`LiveSession::start(source, Arc<Sandbox>, work, LiveConfig)` 消费该权威，只通过 `scholium-build` 沙箱启动
+`rtex serve`。公共接口为 edit、snapshot、request_layout、locate、next_event、cancel；私有假 launcher 仅用于测试。
+`LiveEvent` 提供 Paragraph、Pages、Location、Diagnostic、Engine，自有 outcome/state，不公开协议 JSON 或 rtex 类型。
+Paragraph/Pages 携带宿主 process generation 和 `Option<revision>`；未匹配确认的版本为 None，不能当作当前预览。
+本批只传布局元数据，不栅格化或转发 display list；绘制、hayro 回退与整编/导出另行接入。
+
+宿主不变量：
+
+- 发送前检查规范化相对路径：拒绝绝对路径、空组件、`.`/`..`、平台歧义形式；canonicalize 后必须仍在项目内。
+  每次编辑/重同步重新检查 symlink；范围使用 UTF-8 byte offset，须有序、不越界且两端落在字符边界。
+- 独立 actor 按 interval 发 status，只有有效 status 回复证明心跳。EOF、写失败或心跳截止触发整树取消与有预算重启，
+  重启后重新发送所有已加载资源的最新源码并请求布局。宿主 revision 不回退；终止预览失败后仍保留可取回的源码。
+- 收到 EngineState Restarting/Failed 立即请求布局，恢复 Ready 时再请求一次，补回缺失的在途段落更新。
+  响应心跳的引擎 Failed 不触发宿主重启，缺宏包原因通过事件报告，等待源码修复。
+- 启动时在同一沙箱探测 `serve --help`；分别检测 `--compile-timeout-ms`/`--pass-timeout-ms`，仅对支持的参数传值。
+  缺能力发诊断并保留上游默认；后台超时/被杀结果保留 Failed。没有宿主单轮编译看门狗。
+- 每个 process generation 的 stdout/stderr 共用字节预算（默认 64 MiB），单行默认最多 16 MiB，以容纳既有大布局。
+  受限 reader 在解析前检查限额；未知字段/事件可忽略，畸形 JSON/已知字段产生诊断，超限停止进程而不循环重启。
+  协议队列和公共事件队列均有界，消费者落后导致显式终止。stderr 单独关闭不等于会话死亡。
+- 宿主用 monotonic 时间记录编辑转发到段落更新、layout request/background scheduling 到结果的耗时；这不是 UI 呈现时延或编译 watchdog。
+
+CI 故障注入无需 rtex/TeX/bwrap：私有 tests/support 假进程覆盖崩溃、挂起、丢失更新、引擎 Restarting/Failed、
+上游 pass 超时、缺宏包、偏移/路径拒绝、畸形/超长/累计输出与启动失败。ignored 原生测试使用与 build 相同的
+三个 `SCHOLIUM_RTEX_*` 配置变量，在本机验证启动—编辑—段落更新、杀/停 serve 及输入拒绝；环境不可用时明确失败，
+报告“未运行”及原因。实际测试记录属于开发日志，不作为本节实现依据。

@@ -1,0 +1,135 @@
+[
+  {
+    "name": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 0.668
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--workspace",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "seconds": 1.61
+  },
+  {
+    "name": "test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--workspace"
+    ],
+    "exit": 0,
+    "seconds": 44.023
+  },
+  {
+    "name": "doc",
+    "command": [
+      "cargo",
+      "doc",
+      "--locked",
+      "--workspace",
+      "--no-deps"
+    ],
+    "exit": 0,
+    "seconds": 0.965,
+    "env": {
+      "RUSTDOCFLAGS": "-D warnings"
+    }
+  },
+  {
+    "name": "rust-size",
+    "command": [
+      "python3",
+      "scripts/check-rust-size.py"
+    ],
+    "exit": 0,
+    "seconds": 0.058
+  },
+  {
+    "name": "doc-links",
+    "command": [
+      "python3",
+      "scripts/check-doc-links.py"
+    ],
+    "exit": 0,
+    "seconds": 0.153
+  },
+  {
+    "name": "ui-strings",
+    "command": [
+      "python3",
+      "scripts/check-ui-strings.py"
+    ],
+    "exit": 0,
+    "seconds": 0.146
+  },
+  {
+    "name": "layers",
+    "command": [
+      "python3",
+      "scripts/check-layers.py"
+    ],
+    "exit": 0,
+    "seconds": 0.358
+  },
+  {
+    "name": "deny",
+    "command": [
+      "cargo",
+      "deny",
+      "--locked",
+      "check",
+      "licenses",
+      "bans",
+      "sources"
+    ],
+    "exit": 0,
+    "seconds": 0.935
+  },
+  {
+    "name": "build",
+    "command": [
+      "cargo",
+      "build",
+      "--locked",
+      "-p",
+      "scholium-app",
+      "-p",
+      "scholium-storage",
+      "--bins"
+    ],
+    "exit": 0,
+    "seconds": 0.34
+  },
+  {
+    "name": "windows",
+    "command": [
+      "python3",
+      "scripts/window-checks.py",
+      "--locale",
+      "zh-Hans",
+      "en",
+      "--out",
+      "target/t37-windows"
+    ],
+    "exit": 0,
+    "checks_passed": 44,
+    "checks_total": 44
+  }
+]

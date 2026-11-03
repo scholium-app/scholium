@@ -108,3 +108,5 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0048](ADR-0048-shared-math-input-keymap.md)：两种项目语言共用的数学输入引擎（组合符号、Tab 循环、结构模板与变体），快捷键改为数据驱动的键位表并以 Liii/Mogan 习惯为基线；只实现影响排版结果的数学语义。
 
 [ADR 0049](ADR-0049-formal-project-storage.md)：正式项目存储采用 SQLite WAL/FULL、永久 schema v1、独立草稿与内容寻址 blob，通过 revision/manifest 协调原子源码物化和显式恢复。
+
+[ADR 0050](ADR-0050-linux-live-session-cgroups.md)：Linux 常驻构建会话使用 systemd 用户 scope，fail-closed 资源探测、整树取消与可信字体缓存副本。
