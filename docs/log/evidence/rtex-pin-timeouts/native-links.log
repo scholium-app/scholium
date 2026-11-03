@@ -1,0 +1,11 @@
+    Blocking waiting for file lock on package cache
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-latex)
+    Finished `test` profile [unoptimized] target(s) in 0.99s
+     Running tests/native_links.rs (target/debug/deps/native_links-fd1b21ea90feeb2d)
+
+running 1 test
+test native_snapshot_links_resolve_but_cannot_write_back_to_readonly_project ... host: both symbolic-link forms resolved and wrote back to project
+product sandbox: upstream file/dir links resolved across mounts; both writebacks denied; project bytes unchanged
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.79s

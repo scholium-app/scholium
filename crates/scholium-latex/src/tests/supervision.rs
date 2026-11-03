@@ -370,3 +370,140 @@ async fn paragraph_updates_include_host_monotonic_edit_latency() {
     );
     live.cancel().await.expect("cancel");
 }
+
+#[tokio::test]
+async fn healthy_period_restores_restart_budget_for_spaced_failures() {
+    let fixture = Fixture::new();
+    let mut config = config();
+    config.max_restarts = 1;
+    config.restart_stability_window = Duration::from_millis(120);
+    let mut live = fixture
+        .start_config("normal", config)
+        .await
+        .expect("launch");
+    ready(&mut live).await;
+    for generation in 1..=3 {
+        let launches = fixture.launches();
+        let pid = launches.last().expect("worker")["pid"]
+            .as_i64()
+            .expect("pid") as i32;
+        nix::sys::signal::kill(
+            nix::unistd::Pid::from_raw(pid),
+            nix::sys::signal::Signal::SIGKILL,
+        )
+        .expect("inject crash");
+        until(&mut live, |e| matches!(e, LiveEvent::Pages { generation: actual, revision: Some(0), .. } if *actual == generation)).await;
+        tokio::time::sleep(Duration::from_millis(250)).await;
+    }
+    assert_eq!(fixture.launches().len(), 4);
+    live.cancel().await.expect("cancel");
+}
+
+#[tokio::test]
+async fn rapid_repeated_failures_still_exhaust_restart_budget() {
+    let fixture = Fixture::new();
+    let mut config = config();
+    config.max_restarts = 1;
+    config.restart_stability_window = Duration::from_secs(60);
+    let mut live = fixture
+        .start_config("normal", config)
+        .await
+        .expect("launch");
+    ready(&mut live).await;
+    for generation in 0..=1 {
+        let launches = fixture.launches();
+        let pid = launches.last().expect("worker")["pid"]
+            .as_i64()
+            .expect("pid") as i32;
+        nix::sys::signal::kill(
+            nix::unistd::Pid::from_raw(pid),
+            nix::sys::signal::Signal::SIGKILL,
+        )
+        .expect("inject crash");
+        if generation == 0 {
+            until(&mut live, |e| {
+                matches!(e, LiveEvent::Pages { generation: 1, .. })
+            })
+            .await;
+        }
+    }
+    until(&mut live, |e| matches!(e, LiveEvent::Engine { state: EngineState::Failed, reason: Some(reason), .. } if reason.contains("restart budget"))).await;
+    assert_eq!(fixture.launches().len(), 2);
+    live.cancel().await.expect("cancel");
+}
+
+#[tokio::test]
+async fn paused_consumer_does_not_fail_preview_and_catches_up_to_latest_revision() {
+    let fixture = Fixture::new();
+    let mut live = fixture.start("normal").await;
+    ready(&mut live).await;
+    // Do not drain any events while several queue capacities worth of updates arrive.
+    for _ in 0..100 {
+        live.edit("main.tex", 0..0, "x")
+            .await
+            .expect("accepted source edit");
+    }
+    tokio::time::sleep(Duration::from_millis(300)).await;
+    live.request_layout().await.expect("latest layout");
+    until(&mut live, |event| {
+        assert!(
+            !matches!(
+                event,
+                LiveEvent::Engine {
+                    state: EngineState::Failed,
+                    ..
+                }
+            ),
+            "consumer pause must not kill preview: {event:?}"
+        );
+        matches!(
+            event,
+            LiveEvent::Pages {
+                revision: Some(100),
+                ..
+            }
+        )
+    })
+    .await;
+    assert_eq!(fixture.launches().len(), 1);
+    live.cancel().await.expect("cancel");
+}
+
+#[tokio::test]
+async fn evicted_distinct_paragraphs_request_layout_without_losing_engine_or_source() {
+    let fixture = Fixture::new();
+    let mut live = fixture.start("distinct-paragraphs").await;
+    ready(&mut live).await;
+    for _ in 0..100 {
+        live.edit("main.tex", 0..0, "x").await.expect("edit");
+    }
+    tokio::time::sleep(Duration::from_millis(200)).await;
+    until(&mut live, |event| {
+        matches!(event, LiveEvent::LayoutRequired { generation: 0 })
+    })
+    .await;
+    live.request_layout().await.expect("resynchronize preview");
+    until(&mut live, |event| {
+        matches!(
+            event,
+            LiveEvent::Pages {
+                revision: Some(100),
+                ..
+            }
+        )
+    })
+    .await;
+    assert_eq!(live.snapshot().await.expect("snapshot").revision(), 100);
+    assert_eq!(fixture.launches().len(), 1);
+    live.cancel().await.expect("cancel");
+    until(&mut live, |event| {
+        matches!(
+            event,
+            LiveEvent::Engine {
+                state: EngineState::Stopped,
+                ..
+            }
+        )
+    })
+    .await;
+}

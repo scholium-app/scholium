@@ -108,7 +108,7 @@ shared SDG adapter 验证树身份、结构并发与 actor undo。本阶段打�
 
 1. `latex` 内核的 session、live、build、view 最小实现：`rtex serve` 子进程在沙箱内，适配层只向上暴露事件。
 2. ADR 0043 的宿主兜底：会话心跳与重启、`EngineState Restarting/Failed` 后补发布局、编辑转发前校验、
-   后台编译使用上游 `pass_timeout`（`rtex serve` 命令行尚无此参数：向上游提议增加，或宿主改用库配置）；每一条都有故障注入测试。
+   后台编译使用上游 `pass_timeout`（`rtex serve --pass-timeout-ms` 设置预算，旧二进制保留能力缺失诊断）；每一条都有故障注入测试。
 3. 绘制：display list 按不低于 2 倍像素密度栅格化，无法描述的页面（如 TikZ）以 hayro 渲染 PDF 回退。
 4. 非 LuaLaTeX 项目以整编结果作预览并标明来源与延迟。
 

@@ -1,0 +1,51 @@
+$ cargo deny --locked --manifest-path /home/ation_ciger/.cache/scholium-eval/rtex-531e2c6b32a09d33be58f6be1301fe8f793411cd/Cargo.toml --config /home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml check --show-stats licenses sources
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml:17:6
+   │
+17 │     "Apache-2.0 WITH LLVM-exception",
+   │      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml:21:6
+   │
+21 │     "BSL-1.0",
+   │      ━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml:27:6
+   │
+27 │     "CC0-1.0",
+   │      ━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml:22:6
+   │
+22 │     "ISC",
+   │      ━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml:30:6
+   │
+30 │     "MPL-2.0",
+   │      ━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml:32:6
+   │
+32 │     "OFL-1.1",
+   │      ━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml:33:6
+   │
+33 │     "Ubuntu-font-1.0",
+   │      ━━━━━━━━━━━━━━━ unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml:25:6
+   │
+25 │     "Unicode-DFS-2016",
+   │      ━━━━━━━━━━━━━━━━ unmatched license allowance
+
+ licenses ok: 0 errors, 8 warnings, 120 notes
+  sources ok: 0 errors, 0 warnings, 0 notes

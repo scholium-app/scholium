@@ -1,0 +1,25 @@
+$ cargo deny --locked --manifest-path /home/ation_ciger/.cache/scholium-eval/rtex-531e2c6b32a09d33be58f6be1301fe8f793411cd/Cargo.toml --config /home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml check --show-stats advisories
+error[unmaintained]: `ttf-parser` is unmaintained
+    ┌─ /home/ation_ciger/.cache/scholium-eval/rtex-531e2c6b32a09d33be58f6be1301fe8f793411cd/Cargo.lock:111:1
+    │
+111 │ ttf-parser 0.25.1 registry+https://github.com/rust-lang/crates.io-index
+    │ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ unmaintained advisory detected
+    │
+    ├ ID: RUSTSEC-2026-0192
+    ├ Advisory: https://rustsec.org/advisories/RUSTSEC-2026-0192
+    ├ The author of `ttf-parser` has stated that the crate is unmaintained and will not receive further fixes (see the referenced issue).
+
+      ## Alternative(s)
+
+      - [`skrifa`](https://crates.io/crates/skrifa), an actively maintained TrueType and OpenType font parsing crate, part of the Google Fonts "oxidize" (`fontations`) project.
+    ├ Announcement: https://github.com/harfbuzz/ttf-parser/issues/217
+    ├ Solution: No safe upgrade is available!
+    ├ ttf-parser v0.25.1
+      ├── lopdf v0.42.0
+      │   ├── rtex-core v0.0.6
+      │   │   └── rtex-cli v0.0.6
+      │   └── rtex-verify v0.0.6
+      │       └── rtex-cli v0.0.6 (*)
+      └── rtex-verify v0.0.6 (*)
+
+ advisories FAILED: 1 errors, 0 warnings, 0 notes

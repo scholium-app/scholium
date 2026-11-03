@@ -1,0 +1,17 @@
+Cloning into '/home/ation_ciger/.cache/scholium-eval/rtex-531e2c6b32a09d33be58f6be1301fe8f793411cd'...
+From https://github.com/HenryXiaoYang/realtime-tex
+ * branch            main       -> FETCH_HEAD
+HEAD is now at 531e2c6 Merge pull request #36 from ACG-j/serve-timeouts
+RUN build
+RUN e1-licenses-sources
+RUN e1-bans
+RUN e1-advisories
+RUN e2
+RUN config-build
+RUN e8
+RUN e8-passes
+RUN e8-cli
+E1 PASS
+E2 PASS
+E8 PASS
+PIN updated ; evidence: /home/ation_ciger/Projects/Mogan/scholium-wt3/docs/log/evidence/rtex-pin-timeouts/pin

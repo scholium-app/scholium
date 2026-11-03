@@ -94,6 +94,15 @@ E8 仍观察到在途段落更新可能丢失：挂起的 live engine 由 rtex �
 但挂起期间提交的另一段编辑没有独立 `ParagraphUpdate`。宿主仍须在 `Restarting/Failed` 后请求布局并恢复输入状态，
 同时保留 heartbeat/restart 以及 offset/path 校验作为纵深防御。
 
+## 修订（2026-11-03）
+
+经 `scripts/rtex-pin.py` 的 E1/E2/完整 E8 复验，pin 移到
+`531e2c6b32a09d33be58f6be1301fe8f793411cd`（上游 #36）。`rtex serve` 已提供
+`--compile-timeout-ms` / `--pass-timeout-ms`，宿主直接传入预算，不再需要“库配置”退路；
+旧二进制的能力缺失诊断保留。上游快照改为链接项目文件，产品沙箱内符号链接可跨 `/work` 与只读 `/project`
+解析，读文件及实时编辑正常，经链接写回项目仍被拒绝；无需改沙箱 profile。
+后台 pass 超时报告 `Failed`，修复源码后可恢复。证据见 [T38 开发日志](../log/2026-11-03-rtex-pin-timeouts.md)。
+
 ## 后果
 
 正面：LuaLaTeX 项目获得毫秒级、与最终构建逐字形一致的实时预览；中文 ctex 与 luatexja 文档可走实时路径。

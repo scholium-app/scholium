@@ -1,6 +1,7 @@
 //! Source-authoritative LaTeX sessions and supervised, sandboxed live preview.
 mod event;
 mod live;
+mod mailbox;
 mod protocol;
 mod session;
 mod supervisor;
@@ -31,7 +32,7 @@ pub enum LatexError {
     /// The revision counter cannot advance.
     #[error("source revision exhausted")]
     Revision,
-    /// The supervisor stopped or the consumer fell behind its bounded queue.
+    /// The supervisor or event consumer stopped.
     #[error("live supervisor stopped")]
     Stopped,
     /// A host protocol write or startup check exceeded its deadline.

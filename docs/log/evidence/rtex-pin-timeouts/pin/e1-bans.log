@@ -1,0 +1,32 @@
+$ cargo deny --locked --manifest-path /home/ation_ciger/.cache/scholium-eval/rtex-531e2c6b32a09d33be58f6be1301fe8f793411cd/Cargo.toml --config /home/ation_ciger/Projects/Mogan/scholium-wt3/deny.toml check --show-stats bans
+error[wildcard]: found 3 wildcard dependencies for crate 'rtex-cli'. allow-wildcard-paths is enabled, but does not apply to public crates as crates.io disallows path dependencies.
+   ┌─ /home/ation_ciger/.cache/scholium-eval/rtex-531e2c6b32a09d33be58f6be1301fe8f793411cd/crates/rtex-cli/Cargo.toml:14:13
+   │
+14 │ rtex-core = { path = "../rtex-core" }
+   │             ━━━━━━━━━━━━━━━━━━━━━━━━━ wildcard dependency
+15 │ rtex-dl = { path = "../rtex-dl" }
+   │           ━━━━━━━━━━━━━━━━━━━━━━━ wildcard dependency
+16 │ rtex-verify = { path = "../rtex-verify" }
+   │               ━━━━━━━━━━━━━━━━━━━━━━━━━━━ wildcard dependency
+   │
+   ├ rtex-cli v0.0.6
+
+error[wildcard]: found 1 wildcard dependency for crate 'rtex-core'. allow-wildcard-paths is enabled, but does not apply to public crates as crates.io disallows path dependencies.
+   ┌─ /home/ation_ciger/.cache/scholium-eval/rtex-531e2c6b32a09d33be58f6be1301fe8f793411cd/crates/rtex-core/Cargo.toml:13:11
+   │
+13 │ rtex-dl = { path = "../rtex-dl" }
+   │           ━━━━━━━━━━━━━━━━━━━━━━━ wildcard dependency
+   │
+   ├ rtex-core v0.0.6
+     └── rtex-cli v0.0.6
+
+error[wildcard]: found 1 wildcard dependency for crate 'rtex-verify'. allow-wildcard-paths is enabled, but does not apply to public crates as crates.io disallows path dependencies.
+   ┌─ /home/ation_ciger/.cache/scholium-eval/rtex-531e2c6b32a09d33be58f6be1301fe8f793411cd/crates/rtex-verify/Cargo.toml:10:11
+   │
+10 │ rtex-dl = { path = "../rtex-dl" }
+   │           ━━━━━━━━━━━━━━━━━━━━━━━ wildcard dependency
+   │
+   ├ rtex-verify v0.0.6
+     └── rtex-cli v0.0.6
+
+ bans FAILED: 3 errors, 0 warnings, 0 notes

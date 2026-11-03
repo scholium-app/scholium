@@ -1,0 +1,14 @@
+{
+  "base": "caad0638d3b70f77be606088d0a66d26bc6ad6f8",
+  "upstream_commit": "531e2c6b32a09d33be58f6be1301fe8f793411cd",
+  "upstream_status": "",
+  "binary": "/home/ation_ciger/.cache/scholium-eval/rtex-531e2c6b32a09d33be58f6be1301fe8f793411cd/target/release/rtex",
+  "binary_sha256": "a46184931e71cd0e95babd924b6fa452e78708dfafbfeb3cc01fc0441d7088ca",
+  "lock_sha256": "5e1bd629a20b66c53b214f4fad9e00a776c0b087b252122c72f483e713c5ceb5",
+  "serve_help": "JSON-lines session front end (commands on stdin, events on stdout)\n\nUsage: rtex serve [OPTIONS] --project <PROJECT>\n\nOptions:\n      --project <PROJECT>\n          \n      --main <MAIN>\n          [default: main.tex]\n      --build <BUILD>\n          \n      --fast-budget-ms <FAST_BUDGET_MS>\n          Per-unit fast-path budget in milliseconds: a unit whose compiles take longer three times in a row goes to the background path until the next layout (default 50) [default: 50]\n      --eligibility <ELIGIBILITY>\n          How units qualify for the fast path: probe (default) or allowlist [default: probe]\n      --math-owner-attribute <MATH_OWNER_ATTRIBUTE>\n          Observe host math ids carried by this LuaTeX attribute\n      --compile-timeout-ms <COMPILE_TIMEOUT_MS>\n          Kill a live compile that takes longer than this many milliseconds and restart the engine (default 5000)\n      --pass-timeout-ms <PASS_TIMEOUT_MS>\n          Kill a background or export pass that takes longer than this many milliseconds; its layout reports `Failed` (default 300000, five minutes)\n      --no-picture-cache\n          Draw every picture environment on every background pass instead of reusing the unchanged ones from an earlier pass's PDF\n      --debug-dir <DEBUG_DIR>\n          Write diagnostics here: a bundle per engine failure (request source, context, server log and stage trace) and one line per live compile in requests.log (default: $RTEX_DEBUG_DIR when set)\n  -h, --help\n          Print help",
+  "rust": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1",
+  "kernel": "Linux 7.2.11-arch1-1",
+  "bubblewrap": "bubblewrap 0.13.1",
+  "lualatex": "This is LuaHBTeX, Version 1.24.0 (TeX Live 2026/Arch Linux)",
+  "stock_typst_pixel_comparison": "not run: LaTeX only; no editor surface, Typst fork/adapter, or lockfile changes"
+}

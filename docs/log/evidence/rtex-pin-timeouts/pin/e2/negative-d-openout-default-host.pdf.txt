@@ -1,0 +1,7 @@
+Probe E2EDIT D3 writes a file under the home directory with openout.
+
+
+
+
+                                    1
+
