@@ -121,3 +121,34 @@ fn find_marks_exact_utf8_match_in_large_scrollable_source() {
         egui::text::ByteIndex::from(1)..egui::text::ByteIndex::from(7)
     );
 }
+
+#[test]
+fn disabled_source_leaves_dialog_input_and_completion_untouched() {
+    let mut f = Fixture::new("authority");
+    f.events(vec![text("\\"), text("alpha")]);
+    assert_eq!(f.editor.command.command(), Some("alpha"));
+    let mut remaining = vec![];
+    let mut output = f.ctx.run_ui(
+        egui::RawInput {
+            events: vec![
+                text("project-path"),
+                key(egui::Key::Tab, egui::Modifiers::NONE),
+            ],
+            ..Default::default()
+        },
+        |ui| {
+            ui.add_enabled_ui(false, |ui| {
+                f.editor.show(ui, &mut f.text, &[], &[], Locale::En);
+            });
+            remaining = ui.input(|i| i.events.clone());
+        },
+    );
+    output.textures_delta.clear();
+    assert_eq!(f.text, "authority");
+    assert_eq!(f.editor.command.command(), Some("alpha"));
+    assert!(
+        remaining
+            .iter()
+            .any(|e| matches!(e, egui::Event::Text(s) if s == "project-path"))
+    );
+}

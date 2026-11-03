@@ -485,7 +485,6 @@ math-input-tab-cycle = Tab：循环符号
 math-input-tab-slot = Tab：下个槽位
 
 # Project files and formal storage
-project-latex-pending = LaTeX 预览开发中
 project-source-authority = Typst 源码 · 源文件为权威
 project-locked = 项目已由另一个窗口或进程打开，请先关闭该项目。
 project-conflict = 外部已修改

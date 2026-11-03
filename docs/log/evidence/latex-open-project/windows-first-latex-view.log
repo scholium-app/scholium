@@ -1,0 +1,12 @@
+PASS unavailable-state
+PASS source-completion
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/latex-view-check.py", line 162, in <module>
+    run("unavailable", SOURCE)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/latex-view-check.py", line 115, in run
+    wait(lambda s: s["text"] == source, "completion undo")
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/latex-view-check.py", line 93, in wait
+    raise AssertionError((what, state()))
+AssertionError: ('completion undo', {'dirty': True, 'engine': 'LuaLatex', 'entry': 'paper.tex', 'error': 'missing SCHOLIUM_RTEX_BIN', 'generation': 0, 'kind': 'latex', 'origin': [], 'pages': 0, 'paragraph': False, 'pixels_per_point': 4.166666666666667, 'preview_rect': [644.0, 179.0, 1272.0, 868.0], 'revision': 1, 'shown_revision': None, 'source_rect': [8.0, 179.0, 636.0, 868.0], 'submitted_ms': None, 'text': '\\documentclass{article}\n\\begin{document}\nFirst ordinary paragraph contains enough words for the live preview measurement.\n\nSecond paragraph remains unchanged.\n\\end{document}\n\\alpha', 'toolchain_unavailable': True})

@@ -1,0 +1,9 @@
+{
+  "unavailable-state": {
+    "pass": true,
+    "error": "missing SCHOLIUM_RTEX_BIN"
+  },
+  "source-completion": {
+    "pass": true
+  }
+}

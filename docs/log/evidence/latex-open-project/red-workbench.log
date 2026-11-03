@@ -1,0 +1,19 @@
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 4.93s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-5459d2a2e88f3903)
+
+running 1 test
+
+thread 'project_workspace::tests::latex_project_assembles_the_workbench_instead_of_the_source_placeholder' (808451) panicked at crates/scholium-app/src/project_workspace/tests.rs:8:5:
+LaTeX must assemble its live workbench
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test project_workspace::tests::latex_project_assembles_the_workbench_instead_of_the_source_placeholder ... FAILED
+
+failures:
+
+failures:
+    project_workspace::tests::latex_project_assembles_the_workbench_instead_of_the_source_placeholder
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 331 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`

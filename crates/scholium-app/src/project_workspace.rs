@@ -16,15 +16,17 @@ pub(crate) enum ProjectWorkspace {
         editor: Box<EditorSession>,
     },
     Source(SourceProject),
+    Latex(Box<crate::latex_workspace::Workspace>),
 }
 
-/// Narrow handoff port for the LaTeX executor; this batch assembles only a placeholder.
+/// Assemble the LaTeX workbench from the same durable source project as file commands.
 pub(crate) fn open_latex_workspace(
     project: &ProjectHandle,
+    ctx: &egui::Context,
 ) -> Result<ProjectWorkspace, StoreError> {
-    Ok(ProjectWorkspace::Source(SourceProject::open(
-        project.clone(),
-    )?))
+    Ok(ProjectWorkspace::Latex(Box::new(
+        crate::latex_workspace::Workspace::open(SourceProject::open(project.clone())?, ctx),
+    )))
 }
 
 impl ProjectWorkspace {
@@ -34,7 +36,7 @@ impl ProjectWorkspace {
         state: &mut WorkspaceState,
     ) -> Result<Self, String> {
         if handle.language() == ProjectLanguage::Latex {
-            return open_latex_workspace(&handle).map_err(|e| message(&e, state));
+            return open_latex_workspace(&handle, ctx).map_err(|e| message(&e, state));
         }
         if handle.authority() == Authority::Source {
             return SourceProject::open(handle)
@@ -57,31 +59,47 @@ impl ProjectWorkspace {
         match self {
             Self::Typst { handle, .. } => handle,
             Self::Source(s) => s.handle(),
+            Self::Latex(w) => w.source().handle(),
         }
     }
     pub(crate) fn dirty(&self) -> bool {
         match self {
             Self::Typst { editor, .. } => editor.unsaved_project(),
             Self::Source(s) => s.dirty(),
+            Self::Latex(w) => w.source().dirty(),
         }
     }
     pub(crate) fn pending_input(&self) -> bool {
-        matches!(self, Self::Typst { editor, .. } if editor.pending_input())
+        match self {
+            Self::Typst { editor, .. } => editor.pending_input(),
+            Self::Latex(w) => w.pending_input(),
+            Self::Source(_) => false,
+        }
+    }
+    pub(crate) fn source_mut(&mut self) -> Option<&mut SourceProject> {
+        match self {
+            Self::Source(s) => Some(s),
+            Self::Latex(w) => Some(w.source_mut()),
+            _ => None,
+        }
     }
     pub(crate) fn save(&mut self) -> Result<(), String> {
         match self {
             Self::Typst { editor, .. } => editor.save_project().map_err(|e| e.to_string()),
             Self::Source(s) => s.save().map_err(|e| e.to_string()),
+            Self::Latex(w) => w.source_mut().save().map_err(|e| e.to_string()),
         }
     }
     pub(crate) fn discard(&mut self) -> Result<(), String> {
         match self {
             Self::Typst { editor, .. } => editor.discard_project().map_err(|e| e.to_string()),
             Self::Source(s) => s.reload().map_err(|e| e.to_string()),
+            Self::Latex(w) => w.reload().map_err(|e| e.to_string()),
         }
     }
     pub(crate) fn save_as(&mut self, path: &Path) -> Result<(), String> {
         match self {
+            Self::Latex(w) => w.save_as(path).map_err(|e| e.to_string())?,
             Self::Typst { handle, editor } => {
                 *handle = editor.save_as_project(path).map_err(|e| e.to_string())?;
             }
@@ -97,11 +115,20 @@ impl ProjectWorkspace {
         Ok(())
     }
     pub(crate) fn metadata(&self, state: &mut WorkspaceState) {
+        if let Self::Latex(w) = self {
+            state.composition = w.pending_input().then(String::new);
+        }
         state.source_language = match self {
             Self::Source(s) => Some(s.handle().language()),
+            Self::Latex(w) => Some(w.source().handle().language()),
             _ => None,
         };
-        if let Self::Source(s) = self {
+        let source = match self {
+            Self::Source(s) => Some(s),
+            Self::Latex(w) => Some(w.source()),
+            _ => None,
+        };
+        if let Some(s) = source {
             state.mode = ViewMode::Source;
             state.editor = Some(EditorView {
                 title: Some(name(s.handle())),
@@ -115,58 +142,40 @@ impl ProjectWorkspace {
             editor.show(ui, state);
             return;
         }
+        update_title(ui.ctx(), self.handle(), self.dirty(), state);
+        if let Self::Latex(workbench) = self {
+            workbench.show(ui, state);
+            audit_source(workbench.source(), state);
+            self.metadata(state);
+            return;
+        }
         let Self::Source(source) = self else {
             return;
         };
         let locale = state.locale.resolve();
         let text = |key| i18n::text(locale, key);
-        let saved = text(if source.dirty() {
-            "chrome.tab.unsaved"
-        } else {
-            "chrome.tab.saved"
-        });
-        ui.ctx()
-            .send_viewport_cmd(egui::ViewportCommand::Title(i18n::text_with(
-                locale,
-                "chrome.window.title",
-                &[
-                    ("name", name(source.handle()).into()),
-                    ("state", saved.into()),
-                ],
-            )));
         egui::CentralPanel::default().show(ui, |ui| {
             ui.heading(name(source.handle()));
             ui.label(source.handle().entry().display().to_string());
             if let Some(error) = &state.storage_error {
                 ui.colored_label(ui.visuals().error_fg_color, error);
             }
-            if source.handle().language() == ProjectLanguage::Latex {
-                ui.label(text("project.latex.pending"));
-            } else {
-                ui.label(text("project.source.authority"));
-                let mut input = source.text().to_owned();
-                let response = ui.add(
-                    egui::TextEdit::multiline(&mut input)
-                        .code_editor()
-                        .desired_width(f32::INFINITY),
-                );
-                audit_rect("source", response.rect);
-                if response.changed() {
-                    match source.edit(input) {
-                        Ok(()) => state.storage_error = None,
-                        Err(error) => state.storage_error = Some(message(&error, state)),
-                    }
+            ui.label(text("project.source.authority"));
+            let mut input = source.text().to_owned();
+            let response = ui.add(
+                egui::TextEdit::multiline(&mut input)
+                    .code_editor()
+                    .desired_width(f32::INFINITY),
+            );
+            audit_rect("source", response.rect);
+            if response.changed() {
+                match source.edit(input) {
+                    Ok(()) => state.storage_error = None,
+                    Err(error) => state.storage_error = Some(message(&error, state)),
                 }
             }
         });
-        if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
-            println!(
-                "PROJECT {}",
-                serde_json::json!({"language": format!("{:?}", source.handle().language()),
-                "entry": source.handle().entry(), "dirty": source.dirty(), "text": source.text(),
-                "error": state.storage_error})
-            );
-        }
+        audit_source(source, state);
         self.metadata(state);
     }
 }
@@ -194,4 +203,33 @@ pub(crate) fn audit_rect(control: &str, rect: egui::Rect) {
             serde_json::json!({"control": control, "center": [rect.center().x, rect.center().y]})
         );
     }
+}
+
+#[cfg(test)]
+mod tests;
+
+fn audit_source(source: &SourceProject, state: &WorkspaceState) {
+    if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
+        println!(
+            "PROJECT {}",
+            serde_json::json!({"language":format!("{:?}",source.handle().language()),"entry":source.handle().entry(),"dirty":source.dirty(),"text":source.text(),"error":state.storage_error})
+        );
+    }
+}
+
+fn update_title(ctx: &egui::Context, handle: &ProjectHandle, dirty: bool, state: &WorkspaceState) {
+    let locale = state.locale.resolve();
+    let saved = i18n::text(
+        locale,
+        if dirty {
+            "chrome.tab.unsaved"
+        } else {
+            "chrome.tab.saved"
+        },
+    );
+    ctx.send_viewport_cmd(egui::ViewportCommand::Title(i18n::text_with(
+        locale,
+        "chrome.window.title",
+        &[("name", name(handle).into()), ("state", saved.into())],
+    )));
 }

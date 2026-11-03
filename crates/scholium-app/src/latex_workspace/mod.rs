@@ -1,4 +1,4 @@
-//! Development entry for the LaTeX source authority and same-engine preview workbench.
+//! Project-backed LaTeX source authority and same-engine preview workbench.
 #[cfg(test)]
 mod tests;
 mod worker;
@@ -13,13 +13,14 @@ use scholium_latex::{
 };
 use std::{
     collections::BTreeMap,
-    path::PathBuf,
+    path::Path,
     time::{Duration, Instant},
 };
 use worker::{Backend, Edit, Update};
 
 pub(crate) struct Workspace {
-    text: String,
+    source: scholium_storage::project::SourceProject,
+    context: egui::Context,
     revision: u64,
     shown_revision: Option<u64>,
     generation: u64,
@@ -43,24 +44,14 @@ struct Page {
     origin: RasterOrigin,
 }
 impl Workspace {
-    pub(crate) fn open(project: PathBuf, ctx: &egui::Context) -> Self {
-        let source = SourceSession::open(&project, "main.tex");
-        let (text, engine, error, backend) = match source {
-            Ok(source) => (
-                source.text(source.entry()).unwrap_or_default().into(),
-                source.engine(),
-                None,
-                Some(Backend::start(source, ctx.clone())),
-            ),
-            Err(error) => (
-                String::new(),
-                Engine::LuaLatex,
-                Some(error.to_string()),
-                None,
-            ),
-        };
+    pub(crate) fn open(
+        source: scholium_storage::project::SourceProject,
+        ctx: &egui::Context,
+    ) -> Self {
+        let (engine, error, backend) = preview(&source, ctx);
         Self {
-            text,
+            source,
+            context: ctx.clone(),
             revision: 0,
             shown_revision: None,
             generation: 0,
@@ -79,14 +70,78 @@ impl Workspace {
             audit_last: None,
         }
     }
-    pub(crate) fn show(&mut self, ui: &mut egui::Ui, locale: Locale) {
+    pub(crate) fn source(&self) -> &scholium_storage::project::SourceProject {
+        &self.source
+    }
+    pub(crate) fn source_mut(&mut self) -> &mut scholium_storage::project::SourceProject {
+        &mut self.source
+    }
+    pub(crate) fn pending_input(&self) -> bool {
+        self.editor.composing()
+    }
+    pub(crate) fn edit(
+        &mut self,
+        text: String,
+    ) -> Result<(), scholium_storage::project::StoreError> {
+        // Retain rejected durable input visibly, as SourceProject guarantees; preview is derived only.
+        let result = self.source.edit(text);
+        self.revision += 1;
+        self.edited_at = Some(Instant::now());
+        self.presented = None;
+        if let Some(backend) = &self.backend {
+            let _ = backend.edits.send(Edit {
+                revision: self.revision,
+                text: self.source.text().into(),
+            });
+        }
+        result
+    }
+    pub(crate) fn reload(&mut self) -> Result<(), scholium_storage::project::StoreError> {
+        self.source.reload()?;
+        self.reset_preview();
+        Ok(())
+    }
+    pub(crate) fn save_as(
+        &mut self,
+        path: &Path,
+    ) -> Result<(), scholium_storage::project::StoreError> {
+        let handle = self
+            .source
+            .handle()
+            .copy_source(path, self.source.text().as_bytes())?;
+        let next = scholium_storage::project::SourceProject::open(handle)?;
+        self.source = next;
+        self.reset_preview();
+        Ok(())
+    }
+    fn reset_preview(&mut self) {
+        self.backend = None;
+        let (engine, error, backend) = preview(&self.source, &self.context);
+        self.engine = engine;
+        self.error = error;
+        self.unavailable = backend.is_none();
+        self.backend = backend;
+        self.revision = 0;
+        self.shown_revision = None;
+        self.generation = 0;
+        self.pages.clear();
+        self.editor = SourceEditor::default();
+        self.edited_at = None;
+        self.presented = None;
+    }
+    pub(crate) fn show(&mut self, ui: &mut egui::Ui, state: &mut crate::state::WorkspaceState) {
+        let locale = state.locale.resolve();
         self.poll(ui.ctx());
+        let mut text = self.source.text().to_owned();
         egui::Panel::top("latex-header").show(ui, |ui| {
             ui.horizontal(|ui| {
                 ui.heading(i18n::text(locale, "latex.workspace"));
                 ui.label(format!("{:?}", self.engine));
                 ui.label(self.status(locale));
             });
+            if let Some(error) = &state.storage_error {
+                ui.colored_label(ui.visuals().error_fg_color, error);
+            }
             if let Some(error) = &self.error {
                 ui.colored_label(ui.visuals().warn_fg_color, error);
             }
@@ -95,19 +150,18 @@ impl Workspace {
             ui.columns(2, |columns| {
                 self.source_rect = Some(columns[0].available_rect_before_wrap());
                 columns[0].label(i18n::text(locale, "latex.source"));
-                let highlights = syntax(&self.text, columns[0].visuals());
-                if self
-                    .editor
-                    .show(&mut columns[0], &mut self.text, &highlights, &[], locale)
-                {
-                    self.revision += 1;
-                    self.edited_at = Some(Instant::now());
-                    self.presented = None;
-                    if let Some(backend) = &self.backend {
-                        let _ = backend.edits.send(Edit {
-                            revision: self.revision,
-                            text: self.text.clone(),
-                        });
+                let highlights = syntax(&text, columns[0].visuals());
+                let changed = columns[0]
+                    .add_enabled_ui(!state.file_modal, |ui| {
+                        self.editor.show(ui, &mut text, &highlights, &[], locale)
+                    })
+                    .inner;
+                if changed {
+                    if let Err(error) = self.edit(text.clone()) {
+                        state.storage_error =
+                            Some(crate::project_workspace::message(&error, state));
+                    } else {
+                        state.storage_error = None;
                     }
                 }
                 self.preview_rect = Some(columns[1].available_rect_before_wrap());
@@ -236,17 +290,43 @@ impl Workspace {
             return;
         }
         let rect = |r: Option<egui::Rect>| r.map(|r| [r.min.x, r.min.y, r.max.x, r.max.y]);
-        let fact = serde_json::json!({"kind":"latex","revision":self.revision,"shown_revision":self.shown_revision,"generation":self.generation,"text":self.text,"engine":format!("{:?}",self.engine),"toolchain_unavailable":self.unavailable,"error":self.error,"pages":self.pages.len(),"source_rect":rect(self.source_rect),"preview_rect":rect(self.preview_rect),"paragraph":self.paragraph,"pixels_per_point":scholium_latex::view::PIXELS_PER_POINT,"origin":self.pages.values().map(|p|format!("{:?}",p.origin)).collect::<Vec<_>>(),"submitted_ms":self.presented.map(|d|d.as_secs_f64()*1000.0)});
+        let fact = serde_json::json!({"kind":"latex","revision":self.revision,"shown_revision":self.shown_revision,"generation":self.generation,"text":self.source.text(),"entry":self.source.handle().entry(),"dirty":self.source.dirty(),"engine":format!("{:?}",self.engine),"toolchain_unavailable":self.unavailable,"error":self.error,"pages":self.pages.len(),"source_rect":rect(self.source_rect),"preview_rect":rect(self.preview_rect),"paragraph":self.paragraph,"pixels_per_point":scholium_latex::view::PIXELS_PER_POINT,"origin":self.pages.values().map(|p|format!("{:?}",p.origin)).collect::<Vec<_>>(),"submitted_ms":self.presented.map(|d|d.as_secs_f64()*1000.0)});
         if self.audit_last.as_ref() != Some(&fact) {
             eprintln!("AUDIT {fact}");
             self.audit_last = Some(fact);
         }
     }
 }
-impl eframe::App for Workspace {
-    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
-        self.show(ui, crate::i18n::LocaleSetting::Auto.resolve());
+fn preview(
+    source: &scholium_storage::project::SourceProject,
+    ctx: &egui::Context,
+) -> (Engine, Option<String>, Option<Backend>) {
+    let result = preview_source(source);
+    match result {
+        Ok(snapshot) => (
+            snapshot.engine(),
+            None,
+            Some(Backend::start(snapshot, ctx.clone())),
+        ),
+        Err(error) => (Engine::LuaLatex, Some(error.to_string()), None),
     }
+}
+
+// Preview snapshots are derived from the durable editor, including recovered unsaved drafts.
+fn preview_source(
+    source: &scholium_storage::project::SourceProject,
+) -> Result<SourceSession, scholium_latex::LatexError> {
+    let handle = source.handle();
+    let entry = handle
+        .entry()
+        .to_str()
+        .ok_or(scholium_latex::LatexError::Configuration)?;
+    let mut snapshot = SourceSession::open(handle.root(), entry)?;
+    if snapshot.text(entry) != Some(source.text()) {
+        let len = snapshot.text(entry).unwrap_or_default().len();
+        snapshot.edit(entry, 0..len, source.text())?;
+    }
+    Ok(snapshot)
 }
 
 fn syntax(text: &str, visuals: &egui::Visuals) -> Vec<crate::source_editor::Highlight> {

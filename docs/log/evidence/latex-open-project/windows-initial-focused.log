@@ -1,0 +1,88 @@
+output: /home/ation_ciger/Projects/Mogan/scholium-wt3/target/latex-open-focused
+running latex-view [zh-Hans] ...
+--- latex-view [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/latex-open-focused/zh-Hans/latex-view.log
+/usr/bin/xvfb-run: line 173: 842181 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/latex-view-check.py", line 162, in <module>
+    run("unavailable", SOURCE)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/latex-view-check.py", line 102, in run
+    wait(lambda s: s.get("kind") == "latex" and s["source_rect"], "source workbench")
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/latex-view-check.py", line 93, in wait
+    raise AssertionError((what, state()))
+AssertionError: ('source workbench', None)
+/usr/bin/xvfb-run: line 185: kill: (842181) - No such process
+
+running project-latex [zh-Hans] ...
+--- project-latex [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/latex-open-focused/zh-Hans/project-latex.log
+X connection to :126 broken (explicit kill or server shutdown).
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/project-latex-check.py", line 84, in <module>
+    open_path(root)
+    ~~~~~~~~~^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/project-latex-check.py", line 38, in open_path
+    app.type(str(path))
+    ~~~~~~~~^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/project_ui.py", line 62, in type
+    self.xdo("type", "--clearmodifiers", "--delay", "8", text)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/project_ui.py", line 41, in xdo
+    subprocess.run(["xdotool", *map(str, args)], env=self.env, check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['xdotool', 'type', '--clearmodifiers', '--delay', '8', '/home/ation_ciger/Projects/Mogan/scholium-wt3/target/latex-open-focused/zh-Hans/project-latex/latex']' returned non-zero exit status 1.
+/usr/bin/xvfb-run: line 181: 848354 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (848354) - No such process
+
+running latex-view [en] ...
+--- latex-view [en] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/latex-open-focused/en/latex-view.log
+PASS unavailable-state
+PASS source-completion
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/latex-view-check.py", line 162, in <module>
+    run("unavailable", SOURCE)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/latex-view-check.py", line 115, in run
+    wait(lambda s: s["text"] == source, "completion undo")
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/latex-view-check.py", line 93, in wait
+    raise AssertionError((what, state()))
+AssertionError: ('completion undo', {'dirty': True, 'engine': 'LuaLatex', 'entry': 'paper.tex', 'error': 'missing SCHOLIUM_RTEX_BIN', 'generation': 0, 'kind': 'latex', 'origin': [], 'pages': 0, 'paragraph': False, 'pixels_per_point': 4.166666666666667, 'preview_rect': [644.0, 179.0, 1272.0, 868.0], 'revision': 1, 'shown_revision': None, 'source_rect': [8.0, 179.0, 636.0, 868.0], 'submitted_ms': None, 'text': '\\documentclass{article}\n\\begin{document}\nFirst ordinary paragraph contains enough words for the live preview measurement.\n\nSecond paragraph remains unchanged.\n\\end{document}\n\\alpha', 'toolchain_unavailable': True})
+/usr/bin/xvfb-run: line 181: 849750 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (849750) - No such process
+
+running project-latex [en] ...
+--- project-latex [en] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/latex-open-focused/en/project-latex.log
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/project-latex-check.py", line 43, in <module>
+    app.start("open-file")
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/project_ui.py", line 47, in start
+    self.wait(lambda: subprocess.run(["xdotool", "search", "--onlyvisible", "--pid", str(self.app.pid)],
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                    env=self.env, capture_output=True).returncode == 0)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/project_ui.py", line 27, in wait
+    assert self.app.poll() is None, self.log.read_text()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError:
+thread 'main' (855653) panicked at /kache/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/winit-0.30.13/src/platform_impl/linux/x11/window.rs:1200:14:
+called `Result::unwrap()` on an `Err` value: Connection(IoError(Custom { kind: Other, error: UnknownError }))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+XIO:  fatal IO error 17 (File exists) on X server ":128"
+      after 254 requests (254 known processed) with 11 events remaining.
+
+/usr/bin/xvfb-run: line 181: 855502 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (855502) - No such process
+
+
+check                    result      seconds
+latex-view [zh-Hans]     FAIL(1)        83.3
+project-latex [zh-Hans]  FAIL(1)        13.4
+latex-view [en]          FAIL(1)        83.7
+project-latex [en]       FAIL(1)         3.5
+
+0/4 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt3/target/latex-open-focused

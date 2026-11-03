@@ -93,6 +93,10 @@ fn route(
     ) {
         return;
     }
+    // Source projects own native TextEdit history rather than Typst session history.
+    if state.source_language.is_some() && matches!(spec.action, Action::Undo | Action::Redo) {
+        return;
+    }
     if spec.routing == Routing::Editor {
         if native.is_some() {
             ctx.input_mut(|i| {
@@ -173,6 +177,47 @@ mod tests {
         });
         output.textures_delta.clear();
         (ctx, remaining)
+    }
+    #[test]
+    fn source_history_chords_reach_the_native_text_editor() {
+        let mut state = WorkspaceState {
+            mode: crate::state::ViewMode::Source,
+            source_language: Some(scholium_storage::project::ProjectLanguage::Latex),
+            ..Default::default()
+        };
+        for modifiers in [
+            egui::Modifiers::COMMAND,
+            egui::Modifiers::COMMAND | egui::Modifiers::SHIFT,
+        ] {
+            let ctx = egui::Context::default();
+            let event = egui::Event::Key {
+                key: egui::Key::Z,
+                physical_key: None,
+                modifiers,
+                pressed: true,
+                repeat: false,
+            };
+            let mut output = ctx.run_ui(
+                egui::RawInput {
+                    events: vec![event.clone()],
+                    ..Default::default()
+                },
+                |ui| {
+                    route(
+                        ui.ctx(),
+                        &mut state,
+                        event.clone(),
+                        super::super::keymap::defaults(),
+                    );
+                    assert!(
+                        ui.input(|i| i.events.contains(&event)),
+                        "source undo/redo must stay in native keystroke order"
+                    );
+                },
+            );
+            output.textures_delta.clear();
+            assert!(!state.undo_requested && !state.redo_requested);
+        }
     }
     #[test]
     fn remapping_clipboard_consumes_the_native_old_binding_and_requests_the_new_one() {

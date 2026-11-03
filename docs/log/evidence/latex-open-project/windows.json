@@ -1,0 +1,18 @@
+[
+  {
+    "command": "python3 scripts/window-checks.py --locale zh-Hans en --out target/latex-open-windows",
+    "exit": 1,
+    "result": "52/54; caret-follow zh-Hans Xvfb killed; latex-view zh-Hans started before undo fix"
+  },
+  {
+    "command": "python3 scripts/window-checks.py --only latex-view caret-follow --locale zh-Hans --out target/latex-open-retry",
+    "exit": 0,
+    "result": "2/2; aggregate 54/54",
+    "env": {
+      "SCHOLIUM_LATEX_NATIVE_WINDOW": "1",
+      "SCHOLIUM_RTEX_BIN": "/home/ation_ciger/.cache/scholium-eval/rtex-531e2c6b32a09d33be58f6be1301fe8f793411cd/target/release/rtex",
+      "SCHOLIUM_RTEX_TEXDIR": "/home/ation_ciger/.cache/scholium-eval/rtex-531e2c6b32a09d33be58f6be1301fe8f793411cd/tex",
+      "SCHOLIUM_RTEX_FONT_CACHE": "/home/ation_ciger/Projects/Mogan/scholium-wt3/target/t38-native-font-cache"
+    }
+  }
+]

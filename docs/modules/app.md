@@ -92,8 +92,8 @@ SimSun → Noto Sans CJK SC，标题将 SimSun 换为 SimHei。System 始终载�
 
 默认启动打开数据目录 `scholium/default-project`；显式路径由 `SCHOLIUM_PROJECT_PATH` 指定。
 正式项目通过 `ProjectHandle` 决定语言与 authority，由 `project_workspace` 装配：原生 Typst 接现有页面 EditorCore，
-普通 `.typ` 接最小源码输入与 SourceProject；LaTeX 通过 `open_latex_workspace(&ProjectHandle)` 接占位工作区，
-显示项目名、入口和“LaTeX 预览开发中”，不创建 Typst authority/worker。`source_view` 仍仅服务原生项目生成源码。
+普通 `.typ` 接最小源码输入与 SourceProject；LaTeX 通过 `open_latex_workspace` 将 ProjectHandle 与 egui context
+装配为真实的源码/预览工作台，以项目声明的入口为准，不创建 Typst authority/worker。`source_view` 仍仅服务原生项目生成源码。
 默认项目不存在时，只读迁移旧 structured/legacy 会话当前 head，旧库保留，显示迁移提示与报告位置；
 失败或未完成迁移目标不能当空白文档打开。`SCHOLIUM_SESSION_FILE` 已退役，不再被主程序读取。
 项目声明与迁移边界见 [ADR 0051](../adr/ADR-0051-project-files-and-session-retirement.md)。
@@ -111,7 +111,7 @@ SimSun → Noto Sans CJK SC，标题将 SimSun 换为 SimHei。System 始终载�
 文件对话框打开时页面不接收键盘输入。另存为创建同语言新项目/资源身份并复制普通资源和当前内容，
 不复制私人历史或协作身份；已有目标或原目录内部目标拒绝。成功后切换至副本，原项目保留。
 源码输入写独立 draft，提交失败仍保留新输入并可见报错，保存由 materialize 比对磁盘 hash；冲突显示“外部已修改”，允许重新载入/另存为/取消。
-强杀后重开恢复 draft；LaTeX 占位只覆盖打开/保存/重开，源码编辑与预览由后续 LaTeX 工作区接入。
+强杀后重开恢复 draft；LaTeX 工作台使用相同的 SourceProject 路径，恢复的未保存文本同时作为预览初始输入。
 锁冲突显示明确提示，不回退临时正文；保存失败不清未保存状态。空工作区仍能从文件菜单打开/新建。
 
 编辑器持有 [session](session.md) 的 `EditorCore`，将 egui 文字、可迁移按键、页面坐标和视口转换为 `Input`，由核心
@@ -320,7 +320,7 @@ core 交付已采纳 Scene 的位图与已验证身份的条带，app 上传为�
 混合编辑与团队语言切换已推迟；源码错误、离线草稿和同语言多人协作沿用现有恢复与权限规则。
 共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。
 
-## 共享源码编辑器与 LaTeX 开发工作台
+## 共享源码编辑器与 LaTeX 项目工作台
 
 `source_editor` 提供本地 TextEdit、双向滚动、选区、原生撤销/重做、Ctrl+F 查找、诊断与高亮 byte-range 接口。
 语言内核提供高亮内容，编辑器仅提供样式与标记；IME 使用独立预编辑缓冲，提交后才更新权威源码，整次提交为独立撤销点。
@@ -328,8 +328,13 @@ core 交付已采纳 Scene 的位图与已验证身份的条带，app 上传为�
 LaTeX 源码键入反斜线启动 scholium-math-input 的同一候选引擎，Tab/Enter 接受、方向键选择、Esc 取消；
 插入源码符号/结构片段，经 TextEdit 原生输入路径保证选区与撤销。粘贴与 IME 提交保持字面文本，不触发补全。
 
-启动环境变量 `SCHOLIUM_LATEX_PROJECT=<dir>` 打开 main.tex 的左右源码/预览工作台；此开发入口不接入文件菜单、保存或存储。
-未保存文本只在内存中编辑，源码权威由 SourceSession/LiveSession 校验；缺工具链显示明确不可用状态，源码仍可编辑。
+File > New 选择 LaTeX，或 File > Open 打开 `.tex` / 项目目录，均进入左右源码/预览工作台；
+`SCHOLIUM_PROJECT_PATH` 使用同一路径。入口来自 ProjectHandle 声明，不固定为 main.tex；独立的 LaTeX 启动变量已移除。
+SourceProject 持有唯一可写正文：编辑经 `edit` / `save_draft` 持久化私人草稿，Save 经 `materialize` 发布到入口文件。
+外部冲突沿用文件层的重新载入/另存为/取消 UI；重新载入及另存为同步重建预览和编辑器状态。
+SourceSession/LiveSession 只持有派生的预览快照，恢复 draft 后先覆盖快照入口，再启动预览；缺工具链显示明确不可用状态，源码仍可编辑。
+文件模态框禁止工作台输入；源码项目的撤销/重做快捷键交给 TextEdit 原生历史，不被 Typst 历史命令截获。
+IME 预编辑不写草稿，并阻止保存/切换，提交后才进入持久化路径。
 工具链准备、协议、编译、字体与栅格工作全部离开 UI 线程，输入 watch 保留最新版本、队列有界。
 LuaLaTeX 经 LiveSession 转发最小 UTF-8 patch；显示段落更新。非 Lua 引擎使用一次性整编并丢弃旧 revision。
 UI 始终标明项目引擎、实时/整编来源、耗时及更新中状态。审计 submitted_ms 只代表 UI 提交阶段；

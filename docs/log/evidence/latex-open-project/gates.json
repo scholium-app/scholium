@@ -1,0 +1,120 @@
+[
+  {
+    "name": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 0.371
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--workspace",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "seconds": 0.905
+  },
+  {
+    "name": "test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--workspace"
+    ],
+    "exit": 0,
+    "seconds": 29.05
+  },
+  {
+    "name": "doc",
+    "command": [
+      "cargo",
+      "doc",
+      "--locked",
+      "--workspace",
+      "--no-deps"
+    ],
+    "exit": 0,
+    "seconds": 1.673,
+    "env": {
+      "RUSTDOCFLAGS": "-D warnings"
+    }
+  },
+  {
+    "name": "rust-size",
+    "command": [
+      "python3",
+      "scripts/check-rust-size.py"
+    ],
+    "exit": 0,
+    "seconds": 0.028
+  },
+  {
+    "name": "doc-links",
+    "command": [
+      "python3",
+      "scripts/check-doc-links.py"
+    ],
+    "exit": 0,
+    "seconds": 0.116
+  },
+  {
+    "name": "ui-strings",
+    "command": [
+      "python3",
+      "scripts/check-ui-strings.py"
+    ],
+    "exit": 0,
+    "seconds": 0.131
+  },
+  {
+    "name": "layers",
+    "command": [
+      "python3",
+      "scripts/check-layers.py"
+    ],
+    "exit": 0,
+    "seconds": 0.301
+  },
+  {
+    "name": "deny",
+    "command": [
+      "cargo",
+      "deny",
+      "--locked",
+      "check",
+      "licenses",
+      "bans",
+      "sources"
+    ],
+    "exit": 0,
+    "seconds": 0.573
+  },
+  {
+    "name": "build",
+    "command": [
+      "cargo",
+      "build",
+      "--locked",
+      "-p",
+      "scholium-app",
+      "-p",
+      "scholium-storage",
+      "--bins"
+    ],
+    "exit": 0,
+    "seconds": 0.221
+  }
+]

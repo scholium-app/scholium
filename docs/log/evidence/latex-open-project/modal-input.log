@@ -1,0 +1,8 @@
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 1.77s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-5459d2a2e88f3903)
+
+running 1 test
+test source_editor::tests::disabled_source_leaves_dialog_input_and_completion_untouched ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 333 filtered out; finished in 0.00s
