@@ -94,3 +94,14 @@ AT-SPI 两种语言均完成 11 条断言：
 
 按键位、引擎、迁移、交互分步签署提交，分支 `ation_ciger/feat/keymap-math-engine`。
 依任务例外只推送分支，不创建 PR；协调者可直接以本文“问题 / 改动 / 验证 / 待办”组织 PR 正文。
+
+## 协调者复审修正
+
+将符号表 `latex` 统一为完整数学模式源码片段：命令包含反斜线，普通字符直接输出 `R`、`<`、`>`；
+数据一致性校验拒绝裸命令名，模块规范明确适配器原样输出及 TeX 控制词连接边界。
+命令框 query 非空时 Backspace 删除末字符，已空时按 Backspace 与 Esc 相同，关闭且不修改文档。
+先新增数据、引擎及 app 输入测试，三项均在修正前失败；修正后运行
+`cargo test --locked -p scholium-math-input -p scholium-session -p scholium-app`：396 通过、1 项既有忽略。
+`cargo fmt --all -- --check`、`cargo clippy --locked --workspace --all-targets -- -D warnings`、
+`RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps` 均通过，
+文档链接、Rust 文件规模及 `git diff --check` 通过。本轮依复审范围重跑受影响测试，没有重跑完整窗口套件。

@@ -150,6 +150,7 @@ impl Engine {
                     self.selected = 0;
                 }
             }
+            Event::Backspace if self.command.as_deref() == Some("") => self.reset(),
             Event::Backspace => {
                 if let Some(query) = &mut self.command {
                     query.pop();

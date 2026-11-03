@@ -3,6 +3,18 @@ use super::*;
 use scholium_math_input::TabAction;
 
 #[test]
+fn backspace_on_an_empty_command_closes_it_without_editing_the_document() {
+    let mut f = Fixture::new();
+    f.events(vec![text("body")]);
+    let before = f.editor.snapshot.clone();
+    let cursor = f.editor.cursor;
+    f.events(vec![text("\\"), key(egui::Key::Backspace, false)]);
+    assert!(f.editor.core.math_input.command().is_none());
+    assert_eq!(f.editor.snapshot, before);
+    assert_eq!(f.editor.cursor, cursor);
+}
+
+#[test]
 fn printable_key_events_keep_the_command_query_open_and_tab_accepts_in_body() {
     let mut f = Fixture::new();
     f.events(vec![

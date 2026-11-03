@@ -62,6 +62,40 @@ fn command_completion_precedes_cycle_and_cancel_preserves_the_document() {
 }
 
 #[test]
+fn backspace_edits_the_query_then_closes_an_empty_command() {
+    let mut engine = Engine::default();
+    engine.feed(Event::Text('\\'), context("α"));
+    engine.feed(Event::Text('a'), context("α"));
+    assert_eq!(engine.feed(Event::Backspace, context("α")), Intent::None);
+    assert_eq!(engine.command(), Some(""));
+    assert_eq!(engine.feed(Event::Backspace, context("α")), Intent::None);
+    assert!(engine.command().is_none());
+    assert_eq!(engine.tab_action(context("α")), TabAction::NextSlot);
+}
+
+#[test]
+fn latex_exports_are_source_snippets_and_reject_bare_command_names() {
+    let mut data: data::Data = toml::from_str(include_str!("core.toml")).expect("table syntax");
+    for symbol in &data.symbol {
+        assert!(
+            symbol.latex == "unsupported"
+                || symbol.latex.starts_with('\\')
+                || (symbol.latex == symbol.unicode
+                    && symbol
+                        .unicode
+                        .chars()
+                        .all(|c| c.is_ascii_alphanumeric() || matches!(c, '<' | '>'))),
+            "{} must export a complete LaTeX source snippet: {}",
+            symbol.unicode,
+            symbol.latex
+        );
+    }
+    assert!(data.validate().is_ok());
+    data.symbol[0].latex = "leqslant".into();
+    assert!(data.validate().is_err());
+}
+
+#[test]
 fn body_and_paste_do_not_trigger_mathematical_composition() {
     let mut engine = Engine::default();
     assert_eq!(

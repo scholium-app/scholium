@@ -2,12 +2,13 @@
 use serde::Deserialize;
 use std::{collections::HashSet, sync::OnceLock};
 
-/// One Unicode atom with explicit export names (`unsupported` is a supported marker).
+/// One Unicode atom with explicit export representations (`unsupported` marks no export).
 #[derive(Debug, Deserialize)]
 #[allow(missing_docs)]
 pub struct Symbol {
     pub unicode: String,
     pub category: String,
+    /// Complete math-mode LaTeX source snippet, emitted verbatim; never a bare command name.
     pub latex: String,
     pub typst: String,
 }
@@ -54,14 +55,19 @@ pub struct InvalidData(String);
 impl Data {
     /// Validate table references, unique names, prefix freedom and disjoint cycles.
     /// # Errors
-    /// Rejects empty names, missing export markers, invalid references and ambiguous rules.
+    /// Rejects empty names, bare LaTeX command names, invalid references and ambiguous rules.
     pub fn validate(&self) -> Result<(), InvalidData> {
         let fail = |s: &str| InvalidData(s.into());
         let mut symbols = HashSet::new();
         for s in &self.symbol {
             if s.unicode.chars().count() != 1
                 || s.category.is_empty()
-                || s.latex.is_empty()
+                || !(s.latex == "unsupported"
+                    || s.latex.starts_with('\\')
+                    || (s.latex == s.unicode
+                        && s.unicode
+                            .chars()
+                            .all(|c| c.is_ascii_alphanumeric() || matches!(c, '<' | '>'))))
                 || s.typst.is_empty()
                 || !symbols.insert(s.unicode.as_str())
             {

@@ -1,41 +1,42 @@
 # Independently authored from Unicode character names and public Typst/LaTeX references.
+# latex values are complete math-mode source snippets; TOML escapes each backslash.
 # No GPL keymaps, Scheme files or implementation tables were consulted.
 # References: https://www.unicode.org/charts/ ; https://typst.app/docs/reference/symbols/sym/
 
 [[symbol]]
 unicode = "⩽"
 category = "relation"
-latex = "leqslant"
+latex = "\\leqslant"
 typst = "lt.eq.slant"
 
 [[symbol]]
 unicode = "⩾"
 category = "relation"
-latex = "geqslant"
+latex = "\\geqslant"
 typst = "gt.eq.slant"
 
 [[symbol]]
 unicode = "≠"
 category = "relation"
-latex = "ne"
+latex = "\\ne"
 typst = "eq.not"
 
 [[symbol]]
 unicode = "→"
 category = "arrow"
-latex = "to"
+latex = "\\to"
 typst = "arrow.r"
 
 [[symbol]]
 unicode = "⇒"
 category = "arrow"
-latex = "Rightarrow"
+latex = "\\Rightarrow"
 typst = "arrow.r.double"
 
 [[symbol]]
 unicode = "∞"
 category = "constant"
-latex = "infty"
+latex = "\\infty"
 typst = "infinity"
 
 [[symbol]]
@@ -77,121 +78,121 @@ typst = "cal(R)"
 [[symbol]]
 unicode = "ℜ"
 category = "letter"
-latex = "Re"
+latex = "\\Re"
 typst = "Re"
 
 [[symbol]]
 unicode = "≤"
 category = "relation"
-latex = "leq"
+latex = "\\leq"
 typst = "lt.eq"
 
 [[symbol]]
 unicode = "≥"
 category = "relation"
-latex = "geq"
+latex = "\\geq"
 typst = "gt.eq"
 
 [[symbol]]
 unicode = "←"
 category = "arrow"
-latex = "leftarrow"
+latex = "\\leftarrow"
 typst = "arrow.l"
 
 [[symbol]]
 unicode = "↔"
 category = "arrow"
-latex = "leftrightarrow"
+latex = "\\leftrightarrow"
 typst = "arrow.l.r"
 
 [[symbol]]
 unicode = "⇔"
 category = "arrow"
-latex = "Leftrightarrow"
+latex = "\\Leftrightarrow"
 typst = "arrow.l.r.double"
 
 [[symbol]]
 unicode = "∈"
 category = "relation"
-latex = "in"
+latex = "\\in"
 typst = "in"
 
 [[symbol]]
 unicode = "∉"
 category = "relation"
-latex = "notin"
+latex = "\\notin"
 typst = "in.not"
 
 [[symbol]]
 unicode = "α"
 category = "letter"
-latex = "alpha"
+latex = "\\alpha"
 typst = "alpha"
 
 [[symbol]]
 unicode = "β"
 category = "letter"
-latex = "beta"
+latex = "\\beta"
 typst = "beta"
 
 [[symbol]]
 unicode = "γ"
 category = "letter"
-latex = "gamma"
+latex = "\\gamma"
 typst = "gamma"
 
 [[symbol]]
 unicode = "π"
 category = "letter"
-latex = "pi"
+latex = "\\pi"
 typst = "pi"
 
 [[symbol]]
 unicode = "φ"
 category = "letter"
-latex = "phi"
+latex = "\\phi"
 typst = "phi"
 
 [[symbol]]
 unicode = "ϕ"
 category = "letter"
-latex = "varphi"
+latex = "\\varphi"
 typst = "phi.alt"
 
 [[symbol]]
 unicode = "ε"
 category = "letter"
-latex = "epsilon"
+latex = "\\epsilon"
 typst = "epsilon"
 
 [[symbol]]
 unicode = "ϵ"
 category = "letter"
-latex = "varepsilon"
+latex = "\\varepsilon"
 typst = "epsilon.alt"
 
 [[symbol]]
 unicode = "′"
 category = "punctuation"
-latex = "prime"
+latex = "\\prime"
 typst = "prime"
 
 [[symbol]]
 unicode = "∅"
 category = "constant"
-latex = "emptyset"
+latex = "\\emptyset"
 typst = "emptyset"
 
 [[symbol]]
 unicode = "≡"
 category = "relation"
-latex = "equiv"
+latex = "\\equiv"
 typst = "eq.triple"
 
 [[symbol]]
 unicode = "∣"
 category = "relation"
-latex = "mid"
+latex = "\\mid"
 typst = "divides"
 
 [[compose]]
@@ -581,7 +582,7 @@ symbol = "R"
 [[symbol]]
 unicode = "<"
 category = "relation"
-latex = "lt"
+latex = "<"
 typst = "lt"
 
 [[command]]
@@ -591,7 +592,7 @@ symbol = "<"
 [[symbol]]
 unicode = ">"
 category = "relation"
-latex = "gt"
+latex = ">"
 typst = "gt"
 
 [[command]]
