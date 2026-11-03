@@ -14,6 +14,9 @@ pub(crate) struct WorkspaceState {
     /// Editor metadata and queued toolbar intents; `None` before the editor opens.
     pub(crate) editor: Option<crate::typst_editor::EditorView>,
     pub(crate) new_requested: bool,
+    pub(crate) file_modal: bool,
+    pub(crate) file_dialog: Option<crate::project_files::FileDialog>,
+    pub(crate) source_language: Option<scholium_storage::project::ProjectLanguage>,
     pub(crate) undo_requested: bool,
     pub(crate) redo_requested: bool,
     pub(crate) save_requested: bool,
@@ -50,6 +53,9 @@ impl Default for WorkspaceState {
         Self {
             editor: None,
             new_requested: false,
+            file_dialog: None,
+            file_modal: false,
+            source_language: None,
             undo_requested: false,
             redo_requested: false,
             save_requested: false,

@@ -1,8 +1,16 @@
 //! Formal project storage (ADR 0049), isolated from legacy/structured SessionStore.
 mod data;
+mod handle;
+mod source;
+pub use handle::{Authority, ProjectHandle, ProjectLanguage};
+pub use source::SourceProject;
 mod files;
 mod io;
 mod materialize;
+mod migration;
+mod native;
+pub use migration::{ProjectMigrationReport, migrate_session, session_has_head};
+pub use native::NativeProject;
 mod schema;
 mod types;
 
@@ -20,6 +28,9 @@ pub enum StoreError {
     /// Another process (or handle) already owns the project lock.
     #[error("project is locked by another opener")]
     Locked,
+    /// A directory has zero or multiple language entry candidates.
+    #[error("select an explicit .tex or .typ entry file")]
+    EntryRequired,
     /// Filesystem operation failed; a committed manifest may require recovery.
     #[error(transparent)]
     Io(#[from] std::io::Error),

@@ -18,7 +18,7 @@ assert not any(output.iterdir()), "output directory must be empty"
 assert os.environ.get("DISPLAY") not in (None, ":0"), "run only under private Xvfb"
 channel = output / "ime-event.json"
 log_path = output / "app.log"
-env = dict(os.environ, SCHOLIUM_SESSION_FILE=str(output / "doc.sqlite"),
+env = dict(os.environ, SCHOLIUM_PROJECT_PATH=str(output / "project"),
            SCHOLIUM_EDITOR_AUDIT="1", SCHOLIUM_IME_CHECK_FILE=str(channel),
            WINIT_UNIX_BACKEND="x11", WINIT_X11_SCALE_FACTOR="1")
 env.pop("WAYLAND_DISPLAY", None)

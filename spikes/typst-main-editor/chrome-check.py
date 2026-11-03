@@ -26,7 +26,7 @@ output.mkdir(parents=True, exist_ok=True)
 if any(output.iterdir()):
     raise SystemExit("output directory must be empty")
 locale = os.environ.get("SCHOLIUM_LOCALE", "zh-Hans")
-env = dict(os.environ, SCHOLIUM_SESSION_FILE=str(output / "doc.sqlite"), SCHOLIUM_EDITOR_AUDIT="1",
+env = dict(os.environ, SCHOLIUM_PROJECT_PATH=str(output / "project"), SCHOLIUM_EDITOR_AUDIT="1",
            SCHOLIUM_LOCALE=locale, WINIT_UNIX_BACKEND="x11", WINIT_X11_SCALE_FACTOR="1")
 env.pop("WAYLAND_DISPLAY", None)
 log_path = output / "app.log"
@@ -245,36 +245,27 @@ try:
     chrome.click("view.zoom.fit_width", "status")
     record("10-status-bar-words-and-zoom", True, words=facts(s)["status"]["words"], texts=texts(s))
 
-    # 11. The tab's "+" and close button run the existing discard flow.
-    seen = log_path.read_text().count("DIALOG ")
-
-    def proceed():
-        end = time.monotonic() + 10
-        while time.monotonic() < end:
-            dialogs = [l for l in log_path.read_text().split("\n") if l.startswith("DIALOG ")]
-            if len(dialogs) > seen:
-                x, y = json.loads(dialogs[-1][7:])["proceed"]
-                time.sleep(0.3)
-                xdo("mousemove", "--window", window, round(x * ppp), round(y * ppp))
-                xdo("click", 1)
-                return
-            time.sleep(0.05)
-        raise RuntimeError("no discard dialog")
-
+    # 11. New chooses a project/language; close discards and releases its project lock.
     chrome.click("file.new", "tab")
-    proceed()
-    s = wait(lambda s: texts(s) == [""], "new document replaced the old one")
+    from project_ui import ProjectApp
+    controls = ProjectApp(binary, output, output / "new-project")
+    controls.app, controls.log, controls.window, controls.env = app, log_path, window, env
+    controls.control("path")
+    controls.type(str(output / "new-project"))
+    controls.control("submit")
+    controls.control("discard")
+    s = wait(lambda s: s["current"] and s["raster"] is not None and texts(s) == [""], "new document replaced the old one")
     record("11a-tab-plus-runs-the-new-document-flow", True)
     focus_page()
     type_text("unsaved work")
     wait(lambda s: texts(s) == ["unsaved work"], "dirty again")
-    seen = log_path.read_text().count("DIALOG ")
     chrome.click("file.close", "tab")
-    proceed()
+    controls.control("discard")
     end = time.monotonic() + 15
-    while app.poll() is None and time.monotonic() < end:
+    while 'PROJECT {"closed":true}' not in log_path.read_text() and time.monotonic() < end:
         time.sleep(0.1)
-    record("11b-tab-close-runs-the-discard-flow-and-closes", app.poll() is not None)
+    record("11b-tab-close-discards-and-releases-the-project", 'PROJECT {"closed":true}' in log_path.read_text())
+
 finally:
     (output / "summary.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")
     if app.poll() is None:

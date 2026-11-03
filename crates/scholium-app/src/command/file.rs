@@ -18,12 +18,14 @@ pub(super) fn specs() -> Vec<CommandSpec> {
             "file.open",
             icon: IconId::Open,
             menu: menu!(File, 0, 1),
-            availability: avail::unimplemented,
+            availability: avail::not_composing,
+            action: Action::View(ViewCommand::FileDialog(crate::project_files::FileDialog::Open)),
         },
         command! {
             "file.recent",
             menu: menu!(File, 0, 2),
-            availability: avail::unimplemented,
+            availability: avail::not_composing,
+            action: Action::View(ViewCommand::FileDialog(crate::project_files::FileDialog::Recent)),
         },
         command! {
             "file.save",
@@ -35,7 +37,8 @@ pub(super) fn specs() -> Vec<CommandSpec> {
         command! {
             "file.save_as",
             menu: menu!(File, 1, 1),
-            availability: avail::unimplemented,
+            availability: avail::save,
+            action: Action::View(ViewCommand::FileDialog(crate::project_files::FileDialog::SaveAs)),
         },
         command! {
             "file.export",

@@ -7,7 +7,8 @@
 不切换项目语言，不上传网络，也不展示冲突 UI。
 
 [ADR 0049](../adr/ADR-0049-formal-project-storage.md) 是正式布局、永久 schema、版本迁移和持久性裁决。
-`SessionStore` 是单独的 legacy/structured 会话格式；app/session 的保存尚不接入 `ProjectStore`。
+`SessionStore` 是保留作只读迁移和兼容工具的 legacy/structured 会话格式；app/session 使用正式项目存储。
+项目声明、默认路径与退役策略见 [ADR 0051](../adr/ADR-0051-project-files-and-session-retirement.md)。
 两种项目语言共用该存储边界，标准 `.tex`/`.typ` 保持源码权威；项目语言与 authority 的声明配置不由数据库推断。
 
 ## 内部结构
@@ -19,6 +20,10 @@ src/project/
 ├── schema.sql      永久 v1 STRICT schema 与不可变触发器
 ├── schema.rs       不覆盖创建、先校验后 writer、完整性验证
 ├── data.rs         Action、快照、草稿、内容寻址 blob
+├── handle.rs       不可变项目/资源身份、语言与入口声明、同格式副本
+├── native.rs       临时版本信封、原生 Action 重放与快照
+├── source.rs       私人草稿、磁盘基线、保存/重新载入
+├── migration.rs    只读会话导入、新项目验证与保留原库报告
 ├── files.rs        capability-relative 文件操作、同目录临时发布
 ├── materialize.rs  revision/manifest、恢复检查与显式继续
 └── io.rs           可注入 I/O/事务边界
@@ -54,7 +59,8 @@ SQLite 连接不跨线程共享。浏览器存储另行适配，不将宿主持�
 - `append_action(&ActionRecord) -> DurableSequence`：version=1 的 Action/update 在 SQLite WAL/FULL 事务提交后返回；
   序号与语义 revision 不混用。`actions_after(sequence)` 供内核重放，零表示完整日志。
 - `save_snapshot(sequence, bytes)` / `latest_snapshot()`：由内核保证领域一致性的版本化 checkpoint。
-  接入方在累计 1024 动作或 8 MiB 更新后请求快照，加载后重放其后的 Actions；不自动删日志/快照。
+  正式增量 adapter 接入时在累计 1024 动作或 8 MiB 更新后请求快照；临时 native 信封由显式保存触发快照，
+  加载后重放其后的 Actions，不自动删日志/快照。
 - `save_draft(resource, base_hash, bytes)` / `load_draft` / `discard_draft`：接受无效语法，保留原始基线，
   不触碰源文件、不生成 Action；草稿可先于文件目录存在。默认不进发布包，物化不自动清草稿。
 - `put_blob(bytes)` / `get_blob(hash)`：SHA-256 去重，读写验证内容，不按路径或 mtime 判等。
@@ -67,6 +73,29 @@ SQLite 连接不跨线程共享。浏览器存储另行适配，不将宿主持�
 
 `Resource::new(id,path)` 校验唯一词法形式的 UTF-8 相对路径，拒绝重复分隔符、`.` 和尾部分隔符等别名；身份不得隐式绑定新 path，path 不得绑定另一身份。
 重命名需要后续显式 catalog 操作。本骨架没有 watcher、跨文件 write group、history refs/branch、自动 GC 或浏览器存储。
+
+## 项目生命周期
+
+`ProjectHandle::create` 新建固定语言项目；Typst 为原生权威，LaTeX 为源码权威。
+`open(path, entry)` 读取版本 1 声明或按明确的 `.typ` / `.tex` 入口导入普通目录；多候选入口必须显式选择。
+声明与资源路径拒绝 symlink、不安全路径和语言/authority 不匹配。声明仅在首次创建/导入时不覆盖发布。
+`copy_source` / `copy_native` 复制普通资源并生成新身份，排除私人元数据；已有/嵌套目标和特殊文件拒绝。
+
+`NativeProject::open(handle, initial)` 持锁，验证并恢复快照及后续全部 Actions；空项目先提交初始化事件和快照。
+`append_edit` 提交版本 1 临时绝对状态信封，含 structured 文档、当前请求身份日志和事件身份；
+`save` 在最新 Action 边界写不可变快照，重复保存不覆盖。当前信封由共享 SDG adapter Action 替换，
+不代表 CRDT、协作 actor 或产品历史。`saved_document` / `saved_requests` 保留最后保存基线供显式丢弃追加。
+
+`SourceProject::open` 持锁并读取 UTF-8 源码或私人 draft，不执行语法或改源文件。
+`edit` 保留私人输入并提交 durable draft，失败仍保留新输入与未保存状态；`save` 显式恢复该资源的 pending 意图、执行 materialize，随后清 draft。
+外部 hash 变化返回 Conflict；没有未完成意图时 `reload` 显式丢弃 draft 并重读磁盘。
+物化完成但草稿清理前崩溃，磁盘/draft/已完成 manifest hash 三者一致时恢复新基线，避免假外部冲突。
+源文件缺失和空文件基线不同；损坏编码、锁冲突或失败提交不标记保存成功。
+
+`migrate_session(source,target)` 只读一致验证 schema 0 或 structured v1 会话，生成独立项目及兼容报告；
+当前 head 作为一次导入事件，旧历史仍在保留的原会话。RawMath 保留并报告数量。
+迁移目标带 `.scholium-importing` 标记，保存、重开比对及报告同步完成前拒绝作为项目打开；
+已有目标永不覆盖，失败目标保留。返回值含新 handle、原库规范路径与 Raw 计数。
 
 ## 物化与恢复不变量
 

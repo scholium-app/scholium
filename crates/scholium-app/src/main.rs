@@ -7,14 +7,16 @@ mod commands;
 mod diagnostics;
 mod i18n;
 mod icons;
+mod project_files;
+mod project_workspace;
 mod state;
 mod theme;
 mod typst_editor;
 mod widgets;
 
 use eframe::egui;
+use project_workspace::ProjectWorkspace;
 use state::WorkspaceState;
-use typst_editor::EditorSession;
 
 /// Narrowest window: at this width the toolbar already moves its last group into "»".
 const MIN_WINDOW_WIDTH: f32 = 480.0;
@@ -22,21 +24,52 @@ const MIN_WINDOW_WIDTH: f32 = 480.0;
 #[derive(Default)]
 struct ScholiumApp {
     state: WorkspaceState,
-    editor: Option<EditorSession>,
-    /// The document could not be opened; shown in the window, no editor runs.
-    startup_error: Option<String>,
+    project: Option<ProjectWorkspace>,
+    files: project_files::ProjectFiles,
+    notice: bool,
 }
 
 impl eframe::App for ScholiumApp {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
-        if let Some(error) = &self.startup_error {
-            typst_editor::show_startup_error(ui, error);
-            return;
-        }
         command::shortcuts::shortcuts(ui.ctx(), &mut self.state);
+        if let Some(project) = &self.project {
+            project.metadata(&mut self.state);
+        }
         chrome::show(ui, &mut self.state);
-        if let Some(editor) = &mut self.editor {
-            editor.show(ui, &mut self.state);
+        self.files
+            .show(ui.ctx(), &mut self.state, &mut self.project);
+        if let Some(project) = &mut self.project {
+            project.show(ui, &mut self.state);
+        } else {
+            ui.ctx()
+                .send_viewport_cmd(egui::ViewportCommand::Title("Scholium".into()));
+            egui::CentralPanel::default().show(ui, |ui| {
+                ui.heading(i18n::text(self.state.locale.resolve(), "project.welcome"));
+                if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
+                    println!("PROJECT {{\"closed\":true}}");
+                }
+                if let Some(error) = &self.state.storage_error {
+                    ui.colored_label(ui.visuals().error_fg_color, error);
+                }
+            });
+        }
+        if self.notice {
+            egui::Window::new(i18n::text(
+                self.state.locale.resolve(),
+                "project.migrated.title",
+            ))
+            .show(ui.ctx(), |ui| {
+                ui.label(i18n::text(
+                    self.state.locale.resolve(),
+                    "project.migrated.body",
+                ));
+                if ui
+                    .button(i18n::text(self.state.locale.resolve(), "project.ok"))
+                    .clicked()
+                {
+                    self.notice = false;
+                }
+            });
         }
     }
 }
@@ -56,11 +89,18 @@ fn main() -> eframe::Result {
         Box::new(|cc| {
             let mut app = ScholiumApp::default();
             theme::install(&cc.egui_ctx);
-            match EditorSession::open(&cc.egui_ctx, &mut app.state) {
-                Ok(editor) => app.editor = Some(editor),
+            app.files.initialize(&mut app.state);
+            match typst_editor::default_project().and_then(|(handle, migrated)| {
+                app.notice = migrated;
+                ProjectWorkspace::open(handle, &cc.egui_ctx, &mut app.state)
+            }) {
+                Ok(project) => {
+                    app.files.remember(&project, &mut app.state);
+                    app.project = Some(project);
+                }
                 Err(error) => {
                     eprintln!("{error}");
-                    app.startup_error = Some(error.to_string());
+                    app.state.storage_error = Some(error);
                 }
             }
             Ok(Box::new(app))

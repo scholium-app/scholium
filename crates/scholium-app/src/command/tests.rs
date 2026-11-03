@@ -281,7 +281,7 @@ fn composition_blocks_writes_file_actions_and_mode_switches() {
 #[test]
 fn unimplemented_commands_are_greyed_with_a_reason() {
     for id in [
-        "file.open",
+        "file.export",
         "edit.find",
         "format.underline",
         "document.page_size",
