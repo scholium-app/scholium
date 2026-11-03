@@ -1,0 +1,21 @@
+    Finished `test` profile [unoptimized] target(s) in 0.23s
+     Running tests/real.rs (target/debug/deps/real-9ecedd189df21891)
+
+running 1 test
+test native_capability_probe_and_supported_upstream_pass_timeout ... Engine { generation: 0, state: Starting, reason: None }
+Engine { generation: 0, state: Ready, reason: None }
+Engine { generation: 0, state: Starting, reason: None }
+Pages { generation: 0, revision: Some(0), count: 1, outcome: Complete, elapsed: 817.647416ms }
+Engine { generation: 0, state: Ready, reason: None }
+Engine { generation: 0, state: Recovering, reason: Some("engine watchdog: no response within 30s; server killed") }
+Diagnostic { message: "engine watchdog: no response within 30s; server killed" }
+Diagnostic { message: "engine watchdog: no response within 30s; server killed" }
+Engine { generation: 0, state: Starting, reason: None }
+Engine { generation: 0, state: Ready, reason: None }
+Diagnostic { message: "background pass: lualatex was stopped after 2 s, the time limit of a pass (does the document loop forever?)" }
+Pages { generation: 0, revision: Some(1), count: 0, outcome: Failed, elapsed: 1.755444377s }
+Pages { generation: 0, revision: Some(2), count: 1, outcome: Complete, elapsed: 530.634314ms }
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 34.03s
+

@@ -1,0 +1,21 @@
+[package]
+name = "scholium-latex"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+scholium-build = { path = "../scholium-build", version = "0.1.0" }
+thiserror = "=2.0.20"
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.151"
+tokio = { version = "=1.53.3", features = ["process", "io-util", "time", "sync", "rt", "macros"] }
+
+[dev-dependencies]
+tempfile = "=3.27.0"
+nix = { version = "=0.31.3", features = ["signal", "process"] }
+
+[lints]
+workspace = true

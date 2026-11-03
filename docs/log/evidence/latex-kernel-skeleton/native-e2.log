@@ -1,0 +1,30 @@
+   Compiling scholium-build v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-build)
+    Finished `test` profile [unoptimized] target(s) in 0.29s
+     Running unittests src/lib.rs (target/debug/deps/scholium_build-69edb31adc8a72a3)
+
+running 1 test
+test tests::native::native_rtex_e2_attacks_work_on_host_and_are_blocked_by_product_sandbox ... {"attack_effective":true,"case":"read","connected":false,"leaked":true,"sandboxed":false,"written":false}
+cgroup enforced: memory=2147483648, tasks=64, swap=0; Max cpu time              unlimited            unlimited            seconds   
+{"attack_effective":false,"case":"read","connected":false,"leaked":false,"sandboxed":true,"written":false}
+{"attack_effective":true,"case":"absolute-input","connected":false,"leaked":true,"sandboxed":false,"written":false}
+cgroup enforced: memory=2147483648, tasks=64, swap=0; Max cpu time              unlimited            unlimited            seconds   
+{"attack_effective":false,"case":"absolute-input","connected":false,"leaked":false,"sandboxed":true,"written":false}
+{"attack_effective":true,"case":"shell","connected":false,"leaked":false,"sandboxed":false,"written":true}
+cgroup enforced: memory=2147483648, tasks=64, swap=0; Max cpu time              unlimited            unlimited            seconds   
+{"attack_effective":false,"case":"shell","connected":false,"leaked":false,"sandboxed":true,"written":false}
+{"attack_effective":true,"case":"write-lua","connected":false,"leaked":false,"sandboxed":false,"written":true}
+cgroup enforced: memory=2147483648, tasks=64, swap=0; Max cpu time              unlimited            unlimited            seconds   
+{"attack_effective":false,"case":"write-lua","connected":false,"leaked":false,"sandboxed":true,"written":false}
+{"attack_effective":true,"case":"write-openout","connected":false,"leaked":false,"sandboxed":false,"written":true}
+cgroup enforced: memory=2147483648, tasks=64, swap=0; Max cpu time              unlimited            unlimited            seconds   
+{"attack_effective":false,"case":"write-openout","connected":false,"leaked":false,"sandboxed":true,"written":false}
+{"attack_effective":true,"case":"write-project","connected":false,"leaked":false,"sandboxed":false,"written":true}
+cgroup enforced: memory=2147483648, tasks=64, swap=0; Max cpu time              unlimited            unlimited            seconds   
+{"attack_effective":false,"case":"write-project","connected":false,"leaked":false,"sandboxed":true,"written":false}
+{"attack_effective":true,"case":"network","connected":true,"leaked":false,"sandboxed":false,"written":false}
+cgroup enforced: memory=2147483648, tasks=64, swap=0; Max cpu time              unlimited            unlimited            seconds   
+{"attack_effective":false,"case":"network","connected":false,"leaked":false,"sandboxed":true,"written":false}
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 7.50s
+

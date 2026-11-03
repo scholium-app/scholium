@@ -1,0 +1,53 @@
+   Compiling scholium-build v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-build)
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-latex)
+    Finished `test` profile [unoptimized] target(s) in 1.74s
+     Running unittests src/lib.rs (target/debug/deps/scholium_build-4d18d6902d052022)
+
+running 2 tests
+test tests::native::native_rtex_e2_attacks_work_on_host_and_are_blocked_by_product_sandbox ... ignored, native E2 controls require pinned rtex, LuaLaTeX, bwrap and systemd user cgroups
+test tests::font_cache_copies_are_independent_and_reject_symlinks ... ok
+
+test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/scholium_latex-799202e31c8ebc78)
+
+running 15 tests
+test tests::source::edits_reject_invalid_utf8_ranges_and_non_normal_paths ... ok
+test tests::source::symlink_escapes_are_rejected_on_open_load_and_after_path_replacement ... ok
+test tests::source::engine_directives_mark_non_lua_projects_for_full_compilation ... ok
+test tests::supervision::upstream_pass_timeout_is_failed_and_does_not_trigger_a_host_compile_watchdog ... ok
+test tests::supervision::location_queries_expose_validated_source_byte_ranges ... ok
+test tests::supervision::invalid_edits_never_reach_the_worker ... ok
+test tests::supervision::malformed_acknowledgements_never_mislabel_later_revisions ... ok
+test tests::supervision::malformed_messages_become_diagnostics_and_unknown_fields_are_tolerated ... ok
+test tests::supervision::overlong_and_total_output_exhaustion_fail_closed_without_restarting ... ok
+test tests::supervision::startup_failures_are_bounded_and_reported ... ok
+test tests::supervision::restarting_and_failed_events_request_layout_for_lost_inflight_updates ... ok
+test tests::supervision::upstream_timeout_flags_are_probed_and_missing_capabilities_are_diagnostic ... ok
+test tests::supervision::closing_stderr_does_not_restart_a_healthy_protocol_session ... ok
+test tests::supervision::killed_or_hung_serve_restarts_and_resynchronizes_unsaved_documents ... ok
+test tests::supervision::missing_preamble_package_fails_once_without_a_host_restart_loop ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+
+     Running tests/real.rs (target/debug/deps/real-9ecedd189df21891)
+
+running 3 tests
+test native_capability_probe_and_supported_upstream_pass_timeout ... ignored, requires real rtex; upstream timeout injection additionally requires PR #36 CLI flags
+test native_killed_and_stopped_serve_restarts_and_resynchronizes ... ignored, requires pinned rtex, LuaLaTeX, bwrap namespaces and systemd user cgroups
+test native_start_edit_paragraph_update_and_host_input_rejection ... ignored, requires pinned rtex, LuaLaTeX, bwrap namespaces and systemd user cgroups
+
+test result: ok. 0 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests scholium_build
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests scholium_latex
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

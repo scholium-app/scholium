@@ -1,0 +1,19 @@
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-latex)
+    Finished `test` profile [unoptimized] target(s) in 1.61s
+     Running unittests src/lib.rs (target/debug/deps/scholium_latex-799202e31c8ebc78)
+
+running 1 test
+
+thread 'tests::supervision::closing_stderr_does_not_restart_a_healthy_protocol_session' (78186) panicked at crates/scholium-latex/src/tests/supervision.rs:70:6:
+expected event before test deadline: Elapsed(())
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test tests::supervision::closing_stderr_does_not_restart_a_healthy_protocol_session ... FAILED
+
+failures:
+
+failures:
+    tests::supervision::closing_stderr_does_not_restart_a_healthy_protocol_session
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 13 filtered out; finished in 5.01s
+
+error: test failed, to rerun pass `-p scholium-latex --lib`

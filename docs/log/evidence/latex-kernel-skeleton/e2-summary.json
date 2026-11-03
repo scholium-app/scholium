@@ -1,0 +1,114 @@
+[
+  {
+    "attack_effective": true,
+    "case": "read",
+    "connected": false,
+    "leaked": true,
+    "sandboxed": false,
+    "written": false
+  },
+  {
+    "attack_effective": false,
+    "case": "read",
+    "connected": false,
+    "leaked": false,
+    "sandboxed": true,
+    "written": false
+  },
+  {
+    "attack_effective": true,
+    "case": "absolute-input",
+    "connected": false,
+    "leaked": true,
+    "sandboxed": false,
+    "written": false
+  },
+  {
+    "attack_effective": false,
+    "case": "absolute-input",
+    "connected": false,
+    "leaked": false,
+    "sandboxed": true,
+    "written": false
+  },
+  {
+    "attack_effective": true,
+    "case": "shell",
+    "connected": false,
+    "leaked": false,
+    "sandboxed": false,
+    "written": true
+  },
+  {
+    "attack_effective": false,
+    "case": "shell",
+    "connected": false,
+    "leaked": false,
+    "sandboxed": true,
+    "written": false
+  },
+  {
+    "attack_effective": true,
+    "case": "write-lua",
+    "connected": false,
+    "leaked": false,
+    "sandboxed": false,
+    "written": true
+  },
+  {
+    "attack_effective": false,
+    "case": "write-lua",
+    "connected": false,
+    "leaked": false,
+    "sandboxed": true,
+    "written": false
+  },
+  {
+    "attack_effective": true,
+    "case": "write-openout",
+    "connected": false,
+    "leaked": false,
+    "sandboxed": false,
+    "written": true
+  },
+  {
+    "attack_effective": false,
+    "case": "write-openout",
+    "connected": false,
+    "leaked": false,
+    "sandboxed": true,
+    "written": false
+  },
+  {
+    "attack_effective": true,
+    "case": "write-project",
+    "connected": false,
+    "leaked": false,
+    "sandboxed": false,
+    "written": true
+  },
+  {
+    "attack_effective": false,
+    "case": "write-project",
+    "connected": false,
+    "leaked": false,
+    "sandboxed": true,
+    "written": false
+  },
+  {
+    "attack_effective": true,
+    "case": "network",
+    "connected": true,
+    "leaked": false,
+    "sandboxed": false,
+    "written": false
+  },
+  {
+    "attack_effective": false,
+    "case": "network",
+    "connected": false,
+    "leaked": false,
+    "sandboxed": true,
+    "written": false
+  }
+]
