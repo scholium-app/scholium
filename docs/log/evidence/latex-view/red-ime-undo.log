@@ -1,0 +1,23 @@
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 5.06s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-2b09a38e1bc8faec)
+
+running 3 tests
+
+thread 'source_editor::tests::selection_paste_and_ime_commit_preserve_literal_source_and_undo' (578631) panicked at crates/scholium-app/src/source_editor/tests.rs:88:5:
+assertion `left == right` failed
+  left: "old"
+ right: "\\frac{中文}{x}"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test source_editor::tests::selection_paste_and_ime_commit_preserve_literal_source_and_undo ... FAILED
+test source_editor::tests::command_candidates_insert_source_snippets_as_single_undoable_edits ... ok
+test source_editor::tests::find_marks_exact_utf8_match_in_large_scrollable_source ... ok
+
+failures:
+
+failures:
+    source_editor::tests::selection_paste_and_ime_commit_preserve_literal_source_and_undo
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 333 filtered out; finished in 0.08s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`

@@ -1,0 +1,21 @@
+{
+  "size_a": [
+    2481,
+    3508
+  ],
+  "size_b": [
+    2481,
+    3508
+  ],
+  "ink_a": 16768,
+  "ink_b": 16484,
+  "unmatched_a": 1,
+  "unmatched_b": 0,
+  "unmatched_fraction": 0.00003007337904486948,
+  "unmatched_bbox": [
+    646,
+    634,
+    646,
+    634
+  ]
+}

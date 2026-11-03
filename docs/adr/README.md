@@ -110,3 +110,5 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0049](ADR-0049-formal-project-storage.md)：正式项目存储采用 SQLite WAL/FULL、永久 schema v1、独立草稿与内容寻址 blob，通过 revision/manifest 协调原子源码物化和显式恢复。
 
 [ADR 0050](ADR-0050-linux-live-session-cgroups.md)：Linux 常驻构建会话使用 systemd 用户 scope，fail-closed 资源探测、整树取消与可信字体缓存副本。
+
+[ADR 0052](ADR-0052-latex-view-workbench.md)：LaTeX 内核图元与同引擎 PDF 回退、受限整编 profile、共享源码编辑器与开发工作台。

@@ -67,3 +67,28 @@ fn engine_directives_mark_non_lua_projects_for_full_compilation() {
         assert_eq!(session.preview_mode(), mode);
     }
 }
+
+#[test]
+fn lexical_highlights_preserve_utf8_and_escaped_comments() {
+    use crate::{TokenKind, highlight};
+    let source = "中文 \\alpha{a} $b$ \\% % 注释\ntext";
+    let tokens = highlight(source);
+    assert_eq!(
+        tokens
+            .iter()
+            .map(|t| &source[t.bytes.clone()])
+            .collect::<String>(),
+        source
+    );
+    let comments = tokens
+        .iter()
+        .filter(|t| t.kind == TokenKind::Comment)
+        .collect::<Vec<_>>();
+    assert_eq!(comments.len(), 1);
+    assert_eq!(&source[comments[0].bytes.clone()], "% 注释");
+    assert!(
+        tokens
+            .iter()
+            .any(|t| t.kind == TokenKind::Control && &source[t.bytes.clone()] == "\\alpha")
+    );
+}

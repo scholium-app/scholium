@@ -483,3 +483,14 @@ math-input-accept_hint = Enter / Tab：插入 · ↑↓：选择 · Esc：取消
 math-input-tab-complete = Tab：补全命令
 math-input-tab-cycle = Tab：循环符号
 math-input-tab-slot = Tab：下个槽位
+
+# LaTeX source workbench
+latex-workspace = LaTeX 源码工作台
+latex-source = LaTeX 源码 · 未保存编辑
+latex-preview = 同引擎预览
+latex-unavailable = 工具链不可用
+latex-building = 预览编译中
+latex-stale = 预览更新中 · 源码已改变
+latex-full = 整编预览 · { $ms } ms
+latex-live = 实时预览 · { $ms } ms
+source-editor-find = 查找

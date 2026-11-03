@@ -489,3 +489,14 @@ math-input-accept_hint = Enter / Tab: insert · ↑↓: choose · Esc: cancel
 math-input-tab-complete = Tab: complete
 math-input-tab-cycle = Tab: cycle symbol
 math-input-tab-slot = Tab: next slot
+
+# LaTeX source workbench
+latex-workspace = LaTeX source workbench
+latex-source = LaTeX source · unsaved edits
+latex-preview = Same-engine preview
+latex-unavailable = Toolchain unavailable
+latex-building = Compiling preview
+latex-stale = Preview updating · source changed
+latex-full = Full compilation preview · { $ms } ms
+latex-live = Live preview · { $ms } ms
+source-editor-find = Find

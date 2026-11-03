@@ -98,7 +98,8 @@ impl SandboxProcess {
                 tokio::try_join!(read_setup(stdout), read_setup(stderr), self.child.wait())?;
             if !status.success() {
                 return Err(BuildError::Tool(format!(
-                    "{status}: {}",
+                    "{status}: {} {}",
+                    String::from_utf8_lossy(&out),
                     String::from_utf8_lossy(&err)
                 )));
             }

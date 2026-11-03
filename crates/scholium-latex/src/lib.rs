@@ -1,4 +1,8 @@
 //! Source-authoritative LaTeX sessions and supervised, sandboxed live preview.
+pub mod full;
+mod highlight;
+pub mod view;
+pub use highlight::{Token, TokenKind, highlight};
 mod event;
 mod live;
 mod mailbox;

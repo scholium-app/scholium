@@ -507,3 +507,48 @@ async fn evicted_distinct_paragraphs_request_layout_without_losing_engine_or_sou
     })
     .await;
 }
+
+#[tokio::test]
+async fn fake_protocol_drawing_reaches_page_pixels_and_live_replacement() {
+    let fixture = Fixture::new();
+    let mut live = fixture.start("drawing").await;
+    let initial = until(&mut live, |e| {
+        matches!(
+            e,
+            LiveEvent::Pages {
+                revision: Some(0),
+                ..
+            }
+        )
+    })
+    .await;
+    let mut renderer = view::Renderer::default();
+    let LiveEvent::Pages { drawing, .. } = initial else {
+        panic!("layout")
+    };
+    let before = renderer.apply(&drawing, None).expect("page").remove(0);
+    live.edit("main.tex", 0..0, "new ").await.expect("edit");
+    let event = until(&mut live, |e| {
+        matches!(
+            e,
+            LiveEvent::Paragraph {
+                revision: Some(1),
+                ..
+            }
+        )
+    })
+    .await;
+    let LiveEvent::Paragraph {
+        drawing, paragraph, ..
+    } = event
+    else {
+        panic!("paragraph")
+    };
+    let after = renderer
+        .apply(&drawing, Some(paragraph))
+        .expect("live")
+        .remove(0);
+    assert_eq!(after.origin, view::RasterOrigin::DisplayList);
+    assert_ne!(after.rgba, before.rgba);
+    live.cancel().await.expect("cancel");
+}
