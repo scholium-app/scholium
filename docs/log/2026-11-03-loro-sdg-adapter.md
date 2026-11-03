@@ -56,7 +56,7 @@ common/kv-store 1.17.0 与其编译兼容，精确依赖图由 lockfile 固定�
 
 ## 性能结果
 
-原始十进程输出：[benchmark-raw.jsonl](evidence/2026-11-03-loro-sdg-adapter/benchmark-raw.jsonl)；
+原始十进程输出：[benchmark-raw.jsonl.gz](evidence/2026-11-03-loro-sdg-adapter/benchmark-raw.jsonl.gz)；
 [中位数](evidence/2026-11-03-loro-sdg-adapter/benchmark-summary.json)。
 
 | 指标（中位数） | Loro 1.16.0 | Yrs 0.27.4 |
@@ -99,19 +99,12 @@ RSS 包含 trace、两副本、编码与第三个恢复副本，不等于引擎�
 | `cargo build --locked -p scholium-sdg --target wasm32-unknown-unknown` | PASS |
 | `python3 scripts/window-checks.py --locale zh-Hans en --out target/t41-window-all` | 首轮 45/46；math-input 双语复验 2/2，全部组合有通过记录 |
 
-主要命令输出保留在 [evidence](evidence/2026-11-03-loro-sdg-adapter/tests.log)。
-stock Typst 按 workflow 跑独立 fork/reference 与 compare.py，
-[系统字体](evidence/2026-11-03-loro-sdg-adapter/stock-system.json) 与
-[bundled-only](evidence/2026-11-03-loro-sdg-adapter/stock-bundled.json) 各 31/31 像素相等，未修改 reference 或阈值。
+首轮门禁为历史验证，详细原始记录可在提交 `9c8b3cf` 查阅；当前保留续作后的最终门禁与证据。
+当时 stock Typst 系统/bundled-only 各 31/31 像素一致；当前目录只保留后文链接的最终两份比较。
 WASM target 镜像下载 404 后以单命令官方服务器下载成功，未修改 rustup/git 配置。
-实际 `cargo build --locked -p scholium-sdg --target wasm32-unknown-unknown` 编译了锁定 Loro 引擎并通过；
-该探针没有 adapter，因此不能称为生产 adapter 的 WASM 验收。
-完整双语窗口检查使用共享机器锁、私有 Xvfb，原样运行现有检查，不触及用户桌面。
-[首轮 45/46](evidence/2026-11-03-loro-sdg-adapter/window-all.log)；中文 math-input 在执行断言前遇到
-[XOpenDisplayFailed](evidence/2026-11-03-loro-sdg-adapter/xvfb-startup-failure.log)。
-未修改 app 或脚本，通过同一共享 runner 在新目录中双语[复验 2/2](evidence/2026-11-03-loro-sdg-adapter/window-math-rerun.log)：
-`python3 scripts/window-checks.py --only math-input --locale zh-Hans en --out target/t41-window-math-rerun`。
-23 项 × 2 种语言的全部组合均有通过记录，不将首轮伪报为全通过。
+首轮仅验证引擎编译，不含生产 adapter；完整 adapter 的 WASM 验收见续作验证。
+首轮窗口 45/46，中文 math-input 启动前 XOpenDisplayFailed；同一 runner 双语复验 2/2。
+历史结果不作为最新代码门禁，较早窗口日志不再重复保留。
 两项基准契约测试通过 example 的 `test = true` 纳入默认 workspace test。
 
 ## 待办与会话接口点
@@ -160,18 +153,22 @@ batch 1/10/100、离线 1k/10k/50k 每端、操作分类，并预先给定继续
 测试先行曾发现并修复：结构 redo 重生 metadata 导致身份重复、MathText 清空与并发字符的冲突、
 Loro Snapshot 丢失 pending 输入、复用备用节点跨父移动造成重复身份，以及同一旧 inline 并发改 kind
 时确定性备用名碰撞。身份出生排除 undo、保留 pending envelope、补充带 Action 身份的备用分别覆盖这些问题。
-对应 red/green 与最终测试记录保存在 evidence；没有通过删除回归用例解决失败。
+回归用例及修复保留在实现提交中，最终测试记录见后文；没有通过删除回归用例解决失败。
 
 ### 性能证据与判定
 
-[混合/增量 raw](evidence/2026-11-03-loro-sdg-adapter/collaboration-raw.jsonl)、
+[混合/增量 raw](evidence/2026-11-03-loro-sdg-adapter/collaboration-raw.jsonl.gz)、
 [summary](evidence/2026-11-03-loro-sdg-adapter/collaboration-summary.json) 为 72 个进程；
-[操作分类 raw](evidence/2026-11-03-loro-sdg-adapter/operation-breakdown-raw.jsonl)、
+[操作分类 raw](evidence/2026-11-03-loro-sdg-adapter/operation-breakdown-raw.jsonl.gz)、
 [summary](evidence/2026-11-03-loro-sdg-adapter/operation-breakdown-summary.json) 为 252 个进程；
-[正式阈值 raw](evidence/2026-11-03-loro-sdg-adapter/criteria-raw.jsonl)、
+[正式阈值 raw](evidence/2026-11-03-loro-sdg-adapter/criteria-raw.jsonl.gz)、
 [verdict](evidence/2026-11-03-loro-sdg-adapter/criteria-verdict.json) 为 6 个进程。
-另保留 6 个先验 threshold pilot 和 12 个四版本吞吐完整进程。
+另保留 [6 个先验 threshold pilot](evidence/2026-11-03-loro-sdg-adapter/criteria-pilot.json)，以及
+[12 个四版本吞吐原始进程](evidence/2026-11-03-loro-sdg-adapter/throughput-four-raw.jsonl.gz)与
+[吞吐汇总](evidence/2026-11-03-loro-sdg-adapter/throughput-four-summary.json)。
 全部有效样本检查 monotonic/boottime，未检测到挂起。
+证据清理后只保留本文及 ADR 引用的文件；原始 `.jsonl` 与超过 200 KB 的失败日志使用 gzip 无损压缩，
+可用 `gzip -dc <文件.gz>` 查看。stock 只保留最终系统/bundled 比较，窗口只保留最终轮和故障复验。
 
 ### 增量交换（三轮 pooled nearest-rank p50 / p99，ms/接收批次）
 
@@ -271,21 +268,18 @@ engine example 2 项、collaboration example 3 项。两个独立 benchmark mani
 最新 main 上的[完整双语窗口轮](evidence/2026-11-03-loro-sdg-adapter/window-final-all.log)为 **53/54**；
 唯一英文 sharp-raster 在滚动时私有 Xvfb 被 SIGKILL，见[失败记录](evidence/2026-11-03-loro-sdg-adapter/window-final-sharp-xvfb-failure.log)。
 通过同一 runner、原脚本和全新目录只复验 `--only sharp-raster --locale en`：
-[第一次 0/1](evidence/2026-11-03-loro-sdg-adapter/window-sharp-rerun1.log)、
-[第二次 0/1](evidence/2026-11-03-loro-sdg-adapter/window-sharp-rerun2.log) 均有 Xvfb SIGKILL/连接中断，
+[第一次 0/1](evidence/2026-11-03-loro-sdg-adapter/window-sharp-rerun1.log.gz)、
+[第二次 0/1](evidence/2026-11-03-loro-sdg-adapter/window-sharp-rerun2.log.gz) 均有 Xvfb SIGKILL/连接中断，
 [第三次 1/1](evidence/2026-11-03-loro-sdg-adapter/window-sharp-rerun3-pass.log) 通过，耗时 87.7 秒。
-最后一轮同时保留本机 Xvfb PID 存活采样，未改变输入速度、超时、像素参考或门槛。
+最后一轮未改变输入速度、超时、像素参考或门槛。
 **27 项 × 两语言的 54 个组合均有通过记录**，不把完整轮或前两次复验写为全通过。
 截图、完整 AUDIT 和实际项目保留在槽内 `target/t41-window-0648a0e-*`、`target/t41-sharp-en-*`。
 
-此前 main `42fa7ce` 的[双语全量记录](evidence/2026-11-03-loro-sdg-adapter/window-merged-42fa7ce.log)
-为 38/52；不将其中 14 项失败计作通过。日志有 Xvfb SIGKILL、X display 连接失败、输入/截图中断和排版超时。
-只读进程检查发现无关任务的清理循环会向全机所有同名 Xvfb 发送 SIGKILL；未干预该任务，
-等待其结束后按原共享锁 runner 重跑。详见[基础设施说明](evidence/2026-11-03-loro-sdg-adapter/window-infrastructure-note.txt)。
+此前 main `42fa7ce` 的窗口轮为 38/52，有 Xvfb SIGKILL、连接失败、输入/截图中断和排版超时。
+只读进程检查曾发现无关任务向全机同名 Xvfb 发送 SIGKILL；未干预该任务。
+另一次复验因误用旧输出目录而中止，随后以全新目录运行；两次中间记录均不作为有效门禁。
+当前目录只保留上面的最终全量轮与故障/复验日志，不重复保留旧轮或误用目录的中止输出。
 没有修改窗口脚本、应用代码、参考或容差。
-另一次最新 main 复验误用了已有产物的输出目录，用例以 FileExistsError/非空目录拒绝启动；
-只结束本任务 runner，保留[中止记录](evidence/2026-11-03-loro-sdg-adapter/window-stale-output-aborted.log)，
-再用 `tempfile.mkdtemp` 新建目录重跑。该次不计作有效门禁，也不归因到引擎。
 
 adapter 定向测试覆盖：
 同叶并发文本、wrap/delete、同节点不同 parent 移动、delete/remote child insert、并发 wrap，

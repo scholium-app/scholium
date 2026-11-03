@@ -1,8 +1,0 @@
-    Finished `dev` profile [unoptimized] target(s) in 0.15s
-     Running `target/debug/examples/typst-main-fork-check target/t41-stock-merged/fork`
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.15s
-     Running `target/stock-reference/debug/typst-main-stock-reference target/t41-stock-merged/stock`
-    Finished `dev` profile [unoptimized] target(s) in 0.14s
-     Running `target/debug/examples/typst-main-fork-check target/t41-stock-merged/fork-bundled`
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.09s
-     Running `target/stock-reference/debug/typst-main-stock-reference target/t41-stock-merged/stock-bundled`

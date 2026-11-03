@@ -110,7 +110,9 @@ UndoManager 栈是设备会话状态，恢复后为空；本 ADR 不把其栈伪
 测试覆盖所有现存节点种类、Unicode、并发结构冲突、同叶插字、远端穿插 undo、wrap undo、redo 身份、
 备用补充后跨父移动、容量修复、snapshot+pending/乱序/重复 Action 重放，以及固定种子
 `0x5eed0041..0x5eed004a` 的 10 轮三 actor、每轮 120 步随机交错（含 undo/redo/中途恢复）。
-实测与门禁记录见 [T41 日志](../log/2026-11-03-loro-sdg-adapter.md)。
+实测与证据索引见 [T41 日志](../log/2026-11-03-loro-sdg-adapter.md)，门禁保留
+[最终命令/退出码](../log/evidence/2026-11-03-loro-sdg-adapter/final-gates.json)和
+[最终测试输出](../log/evidence/2026-11-03-loro-sdg-adapter/final-tests.log)。
 
 后续 session 在 `EditorCore::run`/成功的 `apply_joined` 原子命令边界用 adapter 替换本地权威，
 不能让 LocalSession 与 Replica 持续双向可写。先完成规划与 Action，调用

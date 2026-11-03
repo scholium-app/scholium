@@ -89,7 +89,10 @@ Yrs 使用稳定 id + parent/order 字段及 tombstone，**不是已经证明并
 update 是从空 state vector 导出的全量历史，不是逐 Action envelope；Loro 保留操作历史，Yrs 使用默认 GC。
 内存是 Linux 进程 RSS，峰值包含两副本、编码及恢复副本，不是纯引擎堆分配。
 同机存在其它执行者，绝对时延不作产品预算；所有样本检查 monotonic/boottime，未发现挂起。
-方法、复现与原始数据见 [T41 开发日志](../log/2026-11-03-loro-sdg-adapter.md)。
+方法、复现与完整证据索引见 [T41 开发日志](../log/2026-11-03-loro-sdg-adapter.md)。
+[逐批原始数据（gzip）](../log/evidence/2026-11-03-loro-sdg-adapter/collaboration-raw.jsonl.gz)、
+[操作分类原始数据（gzip）](../log/evidence/2026-11-03-loro-sdg-adapter/operation-breakdown-raw.jsonl.gz) 与
+[正式门槛裁决](../log/evidence/2026-11-03-loro-sdg-adapter/criteria-verdict.json)保留供复核。
 
 ### 2026-11-03 协调者复审：继续 Loro，升级并锁定 1.17.1
 
