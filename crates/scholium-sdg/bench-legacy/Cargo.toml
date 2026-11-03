@@ -1,0 +1,35 @@
+# Separate graph: Cargo cannot resolve semver-compatible exact Loro versions
+# together, and loro 1.16.0 is incompatible with loro-internal 1.17.1.
+[workspace]
+
+[package]
+name = "scholium-sdg-bench-legacy"
+version = "0.0.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+rust-version = "1.99"
+publish = false
+
+[dependencies]
+loro = { version = "=1.16.0", default-features = false }
+yrs = { version = "=0.27.4", default-features = false }
+serde_json = "1"
+
+[[bin]]
+name = "collaboration_bench"
+path = "../examples/collaboration_bench.rs"
+
+[profile.dev]
+debug = 0
+
+[lints.clippy]
+too_many_lines = "warn"
+cognitive_complexity = "warn"
+unwrap_used = "warn"
+
+[lints.rust]
+missing_docs = "warn"
+
+[[bin]]
+name = "engine_bench"
+path = "../examples/engine_bench.rs"

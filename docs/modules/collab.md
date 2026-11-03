@@ -51,6 +51,27 @@ StructuredAuthority 使用共享节点 map、children sequence 和文本 leaves�
 按 Loro → Yrs → Automerge 的顺序验证，候选必须比较 Unicode 位置、批量编辑、origin undo、快照大小、10 万次 update、线程模型、
 原生 Rust 线程/消息集成、可选 FFI 和长期维护；不以 JS/WASM 桥接作为桌面必要依赖。选择写 ADR；engine adapter 保留替换可能。
 
+`scholium-sdg` 是层 2 的结构权威 adapter，锁定 Loro 1.17.1。`Replica::new/restore` 创建单一权威；
+`edit(StructuralEdit, name)` 或 `apply_effects(request, origin, expected_revision, document)` 先规划/预演再写入。
+`document/projection` 只返回值，后者携带确定性修复报告；`tree_identity` 提供稳定映射 DTO。
+`receive(Action)` 校验 envelope、文档、peer 与结构后幂等导入，缺因果前驱的 Action 由 pending 保留；
+`pending_actions` 表示同步缺口。`snapshot` 保留引擎身份、receipt hashes 与 pending，恢复可继续合并。
+
+结构使用 movable tree + 属性 + 每节点独立 LoroText，存活 NodeId 不因包裹、移动或 redo 更换树身份。
+新身份/备用补充排除于 undo；用户 activation、属性、文字及移动按一个命令分组。
+`undo/redo` 使用本 actor 的 Loro UndoManager 并生成新 Action，system/remote origin 不进入本地栈。
+设备会话最多保留 1000 步，快照恢复后栈为空；不冒充持久化产品历史。
+
+并发修复依赖最终树状态：删除祖先隐藏后代；非法类型留在历史并报告；缺失固定槽退为同 ID Row/Hole；
+多数学根按树顺序选择首个并报告其它根；空 inline/block/document 使用真实备用节点。
+备用首次编辑保留原身份并补充下一备用，允许后续跨父移动；容量/深度修复明确报告且不删除原值。
+修复投影不能作为没有冲突提示的发布成功。格式、限额及完整规则见
+[ADR 0053](../adr/ADR-0053-loro-sdg-action-mapping.md)。
+
+四版本基准及继续使用 Loro 的判据见 [ADR 0009](../adr/ADR-0009-crdt-engine.md)。
+引擎增量接收预算不包含 adapter 全文规划、投影、UI 或存储。
+benchmark 中的 parent/order 模型不作为 Yrs 并发移动正确性合约，也不是生产替代 adapter。
+
 ## 失败处理
 
 - update decoder 遇到超限、递归过深或畸形输入时拒绝本次更新，且不改变当前文档。

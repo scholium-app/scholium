@@ -1,0 +1,21 @@
+   Compiling typst-library v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-library)
+   Compiling hayro-interpret v0.7.0
+   Compiling hayro v0.7.1
+   Compiling hayro-svg v0.7.0
+   Compiling typst-layout v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-layout)
+   Compiling typst-eval v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-eval)
+   Compiling typst-kit v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-kit)
+   Compiling typst-svg v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-svg)
+   Compiling typst-render v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-render)
+   Compiling typst-html v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-html)
+   Compiling typst-realize v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-realize)
+   Compiling typst v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst)
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-typst)
+    Finished `dev` profile [unoptimized] target(s) in 3.19s
+     Running `target/debug/examples/typst-main-fork-check target/t41-stock-final/fork-system`
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running `target/stock-reference/debug/typst-main-stock-reference target/t41-stock-final/stock-system`
+    Finished `dev` profile [unoptimized] target(s) in 0.11s
+     Running `target/debug/examples/typst-main-fork-check target/t41-stock-final/fork-bundled`
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running `target/stock-reference/debug/typst-main-stock-reference target/t41-stock-final/stock-bundled`

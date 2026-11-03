@@ -1,0 +1,29 @@
+[package]
+name = "scholium-sdg"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+scholium-model = { path = "../scholium-model", version = "0.1.0" }
+scholium-document = { path = "../scholium-document", version = "0.1.0" }
+loro = { version = "=1.17.1", default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "=2.0.20"
+sha2 = "0.10"
+
+[dev-dependencies]
+yrs = { version = "=0.28.0", default-features = false }
+
+[[example]]
+name = "engine_bench"
+test = true
+
+[lints]
+workspace = true
+
+[[example]]
+name = "collaboration_bench"
+test = true

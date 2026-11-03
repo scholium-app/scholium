@@ -11,5 +11,9 @@ serde_json = "1"
 uuid = { version = "=1.26.1", features = ["v4", "serde"] }
 thiserror = "=2.0.20"
 
+# Browser WASM obtains UUID entropy through the runtime binding only.
+[target.'cfg(all(target_arch = "wasm32", target_os = "unknown"))'.dependencies]
+uuid = { version = "=1.26.1", features = ["js"] }
+
 [lints]
 workspace = true

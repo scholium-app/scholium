@@ -93,3 +93,8 @@ ResourceGeneration/SceneStamp；场景采纳比较全部字段，不能仅比较
 `BlockKind::Equation` 是 v1 信封内的加性块标签，块内容严格为一个 `InlineBody::Math`。旧构建拒绝未知标签，不按段落解释；当前 validator 同时检查唯一内容、节点身份及既有限额。Equation 复用现存 MathNode，见 [ADR 0047](../adr/ADR-0047-display-formula-block.md)。
 
 `BlockKind::Equation.label()` 与现有块类型统一使用中文 `独立公式`；具体界面命令和无障碍名称继续经语言目录本地化。
+
+`NodeId::as_bytes/from_bytes` 提供与现有 UUID serde 身份一致的 16-byte 往返，供持久化/CRDT 映射使用，
+不公开 UUID 或引擎类型。浏览器 `wasm32-unknown-unknown` 的 UUID v4 熵源通过目标限定 `uuid/js` binding 提供；
+原生目标保持原熵源，不包含 JavaScript 业务编辑逻辑。结构 adapter 与 Action 格式在 scholium-sdg，见
+[ADR 0053](../adr/ADR-0053-loro-sdg-action-mapping.md)。

@@ -1,0 +1,50 @@
+{
+  "loro-1.16.0": {
+    "edit_ms": 262.36285399999997,
+    "two_way_engine_import_ms": 3208.8899979999997,
+    "two_way_index_rebuild_ms": 15.995376,
+    "two_way_merge_ms": 3224.493129,
+    "update_bytes_total": 1894067,
+    "snapshot_bytes": 1952007,
+    "snapshot_export_ms": 81.485572,
+    "snapshot_import_ms": 38.416843,
+    "rss_after_edit_kib": 109360,
+    "peak_rss_kib": 260628
+  },
+  "loro-1.17.1": {
+    "edit_ms": 238.25516199999998,
+    "two_way_engine_import_ms": 421.230823,
+    "two_way_index_rebuild_ms": 17.290463000000003,
+    "two_way_merge_ms": 438.522653,
+    "update_bytes_total": 1894067,
+    "snapshot_bytes": 1952007,
+    "snapshot_export_ms": 79.593174,
+    "snapshot_import_ms": 36.656156,
+    "rss_after_edit_kib": 109496,
+    "peak_rss_kib": 270004
+  },
+  "yrs-0.27.4": {
+    "edit_ms": 223.72284000000002,
+    "two_way_engine_import_ms": 117.855236,
+    "two_way_index_rebuild_ms": 16.556795,
+    "two_way_merge_ms": 134.10370699999999,
+    "update_bytes_total": 2881754,
+    "snapshot_bytes": 2866614,
+    "snapshot_export_ms": 11.310585999999999,
+    "snapshot_import_ms": 119.57326,
+    "rss_after_edit_kib": 91876,
+    "peak_rss_kib": 265800
+  },
+  "yrs-0.28.0": {
+    "edit_ms": 182.053887,
+    "two_way_engine_import_ms": 99.330352,
+    "two_way_index_rebuild_ms": 15.825199,
+    "two_way_merge_ms": 115.777371,
+    "update_bytes_total": 2905643,
+    "snapshot_bytes": 2890120,
+    "snapshot_export_ms": 9.503892,
+    "snapshot_import_ms": 103.016867,
+    "rss_after_edit_kib": 86216,
+    "peak_rss_kib": 248328
+  }
+}

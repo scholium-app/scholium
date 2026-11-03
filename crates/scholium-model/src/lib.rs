@@ -24,6 +24,16 @@ impl NodeId {
     pub fn fresh() -> Self {
         Self(uuid::Uuid::new_v4())
     }
+
+    /// Stable 16-byte identity for persistence and CRDT mappings.
+    pub fn as_bytes(&self) -> [u8; 16] {
+        *self.0.as_bytes()
+    }
+
+    /// Rebuild an existing identity from its persistence byte form.
+    pub fn from_bytes(bytes: [u8; 16]) -> Self {
+        Self(uuid::Uuid::from_bytes(bytes))
+    }
 }
 
 /// Unique identity of one local edit request.

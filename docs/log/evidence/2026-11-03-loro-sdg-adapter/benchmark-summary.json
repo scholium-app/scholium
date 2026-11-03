@@ -1,0 +1,53 @@
+{
+  "loro-1.16.0": {
+    "actions": 100000,
+    "actions_per_second": 393242.1710418935,
+    "edit_ms": 254.29622600000002,
+    "peak_rss_kib": 259576,
+    "rss_after_edit_kib": 108840,
+    "rss_before_kib": 3356,
+    "snapshot_bytes": 1952007,
+    "snapshot_export_ms": 78.745169,
+    "snapshot_import_ms": 35.539212,
+    "two_way_engine_import_ms": 4350.971584,
+    "two_way_index_rebuild_ms": 33.231025,
+    "two_way_merge_ms": 4381.966796000001,
+    "update_bytes_total": 1894067,
+    "update_export_ms": 33.059394999999995,
+    "visible_nodes": 160,
+    "elapsed_monotonic_s": 4.911113013000431,
+    "elapsed_boottime_s": 4.911113440000918,
+    "suspend_delta_s": 7.2900002123788e-07,
+    "repeats": 5,
+    "converged_all_repeats": true
+  },
+  "yrs-0.27.4": {
+    "actions": 100000,
+    "actions_per_second": 521218.622482561,
+    "edit_ms": 191.858072,
+    "peak_rss_kib": 265568,
+    "rss_after_edit_kib": 91676,
+    "rss_before_kib": 3364,
+    "snapshot_bytes": 2866614,
+    "snapshot_export_ms": 10.535032,
+    "snapshot_import_ms": 106.690649,
+    "two_way_engine_import_ms": 106.130626,
+    "two_way_index_rebuild_ms": 10.175978,
+    "two_way_merge_ms": 116.352865,
+    "update_bytes_total": 2881754,
+    "update_export_ms": 10.671046,
+    "visible_nodes": 160,
+    "elapsed_monotonic_s": 0.5336650440003723,
+    "elapsed_boottime_s": 0.5336656430008588,
+    "suspend_delta_s": 6.220016075531021e-07,
+    "repeats": 5,
+    "converged_all_repeats": true
+  },
+  "host": {
+    "kernel": "7.2.11-arch1-1",
+    "machine": "x86_64",
+    "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+    "profile": "release, optimized workspace and dependencies",
+    "concurrent_executors": true
+  }
+}

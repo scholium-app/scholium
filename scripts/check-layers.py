@@ -15,6 +15,7 @@ LAYERS = {
     "scholium-latex": 2,
     "scholium-typst": 2,
     "scholium-storage": 2,
+    "scholium-sdg": 2,
     "scholium-session": 3,
     "scholium-app": 4,
 }

@@ -114,3 +114,5 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 [ADR 0051](ADR-0051-project-files-and-session-retirement.md)：项目入口与旧会话退役：固定语言/authority 声明、正式存储接入、最近项目、冲突界面与只读会话迁移。
 
 [ADR 0052](ADR-0052-latex-view-workbench.md)：LaTeX 内核图元与同引擎 PDF 回退、受限整编 profile、共享源码编辑器与开发工作台。
+
+[ADR 0053](ADR-0053-loro-sdg-action-mapping.md)：Loro 1.17.1 的稳定 SDG 身份、Action/snapshot v1、确定性结构修复和 actor undo 边界。

@@ -69,3 +69,20 @@ Action、checkpoint 与补偿规划属于共享底座，记录固定项目语言
 同语言分支的 undo/revert/cherry-pick/merge 复核当前权限、锚点与前置条件，未合入草稿独立恢复。
 跨语言只经转换建立新项目及报告；混合历史与团队语言切换已推迟。
 共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。
+
+## 结构内核 Action v1 与设备撤销
+
+`scholium-sdg::Action` 是 ADR 0049 opaque payload 的结构内核格式，采用 `SCSDGA01` binary envelope，
+包含 document、RequestId、actor、origin 与原始 Loro update；编码/严格拒绝规则见
+[ADR 0053](../adr/ADR-0053-loro-sdg-action-mapping.md)。Action ID 不等于引擎 op 或数据库 durable sequence。
+receipt 对完整编码做 SHA-256，重复 ID/字节无效果，异值重用身份拒绝。
+
+adapter 的 actor undo/redo 是追加的普通 Action，排除远端与 system origin，保留远端文字，
+不恢复旧共享快照。身份出生和备用补充不撤销，用户 activation/文字/结构变化才进入 undo scope。
+每个命令一个 checkpoint，最多 1000 步；恢复快照后设备 UndoManager 栈为空。
+这不实现 checkpoint DAG、跨 branch revert 或跨重启产品 undo，也不改变阶段 0 recipe 的既有限制。
+
+`SCSDGS01` snapshot 同时保存 engine history、base revision、已接纳 Action receipts 和因果 pending；
+snapshot 后按 Action 重放，乱序输入等前驱到达后生效。semantic revision 为 base + 唯一 receipt 数，
+包括 pending，不能冒充同步完成标记。后续 session 将完整 Action bytes 交给 `ProjectStore::append_action`，
+只在已提交 durable sequence 保存对应 snapshot；本模块不直接依赖 storage。
