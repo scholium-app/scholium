@@ -1,0 +1,13 @@
+    Checking scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-typst)
+    Checking scholium-build v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-build)
+ Documenting scholium-build v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-build)
+ Documenting scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-typst)
+    Checking egui-winit v0.36.2
+    Checking eframe v0.36.2
+    Checking scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-latex)
+ Documenting scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-latex)
+    Checking scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
+ Documenting scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
+ Documenting scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-app)
+    Finished `dev` profile [unoptimized] target(s) in 4.88s
+   Generated /home/ation_ciger/Projects/Mogan/scholium-wt2/target/doc/scholium_app/index.html and 11 other files

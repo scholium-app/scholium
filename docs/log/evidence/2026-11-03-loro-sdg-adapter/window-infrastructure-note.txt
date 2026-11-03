@@ -1,0 +1,22 @@
+The full 42fa7ce dual-locale run completed with 38/52 passing checks.
+The failing logs retain X server disconnects, XOpenDisplayFailed, input/capture
+errors and incomplete-layout timeouts. No product assertions or runner thresholds
+were changed to obtain a pass.
+
+While investigating, a read-only process listing showed an unrelated task shell
+(PID 835368) running a Python cleanup loop that selected comm == Xvfb and issued
+os.kill(pid, signal.SIGKILL) without restricting the process to its own children.
+This directly explains the repeated private Xvfb termination messages. This task
+did not stop, signal or modify that process. A fresh full window run is required
+after merging main 0648a0e (which adds the latex-view check).
+
+Original full runner output: window-merged-42fa7ce.log.
+Local screenshots and application audit output remain in target/t41-window-merged.
+
+The first 0648a0e rerun mistakenly reused target/t41-window-final, whose old
+scenario outputs predated this continuation. Checks rejected those nonempty
+folders (FileExistsError / output directory must be empty). The executor stopped
+only its own runner PID 852063, retained the partial runner log in
+window-stale-output-aborted.log, and made a fresh directory with tempfile.mkdtemp.
+This aborted attempt is not a valid product gate and is not attributed to Loro or
+to the separate Xvfb cleanup incident.

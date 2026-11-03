@@ -1,0 +1,7 @@
+output: /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t41-sharp-en-third-30phn490
+running sharp-raster [en] ...
+
+check              result      seconds
+sharp-raster [en]  pass           87.7
+
+1/1 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t41-sharp-en-third-30phn490

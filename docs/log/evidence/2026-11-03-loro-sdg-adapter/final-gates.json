@@ -1,0 +1,190 @@
+{
+  "main": "0648a0efe0b9b5bbe7abc9d46fc3e7f67d0f4710",
+  "checks": [
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--workspace",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "tests",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--workspace"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "doc",
+      "command": [
+        "cargo",
+        "doc",
+        "--locked",
+        "--workspace",
+        "--no-deps"
+      ],
+      "exit": 0,
+      "env": {
+        "RUSTDOCFLAGS": "-D warnings"
+      }
+    },
+    {
+      "name": "rust-size",
+      "command": [
+        "python3",
+        "scripts/check-rust-size.py"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "doc-links",
+      "command": [
+        "python3",
+        "scripts/check-doc-links.py"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "ui-strings",
+      "command": [
+        "python3",
+        "scripts/check-ui-strings.py"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "layers",
+      "command": [
+        "python3",
+        "scripts/check-layers.py"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "deny",
+      "command": [
+        "cargo",
+        "deny",
+        "--locked",
+        "check",
+        "licenses",
+        "bans",
+        "sources"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "build",
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "-p",
+        "scholium-app",
+        "-p",
+        "scholium-storage",
+        "--bins"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "wasm",
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "-p",
+        "scholium-sdg",
+        "--target",
+        "wasm32-unknown-unknown"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "window",
+      "command": [
+        "python3",
+        "scripts/window-checks.py",
+        "--locale",
+        "zh-Hans",
+        "en",
+        "--out",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt2/target/t41-window-0648a0e-va0n244n"
+      ],
+      "exit": 1,
+      "passed": 53,
+      "total": 54
+    },
+    {
+      "name": "window-sharp-rerun1",
+      "command": [
+        "python3",
+        "scripts/window-checks.py",
+        "--only",
+        "sharp-raster",
+        "--locale",
+        "en",
+        "--out",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt2/target/t41-sharp-en-2eng6dki"
+      ],
+      "exit": 1,
+      "passed": 0,
+      "total": 1
+    },
+    {
+      "name": "window-sharp-rerun2",
+      "command": [
+        "python3",
+        "scripts/window-checks.py",
+        "--only",
+        "sharp-raster",
+        "--locale",
+        "en",
+        "--out",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt2/target/t41-sharp-en-second-uqr0iz1b"
+      ],
+      "exit": 1,
+      "passed": 0,
+      "total": 1
+    },
+    {
+      "name": "window-sharp-rerun3",
+      "command": [
+        "python3",
+        "scripts/window-checks.py",
+        "--only",
+        "sharp-raster",
+        "--locale",
+        "en",
+        "--out",
+        "/home/ation_ciger/Projects/Mogan/scholium-wt2/target/t41-sharp-en-third-30phn490"
+      ],
+      "exit": 0,
+      "passed": 1,
+      "total": 1
+    }
+  ],
+  "window_all_combinations_have_pass": true
+}

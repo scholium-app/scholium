@@ -1,0 +1,31 @@
+   Compiling image v0.25.10
+   Compiling hayro-syntax v0.7.2
+   Compiling scholium-model v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-model)
+   Compiling vello_common v0.3.0
+   Compiling hayro-syntax v0.8.0
+   Compiling scholium-build v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-build)
+   Compiling hayro-interpret v0.7.0
+   Compiling typst-library v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-library)
+   Compiling arboard v3.6.1
+   Compiling vello_cpu v0.3.0
+   Compiling hayro-interpret v0.8.0
+   Compiling egui-winit v0.36.2
+   Compiling hayro v0.7.1
+   Compiling hayro-svg v0.7.0
+   Compiling hayro v0.8.0
+   Compiling eframe v0.36.2
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-latex)
+   Compiling scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-storage)
+   Compiling scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-document)
+   Compiling typst-layout v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-layout)
+   Compiling typst-eval v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-eval)
+   Compiling typst-kit v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-kit)
+   Compiling typst-svg v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-svg)
+   Compiling typst-render v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-render)
+   Compiling typst-html v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-html)
+   Compiling typst-realize v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-realize)
+   Compiling typst v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst)
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-typst)
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-app)
+    Finished `dev` profile [unoptimized] target(s) in 6.46s

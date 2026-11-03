@@ -239,7 +239,55 @@ unwrap 一次动作移出内容并删除 wrapper。每次动作提交一次。�
 
 ### 续作验证
 
-本节最终门禁、main 合并与窗口结果在完成后补记。当前 adapter 定向测试已覆盖：
+保留实现提交 `ef166b6`；随后按共享规则签署合并 main `42fa7ce` 与 `0648a0e`。
+第二次合并只解决 ADR 索引的并行追加，保留 0051/0052/0053；Cargo.lock 由 Git 合并。
+相对最新 main 的功能差异不涉及 app/session/storage/build/latex，相关文件仅来自 main 合并。
+
+最新 main 上的[门禁命令与退出码](evidence/2026-11-03-loro-sdg-adapter/final-gates.json)：
+
+| 门禁 | 结果 |
+|---|---|
+| `cargo fmt --all -- --check` | PASS |
+| `cargo clippy --locked --workspace --all-targets -- -D warnings` | PASS |
+| `cargo test --locked --workspace` | PASS，645 通过、0 失败、13 项既有忽略 |
+| `RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps` | PASS |
+| `python3 scripts/check-rust-size.py` | PASS |
+| `python3 scripts/check-doc-links.py` | PASS |
+| `python3 scripts/check-ui-strings.py` | PASS，41 项既有白名单 |
+| `python3 scripts/check-layers.py` | PASS |
+| `cargo deny --locked check licenses bans sources` | PASS，仅 unused allowance 提示 |
+| `cargo build --locked -p scholium-app -p scholium-storage --bins` | PASS |
+| `cargo build --locked -p scholium-sdg --target wasm32-unknown-unknown` | PASS，完整生产 adapter |
+
+[workspace 原始测试输出](evidence/2026-11-03-loro-sdg-adapter/final-tests.log) 包含生产 adapter 17 项、
+engine example 2 项、collaboration example 3 项。两个独立 benchmark manifests 的 fmt/clippy/test/doc/deny
+也[全部通过](evidence/2026-11-03-loro-sdg-adapter/standalone-gates-continuation.log)，不拿根 workspace 门禁代替独立依赖图。
+
+按 `.github/workflows/typst-fork.yml` 的两组 cargo run + compare 命令复跑，
+[系统字体](evidence/2026-11-03-loro-sdg-adapter/stock-system-final.json) 与
+[bundled-only](evidence/2026-11-03-loro-sdg-adapter/stock-bundled-final.json) 均 31/31 像素一致，
+[命令输出](evidence/2026-11-03-loro-sdg-adapter/stock-commands-final.log)保留。
+
+最新 main 上的[完整双语窗口轮](evidence/2026-11-03-loro-sdg-adapter/window-final-all.log)为 **53/54**；
+唯一英文 sharp-raster 在滚动时私有 Xvfb 被 SIGKILL，见[失败记录](evidence/2026-11-03-loro-sdg-adapter/window-final-sharp-xvfb-failure.log)。
+通过同一 runner、原脚本和全新目录只复验 `--only sharp-raster --locale en`：
+[第一次 0/1](evidence/2026-11-03-loro-sdg-adapter/window-sharp-rerun1.log)、
+[第二次 0/1](evidence/2026-11-03-loro-sdg-adapter/window-sharp-rerun2.log) 均有 Xvfb SIGKILL/连接中断，
+[第三次 1/1](evidence/2026-11-03-loro-sdg-adapter/window-sharp-rerun3-pass.log) 通过，耗时 87.7 秒。
+最后一轮同时保留本机 Xvfb PID 存活采样，未改变输入速度、超时、像素参考或门槛。
+**27 项 × 两语言的 54 个组合均有通过记录**，不把完整轮或前两次复验写为全通过。
+截图、完整 AUDIT 和实际项目保留在槽内 `target/t41-window-0648a0e-*`、`target/t41-sharp-en-*`。
+
+此前 main `42fa7ce` 的[双语全量记录](evidence/2026-11-03-loro-sdg-adapter/window-merged-42fa7ce.log)
+为 38/52；不将其中 14 项失败计作通过。日志有 Xvfb SIGKILL、X display 连接失败、输入/截图中断和排版超时。
+只读进程检查发现无关任务的清理循环会向全机所有同名 Xvfb 发送 SIGKILL；未干预该任务，
+等待其结束后按原共享锁 runner 重跑。详见[基础设施说明](evidence/2026-11-03-loro-sdg-adapter/window-infrastructure-note.txt)。
+没有修改窗口脚本、应用代码、参考或容差。
+另一次最新 main 复验误用了已有产物的输出目录，用例以 FileExistsError/非空目录拒绝启动；
+只结束本任务 runner，保留[中止记录](evidence/2026-11-03-loro-sdg-adapter/window-stale-output-aborted.log)，
+再用 `tempfile.mkdtemp` 新建目录重跑。该次不计作有效门禁，也不归因到引擎。
+
+adapter 定向测试覆盖：
 同叶并发文本、wrap/delete、同节点不同 parent 移动、delete/remote child insert、并发 wrap，
 empty math/concurrent text、备用补充后移动、并发 kind、actor undo/redo、所有节点形状、
 快照+pending/乱序/重复 replay 与固定种子 `0x5eed0041..0x5eed004a` 三 actor 各轮 120 步。
