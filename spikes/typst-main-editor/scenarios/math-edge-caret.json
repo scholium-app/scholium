@@ -8,10 +8,8 @@
       "text": "$"
     },
     {
-      "key": "Slash",
-      "mods": {
-        "command": true
-      }
+      "command": "Fraction",
+      "via": "shortcut"
     },
     {
       "key": "ArrowRight"
@@ -20,11 +18,8 @@
       "text": "aaa"
     },
     {
-      "key": "Character",
-      "value": "m",
-      "mods": {
-        "command": true
-      }
+      "command": "Math",
+      "via": "shortcut"
     },
     {
       "text": "dad"

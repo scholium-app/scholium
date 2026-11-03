@@ -4,6 +4,7 @@ use super::*;
 mod tests;
 
 pub(in crate::typst) struct Checkpoint {
+    math_input: scholium_math_input::Engine,
     authority: LocalSession<StructuredDocument>,
     pub(in crate::typst) snapshot: Arc<StructuredDocument>,
     cursor: Position,
@@ -32,6 +33,7 @@ impl std::fmt::Debug for Checkpoint {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         // Epoch is an ephemeral safety identity, deliberately renewed by authority restore.
         f.debug_struct("Checkpoint")
+            .field("math_input", &self.math_input)
             .field("snapshot", &self.snapshot)
             .field("actions", &self.authority.actions())
             .field("cursor", &self.cursor)
@@ -55,6 +57,7 @@ impl std::fmt::Debug for Checkpoint {
 impl EditorCore {
     pub(in crate::typst) fn checkpoint(&self) -> Result<Checkpoint, CommandError> {
         Ok(Checkpoint {
+            math_input: self.math_input.clone(),
             authority: self.session.rollback_checkpoint(),
             snapshot: self.snapshot.clone(),
             cursor: self.cursor,
@@ -93,6 +96,7 @@ impl EditorCore {
         if changed {
             self.session = ReadAuthority::new(before.authority);
         }
+        self.math_input = before.math_input;
         self.snapshot = before.snapshot;
         self.cursor = before.cursor;
         self.anchor = before.anchor;

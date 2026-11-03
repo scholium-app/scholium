@@ -15,6 +15,7 @@ mod math_caret;
 #[cfg(test)]
 mod math_edge_tests;
 mod math_enter;
+mod math_input;
 mod math_selection;
 mod persistence;
 pub mod pointer;
@@ -65,6 +66,8 @@ pub struct Target {
 /// Local editing core. Public interaction fields are the phase-1 app adapter contract;
 /// document mutation and persistence go through commands and `save` respectively.
 pub struct EditorCore {
+    /// Transient shared math input state; never a second document.
+    pub math_input: scholium_math_input::Engine,
     runtime: Option<Runtime>,
     deferred: std::collections::VecDeque<DeferredEvent>,
     /// Wanted complete layout identity, including the session lifetime.
@@ -155,6 +158,7 @@ impl EditorCore {
 
     /// Move the semantic caret and optionally extend the selection.
     pub fn move_to(&mut self, target: Position, extend: bool) {
+        self.math_input.interrupt();
         self.goal = None;
         if extend {
             let cursor = self.cursor;
@@ -167,6 +171,7 @@ impl EditorCore {
 
     /// Move to a validated diagnostic location and request caret follow.
     pub fn jump_to(&mut self, target: Target) -> bool {
+        self.math_input.reset();
         let Some(leaf) = input::leaves(&self.snapshot)
             .into_iter()
             .find(|leaf| leaf.id == target.node)
@@ -222,3 +227,6 @@ mod display_tests;
 mod root_delimiter;
 #[cfg(test)]
 mod root_delimiter_tests;
+
+#[cfg(test)]
+mod math_input_tests;

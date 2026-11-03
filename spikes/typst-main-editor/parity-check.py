@@ -114,7 +114,8 @@ class Replay:
             return
         chord = "+".join([v for k, v in (("command", "ctrl"), ("shift", "shift"), ("alt", "alt"))
                           if mods.get(k)] + [symbol])
-        self.xdo("key", "--clearmodifiers", chord)
+        for _ in range(event.get("times", 1)):
+            self.xdo("key", "--clearmodifiers", chord)
 
     def pointer(self, event, state):
         target = event["target"]
@@ -148,6 +149,15 @@ class Replay:
             raise ValueError(f"unknown pointer kind: {kind}")
 
     def input(self, event, state):
+        if event.get("via") == "shortcut":
+            import tomllib
+            ids = {"Undo": "edit.undo", "Redo": "edit.redo", "Math": "insert.formula",
+                   "SelectAll": "edit.select_all", "Bold": "format.bold", "Italic": "format.italic",
+                   "Fraction": "insert.fraction", "Root": "insert.root", "DisplayMath": "insert.display_formula"}
+            table = tomllib.loads((ROOT.parents[1] / "crates/scholium-app/src/command/default-keymap.toml").read_text())
+            chord = next(b["keys"][0] for b in table["binding"] if b["command"] == ids[event["command"]])
+            self.xdo("key", "--clearmodifiers", chord.replace("Ctrl", "ctrl").replace("Alt", "alt").replace("Shift", "shift"))
+            return
         if "text" in event:
             text = event["text"]
             # One scenario Text is one commit; typing words separately creates undo groups.

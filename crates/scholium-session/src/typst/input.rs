@@ -163,6 +163,19 @@ impl EditorCore {
     }
 
     fn apply_input(&mut self, input: Input) -> Result<Outcome, CommandError> {
+        match &input {
+            Input::Viewport { .. } | Input::Text(_) | Input::Key { key: Key::Tab, .. } => {}
+            Input::Key {
+                key: Key::Enter | Key::Escape | Key::Backspace | Key::ArrowUp | Key::ArrowDown,
+                ..
+            } if self.math_input.command().is_some() => {}
+            Input::Key {
+                key: Key::Character(_) | Key::Num(_) | Key::Slash,
+                mods,
+            } if !mods.command && !mods.alt => {}
+            Input::Command(CommandId::MathInput, _) => {}
+            _ => self.math_input.reset(),
+        }
         match input {
             Input::Text(text) => {
                 let before = self.cursor;
@@ -276,6 +289,17 @@ impl EditorCore {
     }
 
     pub(super) fn insert(&mut self, text: String, origin: Origin, state: &mut EditState) {
+        if origin == Origin::Typed
+            && (!self.selected() || self.in_math())
+            && (self.in_math() || self.math_input.command().is_some() || text.contains(['$', '\\']))
+        {
+            self.math_text(&text, state);
+        } else {
+            self.insert_literal(text, origin, state);
+        }
+    }
+
+    pub(super) fn insert_literal(&mut self, text: String, origin: Origin, state: &mut EditState) {
         if text.is_empty() {
             return;
         }
@@ -283,14 +307,6 @@ impl EditorCore {
             if !self.replace_range(text.clone(), state) {
                 self.rejected_input = Some(text);
             }
-            return;
-        }
-        let typed = origin == Origin::Typed;
-        if typed && text == "$" {
-            self.command(CommandId::Math, state);
-            return;
-        }
-        if typed && self.attach_key(&text, state) {
             return;
         }
         if self.at_math_edge() {
@@ -363,6 +379,14 @@ impl EditorCore {
             .unwrap_or(leaf.text.len());
     }
     pub(super) fn command(&mut self, command: CommandId, state: &mut EditState) {
+        if let Some(template) = math_input::template(command) {
+            self.math_event(scholium_math_input::Event::Structure(template), state);
+        } else {
+            self.structural_command(command, state);
+        }
+    }
+
+    pub(super) fn structural_command(&mut self, command: CommandId, state: &mut EditState) {
         if matches!(command, CommandId::DisplayMath) {
             let end = BodyTextPosition {
                 leaf: self.cursor.leaf,

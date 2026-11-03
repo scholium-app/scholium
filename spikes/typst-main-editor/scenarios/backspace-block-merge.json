@@ -49,11 +49,6 @@
       }
     },
     {
-      "key": "Character",
-      "value": "z",
-      "mods": {
-        "command": true
-      },
       "expected": {
         "snapshot": {
           "blocks": [
@@ -90,15 +85,11 @@
         },
         "anchor": null,
         "undo_depth": 3
-      }
+      },
+      "command": "Undo",
+      "via": "shortcut"
     },
     {
-      "key": "Character",
-      "value": "z",
-      "mods": {
-        "command": true,
-        "shift": true
-      },
       "expected": {
         "snapshot": {
           "blocks": [
@@ -130,14 +121,13 @@
         },
         "anchor": null,
         "undo_depth": 4
-      }
+      },
+      "command": "Redo",
+      "via": "shortcut"
     },
     {
-      "key": "Character",
-      "value": "z",
-      "mods": {
-        "command": true
-      }
+      "command": "Undo",
+      "via": "shortcut"
     },
     {
       "key": "ArrowLeft"
@@ -178,19 +168,12 @@
       }
     },
     {
-      "key": "Character",
-      "value": "z",
-      "mods": {
-        "command": true
-      }
+      "command": "Undo",
+      "via": "shortcut"
     },
     {
-      "key": "Character",
-      "value": "z",
-      "mods": {
-        "command": true,
-        "shift": true
-      }
+      "command": "Redo",
+      "via": "shortcut"
     }
   ],
   "expected": {

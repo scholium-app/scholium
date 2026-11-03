@@ -5,11 +5,6 @@
       "text": "history"
     },
     {
-      "key": "Character",
-      "value": "z",
-      "mods": {
-        "command": true
-      },
       "expected": {
         "snapshot": {
           "blocks": [
@@ -34,15 +29,13 @@
         },
         "anchor": null,
         "undo_depth": 0
-      }
+      },
+      "command": "Undo",
+      "via": "shortcut"
     },
     {
-      "key": "Character",
-      "value": "z",
-      "mods": {
-        "command": true,
-        "shift": true
-      }
+      "command": "Redo",
+      "via": "shortcut"
     }
   ],
   "expected": {

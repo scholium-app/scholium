@@ -209,6 +209,27 @@ fn check_vertical(core: &EditorCore, check: &serde_json::Value, points: &[Option
 }
 
 fn replay_input(core: &mut EditorCore, event: &serde_json::Value) {
+    if let Some(times) = event["times"].as_u64() {
+        let mut single = event.clone();
+        single.as_object_mut().expect("event").remove("times");
+        for _ in 0..times {
+            replay_input(core, &single);
+        }
+        return;
+    }
+    let command = event["command"].as_str().and_then(|c| match c {
+        "Undo" => Some(CommandId::Undo),
+        "Redo" => Some(CommandId::Redo),
+        "Math" => Some(CommandId::Math),
+        "SelectAll" => Some(CommandId::SelectAll),
+        "Italic" => Some(CommandId::Style(TextStyle::Emphasis)),
+        _ => None,
+    });
+    if let Some(id) = command {
+        core.input(Input::Command(id, CommandArgs::None))
+            .expect("semantic scenario command");
+        return;
+    }
     if let Some(text) = event["text"].as_str() {
         core.input(Input::Text(text.to_owned()))
             .expect("text input");

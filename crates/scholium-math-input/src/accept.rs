@@ -72,11 +72,11 @@ pub fn cases() -> Vec<Case> {
             name: "fraction slots",
             steps: vec![
                 Structure(Template::Fraction),
-                Text("a"),
+                Text("1"),
                 Tab(false),
-                Text("b"),
+                Text("2"),
             ],
-            expected: Tree::Fraction(Box::new(text("a")), Box::new(text("b"))),
+            expected: Tree::Fraction(Box::new(text("1")), Box::new(text("2"))),
         },
         Case {
             name: "root",

@@ -264,18 +264,6 @@ items = ["φ", "ϕ"]
 [[cycle]]
 items = ["ε", "ϵ"]
 
-[[cycle]]
-items = ["a", "α"]
-
-[[cycle]]
-items = ["b", "β"]
-
-[[cycle]]
-items = ["g", "γ"]
-
-[[cycle]]
-items = ["p", "π"]
-
 [[template]]
 id = "fraction"
 slots = ["numerator", "denominator"]

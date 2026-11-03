@@ -3,6 +3,9 @@ use super::*;
 
 impl EditorCore {
     pub(super) fn key_input(&mut self, key: Key, mods: Modifiers) -> Result<Outcome, CommandError> {
+        if let Some(event) = self.math_key(key, mods) {
+            return self.run(CommandId::MathInput, CommandArgs::Math(event));
+        }
         let before = self.cursor;
         let old_follow = self.follow;
         if mods.command {
@@ -32,10 +35,6 @@ impl EditorCore {
                 .map(|outcome| outcome.applied)
                 .unwrap_or(false)
         {
-            return Ok(self.followed(key, mods, before, old_follow, true));
-        }
-        if key == Key::Tab {
-            self.next_leaf(mods.shift);
             return Ok(self.followed(key, mods, before, old_follow, true));
         }
         if matches!(key, Key::ArrowUp | Key::ArrowDown | Key::Home | Key::End) {
