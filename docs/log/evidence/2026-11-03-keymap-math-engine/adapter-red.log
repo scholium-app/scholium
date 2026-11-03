@@ -1,0 +1,38 @@
+   Compiling toml v0.8.23
+   Compiling typst-syntax v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-syntax)
+   Compiling scholium-math-input v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-math-input)
+   Compiling typst-library v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-library)
+   Compiling typst-layout v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-layout)
+   Compiling typst-eval v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-eval)
+   Compiling typst-kit v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-kit)
+   Compiling typst-svg v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-svg)
+   Compiling typst-render v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-render)
+   Compiling typst-html v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-html)
+   Compiling typst-realize v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-realize)
+   Compiling typst v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst)
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-typst)
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
+error[E0599]: no variant, associated function, or constant named `MathInput` found for enum `command::CommandId` in the current scope
+ --> crates/scholium-session/src/typst/math_input_tests.rs:9:61
+  |
+9 |             Step::Structure(t) => Input::Command(CommandId::MathInput, CommandArgs::Math(scholium_math_input::Event::Structure(*t))),
+  |                                                             ^^^^^^^^^ variant, associated function, or constant not found in `command::CommandId`
+  |
+ ::: crates/scholium-session/src/typst/command.rs:7:1
+  |
+7 | pub enum CommandId {
+  | ------------------ variant, associated function, or constant `MathInput` not found for this enum
+
+error[E0599]: no variant, associated function, or constant named `Math` found for enum `command::CommandArgs` in the current scope
+  --> crates/scholium-session/src/typst/math_input_tests.rs:9:85
+   |
+ 9 |             Step::Structure(t) => Input::Command(CommandId::MathInput, CommandArgs::Math(scholium_math_input::Event::Structure(*t))),
+   |                                                                                     ^^^^ variant, associated function, or constant not found in `command::CommandArgs`
+   |
+  ::: crates/scholium-session/src/typst/command.rs:62:1
+   |
+62 | pub enum CommandArgs {
+   | -------------------- variant, associated function, or constant `Math` not found for this enum
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `scholium-session` (lib test) due to 2 previous errors

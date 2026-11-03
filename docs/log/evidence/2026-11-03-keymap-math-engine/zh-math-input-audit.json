@@ -1,0 +1,1132 @@
+{
+  "structures": [
+    {
+      "revision": 1,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/1/body/root"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "NextSlot"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "hole"
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 2,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/1/body/root/body/numerator"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "NextSlot"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 3,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 1,
+        "path": "blocks/0/content/1/body/root/body/numerator"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "NextSlot"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 3,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/1/body/root/body/denominator"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "NextSlot"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 4,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 1,
+        "path": "blocks/0/content/1/body/root/body/denominator"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "NextSlot"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "2"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 4,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 1,
+        "path": "blocks/0/content/1/body/root"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "NextSlot"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "denominator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "2"
+                        }
+                      },
+                      "kind": "fraction",
+                      "numerator": {
+                        "body": {
+                          "kind": "text",
+                          "text": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    }
+  ],
+  "composition": [
+    {
+      "revision": 3,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 3,
+        "path": "blocks/0/content/1/body/root"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "Cycle"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "text",
+                      "text": "ℝ"
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 4,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 3,
+        "path": "blocks/0/content/1/body/root"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "Cycle"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "text",
+                      "text": "ℛ"
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 5,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 3,
+        "path": "blocks/0/content/1/body/root"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "Cycle"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "text",
+                      "text": "ℝ"
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 5,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/1/body/root"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "NextSlot"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "text",
+                      "text": "ℝ"
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 5,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 3,
+        "path": "blocks/0/content/1/body/root"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "NextSlot"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "text",
+                      "text": "ℝ"
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 7,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 6,
+        "path": "blocks/0/content/1/body/root"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "Cycle"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "text",
+                      "text": "ℝ⩽"
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 8,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 6,
+        "path": "blocks/0/content/1/body/root"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "Cycle"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "text",
+                      "text": "ℝ≤"
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    }
+  ],
+  "commands": [
+    {
+      "revision": 6,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 6,
+        "path": "blocks/0/content/0"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "NextSlot"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "before"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 6,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 6,
+        "path": "blocks/0/content/0"
+      },
+      "math_input": {
+        "candidates": [
+          "sqrt"
+        ],
+        "query": "sqrt",
+        "selected": 0,
+        "tab": "Complete"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "before"
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 8,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/1/body/root/body/radicand"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "NextSlot"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "before"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "root",
+                      "radicand": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 8,
+      "cursor": {
+        "affinity": "Downstream",
+        "byte": 0,
+        "path": "blocks/0/content/1/body/root/body/radicand"
+      },
+      "math_input": {
+        "candidates": [
+          "alpha"
+        ],
+        "query": "alpha",
+        "selected": 0,
+        "tab": "Complete"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "before"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "root",
+                      "radicand": {
+                        "body": {
+                          "kind": "hole"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 9,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 2,
+        "path": "blocks/0/content/1/body/root/body/radicand"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "NextSlot"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "before"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "root",
+                      "radicand": {
+                        "body": {
+                          "kind": "text",
+                          "text": "α"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 9,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 2,
+        "path": "blocks/0/content/1/body/root/body/radicand"
+      },
+      "math_input": {
+        "candidates": [
+          "frac",
+          "fraction"
+        ],
+        "query": "frac",
+        "selected": 0,
+        "tab": "Complete"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "before"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "root",
+                      "radicand": {
+                        "body": {
+                          "kind": "text",
+                          "text": "α"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    },
+    {
+      "revision": 9,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 2,
+        "path": "blocks/0/content/1/body/root/body/radicand"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "NextSlot"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": "before"
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "kind": "root",
+                      "radicand": {
+                        "body": {
+                          "kind": "text",
+                          "text": "α"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    }
+  ],
+  "brackets": [
+    {
+      "revision": 6,
+      "cursor": {
+        "affinity": "Upstream",
+        "byte": 1,
+        "path": "blocks/0/content/1/body/root/body/body/body/body/body/body/body/body"
+      },
+      "math_input": {
+        "candidates": [],
+        "query": null,
+        "selected": 0,
+        "tab": "NextSlot"
+      },
+      "page_text_draws": 0,
+      "layout_error": null,
+      "snapshot": {
+        "blocks": [
+          {
+            "content": [
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              },
+              {
+                "body": {
+                  "kind": "math",
+                  "root": {
+                    "body": {
+                      "body": {
+                        "body": {
+                          "body": {
+                            "body": {
+                              "body": {
+                                "body": {
+                                  "body": {
+                                    "body": {
+                                      "kind": "text",
+                                      "text": "x"
+                                    }
+                                  },
+                                  "close": "|",
+                                  "kind": "delimited",
+                                  "open": "|"
+                                }
+                              },
+                              "close": "}",
+                              "kind": "delimited",
+                              "open": "{"
+                            }
+                          },
+                          "close": "]",
+                          "kind": "delimited",
+                          "open": "["
+                        }
+                      },
+                      "close": ")",
+                      "kind": "delimited",
+                      "open": "("
+                    }
+                  }
+                }
+              },
+              {
+                "body": {
+                  "kind": "text",
+                  "style": "plain",
+                  "text": ""
+                }
+              }
+            ],
+            "kind": "Paragraph"
+          }
+        ]
+      }
+    }
+  ]
+}
