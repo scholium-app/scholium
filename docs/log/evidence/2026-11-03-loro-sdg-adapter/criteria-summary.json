@@ -1,0 +1,68 @@
+[
+  {
+    "engine": "loro-1.17.1",
+    "mode": "incremental",
+    "workload": "mixed",
+    "actions_per_side": 50000,
+    "batch_actions": 100,
+    "repeats": 3,
+    "receive_ms": {
+      "n": 3000,
+      "p50": 2.938333,
+      "p99": 8.927197,
+      "maximum": 12.140777,
+      "two_way_median": 3498.886867,
+      "two_way_maximum": 4007.064732
+    },
+    "engine_import_ms": {
+      "n": 3000,
+      "p50": 2.6843739999999996,
+      "p99": 8.030844,
+      "maximum": 11.410414000000001,
+      "two_way_median": 3187.431297,
+      "two_way_maximum": 3662.403249
+    },
+    "index_rebuild_ms": {
+      "n": 3000,
+      "p50": 0.23592400000000002,
+      "p99": 0.953215,
+      "maximum": 1.4246619999999999,
+      "two_way_median": 311.20687,
+      "two_way_maximum": 344.357121
+    },
+    "update_bytes_total_median": 2023144
+  },
+  {
+    "engine": "loro-1.17.1",
+    "mode": "offline",
+    "workload": "mixed",
+    "actions_per_side": 10000,
+    "batch_actions": 10000,
+    "repeats": 3,
+    "receive_ms": {
+      "n": 6,
+      "p50": 41.240261000000004,
+      "p99": 54.703761,
+      "maximum": 54.703761,
+      "two_way_median": 91.58916300000001,
+      "two_way_maximum": 105.555469
+    },
+    "engine_import_ms": {
+      "n": 6,
+      "p50": 40.188581,
+      "p99": 53.401823,
+      "maximum": 53.401823,
+      "two_way_median": 89.16350800000001,
+      "two_way_maximum": 103.090104
+    },
+    "index_rebuild_ms": {
+      "n": 6,
+      "p50": 1.063492,
+      "p99": 1.373263,
+      "maximum": 1.373263,
+      "two_way_median": 2.4240959999999996,
+      "two_way_maximum": 2.4639550000000003
+    },
+    "update_bytes_total_median": 362056
+  }
+]

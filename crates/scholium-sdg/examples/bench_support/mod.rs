@@ -5,6 +5,7 @@ use std::collections::BTreeMap;
 
 pub const ACTIONS: usize = 100_000;
 pub const PARAGRAPHS: usize = 32;
+#[allow(dead_code, reason = "shared by throughput and collaboration probes")]
 #[derive(Clone, Debug)]
 pub enum Edit {
     Create {
@@ -18,11 +19,26 @@ pub enum Edit {
         id: String,
         parent: String,
     },
+    Wrap {
+        id: String,
+        wrapper: String,
+        parent: String,
+    },
+    Unwrap {
+        id: String,
+        wrapper: String,
+        parent: String,
+    },
     Insert(String),
     Remove(String),
 }
 pub type State = BTreeMap<String, (String, String, String, Vec<String>)>;
 pub trait Backend: Sized {
+    type Version;
+    #[allow(dead_code, reason = "delta API is used by the collaboration probe")]
+    fn version(&self) -> Self::Version;
+    #[allow(dead_code, reason = "delta API is used by the collaboration probe")]
+    fn updates_since(&self, version: &Self::Version) -> Vec<u8>;
     fn new(peer: u64) -> Self;
     fn apply(&mut self, edit: &Edit);
     fn snapshot(&self) -> Vec<u8>;
@@ -99,3 +115,6 @@ pub fn trace(peer: usize) -> Vec<Edit> {
     }
     trace
 }
+
+#[cfg(test)]
+mod delta_tests;

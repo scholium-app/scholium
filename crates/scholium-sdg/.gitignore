@@ -1,0 +1,4 @@
+# Standalone benchmark cargo metadata/check commands may create local targets.
+bench-current/target/
+bench-legacy/target/
+__pycache__/

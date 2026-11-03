@@ -71,9 +71,14 @@ fn memory(field: &str) -> usize {
         .unwrap_or(0)
 }
 fn main() {
+    let legacy = env!("CARGO_PKG_NAME") == "scholium-sdg-bench-legacy";
     match std::env::args().nth(1).as_deref() {
-        Some("loro") => run::<bench_support::loro::Loro>("loro-1.16.0"),
-        Some("yrs") => run::<bench_support::yrs::Yrs>("yrs-0.27.4"),
+        Some("loro") => {
+            run::<bench_support::loro::Loro>(if legacy { "loro-1.16.0" } else { "loro-1.17.1" })
+        }
+        Some("yrs") => {
+            run::<bench_support::yrs::Yrs>(if legacy { "yrs-0.27.4" } else { "yrs-0.28.0" })
+        }
         _ => panic!("expected loro or yrs"),
     }
 }

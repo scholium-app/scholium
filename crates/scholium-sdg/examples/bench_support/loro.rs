@@ -1,14 +1,39 @@
 use super::*;
 use ::loro::{ExportMode, LoroDoc, LoroText, TreeID, ValueOrContainer};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 #[derive(Debug)]
 pub struct Loro {
     doc: LoroDoc,
     ids: HashMap<String, TreeID>,
+    known: HashSet<TreeID>,
     import_ms: f64,
     index_ms: f64,
 }
+impl Loro {
+    fn create(&mut self, id: &str, parent: &str, kind: &str, text: &str) {
+        let tree = self.doc.get_tree("nodes");
+        let node = tree.create(self.ids.get(parent).copied()).expect("create");
+        let meta = tree.get_meta(node).expect("meta");
+        meta.insert("id", id).expect("id");
+        meta.insert("kind", kind).expect("kind");
+        let leaf = meta
+            .insert_container("text", LoroText::new())
+            .expect("text");
+        leaf.insert(0, text).expect("initial text");
+        self.ids.insert(id.to_owned(), node);
+        self.known.insert(node);
+    }
+}
 impl Backend for Loro {
+    type Version = ::loro::VersionVector;
+    fn version(&self) -> Self::Version {
+        self.doc.oplog_vv()
+    }
+    fn updates_since(&self, version: &Self::Version) -> Vec<u8> {
+        self.doc
+            .export(ExportMode::updates(version))
+            .expect("delta")
+    }
     fn new(peer: u64) -> Self {
         let doc = LoroDoc::new();
         doc.set_peer_id(peer).expect("peer");
@@ -16,6 +41,7 @@ impl Backend for Loro {
         Self {
             doc,
             ids: HashMap::new(),
+            known: HashSet::new(),
             import_ms: 0.0,
             index_ms: 0.0,
         }
@@ -29,15 +55,23 @@ impl Backend for Loro {
                 kind,
                 text,
             } => {
-                let node = tree.create(self.ids.get(parent).copied()).expect("create");
-                let meta = tree.get_meta(node).expect("meta");
-                meta.insert("id", id.as_str()).expect("id");
-                meta.insert("kind", *kind).expect("kind");
-                let leaf = meta
-                    .insert_container("text", LoroText::new())
-                    .expect("text");
-                leaf.insert(0, text).expect("initial text");
-                self.ids.insert(id.clone(), node);
+                self.create(id, parent, kind, text);
+            }
+            Edit::Wrap {
+                id,
+                wrapper,
+                parent,
+            } => {
+                self.create(wrapper, parent, "root", "");
+                tree.mov(self.ids[id], self.ids[wrapper]).expect("wrap");
+            }
+            Edit::Unwrap {
+                id,
+                wrapper,
+                parent,
+            } => {
+                tree.mov(self.ids[id], self.ids[parent]).expect("unwrap");
+                tree.delete(self.ids[wrapper]).expect("delete wrapper");
             }
             Edit::Delete(id) => tree.delete(self.ids[id]).expect("delete"),
             Edit::Move { id, parent } => tree.mov(self.ids[id], self.ids[parent]).expect("move"),
@@ -63,6 +97,9 @@ impl Backend for Loro {
         let start = std::time::Instant::now();
         let tree = self.doc.get_tree("nodes");
         for node in tree.nodes() {
+            if !self.known.insert(node) {
+                continue;
+            }
             let id = value(&tree.get_meta(node).expect("meta"), "id");
             self.ids.insert(id, node);
         }

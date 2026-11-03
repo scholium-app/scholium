@@ -1,60 +1,99 @@
-# SDG engine comparison boundary
+# Structured SDG adapter and engine comparison
 
-This crate currently exposes **no production adapter or Action payload API**. T41's
-performance stop condition was triggered; see [ADR 0009](../../docs/adr/ADR-0009-crdt-engine.md).
-The reserved layer is 2; a future adapter may depend on model/document, not session,
-storage, app or a rendering engine. Loro remains a dependency so the WASM gate also
-compiles the actual engine. Yrs is a dev-dependency used only by the comparison.
+`Replica` is a layer 2 Loro 1.17.1 authority. It plans existing `StructuralEdit`s or
+lowers validated effects, emits versioned Actions, merges remote Actions, reports
+schema repairs, provides actor-local undo/redo and snapshots with replay. It depends
+on model/document; session/app/storage integration is external. See
+[ADR 0053](../../docs/adr/ADR-0053-loro-sdg-action-mapping.md) for the permanent format,
+identity mapping, repair rules, capacity limits and restart/undo boundary.
 
-Reproduce from the repository root, using a new output directory:
+The four-version experiment and the coordinator's acceptance criteria are in
+[ADR 0009](../../docs/adr/ADR-0009-crdt-engine.md). Both criteria passed for 1.17.1.
+50k actions per side merged once remains an expensive offline edge case, especially
+for isolated node create/wrap/unwrap workloads. The comparison does not measure the
+adapter's full-document planning/projection, UI or durable storage latency.
+
+## Reproduction
+
+Run from the repository root with fresh output directories:
 
 ```sh
-cargo test --locked -p scholium-sdg --example engine_bench
-cargo build --release --locked -p scholium-sdg --example engine_bench
+cargo test --locked -p scholium-sdg --all-targets
+cargo build --release --locked --manifest-path crates/scholium-sdg/bench-legacy/Cargo.toml \
+  --target-dir target/t41-legacy
+cargo build --release --locked --manifest-path crates/scholium-sdg/bench-current/Cargo.toml \
+  --target-dir target/t41-current
+python3 crates/scholium-sdg/examples/run-collaboration-bench.py \
+  target/t41-legacy/release/collaboration_bench \
+  target/t41-current/release/collaboration_bench target/collaboration-new
+python3 crates/scholium-sdg/examples/run-collaboration-bench.py \
+  target/t41-legacy/release/collaboration_bench \
+  target/t41-current/release/collaboration_bench target/breakdown-new --breakdown
 python3 crates/scholium-sdg/examples/run-engine-bench.py \
-  target/release/examples/engine_bench target/engine-bench-new
+  target/t41-legacy/release/engine_bench target/throughput-legacy-new --repeats 3
+python3 crates/scholium-sdg/examples/run-engine-bench.py \
+  target/t41-current/release/engine_bench target/throughput-current-new --repeats 3
 cargo build --locked -p scholium-sdg --target wasm32-unknown-unknown
 ```
 
-The runner starts one engine process at a time, alternating order over five repeats.
-It saves every raw result and rejects any sample with a monotonic/boottime delta over
-one second; discard the whole run after suspension. Other executors can still run on
-the host, so absolute times are descriptive, not an isolated latency budget.
+The extra threshold stress run uses latest Loro with 50k actions per side and
+batch 100 (the main matrix uses 10k/side for batch 100):
 
-The fixture has 32 paragraph roots, each with a Unicode body text, inline math,
-math row and math text (160 stable benchmark identities). Each replica executes
-50,000 actions on disjoint node sets: one ten-action cycle inserts/deletes `é`,
-creates/deletes a symbol, creates a radical wrapper, moves the existing math text
-into and out of it, deletes the wrapper, and moves the body inline to the next
-paragraph and back. Bootstrap is outside the throughput timer. No full-document
-projection or update encoding occurs per action; this is an engine benchmark, not
-an editor or durable Action throughput claim.
+```sh
+python3 crates/scholium-sdg/examples/run-collaboration-bench.py \
+  target/t41-legacy/release/collaboration_bench \
+  target/t41-current/release/collaboration_bench target/criteria-new --criteria
+```
 
-Loro uses movable tree + node metadata + LoroText; Yrs uses stable-id maps with
-parent/order/alive fields + YText. Text removal is one Unicode scalar in Loro and
-one UTF-16 code unit in Yrs (`é`); Yrs explicitly selects UTF-16 indexing. Both
-must preserve Chinese and the full emoji sequence. The order counter is safe for
-this disjoint trace only: it does not prove Yrs arbitrary concurrent move semantics.
-Root ordering never changes; ordered children of each addressed node are compared.
+The runner retains each receive, alternates engine order and starts one engine
+process at a time. It rejects suspension over one second; discard such a whole
+run. Criteria use the worst per-run p99 and worst two-way offline sum over three
+repeats, and write an explicit verdict. Shared host load can affect absolute times.
+Separate manifests/lockfiles are necessary because Cargo unifies semver-compatible
+versions; notably Loro 1.16.0 cannot compile with loro-internal 1.17.1. Legacy pins
+both to 1.16.0; current pins API/internal 1.17.1. Sources are shared, never relabelled.
+Run standalone fmt, clippy, tests, docs and cargo-deny for both graphs as well.
 
-Every process asserts both replicas converge on the complete expected identified
-state (kind, parent, ordered children, literal text), including the final inline
-reordering, and that a fresh replica imports the snapshot to the same state.
-Preflight tests compare both backends at intermediate insert/delete/wrap/move
-states, not just a final text checksum. These are benchmark-contract tests, not
-production structured-document invariant or actor-undo acceptance.
+## Workloads and measurement boundary
 
-Update bytes are full history from an empty state vector for each source (shared
-bootstrap counted twice). Snapshot is the merged state; Yrs uses full update v1
-and its default GC, Loro uses Snapshot and retains its operation history. These
-are their default retention policies, not equal checkpoint/undo guarantees.
-Merge timing separates engine decode/import from local cache rebuilding and
-excludes state projection. Snapshot import includes rebuilding the local cache.
-RSS is Linux `/proc/self/status` for the whole process: after-edit RSS includes
-both replicas and prepared traces; peak includes codecs and a third restored
-replica. It is not an allocator-only engine-memory measurement.
+The baseline is 32 paragraph roots with body text, inline math, math row and math
+text (160 stable identities), Unicode `hello 中文 👩‍🔬` and `é`. A mixed ten-action
+cycle inserts/deletes text, creates/deletes a symbol, creates a root wrapper, moves
+math text in/out, deletes the wrapper, moves body text to the next paragraph/back.
+Actors edit disjoint nodes. A serial identified-state oracle checks parent, kind,
+ordered children and literal text; each process also checks convergence/snapshot.
+Contract tests inspect intermediate states, real deltas and duplicate imports.
 
-The Loro API is locked at 1.16.0 and internal at 1.16.0 (1.17.1 internal fails to
-compile with this API); common/kv-store resolve to 1.17.0. Use `--locked`, as
-Cargo.lock is the exact reproducible dependency graph. No production code should
-consume this benchmark representation as a permanent SDG schema.
+Incremental batches 1/10/100 contain local actions on **both** replicas before either
+receives; payloads are generated against the recipient's pre-batch state vector.
+Batch 1 uses 1k actions/side, batch 10/100 use 10k/side. A legacy batch-1 10k pilot
+was stopped after about ten minutes without a completed sample. The 50k/side latest
+batch-100 stress run guards against accepting only a short session. Offline mixed
+and isolated operation probes use 1k/10k/50k actions/side and exchange missing deltas
+once, excluding shared bootstrap. Each row records each one-way receive, engine
+import and index time separately; offline tables report the two-way sum. p50/p99
+use nearest-rank over pooled receives. Three independent repeats retain every value.
+
+Isolated categories are text insert/delete, node create/delete, wrap, unwrap and
+cross-parent move. Delete targets/content are prepared before timing. Wrap creates
+a new wrapper and reparents its content in one committed action; unwrap reparents
+out and deletes the wrapper in one action. Text deletion preloads `é`; structural
+probes use different content nodes, while cross-parent move alternates two parents.
+Pure 50k/side structural probes can exceed the product's 100k visible-node bound;
+these are diagnostic engine workloads, not normal document capacity claims.
+
+Loro uses movable tree + metadata + LoroText; Yrs uses stable-id maps with
+parent/order/alive + YText and explicit UTF-16 indexing. The Yrs order counter is
+safe for this disjoint workload only; it does not prove arbitrary concurrent moves.
+No production Yrs adapter is implemented. Loro retains history, Yrs uses default GC;
+these are not identical undo/checkpoint guarantees. Loro identity-cache maintenance
+reads metadata only for newly seen TreeIDs, while still scanning retained IDs.
+The original historical benchmark rebuilt all metadata; its saved evidence remains
+unchanged, and it is reproducible at commit 9c8b3cf.
+
+The full throughput probe runs 100k actions total without per-action export or
+projection, then sends full history from empty vectors (bootstrap counted twice).
+Snapshot is the merged state (Yrs full update v1). RSS is Linux process RSS after
+editing and whole-process peak, including traces, codecs and a restored replica;
+it is not engine-only heap allocation. The release benchmark representation is
+separate from the production SDG mapping and wire format.

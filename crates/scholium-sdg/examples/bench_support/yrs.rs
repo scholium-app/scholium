@@ -12,6 +12,13 @@ pub struct Yrs {
     index_ms: f64,
 }
 impl Backend for Yrs {
+    type Version = StateVector;
+    fn version(&self) -> Self::Version {
+        self.doc.transact().state_vector()
+    }
+    fn updates_since(&self, version: &Self::Version) -> Vec<u8> {
+        self.doc.transact().encode_state_as_update_v1(version)
+    }
     fn new(peer: u64) -> Self {
         Self {
             doc: Doc::with_options(::yrs::Options {
@@ -41,6 +48,31 @@ impl Backend for Yrs {
                 node.insert(&mut txn, "alive", true);
                 node.insert(&mut txn, "order", self.order as f64);
                 node.insert(&mut txn, "text", TextPrelim::new(*text));
+            }
+            Edit::Wrap {
+                id,
+                wrapper,
+                parent,
+            } => {
+                let wrap: MapRef = nodes.insert(&mut txn, wrapper.as_str(), MapPrelim::default());
+                wrap.insert(&mut txn, "parent", parent.as_str());
+                wrap.insert(&mut txn, "kind", "root");
+                wrap.insert(&mut txn, "alive", true);
+                wrap.insert(&mut txn, "order", self.order as f64);
+                wrap.insert(&mut txn, "text", TextPrelim::new(""));
+                let child = node(&nodes, &txn, id);
+                child.insert(&mut txn, "parent", wrapper.as_str());
+                child.insert(&mut txn, "order", self.order as f64);
+            }
+            Edit::Unwrap {
+                id,
+                wrapper,
+                parent,
+            } => {
+                let child = node(&nodes, &txn, id);
+                child.insert(&mut txn, "parent", parent.as_str());
+                child.insert(&mut txn, "order", self.order as f64);
+                node(&nodes, &txn, wrapper).insert(&mut txn, "alive", false);
             }
             Edit::Delete(id) => {
                 node(&nodes, &txn, id).insert(&mut txn, "alive", false);
@@ -151,7 +183,7 @@ fn node(nodes: &MapRef, txn: &impl ReadTxn, id: &str) -> MapRef {
 
 fn number(node: &MapRef, txn: &impl ReadTxn) -> u64 {
     match node.get(txn, "order").expect("order") {
-        ::yrs::Out::Any(Any::Number(value)) => value as u64,
+        ::yrs::Out::Any(Any::Number(value)) => value.to_string().parse().expect("integer order"),
         _ => panic!("numeric order"),
     }
 }

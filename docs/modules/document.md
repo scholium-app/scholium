@@ -190,3 +190,15 @@ SceneStamp 采纳，类型本身不构成窗口竞态验收。裁决见
 `SetDelimiter` 更换配对，最终结构验证拒绝不支持的组合。它们遵守相同的原子动作、撤销和无效范围合约。
 
 Equation 的空树判断、选区提取目标查找和新块落点递归覆盖 Root 的 index/radicand 以及 Delimited 的 body；嵌套根式与定界符遵守同一块边界合约。
+
+## 共享结构权威 adapter
+
+`scholium-sdg` 使用已有 StructuralEdit 规划或接收已验证效果，将每个存活块、inline、数学节点映射为稳定的
+movable tree 身份，并以独立文本容器合并字符。外部规划结果附预期 revision；错误/过期/no-op 不发布部分效果。
+规划时的临时 LocalSession 被消费，不能与 Replica 形成两份持续可写正文。app/session 的现存本地权威尚未替换。
+
+合并后的 `Projection` 满足 StructuredDocument::validate 并给出修复报告：缺槽 wrapper 退为 Row/Hole，
+多数学根选首个，空容器用有真实树身份的备用节点，Equation 内容不符时降为 Paragraph；超深/超容量作明确报告的
+有限投影。原始节点/文字仍留在引擎，不将非法孩子提升到错误层级。备用首次编辑时提升为普通节点、保持身份并补充
+下一备用，避免后续跨父移动导致占位身份重复。细节见
+[ADR 0053](../adr/ADR-0053-loro-sdg-action-mapping.md)。

@@ -1,0 +1,51 @@
+   Compiling scholium-sdg v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-sdg)
+error[E0599]: no method named `version` found for type parameter `T` in the current scope
+  --> crates/scholium-sdg/examples/bench_support/delta_tests.rs:14:24
+   |
+ 3 | fn exchange<T: Backend>() {
+   |             - method `version` not found for this type parameter
+...
+14 |             let va = a.version();
+   |                        ^^^^^^^ method not found in `T`
+
+error[E0599]: no method named `version` found for type parameter `T` in the current scope
+  --> crates/scholium-sdg/examples/bench_support/delta_tests.rs:15:24
+   |
+ 3 | fn exchange<T: Backend>() {
+   |             - method `version` not found for this type parameter
+...
+15 |             let vb = b.version();
+   |                        ^^^^^^^ method not found in `T`
+
+error[E0599]: no method named `updates_since` found for type parameter `T` in the current scope
+  --> crates/scholium-sdg/examples/bench_support/delta_tests.rs:18:24
+   |
+ 3 | fn exchange<T: Backend>() {
+   |             - method `updates_since` not found for this type parameter
+...
+18 |             let ua = a.updates_since(&va);
+   |                        ^^^^^^^^^^^^^
+   |
+help: there is a method `updates` with a similar name, but with different arguments
+  --> crates/scholium-sdg/examples/bench_support/mod.rs:29:5
+   |
+29 |     fn updates(&self) -> Vec<u8>;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0599]: no method named `updates_since` found for type parameter `T` in the current scope
+  --> crates/scholium-sdg/examples/bench_support/delta_tests.rs:19:24
+   |
+ 3 | fn exchange<T: Backend>() {
+   |             - method `updates_since` not found for this type parameter
+...
+19 |             let ub = b.updates_since(&vb);
+   |                        ^^^^^^^^^^^^^
+   |
+help: there is a method `updates` with a similar name, but with different arguments
+  --> crates/scholium-sdg/examples/bench_support/mod.rs:29:5
+   |
+29 |     fn updates(&self) -> Vec<u8>;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `scholium-sdg` (example "engine_bench" test) due to 4 previous errors
