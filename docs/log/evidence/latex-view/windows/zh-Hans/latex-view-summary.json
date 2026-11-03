@@ -1,0 +1,56 @@
+{
+  "unavailable-state": {
+    "pass": true,
+    "error": "missing SCHOLIUM_RTEX_BIN"
+  },
+  "source-completion": {
+    "pass": true
+  },
+  "source-completion-undo": {
+    "pass": true
+  },
+  "live-preview": {
+    "pass": true,
+    "origin": [
+      "DisplayList"
+    ],
+    "engine": "LuaLatex"
+  },
+  "e6-key-to-present": {
+    "pass": true,
+    "n": 20,
+    "p50_ms": 56.497831999877235,
+    "p95_ms": 73.47878500149818,
+    "samples_ms": [
+      131.16110500050127,
+      61.30068399943411,
+      62.19591999979457,
+      56.35324399918318,
+      54.2254989995854,
+      73.47878500149818,
+      53.30245000004652,
+      52.42876400006935,
+      63.47459400058142,
+      51.16856500171707,
+      56.497831999877235,
+      58.98758599869325,
+      48.76078199959011,
+      58.3324610015552,
+      72.49869099905482,
+      62.35894600104075,
+      64.76825600111624,
+      49.11222300142981,
+      48.50731099941186,
+      50.486104999436066
+    ],
+    "suspend_seconds": 4.579997039400041e-07,
+    "method": "xdotool key dispatch to first XGetImage preview pixel change; 2ms polling; private Xvfb, software GL"
+  },
+  "xelatex-preview": {
+    "pass": true,
+    "origin": [
+      "FullCompilation"
+    ],
+    "engine": "XeLatex"
+  }
+}

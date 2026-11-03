@@ -1,0 +1,12 @@
+   Compiling scholium-build v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-build)
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-latex)
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 2.57s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-2b09a38e1bc8faec)
+
+running 3 tests
+test source_editor::tests::selection_paste_and_ime_commit_preserve_literal_source_and_undo ... ok
+test source_editor::tests::command_candidates_insert_source_snippets_as_single_undoable_edits ... ok
+test source_editor::tests::find_marks_exact_utf8_match_in_large_scrollable_source ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 333 filtered out; finished in 0.10s

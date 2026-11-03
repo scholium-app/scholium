@@ -2,7 +2,7 @@
 
 ## 职责
 
-当前实现源码权威 session 与无 UI 的 live 预览监督。其余解析/转换接口为后续规划：提供容错、无损 LaTeX token/CST，项目 include graph，符号与引用索引，常用论文子集到转换 IR 的投影、
+当前实现源码权威 session、无 UI 的 live 预览监督、内核图元栅格化与整编预览。其余解析/转换接口为后续规划：提供容错、无损 LaTeX token/CST，项目 include graph，符号与引用索引，常用论文子集到转换 IR 的投影、
 IR 到 LaTeX 的导出生成、语义编辑降级为最小源码 patch、TeX 日志位置解析与实时预览适配。
 
 ## 非职责
@@ -118,14 +118,14 @@ Rust 容错解析器配 Rowan CST 待验证；Tree-sitter 仅作可选高亮/导
 ## 源码会话与实时监督（当前实现）
 
 `SourceSession::open(root, entry)` 保持 `.tex` 为权威，识别前 20 行的 `% !TeX program = ...`，默认 LuaLaTeX；
-XeLaTeX/pdfLaTeX 标为 `PreviewMode::FullCompilation`，本 crate 不执行整编。入口与通过 `load` 加载的资源
+XeLaTeX/pdfLaTeX 使用 `PreviewMode::FullCompilation` 与 `full::compile`。入口与通过 `load` 加载的资源
 保存在同一源码会话，`edit` 只修改内存快照并递增宿主 revision，不改磁盘。未保存源码可由 `snapshot` 取回。
 
 `LiveSession::start(source, Arc<Sandbox>, work, LiveConfig)` 消费该权威，只通过 `scholium-build` 沙箱启动
 `rtex serve`。公共接口为 edit、snapshot、request_layout、locate、next_event、cancel；私有假 launcher 仅用于测试。
 `LiveEvent` 提供 Paragraph、Pages、LayoutRequired、Location、Diagnostic、Engine，自有 outcome/state，不公开协议 JSON 或 rtex 类型。
 Paragraph/Pages 携带宿主 process generation 和 `Option<revision>`；未匹配确认的版本为 None，不能当作当前预览。
-本批只传布局元数据，不栅格化或转发 display list；绘制、hayro 回退与整编/导出另行接入。
+Paragraph/Pages 携带内核自有不透明 `Drawing`，由 raster worker 的 `Renderer` 消费；不公开上游 JSON。
 
 宿主不变量：
 
@@ -140,14 +140,33 @@ Paragraph/Pages 携带宿主 process generation 和 `Option<revision>`；未匹�
   当前 pin 已支持两个参数，无需库配置退路；旧二进制缺能力时仍发诊断并保留上游默认。后台超时/被杀结果保留 Failed。没有宿主单轮编译看门狗。
 - 每个 process generation 的 stdout/stderr 共用字节预算（默认 64 MiB），单行默认最多 16 MiB，以容纳既有大布局。
   受限 reader 在解析前检查限额；未知字段/事件可忽略，畸形 JSON/已知字段产生诊断，超限停止进程而不循环重启。
-  协议队列与公共事件队列均有界。公共队列最多 32 条事件加一个合并的 `LayoutRequired` 标记：
+  协议队列与公共事件队列均有界。公共队列最多 32 条事件、一个合并的 `LayoutRequired` 标记和一条溢出汇总诊断：
   同 generation 的 Pages 只保留最新，同 generation、同段落的 Paragraph 只保留最新；溢出时淘汰非 Engine 事件，
   淘汰预览更新则标记需要调用 `request_layout` 补齐。Engine 状态与原因按序保留；队列全为 Engine 时等待消费者腾出空间，
   等待时间不计入心跳截止或健康期，不因消费落后永久失败。此时 actor 的命令处理也会等待消费恢复。
-  Diagnostic/Location 可在溢出时被淘汰。stderr 单独关闭不等于会话死亡。
+  Diagnostic/Location 淘汰数用饱和计数器累计，队列排空后输出各自丢失条数及重新查询提示，不能静默丢失。stderr 单独关闭不等于会话死亡。
 - 宿主用 monotonic 时间记录编辑转发到段落更新、layout request/background scheduling 到结果的耗时；这不是 UI 呈现时延或编译 watchdog。
 
 CI 故障注入无需 rtex/TeX/bwrap：私有 tests/support 假进程覆盖崩溃、挂起、丢失更新、引擎 Restarting/Failed、
 上游 pass 超时、缺宏包、偏移/路径拒绝、畸形/超长/累计输出与启动失败。ignored 原生测试使用与 build 相同的
 三个 `SCHOLIUM_RTEX_*` 配置变量，在本机验证启动—编辑—段落更新、杀/停 serve、后台超时后源码修复恢复、快照链接跨挂载可读且不可写回项目，以及输入拒绝；环境不可用时明确失败，
 报告“未运行”及原因。实际测试记录属于开发日志，不作为本节实现依据。
+
+## 图元与 PDF 预览
+
+`view::Drawing` 在监督层解码，页面按 generation 累积完整图元，之后才进入可合并 mailbox，避免空增量覆盖前一页。
+`view::Renderer` 在独立栅格线程保存页面与段落 placements，以横坐标和基线共同识别旧行；失败更新回滚场景并请求完整布局。
+栅格为 300 dpi（300/72 px/bp），scaled point 通过 65536×72.27/72 换算到 bp。
+OpenType 字形经 skrifa；TFM 通过固定宿主 kpsewhich 的 pdftex.map/encoding 解析 Type 1。
+字体路径须 canonicalize 到受信系统字体/TeX 树，单文件 ≤64 MiB，face/glyph 缓存条数有界。
+未知图元、degraded 页面、缺失字形或图片使用当前 layout PDF 经 hayro 0.8 渲染；缺当前 PDF 时保留上次预览并请求布局。
+单页 ≤2400 万像素，场景 ≤9600 万像素，PDF ≤64 MiB、≤256 页；超限失败，不截断为正常预览。
+
+`full::compile` 接收不可变 SourceSession，在独立临时目录复制正规资源（拒绝 symlink/特殊文件，≤1 万项、64 MiB），
+覆盖已加载资源的未保存文本，再通过 `BuildProfile::FullCompilation` 编译。pdfLaTeX 直接输出 PDF；
+XeLaTeX 使用 `-no-pdf` 输出 XDV，再显式执行 xdvipdfmx，避免 shell。最多两轮，所有子进程共用宿主 deadline，
+栅格完成后也检查 deadline。结果携带 source revision、固定引擎、整编来源和耗时，旧 revision 不采纳。
+此接口生成预览，不写回源码、不实现导出/文件菜单或 bibliography 工具链。
+
+`highlight` 返回 UTF-8 byte ranges 与控制序列、注释、数学切换、花括号、普通文本类别；不展开宏或声称 CST 语义。
+绘制边界与回退裁决见 [ADR 0052](../adr/ADR-0052-latex-view-workbench.md)。

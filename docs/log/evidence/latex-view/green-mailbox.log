@@ -1,0 +1,20 @@
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-latex)
+    Finished `test` profile [unoptimized] target(s) in 1.26s
+     Running unittests src/lib.rs (target/debug/deps/scholium_latex-799202e31c8ebc78)
+
+running 1 test
+test tests::mailbox::diagnostic_and_location_eviction_is_explicit ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 22 filtered out; finished in 0.00s
+
+     Running tests/native_links.rs (target/debug/deps/native_links-fd1b21ea90feeb2d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/real.rs (target/debug/deps/real-9ecedd189df21891)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s

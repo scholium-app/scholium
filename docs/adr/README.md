@@ -111,4 +111,6 @@ Proposed、Accepted、Superseded、Rejected。替代旧 ADR 时新增文件并�
 
 [ADR 0050](ADR-0050-linux-live-session-cgroups.md)：Linux 常驻构建会话使用 systemd 用户 scope，fail-closed 资源探测、整树取消与可信字体缓存副本。
 
-| [0051：项目入口与旧会话退役](ADR-0051-project-files-and-session-retirement.md) | Accepted | 固定语言/authority 声明、正式存储接入、最近项目、冲突 UI 与只读会话迁移 |
+[ADR 0051](ADR-0051-project-files-and-session-retirement.md)：项目入口与旧会话退役：固定语言/authority 声明、正式存储接入、最近项目、冲突界面与只读会话迁移。
+
+[ADR 0052](ADR-0052-latex-view-workbench.md)：LaTeX 内核图元与同引擎 PDF 回退、受限整编 profile、共享源码编辑器与开发工作台。

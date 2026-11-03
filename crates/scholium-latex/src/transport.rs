@@ -23,6 +23,24 @@ pub(crate) enum Launcher {
 }
 
 impl Launcher {
+    pub(crate) fn layout_pdf(&self, version: u64) -> Option<Vec<u8>> {
+        let work = match self {
+            Self::Sandbox { work, .. } => work,
+            #[cfg(test)]
+            Self::Fake { .. } => return None,
+        };
+        let path = work
+            .join(format!("build/bg/layout-{version}.pdf"))
+            .canonicalize()
+            .ok()?;
+        if !path.starts_with(work)
+            || !path.is_file()
+            || path.metadata().ok()?.len() > 64 * 1024 * 1024
+        {
+            return None;
+        }
+        std::fs::read(path).ok()
+    }
     pub(crate) async fn capabilities(
         &self,
         config: &LiveConfig,

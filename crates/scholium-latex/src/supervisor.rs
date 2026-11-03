@@ -28,6 +28,7 @@ pub(crate) struct Supervisor {
     locations: VecDeque<String>,
     layout_since: Instant,
     recovering: bool,
+    drawing: crate::view::Drawing,
 }
 impl Supervisor {
     pub(crate) fn new(
@@ -55,6 +56,7 @@ impl Supervisor {
             locations: VecDeque::new(),
             layout_since: Instant::now(),
             recovering: false,
+            drawing: Default::default(),
         }
     }
 
@@ -136,6 +138,7 @@ impl Supervisor {
             .launch(&self.source, &self.config, self.capabilities)?;
         self.heartbeat = None;
         self.healthy_since = None;
+        self.drawing = Default::default();
         self.revisions.clear();
         self.edit_started.clear();
         self.pending.clear();
@@ -217,6 +220,7 @@ impl Supervisor {
                     .and_then(|revision| self.edit_started.get(&revision))
                     .map(Instant::elapsed);
                 self.emit(LiveEvent::Paragraph {
+                    drawing: std::sync::Arc::new(crate::view::Drawing::decode(value, None)),
                     generation: self.generation,
                     revision,
                     paragraph: paragraph.par_id,
@@ -226,7 +230,15 @@ impl Supervisor {
             }
             Some("LayoutUpdate") => {
                 let layout: protocol::Layout = protocol::decode(value)?;
+                self.drawing = crate::view::Drawing::decode(
+                    value,
+                    value["versions"]["layout_version"]
+                        .as_u64()
+                        .and_then(|v| self.launcher.layout_pdf(v)),
+                )
+                .complete(&self.drawing);
                 self.emit(LiveEvent::Pages {
+                    drawing: std::sync::Arc::new(self.drawing.clone()),
                     generation: self.generation,
                     revision: self
                         .revisions

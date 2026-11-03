@@ -505,3 +505,14 @@ project-migrated-body = 已创建独立项目。原会话文件完整保留；�
 project-source-context = 源码权威
 project-import = 迁移旧会话…
 project-import-target = 迁移目标（尚不存在的项目文件夹）
+
+# LaTeX source workbench
+latex-workspace = LaTeX 源码工作台
+latex-source = LaTeX 源码 · 未保存编辑
+latex-preview = 同引擎预览
+latex-unavailable = 工具链不可用
+latex-building = 预览编译中
+latex-stale = 预览更新中 · 源码已改变
+latex-full = 整编预览 · { $ms } ms
+latex-live = 实时预览 · { $ms } ms
+source-editor-find = 查找

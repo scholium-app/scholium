@@ -23,11 +23,13 @@ const RUNTIME: &[&str] = &[
     "/var/cache/fontconfig",
 ];
 
-/// Declarative toolchain policy. Only rtex is implemented; other kernels can add profiles later.
+/// Declarative policies for resident live sessions and bounded one-shot compilation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum BuildProfile {
     /// LuaLaTeX live preview, with a fixed runtime whitelist and no network.
     Rtex,
+    /// Bounded one-shot LaTeX compilation; no rtex runtime is required.
+    FullCompilation,
 }
 
 /// Session-wide cgroup limits. Resident processes have neither a wall-clock nor CPU-seconds limit.
@@ -64,6 +66,7 @@ pub struct Sandbox {
     pub(crate) mounts: BTreeMap<PathBuf, PathBuf>,
     toolchain: RtexToolchain,
     limits: ResourceLimits,
+    profile: BuildProfile,
 }
 impl Sandbox {
     /// Prepare the runtime, probe isolation, and warm a private cache with fixed trusted source.
@@ -81,6 +84,7 @@ impl Sandbox {
             mounts: BTreeMap::new(),
             toolchain,
             limits,
+            profile: BuildProfile::Rtex,
         };
         sandbox.runtime().await?;
         let project = tempfile::tempdir()?;
@@ -100,9 +104,47 @@ impl Sandbox {
         Ok(sandbox)
     }
 
+    /// Prepare the one-shot XeLaTeX/pdfLaTeX policy, without requiring rtex.
+    /// # Errors
+    /// Reports missing engines, isolation or trusted font-cache preparation failures.
+    pub async fn prepare_full(
+        font_cache: PathBuf,
+        limits: ResourceLimits,
+    ) -> Result<Self, BuildError> {
+        if limits.memory_bytes == 0 || limits.tasks == 0 {
+            return Err(BuildError::Configuration("zero resource budget".into()));
+        }
+        let mut sandbox = Self {
+            mounts: BTreeMap::new(),
+            toolchain: RtexToolchain {
+                binary: "/usr/bin/true".into(),
+                tex_directory: "/usr/share/texmf-dist".into(),
+                font_cache,
+            },
+            limits,
+            profile: BuildProfile::FullCompilation,
+        };
+        sandbox.runtime().await?;
+        let project = tempfile::tempdir()?;
+        let work = tempfile::tempdir()?;
+        let cache = tempfile::tempdir()?;
+        sandbox
+            .spawn(
+                project.path(),
+                work.path(),
+                cache,
+                &["/usr/bin/true".into()],
+            )?
+            .output(PROBE_TIMEOUT)
+            .await
+            .map_err(|e| BuildError::Unavailable(e.to_string()))?;
+        cache::warm(&sandbox).await?;
+        Ok(sandbox)
+    }
+
     /// The declarative policy applied to this runtime.
     pub fn profile(&self) -> BuildProfile {
-        BuildProfile::Rtex
+        self.profile
     }
 
     /// Run a bounded setup/capability command in the same sandbox policy as a session.
@@ -269,32 +311,50 @@ impl Sandbox {
             ]
             .map(Into::into),
         );
+        if self.profile == BuildProfile::FullCompilation {
+            args.insert(args.len() - 1, "--cpu=60".into());
+        }
         args.extend_from_slice(argv);
         args
     }
 
     async fn runtime(&mut self) -> Result<(), BuildError> {
-        self.mounts.insert(
-            "/rtex/bin/rtex".into(),
-            self.toolchain.binary.canonicalize()?,
-        );
-        self.mounts.insert(
-            "/rtex/tex".into(),
-            self.toolchain.tex_directory.canonicalize()?,
-        );
-        if !self.toolchain.tex_directory.join("rtex-dl.lua").is_file() {
-            return Err(BuildError::Configuration(
-                "matching rtex support tree required".into(),
-            ));
+        let mut binaries = Vec::new();
+        if self.profile == BuildProfile::Rtex {
+            self.mounts.insert(
+                "/rtex/bin/rtex".into(),
+                self.toolchain.binary.canonicalize()?,
+            );
+            self.mounts.insert(
+                "/rtex/tex".into(),
+                self.toolchain.tex_directory.canonicalize()?,
+            );
+            if !self.toolchain.tex_directory.join("rtex-dl.lua").is_file() {
+                return Err(BuildError::Configuration(
+                    "matching rtex support tree required".into(),
+                ));
+            }
+            binaries.push(self.toolchain.binary.clone());
         }
-        let mut binaries = vec![self.toolchain.binary.clone()];
-        for tool in TOOLS {
+        let mut tools = TOOLS.to_vec();
+        if self.profile == BuildProfile::FullCompilation {
+            tools.extend(["pdflatex", "pdftex", "xelatex", "xetex", "xdvipdfmx"]);
+        }
+        for tool in tools {
             let path = PathBuf::from(format!("/usr/bin/{tool}"));
             self.mounts.insert(path.clone(), path.canonicalize()?);
             binaries.push(path);
         }
         for binary in binaries {
             self.libraries(&binary).await?;
+        }
+        if self.profile == BuildProfile::FullCompilation {
+            for path in ["/etc/paperspecs", "/etc/papersize"] {
+                if Path::new(path).exists() {
+                    self.mounts
+                        .insert(path.into(), Path::new(path).canonicalize()?);
+                }
+            }
         }
         for path in RUNTIME {
             if Path::new(path).exists() {

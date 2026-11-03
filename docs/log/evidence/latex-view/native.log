@@ -1,0 +1,16 @@
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-latex)
+    Finished `test` profile [unoptimized] target(s) in 0.93s
+     Running tests/render_native.rs (target/debug/deps/render_native-4019be3ae663861d)
+
+running 2 tests
+test english_chinese_live_edits_and_tikz_fallback_match_reference_pdf ... english-initial: Diff { size_a: (2481, 3508), size_b: (2481, 3508), ink_a: 12808, ink_b: 12721, unmatched_a: 0, unmatched_b: 0, unmatched_fraction: 0.0, unmatched_bbox: None }, origin=DisplayList
+english-edited-live: Diff { size_a: (2481, 3508), size_b: (2481, 3508), ink_a: 13235, ink_b: 13142, unmatched_a: 0, unmatched_b: 0, unmatched_fraction: 0.0, unmatched_bbox: None }, origin=DisplayList
+chinese-initial: Diff { size_a: (2481, 3508), size_b: (2481, 3508), ink_a: 16768, ink_b: 16484, unmatched_a: 1, unmatched_b: 0, unmatched_fraction: 3.007337904486948e-5, unmatched_bbox: Some((646, 634, 646, 634)) }, origin=DisplayList
+chinese-edited-live: Diff { size_a: (2481, 3508), size_b: (2481, 3508), ink_a: 17170, ink_b: 16939, unmatched_a: 1, unmatched_b: 1, unmatched_fraction: 5.8635550734410276e-5, unmatched_bbox: Some((690, 634, 734, 635)) }, origin=DisplayList
+tikz-initial: Diff { size_a: (2550, 3299), size_b: (2550, 3300), ink_a: 2237, ink_b: 2227, unmatched_a: 0, unmatched_b: 0, unmatched_fraction: 0.0, unmatched_bbox: None }, origin=PdfFallback
+ok
+test non_lua_engines_compile_immutable_revision_with_full_preview_origin_and_deadline ... xelatex full preview revision=1 elapsed_ms=380
+pdflatex full preview revision=1 elapsed_ms=177
+ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.81s

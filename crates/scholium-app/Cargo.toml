@@ -7,6 +7,10 @@ rust-version.workspace = true
 publish = false
 
 [dependencies]
+scholium-latex = { path = "../scholium-latex", version = "0.1.0" }
+scholium-build = { path = "../scholium-build", version = "0.1.0" }
+tokio = { version = "=1.53.3", features = ["rt", "time", "sync", "macros"] }
+tempfile = "=3.27.0"
 scholium-math-input = { path = "../scholium-math-input", version = "0.1.0" }
 toml = "=0.8.23"
 serde = { version = "=1.0.229", features = ["derive"] }

@@ -15,7 +15,7 @@ pub enum Engine {
     /// pdfLaTeX uses full compilation preview.
     PdfLatex,
 }
-/// The preview route; full compilation is identified but not executed by this crate yet.
+/// The preview route selected for the fixed project engine.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PreviewMode {
     /// Supervised rtex/LuaLaTeX session.
