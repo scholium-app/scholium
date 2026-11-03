@@ -7,6 +7,7 @@ use crate::{
 #[derive(Clone, Copy, Debug)]
 pub(crate) enum ViewCommand {
     NewDocument,
+    FileDialog(crate::project_files::FileDialog),
     Save,
     /// Close the open document through the window's close and discard flow.
     CloseDocument,
@@ -31,6 +32,7 @@ pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
         && matches!(
             command,
             ViewCommand::NewDocument
+                | ViewCommand::FileDialog(_)
                 | ViewCommand::Save
                 | ViewCommand::CloseDocument
                 | ViewCommand::Source
@@ -47,6 +49,7 @@ pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
     };
     match command {
         ViewCommand::NewDocument => state.new_requested = true,
+        ViewCommand::FileDialog(dialog) => state.file_dialog = Some(dialog),
         ViewCommand::Save => state.save_requested = true,
         ViewCommand::CloseDocument => state.close_requested = true,
         ViewCommand::ToggleToolbars => state.toolbars_visible = !state.toolbars_visible,

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plain launch without SCHOLIUM_SESSION_FILE: legacy head migrates once, original kept."""
+"""Plain launch without SCHOLIUM_PROJECT_PATH: legacy head migrates once, original kept."""
 import hashlib
 import json
 import os
@@ -20,9 +20,11 @@ data = output / "xdg"
 env = dict(os.environ, XDG_DATA_HOME=str(data), SCHOLIUM_EDITOR_AUDIT="1",
            WINIT_UNIX_BACKEND="x11", WINIT_X11_SCALE_FACTOR="1")
 env.pop("WAYLAND_DISPLAY", None)
+env.pop("SCHOLIUM_PROJECT_PATH", None)
 env.pop("SCHOLIUM_SESSION_FILE", None)
 legacy = data / "scholium" / "session.scholium.sqlite"
-target = data / "scholium" / "document.v1.sqlite"
+project = data / "scholium" / "default-project"
+target = project / ".scholium/history/project.sqlite3"
 
 
 def run(args, name, actions):
@@ -43,7 +45,7 @@ legacy.parent.mkdir(parents=True)
 subprocess.run([str(hammer), str(legacy), "1"], env=env, check=True, stdout=subprocess.DEVNULL)
 heads = sqlite3.connect(f"file:{legacy}?mode=ro", uri=True).execute("select count(*) from snapshots").fetchone()[0]
 assert heads > 0, "hammer wrote a legacy head"
-assert not target.exists(), "writing a legacy head never creates the v1 document"
+assert not target.exists(), "writing a legacy head never creates the project"
 before = hashlib.sha256(legacy.read_bytes()).hexdigest()
 def current(window):
     # Cold debug starts scan fonts before the first Content layout; wait for it.
@@ -57,7 +59,7 @@ def current(window):
 
 
 run([], "default", current)
-assert target.exists(), "plain launch created the v1 document by migration"
+assert target.exists(), "plain launch created the project by migration"
 assert hashlib.sha256(legacy.read_bytes()).hexdigest() == before, "legacy file untouched"
 audits = [json.loads(l[6:]) for l in (output / "default.log").read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
 last = audits[-1]
@@ -66,7 +68,7 @@ assert all(a["page_text_draws"] == 0 for a in audits)
 text = json.dumps(last["snapshot"], ensure_ascii=False)
 assert "内容 1" in text, "migrated content is the authority"
 result = {"binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "legacy_heads": heads,
-          "legacy_sha256_unchanged": True, "v1_created": True, "default_backend": last["backend"],
+          "legacy_sha256_unchanged": True, "project_created": True, "default_backend": last["backend"],
           "audit_frames": len(audits), "committed_egui_text_draws": 0}
 (output / "summary.json").write_text(json.dumps(result, indent=2) + "\n")
 print("PASS default launch migrates legacy head and renders through Typst Content")

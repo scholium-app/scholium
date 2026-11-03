@@ -1,0 +1,45 @@
+{
+  "base": "4bb9808ecf79aca8e17d7ba5247f4603688e8b8e",
+  "branch": "ation_ciger/feat/project-files",
+  "binary_sha256": "b53d031ad2f54f024def9b20dfd07f81819284cdb083a1e0fbdb4c6fe8c19261",
+  "tests": {
+    "passed": 609,
+    "ignored": 11,
+    "failed": 0,
+    "environment": {
+      "RUST_TEST_THREADS": "1"
+    }
+  },
+  "stock_comparison": {
+    "system": 31,
+    "bundled": 31,
+    "all_equal_pixels": true
+  },
+  "windows": {
+    "locales": [
+      "zh-Hans",
+      "en"
+    ],
+    "unique_checks_passed": 52,
+    "unique_checks_total": 52,
+    "full_run": {
+      "passed": 51,
+      "failed": 1,
+      "exit_code": 1
+    },
+    "failed_check": "native [en]",
+    "first_targeted_rerun": {
+      "passed": 0,
+      "failed": 1
+    },
+    "diagnostic_targeted_rerun": {
+      "passed": 1,
+      "failed": 0,
+      "exit_code": 0,
+      "native_workflow_stages": 33,
+      "wrapper": "strace -ff -e trace=kill -e signal=all"
+    },
+    "failure": "Xvfb process killed; source undetermined; no application assertion failure",
+    "evidence": "window-summary.txt"
+  }
+}

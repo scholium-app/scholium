@@ -18,6 +18,7 @@ mod input;
 mod math_enter;
 pub(crate) mod math_input;
 mod paint;
+mod project_files;
 mod raster;
 mod scene;
 mod selection;
@@ -25,7 +26,7 @@ mod source_view;
 mod startup;
 mod style;
 pub(crate) use clipboard::request_clipboard;
-pub(crate) use startup::show_error as show_startup_error;
+pub(crate) use startup::default_project;
 #[cfg(test)]
 mod tests;
 mod vertical;
@@ -41,10 +42,10 @@ use scholium_model::layout_identity::*;
 use scholium_model::structured::*;
 pub(crate) use scholium_session::typst::CommandId as Command;
 use scholium_session::typst::{CommandArgs, CommandError, EditorCore, Origin};
-#[cfg(test)]
-use scholium_storage::SessionStore;
 use scholium_typst::editor::{Affinity, EditorScene, Position, RasterSpec, ViewRange};
-use std::{collections::VecDeque, path::PathBuf, sync::Arc};
+#[cfg(test)]
+use std::path::PathBuf;
+use std::{collections::VecDeque, sync::Arc};
 
 /// Visible page range assumed until the page has been placed once, in pt.
 const INITIAL_VIEW_PT: f64 = 800.0;
@@ -140,43 +141,36 @@ impl std::fmt::Debug for EditorSession {
 }
 
 impl EditorSession {
-    pub(crate) fn open(
+    pub(crate) fn open_project(
         ctx: &egui::Context,
         state: &mut WorkspaceState,
+        handle: scholium_storage::project::ProjectHandle,
     ) -> Result<Self, SessionError> {
-        // An explicit file (tests, multiple instances) must already be schema v1.
-        let (path, notice, named) =
-            match std::env::var_os("SCHOLIUM_SESSION_FILE").filter(|p| !p.is_empty()) {
-                Some(path) => (PathBuf::from(path), None, true),
-                None => {
-                    let (path, notice) = startup::default_document()?;
-                    (path, notice, false)
-                }
-            };
-        let mut session = Self::open_file(ctx, state, &path)?;
-        session.notice = notice;
-        session.title = named
-            .then(|| path.file_stem().map(|s| s.to_string_lossy().into_owned()))
-            .flatten();
-        session.metadata(state);
-        Ok(session)
+        let wake = ctx.clone();
+        let core =
+            EditorCore::open_project_with_wake(handle.clone(), move || wake.request_repaint())?;
+        let mut editor = Self::with_core(ctx, state, core)?;
+        editor.title = Some(crate::project_workspace::name(&handle));
+        editor.metadata(state);
+        Ok(editor)
     }
 
+    #[cfg(test)]
     fn open_file(
         ctx: &egui::Context,
         state: &mut WorkspaceState,
         path: &std::path::Path,
     ) -> Result<Self, SessionError> {
         let wake = ctx.clone();
-        let mut core =
-            EditorCore::open_with_wake(path, move || wake.request_repaint()).map_err(|error| {
-                match error {
-                    scholium_session::typst::SessionError::NoInputLeaf => {
-                        SessionError::Startup(error.to_string())
-                    }
-                    _ => error.into(),
-                }
-            })?;
+        let core = EditorCore::open_with_wake(path, move || wake.request_repaint())?;
+        Self::with_core(ctx, state, core)
+    }
+
+    fn with_core(
+        ctx: &egui::Context,
+        state: &mut WorkspaceState,
+        mut core: EditorCore,
+    ) -> Result<Self, SessionError> {
         // A guess until the first page is placed; the first re-raster corrects it.
         let spec = RasterSpec {
             px_per_pt: raster::forced_px_per_pt()
@@ -286,6 +280,9 @@ impl EditorSession {
             )
         };
         let before = state.editor.as_ref().map(shown);
+        if let Some(error) = &self.core.persistence_error {
+            state.storage_error = Some(error.clone());
+        }
         let problems = self.problems(state);
         self.shown_problems = problems.clone();
         let panel_open = state.diagnostics;

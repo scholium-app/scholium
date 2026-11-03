@@ -17,6 +17,10 @@ impl EditorSession {
                     self.confirm_close = false;
                     self.focus = true;
                 }
+                if ui.button(text("command.file.save.title")).clicked() {
+                    self.save(state);
+                    if state.storage_error.is_none() { self.finish_confirm(ctx, state); }
+                }
                 let proceed = ui.button(text("chrome.dialog.discard"));
                 if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
                     println!("DIALOG {}", serde_json::json!({"proceed": [proceed.rect.center().x, proceed.rect.center().y]}));
@@ -29,6 +33,10 @@ impl EditorSession {
     }
 
     fn finish_confirm(&mut self, ctx: &egui::Context, state: &mut WorkspaceState) {
+        if let Err(error) = self.core.discard_project() {
+            state.storage_error = Some(error.to_string());
+            return;
+        }
         if self.confirm_close {
             self.allow_close = true;
             ctx.send_viewport_cmd(egui::ViewportCommand::Close);

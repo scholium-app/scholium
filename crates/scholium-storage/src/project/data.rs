@@ -248,3 +248,16 @@ impl ProjectStore {
         .transpose()
     }
 }
+
+impl ProjectStore {
+    pub(super) fn latest_action_sequence(&self) -> Result<DurableSequence, StoreError> {
+        let sequence: i64 =
+            self.db
+                .query_row("SELECT coalesce(max(sequence),0) FROM actions", [], |r| {
+                    r.get(0)
+                })?;
+        Ok(DurableSequence(
+            u64::try_from(sequence).map_err(|_| StoreError::Corrupt("invalid sequence"))?,
+        ))
+    }
+}
