@@ -68,7 +68,7 @@ E2 不通过则不得接入，退回自研或纯整编预览；E3 不通过时�
 - 每用户字体缓存的可信预热与每会话可写副本；
 - 后台编译使用上游 `pass_timeout`（超时或被杀报告 `Failed`）、会话心跳与重启、`EngineState Restarting/Failed` 后重新请求布局；
 - 编辑转发前校验（UTF-8 字符边界、不越界、项目内规范化相对路径）；
-- `rtex serve` 命令行尚无 `pass_timeout` 参数（默认 300 秒）：向上游提议增加，或宿主改用库配置；
+- `rtex serve` 通过 `--compile-timeout-ms` / `--pass-timeout-ms` 设置超时；对旧二进制保留能力探测与缺失诊断；
 - display list 按不低于 2 倍像素密度绘制，TikZ 等页面用 hayro 回退；上游提供二进制通道前沿用 JSON 行（ADR 0043 修订）。
 
 出口：

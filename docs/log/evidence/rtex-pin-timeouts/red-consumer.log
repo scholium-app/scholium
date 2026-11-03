@@ -1,0 +1,18 @@
+    Finished `test` profile [unoptimized] target(s) in 0.07s
+     Running unittests src/lib.rs (target/debug/deps/scholium_latex-799202e31c8ebc78)
+
+running 1 test
+
+thread 'tests::supervision::paused_consumer_does_not_fail_preview_and_catches_up_to_latest_revision' (271891) panicked at crates/scholium-latex/src/tests/supervision.rs:424:9:
+consumer pause must not kill preview: Engine { generation: 0, state: Failed, reason: Some("live supervisor stopped; cleanup: Ok(())") }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test tests::supervision::paused_consumer_does_not_fail_preview_and_catches_up_to_latest_revision ... FAILED
+
+failures:
+
+failures:
+    tests::supervision::paused_consumer_does_not_fail_preview_and_catches_up_to_latest_revision
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.33s
+
+error: test failed, to rerun pass `-p scholium-latex --lib`

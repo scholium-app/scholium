@@ -1,0 +1,3 @@
+$ cargo build --release --locked --offline --manifest-path /home/ation_ciger/.cache/scholium-eval/t38-531e2c6-config-src/Cargo.toml --target-dir /home/ation_ciger/.cache/scholium-eval/rtex-531e2c6b32a09d33be58f6be1301fe8f793411cd/target --bin rtex-pass-config-eval
+   Compiling rtex-cli v0.0.6 (/home/ation_ciger/.cache/scholium-eval/t38-531e2c6-config-src/crates/rtex-cli)
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.80s

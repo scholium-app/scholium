@@ -1,0 +1,29 @@
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-latex)
+    Finished `test` profile [unoptimized] target(s) in 0.45s
+     Running unittests src/lib.rs (target/debug/deps/scholium_latex-799202e31c8ebc78)
+
+running 22 tests
+test tests::source::engine_directives_mark_non_lua_projects_for_full_compilation ... ok
+test tests::source::symlink_escapes_are_rejected_on_open_load_and_after_path_replacement ... ok
+test tests::source::edits_reject_invalid_utf8_ranges_and_non_normal_paths ... ok
+test tests::mailbox::superseded_previews_merge_and_distinct_overflow_is_explicit_and_bounded ... ok
+test tests::mailbox::lifecycle_backpressure_preserves_every_state_and_terminal_reason ... ok
+test tests::supervision::invalid_edits_never_reach_the_worker ... ok
+test tests::supervision::malformed_messages_become_diagnostics_and_unknown_fields_are_tolerated ... ok
+test tests::supervision::malformed_acknowledgements_never_mislabel_later_revisions ... ok
+test tests::supervision::paragraph_updates_include_host_monotonic_edit_latency ... ok
+test tests::supervision::location_queries_expose_validated_source_byte_ranges ... ok
+test tests::supervision::upstream_pass_timeout_is_failed_and_does_not_trigger_a_host_compile_watchdog ... ok
+test tests::supervision::overlong_and_total_output_exhaustion_fail_closed_without_restarting ... ok
+test tests::supervision::rapid_repeated_failures_still_exhaust_restart_budget ... ok
+test tests::supervision::upstream_timeout_flags_are_probed_and_missing_capabilities_are_diagnostic ... ok
+test tests::supervision::startup_failures_are_bounded_and_reported ... ok
+test tests::supervision::restarting_and_failed_events_request_layout_for_lost_inflight_updates ... ok
+test tests::supervision::evicted_distinct_paragraphs_request_layout_without_losing_engine_or_source ... ok
+test tests::supervision::closing_stderr_does_not_restart_a_healthy_protocol_session ... ok
+test tests::supervision::paused_consumer_does_not_fail_preview_and_catches_up_to_latest_revision ... ok
+test tests::supervision::killed_or_hung_serve_restarts_and_resynchronizes_unsaved_documents ... ok
+test tests::supervision::missing_preamble_package_fails_once_without_a_host_restart_loop ... ok
+test tests::supervision::healthy_period_restores_restart_budget_for_spaced_failures ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.92s

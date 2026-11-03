@@ -1,5 +1,8 @@
 use crate::{
-    LatexError, LiveEvent, PreviewMode, SourceSession, supervisor::Supervisor, transport::Launcher,
+    LatexError, LiveEvent, PreviewMode, SourceSession,
+    mailbox::{self, EventReceiver},
+    supervisor::Supervisor,
+    transport::Launcher,
 };
 use scholium_build::Sandbox;
 use std::{ops::Range, path::Path, sync::Arc, time::Duration};
@@ -22,8 +25,10 @@ pub struct LiveConfig {
     pub line_bytes: usize,
     /// Combined stdout/stderr byte budget for one process generation.
     pub total_bytes: usize,
-    /// Maximum whole-session restart attempts; exhausted budgets fail visibly.
+    /// Maximum whole-session restart attempts between stable healthy periods; rapid loops fail visibly.
     pub max_restarts: u32,
+    /// Continuous successful-heartbeat period after which the restart budget resets.
+    pub restart_stability_window: Duration,
 }
 impl Default for LiveConfig {
     fn default() -> Self {
@@ -36,6 +41,7 @@ impl Default for LiveConfig {
             line_bytes: 16 * 1024 * 1024,
             total_bytes: 64 * 1024 * 1024,
             max_restarts: 3,
+            restart_stability_window: Duration::from_secs(30),
         }
     }
 }
@@ -59,7 +65,7 @@ pub(crate) enum Command {
 #[derive(Debug)]
 pub struct LiveSession {
     commands: mpsc::Sender<Command>,
-    events: mpsc::Receiver<LiveEvent>,
+    events: EventReceiver,
     task: tokio::task::JoinHandle<()>,
 }
 impl LiveSession {
@@ -94,6 +100,7 @@ impl LiveSession {
         }
         if config.heartbeat_interval.is_zero()
             || config.heartbeat_timeout.is_zero()
+            || config.restart_stability_window.is_zero()
             || config.startup_timeout.is_zero()
             || config.compile_timeout.is_zero()
             || config.pass_timeout.is_zero()
@@ -105,7 +112,7 @@ impl LiveSession {
         let capabilities = launcher.capabilities(&config).await?;
         let worker = launcher.launch(&source, &config, capabilities)?;
         let (commands, receiver) = mpsc::channel(16);
-        let (sender, events) = mpsc::channel(32);
+        let (sender, events) = mailbox::channel();
         let supervisor = Supervisor::new(source, launcher, worker, config, capabilities, sender);
         let task = tokio::spawn(supervisor.run(receiver));
         Ok(Self {
@@ -175,7 +182,8 @@ impl LiveSession {
     }
 
     /// Receive the next bounded event, or `None` after cancellation/terminal failure.
-    /// If this queue fills, the supervisor stops the process instead of growing memory without bound.
+    /// Superseded pages/paragraphs are coalesced. Evicted distinct preview updates produce
+    /// `LayoutRequired`; lifecycle states and terminal reasons are retained with bounded backpressure.
     pub async fn next_event(&mut self) -> Option<LiveEvent> {
         self.events.recv().await
     }

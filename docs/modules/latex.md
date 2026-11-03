@@ -25,6 +25,7 @@ src/
 ├── session.rs      源码权威、引擎识别、UTF-8/path 校验
 ├── live.rs         公共异步会话与有界事件订阅
 ├── supervisor.rs   心跳、重启、文档重同步与故障恢复
+├── mailbox.rs      有界事件合并、布局重取标记与生命周期背压
 ├── transport.rs    仅经 build 沙箱启动与能力探测
 ├── protocol.rs     私有、有界 JSON-lines 适配
 ├── event.rs        Scholium 自有事件（无 rtex 类型）
@@ -112,7 +113,7 @@ Rust 容错解析器配 Rowan CST 待验证；Tree-sitter 仅作可选高亮/导
 - 定时监测不替代本地 E2 全负对照、E3/E5/E6 回归、完整 E8 故障注入或真实窗口 L1 验收。上游变化须按 ADR 0043 复验后才移动 pin。
 - `python3 scripts/rtex-pin.py [完整 commit SHA]` 一条命令在仓库外 clone/build、顺序跑 E1/E2/完整 E8，输出 Pass/Fail；无参数取当前 main head。
   仅三项均通过才原子更新 PIN，失败保留旧 pin；不提交或推送。E3/E5/E6、文档评审与仓库门禁仍在提交前执行。
-  main pin 用于保留尚未发布的上游合并补丁（math owners、unicode-math 空根指数），并不自动追踪每次 main 变更；构建和 driver 均按完整 commit 取源码。
+  main pin 用于保留尚未发布的上游合并补丁（math owners、unicode-math 空根指数、快照文件链接及 serve 超时参数），并不自动追踪每次 main 变更；构建和 driver 均按完整 commit 取源码。
 
 ## 源码会话与实时监督（当前实现）
 
@@ -122,7 +123,7 @@ XeLaTeX/pdfLaTeX 标为 `PreviewMode::FullCompilation`，本 crate 不执行整�
 
 `LiveSession::start(source, Arc<Sandbox>, work, LiveConfig)` 消费该权威，只通过 `scholium-build` 沙箱启动
 `rtex serve`。公共接口为 edit、snapshot、request_layout、locate、next_event、cancel；私有假 launcher 仅用于测试。
-`LiveEvent` 提供 Paragraph、Pages、Location、Diagnostic、Engine，自有 outcome/state，不公开协议 JSON 或 rtex 类型。
+`LiveEvent` 提供 Paragraph、Pages、LayoutRequired、Location、Diagnostic、Engine，自有 outcome/state，不公开协议 JSON 或 rtex 类型。
 Paragraph/Pages 携带宿主 process generation 和 `Option<revision>`；未匹配确认的版本为 None，不能当作当前预览。
 本批只传布局元数据，不栅格化或转发 display list；绘制、hayro 回退与整编/导出另行接入。
 
@@ -131,17 +132,22 @@ Paragraph/Pages 携带宿主 process generation 和 `Option<revision>`；未匹�
 - 发送前检查规范化相对路径：拒绝绝对路径、空组件、`.`/`..`、平台歧义形式；canonicalize 后必须仍在项目内。
   每次编辑/重同步重新检查 symlink；范围使用 UTF-8 byte offset，须有序、不越界且两端落在字符边界。
 - 独立 actor 按 interval 发 status，只有有效 status 回复证明心跳。EOF、写失败或心跳截止触发整树取消与有预算重启，
-  重启后重新发送所有已加载资源的最新源码并请求布局。宿主 revision 不回退；终止预览失败后仍保留可取回的源码。
+  重启后重新发送所有已加载资源的最新源码并请求布局。有效心跳连续健康达到 `restart_stability_window`（默认 30 秒）后，
+  清零重启次数；每次重启重新计健康期，短时间故障仍受 `max_restarts`（默认 3）约束。宿主 revision 不回退；终止预览失败后仍保留可取回的源码。
 - 收到 EngineState Restarting/Failed 立即请求布局，恢复 Ready 时再请求一次，补回缺失的在途段落更新。
   响应心跳的引擎 Failed 不触发宿主重启，缺宏包原因通过事件报告，等待源码修复。
 - 启动时在同一沙箱探测 `serve --help`；分别检测 `--compile-timeout-ms`/`--pass-timeout-ms`，仅对支持的参数传值。
-  缺能力发诊断并保留上游默认；后台超时/被杀结果保留 Failed。没有宿主单轮编译看门狗。
+  当前 pin 已支持两个参数，无需库配置退路；旧二进制缺能力时仍发诊断并保留上游默认。后台超时/被杀结果保留 Failed。没有宿主单轮编译看门狗。
 - 每个 process generation 的 stdout/stderr 共用字节预算（默认 64 MiB），单行默认最多 16 MiB，以容纳既有大布局。
   受限 reader 在解析前检查限额；未知字段/事件可忽略，畸形 JSON/已知字段产生诊断，超限停止进程而不循环重启。
-  协议队列和公共事件队列均有界，消费者落后导致显式终止。stderr 单独关闭不等于会话死亡。
+  协议队列与公共事件队列均有界。公共队列最多 32 条事件加一个合并的 `LayoutRequired` 标记：
+  同 generation 的 Pages 只保留最新，同 generation、同段落的 Paragraph 只保留最新；溢出时淘汰非 Engine 事件，
+  淘汰预览更新则标记需要调用 `request_layout` 补齐。Engine 状态与原因按序保留；队列全为 Engine 时等待消费者腾出空间，
+  等待时间不计入心跳截止或健康期，不因消费落后永久失败。此时 actor 的命令处理也会等待消费恢复。
+  Diagnostic/Location 可在溢出时被淘汰。stderr 单独关闭不等于会话死亡。
 - 宿主用 monotonic 时间记录编辑转发到段落更新、layout request/background scheduling 到结果的耗时；这不是 UI 呈现时延或编译 watchdog。
 
 CI 故障注入无需 rtex/TeX/bwrap：私有 tests/support 假进程覆盖崩溃、挂起、丢失更新、引擎 Restarting/Failed、
 上游 pass 超时、缺宏包、偏移/路径拒绝、畸形/超长/累计输出与启动失败。ignored 原生测试使用与 build 相同的
-三个 `SCHOLIUM_RTEX_*` 配置变量，在本机验证启动—编辑—段落更新、杀/停 serve 及输入拒绝；环境不可用时明确失败，
+三个 `SCHOLIUM_RTEX_*` 配置变量，在本机验证启动—编辑—段落更新、杀/停 serve、后台超时后源码修复恢复、快照链接跨挂载可读且不可写回项目，以及输入拒绝；环境不可用时明确失败，
 报告“未运行”及原因。实际测试记录属于开发日志，不作为本节实现依据。

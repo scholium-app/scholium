@@ -75,7 +75,7 @@ for raw in sys.stdin:
                   'reason': 'injected upstream pass timeout' if args.mode == 'pass-timeout' else 'injected live failure'})
             # Deliberately lose the in-flight paragraph update, as observed in E8.
         else:
-            emit({'event': 'ParagraphUpdate', 'par_id': 1, 'versions': {'source_revision': revision}})
+            emit({'event': 'ParagraphUpdate', 'par_id': revision if args.mode == 'distinct-paragraphs' else 1, 'versions': {'source_revision': revision}})
     elif cmd == 'status':
         emit({'reply': 'status', 'versions': {'source_revision': revision}})
     elif cmd == 'request_layout':

@@ -1,6 +1,7 @@
 use crate::{
     EngineState, LatexError, LiveConfig, LiveEvent, SourceSession,
     live::Command,
+    mailbox::EventSender,
     protocol::{self, Incoming},
     transport::{Launcher, Worker},
 };
@@ -16,10 +17,11 @@ pub(crate) struct Supervisor {
     worker: Worker,
     config: LiveConfig,
     capabilities: (bool, bool),
-    events: mpsc::Sender<LiveEvent>,
+    events: EventSender,
     generation: u64,
     restarts: u32,
     heartbeat: Option<Instant>,
+    healthy_since: Option<Instant>,
     revisions: BTreeMap<u64, u64>,
     edit_started: BTreeMap<u64, Instant>,
     pending: VecDeque<u64>,
@@ -34,7 +36,7 @@ impl Supervisor {
         worker: Worker,
         config: LiveConfig,
         capabilities: (bool, bool),
-        events: mpsc::Sender<LiveEvent>,
+        events: EventSender,
     ) -> Self {
         Self {
             source,
@@ -46,6 +48,7 @@ impl Supervisor {
             generation: 0,
             restarts: 0,
             heartbeat: None,
+            healthy_since: None,
             revisions: BTreeMap::new(),
             edit_started: BTreeMap::new(),
             pending: VecDeque::new(),
@@ -60,11 +63,13 @@ impl Supervisor {
         if let Err(error) = result {
             let cleanup = self.worker.cancel().await;
             let reason = format!("{error}; cleanup: {cleanup:?}");
-            let _ = self.events.try_send(LiveEvent::Engine {
-                generation: self.generation,
-                state: EngineState::Failed,
-                reason: Some(reason),
-            });
+            let _ = self
+                .emit(LiveEvent::Engine {
+                    generation: self.generation,
+                    state: EngineState::Failed,
+                    reason: Some(reason),
+                })
+                .await;
             // Source authority survives terminal preview failure and remains retrievable for saving.
             self.offline(commands).await;
         }
@@ -72,7 +77,7 @@ impl Supervisor {
 
     async fn active(&mut self, commands: &mut mpsc::Receiver<Command>) -> Result<()> {
         if !self.capabilities.0 || !self.capabilities.1 {
-            self.diagnostic(format!("upstream timeout capability missing: compile_timeout={}, pass_timeout={}; unsupported limits retain upstream defaults", self.capabilities.0, self.capabilities.1))?;
+            self.diagnostic(format!("upstream timeout capability missing: compile_timeout={}, pass_timeout={}; unsupported limits retain upstream defaults", self.capabilities.0, self.capabilities.1)).await?;
         }
         self.synchronize().await?;
         let mut interval = tokio::time::interval(self.config.heartbeat_interval);
@@ -88,10 +93,10 @@ impl Supervisor {
                         Some(Incoming::Message(value)) => {
                             if let Err(error) = self.message(&value).await {
                                 if matches!(error, LatexError::Stopped) { return Err(error); }
-                                self.diagnostic(format!("malformed/failed protocol message: {error}"))?;
+                                self.diagnostic(format!("malformed/failed protocol message: {error}")).await?;
                             }
                         }
-                        Some(Incoming::Diagnostic(text)) => self.diagnostic(text)?,
+                        Some(Incoming::Diagnostic(text)) => self.diagnostic(text).await?,
                         Some(Incoming::Fatal(reason)) if reason.contains("limit exceeded") => return Err(std::io::Error::other(reason).into()),
                         Some(Incoming::Fatal(reason)) => self.restart(reason).await?,
                         None => self.restart("serve pipes closed".into()).await?,
@@ -125,11 +130,12 @@ impl Supervisor {
         }
         self.restarts += 1;
         self.generation += 1;
-        self.engine(EngineState::Recovering, Some(reason))?;
+        self.engine(EngineState::Recovering, Some(reason)).await?;
         self.worker = self
             .launcher
             .launch(&self.source, &self.config, self.capabilities)?;
         self.heartbeat = None;
+        self.healthy_since = None;
         self.revisions.clear();
         self.edit_started.clear();
         self.pending.clear();
@@ -175,7 +181,7 @@ impl Supervisor {
             Command::Locate(path) => self.locate(path).await?,
             Command::Cancel(reply) => {
                 let result = self.worker.cancel().await;
-                let _ = self.engine(EngineState::Stopped, None);
+                let _ = self.engine(EngineState::Stopped, None).await;
                 let _ = reply.send(result);
                 return Ok(true);
             }
@@ -187,7 +193,9 @@ impl Supervisor {
         if crate::session::resolve(self.source.root(), &path).is_err()
             || self.source.text(&path).is_none()
         {
-            return self.diagnostic(format!("invalid location resource: {path}"));
+            return self
+                .diagnostic(format!("invalid location resource: {path}"))
+                .await;
         }
         self.locations.push_back(path.clone());
         self.send(json!({"cmd":"spans", "path":path})).await
@@ -195,7 +203,7 @@ impl Supervisor {
 
     async fn message(&mut self, value: &Value) -> Result<()> {
         if let Some(reply) = value["reply"].as_str() {
-            return self.reply(reply, value);
+            return self.reply(reply, value).await;
         }
         match value["event"].as_str() {
             Some("EngineState") => self.engine_message(value).await?,
@@ -213,7 +221,8 @@ impl Supervisor {
                     revision,
                     paragraph: paragraph.par_id,
                     elapsed,
-                })?;
+                })
+                .await?;
             }
             Some("LayoutUpdate") => {
                 let layout: protocol::Layout = protocol::decode(value)?;
@@ -226,9 +235,10 @@ impl Supervisor {
                     count: layout.pages_total,
                     outcome: protocol::compile(&layout.compile.state)?,
                     elapsed: self.layout_since.elapsed(),
-                })?;
+                })
+                .await?;
             }
-            Some("Diagnostics") => self.diagnostics(value)?,
+            Some("Diagnostics") => self.diagnostics(value).await?,
             Some("BackgroundScheduled") => self.layout_since = Instant::now(),
             Some(_) => {} // Forward-compatible event names are intentionally ignored.
             None => return Err(std::io::Error::other("message needs event or reply").into()),
@@ -239,12 +249,12 @@ impl Supervisor {
     async fn engine_message(&mut self, value: &Value) -> Result<()> {
         let event: protocol::Engine = protocol::decode(value)?;
         let state = protocol::engine(&event.state)?;
-        self.engine(state, event.reason.clone())?;
+        self.engine(state, event.reason.clone()).await?;
         match state {
             EngineState::Recovering | EngineState::Failed => {
                 self.recovering = true;
                 if let Some(reason) = event.reason {
-                    self.diagnostic(reason)?;
+                    self.diagnostic(reason).await?;
                 }
                 // A live-engine failure is not a whole-session failure. In particular a missing
                 // preamble package must not start a host restart loop while status remains responsive.
@@ -259,11 +269,15 @@ impl Supervisor {
         Ok(())
     }
 
-    fn reply(&mut self, reply: &str, value: &Value) -> Result<()> {
+    async fn reply(&mut self, reply: &str, value: &Value) -> Result<()> {
         match reply {
             "status" => {
                 protocol::decode::<protocol::Versions>(&value["versions"])?;
                 self.heartbeat = None;
+                let since = self.healthy_since.get_or_insert_with(Instant::now);
+                if since.elapsed() >= self.config.restart_stability_window {
+                    self.restarts = 0;
+                }
             }
             "edit" | "set_document" => {
                 // Consume the acknowledgement even if its fields are malformed; keeping it
@@ -274,7 +288,7 @@ impl Supervisor {
                     self.revisions.insert(version.source_revision, host);
                 }
             }
-            "spans" => self.spans(value)?,
+            "spans" => self.spans(value).await?,
             "error" => {
                 self.pending.pop_front();
                 self.diagnostic(
@@ -282,14 +296,15 @@ impl Supervisor {
                         .as_str()
                         .unwrap_or("upstream rejected request")
                         .into(),
-                )?;
+                )
+                .await?;
             }
             _ => {}
         }
         Ok(())
     }
 
-    fn spans(&mut self, value: &Value) -> Result<()> {
+    async fn spans(&mut self, value: &Value) -> Result<()> {
         let path = self
             .locations
             .pop_front()
@@ -312,15 +327,15 @@ impl Supervisor {
             })
             .collect();
         for location in locations {
-            self.emit(location)?;
+            self.emit(location).await?;
         }
         Ok(())
     }
 
-    fn diagnostics(&self, value: &Value) -> Result<()> {
+    async fn diagnostics(&mut self, value: &Value) -> Result<()> {
         let items: Vec<protocol::Diagnostic> = protocol::decode(&value["items"])?;
         for item in items {
-            self.diagnostic(item.message)?;
+            self.diagnostic(item.message).await?;
         }
         Ok(())
     }
@@ -331,22 +346,26 @@ impl Supervisor {
     async fn send(&mut self, value: Value) -> Result<()> {
         self.worker.send(value, self.config.heartbeat_timeout).await
     }
-    fn engine(&self, state: EngineState, reason: Option<String>) -> Result<()> {
+    async fn engine(&mut self, state: EngineState, reason: Option<String>) -> Result<()> {
         self.emit(LiveEvent::Engine {
             generation: self.generation,
             state,
             reason,
         })
+        .await
     }
-    fn diagnostic(&self, message: String) -> Result<()> {
-        self.emit(LiveEvent::Diagnostic { message })
+    async fn diagnostic(&mut self, message: String) -> Result<()> {
+        self.emit(LiveEvent::Diagnostic { message }).await
     }
-    fn emit(&self, event: LiveEvent) -> Result<()> {
-        // Reserve one slot for a terminal failure reason if the consumer stops draining events.
-        if self.events.capacity() <= 1 {
-            return Err(LatexError::Stopped);
+    async fn emit(&mut self, event: LiveEvent) -> Result<()> {
+        let blocked = self.events.send(event).await?;
+        if let Some(started) = self.heartbeat.as_mut() {
+            *started += blocked;
         }
-        self.events.try_send(event).map_err(|_| LatexError::Stopped)
+        if let Some(started) = self.healthy_since.as_mut() {
+            *started += blocked;
+        }
+        Ok(())
     }
     async fn offline(&mut self, mut commands: mpsc::Receiver<Command>) {
         while let Some(command) = commands.recv().await {

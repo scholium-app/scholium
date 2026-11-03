@@ -1,0 +1,10 @@
+$ /usr/bin/python3 /home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/rtex-eval/negative.py --clone /home/ation_ciger/.cache/scholium-eval/rtex-531e2c6b32a09d33be58f6be1301fe8f793411cd --evidence /home/ation_ciger/Projects/Mogan/scholium-wt3/docs/log/evidence/rtex-pin-timeouts/pin/e2 --run-id t38-531e2c6-e2
+{"control": "a", "config": "default", "result": "Pass", "host_effective": true, "sandbox_effective": false}
+{"control": "b", "config": "default", "result": "Pass", "host_effective": true, "sandbox_effective": false}
+{"control": "c", "config": "default", "result": "Pass", "host_effective": true, "sandbox_effective": false}
+{"control": "c", "config": "lifted", "result": "Pass", "host_effective": true, "sandbox_effective": false}
+{"control": "d-lua", "config": "default", "result": "Pass", "host_effective": true, "sandbox_effective": false}
+{"control": "d-openout", "config": "default", "result": "Pass", "host_effective": true, "sandbox_effective": false}
+{"control": "e", "config": "default", "result": "Inconclusive (probe blocked unsandboxed)", "host_effective": false, "sandbox_effective": false}
+{"control": "e", "config": "lifted", "result": "Pass", "host_effective": true, "sandbox_effective": false}
+{"control": "f", "config": "default", "result": "Pass", "host_effective": true, "sandbox_effective": false}

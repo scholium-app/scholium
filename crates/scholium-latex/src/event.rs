@@ -52,6 +52,12 @@ pub enum LiveEvent {
         /// Host monotonic time since the latest layout request or background scheduling event.
         elapsed: Duration,
     },
+    /// Some distinct preview updates were evicted while the consumer was behind. Request a layout
+    /// to reconstruct a complete preview; source authority and the worker remain live.
+    LayoutRequired {
+        /// Latest process generation whose preview updates may be incomplete.
+        generation: u64,
+    },
     /// A source location supplied by a bounded spans query.
     Location {
         /// Normalized project-relative resource.
