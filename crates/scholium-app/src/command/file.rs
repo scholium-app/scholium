@@ -1,7 +1,7 @@
 //! 文件 menu.
 use super::{
     avail,
-    spec::{Action, ChordKey, CommandSpec, IconId, KeyChord},
+    spec::{Action, CommandSpec, IconId},
 };
 use crate::commands::ViewCommand;
 
@@ -10,7 +10,6 @@ pub(super) fn specs() -> Vec<CommandSpec> {
         command! {
             "file.new",
             icon: IconId::New,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Letter('N'))],
             menu: menu!(File, 0, 0),
             availability: avail::not_composing,
             action: Action::View(ViewCommand::NewDocument),
@@ -18,7 +17,6 @@ pub(super) fn specs() -> Vec<CommandSpec> {
         command! {
             "file.open",
             icon: IconId::Open,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Letter('O'))],
             menu: menu!(File, 0, 1),
             availability: avail::unimplemented,
         },
@@ -30,7 +28,6 @@ pub(super) fn specs() -> Vec<CommandSpec> {
         command! {
             "file.save",
             icon: IconId::Save,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Letter('S'))],
             menu: menu!(File, 1, 0),
             availability: avail::save,
             action: Action::View(ViewCommand::Save),

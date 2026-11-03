@@ -1,10 +1,8 @@
 //! The one command list. Adding a command edits only its domain module; adding a domain
 //! adds one line to `DOMAINS`.
-#[cfg(test)]
-use super::spec::ChordKey;
 use super::{
     document, edit, file, format, help, insert,
-    spec::{CommandSpec, FocusKind, KeyChord, MenuId, Routing, Submenu, ToolbarGroup},
+    spec::{CommandSpec, FocusKind, MenuId, Routing, Submenu, ToolbarGroup},
     tools, view,
 };
 use std::sync::OnceLock;
@@ -85,50 +83,18 @@ pub(crate) fn submenus(menu: MenuId) -> Vec<Submenu> {
     found.into_iter().map(|(sub, _)| sub).collect()
 }
 
-/// Chords the app consumes itself, shifted chords first: a toolkit matches a shortcut by
-/// "pattern modifiers present", so Ctrl+Shift+Z must be tried before Ctrl+Z.
-pub(crate) fn app_shortcuts() -> &'static [(KeyChord, &'static CommandSpec)] {
-    static CHORDS: OnceLock<Vec<(KeyChord, &'static CommandSpec)>> = OnceLock::new();
-    CHORDS.get_or_init(|| {
-        let mut chords: Vec<_> = all()
-            .iter()
-            .filter(|spec| spec.routing == Routing::App)
-            .flat_map(|spec| spec.shortcuts.iter().map(move |chord| (*chord, spec)))
-            .collect();
-        chords.sort_by_key(|(chord, _)| !chord.shift);
-        chords
-    })
-}
-
-/// Does another command bind the same key with Shift? Then the plain chord must not fire
-/// while Shift is held (one redo keystroke would otherwise also register as an undo).
-pub(crate) fn has_shifted_variant(chord: KeyChord) -> bool {
-    all()
+pub(crate) fn editor_command(
+    key: eframe::egui::Key,
+    mods: eframe::egui::Modifiers,
+    math: bool,
+    focus: Option<&str>,
+) -> Option<&'static CommandSpec> {
+    super::keymap::effective()
+        .bindings
         .iter()
-        .flat_map(|spec| spec.shortcuts)
-        .any(|other| other.ctrl == chord.ctrl && other.key == chord.key && other.shift)
-}
-
-/// The page-routed command bound to a key event. Letters, digits and function keys match
-/// exactly (Ctrl+Shift+M is a mode switch, not a formula toggle). Punctuation also matches
-/// its unshifted binding, because `/` needs Shift on some layouts.
-#[cfg(test)]
-pub(crate) fn editor_command(chord: KeyChord) -> Option<&'static CommandSpec> {
-    let find = |wanted: KeyChord| {
-        all()
-            .iter()
-            .filter(|spec| spec.routing == Routing::Editor)
-            .find(|spec| spec.shortcuts.contains(&wanted))
-    };
-    let punctuation = !matches!(
-        chord.key,
-        ChordKey::Letter(_) | ChordKey::Digit(_) | ChordKey::Function(_)
-    );
-    find(chord).or_else(|| {
-        let plain = KeyChord {
-            shift: false,
-            ..chord
-        };
-        (chord.shift && punctuation).then(|| find(plain)).flatten()
-    })
+        .filter(|b| b.scope.matches(true, math, focus))
+        .filter(|b| b.keys.iter().any(|k| super::keys::matches(*k, key, mods)))
+        .max_by_key(|b| b.scope.priority())
+        .and_then(|b| get(&b.command))
+        .filter(|s| s.routing == Routing::Editor)
 }

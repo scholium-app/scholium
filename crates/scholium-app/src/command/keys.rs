@@ -1,6 +1,6 @@
 //! Toolkit edge: `KeyChord` to and from egui keys and modifiers.
-use super::spec::{ChordKey, KeyChord};
-use eframe::egui::{Key, KeyboardShortcut, Modifiers};
+use super::keymap::{ChordKey, KeyChord};
+use eframe::egui::{Key, Modifiers};
 
 const DIGITS: [Key; 10] = [
     Key::Num0,
@@ -39,17 +39,24 @@ fn egui_key(key: ChordKey) -> Option<Key> {
         ChordKey::Equals => Some(Key::Equals),
         ChordKey::Minus => Some(Key::Minus),
         ChordKey::Slash => Some(Key::Slash),
-        ChordKey::Caret | ChordKey::Underscore => None,
     }
 }
 
-pub(super) fn shortcut(chord: KeyChord) -> Option<KeyboardShortcut> {
-    let mut modifiers = Modifiers::NONE;
-    if chord.ctrl {
-        modifiers |= Modifiers::COMMAND;
-    }
-    if chord.shift {
-        modifiers |= Modifiers::SHIFT;
-    }
-    Some(KeyboardShortcut::new(modifiers, egui_key(chord.key)?))
+/// Match all physical modifiers; punctuation may require Shift on a keyboard layout.
+pub(crate) fn matches(chord: KeyChord, key: Key, mods: Modifiers) -> bool {
+    let ctrl = if cfg!(target_os = "macos") {
+        mods.mac_cmd
+    } else {
+        mods.ctrl || mods.command
+    };
+    let meta = mods.mac_cmd;
+    let punctuation = matches!(
+        chord.key,
+        ChordKey::Plus | ChordKey::Equals | ChordKey::Minus | ChordKey::Slash
+    );
+    egui_key(chord.key) == Some(key)
+        && chord.ctrl == ctrl
+        && chord.alt == mods.alt
+        && (chord.meta == meta || cfg!(target_os = "macos") && chord.ctrl && !chord.meta)
+        && (chord.shift == mods.shift || punctuation && !chord.shift)
 }

@@ -49,7 +49,7 @@ impl Resolved {
 
     /// The first shortcut as menu text, e.g. `Ctrl+B`.
     pub(crate) fn shortcut(&self) -> Option<String> {
-        self.spec.shortcuts.first().map(|chord| chord.display())
+        super::keymap::effective().hint(self.spec.id)
     }
 
     /// "名称 + 快捷键", plus the reason while the command cannot run.
@@ -75,6 +75,10 @@ pub(crate) fn invoke(ctx: &egui::Context, state: &mut WorkspaceState, id: &str) 
     let Some(spec) = registry::get(id) else {
         return;
     };
+    if id == "help.shortcuts" {
+        ctx.data_mut(|d| d.insert_temp(egui::Id::new("shortcut-help"), true));
+        return;
+    }
     if let Action::Clipboard(op) = spec.action {
         if (spec.availability)(&CommandContext::of(state)).is_enabled() {
             typst_editor::request_clipboard(ctx, op);

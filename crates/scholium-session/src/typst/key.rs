@@ -1,6 +1,5 @@
 //! Toolkit-independent keyboard input and caret-follow intent.
 use super::*;
-use scholium_model::BlockKind;
 
 impl EditorCore {
     pub(super) fn key_input(&mut self, key: Key, mods: Modifiers) -> Result<Outcome, CommandError> {
@@ -89,34 +88,12 @@ impl EditorCore {
         before: Position,
         old_follow: FollowState,
     ) -> Result<Outcome, CommandError> {
-        let command = match key {
-            Key::Character('a') | Key::Character('A') => Some(CommandId::SelectAll),
-            Key::Character('z') | Key::Character('Z') if mods.shift => Some(CommandId::Redo),
-            Key::Character('z') | Key::Character('Z') => Some(CommandId::Undo),
-            Key::Character('y') | Key::Character('Y') => Some(CommandId::Redo),
-            Key::Home => {
-                self.document_edge(false, mods.shift);
-                None
-            }
-            Key::End => {
-                self.document_edge(true, mods.shift);
-                None
-            }
-            Key::Character('b') | Key::Character('B') if !mods.shift => {
-                Some(CommandId::Style(TextStyle::Strong))
-            }
-            Key::Character('i') | Key::Character('I') if !mods.shift => {
-                Some(CommandId::Style(TextStyle::Emphasis))
-            }
-            Key::Character('e') | Key::Character('E') if mods.shift => Some(CommandId::DisplayMath),
-            Key::Character('m') | Key::Character('M') if !mods.shift => Some(CommandId::Math),
-            Key::Slash if !mods.shift => Some(CommandId::Fraction),
-            Key::Character('r') | Key::Character('R') if mods.shift => Some(CommandId::Root),
-            Key::Num(0) if !mods.shift => Some(CommandId::Kind(BlockKind::Paragraph)),
-            Key::Num(1) if !mods.shift => Some(CommandId::Kind(BlockKind::Heading1)),
-            Key::Num(2) if !mods.shift => Some(CommandId::Kind(BlockKind::Heading2)),
-            _ => None,
+        match key {
+            Key::Home => self.document_edge(false, mods.shift),
+            Key::End => self.document_edge(true, mods.shift),
+            _ => false,
         };
+        let command: Option<CommandId> = None;
         let outcome = command.map_or_else(
             || Ok(Outcome::default()),
             |id| self.run(id, CommandArgs::None),

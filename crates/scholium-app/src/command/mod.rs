@@ -12,6 +12,9 @@ mod file;
 mod format;
 mod help;
 mod insert;
+pub(crate) mod keymap;
+#[cfg(test)]
+mod keymap_tests;
 pub(crate) mod keys;
 pub(crate) mod registry;
 pub(crate) mod shortcuts;

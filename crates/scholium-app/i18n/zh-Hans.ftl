@@ -472,3 +472,7 @@ a11y-math-edge-root-before = 公式内，根式前
 a11y-math-edge-root-after = 公式内，根式后
 a11y-math-edge-delimited-before = 公式内，括号前
 a11y-math-edge-delimited-after = 公式内，括号后
+
+command-edit-select_all =
+    .title = 全选
+    .tooltip = 选择全部正文

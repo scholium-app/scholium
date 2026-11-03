@@ -1,4 +1,5 @@
 use super::*;
+use crate::typst_editor::tests::press_alt;
 use crate::typst_editor::tests::{Fixture, key, text};
 use egui::accesskit::{self, Role};
 use std::collections::HashMap;
@@ -213,7 +214,7 @@ fn formula_is_a_math_object_and_slot_context_is_a_live_status() {
         text("12"),
         crate::typst_editor::tests::shift_left(),
         crate::typst_editor::tests::shift_left(),
-        key(egui::Key::Slash, true),
+        press_alt(egui::Key::F, false),
     ]);
     let tree = settled(&mut f);
     let math = tree.children(Role::Math);
@@ -461,7 +462,7 @@ fn compound_edges_announce_their_side_without_changing_body_text_offsets() {
         text("12"),
         crate::typst_editor::tests::shift_left(),
         crate::typst_editor::tests::shift_left(),
-        key(egui::Key::Slash, true),
+        press_alt(egui::Key::F, false),
     ]);
     let root = match &f.editor.snapshot.blocks[0].content[1].body {
         InlineBody::Math { root } => root.node,

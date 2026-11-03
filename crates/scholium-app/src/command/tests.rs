@@ -1,8 +1,6 @@
 use super::{
     registry,
-    spec::{
-        Availability, ChordKey, CommandContext, CommandSpec, KeyChord, MenuId, Routing, Submenu,
-    },
+    spec::{Availability, CommandContext, CommandSpec, MenuId, Submenu},
 };
 use crate::{
     i18n::{self, Locale, LocaleSetting},
@@ -116,19 +114,6 @@ fn every_reason_a_command_can_give_is_in_the_catalog() {
     for locale in Locale::ALL {
         for reason in &reasons {
             assert!(i18n::defines(locale, reason), "{locale:?} lacks {reason}");
-        }
-    }
-}
-
-#[test]
-fn no_two_commands_share_a_chord() {
-    let mut owners: Vec<(KeyChord, &str)> = Vec::new();
-    for spec in registry::all() {
-        for chord in spec.shortcuts {
-            if let Some((_, other)) = owners.iter().find(|(c, _)| c == chord) {
-                panic!("{} and {} both bind {}", other, spec.id, chord.display());
-            }
-            owners.push((*chord, spec.id));
         }
     }
 }
@@ -340,51 +325,6 @@ fn history_and_clipboard_availability_follow_the_facts() {
     );
 }
 
-#[test]
-fn page_chords_are_registered_for_the_page_and_app_chords_for_the_app() {
-    let ctrl_shift = |c| KeyChord::ctrl_shift(ChordKey::Letter(c));
-    let ctrl = |key| KeyChord::ctrl(key);
-    let routed = |chord| registry::editor_command(chord).map(|s| s.id);
-    assert_eq!(
-        routed(ctrl(ChordKey::Digit(0))),
-        Some("format.paragraph.body")
-    );
-    assert_eq!(
-        routed(ctrl(ChordKey::Digit(1))),
-        Some("format.paragraph.heading1")
-    );
-    assert_eq!(
-        routed(ctrl(ChordKey::Digit(2))),
-        Some("format.paragraph.heading2")
-    );
-    assert_eq!(routed(ctrl(ChordKey::Letter('M'))), Some("insert.formula"));
-    assert_eq!(routed(ctrl_shift('E')), Some("insert.display_formula"));
-    assert_eq!(
-        routed(ctrl_shift('M')),
-        None,
-        "Ctrl+Shift+M is the mode switch"
-    );
-    assert_eq!(
-        routed(ctrl_shift('B')),
-        None,
-        "Ctrl+Shift+B is the navigation toggle"
-    );
-    assert_eq!(
-        routed(KeyChord::ctrl_shift(ChordKey::Slash)),
-        Some("insert.fraction")
-    );
-    assert!(
-        registry::app_shortcuts()
-            .iter()
-            .all(|(_, s)| s.routing == Routing::App)
-    );
-    assert!(
-        registry::app_shortcuts()[0].0.shift,
-        "shifted chords go first"
-    );
-    assert_eq!(spec("view.mode.toggle").shortcuts, [ctrl_shift('M')]);
-}
-
 fn press(state: &mut WorkspaceState, key: egui::Key, modifiers: egui::Modifiers) {
     let ctx = egui::Context::default();
     let input = egui::RawInput {
@@ -518,6 +458,6 @@ fn script_commands_need_the_caret_in_a_formula_outside_source_and_composition() 
             Availability::Disabled("reason.composing")
         );
     }
-    assert_eq!(spec("insert.superscript").shortcuts[0].display(), "^");
-    assert_eq!(spec("insert.subscript").shortcuts[0].display(), "_");
+    assert_eq!(super::keymap::effective().hint("insert.superscript"), None);
+    assert_eq!(super::keymap::effective().hint("insert.subscript"), None);
 }

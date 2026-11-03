@@ -127,9 +127,7 @@ fn english_root_with_empty_and_nested_slots_is_spoken_in_english() {
         pressed: true,
         repeat: false,
         modifiers: egui::Modifiers {
-            ctrl: true,
-            shift: true,
-            command: true,
+            alt: true,
             ..Default::default()
         },
     }]);

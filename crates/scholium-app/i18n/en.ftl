@@ -478,3 +478,7 @@ a11y-math-edge-root-before = In formula, before root
 a11y-math-edge-root-after = In formula, after root
 a11y-math-edge-delimited-before = In formula, before brackets
 a11y-math-edge-delimited-after = In formula, after brackets
+
+command-edit-select_all =
+    .title = Select all
+    .tooltip = Select all body text

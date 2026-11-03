@@ -1,5 +1,6 @@
 use super::*;
-use crate::typst_editor::tests::{Fixture, key, text};
+use crate::typst_editor::tests::press_alt;
+use crate::typst_editor::tests::{Fixture, text};
 
 /// Run Source-mode syncs until the preview shows a page of the current generation.
 fn shown(f: &mut Fixture) {
@@ -32,7 +33,7 @@ fn structure_view_shows_the_generated_typst_of_the_snapshot() {
         text("$"),
         text("1"),
         crate::typst_editor::tests::shift_left(),
-        key(egui::Key::Slash, true),
+        press_alt(egui::Key::F, false),
     ]);
     let snapshot = f.editor.snapshot.clone();
     let generated = f.editor.source_view.source(&snapshot);
@@ -105,7 +106,7 @@ fn source_headers_and_warnings_follow_the_locale_without_changing_the_document()
         text("$"),
         text("x"),
         crate::typst_editor::tests::shift_left(),
-        key(egui::Key::Slash, true),
+        press_alt(egui::Key::F, false),
     ]);
     shown(&mut f);
     let snapshot = f.editor.snapshot.clone();

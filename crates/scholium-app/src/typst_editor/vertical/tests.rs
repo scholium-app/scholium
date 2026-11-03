@@ -1,4 +1,5 @@
 use super::*;
+use crate::typst_editor::tests::press_alt;
 use crate::typst_editor::tests::{Fixture, key, text};
 
 const LONG: &str = "long paragraph long paragraph long paragraph long paragraph long paragraph \
@@ -239,7 +240,7 @@ fn numerator_down_enters_denominator_then_leaves_the_formula_by_lines() {
         text("12"),
         crate::typst_editor::tests::shift_left(),
         crate::typst_editor::tests::shift_left(),
-        key(egui::Key::Slash, true),
+        press_alt(egui::Key::F, false),
         text("3"),
     ]);
     f.settle();

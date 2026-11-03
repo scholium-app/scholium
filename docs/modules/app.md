@@ -216,8 +216,7 @@ core 交付已采纳 Scene 的位图与已验证身份的条带，app 上传为�
   `keys.rs`、`shortcuts.rs`、`ui.rs` 是界面边缘，负责 `KeyChord` 与 egui 按键互转、消费快捷键，
   以及把一条命令的标题、提示、可用性与勾选状态解析成控件描述（`ui::Resolved::meta`）；控件本身由 `widgets/` 绘制。
 - **`CommandSpec`**：稳定点号 `id`（`format.bold`、`view.mode.source`）；`title`、`tooltip` 为目录 key
-  （`command.<id>.title|tooltip`，由 `command!` 宏从 id 派生）；`icon`（`IconId`，无图像）；默认快捷键
-  `KeyChord`；`routing`（`App` 由应用先消费，`Editor` 留在页面事件流里与键入保序执行，`Platform` 是剪贴板事件、
+  （`command.<id>.title|tooltip`，由 `command!` 宏从 id 派生）；`icon`（`IconId`，无图像）；`routing`（`App` 由应用先消费，`Editor` 留在页面事件流里与键入保序执行，`Platform` 是剪贴板事件、
   只用于显示）；菜单位置（菜单、可选子菜单、组、序）、可选主工具栏位置与焦点工具栏类型（文本/数学）；
   `writes`；`availability: fn(&CommandContext) -> Availability`，取 `Enabled`、`Disabled(原因 key)` 或
   `Unimplemented(原因 key)`；`checked`；`action`（复用 `ViewCommand`、编辑器 `Command`、撤销/重做与剪贴板请求）。
@@ -227,13 +226,8 @@ core 交付已采纳 Scene 的位图与已验证身份的条带，app 上传为�
   未交付的命令照样注册，可用性为 `Unimplemented`，菜单与按钮置灰，原因写在悬停提示里。
   `chrome/menubar` 按组插分隔线、按子菜单分层生成菜单树；“视图”含工作方式、导航与诊断、缩放、显示工具栏，
   以及“主题”（浅色/深色）与“语言”（跟随系统/简体中文/English）子菜单，后两者同样是注册表里的命令。
-- **快捷键**：`shortcuts::shortcuts` 遍历注册表中 `App` 路由的和弦，带 Shift 的先于不带的；某键存在带 Shift 的孪生和弦时，
-  不带 Shift 的和弦在 Shift 按住时让位（Ctrl+Shift+Z 重做不会同时触发撤销）。`Unimplemented` 的命令不消费按键。
-  页面路由的和弦（Ctrl+B/I/M、Ctrl+/、Ctrl+Shift+R、Ctrl+0/1/2）由页面按注册表解析，字母、数字、功能键精确匹配，标点另可匹配
-  不带 Shift 的和弦。测试断言没有两个命令共用一个和弦。
-- **默认快捷键**：Ctrl+0 / Ctrl+1 / Ctrl+2 = 正文 / 标题 1 / 标题 2；Ctrl+Shift+M 在页面编辑与源码预览之间切换
-  （Ctrl+1/2 不再切换工作方式；Ctrl+0 不再是实际大小，实际大小只在菜单与按钮里）；Ctrl+B/I 粗体/斜体、Ctrl+M 行内公式、Ctrl+Shift+E 独立公式、
-  Ctrl+/ 分数、Ctrl+Shift+R 根式、Ctrl+Z/Ctrl+Shift+Z/Ctrl+Y、Ctrl+S、Ctrl+N、Ctrl+J、Ctrl+Shift+B、Ctrl+F1、Ctrl+加号/等号/减号缩放不变。
+- **快捷键**：`shortcuts::shortcuts` 按生效键位与作用域选择命令，修饰键精确匹配，标点允许布局所需 Shift。
+  `Unimplemented` 不消费按键；页面命令留在编辑事件流保序执行。默认绑定与用户覆盖规则见下文“数据驱动键位”。
 - **文字目录**：命令标题、提示、菜单名与不可用原因经 `i18n` 的 Fluent 目录（`i18n/zh-Hans.ftl`、`en.ftl`，
   见 [ADR 0040](../adr/ADR-0040-ui-string-catalog.md)）渲染；界面语言 `WorkspaceState.locale`（`auto` 按 `SCHOLIUM_LOCALE`、`LC_ALL`、
   `LC_MESSAGES`、`LANG` 的第一个非空值，否则英语；窗口检查按 `--locale` 在 zh-Hans 与 en 下各跑一遍，控件按命令 id 经 AUDIT 的 `controls` 映射点击，不依赖标签文字或坐标）可在“视图 → 语言”里运行时切换，下一帧生效，不影响文档与历史。窗口外壳的全部可见文字（菜单、工具栏提示、焦点栏、标签、状态栏、
@@ -266,7 +260,7 @@ core 交付已采纳 Scene 的位图与已验证身份的条带，app 上传为�
 ## 公共接口
 
 - `EditorSession` 持有 `EditorCore`，负责 `open` 的路径/窗口策略、show、事件顺序与命令结果的 Scene 发布。
-- 命令注册表（`command::registry`），`CommandSpec { id, title, tooltip, icon, shortcuts, routing, menu, toolbar, focus, writes, availability, checked, action }`；
+- 命令注册表（`command::registry`），`CommandSpec { id, title, tooltip, icon, routing, menu, toolbar, focus, writes, availability, checked, action }`；
   菜单、工具栏、焦点工具栏、命令搜索和快捷键调用同一 `CommandSpec`；能力判定（capability）与参数 schema 随协作命令接入。
 - UI ↔ core 只使用 [协议设计](../PROTOCOLS.md) 定义的命令/事件 DTO，不导入 core 内部类型。
 - 平台端口 trait（window、clipboard、file dialog、credential store、updater）由 app 实现，core 只依赖端口声明。
@@ -357,3 +351,17 @@ JSON `preedit`/`commit`（可选 `cursor_chars`）给同一 egui 输入路径送
 
 根式和定界符的菜单、焦点工具栏入口共享 session 命令。光标在根式内时焦点栏提供“添加根指数”，
 已存在时进入该槽；在定界符内时提供循环配对的命令。两项针对最内层包含光标的对应结构。
+
+
+## 数据驱动键位
+
+命令注册表只声明稳定 id、可用性与动作；默认绑定来自随应用嵌入的
+[`default-keymap.toml`](../../crates/scholium-app/src/command/default-keymap.toml)。Ctrl 按平台映射到 Cmd，
+Alt、Shift、Meta 独立匹配。作用域由宽到窄为 global、page/source、math、focus:结构类型；最窄匹配优先，
+同作用域的重复组合与未知命令 id 拒绝。编辑键在页面事件流中按顺序执行，会话不再持有产品快捷键。
+
+启动时从用户配置目录 `scholium/keymap.toml` 叠加覆盖（Linux 为 XDG_CONFIG_HOME 或 ~/.config，
+macOS 为 Library/Application Support，Windows 为 APPDATA；测试可指定 SCHOLIUM_KEYMAP_FILE）。
+每条 `(command, scope)` 替换该项全部 keys，空数组解除绑定；修改后重启生效。整份文件先验证再安装，
+解析、引用、冲突或读取失败保留默认表，诊断输出到 stderr 并显示在帮助→快捷键窗口。
+菜单右侧、工具提示、快捷键帮助均读取同一生效表。

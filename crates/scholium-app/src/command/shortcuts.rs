@@ -13,25 +13,49 @@ pub(crate) fn shortcuts(ctx: &egui::Context, state: &mut WorkspaceState) {
         state.undo_requested = false;
         state.redo_requested = false;
     }
-    let shift_held = ctx.input(|i| i.modifiers.shift);
-    for (chord, spec) in registry::app_shortcuts().iter().copied() {
-        // egui matches "pattern modifiers present", so a Ctrl+Shift+Z press also matches
-        // the plain Ctrl+Z pattern: shifted chords are tried first (the registry sorts
-        // them) and a plain chord yields while Shift is held and a shifted twin exists.
-        if !chord.shift && shift_held && registry::has_shifted_variant(chord) {
-            continue;
-        }
-        let availability = (spec.availability)(&CommandContext::of(state));
-        // An unimplemented command leaves its chord alone for whatever else wants it.
-        if matches!(availability, Availability::Unimplemented(_)) {
-            continue;
-        }
-        let Some(shortcut) = keys::shortcut(chord) else {
+    let events = ctx.input(|i| i.events.clone());
+    for event in events {
+        let egui::Event::Key {
+            key,
+            modifiers,
+            pressed: true,
+            ..
+        } = event
+        else {
             continue;
         };
-        // Consumed even when disabled so no widget's private undo or paste fires instead.
-        if ctx.input_mut(|i| i.consume_shortcut(&shortcut)) {
+        let context = CommandContext::of(state);
+        let page = state.mode == crate::state::ViewMode::Page;
+        let focus = if context.in_root {
+            Some("root")
+        } else if context.in_delimiter {
+            Some("delimiter")
+        } else {
+            None
+        };
+        let binding = super::keymap::effective()
+            .bindings
+            .iter()
+            .filter(|b| b.scope.matches(page, context.in_math, focus))
+            .filter(|b| b.keys.iter().any(|k| keys::matches(*k, key, modifiers)))
+            .max_by_key(|b| b.scope.priority());
+        let Some(spec) = binding.and_then(|b| registry::get(&b.command)) else {
+            continue;
+        };
+        if spec.routing != super::spec::Routing::App
+            || matches!(
+                (spec.availability)(&context),
+                Availability::Unimplemented(_)
+            )
+        {
+            continue;
+        }
+        ctx.input_mut(|i| i.events.retain(|e| e != &event));
+        if spec.id == "help.shortcuts" {
+            super::ui::invoke(ctx, state, spec.id);
+        } else {
             exec::run(state, spec);
         }
     }
+    super::help::show(ctx, state);
 }

@@ -85,7 +85,19 @@ impl EditorSession {
                 pressed: true,
                 ..
             } if state.composition.is_none() => {
-                if modifiers.command && modifiers.shift && key == egui::Key::M {
+                let focus = if self.core.root_owner().is_some() {
+                    Some("root")
+                } else if self.core.delimiter_owner().is_some() {
+                    Some("delimiter")
+                } else {
+                    None
+                };
+                if let Some(spec) =
+                    crate::command::registry::editor_command(key, modifiers, self.in_math(), focus)
+                {
+                    if let crate::command::spec::Action::Editor(command) = spec.action {
+                        self.command(command, state);
+                    }
                     return None;
                 }
                 if let Some(key) = abstract_key(key) {

@@ -1,7 +1,7 @@
 //! 格式 menu: text styles and the paragraph style submenu.
 use super::{
     avail,
-    spec::{Action, ChordKey, CommandSpec, FocusKind, IconId, KeyChord, Routing},
+    spec::{Action, CommandSpec, FocusKind, IconId, Routing},
 };
 use crate::typst_editor::Command;
 use scholium_model::{BlockKind, structured::TextStyle};
@@ -17,7 +17,6 @@ fn text() -> Vec<CommandSpec> {
         command! {
             "format.bold",
             icon: IconId::Bold,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Letter('B'))],
             routing: Routing::Editor,
             menu: menu!(Format, 0, 0),
             toolbar: toolbar!(Text, 0),
@@ -30,7 +29,6 @@ fn text() -> Vec<CommandSpec> {
         command! {
             "format.italic",
             icon: IconId::Italic,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Letter('I'))],
             routing: Routing::Editor,
             menu: menu!(Format, 0, 1),
             toolbar: toolbar!(Text, 1),
@@ -75,7 +73,6 @@ fn paragraph() -> Vec<CommandSpec> {
         command! {
             "format.paragraph.body",
             icon: IconId::Paragraph,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Digit(0))],
             routing: Routing::Editor,
             menu: menu!(Format, ParagraphStyle, 2, 0),
             toolbar: toolbar!(Paragraph, 0),
@@ -87,7 +84,6 @@ fn paragraph() -> Vec<CommandSpec> {
         command! {
             "format.paragraph.heading1",
             icon: IconId::Heading1,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Digit(1))],
             routing: Routing::Editor,
             menu: menu!(Format, ParagraphStyle, 2, 1),
             toolbar: toolbar!(Paragraph, 1),
@@ -99,7 +95,6 @@ fn paragraph() -> Vec<CommandSpec> {
         command! {
             "format.paragraph.heading2",
             icon: IconId::Heading2,
-            shortcuts: keys![KeyChord::ctrl(ChordKey::Digit(2))],
             routing: Routing::Editor,
             menu: menu!(Format, ParagraphStyle, 2, 2),
             toolbar: toolbar!(Paragraph, 2),

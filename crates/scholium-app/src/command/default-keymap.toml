@@ -1,0 +1,134 @@
+# Default keymap; independently authored from public interaction guides.
+# niri defaults use Mod (Super), not Alt; these Alt letter chords avoid its defaults.
+# Ctrl maps to Cmd on macOS; Meta means the physical Super/Cmd modifier.
+# A user entry replaces all keys for (command, scope); keys=[] unbinds it.
+
+[[binding]]
+command = "file.new"
+scope = "global"
+keys = ["Ctrl+N"]
+
+[[binding]]
+command = "file.open"
+scope = "global"
+keys = ["Ctrl+O"]
+
+[[binding]]
+command = "file.save"
+scope = "global"
+keys = ["Ctrl+S"]
+
+[[binding]]
+command = "edit.find"
+scope = "global"
+keys = ["Ctrl+F"]
+
+[[binding]]
+command = "edit.undo"
+scope = "global"
+keys = ["Ctrl+Z"]
+
+[[binding]]
+command = "edit.redo"
+scope = "global"
+keys = ["Ctrl+Shift+Z", "Ctrl+Y"]
+
+[[binding]]
+command = "edit.cut"
+scope = "global"
+keys = ["Ctrl+X"]
+
+[[binding]]
+command = "edit.copy"
+scope = "global"
+keys = ["Ctrl+C"]
+
+[[binding]]
+command = "edit.paste"
+scope = "global"
+keys = ["Ctrl+V"]
+
+[[binding]]
+command = "format.bold"
+scope = "page"
+keys = ["Ctrl+B"]
+
+[[binding]]
+command = "format.italic"
+scope = "page"
+keys = ["Ctrl+I"]
+
+[[binding]]
+command = "format.paragraph.body"
+scope = "page"
+keys = ["Ctrl+0"]
+
+[[binding]]
+command = "format.paragraph.heading1"
+scope = "page"
+keys = ["Ctrl+1"]
+
+[[binding]]
+command = "format.paragraph.heading2"
+scope = "page"
+keys = ["Ctrl+2"]
+
+[[binding]]
+command = "insert.formula"
+scope = "page"
+keys = ["Alt+M"]
+
+[[binding]]
+command = "insert.display_formula"
+scope = "page"
+keys = ["Alt+Shift+M"]
+
+[[binding]]
+command = "insert.fraction"
+scope = "math"
+keys = ["Alt+F"]
+
+[[binding]]
+command = "insert.root"
+scope = "math"
+keys = ["Alt+R"]
+
+[[binding]]
+command = "view.mode.toggle"
+scope = "global"
+keys = ["Ctrl+Shift+M"]
+
+[[binding]]
+command = "view.navigation"
+scope = "global"
+keys = ["Ctrl+Shift+B"]
+
+[[binding]]
+command = "view.diagnostics"
+scope = "global"
+keys = ["Ctrl+J"]
+
+[[binding]]
+command = "view.toolbars"
+scope = "global"
+keys = ["Ctrl+F1"]
+
+[[binding]]
+command = "view.zoom.in"
+scope = "global"
+keys = ["Ctrl+Plus", "Ctrl+="]
+
+[[binding]]
+command = "view.zoom.out"
+scope = "global"
+keys = ["Ctrl+-"]
+
+[[binding]]
+command = "edit.select_all"
+scope = "page"
+keys = ["Ctrl+A"]
+
+[[binding]]
+command = "insert.delimiter"
+scope = "math"
+keys = ["Alt+B"]

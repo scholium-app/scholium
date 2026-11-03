@@ -34,7 +34,7 @@ src/typst/input.rs            抽象输入分发，以及字面文字、公式�
 src/typst/math_caret.rs       结构边缘导航、边缘输入及空 base 结构命令
 src/typst/structural_delete.rs  字素删除、空结构/公式移除与无编辑的逐停点进入
 src/typst/events.rs           工具包无关的 Input、Key、Pointer 词汇与原子分发测试
-src/typst/key.rs              工具包无关的按键映射与 caret-follow 意图
+src/typst/key.rs              工具包无关的导航按键与 caret-follow 意图
 src/typst/runtime.rs          worker、完整 Scene identity 采纳与 raster/strip 交付
 src/typst/deferred.rs         抽象事件的等待、顺序、拒绝与上限
 src/typst/raster.rs           编辑与预览适配共用的栅格稳定策略
@@ -148,7 +148,7 @@ Typst 确认的 26 页夹具、512 步历史、8 次预热、100 次实际 Text 
 
 ## 分数命令与同一数学行选区
 
-工具栏、菜单和 Ctrl+/ 都调用 `CommandId::Fraction` → `FractionAt`。
+工具栏、菜单和键位表分派都调用 `CommandId::Fraction` → `FractionAt`。
 无选区时在数学 Text 光标字素边界插入空分数，已输入内容留在前后同一行；Hole 和结构边缘也进入空分子。
 有同一数学行选区时只将该范围放入分子并进入空分母。一次 Undo 恢复完整内容、caret 和 anchor。
 Shift+左右按字素扩展数学文字、按原子扩展完整结构；Shift+上下/Home/End、跨槽及跨公式范围仍拒绝。
