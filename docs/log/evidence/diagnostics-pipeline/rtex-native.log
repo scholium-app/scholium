@@ -1,0 +1,42 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-latex)
+    Finished `test` profile [unoptimized] target(s) in 2.59s
+     Running tests/real.rs (target/debug/deps/real-ebf41dfc199e9b0e)
+
+running 1 test
+Engine { generation: 0, state: Starting, reason: None }
+Engine { generation: 0, state: Ready, reason: None }
+Engine { generation: 0, state: Starting, reason: None }
+layout revision=Some(0) outcome=WithErrors
+T43 diagnostics: DiagnosticBatch {
+    revision: 0,
+    items: [
+        Diagnostic {
+            severity: Error,
+            kernel: Latex,
+            resource: Some(
+                "main.tex",
+            ),
+            range: Some(
+                DiagnosticRange {
+                    start: SourcePoint {
+                        line: 3,
+                        column: 1,
+                    },
+                    end: None,
+                    bytes: None,
+                },
+            ),
+            node: None,
+            message: "Undefined control sequence.",
+            code: None,
+            log: None,
+        },
+    ],
+}
+test native_undefined_control_sequence_reaches_revision_bound_diagnostics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 1.10s
+

@@ -223,3 +223,17 @@ Content cache 只使前后受影响正文叶及其段落失效；未变的段落
 边界决策见 [ADR 0044](../adr/ADR-0044-transient-ime-layout.md)。
 
 `BlockKind::Equation` 的内容严格为一个 `InlineBody::Math`，直接构造为 `EquationElem` 并开启 `block`。源码生成 `$ … $` 独立段落；SourceBlock 范围覆盖分隔符以及 Preview 锚点，使源码视图能准确高亮。Equation 结构进入 math indicator，并由 AccessKit 以本地化独立公式名称暴露。
+
+
+## 统一编译诊断
+
+`map_diagnostics(world, items, blocks)` 将 Typst 原生错误/警告映射到 model 的统一 `Diagnostic`，
+通过当前 World 重新解析 span，取得 `.typ` 或生成源码的项目相对路径、1-based Unicode scalar 行列与 UTF-8 半开范围。
+不能解析的 span 保留消息与级别，不推测文件或节点；非 main 文件不使用 main 的生成块映射。
+只有诊断范围完整落在当前 `SourceBlock.range` 中才填入该块的 NodeId。
+
+常驻 `PreviewCompiler` 的 `CompileOutcome.diagnostics` 总是绑定本次输入 generation（与既有 revision 字段同义）；
+成功编译的 warning 和失败编译的 error 都进入统一列表，原 error/warning 字符串保留兼容。
+`submit_generated(document, generation, GeneratedSource)` 连同当前块映射提交，供原生项目按节点定位；
+原有 `submit` 没有源节点映射，仅提供文件/行列。调用方仍按文档身份与 generation 拒绝旧结果。
+此接口不扩大 in-process preview 的执行权限；外部 `.typ` 编译仍须遵守既有沙箱规则。

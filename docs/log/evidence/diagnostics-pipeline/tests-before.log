@@ -1,0 +1,72 @@
+   Compiling syn v3.0.5
+   Compiling num-traits v0.2.19
+   Compiling bitflags v2.13.2
+   Compiling arrayvec v0.7.8
+   Compiling smallvec v1.16.1
+   Compiling once_cell v1.21.4
+   Compiling syn v2.0.119
+   Compiling rustix v1.1.4
+   Compiling zune-jpeg v0.5.15
+   Compiling linux-raw-sys v0.12.1
+   Compiling hashbrown v0.17.1
+   Compiling strict-num v0.1.1
+   Compiling polycool v0.4.0
+   Compiling synstructure v0.14.0
+   Compiling bytemuck_derive v1.12.1
+   Compiling thiserror-impl v2.0.20
+   Compiling phf_macros v0.13.1
+   Compiling hayro-syntax v0.8.0
+   Compiling tokio-macros v2.7.2
+   Compiling serde_derive v1.0.229
+   Compiling kurbo v0.13.1
+   Compiling zerofrom-derive v0.1.8
+   Compiling yoke-derive v0.8.3
+   Compiling png v0.18.1
+   Compiling nix v0.31.3
+   Compiling tokio v1.53.3
+   Compiling thiserror v2.0.20
+   Compiling phf v0.13.1
+   Compiling zerofrom v0.1.8
+   Compiling serde v1.0.229
+   Compiling bytemuck v1.25.2
+   Compiling yoke v0.8.3
+   Compiling euclid v0.22.14
+   Compiling moxcms v0.8.1
+   Compiling pic-scale v0.7.12
+   Compiling font-types v0.12.5
+   Compiling color v0.3.3
+   Compiling tiny-skia-path v0.12.0
+   Compiling guillotiere v0.7.0
+   Compiling tiny-skia v0.12.0
+   Compiling peniko v0.6.1
+   Compiling read-fonts v0.43.3
+   Compiling image v0.25.10
+   Compiling vello_common v0.3.0
+   Compiling vello_cpu v0.3.0
+   Compiling skrifa v0.46.0
+   Compiling hayro-interpret v0.8.0
+   Compiling hayro v0.8.0
+   Compiling tempfile v3.27.0
+   Compiling scholium-build v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-build)
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-latex)
+error[E0433]: cannot find module or crate `scholium_model` in this scope
+ --> crates/scholium-latex/tests/diagnostics.rs:2:5
+  |
+2 | use scholium_model::diagnostic::Severity;
+  |     ^^^^^^^^^^^^^^ use of unresolved module or unlinked crate `scholium_model`
+  |
+help: there is a crate or module with a similar name
+  |
+2 - use scholium_model::diagnostic::Severity;
+2 + use scholium_latex::diagnostic::Severity;
+  |
+
+error[E0432]: unresolved import `scholium_latex::log`
+ --> crates/scholium-latex/tests/diagnostics.rs:1:21
+  |
+1 | use scholium_latex::log::parse_log;
+  |                     ^^^ could not find `log` in `scholium_latex`
+
+Some errors have detailed explanations: E0432, E0433.
+For more information about an error, try `rustc --explain E0432`.
+error: could not compile `scholium-latex` (test "diagnostics") due to 2 previous errors

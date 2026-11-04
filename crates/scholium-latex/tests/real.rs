@@ -25,7 +25,15 @@ async fn until(live: &mut LiveSession, predicate: impl Fn(&LiveEvent) -> bool) -
                 .next_event()
                 .await
                 .expect("real worker event stream ended");
-            eprintln!("{event:?}");
+            match &event {
+                LiveEvent::Pages {
+                    revision, outcome, ..
+                } => eprintln!("layout revision={revision:?} outcome={outcome:?}"),
+                LiveEvent::Paragraph { revision, .. } => {
+                    eprintln!("paragraph revision={revision:?}")
+                }
+                _ => eprintln!("{event:?}"),
+            }
             if predicate(&event) {
                 return event;
             }
@@ -259,5 +267,36 @@ async fn native_capability_probe_and_supported_upstream_pass_timeout() {
         )
     })
     .await;
+    live.cancel().await.expect("cancel");
+}
+
+#[tokio::test]
+#[ignore = "requires pinned rtex, LuaLaTeX, bwrap namespaces and systemd user cgroups"]
+async fn native_undefined_control_sequence_reaches_revision_bound_diagnostics() {
+    let project = tempfile::tempdir().expect("project");
+    let work = tempfile::tempdir().expect("work");
+    let source =
+        "\\documentclass{article}\n\\begin{document}\nHello \\foo world.\n\\end{document}\n";
+    std::fs::write(project.path().join("main.tex"), source).expect("source");
+    let mut live = start(project.path(), work.path()).await;
+    until(&mut live, |e| {
+        matches!(
+            e,
+            LiveEvent::Pages {
+                revision: Some(0),
+                ..
+            }
+        )
+    })
+    .await;
+    let batch = live.diagnostics().await.expect("diagnostics");
+    eprintln!("T43 diagnostics: {batch:#?}");
+    let error = batch
+        .items
+        .iter()
+        .find(|d| d.message.contains("Undefined control sequence"))
+        .expect("undefined macro diagnostic");
+    assert_eq!(error.resource.as_deref(), Some("main.tex"));
+    assert_eq!(error.range.as_ref().expect("source line").start.line, 3);
     live.cancel().await.expect("cancel");
 }

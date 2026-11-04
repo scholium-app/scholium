@@ -1,0 +1,127 @@
+Scholium baseline: d11c0c60ca198b9f3997887473f24df3a176ef03
+
+rtex pin: 531e2c6b32a09d33be58f6be1301fe8f793411cd
+
+crates/rtex-core/src/session/mod.rs:180
+180: #[derive(Debug, Clone, Serialize)]
+181: pub struct Diagnostic {
+182:     pub severity: String,
+183:     pub file: Option<String>,
+184:     pub line: Option<i64>,
+185:     pub message: String,
+186:     pub context: Option<String>,
+187: }
+188: 
+
+crates/rtex-core/src/session/mod.rs:246
+246:     Diagnostics {
+247:         source: String,
+248:         items: Vec<Diagnostic>,
+249:     },
+250:     EngineState {
+
+crates/rtex-core/src/session/passes.rs:528
+528:     withdraw_fast_failures(s, rev);
+529:     let mut diagnostics = parse_log(&cap.log);
+530:     for d in &mut diagnostics {
+531:         // the standby reads the preamble from rtex-preamble.tex (same line numbers)
+532:         if d.file
+533:             .as_deref()
+534:             .map(|f| f.ends_with("rtex-preamble.tex"))
+535:             .unwrap_or(false)
+536:         {
+537:             d.file = Some(s.cfg.main_file.clone());
+538:         }
+539:     }
+540:     let errors = diagnostics.iter().filter(|d| d.severity == "error").count();
+541:     let compile = if cap.json.pages == 0 {
+
+crates/rtex-core/src/session/passes.rs:795
+795:     let pages_total = cap.json.pages;
+796:     // also when empty: the set replaces the previous pass's, so fixed errors go away
+797:     s.events
+798:         .send(Event::Diagnostics {
+799:             source: "background".into(),
+800:             items: diagnostics,
+801:         })
+802:         .ok();
+803:     // the fallback is named whenever the layout has a degraded page, changed in this
+804:     // layout or not: a host that keeps one PDF per layout needs the current file
+805:     let any_degraded = {
+806:         let layout = s.layout.lock();
+807:         layout.pages.values().any(|dl| !dl.is_exact())
+808:     };
+809:     s.events
+810:         .send(Event::LayoutUpdate {
+811:             versions,
+812:             compile,
+813:             convergence: convergence.clone(),
+814:             passes,
+815:             pages_changed,
+
+baseline crates/scholium-latex/src/protocol.rs:111
+111: #[derive(Deserialize)]
+112: pub(crate) struct Diagnostic {
+113:     pub message: String,
+114: }
+115: #[derive(Deserialize)]
+
+baseline crates/scholium-latex/src/supervisor.rs:347
+347:     async fn diagnostics(&mut self, value: &Value) -> Result<()> {
+348:         let items: Vec<protocol::Diagnostic> = protocol::decode(&value["items"])?;
+349:         for item in items {
+350:             self.diagnostic(item.message).await?;
+351:         }
+352:         Ok(())
+353:     }
+
+baseline crates/scholium-app/src/diagnostics/panel.rs:78
+78: /// Draws both sections and returns the number of problem rows.
+79: fn contents(ui: &mut Ui, state: &mut WorkspaceState) -> usize {
+80:     let locale = state.locale.resolve();
+81:     let Some(view) = state.editor.as_ref() else {
+82:         return 0;
+83:     };
+84:     let problems = view.problems.clone();
+85:     let facts = layout_lines(state, view, locale);
+
+baseline crates/scholium-app/src/latex_workspace/worker.rs:215
+215:             request=requests.recv()=>{if request.is_none(){break;} live.request_layout().await?;}
+216:             event=live.next_event()=>{
+217:                 let Some(event)=event else{break;};
+218:                 let job=match event {
+219:                     LiveEvent::Pages{generation,revision:Some(r),drawing,elapsed,count,outcome,..} if outcome!=scholium_latex::CompileOutcome::Failed=>Some(RasterWork{generation,revision:*revisions.get(&r).unwrap_or(&u64::MAX),drawing,paragraph:None,elapsed,count:Some(count)}),
+220:                     LiveEvent::Paragraph{generation,revision:Some(r),drawing,elapsed,paragraph,..}=>Some(RasterWork{generation,revision:*revisions.get(&r).unwrap_or(&u64::MAX),drawing,paragraph:Some(paragraph),elapsed:elapsed.unwrap_or_default(),count:None}),
+221:                     LiveEvent::LayoutRequired{..}=>{live.request_layout().await?;None}
+222:                     LiveEvent::Diagnostic{message}=>{publish(sender,wake,Update::Error(message)).await;None}
+223:                     LiveEvent::Engine{state:scholium_latex::EngineState::Failed,reason:Some(reason),..}=>{publish(sender,wake,Update::Error(reason)).await;None}
+224:                     _=>None,
+225:                 };
+
+baseline crates/scholium-app/src/diagnostics/panel.rs:40
+40: }
+41: 
+42: pub(crate) fn show(ui: &mut Ui, state: &mut WorkspaceState) {
+43:     let ctx = ui.ctx().clone();
+44:     let open = state.diagnostics && state.editor.is_some();
+45:     let was_open = ctx
+46:         .data(|d| d.get_temp::<bool>(was_open_id()))
+47:         .unwrap_or(false);
+48:     ctx.data_mut(|d| d.insert_temp(was_open_id(), open));
+49:     if !open {
+50:         return;
+51:     }
+52:     let t = theme::tokens(&ctx);
+53:     let max = (ui.available_height() * MAX_SHARE).max(MIN_HEIGHT);
+54:     let panel = Panel::bottom(panel_id())
+55:         .resizable(true)
+56:         .default_size(DEFAULT_HEIGHT.min(max))
+57:         .size_range(MIN_HEIGHT..=max)
+58:         .show_separator_line(false)
+59:         .frame(
+60:             Frame::new()
+61:                 .fill(t.focusbar)
+62:                 .inner_margin(Margin::symmetric(Tokens::PAD_BAR as i8, 4)),
+63:         )
+64:         .show(ui, |ui| contents(ui, state));
+65:     let rect = panel.response.rect;

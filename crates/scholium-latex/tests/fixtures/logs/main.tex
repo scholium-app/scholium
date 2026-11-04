@@ -1,0 +1,9 @@
+\documentclass{article}
+\begin{document}
+\input{chapter}
+A reference \ref{absent} and citation \cite{missing}.
+\PackageWarning{demo}{Wrapped warning on input line \the\inputlineno}
+\hbox to 1pt{This is much too wide}
+\parbox{1cm}{A very loosely filled paragraph with spaced words.}
+\PackageError{demo}{A package error}{A deliberate fixture error.}
+\end{document}

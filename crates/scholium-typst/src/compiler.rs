@@ -36,6 +36,8 @@ pub struct CompileOutcome {
     pub warning: Option<String>,
     /// Per-block anchors extracted from the compiled document.
     pub anchors: Vec<BlockAnchor>,
+    /// Structured compiler issues in the exact source compiled for this generation.
+    pub diagnostics: scholium_model::diagnostic::DiagnosticBatch,
 }
 
 /// Completed rasterization of one zero-based page.
@@ -90,6 +92,7 @@ struct CompileRequest {
     revision: u64,
     source: String,
     block_count: usize,
+    blocks: Vec<crate::SourceBlock>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -144,6 +147,27 @@ impl PreviewCompiler {
                 revision,
                 source,
                 block_count,
+                blocks: Vec::new(),
+            });
+            slot.page = None;
+        }
+        let _ = self.wake.try_send(());
+    }
+
+    /// Submit generated source together with its exact structural source map.
+    pub fn submit_generated(
+        &self,
+        document: DocumentId,
+        revision: u64,
+        generated: crate::GeneratedSource,
+    ) {
+        if let Ok(mut slot) = self.pending.lock() {
+            slot.compile = Some(CompileRequest {
+                document,
+                revision,
+                block_count: generated.blocks.len(),
+                source: generated.source,
+                blocks: generated.blocks,
             });
             slot.page = None;
         }
@@ -280,6 +304,7 @@ fn compile(
         })
     };
     let warning = messages(&compiled.warnings);
+    let mut diagnostics = crate::map_diagnostics(world, &compiled.warnings, &request.blocks);
     let (page_count, anchors, error, document) = match compiled.output {
         Ok(document) if document.pages().len() <= MAX_PREVIEW_PAGES => {
             let anchors = extract_anchors(&document, request.block_count);
@@ -291,7 +316,10 @@ fn compile(
             Some(format!("预览最多支持 {MAX_PREVIEW_PAGES} 页")),
             None,
         ),
-        Err(diagnostics) => (0, Vec::new(), messages(&diagnostics), None),
+        Err(errors) => {
+            diagnostics.extend(crate::map_diagnostics(world, &errors, &request.blocks));
+            (0, Vec::new(), messages(&errors), None)
+        }
     };
     let outcome = CompileOutcome {
         document: request.document,
@@ -301,6 +329,10 @@ fn compile(
         error,
         warning,
         anchors,
+        diagnostics: scholium_model::diagnostic::DiagnosticBatch {
+            revision: request.revision,
+            items: diagnostics,
+        },
     };
     let compiled = document.map(|doc| (request.document, request.revision, doc));
     (outcome, compiled)

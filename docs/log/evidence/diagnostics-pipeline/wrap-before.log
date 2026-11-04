@@ -1,0 +1,22 @@
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-latex)
+    Finished `test` profile [unoptimized] target(s) in 0.61s
+     Running tests/diagnostics.rs (target/debug/deps/diagnostics-fcd1bf13e587075f)
+
+running 1 test
+test tex_print_line_wrapping_can_split_the_location_phrase ... FAILED
+
+failures:
+
+---- tex_print_line_wrapping_can_split_the_location_phrase stdout ----
+
+thread 'tex_print_line_wrapping_can_split_the_location_phrase' (118678) panicked at crates/scholium-latex/tests/diagnostics.rs:127:40:
+wrapped location
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    tex_print_line_wrapping_can_split_the_location_phrase
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-latex --test diagnostics`

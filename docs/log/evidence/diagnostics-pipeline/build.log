@@ -1,0 +1,9 @@
+    Blocking waiting for file lock on build directory
+   Compiling scholium-model v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-model)
+   Compiling scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-storage)
+   Compiling scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-document)
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-typst)
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-latex)
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-app)
+    Finished `dev` profile [unoptimized] target(s) in 13.34s

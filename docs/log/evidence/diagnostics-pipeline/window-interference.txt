@@ -1,0 +1,15 @@
+Initial run failures from Xvfb SIGKILL / X server disconnection:
+fraction-at-caret [zh-Hans] FAIL(1)
+parity [zh-Hans] FAIL(1)
+sharp-raster [zh-Hans] FAIL(1)
+backspace-block-merge [en] FAIL(1)
+caret-follow [en] FAIL(1)
+interaction [en] FAIL(1)
+parity [en] FAIL(1)
+project-latex [en] FAIL(1)
+sharp-raster [en] FAIL(1)
+undo-group [en] FAIL(1)
+
+Read-only /proc inspection identified an unrelated shell task invoking os.kill(pid, SIGKILL) for every process whose comm was Xvfb, before and after its own native debugging run. The source script was not changed, and no unrelated process was stopped. Host available memory was 21 GiB; the kernel journal had no OOM event during the checks.
+
+Affected checks are explicitly rerun with the repository runner, the machine lock and private Xvfb, retaining original failures.
