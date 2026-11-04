@@ -84,6 +84,7 @@ impl FilePicker for FallbackPicker {
                 let error = self.error.then(|| text("project.picker.error"));
                 let response = widgets::text_input(ui, &mut self.path, error.as_deref());
                 audit_rect("path", response.rect);
+                widgets::field_gap(ui);
                 ui.label(text("project.picker.recent"));
                 for path in recent {
                     let folder = if path.is_dir() {
@@ -91,7 +92,7 @@ impl FilePicker for FallbackPicker {
                     } else {
                         path.parent().unwrap_or(path)
                     };
-                    let label = folder.display().to_string();
+                    let label = super::recent::display(folder);
                     let t = crate::theme::tokens(ctx);
                     if widgets::row(
                         ui,
@@ -107,7 +108,7 @@ impl FilePicker for FallbackPicker {
                     )
                     .clicked()
                     {
-                        self.path = label;
+                        self.path = folder.display().to_string();
                     }
                 }
             },

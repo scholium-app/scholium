@@ -74,7 +74,7 @@ impl NewProject {
         audit_rect("latex", latex.rect);
         let typst = ui.radio_value(&mut self.latex, false, text("project.new.typst"));
         audit_rect("typst", typst.rect);
-        ui.add_space(crate::theme::Tokens::PAD_BAR);
+        widgets::field_gap(ui);
         ui.label(text("project.new.template"));
         let value = text(if !self.latex {
             "project.new.note"
@@ -137,15 +137,17 @@ impl ProjectFiles {
         let action = widgets::dialog(
             ctx,
             "project-chooser",
-            &text("command.file.new.title"),
+            &text("project.new.title"),
             locale,
             &buttons,
             |ui| {
                 self.new.language_template(ui, locale);
+                widgets::field_gap(ui);
                 ui.label(text("project.new.name"));
                 let error = self.new.error_text(locale, true);
                 let name = widgets::text_input(ui, &mut self.new.name, error.as_deref());
                 audit_rect("name", name.rect);
+                widgets::field_gap(ui);
                 ui.label(text("project.new.location"));
                 ui.horizontal(|ui| {
                     let width = (ui.available_width() - 100.0).max(80.0);
@@ -166,6 +168,7 @@ impl ProjectFiles {
                 if name.changed() {
                     self.new.error = self.new.validate().err();
                 }
+                widgets::field_gap(ui);
                 ui.label(text("project.new.preview"));
                 let entry = if self.new.latex {
                     "main.tex"

@@ -18,7 +18,7 @@ impl ProjectFiles {
         let text = |key| i18n::text(locale, key);
         let title = format!(
             "{} · {}",
-            text("command.document.project_settings.title"),
+            text("project.settings.title"),
             project_workspace::name(project.handle())
         );
         let Some(settings) = &mut self.settings else {
@@ -50,6 +50,7 @@ impl ProjectFiles {
             if latex {
                 latex_fields(ui, settings, locale);
             }
+            widgets::field_gap(ui);
             ui.label(text("project.settings.language"));
             ui.label(if latex { "LaTeX" } else { "Typst" });
             if let Some(error) = &self.settings_error {
@@ -90,6 +91,7 @@ fn latex_fields(
     locale: i18n::Locale,
 ) {
     let text = |key| i18n::text(locale, key);
+    widgets::field_gap(ui);
     ui.label(text("project.settings.engine"));
     let value = engine_label(settings.engine, locale);
     choose(ui, "engine", &value, |ui| {
@@ -107,6 +109,7 @@ fn latex_fields(
         }
     });
     ui.label(text("project.settings.engine_help"));
+    widgets::field_gap(ui);
     ui.label(text("project.settings.bibliography"));
     choose(
         ui,

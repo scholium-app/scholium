@@ -606,3 +606,12 @@ command-file-import =
 command-document-project_settings =
     .title = Project Settings…
     .tooltip = Choose the main file, engine and bibliography tool
+
+project-new-title = New Project
+project-settings-title = Project Settings
+project-conflict-today = Today
+project-conflict-yesterday = Yesterday
+project-environment-rtex = Live preview engine rtex
+project-environment-invalid = Incomplete or invalid installation
+project-environment-fonts_ready = Font cache ready
+project-environment-separator = { ", " }

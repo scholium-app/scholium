@@ -1,0 +1,117 @@
+     Locking 1 package to highest compatible version
+      Adding num_threads v0.1.8
+   Compiling num_threads v0.1.8
+   Compiling time v0.3.55
+   Compiling plist v1.10.1
+   Compiling syntect v5.3.0
+   Compiling two-face v0.4.5
+   Compiling typst-library v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst-library)
+   Compiling typst-layout v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst-layout)
+   Compiling typst-eval v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst-eval)
+   Compiling typst-kit v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst-kit)
+   Compiling typst-svg v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst-svg)
+   Compiling typst-render v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst-render)
+   Compiling typst-html v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst-html)
+   Compiling typst-realize v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst-realize)
+   Compiling typst v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst)
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-typst)
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-session)
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+error[E0425]: cannot find function `friendly_time` in this scope
+   --> crates/scholium-app/src/project_files/conflict.rs:141:20
+    |
+141 |         assert_eq!(friendly_time(today, now, i18n::Locale::ZhHans), "今天 00:01");
+    |                    ^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `friendly_time` in this scope
+   --> crates/scholium-app/src/project_files/conflict.rs:142:20
+    |
+142 |         assert_eq!(friendly_time(yesterday, now, i18n::Locale::ZhHans), "昨天 23:51");
+    |                    ^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `friendly_time` in this scope
+   --> crates/scholium-app/src/project_files/conflict.rs:143:20
+    |
+143 |         assert_eq!(friendly_time(yesterday, now, i18n::Locale::En), "Yesterday 23:51");
+    |                    ^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `friendly_time` in this scope
+   --> crates/scholium-app/src/project_files/conflict.rs:144:20
+    |
+144 |         assert_eq!(friendly_time(today - time::Duration::days(2), now, i18n::Locale::En), "2026-11-02 00:01");
+    |                    ^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `friendly_time` in this scope
+   --> crates/scholium-app/src/project_files/conflict.rs:148:20
+    |
+148 |         assert_eq!(friendly_time(previous, now, i18n::Locale::En), "Today 00:30");
+    |                    ^^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `distribution` in this scope
+  --> crates/scholium-app/src/project_files/environment_tests.rs:26:20
+   |
+26 |         assert_eq!(distribution(banner), expected);
+   |                    ^^^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `summary` in this scope
+  --> crates/scholium-app/src/project_files/environment_tests.rs:28:16
+   |
+28 |     let rows = summary(&status(), i18n::Locale::ZhHans, false);
+   |                ^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `summary` in this scope
+  --> crates/scholium-app/src/project_files/environment_tests.rs:43:16
+   |
+43 |     let rows = summary(&status, i18n::Locale::En, false);
+   |                ^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `summary` in this scope
+  --> crates/scholium-app/src/project_files/environment_tests.rs:50:16
+   |
+50 |     let rows = summary(&status, i18n::Locale::En, false);
+   |                ^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `summary` in this scope
+  --> crates/scholium-app/src/project_files/environment_tests.rs:64:23
+   |
+64 |         let release = summary(&status, locale, false);
+   |                       ^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `summary` in this scope
+  --> crates/scholium-app/src/project_files/environment_tests.rs:65:21
+   |
+65 |         let debug = summary(&status, locale, true);
+   |                     ^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `abbreviate` in this scope
+  --> crates/scholium-app/src/project_files/recent.rs:91:20
+   |
+91 |         assert_eq!(abbreviate(home, Some(home)), "~");
+   |                    ^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `abbreviate` in this scope
+  --> crates/scholium-app/src/project_files/recent.rs:92:20
+   |
+92 |         assert_eq!(abbreviate(&home.join("papers/中文"), Some(home)), "~/papers/中文");
+   |                    ^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `abbreviate` in this scope
+  --> crates/scholium-app/src/project_files/recent.rs:93:20
+   |
+93 |         assert_eq!(abbreviate(Path::new("/home/editorial/paper"), Some(home)), "/home/editorial/paper");
+   |                    ^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `abbreviate` in this scope
+  --> crates/scholium-app/src/project_files/recent.rs:94:20
+   |
+94 |         assert_eq!(abbreviate(Path::new("paper"), Some(home)), "paper");
+   |                    ^^^^^^^^^^ not found in this scope
+
+error[E0425]: cannot find function `abbreviate` in this scope
+  --> crates/scholium-app/src/project_files/recent.rs:95:20
+   |
+95 |         assert_eq!(abbreviate(home, None), "/home/editor");
+   |                    ^^^^^^^^^^ not found in this scope
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `scholium-app` (bin "scholium-app" test) due to 16 previous errors

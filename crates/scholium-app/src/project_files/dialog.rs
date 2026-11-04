@@ -41,7 +41,7 @@ impl ProjectFiles {
                         ui.label(text("project.recent.empty"));
                     }
                     for path in self.recent.clone() {
-                        if crate::widgets::button(ui, &path.display().to_string(), false, true)
+                        if crate::widgets::button(ui, &recent::display(&path), false, true)
                             .clicked()
                         {
                             self.dialog = None;
@@ -63,6 +63,7 @@ impl ProjectFiles {
                     let path = crate::widgets::text_input(ui, &mut self.path, None);
                     audit_rect("path", path.rect);
                     if dialog == FileDialog::Import {
+                        crate::widgets::field_gap(ui);
                         ui.label(text("project.import.target"));
                         let entry = crate::widgets::text_input(ui, &mut self.entry, None);
                         audit_rect("target", entry.rect);

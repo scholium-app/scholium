@@ -73,7 +73,10 @@ pub(crate) fn dialog(
             .id_salt((id, "body"))
             .max_height(max_height)
             .auto_shrink([false, true])
-            .show(ui, body);
+            .show(ui, |ui| {
+                ui.spacing_mut().item_spacing.y = Tokens::GAP_FIELD_LABEL;
+                body(ui);
+            });
         ui.add_space(Tokens::PAD_BAR);
         if let Some(clicked) = footer(ui, buttons) {
             action = Some(clicked);
@@ -83,7 +86,7 @@ pub(crate) fn dialog(
         let r = shown.response.rect;
         println!(
             "DIALOG_FRAME {}",
-            serde_json::json!({"id": id, "rect": [r.min.x, r.min.y, r.max.x, r.max.y]})
+            serde_json::json!({"id": id, "title": title.trim_end_matches(['…', '.']), "rect": [r.min.x, r.min.y, r.max.x, r.max.y]})
         );
     }
     if action.is_none() && keys.1 {
@@ -93,6 +96,11 @@ pub(crate) fn dialog(
             .map(|b| b.id.into());
     }
     action
+}
+
+/// Separate complete field groups; the preceding widget already reserves label spacing.
+pub(crate) fn field_gap(ui: &mut Ui) {
+    ui.add_space((Tokens::GAP_FIELD_GROUP - ui.spacing().item_spacing.y).max(0.0));
 }
 
 /// Acknowledgement notices share the same modal and Esc/Enter rules.
@@ -117,7 +125,7 @@ pub(crate) fn notice(
 fn header(ui: &mut Ui, id: &str, title: &str, locale: i18n::Locale) -> bool {
     let mut close = false;
     ui.horizontal(|ui| {
-        ui.label(egui::RichText::new(title).strong());
+        ui.label(egui::RichText::new(title.trim_end_matches(['…', '.'])).strong());
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
             let meta = Meta::new(
                 format!("{id}.close"),

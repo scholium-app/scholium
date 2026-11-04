@@ -20,6 +20,27 @@ pub(super) fn location() -> Option<PathBuf> {
     }?;
     Some(base.join("scholium/recent-projects.json"))
 }
+pub(super) fn display(path: &Path) -> String {
+    let home = std::env::var_os(if cfg!(target_os = "windows") {
+        "USERPROFILE"
+    } else {
+        "HOME"
+    })
+    .map(PathBuf::from);
+    abbreviate(path, home.as_deref())
+}
+fn abbreviate(path: &Path, home: Option<&Path>) -> String {
+    if let Some(home) = home.filter(|p| !p.as_os_str().is_empty())
+        && let Ok(relative) = path.strip_prefix(home)
+    {
+        return if relative.as_os_str().is_empty() {
+            "~".into()
+        } else {
+            Path::new("~").join(relative).display().to_string()
+        };
+    }
+    path.display().to_string()
+}
 pub(super) fn load(path: &Path) -> Result<Vec<PathBuf>, String> {
     match fs::read(path) {
         Ok(bytes) => {
@@ -79,5 +100,25 @@ mod tests {
             vec![PathBuf::from("/a"), PathBuf::from("/b")]
         );
         fs::remove_dir_all(root).expect("cleanup");
+    }
+}
+
+#[cfg(test)]
+mod display_tests {
+    use super::*;
+    #[test]
+    fn home_paths_are_abbreviated_at_component_boundaries_only() {
+        let home = Path::new("/home/editor");
+        assert_eq!(abbreviate(home, Some(home)), "~");
+        assert_eq!(
+            abbreviate(&home.join("papers/中文"), Some(home)),
+            "~/papers/中文"
+        );
+        assert_eq!(
+            abbreviate(Path::new("/home/editorial/paper"), Some(home)),
+            "/home/editorial/paper"
+        );
+        assert_eq!(abbreviate(Path::new("paper"), Some(home)), "paper");
+        assert_eq!(abbreviate(home, None), "/home/editor");
     }
 }

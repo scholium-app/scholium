@@ -45,6 +45,11 @@ def run(theme):
         time.sleep(0.25)
         app.capture(name)
         if not baseline and name in ('new-project', 'project-settings', 'external-conflict'):
+            title = app.entries('DIALOG_FRAME ')[-1]['title']
+            assert '…' not in title, title
+            if name == 'external-conflict':
+                assert 'UTC' not in title, title
+        if not baseline and name in ('new-project', 'project-settings', 'external-conflict'):
             frames = len(app.entries('DIALOG_FRAME '))
             app.xdo('windowsize', app.window, 480, 600)
             def settled():
@@ -82,7 +87,10 @@ def run(theme):
         native.menu('ui.menu.file', 'file.close')
         app.source(lambda s: s.get('closed'))
         if not baseline:
-            app.wait(lambda: 'environment.refresh' in visible()['controls'])
+            app.wait(lambda: 'environment.0' in visible()['controls'])
+            labels = app.entries('ENVIRONMENT ')[-1]['items']
+            assert labels and all(label.count(' — ') <= 1 for label in labels), labels
+            assert not any('This is ' in label or '—:' in label for label in labels), labels
         capture('start-page')
         if not baseline:
             for _ in range(4):

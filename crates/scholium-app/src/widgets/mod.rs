@@ -23,7 +23,7 @@ mod tests;
 mod tooltip;
 
 pub(crate) use button::{IconButton, TextButton, icon_button, tag, text_button};
-pub(crate) use dialog::{DialogButton, dialog, notice};
+pub(crate) use dialog::{DialogButton, dialog, field_gap, notice};
 pub(crate) use dropdown::{Dropdown, dropdown, field_dropdown};
 pub(crate) use form::{button, popover_frame, text_input};
 pub(crate) use menu::{

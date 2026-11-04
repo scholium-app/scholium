@@ -300,6 +300,14 @@ mod model_tests;
 
 #[cfg(test)]
 pub(crate) const EXTRA_CATALOG_KEYS: &[&str] = &[
+    "project.new.title",
+    "project.settings.title",
+    "project.conflict.today",
+    "project.conflict.yesterday",
+    "project.environment.rtex",
+    "project.environment.separator",
+    "project.environment.invalid",
+    "project.environment.fonts_ready",
     "project.start.description",
     "project.start.begin",
     "project.start.recent",

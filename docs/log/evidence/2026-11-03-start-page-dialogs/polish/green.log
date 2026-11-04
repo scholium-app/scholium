@@ -1,0 +1,22 @@
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 3.35s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-c7f7311f39cf7208)
+
+running 15 tests
+test project_files::conflict::tests::unified_diff_preserves_unicode_and_marks_missing_newline ... ok
+test project_files::recent::display_tests::home_paths_are_abbreviated_at_component_boundaries_only ... ok
+test project_files::picker::tests::fallback_selection_satisfies_the_platform_contract ... ok
+test project_files::model_tests::new_projects_default_to_latex_and_reject_empty_existing_or_unsafe_names ... ok
+test project_files::model_tests::new_projects_reject_missing_or_read_only_locations ... ok
+test project_files::picker::tests::platform_results_and_fallback_selections_share_the_validation_contract ... ok
+test project_files::recent::tests::recent_projects_deduplicate_and_preserve_order_on_disk ... ok
+test project_files::environment::tests::failed_detection_does_not_invent_missing_installations ... ok
+test project_files::conflict::tests::conflict_time_uses_local_calendar_days_across_offsets_and_midnight ... ok
+test project_files::environment::tests::all_toolchain_messages_are_localized ... ok
+test project_files::environment::tests::failed_version_probes_are_not_listed_as_usable_engines ... ok
+test project_files::environment::tests::distribution_summary_extracts_name_and_year_without_the_program_banner ... ok
+test project_files::environment::tests::environment_groups_duplicate_issues_and_keeps_one_action_per_item ... ok
+test project_files::environment::tests::release_summary_never_exposes_development_overrides_and_debug_prefers_invalid ... ok
+test project_files::start_page::tests::keyboard_navigation_keeps_every_arrow_press_in_one_frame ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 340 filtered out; finished in 0.00s

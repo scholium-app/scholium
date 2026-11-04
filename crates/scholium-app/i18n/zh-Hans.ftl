@@ -600,3 +600,12 @@ command-file-import =
 command-document-project_settings =
     .title = 项目设置…
     .tooltip = 设置主文件、引擎和参考文献工具
+
+project-new-title = 新建项目
+project-settings-title = 项目设置
+project-conflict-today = 今天
+project-conflict-yesterday = 昨天
+project-environment-rtex = 实时预览引擎 rtex
+project-environment-invalid = 安装不完整或校验失败
+project-environment-fonts_ready = 字体缓存已准备
+project-environment-separator = { "、" }

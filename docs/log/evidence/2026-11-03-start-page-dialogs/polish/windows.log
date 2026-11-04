@@ -1,0 +1,13 @@
+output: /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t45-polish-windows-final
+running chrome [zh-Hans] ...
+running start-page-dialogs [zh-Hans] ...
+running chrome [en] ...
+running start-page-dialogs [en] ...
+
+check                         result      seconds
+chrome [zh-Hans]              pass           27.4
+start-page-dialogs [zh-Hans]  pass           89.4
+chrome [en]                   pass           27.5
+start-page-dialogs [en]       pass           85.6
+
+4/4 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t45-polish-windows-final

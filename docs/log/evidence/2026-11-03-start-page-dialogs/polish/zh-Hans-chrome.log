@@ -1,0 +1,13 @@
+PASS 01-controls-map-covers-the-chrome
+PASS 02-menus-open-and-close
+PASS 03-toolbar-bold-toggles-and-shows-active
+PASS 04-paragraph-dropdown-and-history
+PASS 05-work-mode-from-menu-and-segmented-control
+PASS 06-focus-bar-follows-the-caret
+PASS 07-minimum-width-keeps-implemented-groups-usable
+PASS 08-toolbars-toggle
+PASS 09-theme-and-language-switch-at-runtime
+PASS 10-status-bar-words-and-zoom
+PASS 11a-tab-plus-runs-the-new-document-flow
+PASS 11b-tab-close-discards-and-releases-the-project
+X connection to :143 broken (explicit kill or server shutdown).

@@ -133,7 +133,7 @@ impl ProjectFiles {
                         .max(1.0);
                 ui.allocate_ui(egui::vec2(width, Tokens::STATUS_BAR), |ui| {
                     let name = path.file_name().unwrap_or_default().to_string_lossy();
-                    let primary = format!("{name}   {}", path.display());
+                    let primary = format!("{name}   {}", recent::display(&path));
                     let language = recent_language(&path);
                     if list_row(
                         ui,
@@ -153,7 +153,11 @@ impl ProjectFiles {
                         );
                     }
                 });
-                let name = format!("{} {}", text("project.recent.remove"), path.display());
+                let name = format!(
+                    "{} {}",
+                    text("project.recent.remove"),
+                    recent::display(&path)
+                );
                 let response = widgets::icon_button(
                     ui,
                     widgets::IconButton {

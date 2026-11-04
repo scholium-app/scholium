@@ -1,7 +1,8 @@
 //! Read-only disk/draft comparison; saving continues to use storage's exact-byte conflict gate.
 use super::*;
 use crate::widgets::{self, DialogButton};
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::SystemTime;
+use time::{OffsetDateTime, UtcOffset};
 
 impl ProjectFiles {
     pub(super) fn conflict_dialog(
@@ -19,8 +20,9 @@ impl ProjectFiles {
         let path = source.handle().root().join(source.handle().entry());
         let when = std::fs::metadata(&path)
             .and_then(|m| m.modified())
-            .map(timestamp)
-            .unwrap_or_else(|_| text("project.conflict.time_unknown"));
+            .ok()
+            .and_then(|time| timestamp(time, SystemTime::now(), locale))
+            .unwrap_or_else(|| text("project.conflict.time_unknown"));
         let title = i18n::text_with(
             locale,
             "project.conflict.title",
@@ -39,8 +41,10 @@ impl ProjectFiles {
         ];
         let action = widgets::dialog(ctx, "project-conflict", &title, locale, &buttons, |ui| {
             ui.label(text("project.conflict.refused"));
+            widgets::field_gap(ui);
             ui.label(text("project.conflict.help"));
             if self.diff {
+                widgets::field_gap(ui);
                 match std::fs::read_to_string(&path) {
                     Ok(disk) => {
                         let diff = unified_diff(&disk, source.text());
@@ -99,27 +103,26 @@ fn unified_diff(disk: &str, draft: &str) -> String {
     }
     result
 }
-// UTC civil date conversion, independent of machine locale and daylight-saving state.
-fn timestamp(time: SystemTime) -> String {
-    let seconds = time
-        .duration_since(UNIX_EPOCH)
-        .unwrap_or_default()
-        .as_secs();
-    let days = (seconds / 86400) as i64 + 719468;
-    let era = days / 146097;
-    let day = days - era * 146097;
-    let year = (day - day / 1460 + day / 36524 - day / 146096) / 365;
-    let doy = day - (365 * year + year / 4 - year / 100);
-    let month = (5 * doy + 2) / 153;
-    let date = doy - (153 * month + 2) / 5 + 1;
-    let month = month + if month < 10 { 3 } else { -9 };
-    let year = year + era * 400 + i64::from(month <= 2);
-    format!(
-        "{year:04}-{month:02}-{date:02} {:02}:{:02}:{:02} UTC",
-        seconds / 3600 % 24,
-        seconds / 60 % 60,
-        seconds % 60
-    )
+fn timestamp(time: SystemTime, now: SystemTime, locale: i18n::Locale) -> Option<String> {
+    fn local(time: SystemTime) -> Option<OffsetDateTime> {
+        let utc = OffsetDateTime::from(time);
+        Some(utc.to_offset(UtcOffset::local_offset_at(utc).ok()?))
+    }
+    Some(friendly_time(local(time)?, local(now)?, locale))
+}
+fn friendly_time(time: OffsetDateTime, now: OffsetDateTime, locale: i18n::Locale) -> String {
+    let days = (now.date() - time.date()).whole_days();
+    let day = match days {
+        0 => i18n::text(locale, "project.conflict.today"),
+        1 => i18n::text(locale, "project.conflict.yesterday"),
+        _ => format!(
+            "{:04}-{:02}-{:02}",
+            time.year(),
+            u8::from(time.month()),
+            time.day()
+        ),
+    };
+    format!("{day} {:02}:{:02}", time.hour(), time.minute())
 }
 #[cfg(test)]
 mod tests {
@@ -132,11 +135,40 @@ mod tests {
         );
     }
     #[test]
-    fn conflict_time_is_an_unambiguous_utc_date() {
-        assert_eq!(timestamp(UNIX_EPOCH), "1970-01-01 00:00:00 UTC");
+    fn conflict_time_uses_local_calendar_days_across_offsets_and_midnight() {
+        use time::{Date, Month, UtcOffset};
+        let date = Date::from_calendar_date(2026, Month::November, 4).expect("date");
+        let now = date
+            .with_hms(0, 5, 0)
+            .expect("clock")
+            .assume_offset(UtcOffset::from_hms(-6, 0, 0).expect("offset"));
+        let today = now.replace_time(time::Time::from_hms(0, 1, 47).expect("clock"));
+        let yesterday = today - time::Duration::minutes(10);
         assert_eq!(
-            timestamp(UNIX_EPOCH + std::time::Duration::from_secs(1735689600)),
-            "2025-01-01 00:00:00 UTC"
+            friendly_time(today, now, i18n::Locale::ZhHans),
+            "今天 00:01"
+        );
+        assert_eq!(
+            friendly_time(yesterday, now, i18n::Locale::ZhHans),
+            "昨天 23:51"
+        );
+        assert_eq!(
+            friendly_time(yesterday, now, i18n::Locale::En),
+            "Yesterday 23:51"
+        );
+        assert_eq!(
+            friendly_time(today - time::Duration::days(2), now, i18n::Locale::En),
+            "2026-11-02 00:01"
+        );
+        // DST can change the offset between the file write and the current time.
+        let previous_offset = UtcOffset::from_hms(-5, 0, 0).expect("offset");
+        let previous = date
+            .with_hms(0, 30, 0)
+            .expect("clock")
+            .assume_offset(previous_offset);
+        assert_eq!(
+            friendly_time(previous, now, i18n::Locale::En),
+            "Today 00:30"
         );
     }
 }

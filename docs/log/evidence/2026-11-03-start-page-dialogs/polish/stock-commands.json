@@ -1,0 +1,86 @@
+[
+  {
+    "mode": "system",
+    "command": [
+      "cargo",
+      "run",
+      "--locked",
+      "-p",
+      "scholium-typst",
+      "--features",
+      "editor",
+      "--example",
+      "typst-main-fork-check",
+      "--",
+      "target/t45-polish-stock/system/fork"
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "system",
+    "command": [
+      "cargo",
+      "run",
+      "--locked",
+      "--manifest-path",
+      "spikes/typst-main-editor/reference/Cargo.toml",
+      "--target-dir",
+      "target/stock-reference",
+      "--",
+      "target/t45-polish-stock/system/stock"
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "system",
+    "command": [
+      "python3",
+      "spikes/typst-main-editor/compare.py",
+      "target/t45-polish-stock/system/fork",
+      "target/t45-polish-stock/system/stock"
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "bundled",
+    "command": [
+      "cargo",
+      "run",
+      "--locked",
+      "-p",
+      "scholium-typst",
+      "--features",
+      "editor",
+      "--example",
+      "typst-main-fork-check",
+      "--",
+      "target/t45-polish-stock/bundled/fork"
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "bundled",
+    "command": [
+      "cargo",
+      "run",
+      "--locked",
+      "--manifest-path",
+      "spikes/typst-main-editor/reference/Cargo.toml",
+      "--target-dir",
+      "target/stock-reference",
+      "--",
+      "target/t45-polish-stock/bundled/stock"
+    ],
+    "exit_code": 0
+  },
+  {
+    "mode": "bundled",
+    "command": [
+      "python3",
+      "spikes/typst-main-editor/compare.py",
+      "target/t45-polish-stock/bundled/fork",
+      "target/t45-polish-stock/bundled/stock"
+    ],
+    "exit_code": 0
+  }
+]
