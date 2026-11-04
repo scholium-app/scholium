@@ -1,1 +1,9 @@
-    Finished `dev` profile [unoptimized] target(s) in 0.23s
+    Checking scholium-model v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-model)
+    Checking scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-storage)
+    Checking scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-document)
+    Checking scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-latex)
+    Checking scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-typst)
+    Checking scholium-sdg v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-sdg)
+    Checking scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-session)
+    Checking scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-app)
+    Finished `dev` profile [unoptimized] target(s) in 18.13s

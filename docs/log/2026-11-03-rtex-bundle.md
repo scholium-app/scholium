@@ -58,12 +58,12 @@ PIN 升级本已有独立的 E1/E2/E8 评审，T44 用本机真实构建/预览�
 ## 验证
 
 完整命令、退出码与耗时见 [gates.json](evidence/rtex-bundle/gates.json)；各命令完整日志在同目录。
-workspace 测试为 658 passed、13 个既有原生测试 ignored，Python 打包合同测试 3 passed。
+整合 T43 后 workspace 测试为 672 passed、15 个既有原生测试 ignored，Python 打包合同测试 3 passed。
 本次未修改 Typst fork/adapter，stock 比较不适用。
 
 中文真实窗口在没有任何 `SCHOLIUM_RTEX_*` 变量时打开 LaTeX 项目并完成实时更新；同引擎 XeLaTeX 整编预览也成功。
 [机器结果](evidence/rtex-bundle/native-window-zh-Hans.json)记录 live 为 DisplayList、XeLaTeX 为 FullCompilation。
-20 次键入到实际 XGetImage 前台像素变化的 p50 53.3 ms、p95 63.1 ms（私有 Xvfb、software GL；不是后台编译耗时，
+20 次键入到实际 XGetImage 前台像素变化的 p50 83.3 ms、p95 106.2 ms（私有 Xvfb、software GL；不是后台编译耗时，
 不作为跨机器性能比较），suspend 差小于 1 秒。首次预览使用默认路径自动准备字体缓存；最终状态重检的 `font_cache_warm` 为 true。
 
 ![无 rtex 环境变量的真实 LuaLaTeX 预览](evidence/rtex-bundle/live-zh-Hans.png)
@@ -73,7 +73,7 @@ workspace 测试为 658 passed、13 个既有原生测试 ignored，Python 打�
 ![显式不可用测试夹具仍可编辑源码](evidence/rtex-bundle/unavailable-zh-Hans.png)
 
 英文同一路径也完成 LuaLaTeX、XeLaTeX 与 20 次实际像素更新验证，见
-[机器结果](evidence/rtex-bundle/native-window-en.json)；最终结果 p50 214.7 ms、p95 275.7 ms。
+[机器结果](evidence/rtex-bundle/native-window-en.json)；最终结果 p50 53.0 ms、p95 56.4 ms。
 这些窗口观察处于同一机器不同负载阶段，不用两者差值推断语言对性能的影响。
 
 ![无 rtex 环境变量的英文实时预览](evidence/rtex-bundle/live-en.png)
@@ -94,9 +94,16 @@ workspace 测试为 658 passed、13 个既有原生测试 ignored，Python 打�
 改动：精确 PIN 的仓库外 locked/cached bundle 构建、完整许可与 manifest；安装/开发布局发现和 hash/PIN 校验；
 后台、有界、可刷新缓存的工具链状态及消息 ID/参数；最小 app 启动接线；假 bundle CI 合同测试；ADR 与模块规范更新。
 
-验证：全部非窗口门禁通过，workspace 658 passed/13 ignored；打包 Python 3 passed；真 bundle 三次构建 hash 相同；
+验证：全部非窗口门禁通过，整合后 workspace 672 passed/15 ignored；打包 Python 3 passed；真 bundle 三次构建 hash 相同；
 无 rtex 覆盖变量的中英 LuaLaTeX 实时和 XeLaTeX 整编预览通过，隐藏 PATH 返回缺少 TeX 的本地化问题。
 窗口完整运行 53/54，显示重连环境修正后定向复验 2/2，最终 54 个场景均通过。外部全局杀 Xvfb 的干扰及本地解决方式保留证据。
 
 待办：没有 T44 必须项未完成。后续 UI 批次消费状态消息键并装配“重新检测”；跨平台安装器与 macOS/Windows 沙箱另行验收。
 CI 不重复构建真 rtex，成本/价值取舍见上；不会创建 PR，由协调者审阅并拟稿。
+
+提交前 origin/main 再前移至 T43 的 80722fd（诊断 pipeline）。先以 fbd53f1 签名保存已验收的 T44 实现，
+再以签名 merge 整合。冲突仅在 latex lib.rs 导出位置及 latex.md 末尾：同时保留 log/toolchain 导出和两份规范章节，
+其余诊断文件原样保留。整合后全部非窗口门禁重新通过（672 passed、15 ignored），另重跑完整中英文窗口验收。
+
+整合后完整中英文窗口检查 **54/54 全部通过**，无定向复验需求；最终机器结果、截图已更新为此轮。
+完整记录见 [windows-integrated.log](evidence/rtex-bundle/windows-integrated.log)。所有必需门禁完成。

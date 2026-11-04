@@ -9,7 +9,7 @@
       "--check"
     ],
     "exit": 0,
-    "seconds": 0.404515229000026
+    "seconds": 1.7338958189993718
   },
   {
     "name": "clippy",
@@ -24,7 +24,7 @@
       "warnings"
     ],
     "exit": 0,
-    "seconds": 0.29694912800005113
+    "seconds": 18.336651769999662
   },
   {
     "name": "test",
@@ -35,7 +35,7 @@
       "--workspace"
     ],
     "exit": 0,
-    "seconds": 35.32842483500008
+    "seconds": 58.76658512600079
   },
   {
     "name": "doc",
@@ -47,7 +47,7 @@
       "--no-deps"
     ],
     "exit": 0,
-    "seconds": 0.3470202389999031
+    "seconds": 18.459495873999913
   },
   {
     "name": "rust-size",
@@ -56,7 +56,7 @@
       "scripts/check-rust-size.py"
     ],
     "exit": 0,
-    "seconds": 0.03600987899972097
+    "seconds": 0.13083665399972233
   },
   {
     "name": "doc-links",
@@ -65,7 +65,7 @@
       "scripts/check-doc-links.py"
     ],
     "exit": 0,
-    "seconds": 0.14217908099999477
+    "seconds": 0.8339026689991442
   },
   {
     "name": "ui-strings",
@@ -74,7 +74,7 @@
       "scripts/check-ui-strings.py"
     ],
     "exit": 0,
-    "seconds": 0.1503816350004854
+    "seconds": 0.4006012580011884
   },
   {
     "name": "layers",
@@ -83,7 +83,7 @@
       "scripts/check-layers.py"
     ],
     "exit": 0,
-    "seconds": 0.3314873169993007
+    "seconds": 1.0268695270005992
   },
   {
     "name": "deny",
@@ -97,7 +97,7 @@
       "sources"
     ],
     "exit": 0,
-    "seconds": 0.7841735329993753
+    "seconds": 1.5374812460013345
   },
   {
     "name": "build",
@@ -112,7 +112,7 @@
       "--bins"
     ],
     "exit": 0,
-    "seconds": 0.29078283099988766
+    "seconds": 30.364275463000013
   },
   {
     "name": "bundle-tests",
@@ -121,10 +121,10 @@
       "scripts/test-bundle-rtex.py"
     ],
     "exit": 0,
-    "seconds": 0.09451789899958385
+    "seconds": 0.3910373819999222
   },
   {
-    "name": "windows",
+    "name": "windows-integrated",
     "argv": [
       "python3",
       "scripts/window-checks.py",
@@ -132,23 +132,10 @@
       "zh-Hans",
       "en",
       "--out",
-      "target/t44-windows-protected"
+      "target/t44-windows-integrated"
     ],
-    "initial_complete_run": "53/54",
-    "recheck_argv": [
-      "python3",
-      "scripts/window-checks.py",
-      "--only",
-      "project-native",
-      "--locale",
-      "zh-Hans",
-      "en",
-      "--out",
-      "target/t44-window-recheck"
-    ],
-    "recheck": "2/2",
-    "final_scenario_coverage": "54/54 passed including recheck",
     "exit": 0,
-    "environment": "Identical local Xvfb binary named scholium-xserver avoids an unrelated task killing every comm == Xvfb. Recheck local wrapper adds -noreset. Machine lock retained."
+    "result": "54/54",
+    "environment": "No SCHOLIUM_RTEX_* overrides; same-byte local Xvfb copy under different comm plus -noreset; machine lock unchanged."
   }
 ]

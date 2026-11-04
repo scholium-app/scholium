@@ -7,15 +7,17 @@
   },
   "build_binary_sha256": "a46184931e71cd0e95babd924b6fa452e78708dfafbfeb3cc01fc0441d7088ca",
   "override_variables_for_status_and_native_preview": [],
-  "workspace_test_passed": 658,
-  "workspace_test_ignored_native": 13,
+  "workspace_test_passed": 672,
+  "workspace_test_ignored_native": 15,
   "python_bundle_tests_passed": 3,
   "ci_real_bundle_build": false,
   "reason": "PIN review already gates the separate upstream workspace; fixtures cover discovery on ordinary CI, real bundle/preview validated locally.",
   "initial_base": "d11c0c60ca198b9f3997887473f24df3a176ef03",
-  "integrated_base": "c94bb32bbd45eb168001874bcefcc55900728653",
-  "integration": "Fast-forward origin/main after PR 99; documentation and reference assets only, no binary inputs changed.",
+  "integrated_base": "80722fd962b46017a44e4d7e2c3e22e348e95baa",
+  "integration": "Merged origin/main diagnostics pipeline; retained both log/toolchain exports and both module specification sections.",
   "window_complete_run": "53/54",
   "window_targeted_recheck": "2/2",
-  "window_final_scenario_coverage": "54/54 including recheck"
+  "window_final_scenario_coverage": "54/54 including recheck",
+  "window_integrated_result": "54/54",
+  "window_integrated_exit": 0
 }
