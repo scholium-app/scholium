@@ -9,7 +9,7 @@ use std::{
     sync::Arc,
     time::{Duration, Instant},
 };
-use tokio::sync::{mpsc, watch};
+use tokio::sync::{mpsc, oneshot, watch};
 
 #[derive(Debug, Clone, Default)]
 pub(super) struct Edit {
@@ -37,6 +37,7 @@ pub(super) struct Backend {
     pub resync: mpsc::Sender<()>,
     pub updates: mpsc::Receiver<Update>,
     thread: Option<std::thread::JoinHandle<()>>,
+    cancel: Option<oneshot::Sender<()>>,
 }
 impl Backend {
     pub fn start(source: SourceSession, wake: eframe::egui::Context) -> Self {
@@ -47,14 +48,20 @@ impl Backend {
         let (edits, receiver) = watch::channel(initial);
         let (sender, updates) = mpsc::channel(4);
         let (resync, requests) = mpsc::channel(1);
+        let (cancel, cancelled) = oneshot::channel();
         let thread = std::thread::spawn(move || {
             let runtime = tokio::runtime::Builder::new_current_thread()
                 .enable_all()
                 .build();
             match runtime {
                 Ok(rt) => rt.block_on(async {
-                    if let Err(error) = run(source, receiver, requests, &sender, &wake).await {
-                        publish(&sender, &wake, Update::Unavailable(error.to_string())).await;
+                    tokio::select! {
+                        _ = cancelled => {},
+                        result = run(source, receiver, requests, &sender, &wake) => {
+                            if let Err(error) = result {
+                                publish(&sender, &wake, Update::Unavailable(error.to_string())).await;
+                            }
+                        }
                     }
                 }),
                 Err(error) => {
@@ -68,11 +75,15 @@ impl Backend {
             resync,
             updates,
             thread: Some(thread),
+            cancel: Some(cancel),
         }
     }
 }
 impl Drop for Backend {
     fn drop(&mut self) {
+        if let Some(cancel) = self.cancel.take() {
+            let _ = cancel.send(());
+        }
         self.updates.close();
         self.thread.take();
     }
@@ -284,6 +295,7 @@ impl Backend {
             resync,
             updates,
             thread: None,
+            cancel: None,
         }
     }
 }

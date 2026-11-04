@@ -9,10 +9,22 @@ binary, output = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
 app = ProjectApp(binary, output, output / "initial")
 project = output / "created"
+def create_project(path, language="latex"):
+    app.key("ctrl+n")
+    app.control("name")
+    app.key("ctrl+a")
+    app.type(path.name)
+    app.control("path")
+    app.key("ctrl+a")
+    app.type(str(path.parent))
+    app.control(language)
+    app.control("submit")
+
+
 try:
     app.start("create")
     before = app.state()["snapshot"]["document"]
-    app.create(project)
+    create_project(project, "typst")
     state = app.state(lambda s: s["current"] and s["snapshot"]["document"] != before)
     caret = next(c for c in state["carets"] if c["leaf"] == state["cursor_leaf"] and c["byte"] == 0)
     app.xdo("mousemove", "--window", app.window, round(caret["x"]), round(caret["y"]))

@@ -41,6 +41,12 @@ pub(super) fn remember(list: &mut Vec<PathBuf>, path: &Path, file: &Path) -> Res
     *list = next;
     Ok(())
 }
+pub(super) fn remove(list: &mut Vec<PathBuf>, path: &Path, file: &Path) -> Result<(), String> {
+    let next: Vec<_> = list.iter().filter(|p| *p != path).cloned().collect();
+    publish(&next, file).map_err(|e| e.to_string())?;
+    *list = next;
+    Ok(())
+}
 fn publish(list: &[PathBuf], file: &Path) -> std::io::Result<()> {
     let parent = file.parent().ok_or(std::io::ErrorKind::InvalidInput)?;
     fs::create_dir_all(parent)?;

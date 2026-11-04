@@ -56,17 +56,8 @@ impl eframe::App for ScholiumApp {
         if let Some(project) = &mut self.project {
             project.show(ui, &mut self.state);
         } else {
-            ui.ctx()
-                .send_viewport_cmd(egui::ViewportCommand::Title("Scholium".into()));
-            egui::CentralPanel::default().show(ui, |ui| {
-                ui.heading(i18n::text(self.state.locale.resolve(), "project.welcome"));
-                if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
-                    println!("PROJECT {{\"closed\":true}}");
-                }
-                if let Some(error) = &self.state.storage_error {
-                    ui.colored_label(ui.visuals().error_fg_color, error);
-                }
-            });
+            self.files
+                .start_page(ui, &mut self.state, &mut self.project);
         }
     }
 }
@@ -99,6 +90,7 @@ fn main() -> eframe::Result {
                     app.project = Some(project);
                 }
                 Err(error) => {
+                    app.files.startup_error(&error);
                     eprintln!("{error}");
                     app.state.storage_error = Some(error);
                 }

@@ -127,3 +127,13 @@ keys = ["Ctrl+A"]
 command = "insert.delimiter"
 scope = "math"
 keys = ["Alt+B"]
+
+[[binding]]
+command = "file.import"
+scope = "global"
+keys = []
+
+[[binding]]
+command = "document.project_settings"
+scope = "global"
+keys = ["Ctrl+Alt+P"]

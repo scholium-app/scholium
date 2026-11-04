@@ -1,0 +1,22 @@
+   Compiling scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-storage)
+    Finished `test` profile [unoptimized] target(s) in 1.70s
+     Running unittests src/lib.rs (target/debug/deps/scholium_storage-ea099cc42e10e9ae)
+
+running 1 test
+test project::handle::settings_tests::switching_to_a_published_draft_recovers_its_materialized_baseline ... FAILED
+
+failures:
+
+---- project::handle::settings_tests::switching_to_a_published_draft_recovers_its_materialized_baseline stdout ----
+
+thread 'project::handle::settings_tests::switching_to_a_published_draft_recovers_its_materialized_baseline' (648969) panicked at crates/scholium-storage/src/project/handle/settings_tests.rs:143:19:
+complete draft cleanup without conflict: Conflict { resource: "other.tex" }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    project::handle::settings_tests::switching_to_a_published_draft_recovers_its_materialized_baseline
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 31 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p scholium-storage --lib`

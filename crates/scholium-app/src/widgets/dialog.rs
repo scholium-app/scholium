@@ -16,6 +16,7 @@ pub(crate) struct DialogButton<'a> {
     pub(crate) label: String,
     pub(crate) primary: bool,
     pub(crate) enabled: bool,
+    pub(crate) left: bool,
 }
 impl<'a> DialogButton<'a> {
     pub(crate) fn new(id: &'a str, label: String, primary: bool) -> Self {
@@ -24,6 +25,7 @@ impl<'a> DialogButton<'a> {
             label,
             primary,
             enabled: true,
+            left: false,
         }
     }
 }
@@ -39,7 +41,11 @@ pub(crate) fn dialog(
 ) -> Option<String> {
     let t = theme::tokens(ctx);
     let width = DEFAULT_WIDTH.min((ctx.content_rect().width() - WINDOW_MARGIN).max(1.0));
+    let popup_open = egui::Popup::is_any_open(ctx);
     let keys = ctx.input_mut(|i| {
+        if popup_open {
+            return (false, false);
+        }
         (
             i.consume_key(egui::Modifiers::NONE, egui::Key::Escape),
             i.consume_key(egui::Modifiers::NONE, egui::Key::Enter),
@@ -134,19 +140,28 @@ fn header(ui: &mut Ui, id: &str, title: &str, locale: i18n::Locale) -> bool {
 }
 fn footer(ui: &mut Ui, buttons: &[DialogButton<'_>]) -> Option<String> {
     let mut action = None;
-    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-        // Primary is always rightmost, irrespective of the caller's declaration order.
-        let ordered = buttons
-            .iter()
-            .filter(|b| b.primary)
-            .chain(buttons.iter().filter(|b| !b.primary).rev());
-        for b in ordered {
+    ui.horizontal(|ui| {
+        for b in buttons.iter().filter(|b| b.left) {
             let response = button(ui, &b.label, b.primary, b.enabled);
             crate::project_workspace::audit_rect(b.id, response.rect);
             if response.clicked() {
                 action = Some(b.id.into());
             }
         }
+        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            // Primary is always rightmost, irrespective of the caller's declaration order.
+            let ordered = buttons
+                .iter()
+                .filter(|b| b.primary && !b.left)
+                .chain(buttons.iter().filter(|b| !b.primary && !b.left).rev());
+            for b in ordered {
+                let response = button(ui, &b.label, b.primary, b.enabled);
+                crate::project_workspace::audit_rect(b.id, response.rect);
+                if response.clicked() {
+                    action = Some(b.id.into());
+                }
+            }
+        });
     });
     action
 }

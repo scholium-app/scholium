@@ -3,11 +3,11 @@
 # Command titles and tooltips
 
 command-file-new =
-    .title = New
+    .title = New Project…
     .tooltip = Start a new document
 
 command-file-open =
-    .title = Open…
+    .title = Open Folder or File…
     .tooltip = Open an existing document
 
 command-file-recent =
@@ -494,7 +494,7 @@ math-input-tab-slot = Tab: next slot
 project-source-authority = Typst source · source file authority
 project-locked = This project is already open in another window or process. Close it there first.
 project-conflict = Modified externally
-project-conflict-help = The source file was preserved. Reload discards the local draft; Save As keeps the current input.
+project-conflict-help = Reload replaces your unsaved changes with the disk file; Save As keeps your current content in a new project.
 project-entry-required = Choose an explicit .tex or .typ entry file.
 project-entry-optional = Entry (optional, relative to the project; required for ambiguous folders)
 project-open-failed = Project operation failed
@@ -506,7 +506,7 @@ project-path-new = New project folder path (must not exist yet)
 project-language = Project language (fixed at creation)
 project-welcome = Create or open a project from the File menu
 project-migrated-title = Session migrated
-project-migrated-body = An independent project was created. The original session is retained. See .scholium/migration.json in the project; old history is not reconstructed as editing Actions.
+project-migrated-body = An independent project was created and the original session was retained. Migration details are available in the project folder.
 project-source-context = Source authority
 project-import = Migrate an old session…
 project-import-target = New project folder for the imported session
@@ -534,3 +534,75 @@ chrome-status-typ_source = Typst · Preview not generated
 
 chrome-toolbar-paragraph_hint = Choose the paragraph style for the current block
 chrome-toolbar-overflow_hint = Show toolbar actions that do not fit in the window
+
+# Start page and project dialogs
+project-start-description = Scientific writing and typesetting
+project-start-begin = Start
+project-start-recent = Recent
+project-start-environment = Environment
+project-start-closed = No project open
+project-retry = Retry
+project-locked-title = This project is open in another window or application
+project-recent-remove = Remove from recent projects
+project-new-create = Create
+project-new-name = Name
+project-new-location = Location
+project-browse = Browse…
+project-new-template = Template
+project-new-article = Blank article
+project-new-ctex = Chinese thesis (ctexart)
+project-new-note = Blank note
+project-new-latex = LaTeX — Edit .tex source with same-engine preview
+project-new-typst = Typst — Edit directly on the typeset page
+project-new-preview = This file will be created. Change the engine in Project Settings.
+project-new-name_error = Enter a project name without path separators.
+project-new-exists = This folder already exists. Choose another name.
+project-new-location_error = Choose an existing, writable folder.
+project-picker-title = Choose a folder or file
+project-picker-recent = Recent folders
+project-picker-error = Choose an existing folder or a .tex / .typ file.
+project-settings-entry = Main file
+project-settings-engine = Engine
+project-settings-engine_help = LuaLaTeX previews paragraphs live; XeLaTeX and pdfLaTeX use full compilation.
+project-settings-bibliography = Bibliography tool
+project-settings-language = Project language (fixed at creation)
+project-settings-auto = Automatic (source or build profile)
+project-settings-none = None
+project-settings-save_first = Save or discard current changes before switching the main file.
+project-settings-failed = Settings were not saved. Check permissions or external changes and try again.
+project-conflict-title = { $file } changed externally · { $when }
+project-conflict-diff = View Diff
+project-conflict-refused = Another program changed the file on disk, so this save was refused to avoid overwriting it.
+project-conflict-time_unknown = change time unknown
+project-conflict-read_error = The disk file could not be read. Your draft is retained.
+project-environment-tex = TeX distribution
+project-environment-missing = Not found
+project-environment-bundled = Bundled with the app; integrity verified
+project-environment-checking = Checking the environment…
+project-environment-refresh = Refresh
+toolchain-executable-unavailable = The application executable could not be located.
+toolchain-reinstall = Reinstall Scholium.
+toolchain-bundle-check-timeout = The live-engine check timed out.
+toolchain-refresh = Refresh the environment check.
+toolchain-detection-failed = Environment detection failed.
+toolchain-bundle-missing = Bundled rtex was not found.
+toolchain-bundle-invalid = The rtex bundle is incomplete or failed integrity checks.
+toolchain-bundle-pin-mismatch = The rtex version does not match this application.
+toolchain-override-invalid = The development rtex override is invalid.
+toolchain-fix-dev-override = Check the development override paths.
+toolchain-tex-missing = No TeX distribution was found.
+toolchain-install-tex = Install TeX Live, MacTeX or MiKTeX.
+toolchain-program-unavailable = { $program } is unavailable.
+toolchain-install-tex-component = Install the corresponding TeX component.
+toolchain-font-cache-cold = The font cache is not ready yet.
+toolchain-warm-on-preview = It will be prepared automatically on the first preview.
+toolchain-dev-override = A development live-engine override is active.
+toolchain-remove-dev-override = Remove development overrides to use the installed bundle.
+
+command-file-import =
+    .title = Import from Older Version…
+    .tooltip = Import an older session as an independent project
+
+command-document-project_settings =
+    .title = Project Settings…
+    .tooltip = Choose the main file, engine and bibliography tool

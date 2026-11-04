@@ -1,0 +1,10 @@
+waiting for another window-check run
+output: /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t45-before-final3
+running start-page-dialogs [zh-Hans] ...
+running start-page-dialogs [en] ...
+
+check                         result      seconds
+start-page-dialogs [zh-Hans]  pass           39.1
+start-page-dialogs [en]       pass           38.7
+
+2/2 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t45-before-final3

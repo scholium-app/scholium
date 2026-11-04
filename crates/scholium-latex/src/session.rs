@@ -55,6 +55,12 @@ impl SourceSession {
             documents: BTreeMap::from([(entry.into(), text)]),
         })
     }
+    /// Select the explicit project engine for this derived preview snapshot.
+    /// This overrides the detected engine without changing source bytes, paths or revision.
+    pub fn with_engine(mut self, engine: Engine) -> Self {
+        self.engine = engine;
+        self
+    }
     /// Canonical project root.
     pub fn root(&self) -> &Path {
         &self.root

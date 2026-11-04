@@ -44,6 +44,15 @@ fn context_key(state: &WorkspaceState) -> &'static str {
 }
 
 pub(super) fn show(ui: &mut Ui, state: &mut WorkspaceState) {
+    if state.editor.is_none() {
+        status_text(
+            ui,
+            &command_ui::text(state, "project.start.closed"),
+            None,
+            None,
+        );
+        return;
+    }
     let right_left = ui
         .scope_builder(
             egui::UiBuilder::new()
@@ -74,7 +83,16 @@ fn right(ui: &mut Ui, state: &mut WorkspaceState) -> f32 {
     zoom(ui, state);
     status_separator(ui);
     let hint = command_ui::text(state, "chrome.status.engine_hint");
-    let backend = status_fixed(ui, &backend_label(state), &hint, 0.0);
+    let backend = if state.source_language.is_some() {
+        let meta = Meta::new("document.project_settings", "status", hint.clone());
+        let response = status_button(ui, None, Some(&backend_label(state)), meta);
+        if response.clicked() {
+            command_ui::invoke(&ui.ctx().clone(), state, "document.project_settings");
+        }
+        response
+    } else {
+        status_fixed(ui, &backend_label(state), &hint, 0.0)
+    };
     let narrow = ui.ctx().content_rect().width() < 760.0;
     let count = problem_count(state);
     if count == 0 && narrow {

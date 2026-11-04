@@ -248,8 +248,13 @@ try:
     from project_ui import ProjectApp
     controls = ProjectApp(binary, output, output / "new-project")
     controls.app, controls.log, controls.window, controls.env = app, log_path, window, env
+    wait(lambda s: facts(s)["file_modal"], "new-project modal ready")
+    controls.control("name")
+    controls.type("new-project")
     controls.control("path")
-    controls.type(str(output / "new-project"))
+    controls.key("ctrl+a")
+    controls.type(str(output))
+    controls.control("typst")
     controls.control("submit")
     controls.control("discard")
     s = wait(lambda s: s["current"] and s["raster"] is not None and texts(s) == [""], "new document replaced the old one")
@@ -260,9 +265,9 @@ try:
     chrome.click("file.close", "tab")
     controls.control("discard")
     end = time.monotonic() + 15
-    while 'PROJECT {"closed":true}' not in log_path.read_text() and time.monotonic() < end:
+    while not any(json.loads(line[8:]).get("closed") for line in log_path.read_text().splitlines() if line.startswith("PROJECT ")) and time.monotonic() < end:
         time.sleep(0.1)
-    record("11b-tab-close-discards-and-releases-the-project", 'PROJECT {"closed":true}' in log_path.read_text())
+    record("11b-tab-close-discards-and-releases-the-project", any(json.loads(line[8:]).get("closed") for line in log_path.read_text().splitlines() if line.startswith("PROJECT ")))
 
 finally:
     (output / "summary.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")

@@ -1,0 +1,44 @@
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-latex)
+    Finished `test` profile [unoptimized] target(s) in 1.71s
+     Running unittests src/lib.rs (target/debug/deps/scholium_latex-600deca61b06ebdd)
+
+running 1 test
+test tests::source::explicit_engine_overrides_magic_comment_or_default_without_changing_source ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 39 filtered out; finished in 0.00s
+
+     Running tests/diagnostics.rs (target/debug/deps/diagnostics-11883f37ecd2fbe4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/diagnostics_native.rs (target/debug/deps/diagnostics_native-f2e14e7dca0eaf47)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/native_links.rs (target/debug/deps/native_links-63257b944f0724a6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/real.rs (target/debug/deps/real-e36c719e9612c7e9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/render_native.rs (target/debug/deps/render_native-86e0ac1f3faa594c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/toolchain.rs (target/debug/deps/toolchain-246f1052288b78ec)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s

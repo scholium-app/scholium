@@ -69,6 +69,47 @@ fn engine_directives_mark_non_lua_projects_for_full_compilation() {
 }
 
 #[test]
+fn explicit_engine_overrides_magic_comment_or_default_without_changing_source() {
+    let project = tempfile::tempdir().expect("project");
+    let path = project.path().join("main.tex");
+    for (text, detected) in [
+        ("% !TEX program = pdfLaTeX\n正文", Engine::PdfLatex),
+        ("正文", Engine::LuaLatex),
+    ] {
+        std::fs::write(&path, text).expect("source");
+        let mut session = SourceSession::open(project.path(), "main.tex").expect("session");
+        assert_eq!(session.engine(), detected);
+        session
+            .edit("main.tex", text.len()..text.len(), "草稿")
+            .expect("draft");
+        for engine in [Engine::LuaLatex, Engine::XeLatex, Engine::PdfLatex] {
+            let selected = session.clone().with_engine(engine);
+            assert_eq!(selected.engine(), engine);
+            assert_eq!(
+                selected.preview_mode(),
+                if engine == Engine::LuaLatex {
+                    PreviewMode::Live
+                } else {
+                    PreviewMode::FullCompilation
+                }
+            );
+            assert_eq!(selected.root(), session.root());
+            assert_eq!(selected.entry(), session.entry());
+            assert_eq!(selected.revision(), session.revision());
+            assert_eq!(
+                selected.text("main.tex"),
+                Some(format!("{text}草稿").as_str())
+            );
+        }
+        assert_eq!(session.engine(), detected);
+        assert_eq!(
+            std::fs::read_to_string(&path).expect("source preserved"),
+            text
+        );
+    }
+}
+
+#[test]
 fn lexical_highlights_preserve_utf8_and_escaped_comments() {
     use crate::{TokenKind, highlight};
     let source = "中文 \\alpha{a} $b$ \\% % 注释\ntext";

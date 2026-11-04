@@ -166,6 +166,11 @@ fn the_catalog_has_no_key_that_nothing_uses() {
         ]
         .map(str::to_owned),
     );
+    used.extend(
+        crate::project_files::EXTRA_CATALOG_KEYS
+            .iter()
+            .map(|k| (*k).to_owned()),
+    );
     for key in leaves(Locale::En) {
         let key = dotted(&key);
         assert!(used.contains(&key), "unused catalog key {key}");

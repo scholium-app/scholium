@@ -24,25 +24,7 @@ impl SourceProject {
         let report = ProjectStore::open(handle.root(), OpenPolicy::Full)?;
         let store = report.store;
         let resource = handle.resource()?;
-        let bytes = store.read_source(&resource)?;
-        let base = bytes.as_ref().map(|b| ContentHash::of(b));
-        let draft = store.load_draft(&resource)?;
-        // A completed publication may precede a crash in caller-owned draft cleanup.
-        let published = store.materialized_hash(&resource)?;
-        let (bytes, base, dirty) = match draft {
-            Some(d) => {
-                let draft_hash = ContentHash::of(&d.bytes);
-                let base = if base == Some(draft_hash) && published == base {
-                    base
-                } else {
-                    d.base_hash
-                };
-                (d.bytes, base, true)
-            }
-            None => (bytes.unwrap_or_default(), base, false),
-        };
-        let text = String::from_utf8(bytes)
-            .map_err(|_| StoreError::Corrupt("source is not UTF-8; original bytes preserved"))?;
+        let (text, base, dirty) = read_input(&store, &resource)?;
         Ok(Self {
             handle,
             store,
@@ -54,6 +36,33 @@ impl SourceProject {
     /// Immutable project descriptor for workspace assembly.
     pub fn handle(&self) -> &ProjectHandle {
         &self.handle
+    }
+    /// Atomically publish project settings under the existing project lock.
+    /// Entry switches retain each resource's stable identity and recover its private draft.
+    ///
+    /// # Errors
+    /// Rejects unsafe or cross-language entries, dirty entry switches, external declaration changes,
+    /// invalid source encoding, unfinished materializations and failed durable publication.
+    pub fn update_settings(&mut self, settings: super::ProjectSettings) -> Result<(), StoreError> {
+        let next = self.handle.prepare_settings(settings)?;
+        let changed = next.entry() != self.handle.entry();
+        if changed && (self.dirty || !self.store.recover()?.steps.is_empty()) {
+            return Err(StoreError::RecoveryRequired);
+        }
+        let input = if changed {
+            let resource = next.resource()?;
+            Some(read_input(&self.store, &resource)?)
+        } else {
+            None
+        };
+        self.handle.publish_settings(&next)?;
+        self.handle = next;
+        if let Some((text, base, dirty)) = input {
+            self.text = text;
+            self.base = base;
+            self.dirty = dirty;
+        }
+        Ok(())
     }
     /// Current private input or committed source.
     pub fn text(&self) -> &str {
@@ -134,6 +143,32 @@ impl SourceProject {
         self.store.recover()
     }
 }
+// Opening and selecting an entry share the exact same crash-window baseline rule.
+fn read_input(
+    store: &ProjectStore,
+    resource: &super::Resource,
+) -> Result<(String, Option<ContentHash>, bool), StoreError> {
+    let disk = store.read_source(resource)?;
+    let base = disk.as_ref().map(|bytes| ContentHash::of(bytes));
+    let draft = store.load_draft(resource)?;
+    let published = store.materialized_hash(resource)?;
+    let (bytes, base, dirty) = match draft {
+        Some(draft) => {
+            let hash = ContentHash::of(&draft.bytes);
+            let base = if base == Some(hash) && published == base {
+                base
+            } else {
+                draft.base_hash
+            };
+            (draft.bytes, base, true)
+        }
+        None => (disk.unwrap_or_default(), base, false),
+    };
+    let text = String::from_utf8(bytes)
+        .map_err(|_| StoreError::Corrupt("source is not UTF-8; original bytes preserved"))?;
+    Ok((text, base, dirty))
+}
+
 impl ProjectStore {
     fn materialized_hash(
         &self,

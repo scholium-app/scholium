@@ -24,7 +24,7 @@ mod tooltip;
 
 pub(crate) use button::{IconButton, TextButton, icon_button, tag, text_button};
 pub(crate) use dialog::{DialogButton, dialog, notice};
-pub(crate) use dropdown::{Dropdown, dropdown};
+pub(crate) use dropdown::{Dropdown, dropdown, field_dropdown};
 pub(crate) use form::{button, popover_frame, text_input};
 pub(crate) use menu::{
     BarMenu, MenuItem, bar_menu, button_menu, menu_item, menu_separator, menu_width, submenu_item,

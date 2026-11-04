@@ -3,11 +3,11 @@
 # Command titles and tooltips
 
 command-file-new =
-    .title = 新建
+    .title = 新建项目…
     .tooltip = 新建文档
 
 command-file-open =
-    .title = 打开…
+    .title = 打开文件夹或文件…
     .tooltip = 打开已有文档
 
 command-file-recent =
@@ -488,7 +488,7 @@ math-input-tab-slot = Tab：下个槽位
 project-source-authority = Typst 源码 · 源文件为权威
 project-locked = 项目已由另一个窗口或进程打开，请先关闭该项目。
 project-conflict = 外部已修改
-project-conflict-help = 源文件没有被覆盖。重新载入会丢弃本地草稿；另存为会保留当前输入。
+project-conflict-help = 重新载入会用磁盘内容替换未保存的修改；另存为会把当前内容保存为新项目，原文件不动。
 project-entry-required = 请选择明确的 .tex 或 .typ 主入口文件。
 project-entry-optional = 主入口（可选，项目内相对路径；多入口目录须填写）
 project-open-failed = 项目操作失败
@@ -500,7 +500,7 @@ project-path-new = 新项目文件夹路径（必须尚不存在）
 project-language = 项目语言（创建后固定）
 project-welcome = 请从文件菜单新建或打开项目
 project-migrated-title = 旧会话已迁移
-project-migrated-body = 已创建独立项目。原会话文件完整保留；迁移报告位于项目的 .scholium/migration.json，旧历史不会伪装成新的编辑动作。
+project-migrated-body = 已创建独立项目，原会话完整保留。迁移说明可在项目文件夹中查看。
 project-source-context = 源码权威
 project-import = 迁移旧会话…
 project-import-target = 迁移目标（尚不存在的项目文件夹）
@@ -528,3 +528,75 @@ chrome-status-typ_source = Typst · 尚未生成预览
 
 chrome-toolbar-paragraph_hint = 选择当前段落的正文或标题样式
 chrome-toolbar-overflow_hint = 显示当前窗口放不下的工具栏操作
+
+# Start page and project dialogs
+project-start-description = 科学写作与排版
+project-start-begin = 开始
+project-start-recent = 最近
+project-start-environment = 环境
+project-start-closed = 未打开项目
+project-retry = 重试
+project-locked-title = 项目正在另一个窗口或程序中使用
+project-recent-remove = 从最近列表移除
+project-new-create = 创建
+project-new-name = 名称
+project-new-location = 位置
+project-browse = 浏览…
+project-new-template = 模板
+project-new-article = 空白文档
+project-new-ctex = 中文论文（ctexart）
+project-new-note = 空白笔记
+project-new-latex = LaTeX — 以 .tex 源码为准，同引擎实时预览
+project-new-typst = Typst — 在排版页面上直接编辑
+project-new-preview = 将创建以下文件；引擎可在项目设置中更改。
+project-new-name_error = 请输入一个有效的项目名称，不含路径分隔符。
+project-new-exists = 该文件夹已经存在，请更改名称。
+project-new-location_error = 请选择一个存在且可写的文件夹。
+project-picker-title = 选择文件夹或文件
+project-picker-recent = 最近使用的文件夹
+project-picker-error = 请选择现有文件夹或 .tex / .typ 文件。
+project-settings-entry = 主文件
+project-settings-engine = 引擎
+project-settings-engine_help = LuaLaTeX 按段落实时预览；XeLaTeX 与 pdfLaTeX 使用后台整编。
+project-settings-bibliography = 参考文献工具
+project-settings-language = 项目语言（创建时确定）
+project-settings-auto = 自动（遵循源码或构建配置）
+project-settings-none = 不使用
+project-settings-save_first = 切换主文件前，请先保存或丢弃当前修改。
+project-settings-failed = 项目设置未保存，请检查文件权限或外部修改后重试。
+project-conflict-title = { $file } 已在外部修改 · { $when }
+project-conflict-diff = 查看差异
+project-conflict-refused = 磁盘上的文件已被其他程序修改，为避免覆盖，这次没有保存。
+project-conflict-time_unknown = 修改时间未知
+project-conflict-read_error = 无法读取磁盘文件，当前草稿仍被保留。
+project-environment-tex = TeX 发行版
+project-environment-missing = 未找到
+project-environment-bundled = 随应用安装，完整性校验通过
+project-environment-checking = 正在检测环境…
+project-environment-refresh = 重新检测
+toolchain-executable-unavailable = 无法定位应用程序。
+toolchain-reinstall = 请重新安装 Scholium。
+toolchain-bundle-check-timeout = 实时引擎检查超时。
+toolchain-refresh = 请重新检测。
+toolchain-detection-failed = 环境检测失败。
+toolchain-bundle-missing = 未找到随应用安装的 rtex。
+toolchain-bundle-invalid = rtex 安装包不完整或校验失败。
+toolchain-bundle-pin-mismatch = rtex 版本与应用不匹配。
+toolchain-override-invalid = 开发环境的 rtex 路径无效。
+toolchain-fix-dev-override = 请检查开发环境路径。
+toolchain-tex-missing = 未找到 TeX 发行版。
+toolchain-install-tex = 请安装 TeX Live、MacTeX 或 MiKTeX。
+toolchain-program-unavailable = { $program } 不可用。
+toolchain-install-tex-component = 请安装对应的 TeX 组件。
+toolchain-font-cache-cold = 字体缓存尚未准备。
+toolchain-warm-on-preview = 首次预览时将自动准备。
+toolchain-dev-override = 正在使用开发版实时引擎。
+toolchain-remove-dev-override = 使用正式安装时请移除开发路径设置。
+
+command-file-import =
+    .title = 从旧版本导入…
+    .tooltip = 将旧会话导入为独立项目
+
+command-document-project_settings =
+    .title = 项目设置…
+    .tooltip = 设置主文件、引擎和参考文献工具
