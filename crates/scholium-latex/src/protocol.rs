@@ -109,10 +109,6 @@ pub(crate) struct Engine {
     pub reason: Option<String>,
 }
 #[derive(Deserialize)]
-pub(crate) struct Diagnostic {
-    pub message: String,
-}
-#[derive(Deserialize)]
 pub(crate) struct Span {
     pub range: ByteRange,
 }

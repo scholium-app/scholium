@@ -1,0 +1,193 @@
+[
+  {
+    "name": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "env": {},
+    "exit_code": 0,
+    "seconds": 0.63
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--workspace",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "env": {},
+    "exit_code": 0,
+    "seconds": 0.52
+  },
+  {
+    "name": "test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--workspace"
+    ],
+    "env": {},
+    "exit_code": 0,
+    "seconds": 39.09
+  },
+  {
+    "name": "rustdoc",
+    "command": [
+      "cargo",
+      "doc",
+      "--locked",
+      "--workspace",
+      "--no-deps"
+    ],
+    "env": {
+      "RUSTDOCFLAGS": "-D warnings"
+    },
+    "exit_code": 0,
+    "seconds": 0.27
+  },
+  {
+    "name": "rust-size",
+    "command": [
+      "python3",
+      "scripts/check-rust-size.py"
+    ],
+    "env": {},
+    "exit_code": 0,
+    "seconds": 0.04
+  },
+  {
+    "name": "doc-links",
+    "command": [
+      "python3",
+      "scripts/check-doc-links.py"
+    ],
+    "env": {},
+    "exit_code": 0,
+    "seconds": 0.11
+  },
+  {
+    "name": "ui-strings",
+    "command": [
+      "python3",
+      "scripts/check-ui-strings.py"
+    ],
+    "env": {},
+    "exit_code": 0,
+    "seconds": 0.14
+  },
+  {
+    "name": "layers",
+    "command": [
+      "python3",
+      "scripts/check-layers.py"
+    ],
+    "env": {},
+    "exit_code": 0,
+    "seconds": 0.29
+  },
+  {
+    "name": "deny",
+    "command": [
+      "cargo",
+      "deny",
+      "--locked",
+      "check",
+      "licenses",
+      "bans",
+      "sources"
+    ],
+    "env": {},
+    "exit_code": 0,
+    "seconds": 0.57
+  },
+  {
+    "name": "build",
+    "command": [
+      "cargo",
+      "build",
+      "--locked",
+      "-p",
+      "scholium-app",
+      "-p",
+      "scholium-storage",
+      "--bins"
+    ],
+    "env": {},
+    "exit_code": 0,
+    "seconds": 0.21
+  },
+  {
+    "name": "windows",
+    "command": [
+      "python3",
+      "scripts/window-checks.py",
+      "--locale",
+      "zh-Hans",
+      "en",
+      "--out",
+      "target/t43-window"
+    ],
+    "exit_code": 1,
+    "note": "Initial complete run: 44/54 passed. Ten interrupted by unrelated global Xvfb SIGKILL. Original log retained."
+  },
+  {
+    "name": "windows-recheck",
+    "command": [
+      "python3",
+      "scripts/window-checks.py",
+      "--only",
+      "fraction-at-caret",
+      "parity",
+      "sharp-raster",
+      "backspace-block-merge",
+      "caret-follow",
+      "interaction",
+      "project-latex",
+      "undo-group",
+      "--locale",
+      "zh-Hans",
+      "en",
+      "--out",
+      "target/t43-window-recheck"
+    ],
+    "exit_code": 1,
+    "note": "11/16 passed. Five again interrupted by unrelated global Xvfb SIGKILL. Final protected-server rerun passed all remaining checks; see windows-protected and window-summary.json."
+  },
+  {
+    "name": "windows-protected",
+    "command": [
+      "python3",
+      "scripts/window-checks.py",
+      "--only",
+      "backspace-block-merge",
+      "caret-follow",
+      "fraction-at-caret",
+      "sharp-raster",
+      "--locale",
+      "zh-Hans",
+      "en",
+      "--out",
+      "target/t43-window-protected"
+    ],
+    "env": {
+      "PATH": "task-local byte-identical Xvfb wrapper before original PATH"
+    },
+    "exit_code": 0,
+    "note": "8/8 passed; xvfb-wrapper.txt records binary hash and isolation."
+  },
+  {
+    "name": "windows-final-coverage",
+    "exit_code": 0,
+    "note": "54/54 unique checks have passing evidence across retained runs; see window-summary.json."
+  }
+]

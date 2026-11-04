@@ -1,6 +1,7 @@
 //! Legacy projections and an explicitly versioned local structured candidate.
 //! No shared SDG or collaboration wire schema is defined here.
 
+pub mod diagnostic;
 pub mod layout_identity;
 pub mod structured;
 

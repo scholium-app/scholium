@@ -146,3 +146,15 @@ T42范围内实现和本地验收已完成；后续批次按上述边界推进�
 [本轮窗口输出](evidence/2026-11-03-ui-foundation/status-narrow-windows.log)。
 已刷新 `after/zh-Hans/window-480.png` 与 `after/en/window-480.png` 两张截图；
 逐张目视确认标签完整、窄窗口没有零问题计数。截图清单已更新对应哈希和本轮二进制哈希。
+
+推送修复 `4856098` 前的最后一次fetch发现主线合入诊断流水线（`80722fd`）；
+依共享约定以带sign-off的merge同步主线，无冲突，未手工修改其他执行器的文件。
+同步后再次通过全部十项非窗口门禁，工作区668项测试通过；
+[合并后门禁](evidence/2026-11-03-ui-foundation/status-merged-gates.json)。
+因主线更新了Typst适配及Cargo.lock，另重跑System/Bundled stock对照，各31/31完全一致：
+[System](evidence/2026-11-03-ui-foundation/status-merged-stock-system.json) /
+[Bundled](evidence/2026-11-03-ui-foundation/status-merged-stock-bundled.json)。
+
+主线同步后的完整中英窗口套件56/56一次通过：
+[合并后完整窗口输出](evidence/2026-11-03-ui-foundation/status-merged-windows.log)。
+两张480 px截图已再次由主线同步后的最终二进制刷新，哈希同步更新。
