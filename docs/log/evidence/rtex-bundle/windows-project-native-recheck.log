@@ -1,0 +1,10 @@
+waiting for another window-check run
+output: /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-window-recheck
+running project-native [zh-Hans] ...
+running project-native [en] ...
+
+check                     result      seconds
+project-native [zh-Hans]  pass            7.5
+project-native [en]       pass            7.5
+
+2/2 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-window-recheck

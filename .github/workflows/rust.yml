@@ -35,6 +35,7 @@ jobs:
       - run: cargo deny --locked check licenses bans sources
       - name: Repository gates
         run: |
+          python3 scripts/test-bundle-rtex.py
           python3 scripts/check-layers.py
           python3 scripts/check-rust-size.py
           python3 scripts/check-ui-strings.py

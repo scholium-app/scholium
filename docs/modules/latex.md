@@ -26,6 +26,7 @@ src/
 ├── live.rs         公共异步会话与有界事件订阅
 ├── supervisor.rs   心跳、重启、文档重同步与故障恢复
 ├── mailbox.rs      有界事件合并、布局重取标记与生命周期背压
+├── toolchain/      bundle 发现/校验、后台状态与版本探测
 ├── transport.rs    仅经 build 沙箱启动与能力探测
 ├── protocol.rs     私有、有界 JSON-lines 适配
 ├── event.rs        Scholium 自有事件（无 rtex 类型）
@@ -175,6 +176,45 @@ XeLaTeX 使用 `-no-pdf` 输出 XDV，再显式执行 xdvipdfmx，避免 shell�
 `highlight` 返回 UTF-8 byte ranges 与控制序列、注释、数学切换、花括号、普通文本类别；不展开宏或声称 CST 语义。
 绘制边界与回退裁决见 [ADR 0052](../adr/ADR-0052-latex-view-workbench.md)。
 
+## 随应用打包与工具链状态
+
+`toolchain::discover().await` 在 blocking worker 中寻找并校验与编译期 PIN 匹配的完整 bundle，返回
+`RtexToolchain` 或 `Issue`；app 的 LaTeX worker 使用此入口，用户无需设置 rtex 路径。布局、manifest 与许可见
+[ADR 0043 的打包修订](../adr/ADR-0043-rtex-live-preview.md#修订2026-11-03随应用打包)。
+开发先运行 `python3 scripts/bundle-rtex.py`，输出默认是 `target/rtex-bundle/`；发现依据可执行文件，不依据 CWD。
+
+`ToolchainDetector::new(DetectionConfig)` 立即启动专用后台线程；`cached()` 只读上次不可变 `Arc<ToolchainStatus>`，
+首次检测前为 None；`refresh()` 合并待处理请求，重检期间保留旧结果，完成后原子替换。线程不包含 UI 对象；
+宿主在关闭时 drop detector，活动检测结束后退出。bundle 检查等待最多 3 秒，六个版本探测并行且每个最多 2 秒，
+每路 stdout/stderr 最多 16 KiB，整个检测最多等待 6 秒；文件系统查询也在线程池中执行，避免阻塞总 deadline。
+本地版本探测不编译文档、不预热字体、不下载资源。超时返回可重检问题。
+路径查找仅使用捕获的 PATH 中绝对目录，忽略相对路径；`kpsewhich --version` 识别 kpathsea/MiKTeX，结合引擎输出识别 TeX Live/MacTeX/MiKTeX，
+版本保留发行版行或首行，最多 512 字符。检测状态不保证当前 Linux 固定 `/usr/bin` 沙箱 profile 支持自定义安装位置。
+
+`ToolchainStatus` 包含：bundle 的 present/valid/commit/version/directory；是否启用开发覆盖；TeX 发行版 found/version/
+kpsewhich；lualatex、xelatex、pdflatex、biber、bibtex 的路径和版本；build 受信 marker 的 font_cache_warm；issues。
+未响应的工具保留已找到的路径，version 为 None。字体冷缓存是可执行提示，不等于错误，预览时自动受信预热。
+`DetectionConfig::from_environment()` 捕获真实配置；`for_executable()` 为无全局环境修改的测试/宿主注入入口。
+`cargo run --locked -p scholium-latex --example toolchain-status` 可输出同一 API 的 JSON，便于诊断。
+
+所有问题及动作均为 `Message { id, arguments }`，由 app 本地化；原始版本、路径与工具名仅作为数据。
+稳定键及含义：
+
+| message id（前缀 `toolchain.`） | action id（同前缀） | 含义/参数 |
+|---|---|---|
+| bundle-missing / bundle-invalid | reinstall | rtex 包缺失/损坏，重新安装应用；开发环境重新打包 |
+| bundle-pin-mismatch | reinstall | 包与应用 PIN 不匹配，expected/actual 为 commit |
+| bundle-check-timeout | refresh | 包校验超时，重新检测 |
+| executable-unavailable | reinstall | 无法定位应用可执行文件 |
+| detection-failed | refresh | 后台检测失败，重新检测 |
+| tex-missing | install-tex | 未发现发行版，安装 TeX Live / MacTeX / MiKTeX 并检查 PATH |
+| program-unavailable | install-tex-component | 工具缺失或版本命令失败/超时，program 为工具名 |
+| font-cache-cold | warm-on-preview | 字体缓存尚未预热，首次预览自动准备 |
+| dev-override | remove-dev-override | 已启用仅供测试/开发的路径覆盖 |
+| override-invalid | fix-dev-override | 开发覆盖不完整或对应文件缺失 |
+
+CI 的假 bundle/假版本程序测试不需要 TeX。常规窗口检查显式使用不存在的开发覆盖来稳定验证不可用状态；
+本机 `SCHOLIUM_LATEX_NATIVE_WINDOW=1` 的额外真实窗口验收使用正常发现路径。新 UI 消费者负责把上述消息键加入其目录。
 
 ## 统一编译诊断
 

@@ -28,3 +28,9 @@ pub enum BuildError {
     #[error("tool failed: {0}")]
     Tool(String),
 }
+
+/// Whether the trusted, atomically published font cache has the current warm marker.
+/// This performs no compilation and never creates or changes a cache.
+pub fn font_cache_is_warm(root: &std::path::Path) -> bool {
+    root.join("ready").join(cache::CACHE_VERSION).is_file()
+}

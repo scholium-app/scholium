@@ -1,0 +1,54 @@
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-latex)
+    Finished `test` profile [unoptimized] target(s) in 4.18s
+     Running unittests src/lib.rs (target/debug/deps/scholium_latex-018c1145deb82668)
+
+running 37 tests
+test tests::full::full_snapshot_rejects_symlinks_and_resource_budget_without_modifying_source ... ok
+test tests::mailbox::lifecycle_backpressure_preserves_every_state_and_terminal_reason ... ok
+test tests::mailbox::diagnostic_and_location_eviction_is_explicit ... ok
+test tests::source::lexical_highlights_preserve_utf8_and_escaped_comments ... ok
+test tests::source::engine_directives_mark_non_lua_projects_for_full_compilation ... ok
+test tests::source::edits_reject_invalid_utf8_ranges_and_non_normal_paths ... ok
+test tests::source::symlink_escapes_are_rejected_on_open_load_and_after_path_replacement ... ok
+test tests::mailbox::superseded_previews_merge_and_distinct_overflow_is_explicit_and_bounded ... ok
+test toolchain::bundle::tests::changed_binary_support_missing_licenses_and_symlinks_are_rejected ... ok
+test toolchain::bundle::tests::manifest_traversal_and_missing_manifest_are_rejected ... ok
+test toolchain::bundle::tests::partial_development_override_cannot_silently_fall_back ... ok
+test toolchain::bundle::tests::installed_and_cargo_layouts_find_a_verified_bundle_without_env ... ok
+test toolchain::probe::tests::kpathsea_only_version_finds_tex_live_and_uses_engine_distribution_version ... ok
+test view::tests::coalesced_layout_retains_unchanged_page_payloads ... ok
+test view::tests::display_list_matches_independent_reference_png_with_e4_threshold ... ok
+test view::tests::excessive_page_and_pdf_dimensions_fail_before_allocation ... ok
+test view::tests::math_boundaries_are_metadata_but_unknown_drawing_requires_pdf ... ok
+test view::tests::paragraph_replaces_only_owned_column_and_failed_update_is_transactional ... ok
+test tests::supervision::fake_protocol_drawing_reaches_page_pixels_and_live_replacement ... ok
+test tests::supervision::paragraph_updates_include_host_monotonic_edit_latency ... ok
+test tests::supervision::malformed_messages_become_diagnostics_and_unknown_fields_are_tolerated ... ok
+test tests::supervision::upstream_pass_timeout_is_failed_and_does_not_trigger_a_host_compile_watchdog ... ok
+test tests::supervision::invalid_edits_never_reach_the_worker ... ok
+test tests::supervision::malformed_acknowledgements_never_mislabel_later_revisions ... ok
+test tests::supervision::location_queries_expose_validated_source_byte_ranges ... ok
+test tests::supervision::upstream_timeout_flags_are_probed_and_missing_capabilities_are_diagnostic ... ok
+test tests::supervision::rapid_repeated_failures_still_exhaust_restart_budget ... ok
+test tests::supervision::restarting_and_failed_events_request_layout_for_lost_inflight_updates ... ok
+test tests::supervision::startup_failures_are_bounded_and_reported ... ok
+test tests::supervision::overlong_and_total_output_exhaustion_fail_closed_without_restarting ... ok
+test tests::supervision::evicted_distinct_paragraphs_request_layout_without_losing_engine_or_source ... ok
+test tests::supervision::closing_stderr_does_not_restart_a_healthy_protocol_session ... ok
+test tests::supervision::paused_consumer_does_not_fail_preview_and_catches_up_to_latest_revision ... ok
+test tests::supervision::missing_preamble_package_fails_once_without_a_host_restart_loop ... ok
+test tests::supervision::killed_or_hung_serve_restarts_and_resynchronizes_unsaved_documents ... ok
+test tests::supervision::healthy_period_restores_restart_budget_for_spaced_failures ... ok
+test toolchain::probe::tests::hanging_and_excess_output_probes_are_bounded_and_versions_are_reported ... ok
+
+test result: ok. 37 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.04s
+
+     Running tests/toolchain.rs (target/debug/deps/toolchain-0e1b9471fabdc8c4)
+
+running 3 tests
+test installed_manifest_mismatch_is_reported_without_launching_binary ... ok
+test missing_bundle_and_tex_are_localizable_and_refreshable_without_tex ... ok
+test refresh_replaces_cached_snapshot_and_observes_font_warm_state ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

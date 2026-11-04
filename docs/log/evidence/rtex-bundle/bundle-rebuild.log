@@ -1,0 +1,9 @@
+HEAD is now at 531e2c6 Merge pull request #36 from ACG-j/serve-timeouts
+    Finished `release` profile [optimized + debuginfo] target(s) in 0.16s
+{
+  "bundle": "/home/ation_ciger/Projects/Mogan/scholium-wt3/target/rtex-bundle",
+  "commit": "531e2c6b32a09d33be58f6be1301fe8f793411cd",
+  "version": "rtex 0.0.6",
+  "binary_sha256": "a46184931e71cd0e95babd924b6fa452e78708dfafbfeb3cc01fc0441d7088ca",
+  "files": 278
+}

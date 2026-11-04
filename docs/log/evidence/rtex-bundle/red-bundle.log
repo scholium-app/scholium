@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/scripts/test-bundle-rtex.py", line 11, in <module>
+    spec.loader.exec_module(bundle)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 896, in get_code
+  File "<frozen importlib._bootstrap_external>", line 954, in get_data
+FileNotFoundError: [Errno 2] No such file or directory: '/home/ation_ciger/Projects/Mogan/scholium-wt3/scripts/bundle-rtex.py'

@@ -1,0 +1,119 @@
+waiting for another window-check run
+output: /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated
+running a4-surface [zh-Hans] ...
+--- a4-surface [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/a4-surface.log
+output directory must be empty
+
+running backspace-block-merge [zh-Hans] ...
+running caret-follow [zh-Hans] ...
+--- caret-follow [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/caret-follow.log
+output directory must be empty
+
+running chrome [zh-Hans] ...
+--- chrome [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/chrome.log
+output directory must be empty
+
+running default-launch [zh-Hans] ...
+--- default-launch [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/default-launch.log
+output directory must be empty
+
+running diagnostics [zh-Hans] ...
+--- diagnostics [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/diagnostics.log
+output directory must be empty
+
+running display-formula [zh-Hans] ...
+--- display-formula [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/display-formula.log
+output directory must be empty
+
+running fraction-at-caret [zh-Hans] ...
+--- fraction-at-caret [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/fraction-at-caret.log
+FAIL fraction-at-caret at input 4: {'command': 'Fraction', 'surface': 'focus', 'expected': {'snapshot': {'blocks': [{'kind': 'Paragraph', 'content': [{'body': {'kind': 'text', 'text': '', 'style': 'plain'}}, {'body': {'kind': 'math', 'root': {'body': {'kind': 'row', 'children': [{'body': {'kind': 'text', 'text': 'ab'}}, {'body': {'kind': 'fraction', 'numerator': {'body': {'kind': 'hole'}}, 'denominator': {'body': {'kind': 'hole'}}}}, {'body': {'kind': 'text', 'text': 'c'}}]}}}}, {'body': {'kind': 'text', 'text': '', 'style': 'plain'}}]}]}, 'cursor': {'path': 'blocks/0/content/1/body/root/body/children/1/body/numerator', 'byte': 0, 'affinity': 'Downstream'}, 'anchor': None, 'undo_depth': 3}}: app exited: 1; see /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/fraction-at-caret/fraction-at-caret/app.log
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/fraction-at-caret-check.py", line 37, in <module>
+    main()
+    ~~~~^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/fraction-at-caret-check.py", line 32, in main
+    parity.scenario(binary, ROOT / "scenarios" / f"{name}.json", output / name, on_step=check)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/parity-check.py", line 252, in scenario
+    state = replay.input(event, state)
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/parity-check.py", line 205, in input
+    return self.ready()
+           ~~~~~~~~~~^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/parity-check.py", line 82, in ready
+    state = self.state()
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/parity-check.py", line 74, in state
+    raise RuntimeError(f"app exited: {self.proc.returncode}; see {self.log}")
+RuntimeError: app exited: 1; see /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/fraction-at-caret/fraction-at-caret/app.log
+/usr/bin/xvfb-run: line 181: 293833 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (293833) - No such process
+
+running ime-inline [zh-Hans] ...
+--- ime-inline [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/ime-inline.log
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/ime-inline-check.py", line 17, in <module>
+    assert not any(output.iterdir()), "output directory must be empty"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: output directory must be empty
+
+running inline-style [zh-Hans] ...
+--- inline-style [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/inline-style.log
+output directory must be empty
+
+running interaction [zh-Hans] ...
+--- interaction [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/interaction.log
+output directory must be empty
+
+running latex-view [zh-Hans] ...
+--- latex-view [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/latex-view.log
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/latex-view-check.py", line 20, in <module>
+    assert not any(out.iterdir()), "output must be empty"
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: output must be empty
+
+running math-attach [zh-Hans] ...
+--- math-attach [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/math-attach.log
+output directory must be empty
+
+running math-edge-caret [zh-Hans] ...
+running math-enter [zh-Hans] ...
+--- math-enter [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/math-enter.log
+output directory must be empty
+
+running math-input [zh-Hans] ...
+--- math-input [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/math-input.log
+PASS math input structures
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/math-input-check.py", line 120, in <module>
+    main()
+    ~~~~^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/math-input-check.py", line 116, in main
+    run_case(binary, output, name, check)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/math-input-check.py", line 33, in run_case
+    check(replay, act)
+    ~~~~~^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/math-input-check.py", line 72, in composition
+    state = act("type", "--clearmodifiers", "--delay", "40", "<=")
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/math-input-check.py", line 26, in act
+    replay.xdo(*args)
+    ~~~~~~~~~~^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/parity-check.py", line 69, in xdo
+    return subprocess.run(["xdotool", *map(str, args)], env=self.env, check=True,
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                          capture_output=True, text=True, timeout=TIMEOUT).stdout.strip()
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['xdotool', 'type', '--clearmodifiers', '--delay', '40', '<=']' returned non-zero exit status 1.
+/usr/bin/xvfb-run: line 181: 294498 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (294498) - No such process
+
+running math-root-delimiter [zh-Hans] ...
+running native [zh-Hans] ...
+--- native [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt3/target/t44-windows-isolated/zh-Hans/native.log
+output directory must be empty
+
+running parity [zh-Hans] ...

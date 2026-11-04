@@ -1,0 +1,7 @@
+{
+  "cause": "Unrelated concurrent task scans /proc comm == Xvfb and sends SIGKILL to every match; confirmed in systemd journal. External task left untouched.",
+  "system_binary_sha256": "6584e6cf04ca1357cb50fd2feb1ad449b5f45dfe6cc61d2bbf006f752df592de",
+  "local_binary_sha256": "6584e6cf04ca1357cb50fd2feb1ad449b5f45dfe6cc61d2bbf006f752df592de",
+  "machine_lock_retained": true,
+  "checks_unchanged": true
+}

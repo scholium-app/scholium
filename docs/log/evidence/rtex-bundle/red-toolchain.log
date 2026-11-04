@@ -1,0 +1,9 @@
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt3/crates/scholium-latex)
+error[E0432]: unresolved import `scholium_latex::toolchain`
+ --> crates/scholium-latex/tests/toolchain.rs:1:21
+  |
+1 | use scholium_latex::toolchain::{DetectionConfig, ToolchainDetector};
+  |                     ^^^^^^^^^ could not find `toolchain` in `scholium_latex`
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `scholium-latex` (test "toolchain") due to 1 previous error

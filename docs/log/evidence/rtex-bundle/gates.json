@@ -1,0 +1,141 @@
+[
+  {
+    "name": "fmt",
+    "argv": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 1.7338958189993718
+  },
+  {
+    "name": "clippy",
+    "argv": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--workspace",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "seconds": 18.336651769999662
+  },
+  {
+    "name": "test",
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--workspace"
+    ],
+    "exit": 0,
+    "seconds": 58.76658512600079
+  },
+  {
+    "name": "doc",
+    "argv": [
+      "cargo",
+      "doc",
+      "--locked",
+      "--workspace",
+      "--no-deps"
+    ],
+    "exit": 0,
+    "seconds": 18.459495873999913
+  },
+  {
+    "name": "rust-size",
+    "argv": [
+      "python3",
+      "scripts/check-rust-size.py"
+    ],
+    "exit": 0,
+    "seconds": 0.13083665399972233
+  },
+  {
+    "name": "doc-links",
+    "argv": [
+      "python3",
+      "scripts/check-doc-links.py"
+    ],
+    "exit": 0,
+    "seconds": 0.8339026689991442
+  },
+  {
+    "name": "ui-strings",
+    "argv": [
+      "python3",
+      "scripts/check-ui-strings.py"
+    ],
+    "exit": 0,
+    "seconds": 0.4006012580011884
+  },
+  {
+    "name": "layers",
+    "argv": [
+      "python3",
+      "scripts/check-layers.py"
+    ],
+    "exit": 0,
+    "seconds": 1.0268695270005992
+  },
+  {
+    "name": "deny",
+    "argv": [
+      "cargo",
+      "deny",
+      "--locked",
+      "check",
+      "licenses",
+      "bans",
+      "sources"
+    ],
+    "exit": 0,
+    "seconds": 1.5374812460013345
+  },
+  {
+    "name": "build",
+    "argv": [
+      "cargo",
+      "build",
+      "--locked",
+      "-p",
+      "scholium-app",
+      "-p",
+      "scholium-storage",
+      "--bins"
+    ],
+    "exit": 0,
+    "seconds": 30.364275463000013
+  },
+  {
+    "name": "bundle-tests",
+    "argv": [
+      "python3",
+      "scripts/test-bundle-rtex.py"
+    ],
+    "exit": 0,
+    "seconds": 0.3910373819999222
+  },
+  {
+    "name": "windows-integrated",
+    "argv": [
+      "python3",
+      "scripts/window-checks.py",
+      "--locale",
+      "zh-Hans",
+      "en",
+      "--out",
+      "target/t44-windows-integrated"
+    ],
+    "exit": 0,
+    "result": "54/54",
+    "environment": "No SCHOLIUM_RTEX_* overrides; same-byte local Xvfb copy under different comm plus -noreset; machine lock unchanged."
+  }
+]

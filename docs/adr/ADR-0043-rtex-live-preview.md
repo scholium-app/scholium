@@ -103,6 +103,37 @@ E8 仍观察到在途段落更新可能丢失：挂起的 live engine 由 rtex �
 解析，读文件及实时编辑正常，经链接写回项目仍被拒绝；无需改沙箱 profile。
 后台 pass 超时报告 `Failed`，修复源码后可恢复。证据见 [T38 开发日志](../log/2026-11-03-rtex-pin-timeouts.md)。
 
+## 修订（2026-11-03，随应用打包）
+
+按用户决定，rtex 随应用分发，TeX Live 仍由用户安装（E1 的独立子进程边界不变）。安装器必须保留完整
+`rtex-bundle/`：`bin/rtex`、`tex/`、`licenses/`、`manifest.json`，不分发 TeX Live 的 GPL 二进制。
+Linux 推荐安装在可执行文件相对的 `../lib/scholium/rtex-bundle/`；便携布局放在可执行文件旁；macOS 资源布局为
+`Contents/Resources/rtex-bundle/`（仅定义资源位置，不表示 macOS 沙箱已验收）。开发构建在 `target/rtex-bundle/`，
+`cargo run` 的 debug/release 可执行文件按自身位置发现它，不依赖编译机源码路径或当前工作目录。
+按“旁边 → Linux lib → macOS Resources → 开发目录”的顺序选择第一个存在的目录；发现坏包时不静默跳到另一份。
+
+`scripts/bundle-rtex.py` 在仓库外的串行缓存中检出 PIN 的完整 SHA，以 Rust 1.99.0、release 和 Cargo.lock 构建。
+复用 `rtex-pin.py` 中与 SHA/lock hash 精确匹配的 E1 许可/来源结果，不用打包替代 E2/E8 评审。
+每次请求 Cargo 检查增量指纹，再验证检出 commit、复制前后 SHA-256；manifest schema 1 记录 repository、commit、
+CLI version、binary SHA-256、全部分发文件 hash、Cargo.lock hash、rustc/host/profile 与 E1 证据 hash。
+锁定依赖、源码及工具链使同宿主重建可复现；不承诺跨操作系统/编译器的二进制逐字节一致。
+二进制和 TeX/Lua 支持树必须来自同一个 checkout。许可证目录含上游 MIT 全文及该 host 的 normal/build 依赖
+license/notice/copyright/authors 文件与依赖索引（包括构建依赖，宁可多保留）；缺许可文本则不发布。
+完整 stage 校验后才替换目标，替换失败恢复旧目录；中断遗留 `.previous` 时明确要求恢复，不覆盖它。
+
+运行时在后台校验 manifest schema、repository/PIN commit、必需文件、全部声明文件的 SHA-256 及二进制执行权限，
+拒绝路径逃逸、symlink 文件/子目录、非正规文件及超预算包（manifest 1 MiB、4096 项、文件总计 256 MiB）。
+缺失、损坏或不匹配返回工具链问题，不 panic、不执行坏包。状态检测不运行 rtex，只对用户已安装的
+`kpsewhich` 与各引擎执行有界 `--version`；“bundle 有效”不代表沙箱/cgroup 已就绪，真正预览仍须通过 build 探针。
+
+`SCHOLIUM_RTEX_BIN` / `SCHOLIUM_RTEX_TEXDIR` 只用于测试/开发，必须成对提供，显式绕过 bundle 的 PIN/hash 检查；
+状态单独标出 override，不把它认证成有效 bundle。`SCHOLIUM_RTEX_FONT_CACHE` 同为测试/开发缓存覆盖。
+普通用户不设置这些变量。字体缓存仍由 build 在固定受信源码上预热，不随包分发用户缓存。
+
+更新顺序：`rtex-pin.py <SHA>` → 人工回归/评审并提交 PIN → `bundle-rtex.py --review <run.json>` → 将完整目录纳入
+安装包 → 无 override 的启动/预览验收。每次移动 PIN 都重建 bundle 与应用（应用嵌入 PIN 供校验），不能只换二进制。
+构建/安装操作和状态 API 合约见 [build](../modules/build.md) 与 [latex](../modules/latex.md)。
+
 ## 后果
 
 正面：LuaLaTeX 项目获得毫秒级、与最终构建逐字形一致的实时预览；中文 ctex 与 luatexja 文档可走实时路径。
