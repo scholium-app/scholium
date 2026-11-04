@@ -99,8 +99,12 @@ def native():
             frame = latest(app, "DIALOG_FRAME ")
             x0, y0, x1, y1 = frame["rect"]
             assert x0 >= 15 and x1 <= 465 and y0 >= 0 and y1 <= 480, frame
+            app.control("name")
+            app.type("Created with Enter")
             app.control("path")
-            app.type(str(output / "Created with Enter"))
+            app.key("ctrl+a")
+            app.type(str(output))
+            app.control("typst")
             app.key("Return")
             app.state(lambda s: facts(s)["tab_title"] == "Created with Enter" and not facts(s)["file_modal"])
             assert (output / "Created with Enter").exists()
@@ -134,7 +138,8 @@ def source(kind):
             state = app.source(lambda s: "chrome" in s)
             chrome = Chrome(lambda: app.source(lambda s: "chrome" in s), app.xdo, app.window)
             controls = state["controls"]
-            assert not any(k.startswith(("format.", "insert.", "document.")) for k in controls)
+            assert not any(k.startswith(("format.", "insert.")) for k in controls)
+            assert {k for k in controls if k.startswith("document.")} == {"document.project_settings"}
             assert "ui.menu.format" not in controls and "ui.menu.insert" not in controls
             assert facts(state)["tab_title"] == root.name
             assert facts(state)["kernel"] == ("TypstSource" if kind == "typ" else "Latex")

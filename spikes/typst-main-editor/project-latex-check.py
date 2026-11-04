@@ -43,6 +43,18 @@ def open_path(path):
     app.control("submit")
 
 
+def create_project(path, language="latex"):
+    app.key("ctrl+n")
+    app.control("name")
+    app.key("ctrl+a")
+    app.type(path.name)
+    app.control("path")
+    app.key("ctrl+a")
+    app.type(str(path.parent))
+    app.control(language)
+    app.control("submit")
+
+
 try:
     app.start("open-file")
     assert app.source(lambda s: s["language"] == "Latex" and s["entry"] == "paper.tex")["text"] == original
@@ -76,14 +88,14 @@ try:
     app.capture("external-conflict")
     app.control("reload")
     app.source(lambda s: s["text"] == "external writer" and not s["dirty"])
-    app.create(output / "new-latex", "latex")
+    create_project(output / "new-latex")
     workbench("main.tex")
     app.source(lambda s: s["entry"] == "main.tex")
     app.capture("new-workbench")
     open_path(entry)
     app.source(lambda s: s["entry"] == "paper.tex" and s["text"] == "external writer")
     workbench()
-    app.create(output / "another-latex", "latex")
+    create_project(output / "another-latex")
     workbench("main.tex")
     open_path(root)
     app.source(lambda s: s["entry"] == "paper.tex" and s["text"] == "external writer")

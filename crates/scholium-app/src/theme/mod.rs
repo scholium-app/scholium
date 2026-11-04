@@ -178,6 +178,8 @@ impl Tokens {
     pub(crate) const GAP_BUTTON: f32 = 2.0;
     pub(crate) const PAD_MENU: f32 = 4.0;
     pub(crate) const PAD_BAR: f32 = 8.0;
+    pub(crate) const GAP_FIELD_GROUP: f32 = 14.0;
+    pub(crate) const GAP_FIELD_LABEL: f32 = 5.0;
     pub(crate) const GAP_STATUS: f32 = 12.0;
     pub(crate) const ALIGN_LEFT: f32 = 16.0;
     pub(crate) const PAGE_TOP: f32 = 24.0;

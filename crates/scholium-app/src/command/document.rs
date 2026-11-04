@@ -1,11 +1,18 @@
-//! 文档 menu: page and style settings, none of which is editable yet.
+//! 文档 menu: source-project settings and future page/style commands.
 use super::{
     avail,
-    spec::{CommandSpec, IconId},
+    spec::{Action, CommandSpec, IconId, Kernel},
 };
 
 pub(super) fn specs() -> Vec<CommandSpec> {
     vec![
+        command! {
+            "document.project_settings",
+            kernels: &[Kernel::Latex, Kernel::TypstSource],
+            menu: menu!(Document, 0, 0),
+            availability: avail::save,
+            action: Action::View(crate::commands::ViewCommand::FileDialog(crate::project_files::FileDialog::Settings)),
+        },
         command! {
             "document.style_template",
             menu: menu!(Document, 0, 0),

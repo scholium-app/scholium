@@ -1,7 +1,13 @@
 //! File commands, language selection, lock/conflict UI, and project switching policy.
 mod confirmation;
+mod conflict;
 mod dialog;
+mod environment;
+mod new_project;
+mod picker;
 mod recent;
+mod settings;
+mod start_page;
 use crate::{
     i18n,
     project_workspace::{self, ProjectWorkspace, audit_rect},
@@ -18,10 +24,12 @@ pub(crate) enum FileDialog {
     Recent,
     SaveAs,
     Import,
+    Settings,
+    Entry,
 }
 #[derive(Debug)]
 enum Operation {
-    Create(PathBuf, ProjectLanguage),
+    Create(PathBuf, ProjectLanguage, bool),
     Open(PathBuf, Option<PathBuf>),
     Close(bool),
     Import(PathBuf, PathBuf),
@@ -31,7 +39,13 @@ pub(crate) struct ProjectFiles {
     dialog: Option<FileDialog>,
     path: String,
     entry: String,
-    latex: bool,
+    new: new_project::NewProject,
+    picker: Option<(picker::Purpose, Box<dyn picker::FilePicker>)>,
+    settings: Option<scholium_storage::project::ProjectSettings>,
+    settings_error: Option<String>,
+    locked: Option<PathBuf>,
+    diff: bool,
+    environment: environment::Environment,
     pending: Option<Operation>,
     recent: Vec<PathBuf>,
     conflict: bool,
@@ -62,12 +76,25 @@ impl ProjectFiles {
     ) {
         if std::mem::take(&mut state.new_requested) {
             self.dialog = Some(FileDialog::New);
-            self.path.clear();
+            self.new = new_project::NewProject::default();
         }
         if let Some(dialog) = state.file_dialog.take() {
             self.dialog = Some(dialog);
             self.path.clear();
             self.entry.clear();
+            match dialog {
+                FileDialog::Open => {
+                    self.dialog = None;
+                    self.picker = Some((
+                        picker::Purpose::Open,
+                        Box::new(picker::FallbackPicker::open()),
+                    ));
+                }
+                FileDialog::Settings => {
+                    self.settings = project.as_ref().map(|p| p.handle().settings())
+                }
+                _ => {}
+            }
         }
         if std::mem::take(&mut state.close_requested) {
             self.request(Operation::Close(false), ctx, state, project);
@@ -82,9 +109,17 @@ impl ProjectFiles {
                 self.request(Operation::Close(window_close), ctx, state, project);
             }
         }
-        if let Some(dialog) = self.dialog {
-            self.chooser(ctx, state, project, dialog);
+        if self.picker.is_none()
+            && let Some(dialog) = self.dialog
+        {
+            match dialog {
+                FileDialog::New => self.new_dialog(ctx, state, project),
+                FileDialog::Settings => self.settings_dialog(ctx, state, project),
+                _ => self.chooser(ctx, state, project, dialog),
+            }
         }
+        self.picker_dialog(ctx, state, project);
+        self.lock_dialog(ctx, state, project);
         if self.pending.is_some() {
             self.confirm(ctx, state, project);
         }
@@ -113,7 +148,9 @@ impl ProjectFiles {
         {
             self.error = None;
         }
-        state.file_modal = self.dialog.is_some()
+        state.file_modal = (self.locked.is_some() && project.is_some())
+            || self.dialog.is_some()
+            || self.picker.is_some()
             || self.pending.is_some()
             || self.conflict
             || self.error.is_some()
@@ -160,9 +197,15 @@ impl ProjectFiles {
         state: &mut WorkspaceState,
         project: &mut Option<ProjectWorkspace>,
     ) {
+        let attempted = match &op {
+            Operation::Open(path, _) => Some(path.clone()),
+            _ => None,
+        };
         let result = match op {
-            Operation::Create(path, language) => ProjectHandle::create(&path, language)
-                .map_err(|e| project_workspace::message(&e, state)),
+            Operation::Create(path, language, chinese) => {
+                dialog::create_project(&path, language, chinese)
+                    .map_err(|e| project_workspace::message(&e, state))
+            }
             Operation::Open(path, entry) => ProjectHandle::open(&path, entry.as_deref())
                 .map_err(|e| project_workspace::message(&e, state)),
             Operation::Import(source, target) => {
@@ -196,6 +239,7 @@ impl ProjectFiles {
         match result {
             Ok(Some(next)) => {
                 *project = Some(next);
+                self.locked = None;
                 state.storage_error = None;
                 state.edit_error = None;
                 state.composition = None;
@@ -212,7 +256,11 @@ impl ProjectFiles {
             Ok(None) => {}
             Err(error) => {
                 state.storage_error = Some(error.clone());
-                self.error = Some(error);
+                if error == i18n::text(state.locale.resolve(), "project.locked") {
+                    self.locked = attempted;
+                } else {
+                    self.error = Some(error);
+                }
             }
         }
     }
@@ -246,3 +294,80 @@ fn p_is_source(project: &Option<ProjectWorkspace>) -> bool {
         .as_ref()
         .is_some_and(|p| !matches!(p, ProjectWorkspace::Typst { .. }))
 }
+
+#[cfg(test)]
+mod model_tests;
+
+#[cfg(test)]
+pub(crate) const EXTRA_CATALOG_KEYS: &[&str] = &[
+    "project.new.title",
+    "project.settings.title",
+    "project.conflict.today",
+    "project.conflict.yesterday",
+    "project.environment.rtex",
+    "project.environment.separator",
+    "project.environment.invalid",
+    "project.environment.fonts_ready",
+    "project.start.description",
+    "project.start.begin",
+    "project.start.recent",
+    "project.start.environment",
+    "project.start.closed",
+    "project.retry",
+    "project.locked.title",
+    "project.recent.remove",
+    "project.new.create",
+    "project.new.name",
+    "project.new.location",
+    "project.browse",
+    "project.new.template",
+    "project.new.article",
+    "project.new.ctex",
+    "project.new.note",
+    "project.new.latex",
+    "project.new.typst",
+    "project.new.preview",
+    "project.new.name_error",
+    "project.new.exists",
+    "project.new.location_error",
+    "project.picker.title",
+    "project.picker.recent",
+    "project.picker.error",
+    "project.settings.entry",
+    "project.settings.engine",
+    "project.settings.engine_help",
+    "project.settings.bibliography",
+    "project.settings.language",
+    "project.settings.auto",
+    "project.settings.none",
+    "project.settings.save_first",
+    "project.settings.failed",
+    "project.conflict.title",
+    "project.conflict.diff",
+    "project.conflict.refused",
+    "project.conflict.time_unknown",
+    "project.conflict.read_error",
+    "project.environment.tex",
+    "project.environment.missing",
+    "project.environment.bundled",
+    "project.environment.checking",
+    "project.environment.refresh",
+    "toolchain.executable.unavailable",
+    "toolchain.reinstall",
+    "toolchain.bundle.check.timeout",
+    "toolchain.refresh",
+    "toolchain.detection.failed",
+    "toolchain.bundle.missing",
+    "toolchain.bundle.invalid",
+    "toolchain.bundle.pin.mismatch",
+    "toolchain.override.invalid",
+    "toolchain.fix.dev.override",
+    "toolchain.tex.missing",
+    "toolchain.install.tex",
+    "toolchain.program.unavailable",
+    "toolchain.install.tex.component",
+    "toolchain.font.cache.cold",
+    "toolchain.warm.on.preview",
+    "toolchain.dev.override",
+    "toolchain.remove.dev.override",
+];

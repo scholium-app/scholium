@@ -114,6 +114,19 @@ impl Workspace {
         self.reset_preview();
         Ok(())
     }
+    pub(crate) fn update_settings(
+        &mut self,
+        settings: scholium_storage::project::ProjectSettings,
+    ) -> Result<(), scholium_storage::project::StoreError> {
+        let entry_changed = settings.entry != self.source.handle().entry();
+        self.source.update_settings(settings)?;
+        let editor = std::mem::take(&mut self.editor);
+        self.reset_preview();
+        if !entry_changed {
+            self.editor = editor;
+        }
+        Ok(())
+    }
     fn reset_preview(&mut self) {
         self.backend = None;
         let (engine, error, backend) = preview(&self.source, &self.context);
@@ -335,6 +348,14 @@ fn preview_source(
         .to_str()
         .ok_or(scholium_latex::LatexError::Configuration)?;
     let mut snapshot = SourceSession::open(handle.root(), entry)?;
+    if let Some(engine) = handle.settings().engine {
+        use scholium_storage::project::LatexEngine;
+        snapshot = snapshot.with_engine(match engine {
+            LatexEngine::LuaLatex => Engine::LuaLatex,
+            LatexEngine::XeLatex => Engine::XeLatex,
+            LatexEngine::PdfLatex => Engine::PdfLatex,
+        });
+    }
     if snapshot.text(entry) != Some(source.text()) {
         let len = snapshot.text(entry).unwrap_or_default().len();
         snapshot.edit(entry, 0..len, source.text())?;

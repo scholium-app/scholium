@@ -90,3 +90,25 @@ fn project_entry_draft_save_conflict_reload_and_save_as_share_source_authority()
     assert!(!w.source().dirty());
     assert_eq!(std::fs::read_to_string(path).expect("original"), "external");
 }
+
+#[test]
+fn declaration_engine_controls_preview_without_rewriting_source_or_draft() {
+    use scholium_storage::project::{LatexEngine, ProjectHandle, ProjectLanguage, SourceProject};
+    let directory = tempfile::tempdir().expect("directory");
+    let handle = ProjectHandle::create(&directory.path().join("paper"), ProjectLanguage::Latex)
+        .expect("project");
+    let path = handle.root().join("main.tex");
+    let bytes = std::fs::read(&path).expect("disk");
+    let mut source = SourceProject::open(handle).expect("source");
+    source
+        .edit("draft without a magic comment".into())
+        .expect("draft");
+    let mut settings = source.handle().settings();
+    settings.engine = Some(LatexEngine::XeLatex);
+    source.update_settings(settings).expect("settings");
+    let snapshot = preview_source(&source).expect("snapshot");
+    assert_eq!(snapshot.engine(), Engine::XeLatex);
+    assert_eq!(snapshot.text("main.tex"), Some(source.text()));
+    assert_eq!(std::fs::read(path).expect("disk"), bytes);
+    assert!(source.dirty());
+}

@@ -1,0 +1,22 @@
+{
+  "before_source_commit": "6d03a90",
+  "integrated_main": "4dfb4dd5ddf13b14c6ec7708b5e965f4097a6607",
+  "before_binary_sha256": "d3e422b7dd5ea18fdc040c01547b4cfe23c089fc6cba31b39cbe35bad8091133",
+  "state": "all gates passed",
+  "after_binary_sha256": "db6d09502f1badaeb6fc7bf24a35f259228e76bbb472dcb372327efe94101dfb",
+  "screenshots": {
+    "before": 36,
+    "after": 72
+  },
+  "window_recheck": "start-page-dialogs passed in both locales and themes, including engine override and 480px dialog boundaries",
+  "all_windows": {
+    "passed": 58,
+    "failed": 0,
+    "locales": [
+      "zh-Hans",
+      "en"
+    ]
+  },
+  "polish_window_recheck": "chrome and start-page-dialogs passed zh-Hans/en, both light/dark, including 480px captures",
+  "polish_full_window_suite": "original T45 suite 58/58 before review fixes; focused rerun 4/4 after fixes"
+}

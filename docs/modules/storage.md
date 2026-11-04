@@ -10,6 +10,11 @@
 `SessionStore` 是保留作只读迁移和兼容工具的 legacy/structured 会话格式；app/session 使用正式项目存储。
 项目声明、默认路径与退役策略见 [ADR 0051](../adr/ADR-0051-project-files-and-session-retirement.md)。
 两种项目语言共用该存储边界，标准 `.tex`/`.typ` 保持源码权威；项目语言与 authority 的声明配置不由数据库推断。
+项目设置的声明 v2、入口资源身份与原子发布规则见 [ADR 0054](../adr/ADR-0054-project-settings.md)。
+`SourceProject::update_settings` 在现有锁下保存主文件、显式引擎和参考文献偏好，不改语言、项目身份或源字节；
+脏入口及未完成物化意图阻止主文件切换。入口资源映射保留私人草稿身份，恢复判定与源码打开一致。
+新建声明仍为 v1，显式保存设置才发布 v2；两版均可读，旧读取器拒绝 v2，SQLite schema 不变。
+
 
 ## 内部结构
 

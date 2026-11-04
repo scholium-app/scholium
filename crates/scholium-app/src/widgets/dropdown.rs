@@ -33,8 +33,17 @@ pub(crate) fn natural_width(ui: &Ui, label: &str, value: &str) -> f32 {
 }
 
 pub(crate) fn dropdown(ui: &mut Ui, dropdown: Dropdown) -> Response {
-    let t = theme::tokens(ui.ctx());
     let width = natural_width(ui, &dropdown.label, &dropdown.value).min(dropdown.max_width);
+    draw(ui, dropdown, width)
+}
+
+/// Dialog fields fill the same form column while retaining the shared dropdown appearance.
+pub(crate) fn field_dropdown(ui: &mut Ui, dropdown: Dropdown) -> Response {
+    let width = ui.available_width().min(dropdown.max_width);
+    draw(ui, dropdown, width)
+}
+fn draw(ui: &mut Ui, dropdown: Dropdown, width: f32) -> Response {
+    let t = theme::tokens(ui.ctx());
     let response = dropdown.meta.place(ui, egui::vec2(width, Tokens::FIELD));
     let state = State::of(&response, dropdown.meta.enabled, false, false);
     let rect = response.rect;

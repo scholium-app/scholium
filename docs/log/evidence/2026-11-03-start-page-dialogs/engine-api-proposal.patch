@@ -1,0 +1,15 @@
+--- a/crates/scholium-latex/src/session.rs
++++ b/crates/scholium-latex/src/session.rs
+@@ -54,6 +54,12 @@
+             revision: 0,
+             documents: BTreeMap::from([(entry.into(), text)]),
+         })
++    }
++    /// Select the explicit project engine for this derived preview snapshot.
++    /// Source bytes, resource paths and revision remain unchanged.
++    pub fn with_engine(mut self, engine: Engine) -> Self {
++        self.engine = engine;
++        self
+     }
+     /// Canonical project root.
+     pub fn root(&self) -> &Path {

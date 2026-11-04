@@ -19,6 +19,7 @@ pub(crate) struct Row<'a> {
     pub(crate) primary: &'a str,
     pub(crate) secondary: Option<&'a str>,
     pub(crate) selected: bool,
+    pub(crate) secondary_right: bool,
 }
 
 /// Draw one full-width row described by `meta` (its name is the accessible name).
@@ -52,12 +53,23 @@ pub(crate) fn row(ui: &mut Ui, spec: &Row<'_>, meta: Meta) -> Response {
     );
     let left = response.rect.left() + PAD + icon + GAP;
     let room = (response.rect.right() - PAD - left).max(1.0);
-    let primary_room = match spec.secondary {
-        Some(_) => text_width(ui, spec.primary, font.clone()).min(room * PRIMARY_SHARE),
-        None => room,
+    let secondary_width = spec
+        .secondary
+        .map_or(0.0, |s| text_width(ui, s, font.clone()).min(room * 0.4));
+    let primary_room = if spec.secondary_right {
+        (room - secondary_width - GAP * 2.0).max(1.0)
+    } else {
+        match spec.secondary {
+            Some(_) => text_width(ui, spec.primary, font.clone()).min(room * PRIMARY_SHARE),
+            None => room,
+        }
     };
     let primary = single_line(ui, spec.primary, font.clone(), t.text, primary_room);
-    let after = left + primary.size().x + GAP * 2.0;
+    let after = if spec.secondary_right {
+        response.rect.right() - PAD - secondary_width
+    } else {
+        left + primary.size().x + GAP * 2.0
+    };
     ui.painter()
         .galley(text_pos(response.rect, left, &primary), primary, t.text);
     if let Some(secondary) = spec.secondary {

@@ -1,0 +1,39 @@
+RUN cargo fmt --all -- --check
+RESULT 0
+RUN cargo clippy --locked --workspace --all-targets -- -D warnings
+    Checking scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-storage)
+    Checking scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-session)
+    Checking scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `dev` profile [unoptimized] target(s) in 2.45s
+RESULT 0
+RUN cargo doc --locked --workspace --no-deps
+    Checking scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-storage)
+ Documenting scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-storage)
+    Checking scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-session)
+ Documenting scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-session)
+ Documenting scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `dev` profile [unoptimized] target(s) in 9.71s
+   Generated /home/ation_ciger/Projects/Mogan/scholium-wt1/target/doc/scholium_app/index.html and 11 other files
+RESULT 0
+RUN python3 scripts/check-rust-size.py
+Rust file sizes: OK
+RESULT 0
+RUN python3 scripts/check-doc-links.py
+all relative links resolve
+RESULT 0
+RUN python3 scripts/check-ui-strings.py
+UI strings: OK (39 allowlisted literals remain)
+RESULT 0
+RUN python3 scripts/check-layers.py
+Layers: OK (all workspace crates registered; no upward edges or UI below app)
+RESULT 0
+RUN cargo deny --locked check licenses bans sources
+warning[license-not-encountered]: license was not encountered
+   ┌─ /home/ation_ciger/Projects/Mogan/scholium-wt1/deny.toml:25:6
+   │
+25 │     "Unicode-DFS-2016",
+   │      ━━━━━━━━━━━━━━━━ unmatched license allowance
+
+bans ok, licenses ok, sources ok
+RESULT 0
+FAILED []

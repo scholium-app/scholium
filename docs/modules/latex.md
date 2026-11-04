@@ -99,6 +99,14 @@ catcode 警告、include 循环、动态路径、label rename 和 log 映射。f
 跨语言只经转换或导出及逐节点报告；混合组件、跨引擎桥接与团队语言切换已推迟。
 共同要求见 [项目语言、跨格式转换与文件操作](../MIXED_SOURCE_EDITING.md) 与 [ADR 0041](../adr/ADR-0041-separate-latex-typst-kernels.md)。
 
+### 项目引擎优先级
+
+项目设置或项目声明中显式选择的引擎优先于源码 `% !TEX program = ...` magic comment，
+也优先于自动检测与默认引擎。app 在构造派生预览快照后调用 `SourceSession::with_engine` 应用显式选择；
+该方法仅替换快照的引擎与相应预览路由，不改变源码字节、资源路径或 revision，也不写入 magic comment。
+没有显式选择时保持既有 `SourceSession::open` 检测行为：识别入口前 20 行的 magic comment，
+未指定时使用 LuaLaTeX，无法识别的引擎指令仍报错。LuaLaTeX 使用实时预览，XeLaTeX / pdfLaTeX 使用整编预览。
+
 ## 候选与参考实现
 
 Rust 容错解析器配 Rowan CST 待验证；Tree-sitter 仅作可选高亮/导航，不承担完整宏语义。纯解析/投影优先兼容 WASM。参考[Mogan 源码调研](../research/MOGAN_LATEX.md)拆分上下文、模板适配、宏包规划、序列化和 source provenance；独立实现，不复制其源码。不确定区域仍遵守本模块保留原文规则。

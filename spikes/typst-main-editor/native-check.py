@@ -186,8 +186,13 @@ try:
     from project_ui import ProjectApp
     controls = ProjectApp(binary, output, output / "new-project")
     controls.app, controls.log, controls.window, controls.env = app, log_path, window, env
+    wait(lambda s: s["chrome"]["facts"]["file_modal"])
+    controls.control("name")
+    controls.type("new-project")
     controls.control("path")
-    controls.type(str(output / "new-project"))
+    controls.key("ctrl+a")
+    controls.type(str(output))
+    controls.control("typst")
     controls.control("submit")
     env["SCHOLIUM_PROJECT_PATH"] = str(output / "new-project")
     state = wait(lambda s: s["current"] and s["snapshot"]["document"] != initial["snapshot"]["document"])

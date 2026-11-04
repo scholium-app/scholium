@@ -28,6 +28,12 @@ pub(super) fn specs() -> Vec<CommandSpec> {
             action: Action::View(ViewCommand::FileDialog(crate::project_files::FileDialog::Recent)),
         },
         command! {
+            "file.import",
+            menu: menu!(File, 0, 3),
+            availability: avail::not_composing,
+            action: Action::View(ViewCommand::FileDialog(crate::project_files::FileDialog::Import)),
+        },
+        command! {
             "file.save",
             icon: IconId::Save,
             menu: menu!(File, 1, 0),

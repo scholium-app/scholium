@@ -219,6 +219,7 @@ fn the_menu_bar_hides_empty_menus_and_preserves_order() {
 fn expected_menu(menu: MenuId) -> Vec<String> {
     let mut rows: Vec<((u8, u8), String)> = registry::all()
         .iter()
+        .filter(|s| s.kernels.contains(&crate::command::spec::Kernel::Native))
         .filter_map(|s| {
             s.menu
                 .filter(|m| m.menu == menu && m.submenu.is_none())

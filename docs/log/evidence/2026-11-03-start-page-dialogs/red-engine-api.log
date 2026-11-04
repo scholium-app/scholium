@@ -1,0 +1,72 @@
+   Compiling syn v3.0.5
+   Compiling arrayvec v0.7.8
+   Compiling smallvec v1.16.1
+   Compiling once_cell v1.21.4
+   Compiling num-traits v0.2.19
+   Compiling syn v2.0.119
+   Compiling rustix v1.1.4
+   Compiling zune-jpeg v0.5.15
+   Compiling png v0.18.1
+   Compiling linux-raw-sys v0.12.1
+   Compiling hashbrown v0.17.1
+   Compiling strict-num v0.1.1
+   Compiling nix v0.31.3
+   Compiling uuid v1.26.1
+   Compiling polycool v0.4.0
+   Compiling synstructure v0.14.0
+   Compiling hayro-syntax v0.8.0
+   Compiling bytemuck_derive v1.12.1
+   Compiling thiserror-impl v2.0.20
+   Compiling tokio-macros v2.7.2
+   Compiling serde_derive v1.0.229
+   Compiling phf_macros v0.13.1
+   Compiling kurbo v0.13.1
+   Compiling zerofrom-derive v0.1.8
+   Compiling yoke-derive v0.8.3
+   Compiling bytemuck v1.25.2
+   Compiling thiserror v2.0.20
+   Compiling tokio v1.53.3
+   Compiling serde v1.0.229
+   Compiling font-types v0.12.5
+   Compiling color v0.3.3
+   Compiling tiny-skia-path v0.12.0
+   Compiling euclid v0.22.14
+   Compiling moxcms v0.8.1
+   Compiling pic-scale v0.7.12
+   Compiling tempfile v3.27.0
+   Compiling zerofrom v0.1.8
+   Compiling phf v0.13.1
+   Compiling scholium-model v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-model)
+   Compiling read-fonts v0.43.3
+   Compiling peniko v0.6.1
+   Compiling guillotiere v0.7.0
+   Compiling tiny-skia v0.12.0
+   Compiling scholium-build v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-build)
+   Compiling yoke v0.8.3
+   Compiling image v0.25.10
+   Compiling vello_common v0.3.0
+   Compiling skrifa v0.46.0
+   Compiling vello_cpu v0.3.0
+   Compiling hayro-interpret v0.8.0
+   Compiling hayro v0.8.0
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-latex)
+error[E0599]: no method named `with_engine` found for struct `session::SourceSession` in the current scope
+  --> crates/scholium-latex/src/tests/source.rs:84:44
+   |
+84 |             let selected = session.clone().with_engine(engine);
+   |                                            ^^^^^^^^^^^
+   |
+  ::: crates/scholium-latex/src/session.rs:29:1
+   |
+29 | pub struct SourceSession {
+   | ------------------------ method `with_engine` not found for this struct
+   |
+help: there is a method `engine` with a similar name, but with different arguments
+  --> crates/scholium-latex/src/session.rs:67:5
+   |
+67 |     pub fn engine(&self) -> Engine {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `scholium-latex` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

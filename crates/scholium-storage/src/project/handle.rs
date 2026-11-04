@@ -1,5 +1,6 @@
 //! Immutable project declaration; paths are not document identities.
-use super::{Resource, StoreError};
+use super::{BibliographyTool, LatexEngine, ProjectSettings, Resource, StoreError};
+mod settings;
 use serde::{Deserialize, Serialize};
 use std::{
     fs,
@@ -23,7 +24,7 @@ pub enum Authority {
     /// Standard source file remains authoritative.
     Source,
 }
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Declaration {
     format: String,
@@ -33,6 +34,12 @@ struct Declaration {
     authority: Authority,
     entry: PathBuf,
     resource: [u8; 16],
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    engine: Option<LatexEngine>,
+    #[serde(default, skip_serializing_if = "BibliographyTool::is_auto")]
+    bibliography: BibliographyTool,
+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
+    entry_resources: std::collections::BTreeMap<PathBuf, [u8; 16]>,
 }
 /// Validated immutable project identity and entry. Does not own the project lock.
 #[derive(Clone, Debug)]
@@ -140,6 +147,9 @@ impl ProjectHandle {
                 authority,
                 entry: entry.to_path_buf(),
                 resource: scholium_model::RequestId::fresh().as_bytes(),
+                engine: None,
+                bibliography: BibliographyTool::Auto,
+                entry_resources: Default::default(),
             },
         };
         handle.validate()?;
@@ -167,14 +177,36 @@ impl ProjectHandle {
     }
     fn validate(&self) -> Result<(), StoreError> {
         if self.declaration.format != "scholium.project"
-            || self.declaration.version != 1
+            || !matches!(self.declaration.version, 1 | 2)
             || (self.authority() == Authority::Structured
                 && self.language() != ProjectLanguage::Typst)
             || language(self.entry())? != self.language()
+            || (self.language() == ProjectLanguage::Typst
+                && (self.declaration.engine.is_some()
+                    || self.declaration.bibliography != BibliographyTool::Auto))
         {
             return Err(StoreError::Corrupt("unsupported project declaration"));
         }
         self.resource()?;
+        if self.declaration.version == 1
+            && (self.declaration.engine.is_some()
+                || self.declaration.bibliography != BibliographyTool::Auto
+                || !self.declaration.entry_resources.is_empty())
+        {
+            return Err(StoreError::Corrupt(
+                "settings require declaration version 2",
+            ));
+        }
+        let mut seen = std::collections::BTreeSet::new();
+        for (path, id) in &self.declaration.entry_resources {
+            Resource::new(*id, path)?;
+            if language(path)? != self.language()
+                || !seen.insert(id)
+                || (path == self.entry() && *id != self.declaration.resource)
+            {
+                return Err(StoreError::InvalidResource);
+            }
+        }
         // Reject symlink components even when the eventual target stays inside the project.
         let mut path = self.root.clone();
         for part in self.entry().components() {
@@ -258,7 +290,17 @@ impl ProjectHandle {
             fs::File::open(path)?.sync_all()?;
         }
         fs::File::open(&absolute)?.sync_all()?;
-        Self::declare(&absolute, self.language(), self.authority(), self.entry())
+        let handle = Self::declare(&absolute, self.language(), self.authority(), self.entry())?;
+        if self.authority() == Authority::Source
+            && (self.declaration.engine.is_some()
+                || self.declaration.bibliography != BibliographyTool::Auto)
+        {
+            let mut copy = super::SourceProject::open(handle)?;
+            copy.update_settings(self.settings())?;
+            Ok(copy.handle().clone())
+        } else {
+            Ok(handle)
+        }
     }
 }
 fn language(path: &Path) -> Result<ProjectLanguage, StoreError> {
@@ -313,3 +355,6 @@ fn create_root(root: &Path) -> Result<(), StoreError> {
     fs::File::open(parent)?.sync_all()?;
     Ok(())
 }
+
+#[cfg(test)]
+mod settings_tests;

@@ -1,0 +1,56 @@
+   Compiling scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-storage)
+    Finished `test` profile [unoptimized] target(s) in 0.82s
+     Running unittests src/lib.rs (target/debug/deps/scholium_storage-ea099cc42e10e9ae)
+
+running 1 test
+test project::handle::settings_tests::switching_to_a_published_draft_recovers_its_materialized_baseline ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 31 filtered out; finished in 0.01s
+
+     Running unittests src/bin/hammer.rs (target/debug/deps/hammer-fc3544e255201785)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/project_hammer.rs (target/debug/deps/project_hammer-591998674d49aa37)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/formal_benchmark.rs (target/debug/deps/formal_benchmark-0a0bda6bbccf4c90)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/project.rs (target/debug/deps/project-6f18b54656026bcc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/project_faults.rs (target/debug/deps/project_faults-31ac3bca3e035002)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/project_files.rs (target/debug/deps/project_files-53179fe6ff7258b5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/project_kill.rs (target/debug/deps/project_kill-9507df84ab412b4b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/recovery.rs (target/debug/deps/recovery-d6bc2e4d423654b4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s

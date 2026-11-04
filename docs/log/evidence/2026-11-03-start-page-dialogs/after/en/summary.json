@@ -1,0 +1,26 @@
+{
+  "light": {
+    "recent_click": true,
+    "recent_remove": true,
+    "keyboard": true,
+    "latex_default": true,
+    "inline_errors": true,
+    "engine_persisted": true,
+    "engine_applied": true,
+    "status_engine_updated": true,
+    "diff_cancel_save_as": true,
+    "entry_choice": true
+  },
+  "dark": {
+    "recent_click": true,
+    "recent_remove": true,
+    "keyboard": true,
+    "latex_default": true,
+    "inline_errors": true,
+    "engine_persisted": true,
+    "engine_applied": true,
+    "status_engine_updated": true,
+    "diff_cancel_save_as": true,
+    "entry_choice": true
+  }
+}

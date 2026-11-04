@@ -1,6 +1,8 @@
 //! Formal project storage (ADR 0049), isolated from legacy/structured SessionStore.
 mod data;
 mod handle;
+mod settings;
+pub use settings::{BibliographyTool, LatexEngine, ProjectSettings};
 mod source;
 pub use handle::{Authority, ProjectHandle, ProjectLanguage};
 pub use source::SourceProject;

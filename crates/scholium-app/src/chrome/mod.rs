@@ -93,7 +93,7 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
         .show_separator_line(false)
         .show(ui, |ui| menubar::show(ui, state));
     let mut overflowed = Vec::new();
-    if state.toolbars_visible {
+    if state.toolbars_visible && state.editor.is_some() {
         let bar = Panel::top("toolbar")
             .exact_size(Tokens::TOOLBAR)
             .frame(bar_frame(t.toolbar))
@@ -108,11 +108,13 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
             .show(ui, |ui| focusbar::show(ui, state));
         edge(ui, bar.response.rect, false);
     }
-    Panel::top("tabbar")
-        .exact_size(Tokens::TAB_BAR)
-        .frame(bar_frame(t.tabbar))
-        .show_separator_line(false)
-        .show(ui, |ui| tabbar::show(ui, state));
+    if state.editor.is_some() {
+        Panel::top("tabbar")
+            .exact_size(Tokens::TAB_BAR)
+            .frame(bar_frame(t.tabbar))
+            .show_separator_line(false)
+            .show(ui, |ui| tabbar::show(ui, state));
+    }
     let bar = Panel::bottom("status")
         .exact_size(Tokens::STATUS_BAR)
         .frame(bar_frame(t.toolbar))

@@ -131,6 +131,7 @@ fn problems_section(ui: &mut Ui, problems: &[Diagnostic], locale: Locale) -> Opt
                     Severity::Info => (Glyph::Info, t.text_dim),
                 };
                 let spec = Row {
+                    secondary_right: false,
                     glyph,
                     tint,
                     primary: &message,

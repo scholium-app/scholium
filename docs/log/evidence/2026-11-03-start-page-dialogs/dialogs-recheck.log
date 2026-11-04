@@ -1,0 +1,9 @@
+output: /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t45-dialogs-complete
+running start-page-dialogs [zh-Hans] ...
+running start-page-dialogs [en] ...
+
+check                         result      seconds
+start-page-dialogs [zh-Hans]  pass           86.8
+start-page-dialogs [en]       pass           83.3
+
+2/2 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t45-dialogs-complete

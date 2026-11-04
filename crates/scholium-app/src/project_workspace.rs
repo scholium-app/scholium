@@ -114,6 +114,16 @@ impl ProjectWorkspace {
         }
         Ok(())
     }
+    pub(crate) fn update_settings(
+        &mut self,
+        settings: scholium_storage::project::ProjectSettings,
+    ) -> Result<(), StoreError> {
+        match self {
+            Self::Source(source) => source.update_settings(settings),
+            Self::Latex(workspace) => workspace.update_settings(settings),
+            Self::Typst { .. } => Err(StoreError::InvalidResource),
+        }
+    }
     pub(crate) fn metadata(&self, state: &mut WorkspaceState) {
         state.project_name = Some(display_name(self.handle(), state));
         state.project_entry = Some(self.handle().entry().display().to_string());
