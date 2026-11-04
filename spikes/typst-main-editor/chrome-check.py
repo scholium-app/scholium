@@ -31,7 +31,7 @@ env = dict(os.environ, SCHOLIUM_PROJECT_PATH=str(output / "project"), SCHOLIUM_E
 env.pop("WAYLAND_DISPLAY", None)
 log_path = output / "app.log"
 results = {}
-MENUS = ["file", "edit", "insert", "format", "document", "view", "tools", "help"]
+MENUS = ["file", "edit", "insert", "format", "view", "help"]
 
 
 def state():
@@ -122,8 +122,8 @@ try:
     # 1. The audit map covers every bar, and the language and fonts are what the run asked for.
     s = wait(lambda s: drawn(s, "ui.menu.file", "menubar") and drawn(s, "view.mode.page", "focus"), "chrome drawn")
     ok = (all(drawn(s, f"ui.menu.{m}", "menubar") for m in MENUS)
-          and drawn(s, "format.bold", "toolbar") and drawn(s, "tools.search", "toolbar")
-          and drawn(s, "document.page_size", "focus") and drawn(s, "ui.tab", "tab")
+          and drawn(s, "format.bold", "toolbar") and not drawn(s, "tools.search", "toolbar")
+          and not drawn(s, "document.page_size", "focus") and drawn(s, "ui.tab", "tab")
           and drawn(s, "file.new", "tab") and drawn(s, "view.zoom.in", "status"))
     wanted = "ZhHans" if locale.startswith("zh") else "En"
     record("01-controls-map-covers-the-chrome", ok and facts(s)["locale"] == wanted and s["fonts"]["ui"],
@@ -187,23 +187,21 @@ try:
     assert drawn(s, "view.mode.source", "focus"), "the mode switch is always there"
     shot("06-math-focus")
     chrome.click("insert.exit_formula", "focus")
-    s = wait(lambda s: drawn(s, "document.page_size", "focus"), "document properties return")
+    s = wait(lambda s: not drawn(s, "insert.exit_formula", "focus"), "body focus bar")
     record("06-focus-bar-follows-the-caret", not drawn(s, "insert.exit_formula", "focus"))
 
-    # 7. A narrow window moves whole trailing groups into the overflow list; the search stays.
+    # 7. Removing placeholders leaves all implemented groups usable at the minimum width.
+    # Overflow ordering at smaller widths remains covered by pure/headless chrome tests.
     xdo("windowsize", window, 480, 700)
-    s = wait(lambda s: drawn(s, "ui.toolbar.overflow", "toolbar"), "overflow button")
-    assert drawn(s, "tools.search", "toolbar") and drawn(s, "view.mode.page", "focus")
-    assert not drawn(s, "edit.undo", "toolbar"), "history moved into overflow"
-    chrome.click("ui.toolbar.overflow", "toolbar")
-    chrome.wait("edit.redo", "overflow")
-    shot("07-overflow")
+    s = wait(lambda s: drawn(s, "edit.undo", "toolbar"), "minimum-width toolbar")
+    assert not drawn(s, "tools.search", "toolbar") and drawn(s, "view.mode.page", "focus")
+    assert not drawn(s, "ui.toolbar.overflow", "toolbar")
+    shot("07-minimum-width")
     before = state()["snapshot"]
-    chrome.click("edit.undo", "overflow")
-    wait(lambda s: s["snapshot"] != before, "undo from the overflow list changes the document")
+    chrome.click("edit.undo", "toolbar")
+    wait(lambda s: s["snapshot"] != before, "undo at minimum width changes the document")
     xdo("windowsize", window, 1280, 900)
-    wait(lambda s: not drawn(s, "ui.toolbar.overflow", "toolbar"), "overflow gone when wide")
-    record("07-narrow-window-overflows-trailing-groups", True)
+    record("07-minimum-width-keeps-implemented-groups-usable", True)
 
     # 8. Ctrl+F1 and the View menu both toggle the toolbars. F1 goes by keycode: xdotool would
     # add Alt to the keysym on xkeyboard-config >= 2.46 (see chrome_ui.keycode).

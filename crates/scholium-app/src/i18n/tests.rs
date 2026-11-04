@@ -64,7 +64,7 @@ fn a_missing_key_is_detectable_and_falls_back_visibly() {
 #[test]
 fn registered_commands_and_menus_have_titles_in_both_locales() {
     for locale in Locale::ALL {
-        for spec in registry::all() {
+        for spec in registry::declarations() {
             for key in [spec.title, spec.tooltip] {
                 assert!(defines(locale, key), "{locale:?} lacks {key}");
             }
@@ -82,7 +82,7 @@ fn registered_commands_and_menus_have_titles_in_both_locales() {
 #[test]
 fn the_catalog_has_no_key_that_nothing_uses() {
     let mut used: BTreeSet<String> = BTreeSet::new();
-    for spec in registry::all() {
+    for spec in registry::declarations() {
         used.insert(spec.title.into());
         used.insert(spec.tooltip.into());
     }
@@ -95,7 +95,19 @@ fn the_catalog_has_no_key_that_nothing_uses() {
             .iter()
             .map(|k| (*k).to_owned()),
     );
-    used.insert("reason.document_properties".to_owned());
+    used.extend(
+        [
+            "reason.document_properties",
+            "reason.unimplemented",
+            "reason.final_build",
+            "chrome.dialog.close",
+            "chrome.status.no_problems",
+            "chrome.status.engine_hint",
+            "chrome.status.position",
+            "chrome.status.typ_source",
+        ]
+        .map(str::to_owned),
+    );
     used.extend(
         crate::project_files::CATALOG_KEYS
             .iter()

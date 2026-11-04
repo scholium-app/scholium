@@ -367,11 +367,10 @@ fn ctrl_j_docks_the_panel_and_layout_stats_leave_the_status_bar() {
     let texts = painted_text(&open);
     assert!(texts.iter().any(|(_, t)| t == "问题"), "{texts:?}");
     assert!(texts.iter().any(|(_, t)| t == "没有问题"), "{texts:?}");
-    let stats = texts
-        .iter()
-        .find(|(_, t)| t.starts_with("Content 新建"))
-        .expect("layout stats in the panel");
-    assert!(stats.0.y < size.y - STATUS_HEIGHT, "above the status bar");
+    assert!(
+        !texts.iter().any(|(_, t)| t.starts_with("Content 新建")),
+        "developer stats stay in AUDIT"
+    );
     assert!(
         !status_text(&open, size.y).contains("Content 新建"),
         "{}",

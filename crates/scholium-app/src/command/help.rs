@@ -21,20 +21,31 @@ pub(super) fn specs() -> Vec<CommandSpec> {
     ]
 }
 
-pub(super) fn show(ctx: &eframe::egui::Context, state: &crate::state::WorkspaceState) {
+pub(crate) fn show(ctx: &eframe::egui::Context, state: &crate::state::WorkspaceState) -> bool {
     use eframe::egui;
     let id = egui::Id::new("shortcut-help");
     let mut open = ctx.data(|d| d.get_temp::<bool>(id).unwrap_or(false));
-    egui::Window::new(super::ui::text(state, "command.help.shortcuts.title"))
-        .open(&mut open)
-        .show(ctx, |ui| {
-            let map = super::keymap::effective();
-            if let Some(error) = &map.diagnostic {
-                ui.label(error);
-            }
-            egui::ScrollArea::vertical().show(ui, |ui| {
+    if open {
+        let buttons = [crate::widgets::DialogButton::new(
+            "ok",
+            super::ui::text(state, "project.ok"),
+            true,
+        )];
+        if crate::widgets::dialog(
+            ctx,
+            "shortcut-help-dialog",
+            &super::ui::text(state, "command.help.shortcuts.title"),
+            state.locale.resolve(),
+            &buttons,
+            |ui| {
+                let map = super::keymap::effective();
+                if let Some(error) = &map.diagnostic {
+                    ui.label(error);
+                }
                 for binding in &map.bindings {
-                    let Some(spec) = super::registry::get(&binding.command) else {
+                    let Some(spec) =
+                        super::registry::get(&binding.command).filter(|s| s.visible(state))
+                    else {
                         continue;
                     };
                     if binding.keys.is_empty() {
@@ -50,10 +61,15 @@ pub(super) fn show(ctx: &eframe::egui::Context, state: &crate::state::WorkspaceS
                                 .collect::<Vec<_>>()
                                 .join(", "),
                         );
-                        ui.weak(format!("{:?}", binding.scope));
                     });
                 }
-            });
-        });
+            },
+        )
+        .is_some()
+        {
+            open = false;
+        }
+    }
     ctx.data_mut(|d| d.insert_temp(id, open));
+    open
 }

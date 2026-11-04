@@ -148,16 +148,24 @@ impl Window {
         })
     }
 
-    pub(crate) fn position_of(&self, text: &str) -> egui::Pos2 {
-        self.painted()
-            .into_iter()
-            .find(|(_, g)| g.text() == text)
-            .map(|(p, _)| p)
-            .unwrap_or_else(|| panic!("{text:?} is not painted"))
-    }
-
     pub(crate) fn status_top(&self) -> f32 {
         self.size.y - Tokens::STATUS_BAR
+    }
+
+    pub(crate) fn clipped_status_labels(&self) -> Vec<String> {
+        self.output
+            .shapes
+            .iter()
+            .filter_map(|shape| {
+                let egui::Shape::Text(text) = &shape.shape else {
+                    return None;
+                };
+                let rect = egui::Rect::from_min_size(text.pos, text.galley.size());
+                (text.pos.y >= self.status_top()
+                    && !shape.clip_rect.expand(0.5).contains_rect(rect))
+                .then(|| text.galley.text().to_owned())
+            })
+            .collect()
     }
 
     /// The panel's rectangle once drawn, `None` while it is closed.
@@ -197,10 +205,11 @@ pub(crate) const ZH: LocaleSetting = LocaleSetting::ZhHans;
 pub(crate) const EN: LocaleSetting = LocaleSetting::En;
 
 #[test]
-fn the_menu_bar_lists_the_eight_menus_left_to_right() {
+fn the_menu_bar_hides_empty_menus_and_preserves_order() {
     let w = Window::new(1280.0, ZH);
     let expected: Vec<String> = MenuId::ALL
         .iter()
+        .filter(|m| !expected_menu(**m).is_empty())
         .map(|m| format!("ui.{}", m.key()))
         .collect();
     assert_eq!(w.ids("menubar"), expected);
@@ -232,6 +241,9 @@ fn expected_menu(menu: MenuId) -> Vec<String> {
 fn every_open_menu_equals_the_registry_tree() {
     for locale in [ZH, EN] {
         for menu in MenuId::ALL {
+            if expected_menu(menu).is_empty() {
+                continue;
+            }
             let mut w = Window::new(1280.0, locale);
             w.click(&format!("ui.{}", menu.key()), "menubar");
             assert_eq!(w.ids("menu"), expected_menu(menu), "{locale:?} {menu:?}");
@@ -272,31 +284,22 @@ fn only_checkable_commands_are_exposed_as_toggles() {
 }
 
 #[test]
-fn unimplemented_toolbar_commands_are_disabled_with_a_reason() {
+fn only_implemented_toolbar_commands_are_visible_and_unavailable_history_explains_why() {
     let w = Window::new(1280.0, ZH);
-    let underline = w.find("format.underline", "toolbar");
-    assert!(!underline.enabled);
-    let state = &w.state;
-    let tip = crate::command::ui::resolve(state, "format.underline").map(|r| r.tip(state));
+    for id in ["format.underline", "format.strike", "tools.search"] {
+        assert!(!w.ids("toolbar").contains(&id.to_owned()));
+    }
+    assert!(!w.find("edit.undo", "toolbar").enabled);
+    let resolved = crate::command::ui::resolve(&w.state, "edit.undo").expect("history command");
     assert_eq!(
-        tip.and_then(|t| t.reason).as_deref(),
-        Some("此功能尚未接入")
-    );
-    assert!(
-        !w.find("tools.search", "toolbar").enabled,
-        "the search opens nothing until T14"
+        resolved.tip(&w.state).reason.as_deref(),
+        Some("没有可撤销的编辑")
     );
 }
 
 fn x_order(entries: &[Entry]) -> Vec<String> {
     let mut sorted = entries.to_vec();
-    sorted.sort_by(|a, b| {
-        a.rect
-            .min
-            .x
-            .partial_cmp(&b.rect.min.x)
-            .unwrap_or(std::cmp::Ordering::Equal)
-    });
+    sorted.sort_by(|a, b| a.rect.min.x.total_cmp(&b.rect.min.x));
     sorted.into_iter().map(|e| e.id).collect()
 }
 
@@ -309,19 +312,15 @@ fn the_toolbar_follows_the_registry_groups_and_ends_with_the_search() {
             expected.extend(items.iter().map(|s| s.id.to_owned()));
         }
     }
-    expected.push("tools.search".to_owned());
     assert_eq!(x_order(&w.on("toolbar")), expected);
 }
 
 #[test]
 fn a_narrow_window_moves_whole_trailing_groups_into_overflow_in_order() {
-    let mut w = Window::new(420.0, ZH);
+    let mut w = Window::new(250.0, ZH);
     let shown = x_order(&w.on("toolbar"));
     assert!(shown.contains(&"ui.toolbar.overflow".to_owned()));
-    assert!(
-        shown.contains(&"tools.search".to_owned()),
-        "search stays visible"
-    );
+    assert!(!shown.contains(&"tools.search".to_owned()));
     assert!(shown.contains(&"format.bold".to_owned()));
     assert!(!shown.contains(&"edit.undo".to_owned()));
     w.click("ui.toolbar.overflow", "toolbar");
@@ -351,20 +350,10 @@ fn every_group_fits_in_a_wide_window_and_no_overflow_button_shows() {
 }
 
 #[test]
-fn the_focus_bar_shows_document_properties_in_text_and_formula_commands_in_math() {
+fn the_focus_bar_keeps_body_empty_and_shows_formula_commands_in_math() {
     let mut w = Window::new(1280.0, ZH);
     let text = x_order(&w.on("focus"));
-    for id in [
-        "document.style_template",
-        "document.page_size",
-        "document.language",
-        "document.font",
-        "document.font_size",
-    ] {
-        assert!(text.contains(&id.to_owned()), "{id} in {text:?}");
-        assert!(!w.find(id, "focus").enabled, "{id} is read-only for now");
-    }
-    assert!(!text.contains(&"insert.fraction".to_owned()));
+    assert_eq!(text, ["view.mode.page", "view.mode.source"]);
     w.editor().in_math = true;
     w.settle();
     let math = x_order(&w.on("focus"));
@@ -377,7 +366,10 @@ fn the_focus_bar_shows_document_properties_in_text_and_formula_commands_in_math(
         assert!(math.contains(&id.to_owned()), "{id} in {math:?}");
     }
     assert!(!math.contains(&"document.page_size".to_owned()));
-    assert!(w.texts().contains(&"公式".to_owned()), "the formula tag");
+    assert!(
+        w.texts().iter().any(|t| t.starts_with("公式")),
+        "the formula tag"
+    );
 }
 
 #[test]
@@ -386,7 +378,7 @@ fn the_focus_bar_leaves_formulas_alone_in_the_source_view() {
     w.editor().in_math = true;
     w.state.mode = ViewMode::Source;
     w.settle();
-    assert!(w.ids("focus").contains(&"document.page_size".to_owned()));
+    assert_eq!(w.ids("focus"), ["view.mode.page", "view.mode.source"]);
 }
 
 #[test]
@@ -428,7 +420,7 @@ fn the_bars_have_the_designed_heights() {
         bold.rect.center().y,
         Tokens::MENU_BAR + Tokens::TOOLBAR / 2.0
     );
-    let field = w.find("document.page_size", "focus");
+    let field = w.find("view.mode.page", "focus");
     assert_eq!(field.rect.height(), Tokens::FIELD);
     assert_eq!(
         field.rect.center().y,
@@ -436,8 +428,8 @@ fn the_bars_have_the_designed_heights() {
     );
     let tab = w.find("ui.tab", "tab");
     assert_eq!(tab.rect.height(), Tokens::TAB);
-    // The four top bars total 122 and the current tab sits on the bar's bottom edge.
-    assert_eq!(tab.rect.bottom(), 122.0);
+    // The four top bars total 126 and the current tab sits on the bar's bottom edge.
+    assert_eq!(tab.rect.bottom(), 126.0);
 }
 
 #[test]
@@ -577,7 +569,7 @@ fn words_count_cjk_characters_and_latin_words() {
 #[test]
 fn mathematical_focus_commands_fit_beside_the_mode_switch_in_both_locales() {
     for locale in [ZH, EN] {
-        for width in [640.0, 1024.0, 1280.0] {
+        for width in [480.0, 640.0, 1024.0, 1280.0] {
             let mut w = Window::new(width, locale);
             w.editor().in_math = true;
             w.editor().in_root = true;
@@ -597,3 +589,6 @@ fn mathematical_focus_commands_fit_beside_the_mode_switch_in_both_locales() {
         }
     }
 }
+
+#[cfg(test)]
+mod foundation_tests;

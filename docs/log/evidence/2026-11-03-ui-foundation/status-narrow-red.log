@@ -1,0 +1,22 @@
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 7.83s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-5459d2a2e88f3903)
+
+running 1 test
+test chrome::status_tests::narrow_status_hides_zero_problems_and_draws_only_whole_labels ... FAILED
+
+failures:
+
+---- chrome::status_tests::narrow_status_hides_zero_problems_and_draws_only_whole_labels stdout ----
+
+thread 'chrome::status_tests::narrow_status_hides_zero_problems_and_draws_only_whole_labels' (350180) panicked at crates/scholium-app/src/chrome/status_tests.rs:9:9:
+assertion failed: !w.ids("status").contains(&"ui.status.count".into())
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    chrome::status_tests::narrow_status_hides_zero_problems_and_draws_only_whole_labels
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 339 filtered out; finished in 0.46s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`

@@ -21,8 +21,12 @@ pub(super) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut 
                     .inner_margin(egui::Margin::same(8)),
             )
             .show(ui, |ui| {
-                ui.label("未命名 · 结构会话");
-                ui.weak("隔离开发文件");
+                ui.label(state.project_name.clone().unwrap_or_else(|| {
+                    crate::i18n::text(state.locale.resolve(), "chrome.tab.untitled")
+                }));
+                if let Some(entry) = &state.project_entry {
+                    ui.weak(entry);
+                }
             });
     }
     egui::CentralPanel::default()

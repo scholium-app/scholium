@@ -1,0 +1,185 @@
+{
+  "baseline_source": "d11c0c60ca198b9f3997887473f24df3a176ef03",
+  "integrated_main": "c94bb32bbd45eb168001874bcefcc55900728653",
+  "baseline_binary_sha256": "19ad5562cf28008c9d06e25a6b3c23a82d2dc74c18012d6cb0dcbb1b0fad2499",
+  "final_binary_sha256": "649d141dc6a405c4592fbac2207cd9ca228b918cb16f3f2395b3903e4e803b2f",
+  "screenshots": [
+    {
+      "file": "after/en/diagnostics.png",
+      "sha256": "a7755b30bd8c76bbcd45783d3826d7c691e7b01cdd01907e1881dc6e1c790034"
+    },
+    {
+      "file": "after/en/dialog-480.png",
+      "sha256": "8efc7e2672ed143d8be3b99cd4864390b39cd641a8be944314afe0b184cf2cfc"
+    },
+    {
+      "file": "after/en/dialog-new.png",
+      "sha256": "89459fd598e6889ae64af1df73558cbf702488580773bf66f0d86ce696f3a908"
+    },
+    {
+      "file": "after/en/external-conflict.png",
+      "sha256": "2cab873c3654f3528fc242b838a35d5af9df1037c8a2976bc9070f466c849256"
+    },
+    {
+      "file": "after/en/formula-focus.png",
+      "sha256": "ab98f4fd12a1cf0c0ed7a9a44d62ef260e3a5464d61b9f74c486a8584e88d753"
+    },
+    {
+      "file": "after/en/latex-workbench.png",
+      "sha256": "081884d9f46b6f14e201b486e578411d7dad72934a718a80f7e1abe9792fc89a"
+    },
+    {
+      "file": "after/en/menu.png",
+      "sha256": "81e1bdf56ace7c6518e91f40a3bfabcfba5f8577c9307ec3a915dccbe6c8aaf6"
+    },
+    {
+      "file": "after/en/typ-project.png",
+      "sha256": "7a51b04c8b9f53e71dab8531c6578517976b63b334ff7c920d869555e8f05f83"
+    },
+    {
+      "file": "after/en/typst-page-dark.png",
+      "sha256": "35254bacbae7fa20167bb7fb9c6c24a69f5736fcf0e5afc26d970c1805137cee"
+    },
+    {
+      "file": "after/en/typst-page-light.png",
+      "sha256": "8ce2f66532e6514626ec91ea650125217b84fcf6329b3fc0d3bdcd27f2a6c189"
+    },
+    {
+      "file": "after/en/window-480.png",
+      "sha256": "23372016b74f72f2caafb0724bc4d3f0f82ac5ea899921de4ce385c991a48925"
+    },
+    {
+      "file": "after/zh-Hans/diagnostics.png",
+      "sha256": "2389b2ed2e13854f44330793ba68a544a7751ad1a469cd67d8b3582917887ea5"
+    },
+    {
+      "file": "after/zh-Hans/dialog-480.png",
+      "sha256": "11f4c3e927d4e63ccd52080778c25548799defbdc07a951d62e8478f31e7e573"
+    },
+    {
+      "file": "after/zh-Hans/dialog-new.png",
+      "sha256": "b7c0898168ebeff0d07fba6bd14ec96fe483e2ebc741c0451a0279e2a288d79b"
+    },
+    {
+      "file": "after/zh-Hans/external-conflict.png",
+      "sha256": "94865c9bc9ab8ac8b9a284a2f755c05862fe2b8716429e39bf25c5aa19348a51"
+    },
+    {
+      "file": "after/zh-Hans/formula-focus.png",
+      "sha256": "917164b8aecb81a74421ec7cc5dec40118dc0d3d485bd6d6ae946ee62dbc2071"
+    },
+    {
+      "file": "after/zh-Hans/latex-workbench.png",
+      "sha256": "3d39ef3f2c10e8fecd8fe8e2bb1465c1be8366b959125e687870387307549c5d"
+    },
+    {
+      "file": "after/zh-Hans/menu.png",
+      "sha256": "b91a2b91cb2c015f3ef644113d8e65ad82607ef953195a5777bc5d8ebcd79c24"
+    },
+    {
+      "file": "after/zh-Hans/typ-project.png",
+      "sha256": "3643beb48b3878ab20eedac23c2f9e2a2c64a1a454ad3d2c42d898e0a6e2dd15"
+    },
+    {
+      "file": "after/zh-Hans/typst-page-dark.png",
+      "sha256": "393b8ec398abf9ee18da3d55cc4e043443539c43bc8e687961e91da3e39489ab"
+    },
+    {
+      "file": "after/zh-Hans/typst-page-light.png",
+      "sha256": "4b330b3356b871584d178da81acb50c488b15cc5c3c28da5ebf969ae09be77df"
+    },
+    {
+      "file": "after/zh-Hans/window-480.png",
+      "sha256": "e92718f611546d088f1a7a0b997c1c2242c578035b74a09ffeb554f87a67608c"
+    },
+    {
+      "file": "before/en/diagnostics.png",
+      "sha256": "d3976ac65f8aca9db205315010f715cbe7933aada8d5228ead74b0201896275a"
+    },
+    {
+      "file": "before/en/dialog-480.png",
+      "sha256": "a9b7c32cb88d4531c3f21a6ab85564e20b7cd26f01e0b4ca48cd291ff2d2121b"
+    },
+    {
+      "file": "before/en/dialog-new.png",
+      "sha256": "96f161d36ac375d8c43ecb91a52bd34c0b044f857fd13a6ec597fae910e6a0a6"
+    },
+    {
+      "file": "before/en/external-conflict.png",
+      "sha256": "a7ca4099fb4aa4aa91ee67dcbc8bfcdf9d5d6c430c7df9c03b09de72760a3760"
+    },
+    {
+      "file": "before/en/formula-focus.png",
+      "sha256": "6449f512b6d725d87333fbfcb0f7245ff23ea26754460905cd3a442b3c0a1306"
+    },
+    {
+      "file": "before/en/latex-workbench.png",
+      "sha256": "26e8d4623998d1efc4aa53a8f9c92946a11445b7e3aadeffb3fd9ccca33776de"
+    },
+    {
+      "file": "before/en/menu.png",
+      "sha256": "9959c2855989fb2545aa7a43f0121b95718376cd4c3f0ea76402264041a7b459"
+    },
+    {
+      "file": "before/en/typ-project.png",
+      "sha256": "19558c73f370e775e2a973a61539131cb47c1817f911734d89ec3d5978bff1af"
+    },
+    {
+      "file": "before/en/typst-page-dark.png",
+      "sha256": "ec23afed6c4a14be8ae49a5e8223ceb4eacb7b0bc91a25af89e9a8a6c4e61a65"
+    },
+    {
+      "file": "before/en/typst-page-light.png",
+      "sha256": "dd1efc89d5d79f9706854bf6de1e074316be6cec396798dd35ced95454d123b2"
+    },
+    {
+      "file": "before/en/window-480.png",
+      "sha256": "d2b721d7efae90c7a448981cccbc68168ab2d384a1afeb035dd99e9b8a0419e0"
+    },
+    {
+      "file": "before/zh-Hans/diagnostics.png",
+      "sha256": "2df421ad07392f6d9d64e26066472fdad93b3893117509d51531f0eeb59b22d5"
+    },
+    {
+      "file": "before/zh-Hans/dialog-480.png",
+      "sha256": "dc5dcf112e94fdf5cbafcecc232a2cf304e721d27f7e97bd1aa5c2f9c7298652"
+    },
+    {
+      "file": "before/zh-Hans/dialog-new.png",
+      "sha256": "01dd6c124e863eaac2bdfb8b0841762495b900af424b5f2b21559f325eb7f3f9"
+    },
+    {
+      "file": "before/zh-Hans/external-conflict.png",
+      "sha256": "4db5dcf36efeff5f2170cf31df11c67b1dc296db532f16679955e99ef69494cb"
+    },
+    {
+      "file": "before/zh-Hans/formula-focus.png",
+      "sha256": "d03ef793d78d7100b4d4e3d8e48554f70bfd23825dff5a70391b28d7fea95969"
+    },
+    {
+      "file": "before/zh-Hans/latex-workbench.png",
+      "sha256": "57a620a3cf07c828fe47c4a8239f6e36dfdf0f4a983a17d138b99cb3d3642558"
+    },
+    {
+      "file": "before/zh-Hans/menu.png",
+      "sha256": "9ff41d68d0ba0fe97bec49dcbe5ee6ba433d84064c20b1dd7300c56d3608e311"
+    },
+    {
+      "file": "before/zh-Hans/typ-project.png",
+      "sha256": "b446df1fd9e0decfef981053b65a021b07e22c866b14197e50f100f035b32ec9"
+    },
+    {
+      "file": "before/zh-Hans/typst-page-dark.png",
+      "sha256": "6daed6ca877828bf43a5b8638be113f030666cdd1fdab11e841048148863beca"
+    },
+    {
+      "file": "before/zh-Hans/typst-page-light.png",
+      "sha256": "19bd88c5f89e2bbbaac5e9759738a37ef6b265e1b66f443d3edb1b3df0f168b9"
+    },
+    {
+      "file": "before/zh-Hans/window-480.png",
+      "sha256": "4fe438e0e7e1924b0891d96373d302040cde75dc1f790cd02f6af6d150e4b024"
+    }
+  ],
+  "status_narrow_binary_sha256": "d3e422b7dd5ea18fdc040c01547b4cfe23c089fc6cba31b39cbe35bad8091133"
+}

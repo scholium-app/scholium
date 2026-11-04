@@ -133,23 +133,14 @@ impl Workspace {
         let locale = state.locale.resolve();
         self.poll(ui.ctx());
         let mut text = self.source.text().to_owned();
-        egui::Panel::top("latex-header").show(ui, |ui| {
-            ui.horizontal(|ui| {
-                ui.heading(i18n::text(locale, "latex.workspace"));
-                ui.label(format!("{:?}", self.engine));
-                ui.label(self.status(locale));
-            });
-            if let Some(error) = &state.storage_error {
-                ui.colored_label(ui.visuals().error_fg_color, error);
-            }
-            if let Some(error) = &self.error {
-                ui.colored_label(ui.visuals().warn_fg_color, error);
-            }
-        });
         egui::CentralPanel::default().show(ui, |ui| {
             ui.columns(2, |columns| {
                 self.source_rect = Some(columns[0].available_rect_before_wrap());
-                columns[0].label(i18n::text(locale, "latex.source"));
+                if std::mem::take(&mut state.focus_requested) {
+                    columns[0]
+                        .ctx()
+                        .memory_mut(|m| m.request_focus(egui::Id::new("source-editor")));
+                }
                 let highlights = syntax(&text, columns[0].visuals());
                 let changed = columns[0]
                     .add_enabled_ui(!state.file_modal, |ui| {
@@ -165,7 +156,6 @@ impl Workspace {
                     }
                 }
                 self.preview_rect = Some(columns[1].available_rect_before_wrap());
-                columns[1].label(i18n::text(locale, "latex.preview"));
                 egui::ScrollArea::both()
                     .id_salt("latex-preview")
                     .show(&mut columns[1], |ui| {
@@ -181,6 +171,11 @@ impl Workspace {
         if self.shown_revision == Some(self.revision) && self.presented.is_none() {
             self.presented = self.edited_at.map(|t| t.elapsed());
         }
+        state.source_position = self.editor.position(self.source.text());
+        (state.source_undo, state.source_redo) = self.editor.history();
+        state.source_words = crate::chrome::count_words(self.source.text());
+        state.kernel_status = Some(self.status(locale));
+        state.source_problems = self.problem_count();
         self.audit();
     }
     fn poll(&mut self, ctx: &egui::Context) {
@@ -259,7 +254,15 @@ impl Workspace {
             );
         }
     }
-    fn status(&self, locale: Locale) -> String {
+    pub(crate) fn status(&self, locale: Locale) -> String {
+        let engine = match self.engine {
+            Engine::LuaLatex => "LuaLaTeX",
+            Engine::XeLatex => "XeLaTeX",
+            Engine::PdfLatex => "pdfLaTeX",
+        };
+        if self.unavailable {
+            return format!("{engine} · {}", i18n::text(locale, "latex.unavailable"));
+        }
         let mode = if self.engine == Engine::LuaLatex {
             "latex.live"
         } else {
@@ -268,7 +271,13 @@ impl Workspace {
         let label = i18n::text_with(
             locale,
             mode,
-            &[("ms", (self.elapsed.as_millis() as i64).into())],
+            &[
+                ("ms", (self.elapsed.as_millis() as i64).into()),
+                (
+                    "seconds",
+                    format!("{:.1}", self.elapsed.as_secs_f64()).into(),
+                ),
+            ],
         );
         let state = if self.unavailable {
             Some("latex.unavailable")
@@ -280,9 +289,13 @@ impl Workspace {
             None
         };
         state.map_or_else(
-            || label.clone(),
-            |key| format!("{label} · {}", i18n::text(locale, key)),
+            || format!("{engine} · {label}"),
+            |key| format!("{engine} · {label} · {}", i18n::text(locale, key)),
         )
+    }
+
+    pub(crate) fn problem_count(&self) -> usize {
+        usize::from(self.error.is_some() && !self.unavailable)
     }
 
     fn audit(&mut self) {

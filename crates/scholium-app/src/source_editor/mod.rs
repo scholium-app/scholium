@@ -23,6 +23,8 @@ pub(crate) struct Highlight {
 }
 #[derive(Default)]
 pub(crate) struct SourceEditor {
+    cursor: usize,
+    history: (bool, bool),
     query: String,
     find_open: bool,
     composing: bool,
@@ -35,6 +37,13 @@ pub(crate) struct SourceEditor {
 impl SourceEditor {
     pub(crate) fn composing(&self) -> bool {
         self.composing
+    }
+    pub(crate) fn position(&self, text: &str) -> (usize, usize) {
+        let cursor = self.cursor.min(text.chars().count());
+        line_column(text, cursor)
+    }
+    pub(crate) fn history(&self) -> (bool, bool) {
+        self.history
     }
     pub(crate) fn show(
         &mut self,
@@ -53,7 +62,7 @@ impl SourceEditor {
         if self.find_open {
             ui.horizontal(|ui| {
                 ui.label(crate::i18n::text(locale, "source.editor.find"));
-                ui.text_edit_singleline(&mut self.query);
+                crate::widgets::text_input(ui, &mut self.query, None);
             });
         }
         if ui.is_enabled() {
@@ -75,7 +84,7 @@ impl SourceEditor {
         if self.find_open && !self.query.is_empty() {
             ranges.extend(text.match_indices(&self.query).map(|(start, hit)| Mark {
                 bytes: start..start + hit.len(),
-                color: egui::Color32::YELLOW,
+                color: crate::theme::tokens(ui.ctx()).active_bg,
                 message: None,
             }));
         }
@@ -98,6 +107,13 @@ impl SourceEditor {
                     .show(ui)
             })
             .inner;
+        if let Some(cursor) = output
+            .cursor_range
+            .or_else(|| output.state.cursor.char_range())
+        {
+            self.cursor = cursor.primary.index.into();
+        }
+        self.history = history(&output, &buffer);
         if !self.focus && ui.is_enabled() {
             output.response.request_focus();
             self.focus = true;
@@ -106,7 +122,10 @@ impl SourceEditor {
             self.draft = Some(buffer);
         } else {
             if let Some(mut undo) = self.ime_undo.take() {
-                if let Some(cursor) = output.cursor_range {
+                if let Some(cursor) = output
+                    .cursor_range
+                    .or_else(|| output.state.cursor.char_range())
+                {
                     undo.add_undo(&(cursor, buffer.clone()));
                 }
                 output.state.set_undoer(undo);
@@ -124,4 +143,43 @@ impl SourceEditor {
         }
         *text != before
     }
+}
+
+/// Character offsets are Unicode scalar positions, as egui TextEdit specifies.
+pub(crate) fn line_column(text: &str, cursor: usize) -> (usize, usize) {
+    text.chars()
+        .take(cursor)
+        .fold((1, 1), |(line, column), ch| {
+            if ch == '\n' {
+                (line + 1, 1)
+            } else {
+                (line, column + 1)
+            }
+        })
+}
+fn history(output: &egui::text_edit::TextEditOutput, text: &str) -> (bool, bool) {
+    let Some(cursor) = output
+        .cursor_range
+        .or_else(|| output.state.cursor.char_range())
+    else {
+        return (false, false);
+    };
+    let current = (cursor, text.to_owned());
+    let undoer = output.state.undoer();
+    (undoer.has_undo(&current), undoer.has_redo(&current))
+}
+pub(crate) fn publish_status(
+    output: &egui::text_edit::TextEditOutput,
+    text: &str,
+    state: &mut crate::state::WorkspaceState,
+) {
+    state.source_position = line_column(
+        text,
+        output
+            .cursor_range
+            .or_else(|| output.state.cursor.char_range())
+            .map_or(0, |c| c.primary.index.into()),
+    );
+    (state.source_undo, state.source_redo) = history(output, text);
+    state.source_words = crate::chrome::count_words(text);
 }

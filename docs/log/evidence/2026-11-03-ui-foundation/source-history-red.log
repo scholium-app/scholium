@@ -1,0 +1,21 @@
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 1.71s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-5459d2a2e88f3903)
+
+running 1 test
+
+thread 'project_workspace::tests::source_toolbar_undo_restores_focus_before_handling_history' (193337) panicked at crates/scholium-app/src/project_workspace/tests.rs:45:5:
+assertion `left == right` failed
+  left: "DraftX"
+ right: "Draft"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test project_workspace::tests::source_toolbar_undo_restores_focus_before_handling_history ... FAILED
+
+failures:
+
+failures:
+    project_workspace::tests::source_toolbar_undo_restores_focus_before_handling_history
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 335 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`

@@ -24,3 +24,5 @@ pub(crate) mod tests;
 mod tools;
 pub(crate) mod ui;
 mod view;
+
+pub(crate) use help::show as show_shortcuts;

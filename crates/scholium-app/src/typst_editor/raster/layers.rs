@@ -61,7 +61,7 @@ impl Bands {
                 texture.id(),
                 rect,
                 Rect::from_min_max(Pos2::ZERO, egui::pos2(1.0, 1.0)),
-                egui::Color32::WHITE,
+                crate::theme::Tokens::LIGHT.page,
             );
         }
     }

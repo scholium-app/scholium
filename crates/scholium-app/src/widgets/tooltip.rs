@@ -22,7 +22,8 @@ pub(super) fn show(response: &egui::Response, tip: &Tip, _enabled: bool) {
         Frame::new()
             .fill(t.tooltip)
             .corner_radius(egui::CornerRadius::same(Tokens::RADIUS_MENU))
-            .inner_margin(Margin::symmetric(PAD_X, PAD_Y)),
+            .inner_margin(Margin::symmetric(PAD_X, PAD_Y))
+            .shadow(Tokens::popup_shadow()),
     );
     tooltip.show(|ui| contents(ui, &t, tip));
 }

@@ -12,9 +12,9 @@ use eframe::egui::{self, Align, Layout, Ui, WidgetType};
 /// The tab title: the document's file stem, or 未命名.
 pub(super) fn title(state: &WorkspaceState) -> String {
     state
-        .editor
-        .as_ref()
-        .and_then(|e| e.title.clone())
+        .project_name
+        .clone()
+        .or_else(|| state.editor.as_ref().and_then(|e| e.title.clone()))
         .unwrap_or_else(|| command_ui::text(state, "chrome.tab.untitled"))
 }
 
