@@ -14,11 +14,12 @@
 
 ## 验证
 
-- 工作区测试 663 passed、15 ignored；完整共享门禁逐项见 `gates.json`，中英文窗口结果见 `windows.log`。
+- 工作区测试 663 passed、15 ignored；完整共享门禁逐项见 `gates.json`，中英文窗口 54/54 均有通过记录，见 `window-summary.json`；原始轮次和复验日志均保留。
 - 本地显式运行真实 rtex 沙箱：`Undefined control sequence.` 出现在 `main.tex:3`。
 - XeLaTeX/pdfLaTeX 沙箱整编失败保留 `main.tex:5` 与 revision，修复后成功出图。
 - CI 使用 fake-rtex 与真实日志夹具；任意 Unicode 输入属性测试覆盖 2048 组。
 - 系统字体、仅打包字体两套 stock Typst 对照各 31/31 逐像素相同。
+- 窗口首次被外部全局 Xvfb 清理中断；最终受影响项在同一 runner/机器锁下使用 byte-identical Xvfb 的专用进程名复验 8/8，通过且未改断言，临时包装不提交。
 - 保留测试先失败、后修复的记录；无新增外部 crate 或 TeX 安装依赖。
 
 ## 待办

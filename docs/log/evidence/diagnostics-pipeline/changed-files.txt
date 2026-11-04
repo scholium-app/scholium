@@ -49,8 +49,13 @@ docs/log/evidence/diagnostics-pipeline/stock-system.log
 docs/log/evidence/diagnostics-pipeline/test.log
 docs/log/evidence/diagnostics-pipeline/tests-before.log
 docs/log/evidence/diagnostics-pipeline/ui-strings.log
+docs/log/evidence/diagnostics-pipeline/window-interference.txt
+docs/log/evidence/diagnostics-pipeline/window-summary.json
+docs/log/evidence/diagnostics-pipeline/windows-protected.log
+docs/log/evidence/diagnostics-pipeline/windows-recheck.log
 docs/log/evidence/diagnostics-pipeline/windows.log
 docs/log/evidence/diagnostics-pipeline/wrap-before.log
+docs/log/evidence/diagnostics-pipeline/xvfb-wrapper.txt
 docs/modules/latex.md
 docs/modules/model.md
 docs/modules/typst.md

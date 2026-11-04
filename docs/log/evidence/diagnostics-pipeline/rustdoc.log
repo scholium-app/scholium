@@ -1,16 +1,2 @@
-    Checking scholium-model v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-model)
- Documenting scholium-model v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-model)
-    Checking scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-storage)
-    Checking scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-document)
-    Checking scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-typst)
- Documenting scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-storage)
-    Checking scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-latex)
- Documenting scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-document)
- Documenting scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-latex)
- Documenting scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-typst)
- Documenting scholium-sdg v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-sdg)
-    Checking scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
- Documenting scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
- Documenting scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-app)
-    Finished `dev` profile [unoptimized] target(s) in 20.42s
+    Finished `dev` profile [unoptimized] target(s) in 0.23s
    Generated /home/ation_ciger/Projects/Mogan/scholium-wt2/target/doc/scholium_app/index.html and 11 other files

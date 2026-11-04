@@ -2,7 +2,7 @@
 
 ## 问题与定位
 
-基线为 `origin/main`（实施时的精确 SHA 见证据），任务在 wt2 的
+基线为 `origin/main`（实施时的精确 SHA 见证据；完成实现后又签名合并 `c94bb32` 并重跑门禁），任务在 wt2 的
 `ation_ciger/feat/diagnostics-pipeline` 完成，没有修改 app、build 或 transport/工具链发现代码。
 
 审查中的 `\foo` 并非只存在于原始日志。锁定 rtex `531e2c6b32a09d33be58f6be1301fe8f793411cd`
@@ -56,6 +56,13 @@ Typst 使用真实编译器验证当前源码行列、精确块身份及常驻 w
 全部共享门禁的逐命令状态与原始输出收录于 [门禁结果](evidence/diagnostics-pipeline/gates.json)。
 额外验收命令记录见 [补充结果](evidence/diagnostics-pipeline/extras.json)。
 窗口测试使用仓库 runner 的机器锁及私有 Xvfb，未访问用户桌面；中文/英文分别完整运行。
+首轮 44/54 通过，10 项被其它并行任务的全局 Xvfb SIGKILL 中断；显式复验 11/16 通过，5 项再次遭遇同样干扰。
+环境证据见 [干扰记录](evidence/diagnostics-pipeline/window-interference.txt)。最终复验仅为本 slot 的 Xvfb 使用
+任务专用可执行文件名，二进制 SHA-256 与系统文件一致，避开外部按 comm 名称误杀；保留原 runner、机器锁、
+私有显示、屏幕参数与所有断言，未修改系统文件、脚本或其它任务的进程。
+包装及 hash 说明见 [Xvfb 记录](evidence/diagnostics-pipeline/xvfb-wrapper.txt)。
+最后一轮 8/8 通过；结合保留轮次，中英文 54/54 唯一检查均有通过记录，见
+[覆盖汇总](evidence/diagnostics-pipeline/window-summary.json)。本地环境干扰导致的显式复验为验证流程偏离，未放宽门禁。
 
 ## 后续接线
 

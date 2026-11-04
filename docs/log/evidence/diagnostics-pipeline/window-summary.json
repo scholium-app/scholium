@@ -1,0 +1,22 @@
+{
+  "passed_unique": 54,
+  "expected_unique": 54,
+  "runs": [
+    {
+      "log": "windows.log",
+      "passed": 44,
+      "total": 54
+    },
+    {
+      "log": "windows-recheck.log",
+      "passed": 11,
+      "total": 16
+    },
+    {
+      "log": "windows-protected.log",
+      "passed": 8,
+      "total": 8
+    }
+  ],
+  "note": "All 54 checks have passing evidence. Original and first recheck retain external Xvfb termination failures. Final 8 checks use a byte-identical Xvfb with a task-specific process name; no test assertions or machine lock changed."
+}
