@@ -18,9 +18,27 @@ const DOMAINS: [fn() -> Vec<CommandSpec>; 8] = [
     help::specs,
 ];
 
+#[cfg(test)]
+pub(crate) fn declarations() -> Vec<CommandSpec> {
+    DOMAINS.iter().flat_map(|specs| specs()).collect()
+}
+
 pub(crate) fn all() -> &'static [CommandSpec] {
     static ALL: OnceLock<Vec<CommandSpec>> = OnceLock::new();
-    ALL.get_or_init(|| DOMAINS.iter().flat_map(|specs| specs()).collect())
+    ALL.get_or_init(|| {
+        DOMAINS
+            .iter()
+            .flat_map(|specs| specs())
+            .filter(|s| {
+                !matches!(
+                    (s.availability)(&super::spec::CommandContext::of(
+                        &crate::state::WorkspaceState::default()
+                    )),
+                    super::spec::Availability::Unimplemented(_)
+                )
+            })
+            .collect()
+    })
 }
 
 pub(crate) fn get(id: &str) -> Option<&'static CommandSpec> {

@@ -16,6 +16,9 @@ pub(super) fn show(ui: &mut Ui, state: &mut WorkspaceState) {
     ui.spacing_mut().item_spacing = egui::Vec2::ZERO;
     ui.with_layout(Layout::left_to_right(Align::Center), |ui| {
         for menu in MenuId::ALL {
+            if entries(state, menu, None).is_empty() {
+                continue;
+            }
             let label = command_ui::text(state, menu.key());
             let meta = Meta::new(format!("ui.{}", menu.key()), "menubar", label.clone());
             bar_menu(ui, BarMenu { label, meta }, |ui| {
@@ -31,9 +34,10 @@ enum Entry {
 }
 
 /// A menu's entries in display order with their group, so a group change draws a separator.
-fn entries(menu: MenuId, submenu: Option<Submenu>) -> Vec<(u8, Entry)> {
+fn entries(state: &WorkspaceState, menu: MenuId, submenu: Option<Submenu>) -> Vec<(u8, Entry)> {
     let mut entries: Vec<((u8, u8), Entry)> = registry::menu_items(menu, submenu)
         .into_iter()
+        .filter(|spec| spec.visible(state))
         .filter_map(|spec| {
             spec.menu
                 .map(|m| ((m.group, m.order), Entry::Command(spec)))
@@ -43,6 +47,7 @@ fn entries(menu: MenuId, submenu: Option<Submenu>) -> Vec<(u8, Entry)> {
         for sub in registry::submenus(menu) {
             let first = registry::menu_items(menu, Some(sub))
                 .into_iter()
+                .filter(|spec| spec.visible(state))
                 .filter_map(|spec| spec.menu.map(|m| (m.group, m.order)))
                 .min();
             entries.extend(first.map(|at| (at, Entry::Submenu(sub))));
@@ -53,7 +58,7 @@ fn entries(menu: MenuId, submenu: Option<Submenu>) -> Vec<(u8, Entry)> {
 }
 
 fn menu_list(ui: &mut Ui, state: &mut WorkspaceState, menu: MenuId, submenu: Option<Submenu>) {
-    let entries = entries(menu, submenu);
+    let entries = entries(state, menu, submenu);
     let rows: Vec<(String, Option<String>, bool)> = entries
         .iter()
         .map(|(_, entry)| match entry {

@@ -9,6 +9,9 @@ use scholium_model::{BlockKind, structured::TextStyle};
 pub(super) fn specs() -> Vec<CommandSpec> {
     let mut specs = text();
     specs.extend(paragraph());
+    for spec in &mut specs {
+        spec.kernels = super::spec::Kernel::NATIVE;
+    }
     specs
 }
 

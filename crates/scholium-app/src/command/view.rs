@@ -38,6 +38,7 @@ fn workspace() -> Vec<CommandSpec> {
         },
         command! {
             "view.navigation",
+            kernels: super::spec::Kernel::NATIVE,
             icon: IconId::Navigation,
             menu: menu!(View, 1, 0),
             checked: Some(avail::navigation),

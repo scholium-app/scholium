@@ -318,11 +318,7 @@ impl EditorSession {
     fn source_pane(&mut self, ui: &mut egui::Ui, focus_block: Option<NodeId>, locale: Locale) {
         let snapshot = self.snapshot.clone();
         let generated = self.source_view.source(&snapshot);
-        ui.label(crate::i18n::text_with(
-            locale,
-            "source.header",
-            &[("revision", (snapshot.revision.0 as i64).into())],
-        ));
+        ui.label(crate::i18n::text(locale, "source.header"));
         if generated.holes > 0 || !generated.raw.is_empty() {
             ui.weak(crate::i18n::text_with(
                 locale,
@@ -396,7 +392,7 @@ impl EditorSession {
                     texture,
                     drawn,
                     egui::Rect::from_min_max(egui::Pos2::ZERO, egui::pos2(1.0, 1.0)),
-                    egui::Color32::WHITE,
+                    crate::theme::Tokens::LIGHT.page,
                 );
                 shown_at = Some((response.rect, scale));
                 if current

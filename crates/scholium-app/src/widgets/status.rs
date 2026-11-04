@@ -34,7 +34,8 @@ pub(crate) fn status_text(
         t.text_dim,
     );
     match tip {
-        Some(tip) => response.on_hover_text(tip),
+        Some(tip) if tip != text => response.on_hover_text(tip),
+        Some(_) => response,
         None => response,
     }
 }

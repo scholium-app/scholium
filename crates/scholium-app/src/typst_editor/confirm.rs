@@ -8,28 +8,37 @@ impl EditorSession {
         }
         let locale = state.locale.resolve();
         let text = |key: &str| crate::i18n::text(locale, key);
-        egui::Modal::new(egui::Id::new("editor-discard")).show(ctx, |ui| {
-            ui.heading(text("chrome.dialog.title"));
-            ui.label(text("chrome.dialog.body"));
-            ui.horizontal(|ui| {
-                if ui.button(text("chrome.dialog.cancel")).clicked() {
-                    self.confirm_new = false;
-                    self.confirm_close = false;
-                    self.focus = true;
-                }
-                if ui.button(text("command.file.save.title")).clicked() {
-                    self.save(state);
-                    if state.storage_error.is_none() { self.finish_confirm(ctx, state); }
-                }
-                let proceed = ui.button(text("chrome.dialog.discard"));
-                if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
-                    println!("DIALOG {}", serde_json::json!({"proceed": [proceed.rect.center().x, proceed.rect.center().y]}));
-                }
-                if proceed.clicked() {
+        use crate::widgets::{DialogButton, dialog};
+        let buttons = [
+            DialogButton::new("cancel", text("chrome.dialog.cancel"), false),
+            DialogButton::new("proceed", text("chrome.dialog.discard"), false),
+            DialogButton::new("save", text("command.file.save.title"), true),
+        ];
+        let action = dialog(
+            ctx,
+            "editor-discard",
+            &text("chrome.dialog.title"),
+            locale,
+            &buttons,
+            |ui| {
+                ui.label(text("chrome.dialog.body"));
+            },
+        );
+        match action.as_deref() {
+            Some("cancel") => {
+                self.confirm_new = false;
+                self.confirm_close = false;
+                self.focus = true;
+            }
+            Some("save") => {
+                self.save(state);
+                if state.storage_error.is_none() {
                     self.finish_confirm(ctx, state);
                 }
-            });
-        });
+            }
+            Some("proceed") => self.finish_confirm(ctx, state),
+            _ => {}
+        }
     }
 
     fn finish_confirm(&mut self, ctx: &egui::Context, state: &mut WorkspaceState) {

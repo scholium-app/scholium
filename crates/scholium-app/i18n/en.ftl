@@ -350,9 +350,9 @@ chrome-status-context-source = Source · read-only
 
 chrome-status-revisions = Typst Content · body r{ $body } · view { $shown }
 
-chrome-status-backend = Typst preview
+chrome-status-backend = Typst · Synced
 
-chrome-status-updating = Updating
+chrome-status-updating = Typst · Updating
 
 chrome-status-pending = updating
 
@@ -374,7 +374,7 @@ chrome-dialog-discard = Discard and Continue
 
 # Source view
 
-source-header = Generated Typst source · read-only · body r{ $revision }
+source-header = Generated from document · Read-only
 
 source-warning = Empty slots: { $holes } (shown as □; rejected by strict output). Raw formulas: { $raw } (display only; not executed in the preview).
 
@@ -518,6 +518,19 @@ latex-preview = Same-engine preview
 latex-unavailable = Toolchain unavailable
 latex-building = Compiling preview
 latex-stale = Preview updating · source changed
-latex-full = Full compilation preview · { $ms } ms
-latex-live = Live preview · { $ms } ms
+latex-full = Full build { $seconds } s
+latex-live = Live { $ms } ms
 source-editor-find = Find
+
+chrome-dialog-close = Close dialog
+
+chrome-status-position = Ln { $line }, Col { $column }
+
+chrome-status-no_problems = No problems
+
+chrome-status-engine_hint = Preview uses the project language engine
+
+chrome-status-typ_source = Typst · Preview not generated
+
+chrome-toolbar-paragraph_hint = Choose the paragraph style for the current block
+chrome-toolbar-overflow_hint = Show toolbar actions that do not fit in the window

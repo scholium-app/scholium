@@ -177,21 +177,21 @@ try:
     toggle_roles = ("check box", "toggle button")
     strike, bold, undo = named("format.strike"), named("format.bold"), named("edit.undo")
     redo = named("edit.redo")  # nothing to redo yet: disabled with a reason
-    record("09-disabled-controls-are-not-enabled",
-           strike is not None and not states(strike)["ENABLED"] and not states(strike)["SENSITIVE"]
-           and redo is not None and not states(redo)["ENABLED"]
+    record("09-unimplemented-controls-absent-and-unavailable-controls-disabled",
+           strike is None and named("tools.search") is None
+           and redo is not None and not states(redo)["ENABLED"] and not states(redo)["SENSITIVE"]
            and bold is not None and states(bold)["ENABLED"],
            strike=states(strike) if strike else None, redo=states(redo) if redo else None,
            bold=states(bold) if bold else None)
     record("10-only-checkable-commands-are-toggles",
            bold.get_role_name() in toggle_roles and undo.get_role_name() in button_roles
-           and strike.get_role_name() in button_roles,
-           bold=bold.get_role_name(), undo=undo.get_role_name(), strike=strike.get_role_name())
+           and redo.get_role_name() in button_roles,
+           bold=bold.get_role_name(), undo=undo.get_role_name(), redo=redo.get_role_name())
     wanted = {
         "menubar": [catalog[f"menu-{m}"] for m in
-                    ("file", "edit", "insert", "format", "document", "view", "tools", "help")],
+                    ("file", "edit", "insert", "format", "view", "help")],
         "toolbar": [chrome_ui.title(locale, c) for c in
-                    ("format.bold", "format.italic", "edit.undo", "insert.formula", "tools.search")],
+                    ("format.bold", "format.italic", "edit.undo", "insert.formula")],
         "focus": [chrome_ui.title(locale, c) for c in
                   ("view.mode.page", "view.mode.source", "insert.exit_formula")],
         "tab": [chrome_ui.title(locale, c) for c in ("file.new", "file.close")],

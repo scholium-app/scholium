@@ -99,6 +99,10 @@ impl EditorSession {
         });
         value.as_object_mut().expect("audit is an object").extend(
             json!({
+            "layout_stats": self.scene().map(|s| json!({
+                "built": s.stats.built, "reused": s.stats.reused,
+                "source_reads": s.stats.source_reads, "elapsed_ms": s.stats.elapsed_ms,
+            })),
             "document_geometry": self.core.document_scene_is_current(),
             "preedit_caret": self.scene().and_then(|s| s.preedit.as_ref()).map(|c| json!({
                 "leaf": format!("{:?}", c.position.leaf), "byte": c.position.byte,

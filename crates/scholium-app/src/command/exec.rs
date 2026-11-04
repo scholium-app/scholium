@@ -4,7 +4,7 @@ use crate::{commands, state::WorkspaceState};
 
 /// Run `spec` if its availability allows; false when it did not run.
 pub(crate) fn run(state: &mut WorkspaceState, spec: &CommandSpec) -> bool {
-    if !(spec.availability)(&CommandContext::of(state)).is_enabled() {
+    if !spec.visible(state) || !(spec.availability)(&CommandContext::of(state)).is_enabled() {
         return false;
     }
     perform(state, spec.action);

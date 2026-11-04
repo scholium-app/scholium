@@ -198,6 +198,25 @@ impl Availability {
     }
 }
 
+/// Project kernels are independent; native page commands never reach source authorities.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Kernel {
+    Native,
+    TypstSource,
+    Latex,
+}
+impl Kernel {
+    pub(crate) const ALL: &'static [Self] = &[Self::Native, Self::TypstSource, Self::Latex];
+    pub(crate) const NATIVE: &'static [Self] = &[Self::Native];
+    pub(crate) fn of(state: &crate::state::WorkspaceState) -> Self {
+        match state.source_language {
+            Some(scholium_storage::project::ProjectLanguage::Latex) => Self::Latex,
+            Some(_) => Self::TypstSource,
+            None => Self::Native,
+        }
+    }
+}
+
 /// The facts availability and checked state depend on, built from the workspace state.
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct CommandContext {
@@ -226,6 +245,7 @@ pub(crate) type CheckedFn = fn(&CommandContext) -> bool;
 
 #[derive(Clone, Debug)]
 pub(crate) struct CommandSpec {
+    pub(crate) kernels: &'static [Kernel],
     pub(crate) id: CommandId,
     pub(crate) title: CatalogKey,
     #[allow(dead_code)] // the longer description; read by the command search (next task)
@@ -243,8 +263,13 @@ pub(crate) struct CommandSpec {
 }
 
 impl CommandSpec {
+    pub(crate) fn visible(&self, state: &crate::state::WorkspaceState) -> bool {
+        self.kernels.contains(&Kernel::of(state))
+    }
+
     /// Defaults for the `command!` macro: always enabled, no placement, no action.
     pub(crate) const BASE: Self = Self {
+        kernels: Kernel::ALL,
         id: "",
         title: "",
         tooltip: "",

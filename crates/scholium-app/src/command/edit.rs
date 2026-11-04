@@ -19,6 +19,11 @@ pub(super) fn specs() -> Vec<CommandSpec> {
         availability: avail::page_write,
         action: Action::Editor(crate::typst_editor::Command::SelectAll),
     });
+    for spec in &mut specs {
+        if !matches!(spec.action, Action::Undo | Action::Redo) {
+            spec.kernels = super::spec::Kernel::NATIVE;
+        }
+    }
     specs
 }
 

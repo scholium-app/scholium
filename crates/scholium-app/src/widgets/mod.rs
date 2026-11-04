@@ -7,7 +7,11 @@
 //! hover, pressed, active, disabled and the keyboard focus ring.
 pub(crate) mod audit;
 mod button;
+mod dialog;
+#[cfg(test)]
+mod dialog_tests;
 mod dropdown;
+mod form;
 mod menu;
 mod row;
 mod segmented;
@@ -19,7 +23,9 @@ mod tests;
 mod tooltip;
 
 pub(crate) use button::{IconButton, TextButton, icon_button, tag, text_button};
-pub(crate) use dropdown::{Dropdown, dropdown, natural_width as dropdown_width};
+pub(crate) use dialog::{DialogButton, dialog, notice};
+pub(crate) use dropdown::{Dropdown, dropdown};
+pub(crate) use form::{button, popover_frame, text_input};
 pub(crate) use menu::{
     BarMenu, MenuItem, bar_menu, button_menu, menu_item, menu_separator, menu_width, submenu_item,
 };
@@ -173,7 +179,9 @@ impl Meta {
             info
         });
         audit::record(ui.ctx(), self, rect);
-        if let Some(tip) = &self.tip {
+        if let Some(tip) = &self.tip
+            && (tip.title != self.name || tip.shortcut.is_some() || tip.reason.is_some())
+        {
             tooltip::show(&response, tip, self.enabled);
         }
         response

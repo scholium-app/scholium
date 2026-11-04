@@ -129,7 +129,6 @@ fn every_p1_menu_lists_its_commands() {
                 "file.recent",
                 "file.save",
                 "file.save_as",
-                "file.export",
                 "file.close",
             ],
         ),
@@ -141,7 +140,6 @@ fn every_p1_menu_lists_its_commands() {
                 "edit.cut",
                 "edit.copy",
                 "edit.paste",
-                "edit.find",
             ],
         ),
         (
@@ -158,39 +156,15 @@ fn every_p1_menu_lists_its_commands() {
         ),
         (
             MenuId::Format,
-            &[
-                "format.bold",
-                "format.italic",
-                "format.underline",
-                "format.strike",
-                "format.clear",
-            ],
+            &["format.bold", "format.italic", "format.clear"],
         ),
-        (
-            MenuId::Document,
-            &[
-                "document.style_template",
-                "document.page_size",
-                "document.language",
-                "document.font",
-                "document.font_size",
-                "document.final_check",
-            ],
-        ),
+        (MenuId::Document, &[]),
         (
             MenuId::View,
-            &[
-                "view.navigation",
-                "view.diagnostics",
-                "view.split",
-                "view.toolbars",
-            ],
+            &["view.navigation", "view.diagnostics", "view.toolbars"],
         ),
-        (MenuId::Tools, &["tools.search", "tools.preferences"]),
-        (
-            MenuId::Help,
-            &["help.shortcuts", "help.commands", "help.about"],
-        ),
+        (MenuId::Tools, &[]),
+        (MenuId::Help, &["help.shortcuts"]),
     ];
     for (menu, ids) in expected {
         let listed: Vec<_> = registry::menu_items(menu, None)
@@ -279,23 +253,18 @@ fn composition_blocks_writes_file_actions_and_mode_switches() {
 }
 
 #[test]
-fn unimplemented_commands_are_greyed_with_a_reason() {
+fn unimplemented_commands_are_absent_from_the_registry_and_keymap() {
     for id in [
         "file.export",
         "edit.find",
         "format.underline",
         "document.page_size",
+        "document.final_check",
+        "tools.search",
     ] {
-        assert_eq!(
-            (spec(id).availability)(&editable()),
-            Availability::Unimplemented("reason.unimplemented"),
-            "{id}"
-        );
+        assert!(registry::get(id).is_none(), "{id}");
+        assert!(super::keymap::effective().hint(id).is_none(), "{id}");
     }
-    assert_eq!(
-        (spec("document.final_check").availability)(&editable()),
-        Availability::Unimplemented("reason.final_build")
-    );
 }
 
 #[test]

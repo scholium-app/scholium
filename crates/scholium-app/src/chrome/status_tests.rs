@@ -1,4 +1,4 @@
-//! Status bar behaviour: revisions on hover, the always-visible backend label.
+//! Status bar behaviour: user-facing position, context and backend state.
 use super::tests::{EN, Window, ZH, overflow};
 use crate::state::ViewMode;
 
@@ -11,25 +11,10 @@ fn developer_revisions_are_not_in_the_status_bar_text() {
 }
 
 #[test]
-fn revisions_and_backend_move_into_the_context_tooltip_and_mark_a_stale_picture() {
-    let mut w = Window::new(1280.0, ZH);
-    w.editor().revision = 7;
-    w.editor().shown_revision = Some(6);
-    let line = super::statusbar::revisions(&w.state, w.state.editor.as_ref().expect("document"));
-    assert_eq!(line, "Typst Content · 正文 r7 · 画面 r6");
-    w.editor().pending = true;
-    let stale = super::statusbar::revisions(&w.state, w.state.editor.as_ref().expect("document"));
-    assert!(stale.ends_with("待更新"), "{stale}");
-    w.state.locale = EN;
-    let en = super::statusbar::revisions(&w.state, w.state.editor.as_ref().expect("document"));
-    assert!(en.contains("body r7") && en.ends_with("updating"), "{en}");
-}
-
-#[test]
 fn the_backend_label_is_always_shown_and_reads_updating_while_stale() {
     for (locale, steady, updating) in [
-        (ZH, "Typst 预览", "更新中"),
-        (EN, "Typst preview", "Updating"),
+        (ZH, "Typst · 已同步", "Typst · 更新中"),
+        (EN, "Typst · Synced", "Typst · Updating"),
     ] {
         for mode in [ViewMode::Page, ViewMode::Source] {
             let mut w = Window::new(1280.0, locale);
@@ -65,15 +50,12 @@ fn the_backend_label_is_always_shown_and_reads_updating_while_stale() {
             );
             assert!(!texts.contains(&steady.to_owned()));
             assert_eq!(next_at(&w), before, "no layout jump");
-            let tip =
-                super::statusbar::revisions(&w.state, w.state.editor.as_ref().expect("document"));
-            assert!(tip.contains("r7") && tip.contains("r6"), "{tip}");
         }
     }
 }
 
 #[test]
-fn the_status_bar_shows_words_context_and_page_info_only_in_source() {
+fn the_native_status_bar_shows_page_words_and_context() {
     let mut w = Window::new(1280.0, ZH);
     w.editor().words = 1284;
     w.editor().preview_page = Some((1, 2));
@@ -82,10 +64,8 @@ fn the_status_bar_shows_words_context_and_page_info_only_in_source() {
     assert!(texts.contains(&"1,284 字".to_owned()), "{texts:?}");
     assert!(texts.contains(&"正文".to_owned()));
     assert!(
-        !texts
-            .iter()
-            .any(|t| t.starts_with("第 ") && t.ends_with(" 页")),
-        "no page info in the continuous view"
+        texts.contains(&"第 1/2 页".to_owned()),
+        "native page position"
     );
     w.editor().in_math = true;
     w.settle();

@@ -1,4 +1,4 @@
-//! The window chrome of P1_UI: menu bar 28, main toolbar 34, focus toolbar 30, document
+//! The window chrome of P1_UI: menu bar 28, main toolbar 36, focus toolbar 32, document
 //! tab bar 30, editing area, status bar 24. Everything is drawn from the command registry
 //! and the design tokens; the operating system draws the title bar.
 mod focusbar;
@@ -27,6 +27,8 @@ use eframe::egui::{self, Frame, Margin, Panel};
 #[cfg(test)]
 pub(crate) const CATALOG_KEYS: &[&str] = &[
     "chrome.overflow",
+    "chrome.toolbar.paragraph_hint",
+    "chrome.toolbar.overflow_hint",
     "chrome.focus.label.style",
     "chrome.focus.label.paper",
     "chrome.focus.label.language",
@@ -123,6 +125,8 @@ pub(crate) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState) {
 
 fn facts(state: &WorkspaceState, overflowed: &[&'static str]) -> serde_json::Value {
     serde_json::json!({
+        "file_modal": state.file_modal,
+        "kernel": format!("{:?}", crate::command::spec::Kernel::of(state)),
         "locale": format!("{:?}", state.locale.resolve()),
         "theme": format!("{:?}", state.theme),
         "toolbars_visible": state.toolbars_visible,

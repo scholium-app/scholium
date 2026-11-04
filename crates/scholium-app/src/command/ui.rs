@@ -26,7 +26,8 @@ pub(crate) struct Resolved {
 }
 
 pub(crate) fn resolve(state: &WorkspaceState, id: &str) -> Option<Resolved> {
-    Some(resolve_spec(state, registry::get(id)?))
+    let spec = registry::get(id)?;
+    spec.visible(state).then(|| resolve_spec(state, spec))
 }
 
 pub(crate) fn resolve_spec(state: &WorkspaceState, spec: &'static CommandSpec) -> Resolved {
@@ -55,7 +56,7 @@ impl Resolved {
     /// "名称 + 快捷键", plus the reason while the command cannot run.
     pub(crate) fn tip(&self, state: &WorkspaceState) -> Tip {
         Tip {
-            title: self.title(state),
+            title: text(state, self.spec.tooltip),
             shortcut: self.shortcut(),
             reason: self.availability.reason().map(|key| text(state, key)),
         }
@@ -75,6 +76,27 @@ pub(crate) fn invoke(ctx: &egui::Context, state: &mut WorkspaceState, id: &str) 
     let Some(spec) = registry::get(id) else {
         return;
     };
+    if !spec.visible(state) {
+        return;
+    }
+    if state.source_language.is_some() && matches!(spec.action, Action::Undo | Action::Redo) {
+        let shift = matches!(spec.action, Action::Redo);
+        ctx.input_mut(|input| {
+            input.events.push(egui::Event::Key {
+                key: egui::Key::Z,
+                physical_key: None,
+                pressed: true,
+                repeat: false,
+                modifiers: if shift {
+                    egui::Modifiers::COMMAND | egui::Modifiers::SHIFT
+                } else {
+                    egui::Modifiers::COMMAND
+                },
+            })
+        });
+        state.focus_requested = true;
+        return;
+    }
     if id == "help.shortcuts" {
         ctx.data_mut(|d| d.insert_temp(egui::Id::new("shortcut-help"), true));
         return;

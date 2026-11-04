@@ -1,7 +1,7 @@
 //! Language-specific assembly; LaTeX never starts the Typst document or layout worker.
 use crate::{
     i18n,
-    state::{ViewMode, WorkspaceState},
+    state::WorkspaceState,
     typst_editor::{EditorSession, EditorView},
 };
 use eframe::egui;
@@ -115,7 +115,19 @@ impl ProjectWorkspace {
         Ok(())
     }
     pub(crate) fn metadata(&self, state: &mut WorkspaceState) {
+        state.project_name = Some(display_name(self.handle(), state));
+        state.project_entry = Some(self.handle().entry().display().to_string());
+        state.kernel_status = None;
+        state.source_problems = 0;
+        if let Self::Source(_) = self {
+            state.kernel_status = Some(i18n::text(
+                state.locale.resolve(),
+                "chrome.status.typ_source",
+            ));
+        }
         if let Self::Latex(w) = self {
+            state.kernel_status = Some(w.status(state.locale.resolve()));
+            state.source_problems = w.problem_count();
             state.composition = w.pending_input().then(String::new);
         }
         state.source_language = match self {
@@ -129,9 +141,11 @@ impl ProjectWorkspace {
             _ => None,
         };
         if let Some(s) = source {
-            state.mode = ViewMode::Source;
             state.editor = Some(EditorView {
-                title: Some(name(s.handle())),
+                title: Some(display_name(s.handle(), state)),
+                can_undo: state.source_undo,
+                can_redo: state.source_redo,
+                words: crate::chrome::count_words(s.text()),
                 dirty: s.dirty(),
                 ..Default::default()
             });
@@ -145,28 +159,32 @@ impl ProjectWorkspace {
         update_title(ui.ctx(), self.handle(), self.dirty(), state);
         if let Self::Latex(workbench) = self {
             workbench.show(ui, state);
-            audit_source(workbench.source(), state);
+            audit_source(workbench.source(), state, ui.ctx());
             self.metadata(state);
             return;
         }
         let Self::Source(source) = self else {
             return;
         };
-        let locale = state.locale.resolve();
-        let text = |key| i18n::text(locale, key);
         egui::CentralPanel::default().show(ui, |ui| {
             ui.heading(name(source.handle()));
             ui.label(source.handle().entry().display().to_string());
             if let Some(error) = &state.storage_error {
                 ui.colored_label(ui.visuals().error_fg_color, error);
             }
-            ui.label(text("project.source.authority"));
             let mut input = source.text().to_owned();
-            let response = ui.add(
-                egui::TextEdit::multiline(&mut input)
-                    .code_editor()
-                    .desired_width(f32::INFINITY),
-            );
+            if std::mem::take(&mut state.focus_requested) {
+                ui.ctx()
+                    .memory_mut(|m| m.request_focus(egui::Id::new("typ-source")));
+            }
+            let output = egui::TextEdit::multiline(&mut input)
+                .id(egui::Id::new("typ-source"))
+                .interactive(!state.file_modal)
+                .code_editor()
+                .desired_width(f32::INFINITY)
+                .show(ui);
+            let response = &output.response;
+            crate::source_editor::publish_status(&output, &input, state);
             audit_rect("source", response.rect);
             if response.changed() {
                 match source.edit(input) {
@@ -175,9 +193,20 @@ impl ProjectWorkspace {
                 }
             }
         });
-        audit_source(source, state);
+        audit_source(source, state, ui.ctx());
         self.metadata(state);
     }
+}
+pub(crate) fn display_name(handle: &ProjectHandle, state: &WorkspaceState) -> String {
+    if is_default(handle) {
+        i18n::text(state.locale.resolve(), "chrome.tab.untitled")
+    } else {
+        name(handle)
+    }
+}
+pub(crate) fn is_default(handle: &ProjectHandle) -> bool {
+    scholium_storage::default_document_path()
+        .is_ok_and(|p| p.with_file_name("default-project") == handle.root())
 }
 pub(crate) fn name(handle: &ProjectHandle) -> String {
     handle
@@ -208,11 +237,11 @@ pub(crate) fn audit_rect(control: &str, rect: egui::Rect) {
 #[cfg(test)]
 mod tests;
 
-fn audit_source(source: &SourceProject, state: &WorkspaceState) {
+fn audit_source(source: &SourceProject, state: &WorkspaceState, ctx: &egui::Context) {
     if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
         println!(
             "PROJECT {}",
-            serde_json::json!({"language":format!("{:?}",source.handle().language()),"entry":source.handle().entry(),"dirty":source.dirty(),"text":source.text(),"error":state.storage_error})
+            serde_json::json!({"language":format!("{:?}",source.handle().language()),"entry":source.handle().entry(),"dirty":source.dirty(),"text":source.text(),"error":state.storage_error,"chrome":crate::widgets::audit::facts_json(ctx),"controls":crate::widgets::audit::controls_json(ctx)})
         );
     }
 }
@@ -230,6 +259,9 @@ fn update_title(ctx: &egui::Context, handle: &ProjectHandle, dirty: bool, state:
     ctx.send_viewport_cmd(egui::ViewportCommand::Title(i18n::text_with(
         locale,
         "chrome.window.title",
-        &[("name", name(handle).into()), ("state", saved.into())],
+        &[
+            ("name", display_name(handle, state).into()),
+            ("state", saved.into()),
+        ],
     )));
 }

@@ -2,24 +2,26 @@ use super::{ThemeKind, Tokens, fonts};
 use std::path::{Path, PathBuf};
 
 /// The P1_UI token table: (name, light, dark).
-const TABLE: [(&str, u32, u32); 24] = [
-    ("menubar", 0xEDEDED, 0x2A2A2A),
-    ("toolbar", 0xEDEDED, 0x2A2A2A),
-    ("focusbar", 0xF7F7F7, 0x313131),
-    ("tabbar", 0xDEDEDE, 0x222222),
-    ("tab_active", 0xE8E8E8, 0x1B1B1B),
-    ("canvas", 0xE8E8E8, 0x1B1B1B),
+const TABLE: [(&str, u32, u32); 26] = [
+    ("menubar", 0xF2F2F3, 0x2A2A2A),
+    ("toolbar", 0xF2F2F3, 0x2A2A2A),
+    ("focusbar", 0xF2F2F3, 0x313131),
+    ("tabbar", 0xEAEAEC, 0x222222),
+    ("tab_active", 0xE6E6E8, 0x1B1B1B),
+    ("canvas", 0xE6E6E8, 0x1B1B1B),
     ("page", 0xFFFFFF, 0xFFFFFF),
     ("field", 0xFFFFFF, 0x1F1F1F),
-    ("border", 0x8C8C8C, 0x7A7A7A),
-    ("separator", 0xD2D2D2, 0x3C3C3C),
-    ("hover", 0xDCDCDC, 0x3A3A3A),
-    ("pressed", 0xCBCBCB, 0x474747),
-    ("active_bg", 0xD6E3F8, 0x22395F),
+    ("border", 0xCFCFD4, 0x5A5A60),
+    ("separator", 0xE0E0E3, 0x3C3C3C),
+    ("hover", 0xE4E4E7, 0x3A3A3A),
+    ("pressed", 0xD8D8DC, 0x474747),
+    ("active_bg", 0xDCE6F8, 0x22395F),
     ("accent", 0x1D5BD0, 0x6EA4FF),
     ("focus_ring", 0x1D5BD0, 0x6EA4FF),
     ("text", 0x1F1F1F, 0xE8E8E8),
-    ("text_dim", 0x595959, 0xA6A6A6),
+    ("text_dim", 0x5C5C63, 0xA6A6A6),
+    ("text_faint", 0x8E8E95, 0x7E7E84),
+    ("error", 0xC4311F, 0xFF7A6B),
     ("text_disabled", 0xA6A6A6, 0x5E5E5E),
     ("warning", 0x9A6700, 0xE0A82E),
     ("warning_bg", 0xFBEFC5, 0x3A2F12),
@@ -48,6 +50,8 @@ fn value(t: &Tokens, name: &str) -> [u8; 3] {
         "focus_ring" => t.focus_ring,
         "text" => t.text,
         "text_dim" => t.text_dim,
+        "text_faint" => t.text_faint,
+        "error" => t.error,
         "text_disabled" => t.text_disabled,
         "warning" => t.warning,
         "warning_bg" => t.warning_bg,
@@ -88,7 +92,7 @@ fn the_page_is_white_in_both_themes() {
 #[test]
 fn bar_heights_sum_to_the_designed_chrome() {
     let top = Tokens::MENU_BAR + Tokens::TOOLBAR + Tokens::FOCUS_BAR + Tokens::TAB_BAR;
-    assert_eq!(top, 122.0, "P1_UI: the four top bars total 122 logical px");
+    assert_eq!(top, 126.0, "P1_UI: the four top bars total 126 logical px");
     assert_eq!(Tokens::STATUS_BAR, 24.0);
 }
 

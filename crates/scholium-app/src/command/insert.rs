@@ -10,6 +10,9 @@ pub(super) fn specs() -> Vec<CommandSpec> {
     let mut specs = math();
     specs.extend(math_focus());
     specs.extend(objects());
+    for spec in &mut specs {
+        spec.kernels = super::spec::Kernel::NATIVE;
+    }
     specs
 }
 
