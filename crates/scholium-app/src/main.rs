@@ -20,7 +20,7 @@ use eframe::egui;
 use project_workspace::ProjectWorkspace;
 use state::WorkspaceState;
 
-/// Narrowest window: at this width the toolbar already moves its last group into "»".
+/// Narrowest supported window; toolbar groups overflow together if space is insufficient.
 const MIN_WINDOW_WIDTH: f32 = 480.0;
 
 #[derive(Default)]
@@ -40,6 +40,19 @@ impl eframe::App for ScholiumApp {
         chrome::show(ui, &mut self.state);
         self.files
             .show(ui.ctx(), &mut self.state, &mut self.project);
+        self.state.file_modal |= command::show_shortcuts(ui.ctx(), &self.state);
+        if self.notice
+            && widgets::notice(
+                ui.ctx(),
+                "startup-migrated",
+                &i18n::text(self.state.locale.resolve(), "project.migrated.title"),
+                &i18n::text(self.state.locale.resolve(), "project.migrated.body"),
+                self.state.locale.resolve(),
+            )
+        {
+            self.notice = false;
+        }
+        self.state.file_modal |= self.notice;
         if let Some(project) = &mut self.project {
             project.show(ui, &mut self.state);
         } else {
@@ -52,24 +65,6 @@ impl eframe::App for ScholiumApp {
                 }
                 if let Some(error) = &self.state.storage_error {
                     ui.colored_label(ui.visuals().error_fg_color, error);
-                }
-            });
-        }
-        if self.notice {
-            egui::Window::new(i18n::text(
-                self.state.locale.resolve(),
-                "project.migrated.title",
-            ))
-            .show(ui.ctx(), |ui| {
-                ui.label(i18n::text(
-                    self.state.locale.resolve(),
-                    "project.migrated.body",
-                ));
-                if ui
-                    .button(i18n::text(self.state.locale.resolve(), "project.ok"))
-                    .clicked()
-                {
-                    self.notice = false;
                 }
             });
         }
@@ -97,6 +92,9 @@ fn main() -> eframe::Result {
                 ProjectWorkspace::open(handle, &cc.egui_ctx, &mut app.state)
             }) {
                 Ok(project) => {
+                    if !matches!(project, ProjectWorkspace::Typst { .. }) {
+                        app.state.mode = state::ViewMode::Source;
+                    }
                     app.files.remember(&project, &mut app.state);
                     app.project = Some(project);
                 }

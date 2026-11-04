@@ -51,6 +51,8 @@ pub(crate) struct Tokens {
     pub(crate) focus_ring: Color32,
     pub(crate) text: Color32,
     pub(crate) text_dim: Color32,
+    pub(crate) text_faint: Color32,
+    pub(crate) error: Color32,
     pub(crate) text_disabled: Color32,
     pub(crate) warning: Color32,
     pub(crate) warning_bg: Color32,
@@ -66,23 +68,25 @@ pub(crate) struct Tokens {
 impl Tokens {
     pub(crate) const LIGHT: Self = Self {
         kind: ThemeKind::Light,
-        menubar: hex(0xEDEDED),
-        toolbar: hex(0xEDEDED),
-        focusbar: hex(0xF7F7F7),
-        tabbar: hex(0xDEDEDE),
-        tab_active: hex(0xE8E8E8),
-        canvas: hex(0xE8E8E8),
+        menubar: hex(0xF2F2F3),
+        toolbar: hex(0xF2F2F3),
+        focusbar: hex(0xF2F2F3),
+        tabbar: hex(0xEAEAEC),
+        tab_active: hex(0xE6E6E8),
+        canvas: hex(0xE6E6E8),
         page: hex(0xFFFFFF),
         field: hex(0xFFFFFF),
-        border: hex(0x8C8C8C),
-        separator: hex(0xD2D2D2),
-        hover: hex(0xDCDCDC),
-        pressed: hex(0xCBCBCB),
-        active_bg: hex(0xD6E3F8),
+        border: hex(0xCFCFD4),
+        separator: hex(0xE0E0E3),
+        hover: hex(0xE4E4E7),
+        pressed: hex(0xD8D8DC),
+        active_bg: hex(0xDCE6F8),
         accent: hex(0x1D5BD0),
         focus_ring: hex(0x1D5BD0),
         text: hex(0x1F1F1F),
-        text_dim: hex(0x595959),
+        text_dim: hex(0x5C5C63),
+        text_faint: hex(0x8E8E95),
+        error: hex(0xC4311F),
         text_disabled: hex(0xA6A6A6),
         warning: hex(0x9A6700),
         warning_bg: hex(0xFBEFC5),
@@ -103,7 +107,7 @@ impl Tokens {
         canvas: hex(0x1B1B1B),
         page: hex(0xFFFFFF),
         field: hex(0x1F1F1F),
-        border: hex(0x7A7A7A),
+        border: hex(0x5A5A60),
         separator: hex(0x3C3C3C),
         hover: hex(0x3A3A3A),
         pressed: hex(0x474747),
@@ -112,6 +116,8 @@ impl Tokens {
         focus_ring: hex(0x6EA4FF),
         text: hex(0xE8E8E8),
         text_dim: hex(0xA6A6A6),
+        text_faint: hex(0x7E7E84),
+        error: hex(0xFF7A6B),
         text_disabled: hex(0x5E5E5E),
         warning: hex(0xE0A82E),
         warning_bg: hex(0x3A2F12),
@@ -121,6 +127,26 @@ impl Tokens {
         tooltip: hex(0xE8E8E8),
         tooltip_text: hex(0x1F1F1F),
     };
+
+    pub(crate) fn popup_shadow() -> egui::Shadow {
+        egui::Shadow {
+            offset: [0, 4],
+            blur: 14,
+            spread: 0,
+            color: Color32::from_black_alpha(26),
+        }
+    }
+    pub(crate) fn dialog_shadow() -> egui::Shadow {
+        egui::Shadow {
+            offset: [0, 10],
+            blur: 30,
+            spread: 0,
+            color: Color32::from_black_alpha(46),
+        }
+    }
+    pub(crate) fn overlay_border(dialog: bool) -> Color32 {
+        Color32::from_black_alpha(if dialog { 20 } else { 15 })
+    }
 
     /// The page is white in both themes, so what is drawn on it (caret, selection, the
     /// formula tint) uses the light theme's colors whatever the window theme is.
@@ -135,8 +161,8 @@ impl Tokens {
 
     // Bar heights; the separator on a bar's edge is drawn inside its height.
     pub(crate) const MENU_BAR: f32 = 28.0;
-    pub(crate) const TOOLBAR: f32 = 34.0;
-    pub(crate) const FOCUS_BAR: f32 = 30.0;
+    pub(crate) const TOOLBAR: f32 = 36.0;
+    pub(crate) const FOCUS_BAR: f32 = 32.0;
     pub(crate) const TAB_BAR: f32 = 30.0;
     pub(crate) const TAB: f32 = 26.0;
     pub(crate) const STATUS_BAR: f32 = 24.0;
@@ -156,8 +182,8 @@ impl Tokens {
     pub(crate) const ALIGN_LEFT: f32 = 16.0;
     pub(crate) const PAGE_TOP: f32 = 24.0;
     // Radii.
-    pub(crate) const RADIUS_CONTROL: u8 = 3;
-    pub(crate) const RADIUS_MENU: u8 = 4;
+    pub(crate) const RADIUS_CONTROL: u8 = 4;
+    pub(crate) const RADIUS_MENU: u8 = 6;
     // Icon sizes with their stroke width, both in logical px.
     pub(crate) const ICON_TOOLBAR: (f32, f32) = (18.0, 1.5);
     pub(crate) const ICON_MENU: (f32, f32) = (14.0, 1.25);
@@ -205,8 +231,11 @@ fn style_of(t: Tokens) -> egui::Style {
     visuals.window_stroke = egui::Stroke::new(1.0, t.border);
     visuals.window_corner_radius = egui::CornerRadius::same(Tokens::RADIUS_MENU);
     visuals.menu_corner_radius = egui::CornerRadius::same(Tokens::RADIUS_MENU);
-    visuals.popup_shadow = egui::Shadow::NONE;
-    visuals.window_shadow = egui::Shadow::NONE;
+    visuals.popup_shadow = Tokens::popup_shadow();
+    visuals.window_shadow = Tokens::dialog_shadow();
+    visuals.error_fg_color = t.error;
+    visuals.warn_fg_color = t.warning;
+    visuals.weak_text_color = Some(t.text_faint);
     visuals.override_text_color = Some(t.text);
     visuals.selection.bg_fill = t.active_bg;
     visuals.selection.stroke = egui::Stroke::new(1.0, t.accent);

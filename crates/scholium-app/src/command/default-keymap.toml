@@ -19,11 +19,6 @@ scope = "global"
 keys = ["Ctrl+S"]
 
 [[binding]]
-command = "edit.find"
-scope = "global"
-keys = ["Ctrl+F"]
-
-[[binding]]
 command = "edit.undo"
 scope = "global"
 keys = ["Ctrl+Z"]

@@ -347,9 +347,9 @@ chrome-status-context-source = 源码 · 只读
 
 chrome-status-revisions = Typst Content · 正文 r{ $body } · 画面 { $shown }
 
-chrome-status-backend = Typst 预览
+chrome-status-backend = Typst · 已同步
 
-chrome-status-updating = 更新中
+chrome-status-updating = Typst · 更新中
 
 chrome-status-pending = 待更新
 
@@ -371,7 +371,7 @@ chrome-dialog-discard = 丢弃并继续
 
 # Source view
 
-source-header = 生成 Typst 源码 · 只读 · 正文 r{ $revision }
+source-header = 由文档生成 · 只读
 
 source-warning = { $holes } 个空槽显示为 □，严格输出会拒绝；{ $raw } 个原串公式只显示、不在预览中执行。
 
@@ -512,6 +512,19 @@ latex-preview = 同引擎预览
 latex-unavailable = 工具链不可用
 latex-building = 预览编译中
 latex-stale = 预览更新中 · 源码已改变
-latex-full = 整编预览 · { $ms } ms
-latex-live = 实时预览 · { $ms } ms
+latex-full = 整编 { $seconds } s
+latex-live = 实时 { $ms } ms
 source-editor-find = 查找
+
+chrome-dialog-close = 关闭对话框
+
+chrome-status-position = 第 { $line } 行，第 { $column } 列
+
+chrome-status-no_problems = 无问题
+
+chrome-status-engine_hint = 预览由项目语言对应的引擎生成
+
+chrome-status-typ_source = Typst · 尚未生成预览
+
+chrome-toolbar-paragraph_hint = 选择当前段落的正文或标题样式
+chrome-toolbar-overflow_hint = 显示当前窗口放不下的工具栏操作

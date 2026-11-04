@@ -23,6 +23,9 @@ fn clipboard_id(op: ClipboardOp) -> &'static str {
 }
 
 pub(crate) fn shortcuts(ctx: &egui::Context, state: &mut WorkspaceState) {
+    if state.file_modal {
+        return;
+    }
     if state.has_document() {
         state.undo_requested = false;
         state.redo_requested = false;
@@ -31,7 +34,6 @@ pub(crate) fn shortcuts(ctx: &egui::Context, state: &mut WorkspaceState) {
     for event in events {
         route(ctx, state, event, super::keymap::effective());
     }
-    super::help::show(ctx, state);
 }
 fn route(
     ctx: &egui::Context,
@@ -87,6 +89,9 @@ fn route(
         }
         return;
     };
+    if !spec.visible(state) {
+        return;
+    }
     if matches!(
         (spec.availability)(&context),
         Availability::Unimplemented(_)

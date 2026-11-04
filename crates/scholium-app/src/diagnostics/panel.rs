@@ -1,28 +1,22 @@
 //! The docked diagnostics panel (视图 → 诊断, Ctrl+J, or the status-bar count): 「问题」 rows
-//! on the left, 「排版」 facts on the right. It sits above the status bar inside the editing
+//! only; layout facts remain in AUDIT. It sits above the status bar inside the editing
 //! area, resizes with a splitter and never covers the bars.
-use super::{Diagnostic, LayoutStats, Severity};
+use super::{Diagnostic, Severity};
 use crate::{
-    command::ui as command_ui,
     i18n::{self, Locale},
     icons::Glyph,
     state::WorkspaceState,
     theme::{self, Tokens},
-    typst_editor::EditorView,
     widgets::{Meta, Row, row, status_text},
 };
 use eframe::egui::{self, Frame, Margin, Panel, Ui};
 use fluent_bundle::FluentValue;
 
 /// Starting height of the panel in logical px.
-pub(crate) const DEFAULT_HEIGHT: f32 = 160.0;
+pub(crate) const DEFAULT_HEIGHT: f32 = 180.0;
 const MIN_HEIGHT: f32 = 64.0;
 /// Widest the panel may grow, as a share of the editing area.
 const MAX_SHARE: f32 = 0.6;
-/// Width of the 「排版」 column, and the window width below which it moves under the rows.
-const LAYOUT_WIDTH: f32 = 280.0;
-const SIDE_BY_SIDE_MIN: f32 = 640.0;
-
 /// Control id of the rows, which window checks click by index.
 pub(crate) const ROW_ID: &str = "ui.diagnostics.row";
 const SURFACE: &str = "diagnostics";
@@ -75,30 +69,14 @@ pub(crate) fn show(ui: &mut Ui, state: &mut WorkspaceState) {
     navigate(&ctx, state, rows);
 }
 
-/// Draws both sections and returns the number of problem rows.
+/// Draws the problem list and returns the number of rows.
 fn contents(ui: &mut Ui, state: &mut WorkspaceState) -> usize {
     let locale = state.locale.resolve();
     let Some(view) = state.editor.as_ref() else {
         return 0;
     };
     let problems = view.problems.clone();
-    let facts = layout_lines(state, view, locale);
-    let side_by_side = ui.available_width() >= SIDE_BY_SIDE_MIN;
-    let mut jump = None;
-    if side_by_side {
-        ui.horizontal_top(|ui| {
-            let list_width = ui.available_width() - LAYOUT_WIDTH - Tokens::GAP_STATUS;
-            let size = egui::vec2(list_width, ui.available_height());
-            let down = egui::Layout::top_down(egui::Align::LEFT);
-            ui.allocate_ui_with_layout(size, down, |ui| {
-                jump = problems_section(ui, &problems, locale);
-            });
-            ui.add_space(Tokens::GAP_STATUS);
-            ui.vertical(|ui| layout_section(ui, &facts, locale));
-        });
-    } else {
-        jump = problems_section(ui, &problems, locale);
-    }
+    let jump = problems_section(ui, &problems, locale);
     if let Some(index) = jump {
         activate(state, &problems, index);
     }
@@ -148,7 +126,7 @@ fn problems_section(ui: &mut Ui, problems: &[Diagnostic], locale: Locale) -> Opt
                     ],
                 );
                 let (glyph, tint) = match problem.severity {
-                    Severity::Error => (Glyph::Error, t.warning),
+                    Severity::Error => (Glyph::Error, t.error),
                     Severity::Warning => (Glyph::Warning, t.warning),
                     Severity::Info => (Glyph::Info, t.text_dim),
                 };
@@ -161,70 +139,12 @@ fn problems_section(ui: &mut Ui, problems: &[Diagnostic], locale: Locale) -> Opt
                 };
                 let meta = Meta::new(ROW_ID, SURFACE, name).indexed(index);
                 let response = row(ui, &spec, meta);
-                response.clone().on_hover_text(&message);
                 if response.clicked() {
                     clicked = Some(index);
                 }
             }
         });
     clicked
-}
-
-/// 「排版」: backend, revisions and the layout statistics of the Scene on screen.
-fn layout_lines(state: &WorkspaceState, view: &EditorView, locale: Locale) -> Vec<String> {
-    let shown = view
-        .shown_revision
-        .map_or("—".to_owned(), |r| format!("r{r}"));
-    let mut shown_line = i18n::text_with(locale, "diag.panel.shown", &[("revision", shown.into())]);
-    if view.pending {
-        shown_line.push_str(" · ");
-        shown_line.push_str(&command_ui::text(state, "chrome.status.pending"));
-    }
-    let mut lines = vec![
-        i18n::text_with(
-            locale,
-            "diag.panel.backend",
-            &[("name", "Typst Content".into())],
-        ),
-        i18n::text_with(
-            locale,
-            "diag.panel.body",
-            &[("revision", (view.revision as i64).into())],
-        ),
-        shown_line,
-    ];
-    if let Some(stats) = view.layout {
-        lines.extend(stats_lines(locale, stats));
-    }
-    lines
-}
-
-fn stats_lines(locale: Locale, stats: LayoutStats) -> [String; 2] {
-    let number = |value: usize| FluentValue::from(value as i64);
-    [
-        i18n::text_with(
-            locale,
-            "diag.panel.content",
-            &[
-                ("built", number(stats.built)),
-                ("reused", number(stats.reused)),
-                ("reads", number(stats.source_reads)),
-            ],
-        ),
-        i18n::text_with(
-            locale,
-            "diag.panel.timing",
-            &[("ms", number(stats.elapsed_ms as usize))],
-        ),
-    ]
-}
-
-fn layout_section(ui: &mut Ui, lines: &[String], locale: Locale) {
-    ui.spacing_mut().item_spacing.y = 0.0;
-    section_title(ui, "diag.panel.layout", locale);
-    for line in lines {
-        status_text(ui, line, Some(line), Some(LAYOUT_WIDTH));
-    }
 }
 
 /// Up/Down move focus between rows; Esc hands focus back to the page.

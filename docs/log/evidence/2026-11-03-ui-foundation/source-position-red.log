@@ -1,0 +1,24 @@
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 1.66s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-5459d2a2e88f3903)
+
+running 1 test
+test project_workspace::tests::source_position_survives_focus_moving_to_the_chrome ... FAILED
+
+failures:
+
+---- project_workspace::tests::source_position_survives_focus_moving_to_the_chrome stdout ----
+
+thread 'project_workspace::tests::source_position_survives_focus_moving_to_the_chrome' (218883) panicked at crates/scholium-app/src/project_workspace/tests.rs:103:13:
+assertion `left == right` failed
+  left: (1, 1)
+ right: (1, 7)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    project_workspace::tests::source_position_survives_focus_moving_to_the_chrome
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 336 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`

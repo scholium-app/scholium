@@ -84,8 +84,8 @@ fn several_diagnostics_show_the_most_serious_and_the_count() {
     w.editor().problems = vec![overflow()];
     w.settle();
     assert!(
-        !w.texts().iter().any(|t| t.contains("共")),
-        "one issue shows no count"
+        w.texts().iter().any(|t| t.contains("共 1 条")),
+        "one issue also has a persistent count"
     );
 }
 
@@ -166,7 +166,7 @@ fn the_panel_lists_rows_with_excerpts_and_an_empty_state() {
 }
 
 #[test]
-fn the_panel_shows_layout_facts_and_the_status_bar_no_longer_does() {
+fn developer_layout_facts_are_not_painted_in_the_panel_or_status_bar() {
     let mut w = Window::new(1280.0, ZH);
     w.editor().revision = 7;
     w.editor().shown_revision = Some(6);
@@ -188,15 +188,10 @@ fn the_panel_shows_layout_facts_and_the_status_bar_no_longer_does() {
         "布局+栅格 12 ms",
     ] {
         assert!(
-            texts.contains(&expected.to_owned()),
+            !texts.contains(&expected.to_owned()),
             "{expected} in {texts:?}"
         );
     }
-    let stats_at = w.position_of("布局+栅格 12 ms");
-    assert!(
-        stats_at.y < w.status_top(),
-        "the stats are in the panel, above the status bar"
-    );
 }
 
 #[test]

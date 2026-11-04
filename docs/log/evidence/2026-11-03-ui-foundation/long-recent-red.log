@@ -1,0 +1,22 @@
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 1.76s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-5459d2a2e88f3903)
+
+running 1 test
+test widgets::dialog_tests::a_recent_project_with_a_long_path_cannot_widen_the_dialog ... FAILED
+
+failures:
+
+---- widgets::dialog_tests::a_recent_project_with_a_long_path_cannot_widen_the_dialog stdout ----
+
+thread 'widgets::dialog_tests::a_recent_project_with_a_long_path_cannot_widen_the_dialog' (274117) panicked at crates/scholium-app/src/widgets/dialog_tests.rs:119:5:
+[[-1549.0 181.0] - [2029.9 299.0]]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    widgets::dialog_tests::a_recent_project_with_a_long_path_cannot_widen_the_dialog
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 337 filtered out; finished in 0.20s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`

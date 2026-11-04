@@ -1,0 +1,301 @@
+waiting for another window-check run
+output: /tmp/t42-windows-final
+running a4-surface [zh-Hans] ...
+running backspace-block-merge [zh-Hans] ...
+running caret-follow [zh-Hans] ...
+running chrome [zh-Hans] ...
+running default-launch [zh-Hans] ...
+--- default-launch [zh-Hans] FAIL(1); tail of /tmp/t42-windows-final/zh-Hans/default-launch.log
+/usr/bin/xvfb-run: line 173: 249431 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+Failed creating new xdo instance.
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/default-launch-check.py", line 61, in <module>
+    run([], "default", current)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/default-launch-check.py", line 35, in run
+    window = subprocess.check_output(["xdotool", "search", "--pid", str(app.pid)], env=env, text=True).split()[0]
+             ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['xdotool', 'search', '--pid', '251084']' returned non-zero exit status 1.
+/usr/bin/xvfb-run: line 185: kill: (249431) - No such process
+
+running diagnostics [zh-Hans] ...
+--- diagnostics [zh-Hans] FAIL(1); tail of /tmp/t42-windows-final/zh-Hans/diagnostics.log
+PASS 01-overflows-are-located-diagnostics
+PASS 02-status-bar-shows-the-warning-and-the-count
+PASS 03-warning-click-lands-in-the-formula
+PASS 04-ctrl-j-opens-the-panel
+import: unable to open X server `:136' @ error/import.c/ImportImageCommand/350.
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/diagnostics-check.py", line 139, in <module>
+    shot("04-panel-light")
+    ~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/diagnostics-check.py", line 60, in shot
+    subprocess.run(["import", "-window", window, str(output / f"{name}.png")], check=True, env=env)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['import', '-window', '2097156', '/tmp/t42-windows-final/zh-Hans/diagnostics/04-panel-light.png']' returned non-zero exit status 1.
+/usr/bin/xvfb-run: line 181: 252771 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (252771) - No such process
+
+running display-formula [zh-Hans] ...
+running fraction-at-caret [zh-Hans] ...
+running ime-inline [zh-Hans] ...
+running inline-style [zh-Hans] ...
+running interaction [zh-Hans] ...
+running latex-view [zh-Hans] ...
+running math-attach [zh-Hans] ...
+running math-edge-caret [zh-Hans] ...
+running math-enter [zh-Hans] ...
+running math-input [zh-Hans] ...
+--- math-input [zh-Hans] FAIL(1); tail of /tmp/t42-windows-final/zh-Hans/math-input.log
+PASS math input structures
+PASS math input composition
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/math-input-check.py", line 120, in <module>
+    main()
+    ~~~~^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/math-input-check.py", line 116, in main
+    run_case(binary, output, name, check)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/math-input-check.py", line 33, in run_case
+    check(replay, act)
+    ~~~~~^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/math-input-check.py", line 96, in commands
+    state = act("key", "Escape")
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/math-input-check.py", line 27, in act
+    state = replay.ready()
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/parity-check.py", line 82, in ready
+    state = self.state()
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/parity-check.py", line 74, in state
+    raise RuntimeError(f"app exited: {self.proc.returncode}; see {self.log}")
+RuntimeError: app exited: 1; see /tmp/t42-windows-final/zh-Hans/math-input/commands/app.log
+/usr/bin/xvfb-run: line 181: 263070 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (263070) - No such process
+
+running math-root-delimiter [zh-Hans] ...
+running native [zh-Hans] ...
+running parity [zh-Hans] ...
+running project-latex [zh-Hans] ...
+--- project-latex [zh-Hans] FAIL(1); tail of /tmp/t42-windows-final/zh-Hans/project-latex.log
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/project-latex-check.py", line 59, in <module>
+    app.start("reopen-folder")
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/project_ui.py", line 47, in start
+    self.wait(lambda: subprocess.run(["xdotool", "search", "--onlyvisible", "--pid", str(self.app.pid)],
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                    env=self.env, capture_output=True).returncode == 0)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/project_ui.py", line 27, in wait
+    assert self.app.poll() is None, self.log.read_text()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Error: WinitEventLoop(Os(OsError { line: 788, file: "/kache/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/winit-0.30.13/src/platform_impl/linux/mod.rs", error: XNotSupported(XOpenDisplayFailed) }))
+
+/usr/bin/xvfb-run: line 181: 267955 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (267955) - No such process
+
+running project-native [zh-Hans] ...
+--- project-native [zh-Hans] FAIL(1); tail of /tmp/t42-windows-final/zh-Hans/project-native.log
+XIO:  fatal IO error 2 (No such file or directory) on X server ":139"
+      after 8 requests (6 known processed) with 0 events remaining.
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/project-native-check.py", line 24, in <module>
+    app.capture("saved")
+    ~~~~~~~~~~~^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/project_ui.py", line 76, in capture
+    subprocess.run(["import", "-window", self.window, str(self.output / f"{name}.png")], env=self.env, check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['import', '-window', '2097156', '/tmp/t42-windows-final/zh-Hans/project-native/saved.png']' returned non-zero exit status 1.
+/usr/bin/xvfb-run: line 181: 268223 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (268223) - No such process
+
+running project-source [zh-Hans] ...
+running sharp-raster [zh-Hans] ...
+--- sharp-raster [zh-Hans] FAIL(1); tail of /tmp/t42-windows-final/zh-Hans/sharp-raster.log
+PASS 01-fractional-scale-in-effect
+PASS 02-raster-width-equals-displayed-width
+PASS 03-raster-is-denser-than-the-former-2px-per-pt
+PASS 04-page_left_px-on-pixel-grid
+PASS 04-page_top_px-on-pixel-grid
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/sharp-raster-check.py", line 149, in <module>
+    old_state, old_png, _ = run("fixed-2px-per-pt", {"SCHOLIUM_RASTER_PX_PER_PT": "2"})
+                            ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/sharp-raster-check.py", line 87, in run
+    wait(lambda s: s["current"], "first scene")
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/sharp-raster-check.py", line 78, in wait
+    raise RuntimeError(f"timeout: {what}: {state()}")
+RuntimeError: timeout: first scene: {'anchor_affinity': None, 'anchor_byte': None, 'anchor_leaf': None, 'backend': 'Typst Content main app', 'body_leaves': [{'bytes': 0, 'leaf': 'NodeId(7628cb43-cb91-4e4b-99f9-92db1fcd5260)'}], 'carets': [], 'chrome': {'facts': {'file_modal': False, 'kernel': 'Native', 'locale': 'ZhHans', 'status': {'backend': 'chrome.status.updating', 'context': 'chrome.status.context.body', 'diagnostic_count': 0, 'engine_state': 'Typst · 更新中', 'preview_page': None, 'source_position': [1, 1], 'warning': None, 'words': 0}, 'tab_title': 'project', 'theme': 'Light', 'toolbar_overflow': [], 'toolbars_visible': True}, 'pixels_per_point': 1.5}, 'controls': {'edit.redo': [{'checked': None, 'enabled': False, 'rect': [413, 48, 455, 90], 'surface': 'toolbar'}], 'edit.undo': [{'checked': None, 'enabled': False, 'rect': [368, 48, 410, 90], 'surface': 'toolbar'}], 'file.close': [{'checked': None, 'enabled': True, 'rect': [96, 156, 123, 183], 'surface': 'tab'}], 'file.new': [{'checked': None, 'enabled': True, 'rect': [132, 146, 174, 188], 'surface': 'tab'}], 'format.bold': [{'checked': False, 'enabled': True, 'rect': [98, 48, 140, 90], 'surface': 'toolbar'}], 'format.clear': [{'checked': None, 'enabled': True, 'rect': [188, 48, 230, 90], 'surface': 'toolbar'}], 'format.italic': [{'checked': False, 'enabled': True, 'rect': [143, 48, 185, 90], 'surface': 'toolbar'}], 'insert.formula': [{'checked': False, 'enabled': True, 'rect': [255, 48, 297, 90], 'surface': 'toolbar'}], 'insert.fraction': [{'checked': None, 'enabled': True, 'rect': [300, 48, 342, 90], 'surface': 'toolbar'}], 'ui.menu.edit': [{'checked': None, 'enabled': True, 'rect': [75, 0, 138, 42], 'surface': 'menubar'}], 'ui.menu.file': [{'checked': None, 'enabled': True, 'rect': [12, 0, 75, 42], 'surface': 'menubar'}], 'ui.menu.format': [{'checked': None, 'enabled': True, 'rect': [201, 0, 264, 42], 'surface': 'menubar'}], 'ui.menu.help': [{'checked': None, 'enabled': True, 'rect': [327, 0, 390, 42], 'surface': 'menubar'}], 'ui.menu.insert': [{'checked': None, 'enabled': True, 'rect': [138, 0, 201, 42], 'surface': 'menubar'}], 'ui.menu.view': [{'checked': None, 'enabled': True, 'rect': [264, 0, 327, 42], 'surface': 'menubar'}], 'ui.status.count': [{'checked': None, 'enabled': True, 'rect': [1404, 1317, 1476, 1347], 'surface': 'status'}], 'ui.tab': [{'checked': True, 'enabled': True, 'rect': [12, 150, 129, 189], 'surface': 'tab'}], 'ui.toolbar.paragraph': [{'checked': None, 'enabled': True, 'rect': [12, 53, 72, 86], 'surface': 'toolbar'}], 'view.mode.page': [{'checked': True, 'enabled': True, 'rect': [1620, 104, 1764, 137], 'surface': 'focus'}], 'view.mode.source': [{'checked': False, 'enabled': True, 'rect': [1764, 104, 1908, 137], 'surface': 'focus'}], 'view.zoom.actual': [{'checked': None, 'enabled': True, 'rect': [1716, 1317, 1782, 1347], 'surface': 'status'}], 'view.zoom.fit_width': [{'checked': True, 'enabled': True, 'rect': [1818, 1317, 1908, 1347], 'surface': 'status'}], 'view.zoom.in': [{'checked': None, 'enabled': True, 'rect': [1785, 1317, 1815, 1347], 'surface': 'status'}], 'view.zoom.out': [{'checked': None, 'enabled': True, 'rect': [1683, 1317, 1713, 1347], 'surface': 'status'}]}, 'current': False, 'cursor_affinity': 'Downstream', 'cursor_byte': 0, 'cursor_leaf': 'NodeId(7628cb43-cb91-4e4b-99f9-92db1fcd5260)', 'deferred': 0, 'diagnostics': [], 'document_geometry': False, 'follow': None, 'fonts': {'latin': None, 'mono': None, 'ui': 'Microsoft YaHei UI'}, 'formula_overflow': False, 'ime_area': None, 'ime_caret': None, 'layout_error': None, 'layout_stats': None, 'math_input': {'candidates': [], 'query': None, 'selected': 0, 'tab': 'NextSlot'}, 'page_text_draws': 0, 'preedit_caret': None, 'preview': {'anchors': None, 'bitmap_px': None, 'error': None, 'generation': 0, 'page': 0, 'pages': None, 'px_per_pt': None, 'rect': None, 'scale': None, 'shown': False, 'wanted_px_per_pt': 0.0}, 'raster': None, 'redo_depth': 0, 'revision': 0, 'saved': True, 'selection': None, 'selection_geometry_error': None, 'selection_quads': 0, 'semantic': {'anchor': None, 'cursor': {'affinity': 'Downstream', 'byte': 0, 'path': 'blocks/0/content/0'}, 'snapshot': {'blocks': [{'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': ''}}], 'kind': 'Paragraph'}]}, 'undo_depth': 0}, 'shown': None, 'snapshot': {'blocks': [{'content': [{'body': {'kind': 'text', 'style': 'plain', 'text': ''}, 'node': '7628cb43-cb91-4e4b-99f9-92db1fcd5260'}], 'kind': 'Paragraph', 'node': 'ffdb844a-836d-46e2-94d7-a832ad5eeacf'}], 'document': 'a35788b3-53dd-493d-98ca-87987ac88337', 'revision': 0}, 'source_mode': False, 'source_reads': None, 'undo_depth': 0, 'wanted': 'SceneStamp { document: DocumentId(a35788b3-53dd-493d-98ca-87987ac88337), epoch: LayoutEpoch(323a20e7-cc39-4140-ab17-a8a64b819193), request: LayoutRequestId(d9f16a8d-ba0d-4f28-be2a-ab850fbed106), revision: Revision(0), profile: ProfileGeneration(0), resources: ResourceGeneration(0) }'}
+/usr/bin/xvfb-run: line 181: 269093 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (269093) - No such process
+
+running source-theme [zh-Hans] ...
+running source-view [zh-Hans] ...
+running ui-foundation [zh-Hans] ...
+running undo-group [zh-Hans] ...
+running a11y [zh-Hans] ...
+--- a11y [zh-Hans] FAIL(1); tail of /tmp/t42-windows-final/zh-Hans/a11y.log
+
+(process:277243): atspi-WARNING **: 20:46:12.484: AT-SPI: Error in GetItems, sender=:1.1, error=Unknown object '/org/a11y/atspi/cache'
+PASS 01-body-text-object
+X connection to :141 broken (explicit kill or server shutdown).
+PASS 02-typed-text-and-caret
+Error: Can't open display: :141
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/a11y/a11y_check.py", line 118, in <module>
+    paste("\nsecond line\n\nfourth")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/a11y/a11y_check.py", line 81, in paste
+    subprocess.run(["xclip", "-selection", "clipboard"], input=value.encode(), env=env, check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['xclip', '-selection', 'clipboard']' returned non-zero exit status 1.
+/usr/bin/xvfb-run: line 181: 277098 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (277098) - No such process
+
+running a4-surface [en] ...
+running backspace-block-merge [en] ...
+running caret-follow [en] ...
+running chrome [en] ...
+running default-launch [en] ...
+running diagnostics [en] ...
+running display-formula [en] ...
+running fraction-at-caret [en] ...
+running ime-inline [en] ...
+running inline-style [en] ...
+running interaction [en] ...
+running latex-view [en] ...
+running math-attach [en] ...
+running math-edge-caret [en] ...
+running math-enter [en] ...
+running math-input [en] ...
+running math-root-delimiter [en] ...
+running native [en] ...
+running parity [en] ...
+running project-latex [en] ...
+running project-native [en] ...
+running project-source [en] ...
+running sharp-raster [en] ...
+--- sharp-raster [en] FAIL(1); tail of /tmp/t42-windows-final/en/sharp-raster.log
+/usr/bin/xvfb-run: line 173: 291464 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/sharp-raster-check.py", line 138, in <module>
+    sharp_state, sharp_png, scrolled = run("display-resolution", {}, scroll=True)
+                                       ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/sharp-raster-check.py", line 87, in run
+    wait(lambda s: s["current"], "first scene")
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/sharp-raster-check.py", line 78, in wait
+    raise RuntimeError(f"timeout: {what}: {state()}")
+RuntimeError: timeout: first scene: None
+/usr/bin/xvfb-run: line 185: kill: (291464) - No such process
+
+running source-theme [en] ...
+running source-view [en] ...
+running ui-foundation [en] ...
+running undo-group [en] ...
+running a11y [en] ...
+--- a11y [en] FAIL(1); tail of /tmp/t42-windows-final/en/a11y.log
+
+(process:293310): atspi-WARNING **: 20:53:18.258: AT-SPI: Error in GetItems, sender=:1.1, error=Unknown object '/org/a11y/atspi/cache'
+PASS 01-body-text-object
+PASS 02-typed-text-and-caret
+PASS 03-paragraph-breaks
+PASS 04-assistive-selection
+PASS 05-selection-replaced-once
+PASS 06-text-survives-pending-layout
+PASS 07-character-extents
+PASS 08-math-object-and-slot-status
+FAIL 09-disabled-controls-are-not-enabled
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/a11y/a11y_check.py", line 180, in <module>
+    record("09-disabled-controls-are-not-enabled",
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           strike is not None and not states(strike)["ENABLED"] and not states(strike)["SENSITIVE"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+           strike=states(strike) if strike else None, redo=states(redo) if redo else None,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           bold=states(bold) if bold else None)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt1/spikes/typst-main-editor/a11y/a11y_check.py", line 89, in record
+    raise AssertionError(f"{name}: {detail}")
+AssertionError: 09-disabled-controls-are-not-enabled: {'strike': None, 'redo': {'ENABLED': False, 'SENSITIVE': False, 'FOCUSED': False, 'EDITABLE': False, 'MULTI_LINE': False}, 'bold': {'ENABLED': True, 'SENSITIVE': True, 'FOCUSED': False, 'EDITABLE': False, 'MULTI_LINE': False}}
+X connection to :143 broken (explicit kill or server shutdown).
+
+
+check                            result      seconds
+a4-surface [zh-Hans]             pass            6.2
+backspace-block-merge [zh-Hans]  pass            7.0
+caret-follow [zh-Hans]           pass           35.5
+chrome [zh-Hans]                 pass           26.4
+default-launch [zh-Hans]         FAIL(1)         7.1
+diagnostics [zh-Hans]            FAIL(1)         9.9
+display-formula [zh-Hans]        pass            6.6
+fraction-at-caret [zh-Hans]      pass           35.0
+ime-inline [zh-Hans]             pass            4.5
+inline-style [zh-Hans]           pass            5.8
+interaction [zh-Hans]            pass            8.4
+latex-view [zh-Hans]             pass            3.9
+math-attach [zh-Hans]            pass            5.1
+math-edge-caret [zh-Hans]        pass           11.4
+math-enter [zh-Hans]             pass           11.8
+math-input [zh-Hans]             FAIL(1)         9.2
+math-root-delimiter [zh-Hans]    pass            9.9
+native [zh-Hans]                 pass           17.8
+parity [zh-Hans]                 pass           70.6
+project-latex [zh-Hans]          FAIL(1)         4.3
+project-native [zh-Hans]         FAIL(1)         6.4
+project-source [zh-Hans]         pass            5.2
+sharp-raster [zh-Hans]           FAIL(1)       133.7
+source-theme [zh-Hans]           pass            8.8
+source-view [zh-Hans]            pass            5.8
+ui-foundation [zh-Hans]          pass           17.2
+undo-group [zh-Hans]             pass            4.8
+a11y [zh-Hans]                   FAIL(1)         5.1
+a4-surface [en]                  pass            6.2
+backspace-block-merge [en]       pass            7.0
+caret-follow [en]                pass           32.5
+chrome [en]                      pass           26.2
+default-launch [en]              pass            7.4
+diagnostics [en]                 pass           14.9
+display-formula [en]             pass            6.5
+fraction-at-caret [en]           pass           35.0
+ime-inline [en]                  pass            4.3
+inline-style [en]                pass            5.7
+interaction [en]                 pass            8.1
+latex-view [en]                  pass            3.8
+math-attach [en]                 pass            5.0
+math-edge-caret [en]             pass           11.4
+math-enter [en]                  pass           11.9
+math-input [en]                  pass           11.7
+math-root-delimiter [en]         pass            9.9
+native [en]                      pass           18.2
+parity [en]                      pass           70.4
+project-latex [en]               pass           11.8
+project-native [en]              pass            7.0
+project-source [en]              pass            5.1
+sharp-raster [en]                FAIL(1)        63.1
+source-theme [en]                pass            8.7
+source-view [en]                 pass            5.7
+ui-foundation [en]               pass           18.5
+undo-group [en]                  pass            4.8
+a11y [en]                        FAIL(1)         6.4
+
+47/56 ok; logs and evidence in /tmp/t42-windows-final

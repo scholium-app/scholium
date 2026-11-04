@@ -187,7 +187,7 @@ pub(crate) fn paint(
         texture.id(),
         Rect::from_min_size(min, egui::vec2(side, side)),
         Rect::from_min_max(egui::Pos2::ZERO, egui::pos2(1.0, 1.0)),
-        Color32::WHITE,
+        crate::theme::Tokens::LIGHT.page,
     );
 }
 

@@ -42,11 +42,20 @@ pub(super) fn show(ui: &mut Ui, state: &mut WorkspaceState) -> Vec<&'static str>
     ui.spacing_mut().item_spacing = egui::vec2(Tokens::GAP_BUTTON, 0.0);
     let groups: Vec<Group> = registry::toolbar_groups()
         .into_iter()
+        .map(|(group, items)| {
+            (
+                group,
+                items
+                    .into_iter()
+                    .filter(|s| s.visible(state))
+                    .collect::<Vec<_>>(),
+            )
+        })
         .filter(|(_, items)| !items.is_empty())
         .collect();
     let widths: Vec<f32> = groups.iter().map(group_width).collect();
     let right = ui.max_rect().right();
-    let available = ui.available_width() - Tokens::ICON_BUTTON - SEARCH_GAP;
+    let available = ui.available_width() - SEARCH_GAP;
     let shown = fit_groups(&widths, SEPARATOR, Tokens::ICON_BUTTON, available);
     ui.with_layout(Layout::left_to_right(Align::Center), |ui| {
         for (index, group) in groups[..shown].iter().enumerate() {
@@ -62,7 +71,9 @@ pub(super) fn show(ui: &mut Ui, state: &mut WorkspaceState) -> Vec<&'static str>
             overflow(ui, state, &groups[shown..]);
         }
     });
-    search(ui, state, right);
+    if command_ui::resolve(state, "tools.search").is_some() {
+        search(ui, state, right);
+    }
     groups[shown..]
         .iter()
         .map(|(group, _)| group_name(*group))
@@ -108,45 +119,18 @@ fn command_button(ui: &mut Ui, state: &mut WorkspaceState, spec: &'static Comman
 fn paragraph_dropdown(ui: &mut Ui, state: &mut WorkspaceState, items: &[&'static CommandSpec]) {
     let name = command_ui::text(state, "menu.format.paragraph_style");
     let meta = Meta::new("ui.toolbar.paragraph", "toolbar", name.clone()).tip(Tip {
-        title: name,
+        title: command_ui::text(state, "chrome.toolbar.paragraph_hint"),
         ..Default::default()
     });
-    let (rect, _) = ui.allocate_exact_size(
-        egui::vec2(DROPDOWN, Tokens::ICON_BUTTON),
-        egui::Sense::hover(),
+    let response = crate::widgets::dropdown(
+        ui,
+        crate::widgets::Dropdown {
+            label: String::new(),
+            value: "¶".into(),
+            max_width: DROPDOWN,
+            meta,
+        },
     );
-    let response = meta.interact(ui, rect);
-    let t = crate::theme::tokens(ui.ctx());
-    let open = egui::Popup::is_id_open(ui.ctx(), egui::Popup::default_response_id(&response));
-    let state_look = crate::widgets::State::of(&response, true, false, open);
-    if let Some(fill) = state_look.background(&t) {
-        ui.painter()
-            .rect_filled(rect, egui::CornerRadius::same(Tokens::RADIUS_CONTROL), fill);
-    }
-    let color = state_look.foreground(&t);
-    let icon = egui::Rect::from_center_size(
-        egui::pos2(rect.left() + 17.0, rect.center().y),
-        egui::Vec2::splat(Tokens::ICON_TOOLBAR.0),
-    );
-    icons::paint(
-        ui.painter(),
-        icon,
-        Glyph::Paragraph,
-        Tokens::ICON_TOOLBAR,
-        color,
-    );
-    let chevron = egui::Rect::from_center_size(
-        egui::pos2(rect.right() - 11.0, rect.center().y),
-        egui::Vec2::splat(Tokens::ICON_CHEVRON.0),
-    );
-    icons::paint(
-        ui.painter(),
-        chevron,
-        Glyph::ChevronDown,
-        Tokens::ICON_CHEVRON,
-        color,
-    );
-    crate::widgets::focus_ring(ui, &response, Tokens::RADIUS_CONTROL);
     button_menu(&response, RectAlign::BOTTOM_START, |ui| {
         list(ui, state, &[("menu", items)], false);
     });
@@ -155,7 +139,7 @@ fn paragraph_dropdown(ui: &mut Ui, state: &mut WorkspaceState, items: &[&'static
 fn overflow(ui: &mut Ui, state: &mut WorkspaceState, hidden: &[Group]) {
     let name = command_ui::text(state, "chrome.overflow");
     let meta = Meta::new("ui.toolbar.overflow", "toolbar", name.clone()).tip(Tip {
-        title: name,
+        title: command_ui::text(state, "chrome.toolbar.overflow_hint"),
         ..Default::default()
     });
     let button = IconButton {

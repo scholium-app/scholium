@@ -1,4 +1,5 @@
 //! File commands, language selection, lock/conflict UI, and project switching policy.
+mod confirmation;
 mod dialog;
 mod recent;
 use crate::{
@@ -90,36 +91,33 @@ impl ProjectFiles {
         if self.conflict {
             self.conflict_dialog(ctx, state, project);
         }
-        if self.imported {
-            egui::Window::new(i18n::text(state.locale.resolve(), "project.migrated.title")).show(
+        if self.imported
+            && crate::widgets::notice(
                 ctx,
-                |ui| {
-                    ui.label(i18n::text(state.locale.resolve(), "project.migrated.body"));
-                    if ui
-                        .button(i18n::text(state.locale.resolve(), "project.ok"))
-                        .clicked()
-                    {
-                        self.imported = false;
-                    }
-                },
-            );
+                "project-migrated",
+                &i18n::text(state.locale.resolve(), "project.migrated.title"),
+                &i18n::text(state.locale.resolve(), "project.migrated.body"),
+                state.locale.resolve(),
+            )
+        {
+            self.imported = false;
+        }
+        if let Some(error) = self.error.clone()
+            && crate::widgets::notice(
+                ctx,
+                "project-error",
+                &i18n::text(state.locale.resolve(), "project.open.failed"),
+                &error,
+                state.locale.resolve(),
+            )
+        {
+            self.error = None;
         }
         state.file_modal = self.dialog.is_some()
             || self.pending.is_some()
             || self.conflict
-            || self.error.is_some();
-        if let Some(error) = self.error.clone() {
-            egui::Modal::new(egui::Id::new("project-error")).show(ctx, |ui| {
-                ui.heading(i18n::text(state.locale.resolve(), "project.open.failed"));
-                ui.label(error);
-                if ui
-                    .button(i18n::text(state.locale.resolve(), "project.ok"))
-                    .clicked()
-                {
-                    self.error = None;
-                }
-            });
-        }
+            || self.error.is_some()
+            || self.imported;
     }
     fn save_source(&mut self, project: &mut Option<ProjectWorkspace>, state: &mut WorkspaceState) {
         if project.as_ref().is_some_and(|p| p.pending_input()) {
@@ -201,7 +199,11 @@ impl ProjectFiles {
                 state.storage_error = None;
                 state.edit_error = None;
                 state.composition = None;
-                state.mode = crate::state::ViewMode::Page;
+                state.mode = if p_is_source(project) {
+                    crate::state::ViewMode::Source
+                } else {
+                    crate::state::ViewMode::Page
+                };
                 if let Some(p) = project {
                     p.metadata(state);
                     self.remember(p, state);
@@ -213,92 +215,6 @@ impl ProjectFiles {
                 self.error = Some(error);
             }
         }
-    }
-    fn confirm(
-        &mut self,
-        ctx: &egui::Context,
-        state: &mut WorkspaceState,
-        project: &mut Option<ProjectWorkspace>,
-    ) {
-        let locale = state.locale.resolve();
-        let text = |key| i18n::text(locale, key);
-        egui::Modal::new(egui::Id::new("project-switch")).show(ctx, |ui| {
-            ui.heading(text("chrome.dialog.title"));
-            ui.label(text("chrome.dialog.body"));
-            ui.horizontal(|ui| {
-                if ui.button(text("chrome.dialog.cancel")).clicked() {
-                    self.pending = None;
-                }
-                if ui
-                    .add_enabled(
-                        !project.as_ref().is_some_and(|p| p.pending_input()),
-                        egui::Button::new(text("command.file.save.title")),
-                    )
-                    .clicked()
-                {
-                    if project.as_mut().is_some_and(|p| p.source_mut().is_some()) {
-                        self.save_source(project, state);
-                    } else {
-                        state.storage_error = project.as_mut().and_then(|p| p.save().err());
-                    }
-                    if state.storage_error.is_none() {
-                        if let Some(op) = self.pending.take() {
-                            self.execute(op, ctx, state, project);
-                        }
-                    } else {
-                        self.pending = None;
-                    }
-                }
-                let discard = ui.button(text("chrome.dialog.discard"));
-                audit_rect("discard", discard.rect);
-                if discard.clicked() {
-                    match project.as_mut().map(|p| p.discard()).transpose() {
-                        Ok(_) => {
-                            if let Some(op) = self.pending.take() {
-                                self.execute(op, ctx, state, project);
-                            }
-                        }
-                        Err(e) => state.storage_error = Some(e),
-                    }
-                }
-            });
-        });
-    }
-    fn conflict_dialog(
-        &mut self,
-        ctx: &egui::Context,
-        state: &mut WorkspaceState,
-        project: &mut Option<ProjectWorkspace>,
-    ) {
-        let locale = state.locale.resolve();
-        let text = |key| i18n::text(locale, key);
-        egui::Modal::new(egui::Id::new("project-conflict")).show(ctx, |ui| {
-            ui.heading(text("project.conflict"));
-            ui.label(text("project.conflict.help"));
-            let reload = ui.button(text("project.reload"));
-            audit_rect("reload", reload.rect);
-            if reload.clicked()
-                && let Some(p) = project
-            {
-                match p.discard() {
-                    Ok(()) => {
-                        state.storage_error = None;
-                        self.conflict = false;
-                    }
-                    Err(e) => state.storage_error = Some(e),
-                }
-            }
-            let save_as = ui.button(text("command.file.save_as.title"));
-            audit_rect("save-as", save_as.rect);
-            if save_as.clicked() {
-                self.conflict = false;
-                self.dialog = Some(FileDialog::SaveAs);
-                self.path.clear();
-            }
-            if ui.button(text("chrome.dialog.cancel")).clicked() {
-                self.conflict = false;
-            }
-        });
     }
 }
 
@@ -324,3 +240,9 @@ pub(crate) const CATALOG_KEYS: &[&str] = &[
     "project.import",
     "project.import.target",
 ];
+
+fn p_is_source(project: &Option<ProjectWorkspace>) -> bool {
+    project
+        .as_ref()
+        .is_some_and(|p| !matches!(p, ProjectWorkspace::Typst { .. }))
+}

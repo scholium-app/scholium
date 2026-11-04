@@ -48,12 +48,7 @@ pub(crate) fn menu_width(ui: &Ui, rows: &[(&str, Option<&str>, bool)]) -> f32 {
 }
 
 pub(crate) fn menu_frame(ctx: &egui::Context) -> Frame {
-    let t = theme::tokens(ctx);
-    Frame::new()
-        .fill(t.field)
-        .stroke(egui::Stroke::new(1.0, t.border))
-        .corner_radius(egui::CornerRadius::same(Tokens::RADIUS_MENU))
-        .inner_margin(Margin::symmetric(2, Tokens::PAD_MENU as i8))
+    super::popover_frame(ctx).inner_margin(Margin::symmetric(2, Tokens::PAD_MENU as i8))
 }
 
 /// Show `content` in a menu popup below `button`; hovering the title of another open

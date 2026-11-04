@@ -113,19 +113,19 @@ fn source_headers_and_warnings_follow_the_locale_without_changing_the_document()
     for (locale, header, warning, preview) in [
         (
             Locale::En,
-            "Generated Typst source · read-only · body r3",
+            "Generated from document · Read-only",
             "Empty slots: 1",
             "A4 preview · page 1/1 ·",
         ),
         (
             Locale::ZhHans,
-            "生成 Typst 源码 · 只读 · 正文 r3",
+            "由文档生成 · 只读",
             "1 个空槽",
             "A4 预览 · 第 1/1 页 ·",
         ),
         (
             Locale::En,
-            "Generated Typst source · read-only · body r3",
+            "Generated from document · Read-only",
             "Empty slots: 1",
             "A4 preview · page 1/1 ·",
         ),

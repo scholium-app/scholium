@@ -1,0 +1,610 @@
+[
+  {
+    "check": "a4-surface",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 6.2
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "backspace-block-merge",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 7.0
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "caret-follow",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 35.5
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "chrome",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 26.4
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "default-launch",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "FAIL(1)",
+      "seconds": 7.1
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 7.4
+    },
+    "final": "pass"
+  },
+  {
+    "check": "diagnostics",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "FAIL(1)",
+      "seconds": 9.9
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 14.8
+    },
+    "final": "pass"
+  },
+  {
+    "check": "display-formula",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 6.6
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "fraction-at-caret",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 35.0
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "ime-inline",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 4.5
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "inline-style",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 5.8
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "interaction",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 8.4
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "latex-view",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 3.9
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "math-attach",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 5.1
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "math-edge-caret",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 11.4
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "math-enter",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 11.8
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "math-input",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "FAIL(1)",
+      "seconds": 9.2
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 10.7
+    },
+    "final": "pass"
+  },
+  {
+    "check": "math-root-delimiter",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 9.9
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "native",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 17.8
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "parity",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 70.6
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "project-latex",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "FAIL(1)",
+      "seconds": 4.3
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 12.2
+    },
+    "final": "pass"
+  },
+  {
+    "check": "project-native",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "FAIL(1)",
+      "seconds": 6.4
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 7.0
+    },
+    "final": "pass"
+  },
+  {
+    "check": "project-source",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 5.2
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "sharp-raster",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "FAIL(1)",
+      "seconds": 133.7
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 71.7
+    },
+    "final": "pass"
+  },
+  {
+    "check": "source-theme",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 8.8
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "source-view",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 5.8
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "ui-foundation",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 17.2
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 18.5
+    },
+    "final": "pass"
+  },
+  {
+    "check": "undo-group",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "pass",
+      "seconds": 4.8
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "a11y",
+    "locale": "zh-Hans",
+    "initial": {
+      "result": "FAIL(1)",
+      "seconds": 5.1
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 6.5
+    },
+    "final": "pass"
+  },
+  {
+    "check": "a4-surface",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 6.2
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "backspace-block-merge",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 7.0
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "caret-follow",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 32.5
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "chrome",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 26.2
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "default-launch",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 7.4
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 7.4
+    },
+    "final": "pass"
+  },
+  {
+    "check": "diagnostics",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 14.9
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 14.8
+    },
+    "final": "pass"
+  },
+  {
+    "check": "display-formula",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 6.5
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "fraction-at-caret",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 35.0
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "ime-inline",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 4.3
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "inline-style",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 5.7
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "interaction",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 8.1
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "latex-view",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 3.8
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "math-attach",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 5.0
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "math-edge-caret",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 11.4
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "math-enter",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 11.9
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "math-input",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 11.7
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 10.6
+    },
+    "final": "pass"
+  },
+  {
+    "check": "math-root-delimiter",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 9.9
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "native",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 18.2
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "parity",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 70.4
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "project-latex",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 11.8
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 11.8
+    },
+    "final": "pass"
+  },
+  {
+    "check": "project-native",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 7.0
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 6.9
+    },
+    "final": "pass"
+  },
+  {
+    "check": "project-source",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 5.1
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "sharp-raster",
+    "locale": "en",
+    "initial": {
+      "result": "FAIL(1)",
+      "seconds": 63.1
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 71.5
+    },
+    "final": "pass"
+  },
+  {
+    "check": "source-theme",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 8.7
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "source-view",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 5.7
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "ui-foundation",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 18.5
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 18.8
+    },
+    "final": "pass"
+  },
+  {
+    "check": "undo-group",
+    "locale": "en",
+    "initial": {
+      "result": "pass",
+      "seconds": 4.8
+    },
+    "recheck": null,
+    "final": "pass"
+  },
+  {
+    "check": "a11y",
+    "locale": "en",
+    "initial": {
+      "result": "FAIL(1)",
+      "seconds": 6.4
+    },
+    "recheck": {
+      "result": "pass",
+      "seconds": 6.5
+    },
+    "final": "pass"
+  }
+]

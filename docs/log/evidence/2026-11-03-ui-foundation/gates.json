@@ -1,0 +1,62 @@
+[
+  {
+    "command": "cargo fmt --all -- --check",
+    "exit": 0,
+    "seconds": 0.6,
+    "log": "/tmp/t42-final-gate-0.log"
+  },
+  {
+    "command": "cargo clippy --locked --workspace --all-targets -- -D warnings",
+    "exit": 0,
+    "seconds": 2.0,
+    "log": "/tmp/t42-final-gate-1.log"
+  },
+  {
+    "command": "cargo test --locked --workspace",
+    "exit": 0,
+    "seconds": 41.3,
+    "log": "/tmp/t42-final-gate-2.log"
+  },
+  {
+    "command": "RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps",
+    "exit": 0,
+    "seconds": 3.27,
+    "log": "/tmp/t42-final-gate-3.log"
+  },
+  {
+    "command": "python3 scripts/check-rust-size.py",
+    "exit": 0,
+    "seconds": 0.04,
+    "log": "/tmp/t42-final-gate-4.log"
+  },
+  {
+    "command": "python3 scripts/check-doc-links.py",
+    "exit": 0,
+    "seconds": 0.14,
+    "log": "/tmp/t42-final-gate-5.log"
+  },
+  {
+    "command": "python3 scripts/check-ui-strings.py",
+    "exit": 0,
+    "seconds": 0.2,
+    "log": "/tmp/t42-final-gate-6.log"
+  },
+  {
+    "command": "python3 scripts/check-layers.py",
+    "exit": 0,
+    "seconds": 0.47,
+    "log": "/tmp/t42-final-gate-7.log"
+  },
+  {
+    "command": "cargo deny --locked check licenses bans sources",
+    "exit": 0,
+    "seconds": 0.85,
+    "log": "/tmp/t42-final-gate-8.log"
+  },
+  {
+    "command": "cargo build --locked -p scholium-app -p scholium-storage --bins",
+    "exit": 0,
+    "seconds": 1.44,
+    "log": "/tmp/t42-final-gate-9.log"
+  }
+]
