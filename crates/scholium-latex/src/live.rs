@@ -55,6 +55,11 @@ pub(crate) enum Command {
         reply: oneshot::Sender<Result<u64, LatexError>>,
     },
     Snapshot(oneshot::Sender<SourceSession>),
+    Diagnostics(oneshot::Sender<scholium_model::diagnostic::DiagnosticBatch>),
+    FullDiagnostics(
+        scholium_model::diagnostic::DiagnosticBatch,
+        oneshot::Sender<bool>,
+    ),
     Locate(String),
     Layout,
     Cancel(oneshot::Sender<Result<(), LatexError>>),
@@ -157,6 +162,36 @@ impl LiveSession {
             .await
             .map_err(|_| LatexError::Stopped)?;
         receiver.await.map_err(|_| LatexError::Stopped)
+    }
+
+    /// Read the complete diagnostic list for the current source revision, including empty clears.
+    /// # Errors
+    /// Reports a stopped actor.
+    pub async fn diagnostics(
+        &self,
+    ) -> Result<scholium_model::diagnostic::DiagnosticBatch, LatexError> {
+        let (reply, receive) = oneshot::channel();
+        self.commands
+            .send(Command::Diagnostics(reply))
+            .await
+            .map_err(|_| LatexError::Stopped)?;
+        receive.await.map_err(|_| LatexError::Stopped)
+    }
+
+    /// Merge full-build diagnostics only if they still match the current source revision.
+    /// Returns false for stale results. Empty current batches clear the full-build source.
+    /// # Errors
+    /// Reports a stopped actor.
+    pub async fn publish_full_diagnostics(
+        &self,
+        batch: scholium_model::diagnostic::DiagnosticBatch,
+    ) -> Result<bool, LatexError> {
+        let (reply, receive) = oneshot::channel();
+        self.commands
+            .send(Command::FullDiagnostics(batch, reply))
+            .await
+            .map_err(|_| LatexError::Stopped)?;
+        receive.await.map_err(|_| LatexError::Stopped)
     }
 
     /// Request whole-page layout without adding a host compile watchdog.

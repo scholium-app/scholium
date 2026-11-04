@@ -22,7 +22,31 @@ pub struct FullPreview {
     pub pages: Vec<RasterPage>,
     /// Compiler log; failed compilation returns an error instead of replacing preview.
     pub log: String,
+    /// Complete diagnostics of the last compilation pass.
+    pub diagnostics: scholium_model::diagnostic::DiagnosticBatch,
 }
+/// Failed compilation retains diagnostics without replacing the last successful preview.
+#[derive(Debug, thiserror::Error)]
+#[error("LaTeX compilation failed at revision {revision}")]
+pub struct FullFailure {
+    /// Host revision of the failed immutable snapshot.
+    pub revision: u64,
+    /// Original compiler transcript.
+    pub log: String,
+    /// Current errors and warnings, including unmapped log positions.
+    pub diagnostics: scholium_model::diagnostic::DiagnosticBatch,
+}
+
+pub(crate) fn diagnostics(
+    source: &SourceSession,
+    log: &str,
+) -> scholium_model::diagnostic::DiagnosticBatch {
+    scholium_model::diagnostic::DiagnosticBatch {
+        revision: source.revision(),
+        items: crate::log::parse_log(log),
+    }
+}
+
 /// Compile an immutable project snapshot, never modify source files. At most two passes for references.
 /// # Errors
 /// Rejects the live policy, LuaLaTeX, escaped/oversized resource trees, failed/late compilation or PDF.
@@ -45,59 +69,17 @@ pub async fn compile(
     for (path, text) in source.documents() {
         std::fs::write(project.path().join(path), text)?;
     }
-    let engine = match source.engine() {
-        Engine::XeLatex => "/usr/bin/xelatex",
-        Engine::PdfLatex => "/usr/bin/pdflatex",
-        _ => return Err(LatexError::Configuration),
+    let job = FullBuild {
+        source,
+        sandbox,
+        project: project.path(),
+        work: work.path(),
+        started,
+        deadline,
     };
-    let mut args = vec![
-        engine.into(),
-        "-interaction=nonstopmode".into(),
-        "-halt-on-error".into(),
-        "-no-shell-escape".into(),
-        "-jobname=preview".into(),
-        "-output-directory=/work".into(),
-        format!("/project/{}", source.entry()).into(),
-    ];
+    let mut log = job.passes().await?;
     if source.engine() == Engine::XeLatex {
-        args.insert(1, "-no-pdf".into());
-    }
-    let mut log = String::new();
-    for pass in 0..2 {
-        let remaining = deadline
-            .checked_sub(started.elapsed())
-            .ok_or(LatexError::Timeout)?;
-        let output = sandbox
-            .run(project.path(), work.path(), &args, remaining)
-            .await?;
-        log.push_str(&String::from_utf8_lossy(&output));
-        let details = std::fs::read_to_string(work.path().join("preview.log")).unwrap_or_default();
-        if pass > 0
-            || !(details.contains("Rerun")
-                || details.contains("rerun")
-                || details.contains("undefined references"))
-        {
-            break;
-        }
-    }
-    if source.engine() == Engine::XeLatex {
-        let remaining = deadline
-            .checked_sub(started.elapsed())
-            .ok_or(LatexError::Timeout)?;
-        let output = sandbox
-            .run(
-                project.path(),
-                work.path(),
-                &[
-                    "/usr/bin/xdvipdfmx".into(),
-                    "-o".into(),
-                    "/work/preview.pdf".into(),
-                    "/work/preview.xdv".into(),
-                ],
-                remaining,
-            )
-            .await?;
-        log.push_str(&String::from_utf8_lossy(&output));
+        log.push_str(&job.convert_xdv().await?);
     }
     let path = work.path().join("preview.pdf");
     let meta = std::fs::symlink_metadata(&path)?;
@@ -119,9 +101,106 @@ pub async fn compile(
         engine: source.engine(),
         elapsed: started.elapsed(),
         pages,
+        diagnostics: diagnostics(source, &log),
         log,
     })
 }
+struct FullBuild<'a> {
+    source: &'a SourceSession,
+    sandbox: &'a Sandbox,
+    project: &'a Path,
+    work: &'a Path,
+    started: Instant,
+    deadline: Duration,
+}
+impl FullBuild<'_> {
+    fn remaining(&self) -> Result<Duration, LatexError> {
+        self.deadline
+            .checked_sub(self.started.elapsed())
+            .ok_or(LatexError::Timeout)
+    }
+    fn args(&self) -> Vec<std::ffi::OsString> {
+        let engine = match self.source.engine() {
+            Engine::XeLatex => "/usr/bin/xelatex",
+            Engine::PdfLatex => "/usr/bin/pdflatex",
+            Engine::LuaLatex => unreachable!("validated full-build engine"),
+        };
+        let mut args = vec![
+            engine.into(),
+            "-interaction=nonstopmode".into(),
+            "-halt-on-error".into(),
+            "-no-shell-escape".into(),
+            "-jobname=preview".into(),
+            "-output-directory=/work".into(),
+            format!("/project/{}", self.source.entry()).into(),
+        ];
+        if self.source.engine() == Engine::XeLatex {
+            args.insert(1, "-no-pdf".into());
+        }
+        args
+    }
+    async fn passes(&self) -> Result<String, LatexError> {
+        let mut log = String::new();
+        for pass in 0..2 {
+            log = self.pass().await?;
+            if pass > 0
+                || !(log.contains("Rerun")
+                    || log.contains("rerun")
+                    || log.contains("undefined references"))
+            {
+                break;
+            }
+        }
+        Ok(log)
+    }
+    async fn pass(&self) -> Result<String, LatexError> {
+        let output = self
+            .sandbox
+            .run(self.project, self.work, &self.args(), self.remaining()?)
+            .await;
+        let log = std::fs::read_to_string(self.work.join("preview.log")).unwrap_or_default();
+        match output {
+            Ok(output) => Ok(if log.is_empty() {
+                String::from_utf8_lossy(&output).into_owned()
+            } else {
+                log
+            }),
+            Err(error) => {
+                if !matches!(error, scholium_build::BuildError::Tool(_)) {
+                    return Err(error.into());
+                }
+                let diagnostics = diagnostics(self.source, &log);
+                if diagnostics.items.is_empty() {
+                    return Err(error.into());
+                }
+                Err(Box::new(FullFailure {
+                    revision: self.source.revision(),
+                    log,
+                    diagnostics,
+                })
+                .into())
+            }
+        }
+    }
+    async fn convert_xdv(&self) -> Result<String, LatexError> {
+        let output = self
+            .sandbox
+            .run(
+                self.project,
+                self.work,
+                &[
+                    "/usr/bin/xdvipdfmx".into(),
+                    "-o".into(),
+                    "/work/preview.pdf".into(),
+                    "/work/preview.xdv".into(),
+                ],
+                self.remaining()?,
+            )
+            .await?;
+        Ok(String::from_utf8_lossy(&output).into_owned())
+    }
+}
+
 pub(crate) fn snapshot(
     root: &Path,
     from: &Path,

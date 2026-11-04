@@ -5,3 +5,5 @@ mod supervision;
 pub(crate) mod pixels;
 
 mod full;
+
+mod diagnostics;

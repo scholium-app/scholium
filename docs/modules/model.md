@@ -29,7 +29,7 @@ src/
 - 校验 TextPatch 有序、不重叠、位于同一 revision。
 - `WorkspacePatch::validate` 保证跨文件 patch 没有重复资源或重叠替换。
 - IR visitor/folder trait，避免下游直接匹配所有内部字段。
-- Diagnostic builder 强制 code、primary location 和 severity。
+- `diagnostic::Diagnostic` 定义内核统一编译诊断；code/location 仅在生产者已知时填写，severity 必填。
 
 ## 不变量
 
@@ -98,3 +98,17 @@ ResourceGeneration/SceneStamp；场景采纳比较全部字段，不能仅比较
 不公开 UUID 或引擎类型。浏览器 `wasm32-unknown-unknown` 的 UUID v4 熵源通过目标限定 `uuid/js` binding 提供；
 原生目标保持原熵源，不包含 JavaScript 业务编辑逻辑。结构 adapter 与 Action 格式在 scholium-sdg，见
 [ADR 0053](../adr/ADR-0053-loro-sdg-action-mapping.md)。
+
+## 内核编译诊断
+
+`diagnostic` 是 layer 0 的无 IO、无 UI DTO：`Diagnostic` 包含 `Severity`（error/warning/info）、
+`DiagnosticKernel`（latex/typst）、可选项目相对 `resource`、`DiagnosticRange`、消息、可选 code/node/log。
+`DiagnosticBatch { revision, items }` 把整组位置绑定到一个不可变输入版本；空列表表示清除。
+这些 DTO 不替代已有编辑动作拒绝或持久化错误。
+
+行与列从 1 开始；列按 Unicode scalar 计数，不是 UTF-16 或 UTF-8 byte。只知行的 TeX 来源使用列 1，
+不声称精确字符范围；可选 end 为 exclusive，可选 bytes 为同一源文件的 UTF-8 半开范围。
+`SourcePoint::at` 拒绝非 UTF-8 边界。`resource_path` 只接受规范相对路径，拒绝绝对路径、父目录、空组件、
+Windows 分隔符与盘符。映射失败时 resource/range 留空，不能改指主文件或邻近节点。
+`LogPosition` 保存原日志中从 1 开始的行号与 UTF-8 header 范围，独立于源码位置；原始日志由生产者保留。
+枚举序列化为显式 snake_case 名称；该接口是编译结果 DTO，不是新的持久化 schema。

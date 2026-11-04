@@ -1,0 +1,135 @@
+waiting for another window-check run
+output: /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t43-window-recheck
+running backspace-block-merge [zh-Hans] ...
+running caret-follow [zh-Hans] ...
+running fraction-at-caret [zh-Hans] ...
+running interaction [zh-Hans] ...
+running parity [zh-Hans] ...
+running project-latex [zh-Hans] ...
+running sharp-raster [zh-Hans] ...
+--- sharp-raster [zh-Hans] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t43-window-recheck/zh-Hans/sharp-raster.log
+X connection to :131 broken (explicit kill or server shutdown).
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/sharp-raster-check.py", line 138, in <module>
+    sharp_state, sharp_png, scrolled = run("display-resolution", {}, scroll=True)
+                                       ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/sharp-raster-check.py", line 98, in run
+    scrolled = scroll_case(window, env, wait, sharp) if scroll else None
+               ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/sharp-raster-check.py", line 115, in scroll_case
+    xdo("key", "Return")
+    ~~~^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/sharp-raster-check.py", line 111, in <lambda>
+    xdo = lambda *args: subprocess.run(["xdotool", *map(str, args)], check=True, env=env)
+                        ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['xdotool', 'key', 'Return']' returned non-zero exit status 1.
+/usr/bin/xvfb-run: line 181: 235750 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (235750) - No such process
+
+running undo-group [zh-Hans] ...
+running backspace-block-merge [en] ...
+--- backspace-block-merge [en] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t43-window-recheck/en/backspace-block-merge.log
+FAIL backspace-block-merge at input 2: {'key': 'Enter'}: app exited: 1; see /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t43-window-recheck/en/backspace-block-merge/scenario/app.log
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/backspace-block-merge-check.py", line 21, in <module>
+    parity.scenario(Path(sys.argv[1]).resolve(), ROOT / "scenarios/backspace-block-merge.json",
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    Path(sys.argv[2]).resolve() / "scenario")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/parity-check.py", line 252, in scenario
+    state = replay.input(event, state)
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/parity-check.py", line 205, in input
+    return self.ready()
+           ~~~~~~~~~~^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/parity-check.py", line 82, in ready
+    state = self.state()
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/parity-check.py", line 74, in state
+    raise RuntimeError(f"app exited: {self.proc.returncode}; see {self.log}")
+RuntimeError: app exited: 1; see /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t43-window-recheck/en/backspace-block-merge/scenario/app.log
+/usr/bin/xvfb-run: line 181: 236425 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (236425) - No such process
+
+running caret-follow [en] ...
+--- caret-follow [en] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t43-window-recheck/en/caret-follow.log
+X connection to :130 broken (explicit kill or server shutdown).
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/caret-follow-check.py", line 83, in <module>
+    xdo("type", "--delay", "12", f"Body line number {n} with some words.")
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/caret-follow-check.py", line 50, in xdo
+    subprocess.run(["xdotool", *map(str, args)], check=True, env=env)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['xdotool', 'type', '--delay', '12', 'Body line number 1 with some words.']' returned non-zero exit status 1.
+/usr/bin/xvfb-run: line 181: 236760 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (236760) - No such process
+
+running fraction-at-caret [en] ...
+--- fraction-at-caret [en] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t43-window-recheck/en/fraction-at-caret.log
+FAIL fraction-at-caret at input 8: {'key': 'Tab'}: app exited: 1; see /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t43-window-recheck/en/fraction-at-caret/fraction-at-caret/app.log
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/fraction-at-caret-check.py", line 37, in <module>
+    main()
+    ~~~~^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/fraction-at-caret-check.py", line 32, in main
+    parity.scenario(binary, ROOT / "scenarios" / f"{name}.json", output / name, on_step=check)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/parity-check.py", line 252, in scenario
+    state = replay.input(event, state)
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/parity-check.py", line 205, in input
+    return self.ready()
+           ~~~~~~~~~~^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/parity-check.py", line 82, in ready
+    state = self.state()
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/parity-check.py", line 74, in state
+    raise RuntimeError(f"app exited: {self.proc.returncode}; see {self.log}")
+RuntimeError: app exited: 1; see /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t43-window-recheck/en/fraction-at-caret/fraction-at-caret/app.log
+/usr/bin/xvfb-run: line 181: 236987 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (236987) - No such process
+
+running interaction [en] ...
+running parity [en] ...
+running project-latex [en] ...
+running sharp-raster [en] ...
+--- sharp-raster [en] FAIL(1); tail of /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t43-window-recheck/en/sharp-raster.log
+X connection to :134 broken (explicit kill or server shutdown).
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/sharp-raster-check.py", line 138, in <module>
+    sharp_state, sharp_png, scrolled = run("display-resolution", {}, scroll=True)
+                                       ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt2/spikes/typst-main-editor/sharp-raster-check.py", line 91, in run
+    subprocess.run(["xdotool", "type", "--delay", "30", SENTENCE], check=True, env=env)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['xdotool', 'type', '--delay', '30', 'Sharp text rendering at fractional scale keeps stems and serifs crisp']' returned non-zero exit status 1.
+/usr/bin/xvfb-run: line 181: 243635 Killed                     XAUTHORITY=$AUTHFILE Xvfb ":$SERVERNUM" $XVFBARGS $LISTENTCP >> "$ERRORFILE" 2>&1
+/usr/bin/xvfb-run: line 185: kill: (243635) - No such process
+
+running undo-group [en] ...
+
+check                            result      seconds
+backspace-block-merge [zh-Hans]  pass            7.0
+caret-follow [zh-Hans]           pass           32.6
+fraction-at-caret [zh-Hans]      pass           35.0
+interaction [zh-Hans]            pass            8.1
+parity [zh-Hans]                 pass           70.4
+project-latex [zh-Hans]          pass           13.7
+sharp-raster [zh-Hans]           FAIL(1)         9.2
+undo-group [zh-Hans]             pass            4.8
+backspace-block-merge [en]       FAIL(1)         4.1
+caret-follow [en]                FAIL(1)         4.3
+fraction-at-caret [en]           FAIL(1)         6.5
+interaction [en]                 pass            8.4
+parity [en]                      pass           71.2
+project-latex [en]               pass           13.3
+sharp-raster [en]                FAIL(1)         4.1
+undo-group [en]                  pass            4.7
+
+11/16 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt2/target/t43-window-recheck

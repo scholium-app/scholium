@@ -2,8 +2,8 @@
 
 ## 职责
 
-当前实现源码权威 session、无 UI 的 live 预览监督、内核图元栅格化与整编预览，app 将其接入项目工作台。其余解析/转换接口为后续规划：提供容错、无损 LaTeX token/CST，项目 include graph，符号与引用索引，常用论文子集到转换 IR 的投影、
-IR 到 LaTeX 的导出生成、语义编辑降级为最小源码 patch、TeX 日志位置解析与实时预览适配。
+当前实现源码权威 session、无 UI 的 live 预览监督、内核图元栅格化、整编预览与统一日志诊断，app 将其接入项目工作台。其余解析/转换接口为后续规划：提供容错、无损 LaTeX token/CST，项目 include graph，符号与引用索引，常用论文子集到转换 IR 的投影、
+IR 到 LaTeX 的导出生成、语义编辑降级为最小源码 patch。
 
 ## 非职责
 
@@ -58,7 +58,7 @@ lexer 不展开 catcode；首发假定常见 LaTeX catcode 语义。遇到可能
 
 ## 公共接口
 
-已实现的 session/live 合约见下节；以下 CST、projection、generate、log 接口为后续规划。
+已实现的 session/live 合约见下节；以下 CST、projection、generate 接口为后续规划；日志诊断已实现。
 
 - `parse(resource, revision, text) -> LatexCst`；`reparse(previous, edits) -> LatexCst`。
 - `symbols(cst) -> SymbolIndex`；`dependencies(cst) -> Vec<ResourceDependency>`（input/include、bibliography、
@@ -126,7 +126,7 @@ app 工作台以存储层 SourceProject 为唯一可写权威；入口来自项�
 重新载入/另存为时重建预览会话，不能用旧页面冒充新项目的最新结果。
 
 `LiveSession::start(source, Arc<Sandbox>, work, LiveConfig)` 消费该权威，只通过 `scholium-build` 沙箱启动
-`rtex serve`。公共接口为 edit、snapshot、request_layout、locate、next_event、cancel；私有假 launcher 仅用于测试。
+`rtex serve`。公共接口为 edit、snapshot、diagnostics、publish_full_diagnostics、request_layout、locate、next_event、cancel；私有假 launcher 仅用于测试。
 `LiveEvent` 提供 Paragraph、Pages、LayoutRequired、Location、Diagnostic、Engine，自有 outcome/state，不公开协议 JSON 或 rtex 类型。
 Paragraph/Pages 携带宿主 process generation 和 `Option<revision>`；未匹配确认的版本为 None，不能当作当前预览。
 Paragraph/Pages 携带内核自有不透明 `Drawing`，由 raster worker 的 `Renderer` 消费；不公开上游 JSON。
@@ -174,3 +174,28 @@ XeLaTeX 使用 `-no-pdf` 输出 XDV，再显式执行 xdvipdfmx，避免 shell�
 
 `highlight` 返回 UTF-8 byte ranges 与控制序列、注释、数学切换、花括号、普通文本类别；不展开宏或声称 CST 语义。
 绘制边界与回退裁决见 [ADR 0052](../adr/ADR-0052-latex-view-workbench.md)。
+
+
+## 统一编译诊断
+
+`log::parse_log` 返回 `scholium_model::diagnostic::Diagnostic`：括号文件栈识别相对文件（含引号路径）与
+明确的 `/project/` 沙箱挂载；其它绝对路径或无法识别的上下文不映射到父文件。支持 `!` 错误与后续 `l.N`、
+LaTeX/宏包 warning/error、换行警告中的 `on input line N`、未定义引用/引文及 overfull/underfull 信息。
+日志 header 的原始行号和 byte range 始终保留；TeX 未提供列时使用 1，未提供 end/bytes 时留空。
+解析是容错的，未识别日志保持在完整 transcript 中，不通过推测创建源码位置。
+
+`full::compile` 成功返回 `FullPreview.diagnostics`（最后一轮完整日志的版本化结果）；TeX 返回非零且留下可解析
+日志时返回 `LatexError::Compilation(Box<FullFailure>)`，其中仍有 revision、完整 log 和 diagnostics。
+沙箱/超时/资源错误继续按原错误分类返回，不能伪装成编译诊断。失败不生成新预览，调用方保留旧页。
+
+`LiveSession::diagnostics()` 查询当前 host revision 的完整问题列表，不依赖 UI 是否及时消费事件。
+`publish_full_diagnostics(batch)` 合并同版本独立整编结果，旧或未来版本返回 false；每个来源替换而非累积，空组清除，
+源码版本前进时清除旧版本来源。相同条目合并去重。rtex 类型仍只存在于私有协议适配器。
+锁定 rtex 的 `background` Diagnostics 不带 revision，先暂存并与随后 LayoutUpdate 的 source_revision 配对；
+没有 acknowledgement 映射或已过期的结果丢弃。带版本的诊断事件按已确认映射接入。
+无版本的 fast/standby 引擎故障只保留在 supervision 消息中，不能猜测成当前源码诊断。
+重启时丢弃尚未配对的旧进程诊断。源码和诊断在离线 actor 中仍可查询与保存。
+
+CI 使用 fake-rtex 验证事件→适配→当前列表、整编合并、修复清除和旧版本拒绝；真实 LuaLaTeX/XeLaTeX transcript
+夹具与任意 Unicode 输入检查覆盖日志解析。`real::native_undefined_control_sequence_reaches_revision_bound_diagnostics`
+及 `diagnostics_native` 是显式 ignored 的真实沙箱验收，必须在具备工具链的宿主另行运行。

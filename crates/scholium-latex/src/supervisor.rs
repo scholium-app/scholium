@@ -29,6 +29,7 @@ pub(crate) struct Supervisor {
     layout_since: Instant,
     recovering: bool,
     drawing: crate::view::Drawing,
+    diagnostics: crate::diagnostics::Diagnostics,
 }
 impl Supervisor {
     pub(crate) fn new(
@@ -57,6 +58,7 @@ impl Supervisor {
             layout_since: Instant::now(),
             recovering: false,
             drawing: Default::default(),
+            diagnostics: Default::default(),
         }
     }
 
@@ -139,6 +141,7 @@ impl Supervisor {
         self.heartbeat = None;
         self.healthy_since = None;
         self.drawing = Default::default();
+        self.diagnostics.pending = None;
         self.revisions.clear();
         self.edit_started.clear();
         self.pending.clear();
@@ -176,6 +179,15 @@ impl Supervisor {
                         self.restart(error.to_string()).await?;
                     }
                 }
+            }
+            Command::Diagnostics(reply) => {
+                let _ = reply.send(self.diagnostics.snapshot(&self.source));
+            }
+            Command::FullDiagnostics(batch, reply) => {
+                let accepted = self
+                    .diagnostics
+                    .replace("full", batch, self.source.revision());
+                let _ = reply.send(accepted);
             }
             Command::Snapshot(reply) => {
                 let _ = reply.send(self.source.clone());
@@ -230,6 +242,15 @@ impl Supervisor {
             }
             Some("LayoutUpdate") => {
                 let layout: protocol::Layout = protocol::decode(value)?;
+                if let Some(items) = self.diagnostics.pending.take()
+                    && let Some(&revision) = self.revisions.get(&layout.versions.source_revision)
+                {
+                    self.diagnostics.replace(
+                        "background",
+                        scholium_model::diagnostic::DiagnosticBatch { revision, items },
+                        self.source.revision(),
+                    );
+                }
                 self.drawing = crate::view::Drawing::decode(
                     value,
                     value["versions"]["layout_version"]
@@ -345,9 +366,27 @@ impl Supervisor {
     }
 
     async fn diagnostics(&mut self, value: &Value) -> Result<()> {
-        let items: Vec<protocol::Diagnostic> = protocol::decode(&value["items"])?;
-        for item in items {
-            self.diagnostic(item.message).await?;
+        let items: Vec<crate::diagnostics::Item> = protocol::decode(&value["items"])?;
+        // Never assign an unversioned event to the latest edit. Background sets are paired
+        // with their following layout; fast engine failures remain supervision messages.
+        if let Some(upstream) = value["versions"]["source_revision"].as_u64() {
+            if let Some(&revision) = self.revisions.get(&upstream) {
+                let batch = scholium_model::diagnostic::DiagnosticBatch {
+                    revision,
+                    items: items.into_iter().map(|item| item.map()).collect(),
+                };
+                self.diagnostics.replace(
+                    value["source"].as_str().unwrap_or("rtex"),
+                    batch,
+                    self.source.revision(),
+                );
+            }
+        } else if value["source"] == "background" {
+            self.diagnostics.pending = Some(items.into_iter().map(|item| item.map()).collect());
+        } else {
+            for item in items {
+                self.diagnostic(item.message).await?;
+            }
         }
         Ok(())
     }
@@ -382,6 +421,15 @@ impl Supervisor {
     async fn offline(&mut self, mut commands: mpsc::Receiver<Command>) {
         while let Some(command) = commands.recv().await {
             match command {
+                Command::Diagnostics(reply) => {
+                    let _ = reply.send(self.diagnostics.snapshot(&self.source));
+                }
+                Command::FullDiagnostics(batch, reply) => {
+                    let accepted = self
+                        .diagnostics
+                        .replace("full", batch, self.source.revision());
+                    let _ = reply.send(accepted);
+                }
                 Command::Snapshot(reply) => {
                     let _ = reply.send(self.source.clone());
                 }
