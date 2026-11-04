@@ -1,0 +1,122 @@
+[
+  {
+    "name": "full-native",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "-p",
+      "scholium-latex",
+      "--test",
+      "diagnostics_native",
+      "--",
+      "--ignored",
+      "--nocapture"
+    ],
+    "env": {},
+    "exit_code": 0,
+    "seconds": 30.06
+  },
+  {
+    "name": "fork-system",
+    "command": [
+      "cargo",
+      "run",
+      "--locked",
+      "-p",
+      "scholium-typst",
+      "--features",
+      "editor",
+      "--example",
+      "typst-main-fork-check",
+      "--",
+      "target/t43-stock/system/fork"
+    ],
+    "env": {},
+    "exit_code": 0,
+    "seconds": 18.34
+  },
+  {
+    "name": "stock-system",
+    "command": [
+      "cargo",
+      "run",
+      "--locked",
+      "--manifest-path",
+      "spikes/typst-main-editor/reference/Cargo.toml",
+      "--target-dir",
+      "target/stock-reference",
+      "--",
+      "target/t43-stock/system/stock"
+    ],
+    "env": {},
+    "exit_code": 0,
+    "seconds": 9.67
+  },
+  {
+    "name": "compare-system",
+    "command": [
+      "python3",
+      "spikes/typst-main-editor/compare.py",
+      "target/t43-stock/system/fork",
+      "target/t43-stock/system/stock"
+    ],
+    "env": {},
+    "exit_code": 0,
+    "seconds": 0.18
+  },
+  {
+    "name": "fork-bundled",
+    "command": [
+      "cargo",
+      "run",
+      "--locked",
+      "-p",
+      "scholium-typst",
+      "--features",
+      "editor",
+      "--example",
+      "typst-main-fork-check",
+      "--",
+      "target/t43-stock/bundled/fork"
+    ],
+    "env": {
+      "SCHOLIUM_TEST_FONTS": "bundled"
+    },
+    "exit_code": 0,
+    "seconds": 3.68
+  },
+  {
+    "name": "stock-bundled",
+    "command": [
+      "cargo",
+      "run",
+      "--locked",
+      "--manifest-path",
+      "spikes/typst-main-editor/reference/Cargo.toml",
+      "--target-dir",
+      "target/stock-reference",
+      "--",
+      "target/t43-stock/bundled/stock"
+    ],
+    "env": {
+      "SCHOLIUM_TEST_FONTS": "bundled"
+    },
+    "exit_code": 0,
+    "seconds": 2.53
+  },
+  {
+    "name": "compare-bundled",
+    "command": [
+      "python3",
+      "spikes/typst-main-editor/compare.py",
+      "target/t43-stock/bundled/fork",
+      "target/t43-stock/bundled/stock"
+    ],
+    "env": {
+      "SCHOLIUM_TEST_FONTS": "bundled"
+    },
+    "exit_code": 0,
+    "seconds": 0.19
+  }
+]

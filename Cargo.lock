@@ -4712,6 +4712,7 @@ dependencies = [
  "hayro 0.8.0",
  "nix",
  "scholium-build",
+ "scholium-model",
  "serde",
  "serde_json",
  "sha2",

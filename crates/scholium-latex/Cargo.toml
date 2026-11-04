@@ -7,6 +7,7 @@ rust-version.workspace = true
 publish = false
 
 [dependencies]
+scholium-model = { path = "../scholium-model", version = "0.1.0" }
 scholium-build = { path = "../scholium-build", version = "0.1.0" }
 thiserror = "=2.0.20"
 serde = { version = "=1.0.229", features = ["derive"] }

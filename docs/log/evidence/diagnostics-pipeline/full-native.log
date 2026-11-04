@@ -1,0 +1,96 @@
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-latex)
+    Finished `test` profile [unoptimized] target(s) in 1.46s
+     Running tests/diagnostics_native.rs (target/debug/deps/diagnostics_native-a3bf3e34260b1a1e)
+
+running 1 test
+T43 xelatex: FullFailure {
+    revision: 1,
+    log: "This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Arch Linux) (preloaded format=xelatex 2026.10.30)  4 NOV 2026 03:16\nentering extended mode\n %&-line parsing enabled.\n**/project/main.tex\n(/project/main.tex\nLaTeX2e <2025-11-01>\nL3 programming layer <2026-01-19>\n(/usr/share/texmf-dist/tex/latex/base/article.cls\nDocument Class: article 2025/01/22 v1.4n Standard LaTeX document class\n(/usr/share/texmf-dist/tex/latex/base/size10.clo\nFile: size10.clo 2025/01/22 v1.4n Standard LaTeX file (size option)\n)\n\\c@part=\\count271\n\\c@section=\\count272\n\\c@subsection=\\count273\n\\c@subsubsection=\\count274\n\\c@paragraph=\\count275\n\\c@subparagraph=\\count276\n\\c@figure=\\count277\n\\c@table=\\count278\n\\abovecaptionskip=\\skip49\n\\belowcaptionskip=\\skip50\n\\bibindent=\\dimen148\n)\n(/usr/share/texmf-dist/tex/latex/l3backend/l3backend-xetex.def\nFile: l3backend-xetex.def 2025-10-09 L3 backend support: XeTeX\n\\g__graphics_track_int=\\count279\n\\g__pdfannot_backend_int=\\count280\n\\g__pdfannot_backend_link_int=\\count281\n)\nNo file preview.aux.\n\\openout1 = `preview.aux'.\n\nLaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\nLaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\nLaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\nLaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\nLaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\nLaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\nLaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\nLaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\n! Undefined control sequence.\nl.5 \\foo\n        \nThe control sequence at the end of the top line\nof your error message was never \\def'ed. If you have\nmisspelled it (e.g., `\\hobx'), type `I' and the correct\nspelling (e.g., `I\\hbox'). Otherwise just continue,\nand I'll forget about whatever was undefined.\n\n \nHere is how much of TeX's memory you used:\n 431 strings out of 470180\n 8216 string characters out of 5479197\n 426408 words of memory out of 5000000\n 29105 multiletter control sequences out of 15000+600000\n 627729 words of font info for 41 fonts, out of 8000000 for 9000\n 14 hyphenation exceptions out of 8191\n 35i,0n,38p,154b,40s stack positions out of 10000i,1000n,20000p,200000b,200000s\nNo pages of output.\n",
+    diagnostics: DiagnosticBatch {
+        revision: 1,
+        items: [
+            Diagnostic {
+                severity: Error,
+                kernel: Latex,
+                resource: Some(
+                    "main.tex",
+                ),
+                range: Some(
+                    DiagnosticRange {
+                        start: SourcePoint {
+                            line: 5,
+                            column: 1,
+                        },
+                        end: None,
+                        bytes: None,
+                    },
+                ),
+                node: None,
+                message: "Undefined control sequence.",
+                code: None,
+                log: Some(
+                    LogPosition {
+                        line: 50,
+                        bytes: 1987..2016,
+                    },
+                ),
+            },
+        ],
+    },
+}
+T43 pdflatex: FullFailure {
+    revision: 1,
+    log: "This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex 2026.10.30)  4 NOV 2026 03:16\nentering extended mode\n %&-line parsing enabled.\n**/project/main.tex\n(/project/main.tex\nLaTeX2e <2025-11-01>\nL3 programming layer <2026-01-19>\n(/usr/share/texmf-dist/tex/latex/base/article.cls\nDocument Class: article 2025/01/22 v1.4n Standard LaTeX document class\n(/usr/share/texmf-dist/tex/latex/base/size10.clo\nFile: size10.clo 2025/01/22 v1.4n Standard LaTeX file (size option)\n)\n\\c@part=\\count275\n\\c@section=\\count276\n\\c@subsection=\\count277\n\\c@subsubsection=\\count278\n\\c@paragraph=\\count279\n\\c@subparagraph=\\count280\n\\c@figure=\\count281\n\\c@table=\\count282\n\\abovecaptionskip=\\skip49\n\\belowcaptionskip=\\skip50\n\\bibindent=\\dimen148\n)\n(/usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def\nFile: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)\n\\l__color_backend_stack_int=\\count283\n)\nNo file preview.aux.\n\\openout1 = `preview.aux'.\n\nLaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\nLaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\nLaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\nLaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\nLaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\nLaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\nLaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 4.\nLaTeX Font Info:    ... okay on input line 4.\n! Undefined control sequence.\nl.5 \\foo\n        \nThe control sequence at the end of the top line\nof your error message was never \\def'ed. If you have\nmisspelled it (e.g., `\\hobx'), type `I' and the correct\nspelling (e.g., `I\\hbox'). Otherwise just continue,\nand I'll forget about whatever was undefined.\n\n \nHere is how much of TeX's memory you used:\n 417 strings out of 469504\n 7709 string characters out of 5470283\n 433756 words of memory out of 5000000\n 29158 multiletter control sequences out of 15000+600000\n 627721 words of font info for 40 fonts, out of 8000000 for 9000\n 14 hyphenation exceptions out of 8191\n 35i,0n,38p,154b,36s stack positions out of 10000i,1000n,20000p,200000b,200000s\n!  ==> Fatal error occurred, no output PDF file produced!\n",
+    diagnostics: DiagnosticBatch {
+        revision: 1,
+        items: [
+            Diagnostic {
+                severity: Error,
+                kernel: Latex,
+                resource: Some(
+                    "main.tex",
+                ),
+                range: Some(
+                    DiagnosticRange {
+                        start: SourcePoint {
+                            line: 5,
+                            column: 1,
+                        },
+                        end: None,
+                        bytes: None,
+                    },
+                ),
+                node: None,
+                message: "Undefined control sequence.",
+                code: None,
+                log: Some(
+                    LogPosition {
+                        line: 46,
+                        bytes: 1818..1847,
+                    },
+                ),
+            },
+            Diagnostic {
+                severity: Error,
+                kernel: Latex,
+                resource: Some(
+                    "main.tex",
+                ),
+                range: None,
+                node: None,
+                message: " ==> Fatal error occurred, no output PDF file produced!",
+                code: None,
+                log: Some(
+                    LogPosition {
+                        line: 64,
+                        bytes: 2513..2570,
+                    },
+                ),
+            },
+        ],
+    },
+}
+test full_build_failure_retains_main_file_line_and_revision ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 28.52s
+

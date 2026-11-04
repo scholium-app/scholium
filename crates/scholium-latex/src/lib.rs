@@ -1,6 +1,8 @@
 //! Source-authoritative LaTeX sessions and supervised, sandboxed live preview.
+mod diagnostics;
 pub mod full;
 mod highlight;
+pub mod log;
 pub mod toolchain;
 pub mod view;
 pub use highlight::{Token, TokenKind, highlight};
@@ -43,6 +45,9 @@ pub enum LatexError {
     /// A host protocol write or startup check exceeded its deadline.
     #[error("live operation timed out")]
     Timeout,
+    /// TeX compilation failed; revision-bound diagnostics and raw log remain available.
+    #[error(transparent)]
+    Compilation(#[from] Box<full::FullFailure>),
     /// Invalid supervision budgets.
     #[error("invalid live configuration")]
     Configuration,

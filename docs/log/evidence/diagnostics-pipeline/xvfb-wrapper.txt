@@ -1,0 +1,3 @@
+6584e6cf04ca1357cb50fd2feb1ad449b5f45dfe6cc61d2bbf006f752df592de  /usr/bin/Xvfb
+6584e6cf04ca1357cb50fd2feb1ad449b5f45dfe6cc61d2bbf006f752df592de  target/t43-bin/t43-x-server
+The temporary PATH wrapper executes the byte-identical local Xvfb binary under the task-specific executable name t43-x-server. This avoids the independently observed unrelated cleanup that kills every process with comm == Xvfb. It does not change displays, screen dimensions, test assertions or the machine-wide lock. Only this task's private X server uses the renamed executable. No system file, test script or other task process was changed.

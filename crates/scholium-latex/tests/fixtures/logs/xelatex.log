@@ -1,0 +1,136 @@
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Arch Linux) (preloaded format=xelatex 2026.10.30)  3 NOV 2026 19:03
+entering extended mode
+ %&-line parsing enabled.
+**main.tex
+(./main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+(/usr/share/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(/usr/share/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count271
+\c@section=\count272
+\c@subsection=\count273
+\c@subsubsection=\count274
+\c@paragraph=\count275
+\c@subparagraph=\count276
+\c@figure=\count277
+\c@table=\count278
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen148
+)
+(/usr/share/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
+File: l3backend-xetex.def 2025-10-09 L3 backend support: XeTeX
+\g__graphics_track_int=\count279
+\g__pdfannot_backend_int=\count280
+\g__pdfannot_backend_link_int=\count281
+)
+No file main.aux.
+\openout1 = `main.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+(./chapter.tex
+! Undefined control sequence.
+l.2 \foo
+        
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+)
+
+LaTeX Warning: Reference `absent' on page 1 undefined on input line 4.
+
+
+LaTeX Warning: Citation `missing' on page 1 undefined on input line 4.
+
+
+Package demo Warning: Wrapped warning on input line 5 on input line 5.
+
+
+Overfull \hbox (91.6pt too wide) detected at line 6
+\TU/lmr/m/n/10 This is much too wide
+ []
+
+
+Overfull \hbox (1.04726pt too wide) in paragraph at lines 7--7
+\TU/lmr/m/n/10 loosely
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7--7
+\TU/lmr/m/n/10 filled
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7--7
+\TU/lmr/m/n/10 para-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7--7
+\TU/lmr/m/n/10 graph
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7--7
+\TU/lmr/m/n/10 with
+ []
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 7.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 7.
+
+! Package demo Error: A package error.
+
+See the demo package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.8 ...package error}{A deliberate fixture error.}
+                                                  
+A deliberate fixture error.
+
+[1
+
+] (./main.aux)
+ ***********
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+ ***********
+
+
+LaTeX Warning: There were undefined references.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 449 strings out of 470180
+ 8530 string characters out of 5479197
+ 427408 words of memory out of 5000000
+ 29118 multiletter control sequences out of 15000+600000
+ 627737 words of font info for 42 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 35i,5n,38p,145b,126s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+Output written on main.pdf (1 page).
