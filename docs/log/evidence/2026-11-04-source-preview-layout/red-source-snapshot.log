@@ -1,0 +1,21 @@
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-typst)
+error[E0425]: cannot find function `compile_source_snapshot` in the crate root
+ --> crates/scholium-typst/src/tests.rs:9:26
+  |
+9 |     let preview = crate::compile_source_snapshot("main.typ", &files, 1.0).expect("valid snapshot");
+  |                          ^^^^^^^^^^^^^^^^^^^^^^^ not found in the crate root
+
+error[E0425]: cannot find function `compile_source_snapshot` in the crate root
+  --> crates/scholium-typst/src/tests.rs:16:25
+   |
+16 |     let failed = crate::compile_source_snapshot("main.typ", &files, 1.0).expect("valid input envelope");
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^ not found in the crate root
+
+error[E0425]: cannot find function `highlight_source` in the crate root
+  --> crates/scholium-typst/src/tests.rs:25:25
+   |
+25 |     let tokens = crate::highlight_source(text);
+   |                         ^^^^^^^^^^^^^^^^ not found in the crate root
+
+For more information about this error, try `rustc --explain E0425`.
+error: could not compile `scholium-typst` (lib test) due to 3 previous errors

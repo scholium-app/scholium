@@ -104,7 +104,6 @@ fn the_catalog_has_no_key_that_nothing_uses() {
             "chrome.status.no_problems",
             "chrome.status.engine_hint",
             "chrome.status.position",
-            "chrome.status.typ_source",
         ]
         .map(str::to_owned),
     );
@@ -158,6 +157,12 @@ fn the_catalog_has_no_key_that_nothing_uses() {
             "latex.full",
             "latex.live",
             "source.editor.find",
+            "preview.page_editing_note",
+            "preview.failed",
+            "preview.retry",
+            "preview.retained",
+            "preview.problems",
+            "preview.ready",
             "source.header",
             "source.warning",
             "source.preview.compiling",

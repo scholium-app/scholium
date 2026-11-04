@@ -10,7 +10,7 @@ fn context() -> Context<'static> {
 }
 impl SourceEditor {
     pub(super) fn completion_input(&mut self, ui: &egui::Ui) {
-        let focused = ui.memory(|m| m.has_focus(egui::Id::new("source-editor")));
+        let focused = ui.memory(|m| m.has_focus(self.id()));
         if !focused {
             self.command.reset();
             return;

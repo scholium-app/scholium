@@ -1,0 +1,9 @@
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 1.57s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-c7f7311f39cf7208)
+
+running 1 test
+T46 5000 lines: cold 109.679 ms, one edit 31.579 ms, reused 5000/5001 rows
+test source_editor::tests::a_single_edit_in_five_thousand_lines_reuses_unchanged_layout_rows ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 359 filtered out; finished in 0.15s

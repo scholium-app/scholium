@@ -515,6 +515,12 @@ latex-stale = 预览更新中 · 源码已改变
 latex-full = 整编 { $seconds } s
 latex-live = 实时 { $ms } ms
 source-editor-find = 查找
+preview-page_editing_note = 页面公式编辑将在阶段 3 提供。
+preview-failed = 预览失败，源码已保留。
+preview-retry = 重试预览
+preview-retained = 显示版本 { $revision }
+preview-problems = 查看 { $count } 个问题
+preview-ready = 预览 · 第 { $page }/{ $pages } 页 · { $ms } ms
 
 chrome-dialog-close = 关闭对话框
 
@@ -524,7 +530,6 @@ chrome-status-no_problems = 无问题
 
 chrome-status-engine_hint = 预览由项目语言对应的引擎生成
 
-chrome-status-typ_source = Typst · 尚未生成预览
 
 chrome-toolbar-paragraph_hint = 选择当前段落的正文或标题样式
 chrome-toolbar-overflow_hint = 显示当前窗口放不下的工具栏操作

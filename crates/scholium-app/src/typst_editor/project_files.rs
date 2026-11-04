@@ -19,6 +19,7 @@ impl EditorSession {
     ) -> Result<scholium_storage::project::ProjectHandle, SessionError> {
         let handle = self.core.save_as_project(target)?;
         self.title = Some(crate::project_workspace::name(&handle));
+        self.source_view.project = handle.root().into();
         Ok(handle)
     }
 }

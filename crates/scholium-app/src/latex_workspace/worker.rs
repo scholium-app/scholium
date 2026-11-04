@@ -29,6 +29,7 @@ pub(super) enum Update {
         paragraph: bool,
         count: Option<u64>,
     },
+    Diagnostics(scholium_model::diagnostic::DiagnosticBatch),
     Error(String),
     Unavailable(String),
 }
@@ -210,6 +211,11 @@ async fn live_loop(
                     LiveEvent::Engine{state:scholium_latex::EngineState::Failed,reason:Some(reason),..}=>{publish(sender,wake,Update::Error(reason)).await;None}
                     _=>None,
                 };
+                let mut diagnostics = live.diagnostics().await?;
+                if let Some(revision) = revisions.get(&diagnostics.revision) {
+                    diagnostics.revision = *revision;
+                    publish(sender, wake, Update::Diagnostics(diagnostics)).await;
+                }
                 if let Some(job)=job && jobs.send(job).await.is_err(){break;}
             }
         }
@@ -239,6 +245,9 @@ async fn full(
         if edits.borrow().revision == edit.revision {
             match result {
                 Ok(preview) => {
+                    let mut diagnostics = preview.diagnostics;
+                    diagnostics.revision = edit.revision;
+                    publish(sender, wake, Update::Diagnostics(diagnostics)).await;
                     publish(
                         sender,
                         wake,
@@ -253,7 +262,14 @@ async fn full(
                     )
                     .await
                 }
-                Err(error) => publish(sender, wake, Update::Error(error.to_string())).await,
+                Err(error) => {
+                    if let scholium_latex::LatexError::Compilation(failure) = &error {
+                        let mut diagnostics = failure.diagnostics.clone();
+                        diagnostics.revision = edit.revision;
+                        publish(sender, wake, Update::Diagnostics(diagnostics)).await;
+                    }
+                    publish(sender, wake, Update::Error(error.to_string())).await;
+                }
             }
         }
         if edits.has_changed().unwrap_or(false) {

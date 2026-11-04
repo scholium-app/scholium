@@ -521,6 +521,12 @@ latex-stale = Preview updating · source changed
 latex-full = Full build { $seconds } s
 latex-live = Live { $ms } ms
 source-editor-find = Find
+preview-page_editing_note = Page formula editing arrives in stage 3.
+preview-failed = Preview failed. Your source is retained.
+preview-retry = Retry preview
+preview-retained = Showing version { $revision }
+preview-problems = View { $count } problems
+preview-ready = Preview · page { $page }/{ $pages } · { $ms } ms
 
 chrome-dialog-close = Close dialog
 
@@ -530,7 +536,6 @@ chrome-status-no_problems = No problems
 
 chrome-status-engine_hint = Preview uses the project language engine
 
-chrome-status-typ_source = Typst · Preview not generated
 
 chrome-toolbar-paragraph_hint = Choose the paragraph style for the current block
 chrome-toolbar-overflow_hint = Show toolbar actions that do not fit in the window

@@ -1,4 +1,51 @@
 use super::*;
+
+#[test]
+fn source_snapshot_preview_uses_only_explicit_files_and_reports_source_ranges() {
+    let files = std::collections::BTreeMap::from([
+        (
+            String::from("main.typ"),
+            b"#set page(width: 100pt, height: 100pt)\n#include \"part.typ\"".to_vec(),
+        ),
+        (String::from("part.typ"), b"Hello source preview".to_vec()),
+    ]);
+    let preview = crate::compile_source_snapshot("main.typ", &files, 1.0).expect("valid snapshot");
+    assert!(preview.error.is_none(), "{:?}", preview.error);
+    assert_eq!(preview.pages.len(), 1);
+    assert!(preview.pages[0].width > 0);
+    let files = std::collections::BTreeMap::from([(
+        String::from("main.typ"),
+        b"#read(\"/etc/hostname\")".to_vec(),
+    )]);
+    let failed =
+        crate::compile_source_snapshot("main.typ", &files, 1.0).expect("valid input envelope");
+    assert!(failed.error.is_some());
+    assert!(failed.pages.is_empty());
+    assert!(
+        failed
+            .diagnostics
+            .iter()
+            .any(|d| d.resource.as_deref() == Some("main.typ") && d.range.is_some())
+    );
+}
+
+#[test]
+fn source_highlighting_preserves_every_utf8_byte_in_disjoint_ranges() {
+    let text = "= 中文 heading\n#let value = 42\n// comment\n$value + 1$";
+    let tokens = crate::highlight_source(text);
+    let rebuilt: String = tokens
+        .iter()
+        .map(|token| &text[token.bytes.clone()])
+        .collect();
+    assert_eq!(rebuilt, text);
+    assert!(
+        tokens
+            .windows(2)
+            .all(|pair| pair[0].bytes.end == pair[1].bytes.start)
+    );
+    assert!(tokens.iter().any(|token| token.scope.contains("comment")));
+    assert!(tokens.iter().any(|token| token.scope.contains("numeric")));
+}
 use scholium_model::{
     BlockKind, DocumentId, NodeId, Revision,
     structured::{

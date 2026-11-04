@@ -263,7 +263,7 @@ fn worker(
     }
 }
 
-fn raster(page: &typst_layout::Page, pixel_per_pt: f32) -> PagePixels {
+pub(crate) fn raster(page: &typst_layout::Page, pixel_per_pt: f32) -> PagePixels {
     // Clamp to the typst-render working range so a fractional DPR cannot
     // produce a degenerate bitmap.
     let scale = pixel_per_pt.clamp(0.25, 8.0);

@@ -21,11 +21,17 @@ pub(super) fn job(
     }
     boundaries.sort_unstable();
     boundaries.dedup();
+    let mut sorted: Vec<_> = highlights.iter().collect();
+    sorted.sort_by_key(|h| h.bytes.start);
+    let mut cursor = 0;
     for pair in boundaries.windows(2) {
         let range = pair[0]..pair[1];
-        let color = highlights
-            .iter()
-            .find(|h| h.bytes.contains(&range.start))
+        while cursor < sorted.len() && sorted[cursor].bytes.end <= range.start {
+            cursor += 1;
+        }
+        let color = sorted
+            .get(cursor)
+            .filter(|h| h.bytes.contains(&range.start))
             .map_or(ui.visuals().text_color(), |h| h.color);
         let mut format = egui::TextFormat::simple(egui::FontId::monospace(13.0), color);
         if let Some(mark) = marks.iter().find(|m| m.bytes.contains(&range.start)) {

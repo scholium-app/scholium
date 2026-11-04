@@ -1,5 +1,52 @@
 use super::*;
 #[test]
+fn page_mode_uses_the_full_preview_and_source_mode_restores_the_split() {
+    let directory = tempfile::tempdir().expect("project");
+    let handle = scholium_storage::project::ProjectHandle::create(
+        &directory.path().join("paper"),
+        scholium_storage::project::ProjectLanguage::Latex,
+    )
+    .expect("handle");
+    let source = scholium_storage::project::SourceProject::open(handle).expect("source");
+    let ctx = egui::Context::default();
+    let mut workspace = Workspace::open(source, &ctx);
+    workspace.backend = None;
+    let mut state = crate::state::WorkspaceState::default();
+    for source_mode in [false, true, false] {
+        state.mode = if source_mode {
+            crate::state::ViewMode::Source
+        } else {
+            crate::state::ViewMode::Page
+        };
+        let mut available = egui::Rect::NOTHING;
+        let mut output = ctx.run_ui(
+            egui::RawInput {
+                screen_rect: Some(egui::Rect::from_min_size(
+                    egui::Pos2::ZERO,
+                    egui::vec2(1280.0, 900.0),
+                )),
+                ..Default::default()
+            },
+            |ui| {
+                available = ui.available_rect_before_wrap();
+                workspace.show(ui, &mut state);
+            },
+        );
+        output.textures_delta.clear();
+        assert_eq!(
+            workspace.source_rect.is_some(),
+            source_mode,
+            "source is visible only in source mode"
+        );
+        let preview = workspace.preview_rect.expect("preview pane");
+        if source_mode {
+            assert!(preview.width() < available.width() * 0.8);
+        } else {
+            assert!(preview.width() >= available.width() - 20.0);
+        }
+    }
+}
+#[test]
 fn edit_differences_use_utf8_byte_boundaries() {
     for (a, b) in [
         ("Hello 中文", "Hello 新中文"),

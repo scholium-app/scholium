@@ -35,7 +35,7 @@ pub(super) fn show(ui: &mut egui::Ui, state: &mut WorkspaceState, session: &mut 
             if state.mode == ViewMode::Source {
                 session.drag = None;
                 session.placement = None;
-                session.show_source(ui, state.locale.resolve());
+                session.show_source_state(ui, state);
                 session.audit_source(ui.ctx());
                 return;
             }

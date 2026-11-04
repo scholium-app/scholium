@@ -7,7 +7,8 @@
 
 ## 非职责
 
-不直接写项目文件，不实现 CRDT/解析/历史算法，不拼接构建命令，不在前端保存永久 token。
+不直接写权威项目文件，不实现 CRDT/解析/历史算法，不接受项目指定的构建命令，不在前端保存永久 token。
+外部 Typst 预览通过固定 worker 模式监督受限子进程；源码编译、语法与诊断仍由内核提供。
 
 ## 内部结构
 
@@ -95,7 +96,7 @@ SimSun → Noto Sans CJK SC，标题将 SimSun 换为 SimHei。System 始终载�
 
 默认启动打开数据目录 `scholium/default-project`；显式路径由 `SCHOLIUM_PROJECT_PATH` 指定。
 正式项目通过 `ProjectHandle` 决定语言与 authority，由 `project_workspace` 装配：原生 Typst 接现有页面 EditorCore，
-普通 `.typ` 接最小源码输入与 SourceProject；LaTeX 通过 `open_latex_workspace` 将 ProjectHandle 与 egui context
+普通 `.typ` 接共享源码编辑器、SourceProject 与隔离的 Typst 预览；LaTeX 通过 `open_latex_workspace` 将 ProjectHandle 与 egui context
 装配为真实的源码/预览工作台，以项目声明的入口为准，不创建 Typst authority/worker。`source_view` 仍仅服务原生项目生成源码。
 默认项目不存在时，只读迁移旧 structured/legacy 会话当前 head，旧库保留，显示迁移提示与报告位置；
 失败或未完成迁移目标不能当空白文档打开。`SCHOLIUM_SESSION_FILE` 已退役，不再被主程序读取。
@@ -152,7 +153,7 @@ UI 只读取缓存；缺工具链不会禁用新建、打开或编辑。
 
 - Typst 原生：页码（连续编辑面为 1/1；生成预览可用时显示其页码）、正文词数、正文/公式/只读上下文、常驻问题计数、
   “Typst · 已同步 / 更新中”、缩放。CJK 每字与拉丁词各计一，按快照修订更新；有空间时保留最严重诊断与被拒输入复制入口。
-- `.typ`：TextEdit 实际行列、现有问题计数、Typst 状态、缩放。源码预览尚未装配时明确显示“尚未生成预览”，不冒称已同步。
+- `.typ`：TextEdit 实际行列、当前内核问题计数、Typst 编译/失败/预览页码与耗时、缩放。失败后保留上次成功页面并标记所显示版本。
 - LaTeX：实际行列、源码词数、现有工作台错误计数、规范拼写的 LuaLaTeX / XeLaTeX / pdfLaTeX 与实时毫秒或整编秒数、缩放。
   工具链缺失显示本地化状态项；工作台不显示原始 `missing SCHOLIUM_*`、调试标题或权威/未保存说明，原始细节仍写 AUDIT。
 
@@ -359,9 +360,28 @@ core 交付已采纳 Scene 的位图与已验证身份的条带，app 上传为�
 
 ## 共享源码编辑器与 LaTeX 项目工作台
 
-`source_editor` 提供本地 TextEdit、双向滚动、选区、原生撤销/重做、Ctrl+F 查找、诊断与高亮 byte-range 接口。
+`source_editor` 提供占满窗格高度的 TextEdit、双向滚动、行号、当前行底色、独立问题标记槽、选区、原生撤销/重做、Ctrl+F 查找、诊断与高亮 byte-range 接口。
+高亮布局保留换行边界，egui 按行缓存塑形；单行编辑复用其他行，不因当前行底色重新塑形全文。
+诊断只装饰同一资源、同一 revision 的 UTF-8 范围，标记悬停显示原消息；LaTeX 的 live/full 结果均转发真实 DiagnosticBatch。
 语言内核提供高亮内容，编辑器仅提供样式与标记；IME 使用独立预编辑缓冲，提交后才更新权威源码，整次提交为独立撤销点。
-共享 `ReadOnlySource` 提供布局缓存与跟随滚动，Typst source_view 保持生成源码只读、块高亮、主题更新和预览定位行为。
+共享 `ReadOnlySource` 提供行号、内核语法高亮、布局缓存与跟随滚动，Typst source_view 保持生成源码只读、块高亮、主题更新和预览定位行为，保留“由文档生成 · 只读”标题。
+
+三种源码窗格共用平面两栏与 1 px 分隔线。分隔条有 8 px 点击区，可拖动、Tab 聚焦后左右键按 2% 调整，双击回到 50/50；
+比例限制为 20%–80%，按规范项目根路径保存到机器本地配置 `scholium/source-layout.json`，不写项目声明。
+`SCHOLIUM_LAYOUT_FILE` 可隔离偏好文件；窗口检查的 `SCHOLIUM_RECENT_FILE` 也自动隔离相邻布局文件。
+原生项目另存为后使用副本路径，不继承原项目的分隔身份。
+
+预览在画布中居中，页码导航、状态栏缩放、100% 与适合宽度使用实际页面 pt 尺寸。
+LaTeX 的“页面编辑”在阶段 3 前显示全宽预览与一行公式编辑说明，返回源码恢复原分隔比例。
+工具链缺失时在画布中央展示真实 ToolchainDetector 的安装建议与重新检测；重新检测也重新启动预览。
+编译失败保留最后成功页面，明确显示版本并提供问题计数入口；没有成功页面时显示居中失败提示。
+面板统一重做与源码诊断跳转属于后续批次。
+
+`typst_source` 用 SourceProject 保存唯一源码权威；打开即聚焦编辑器，IME 预编辑不提交草稿。
+`SourceHighlighter` 仅增量解析语法，不求值。源码快照通过固定 `--source-preview-worker` 模式在 Linux bwrap/systemd 用户 scope 内编译；
+工作线程负责 150 ms 去抖、取消旧请求及读取有界结果；UI 只接收 revision、诊断和 RGBA 页面，旧 revision 丢弃。
+无隔离能力的平台或主机明确报不可用，不在主进程降级求值。资源与预算边界见
+[ADR 0055](../adr/ADR-0055-source-preview-worker.md)。
 LaTeX 源码键入反斜线启动 scholium-math-input 的同一候选引擎，Tab/Enter 接受、方向键选择、Esc 取消；
 插入源码符号/结构片段，经 TextEdit 原生输入路径保证选区与撤销。粘贴与 IME 提交保持字面文本，不触发补全。
 

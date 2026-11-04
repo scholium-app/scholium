@@ -1,0 +1,38 @@
+{
+  "baseline": {
+    "commit": "8713f75839795f009faa963a5a3fd0e072becf2a",
+    "binary_sha256": "db6d09502f1badaeb6fc7bf24a35f259228e76bbb472dcb372327efe94101dfb"
+  },
+  "workspace_tests": {
+    "passed": 708,
+    "failed": 0,
+    "ignored": 15
+  },
+  "stock_parity": {
+    "system": {
+      "cases": 31,
+      "identical_pixels": 31
+    },
+    "bundled": {
+      "cases": 31,
+      "identical_pixels": 31
+    }
+  },
+  "performance": {
+    "fixture_lines": 5000,
+    "unit": "ms",
+    "cold": 109.679,
+    "one_edit": 31.579,
+    "reused_rows": 5000,
+    "total_rows": 5001,
+    "scope": "debug test: kernel syntax plus egui layout; not display latency"
+  },
+  "windows": {
+    "total_checks": 60,
+    "final_pass": 60,
+    "initial_full_pass": 59,
+    "focused_rerun_pass": 2,
+    "focused_assertions": 32,
+    "note": "Corrected expensive-evaluation fixture after Typst itself rejected the initial loop; no product changes or threshold relaxation."
+  }
+}

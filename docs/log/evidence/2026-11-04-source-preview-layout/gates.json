@@ -1,0 +1,118 @@
+[
+  {
+    "name": "fmt",
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "seconds": 0.38719083899923135
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--workspace",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 0,
+    "seconds": 0.7185225790017284,
+    "note": "Passed after moving the new unit test module below its production items."
+  },
+  {
+    "name": "test",
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--workspace"
+    ],
+    "exit_code": 0,
+    "seconds": 32.449251254001865
+  },
+  {
+    "name": "doc",
+    "command": [
+      "cargo",
+      "doc",
+      "--locked",
+      "--workspace",
+      "--no-deps"
+    ],
+    "exit_code": 0,
+    "seconds": 5.275842594001006
+  },
+  {
+    "name": "rust-size",
+    "command": [
+      "python3",
+      "scripts/check-rust-size.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.030786097999225603
+  },
+  {
+    "name": "doc-links",
+    "command": [
+      "python3",
+      "scripts/check-doc-links.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.10554649099867675
+  },
+  {
+    "name": "ui-strings",
+    "command": [
+      "python3",
+      "scripts/check-ui-strings.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.17884487899937085
+  },
+  {
+    "name": "layers",
+    "command": [
+      "python3",
+      "scripts/check-layers.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.3191864840009657
+  },
+  {
+    "name": "deny",
+    "command": [
+      "cargo",
+      "deny",
+      "--locked",
+      "check",
+      "licenses",
+      "bans",
+      "sources"
+    ],
+    "exit_code": 0,
+    "seconds": 0.6355835139984265
+  },
+  {
+    "name": "build",
+    "command": [
+      "cargo",
+      "build",
+      "--locked",
+      "-p",
+      "scholium-app",
+      "-p",
+      "scholium-storage",
+      "--bins"
+    ],
+    "exit_code": 0,
+    "seconds": 1.6283463350009697
+  }
+]

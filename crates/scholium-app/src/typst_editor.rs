@@ -150,6 +150,7 @@ impl EditorSession {
         let core =
             EditorCore::open_project_with_wake(handle.clone(), move || wake.request_repaint())?;
         let mut editor = Self::with_core(ctx, state, core)?;
+        editor.source_view.project = handle.root().into();
         editor.title = (!crate::project_workspace::is_default(&handle))
             .then(|| crate::project_workspace::name(&handle));
         editor.metadata(state);

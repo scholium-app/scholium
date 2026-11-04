@@ -152,3 +152,76 @@ fn disabled_source_leaves_dialog_input_and_completion_untouched() {
             .any(|e| matches!(e, egui::Event::Text(s) if s == "project-path"))
     );
 }
+
+#[test]
+fn short_source_editor_fills_the_pane_height() {
+    let ctx = egui::Context::default();
+    let mut editor = SourceEditor::default();
+    let mut text = String::from("one line");
+    let mut height = 0.0;
+    let mut available = 0.0;
+    let mut output = ctx.run_ui(
+        egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                egui::Pos2::ZERO,
+                egui::vec2(600.0, 900.0),
+            )),
+            ..Default::default()
+        },
+        |ui| {
+            available = ui.available_height();
+            editor.show(ui, &mut text, &[], &[], Locale::En);
+            height = ui
+                .ctx()
+                .read_response(egui::Id::new("source-editor"))
+                .expect("editor")
+                .rect
+                .height();
+        },
+    );
+    output.textures_delta.clear();
+    assert!(
+        height >= available - 4.0,
+        "editor {height} must fill pane {available}"
+    );
+}
+
+#[test]
+fn a_single_edit_in_five_thousand_lines_reuses_unchanged_layout_rows() {
+    let ctx = egui::Context::default();
+    let mut parser = scholium_typst::SourceHighlighter::default();
+    let mut source = (0..5000)
+        .map(|i| format!("#let v{i} = {i} // source line\n"))
+        .collect::<String>();
+    let layout = |source: &str, parser: &mut scholium_typst::SourceHighlighter| {
+        let started = std::time::Instant::now();
+        let tokens = parser.highlight(source);
+        let mut galley = None;
+        let mut output = ctx.run_ui(egui::RawInput::default(), |ui| {
+            let styles = super::typst_styles(&tokens, ui.visuals());
+            let job = highlight::job(ui, source, &styles, &[]);
+            galley = Some(ui.fonts_mut(|fonts| fonts.layout_job(job)));
+        });
+        output.textures_delta.clear();
+        (galley.expect("source layout"), started.elapsed())
+    };
+    let (before, cold) = layout(&source, &mut parser);
+    source.insert(10, '1');
+    let (after, edited) = layout(&source, &mut parser);
+    let reused = before
+        .rows
+        .iter()
+        .zip(&after.rows)
+        .filter(|(a, b)| std::sync::Arc::ptr_eq(&a.row, &b.row))
+        .count();
+    println!(
+        "T46 5000 lines: cold {:.3} ms, one edit {:.3} ms, reused {reused}/{} rows",
+        cold.as_secs_f64() * 1000.0,
+        edited.as_secs_f64() * 1000.0,
+        before.rows.len()
+    );
+    assert!(
+        reused >= 4999,
+        "unchanged lines must retain egui paragraph layouts"
+    );
+}
