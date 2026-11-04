@@ -128,3 +128,21 @@ T42范围内实现和本地验收已完成；后续批次按上述边界推进�
 应用变更位于 `crates/scholium-app/**`；窗口期望更新为 `chrome-check.py`，新增 `ui-foundation-check.py`。
 模块规范更新 `docs/modules/app.md`，本日志与证据记录验证。另有上文列明的两处最小文件范围例外。
 未修改Cargo.lock、内核/诊断/构建crate，也未新增依赖。
+
+## 协调器复核修复：窄窗口状态栏
+
+协调器指出480 px中文状态栏把“正文”裁到半个字形，裸“0”也无法表达问题数量。
+本轮先加入失败回归测试，再改为先绘制右侧控件、按其实际左边界保留空间；
+左侧标签按完整宽度计算，空间不足时依次隐藏上下文、字数、页码（源码项目最高优先级为行列），不裁切标签。
+计数始终带最严重问题的图标；窄窗口零问题隐藏整个计数，非零显示图标加数字，宽窗口保留完整标签。
+共享状态按钮为图标和文字分配独立空间；可访问名称仍为完整的问题数量。
+
+新增优先级边界单元测试，以及中英480 px零/非零问题和文字裁剪边界测试。
+[修复前失败记录](evidence/2026-11-03-ui-foundation/status-narrow-red.log)。
+本轮十项非窗口门禁再次全部通过，工作区654项测试通过（应用340项）；
+[本轮门禁](evidence/2026-11-03-ui-foundation/status-narrow-gates.json)。
+本轮运行 `python3 scripts/window-checks.py --only chrome diagnostics ui-foundation source-theme --locale zh-Hans en`，
+使用同一私有Xvfb/共享锁及先前的进程名隔离，8/8通过，无重试、无阈值调整。
+[本轮窗口输出](evidence/2026-11-03-ui-foundation/status-narrow-windows.log)。
+已刷新 `after/zh-Hans/window-480.png` 与 `after/en/window-480.png` 两张截图；
+逐张目视确认标签完整、窄窗口没有零问题计数。截图清单已更新对应哈希和本轮二进制哈希。

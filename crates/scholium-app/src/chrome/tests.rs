@@ -152,6 +152,22 @@ impl Window {
         self.size.y - Tokens::STATUS_BAR
     }
 
+    pub(crate) fn clipped_status_labels(&self) -> Vec<String> {
+        self.output
+            .shapes
+            .iter()
+            .filter_map(|shape| {
+                let egui::Shape::Text(text) = &shape.shape else {
+                    return None;
+                };
+                let rect = egui::Rect::from_min_size(text.pos, text.galley.size());
+                (text.pos.y >= self.status_top()
+                    && !shape.clip_rect.expand(0.5).contains_rect(rect))
+                .then(|| text.galley.text().to_owned())
+            })
+            .collect()
+    }
+
     /// The panel's rectangle once drawn, `None` while it is closed.
     pub(crate) fn panel_rect(&self) -> Option<egui::Rect> {
         let open = self.texts().iter().any(|t| t == "问题" || t == "Problems");

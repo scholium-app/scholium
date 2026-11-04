@@ -1,5 +1,5 @@
-//! Status bar: left word count, page info (only when known) and context; middle the one
-//! most serious diagnostic with its count; right the zoom controls. Backend and revisions live in the context tooltip.
+//! Status bar: whole position/word/context segments in priority order, diagnostics,
+//! kernel state and zoom. Narrow windows never clip lower-priority labels.
 use super::stats::grouped;
 use crate::{
     command::ui as command_ui,
@@ -12,7 +12,7 @@ use crate::{
         warning_segment,
     },
 };
-use eframe::egui::{self, Align, FontId, Layout, Ui};
+use eframe::egui::{self, Align, Layout, Ui};
 use fluent_bundle::FluentValue;
 
 /// What the status bar shows, for the window audit.
@@ -44,55 +44,77 @@ fn context_key(state: &WorkspaceState) -> &'static str {
 }
 
 pub(super) fn show(ui: &mut Ui, state: &mut WorkspaceState) {
-    let font = theme::font(Tokens::SMALL_TEXT);
-    let narrow = ui.max_rect().width() < 760.0;
-    let backend_label = backend_label(state);
-    let count = problem_count(state);
-    let count_label = if narrow {
-        count.to_string()
-    } else if count == 0 {
-        command_ui::text(state, "chrome.status.no_problems")
-    } else {
-        diagnostics::count_text(state.locale.resolve(), count)
-    };
-    let backend_width = text_width(ui, &backend_label, font.clone()) + 4.0;
-    let count_width = text_width(ui, &count_label, font.clone()) + 12.0;
-    let right_width = zoom_width(ui, state, &font) + backend_width + count_width + 80.0;
+    let right_left = ui
+        .scope_builder(
+            egui::UiBuilder::new()
+                .max_rect(ui.max_rect())
+                .layout(Layout::right_to_left(Align::Center)),
+            |ui| right(ui, state),
+        )
+        .inner;
     let mut left_rect = ui.max_rect();
-    left_rect.max.x = (left_rect.right() - right_width).max(left_rect.left());
+    left_rect.max.x = (right_left - Tokens::GAP_STATUS).max(left_rect.left());
     ui.scope_builder(
         egui::UiBuilder::new()
             .max_rect(left_rect)
             .layout(Layout::left_to_right(Align::Center)),
         |ui| {
-            ui.set_clip_rect(ui.clip_rect().intersect(left_rect));
+            ui.spacing_mut().item_spacing.x = Tokens::GAP_BUTTON;
             left(ui, state);
             if ui.available_width() > 100.0 {
                 warning(ui, state, ui.available_width());
             }
         },
     );
-    ui.scope_builder(
-        egui::UiBuilder::new()
-            .max_rect(ui.max_rect())
-            .layout(Layout::right_to_left(Align::Center)),
-        |ui| {
-            ui.spacing_mut().item_spacing = egui::vec2(Tokens::GAP_BUTTON, 0.0);
-            zoom(ui, state);
-            status_separator(ui);
-            let hint = command_ui::text(state, "chrome.status.engine_hint");
-            status_fixed(ui, &backend_label, &hint, backend_width);
-            status_separator(ui);
-            let meta =
-                Meta::new("ui.status.count", "status", &count_label).tip(crate::widgets::Tip {
-                    title: command_ui::text(state, "diag.count_hint"),
-                    ..Default::default()
-                });
-            if status_button(ui, None, Some(&count_label), meta).clicked() {
-                state.diagnostics = !state.diagnostics;
-            }
-        },
-    );
+}
+
+/// Return the actual left edge of the reserved controls, rather than guessing their width.
+fn right(ui: &mut Ui, state: &mut WorkspaceState) -> f32 {
+    ui.spacing_mut().item_spacing.x = Tokens::GAP_BUTTON;
+    zoom(ui, state);
+    status_separator(ui);
+    let hint = command_ui::text(state, "chrome.status.engine_hint");
+    let backend = status_fixed(ui, &backend_label(state), &hint, 0.0);
+    let narrow = ui.ctx().content_rect().width() < 760.0;
+    let count = problem_count(state);
+    if count == 0 && narrow {
+        return backend.rect.left();
+    }
+    status_separator(ui);
+    let label = if narrow {
+        count.to_string()
+    } else if count == 0 {
+        command_ui::text(state, "chrome.status.no_problems")
+    } else {
+        diagnostics::count_text(state.locale.resolve(), count)
+    };
+    let name = diagnostics::count_text(state.locale.resolve(), count);
+    let meta = Meta::new("ui.status.count", "status", name).tip(crate::widgets::Tip {
+        title: command_ui::text(state, "diag.count_hint"),
+        ..Default::default()
+    });
+    let response = status_button(ui, Some(problem_icon(state)), Some(&label), meta);
+    if response.clicked() {
+        state.diagnostics = !state.diagnostics;
+    }
+    response.rect.left()
+}
+
+fn problem_icon(state: &WorkspaceState) -> Glyph {
+    use diagnostics::Severity;
+    let severity = if state.source_language.is_some() {
+        (state.source_problems > 0).then_some(Severity::Error)
+    } else {
+        state
+            .editor
+            .as_ref()
+            .and_then(|v| v.problems.iter().map(|p| p.severity).min())
+    };
+    match severity {
+        Some(Severity::Error) => Glyph::Error,
+        Some(Severity::Warning) => Glyph::Warning,
+        Some(Severity::Info) | None => Glyph::Info,
+    }
 }
 
 fn problem_count(state: &WorkspaceState) -> usize {
@@ -118,9 +140,26 @@ fn locale_text(state: &WorkspaceState, key: &str, values: &[(&str, FluentValue<'
     i18n::text_with(state.locale.resolve(), key, values)
 }
 
-fn left(ui: &mut Ui, state: &mut WorkspaceState) {
+fn left(ui: &mut Ui, state: &WorkspaceState) {
+    let labels = labels(state);
+    let widths: Vec<_> = labels
+        .iter()
+        .map(|label| text_width(ui, label, theme::font(Tokens::SMALL_TEXT)) + 4.0)
+        .collect();
+    let separator = Tokens::GAP_STATUS * 2.0 + 1.0 + Tokens::GAP_BUTTON * 2.0;
+    let count = super::layout::fit_status_segments(&widths, separator, ui.available_width());
+    for (index, label) in labels.iter().take(count).enumerate() {
+        if index > 0 {
+            status_separator(ui);
+        }
+        status_text(ui, label, None, None);
+    }
+}
+
+fn labels(state: &WorkspaceState) -> Vec<String> {
+    let mut labels = Vec::new();
     let Some(view) = state.editor.as_ref() else {
-        return;
+        return labels;
     };
     if state.source_language.is_some() {
         let (line, column) = state.source_position;
@@ -132,9 +171,9 @@ fn left(ui: &mut Ui, state: &mut WorkspaceState) {
                 ("column", (column as i64).into()),
             ],
         );
-        status_text(ui, &position, None, None);
+        labels.push(position);
         if state.source_language != Some(scholium_storage::project::ProjectLanguage::Latex) {
-            return;
+            return labels;
         }
     } else {
         let (page, pages) = view.preview_page.unwrap_or((1, 1));
@@ -146,23 +185,19 @@ fn left(ui: &mut Ui, state: &mut WorkspaceState) {
                 ("pages", (pages as i64).into()),
             ],
         );
-        status_text(ui, &page, None, None);
+        labels.push(page);
     }
-    if ui.available_width() < 60.0 {
-        return;
-    }
-    status_separator(ui);
     let words = locale_text(
         state,
         "chrome.status.words",
         &[("count", (view.words as i64).into())],
     );
     let words = words.replacen(&view.words.to_string(), &grouped(view.words), 1);
-    status_text(ui, &words, None, None);
-    if state.source_language.is_none() && ui.available_width() > 50.0 {
-        status_separator(ui);
-        status_text(ui, &command_ui::text(state, context_key(state)), None, None);
+    labels.push(words);
+    if state.source_language.is_none() {
+        labels.push(command_ui::text(state, context_key(state)));
     }
+    labels
 }
 
 /// The most serious diagnostic and optional rejected-input copy action.
@@ -216,20 +251,6 @@ fn percent(state: &WorkspaceState) -> String {
         state.zoom
     };
     format!("{:.0}%", zoom * 100.0)
-}
-
-/// Width of the right-hand zoom cluster, so the warning can use the space between.
-fn zoom_width(ui: &Ui, state: &WorkspaceState, font: &FontId) -> f32 {
-    let icon = Tokens::STATUS_BAR - 4.0;
-    let pct = text_width(ui, &percent(state), font.clone()) + 12.0;
-    let fit = if ui.ctx().content_rect().width() < 760.0 {
-        icon
-    } else {
-        command_ui::resolve(state, "view.zoom.fit_width").map_or(0.0, |r| {
-            text_width(ui, &r.title(state), font.clone()) + 12.0
-        })
-    };
-    icon * 2.0 + pct + fit + Tokens::GAP_BUTTON * 3.0
 }
 
 /// Right to left: the last control drawn is the leftmost.

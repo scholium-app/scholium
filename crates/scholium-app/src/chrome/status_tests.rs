@@ -3,6 +3,25 @@ use super::tests::{EN, Window, ZH, overflow};
 use crate::state::ViewMode;
 
 #[test]
+fn narrow_status_hides_zero_problems_and_draws_only_whole_labels() {
+    for locale in [ZH, EN] {
+        let mut w = Window::new(480.0, locale);
+        assert!(!w.ids("status").contains(&"ui.status.count".into()));
+        w.editor().words = 123_456_789;
+        w.editor().preview_page = Some((1234, 5678));
+        w.settle();
+        assert!(
+            w.clipped_status_labels().is_empty(),
+            "{:?}",
+            w.clipped_status_labels()
+        );
+        w.editor().problems = vec![overflow()];
+        w.settle();
+        assert!(w.ids("status").contains(&"ui.status.count".into()));
+    }
+}
+
+#[test]
 fn developer_revisions_are_not_in_the_status_bar_text() {
     let mut w = Window::new(1280.0, ZH);
     w.editor().revision = 7;

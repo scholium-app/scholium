@@ -80,8 +80,13 @@ pub(crate) fn status_button(
         }
     };
     let galley = label.map(|l| single_line(ui, l, font, t.text_dim, f32::INFINITY));
+    let icon_width = if glyph.is_some() && label.is_some() {
+        Tokens::ICON_STATUS.0 + 4.0
+    } else {
+        0.0
+    };
     let width = match &galley {
-        Some(g) => g.size().x + WARNING_PAD * 2.0,
+        Some(g) => g.size().x + WARNING_PAD * 2.0 + icon_width,
         None => side,
     };
     let response = meta.place(ui, egui::vec2(width, side));
@@ -96,13 +101,18 @@ pub(crate) fn status_button(
     }
     let color = color_for(state);
     if let Some(glyph) = glyph {
-        icons::paint(
-            ui.painter(),
-            response.rect,
-            glyph,
-            Tokens::ICON_STATUS,
-            color,
-        );
+        let rect = if label.is_some() {
+            egui::Rect::from_center_size(
+                egui::pos2(
+                    response.rect.left() + WARNING_PAD + Tokens::ICON_STATUS.0 / 2.0,
+                    response.rect.center().y,
+                ),
+                egui::Vec2::splat(Tokens::ICON_STATUS.0),
+            )
+        } else {
+            response.rect
+        };
+        icons::paint(ui.painter(), rect, glyph, Tokens::ICON_STATUS, color);
     }
     if let Some(text) = label {
         let galley = single_line(
@@ -112,7 +122,11 @@ pub(crate) fn status_button(
             color,
             f32::INFINITY,
         );
-        let pos = text_pos(response.rect, response.rect.left() + WARNING_PAD, &galley);
+        let pos = text_pos(
+            response.rect,
+            response.rect.left() + WARNING_PAD + icon_width,
+            &galley,
+        );
         ui.painter().galley(pos, galley, color);
     }
     focus_ring(ui, &response, Tokens::RADIUS_CONTROL);
