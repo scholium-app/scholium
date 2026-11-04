@@ -1,0 +1,21 @@
+{
+  "branch": "ation_ciger/feat/rtex-bundle",
+  "rtex_pin": {
+    "repository": "https://github.com/HenryXiaoYang/realtime-tex",
+    "branch": "main",
+    "commit": "531e2c6b32a09d33be58f6be1301fe8f793411cd"
+  },
+  "build_binary_sha256": "a46184931e71cd0e95babd924b6fa452e78708dfafbfeb3cc01fc0441d7088ca",
+  "override_variables_for_status_and_native_preview": [],
+  "workspace_test_passed": 658,
+  "workspace_test_ignored_native": 13,
+  "python_bundle_tests_passed": 3,
+  "ci_real_bundle_build": false,
+  "reason": "PIN review already gates the separate upstream workspace; fixtures cover discovery on ordinary CI, real bundle/preview validated locally.",
+  "initial_base": "d11c0c60ca198b9f3997887473f24df3a176ef03",
+  "integrated_base": "c94bb32bbd45eb168001874bcefcc55900728653",
+  "integration": "Fast-forward origin/main after PR 99; documentation and reference assets only, no binary inputs changed.",
+  "window_complete_run": "53/54",
+  "window_targeted_recheck": "2/2",
+  "window_final_scenario_coverage": "54/54 including recheck"
+}

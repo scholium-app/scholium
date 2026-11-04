@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/project-native-check.py", line 13, in <module>
+    app.start("create")
+    ~~~~~~~~~^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/project_ui.py", line 47, in start
+    self.wait(lambda: subprocess.run(["xdotool", "search", "--onlyvisible", "--pid", str(self.app.pid)],
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                    env=self.env, capture_output=True).returncode == 0)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ation_ciger/Projects/Mogan/scholium-wt3/spikes/typst-main-editor/project_ui.py", line 27, in wait
+    assert self.app.poll() is None, self.log.read_text()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Error: WinitEventLoop(Os(OsError { line: 788, file: "/kache/.cargo/registry/src/rsproxy.cn-e3de039b2554c837/winit-0.30.13/src/platform_impl/linux/mod.rs", error: XNotSupported(XOpenDisplayFailed) }))
+

@@ -1,0 +1,91 @@
+{
+  "development_override": false,
+  "engines": [
+    {
+      "name": "lualatex",
+      "path": null,
+      "version": null
+    },
+    {
+      "name": "xelatex",
+      "path": null,
+      "version": null
+    },
+    {
+      "name": "pdflatex",
+      "path": null,
+      "version": null
+    },
+    {
+      "name": "biber",
+      "path": null,
+      "version": null
+    },
+    {
+      "name": "bibtex",
+      "path": null,
+      "version": null
+    }
+  ],
+  "font_cache_warm": true,
+  "issues": [
+    {
+      "action": "toolchain.install-tex",
+      "action_arguments": {},
+      "arguments": {},
+      "message": "toolchain.tex-missing"
+    },
+    {
+      "action": "toolchain.install-tex-component",
+      "action_arguments": {},
+      "arguments": {
+        "program": "lualatex"
+      },
+      "message": "toolchain.program-unavailable"
+    },
+    {
+      "action": "toolchain.install-tex-component",
+      "action_arguments": {},
+      "arguments": {
+        "program": "xelatex"
+      },
+      "message": "toolchain.program-unavailable"
+    },
+    {
+      "action": "toolchain.install-tex-component",
+      "action_arguments": {},
+      "arguments": {
+        "program": "pdflatex"
+      },
+      "message": "toolchain.program-unavailable"
+    },
+    {
+      "action": "toolchain.install-tex-component",
+      "action_arguments": {},
+      "arguments": {
+        "program": "biber"
+      },
+      "message": "toolchain.program-unavailable"
+    },
+    {
+      "action": "toolchain.install-tex-component",
+      "action_arguments": {},
+      "arguments": {
+        "program": "bibtex"
+      },
+      "message": "toolchain.program-unavailable"
+    }
+  ],
+  "rtex": {
+    "commit": "531e2c6b32a09d33be58f6be1301fe8f793411cd",
+    "directory": "/home/ation_ciger/Projects/Mogan/scholium-wt3/target/rtex-bundle",
+    "present": true,
+    "valid": true,
+    "version": "rtex 0.0.6"
+  },
+  "tex_live": {
+    "found": false,
+    "kpsewhich": null,
+    "version": null
+  }
+}

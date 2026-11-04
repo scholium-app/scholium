@@ -1,12 +1,11 @@
 //! All toolchain preparation, compilation and rasterization runs off the UI thread.
-use scholium_build::{ResourceLimits, RtexToolchain, Sandbox};
+use scholium_build::{ResourceLimits, Sandbox};
 use scholium_latex::{
     LiveConfig, LiveEvent, LiveSession, SourceSession,
     view::{Drawing, RasterPage, Renderer},
 };
 use std::{
     collections::BTreeMap,
-    path::PathBuf,
     sync::Arc,
     time::{Duration, Instant},
 };
@@ -82,21 +81,6 @@ async fn publish(sender: &mpsc::Sender<Update>, wake: &eframe::egui::Context, ev
     let _ = sender.send(event).await;
     wake.request_repaint();
 }
-fn cache() -> PathBuf {
-    std::env::var_os("SCHOLIUM_RTEX_FONT_CACHE")
-        .map(PathBuf::from)
-        .unwrap_or_else(|| {
-            std::env::var_os("XDG_CACHE_HOME")
-                .map(PathBuf::from)
-                .unwrap_or_else(|| {
-                    std::env::var_os("HOME")
-                        .map(PathBuf::from)
-                        .unwrap_or_else(std::env::temp_dir)
-                        .join(".cache")
-                })
-                .join("scholium/tex-fonts")
-        })
-}
 async fn run(
     source: SourceSession,
     edits: watch::Receiver<Edit>,
@@ -105,7 +89,11 @@ async fn run(
     wake: &eframe::egui::Context,
 ) -> Result<(), scholium_latex::LatexError> {
     if source.engine() != scholium_latex::Engine::LuaLatex {
-        let sandbox = Sandbox::prepare_full(cache(), ResourceLimits::default()).await?;
+        let sandbox = Sandbox::prepare_full(
+            scholium_latex::toolchain::font_cache_directory(),
+            ResourceLimits::default(),
+        )
+        .await?;
         publish(
             sender,
             wake,
@@ -116,22 +104,10 @@ async fn run(
         .await;
         return full(source, sandbox, edits, sender, wake).await;
     }
-    let required = |key| {
-        std::env::var_os(key)
-            .map(PathBuf::from)
-            .ok_or_else(|| std::io::Error::other(format!("missing {key}")))
-    };
-    let sandbox = Arc::new(
-        Sandbox::prepare(
-            RtexToolchain {
-                binary: required("SCHOLIUM_RTEX_BIN")?,
-                tex_directory: required("SCHOLIUM_RTEX_TEXDIR")?,
-                font_cache: cache(),
-            },
-            ResourceLimits::default(),
-        )
-        .await?,
-    );
+    let toolchain = scholium_latex::toolchain::discover()
+        .await
+        .map_err(|issue| std::io::Error::other(issue.message.id))?;
+    let sandbox = Arc::new(Sandbox::prepare(toolchain, ResourceLimits::default()).await?);
     let work = tempfile::tempdir()?;
     let live =
         LiveSession::start(source.clone(), sandbox, work.path(), LiveConfig::default()).await?;

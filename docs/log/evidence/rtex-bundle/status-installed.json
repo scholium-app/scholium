@@ -1,0 +1,44 @@
+{
+  "development_override": false,
+  "engines": [
+    {
+      "name": "lualatex",
+      "path": "/usr/bin/lualatex",
+      "version": "This is LuaHBTeX, Version 1.24.0 (TeX Live 2026/Arch Linux)"
+    },
+    {
+      "name": "xelatex",
+      "path": "/usr/bin/xelatex",
+      "version": "XeTeX 3.141592653-2.6-0.999998 (TeX Live 2026/Arch Linux)"
+    },
+    {
+      "name": "pdflatex",
+      "path": "/usr/bin/pdflatex",
+      "version": "pdfTeX 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux)"
+    },
+    {
+      "name": "biber",
+      "path": "/usr/bin/vendor_perl/biber",
+      "version": "biber version: 2.22"
+    },
+    {
+      "name": "bibtex",
+      "path": "/usr/bin/bibtex",
+      "version": "BibTeX 0.99e (TeX Live 2026/Arch Linux)"
+    }
+  ],
+  "font_cache_warm": true,
+  "issues": [],
+  "rtex": {
+    "commit": "531e2c6b32a09d33be58f6be1301fe8f793411cd",
+    "directory": "/home/ation_ciger/Projects/Mogan/scholium-wt3/target/rtex-bundle",
+    "present": true,
+    "valid": true,
+    "version": "rtex 0.0.6"
+  },
+  "tex_live": {
+    "found": true,
+    "kpsewhich": "/usr/bin/kpsewhich",
+    "version": "This is LuaHBTeX, Version 1.24.0 (TeX Live 2026/Arch Linux)"
+  }
+}

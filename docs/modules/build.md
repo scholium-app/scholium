@@ -20,7 +20,7 @@ Typst 接入、构建规划、产物缓存与导出属于后续扩展。
 ## 公共接口
 
 - `BuildProfile::Rtex` 标识固定策略；新增工具链以新的 profile 明确扩展。
-- `RtexToolchain { binary, tex_directory, font_cache }` 只由受信宿主配置；rtex 按评审 pin 在仓库外构建。
+- `RtexToolchain { binary, tex_directory, font_cache }` 只由受信宿主配置；rtex 按评审 pin 在仓库外构建并随应用打包，由 latex 的发现入口生成此配置。
 - `Sandbox::prepare(toolchain, ResourceLimits)` 探测隔离和 cgroup 并完成可信预热，失败返回 `BuildError`。
 - `Sandbox::launch(project, work, argv)` 返回 `SandboxProcess`；argv 使用沙箱内路径，没有 shell 解释。
 - `Sandbox::run(..., deadline)` 只执行有界的 setup/能力探测命令；stdout/stderr 各最多 1 MiB。
@@ -64,3 +64,18 @@ ignored 原生测试读取 `SCHOLIUM_RTEX_BIN`、`SCHOLIUM_RTEX_TEXDIR`、`SCHOL
 每个进程额外受 60 CPU 秒限制；调用者为完整操作计算剩余 wall-clock deadline，再传 `run`。
 非零退出包含有界 stdout/stderr，超时通过 RAII 取消 scope 全树，不允许 shell、网络或项目写入。
 资源快照与 revision 淘汰属于 latex，build 不识别 TeX 内容。
+
+## rtex bundle 的构建与分发
+
+先执行 `python3 scripts/bundle-rtex.py`（缓存默认 `~/.cache/scholium-eval/`，输出 `target/rtex-bundle/`）。
+`--review` 可指定匹配的 rtex-pin E1 `run.json`；省略时查找已提交证据中的 `*/pin/run.json`，必须匹配 PIN 与 lock hash。
+`--cache` 必须在仓库外，`--output` 可指定安装包 staging 位置。脚本对 cache 和目标加排他锁，保留增量构建，
+不修改 PIN、不把上游源码/二进制提交进仓库。显式传 Cargo.lock/release/target-dir，固定 Rust 1.99.0，
+屏蔽调用环境的 RUSTFLAGS/target/profile 覆盖；manifest 保留真实 rustc/target/profile 及文件 hash，依赖缓存仍由 Cargo 验证。
+
+安装包复制完整目录，包括 `licenses/` 中 rtex 与依赖的许可/notice 及 `dependencies.json`。TeX Live 及其字体/包树不纳入
+此 bundle；build 仍只挂载宿主已安装的受信运行时。正式升级 PIN 的流程与 manifest schema 见
+[ADR 0043](../adr/ADR-0043-rtex-live-preview.md#修订2026-11-03随应用打包)。
+
+`font_cache_is_warm(root)` 只读 build 自有的当前版本 marker，供 latex 状态检测共享，避免复制 marker 规则。
+它不证明 TeX 安装版本变化后的缓存兼容，也不替代 `Sandbox::prepare` 的探针/预热。

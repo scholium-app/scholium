@@ -3,7 +3,7 @@ use std::os::unix::fs::PermissionsExt;
 use std::{fs, path::Path, time::Duration};
 
 const TRUSTED_SOURCE: &str = "\\documentclass{article}\n\\usepackage{fontspec}\n\\begin{document}Scholium trusted font cache warm-up.\\end{document}\n";
-const CACHE_VERSION: &str = "scholium-font-cache-v1";
+pub(crate) const CACHE_VERSION: &str = "scholium-font-cache-v1";
 
 pub(crate) async fn warm(sandbox: &Sandbox) -> Result<(), BuildError> {
     let root = sandbox.cache_path();

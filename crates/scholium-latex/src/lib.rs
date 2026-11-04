@@ -1,6 +1,7 @@
 //! Source-authoritative LaTeX sessions and supervised, sandboxed live preview.
 pub mod full;
 mod highlight;
+pub mod toolchain;
 pub mod view;
 pub use highlight::{Token, TokenKind, highlight};
 mod event;

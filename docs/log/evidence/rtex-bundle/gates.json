@@ -1,0 +1,154 @@
+[
+  {
+    "name": "fmt",
+    "argv": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit": 0,
+    "seconds": 0.404515229000026
+  },
+  {
+    "name": "clippy",
+    "argv": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--workspace",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit": 0,
+    "seconds": 0.29694912800005113
+  },
+  {
+    "name": "test",
+    "argv": [
+      "cargo",
+      "test",
+      "--locked",
+      "--workspace"
+    ],
+    "exit": 0,
+    "seconds": 35.32842483500008
+  },
+  {
+    "name": "doc",
+    "argv": [
+      "cargo",
+      "doc",
+      "--locked",
+      "--workspace",
+      "--no-deps"
+    ],
+    "exit": 0,
+    "seconds": 0.3470202389999031
+  },
+  {
+    "name": "rust-size",
+    "argv": [
+      "python3",
+      "scripts/check-rust-size.py"
+    ],
+    "exit": 0,
+    "seconds": 0.03600987899972097
+  },
+  {
+    "name": "doc-links",
+    "argv": [
+      "python3",
+      "scripts/check-doc-links.py"
+    ],
+    "exit": 0,
+    "seconds": 0.14217908099999477
+  },
+  {
+    "name": "ui-strings",
+    "argv": [
+      "python3",
+      "scripts/check-ui-strings.py"
+    ],
+    "exit": 0,
+    "seconds": 0.1503816350004854
+  },
+  {
+    "name": "layers",
+    "argv": [
+      "python3",
+      "scripts/check-layers.py"
+    ],
+    "exit": 0,
+    "seconds": 0.3314873169993007
+  },
+  {
+    "name": "deny",
+    "argv": [
+      "cargo",
+      "deny",
+      "--locked",
+      "check",
+      "licenses",
+      "bans",
+      "sources"
+    ],
+    "exit": 0,
+    "seconds": 0.7841735329993753
+  },
+  {
+    "name": "build",
+    "argv": [
+      "cargo",
+      "build",
+      "--locked",
+      "-p",
+      "scholium-app",
+      "-p",
+      "scholium-storage",
+      "--bins"
+    ],
+    "exit": 0,
+    "seconds": 0.29078283099988766
+  },
+  {
+    "name": "bundle-tests",
+    "argv": [
+      "python3",
+      "scripts/test-bundle-rtex.py"
+    ],
+    "exit": 0,
+    "seconds": 0.09451789899958385
+  },
+  {
+    "name": "windows",
+    "argv": [
+      "python3",
+      "scripts/window-checks.py",
+      "--locale",
+      "zh-Hans",
+      "en",
+      "--out",
+      "target/t44-windows-protected"
+    ],
+    "initial_complete_run": "53/54",
+    "recheck_argv": [
+      "python3",
+      "scripts/window-checks.py",
+      "--only",
+      "project-native",
+      "--locale",
+      "zh-Hans",
+      "en",
+      "--out",
+      "target/t44-window-recheck"
+    ],
+    "recheck": "2/2",
+    "final_scenario_coverage": "54/54 passed including recheck",
+    "exit": 0,
+    "environment": "Identical local Xvfb binary named scholium-xserver avoids an unrelated task killing every comm == Xvfb. Recheck local wrapper adds -noreset. Machine lock retained."
+  }
+]

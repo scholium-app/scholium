@@ -16,6 +16,10 @@ app = ProjectApp(binary, output, entry)
 for key in ("SCHOLIUM_RTEX_BIN", "SCHOLIUM_RTEX_TEXDIR", "SCHOLIUM_LATEX_NATIVE_WINDOW"):
     app.env.pop(key, None)
 
+# This persistence check deliberately keeps compilation unavailable, even with a local bundle.
+app.env["SCHOLIUM_RTEX_BIN"] = str(output / "missing-rtex")
+app.env["SCHOLIUM_RTEX_TEXDIR"] = str(output / "missing-tex")
+
 
 def workbench(entry_name="paper.tex"):
     return app.state(lambda s: s.get("kind") == "latex" and s["entry"] == entry_name

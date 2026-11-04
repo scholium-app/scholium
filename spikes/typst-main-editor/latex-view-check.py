@@ -2,7 +2,7 @@
 """Native source workbench: explicit unavailable state; optional real TeX E6 pixels.
 
 Discovered by scripts/window-checks.py. SCHOLIUM_LATEX_NATIVE_WINDOW=1 additionally
-runs LuaLaTeX and XeLaTeX with configured SCHOLIUM_RTEX_* tools. No desktop access.
+runs LuaLaTeX and XeLaTeX with the bundled rtex (no overrides needed). No desktop access.
 """
 import ctypes
 import hashlib
@@ -75,8 +75,9 @@ def run(name, source, native=False):
                SCHOLIUM_EDITOR_AUDIT="1", WINIT_UNIX_BACKEND="x11", WINIT_X11_SCALE_FACTOR="1")
     env.pop("WAYLAND_DISPLAY", None)
     if not native:
-        env.pop("SCHOLIUM_RTEX_BIN", None)
-        env.pop("SCHOLIUM_RTEX_TEXDIR", None)
+        # Force a deterministic unavailable toolchain even on developer machines with a bundle.
+        env["SCHOLIUM_RTEX_BIN"] = str(root / "missing-rtex")
+        env["SCHOLIUM_RTEX_TEXDIR"] = str(root / "missing-tex")
     log_path = root / "app.log"
 
     def state():
@@ -104,7 +105,7 @@ def run(name, source, native=False):
         xdo("windowfocus", window)
         if not native:
             s = wait(lambda s: s["toolchain_unavailable"] and s["error"], "explicit missing toolchain")
-            record("unavailable-state", s["pages"] == 0 and "SCHOLIUM_RTEX_BIN" in s["error"], error=s["error"])
+            record("unavailable-state", s["pages"] == 0 and "toolchain.override-invalid" in s["error"], error=s["error"])
             # Append a shared math-table completion; clipboard bypass remains literal source.
             xdo("key", "--clearmodifiers", "ctrl+End")
             xdo("type", "--delay", "30", "\\alpha")

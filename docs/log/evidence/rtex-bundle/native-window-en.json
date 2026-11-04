@@ -1,0 +1,56 @@
+{
+  "unavailable-state": {
+    "pass": true,
+    "error": "toolchain.override-invalid"
+  },
+  "source-completion": {
+    "pass": true
+  },
+  "source-completion-undo": {
+    "pass": true
+  },
+  "live-preview": {
+    "pass": true,
+    "origin": [
+      "DisplayList"
+    ],
+    "engine": "LuaLatex"
+  },
+  "e6-key-to-present": {
+    "pass": true,
+    "n": 20,
+    "p50_ms": 214.67152300101588,
+    "p95_ms": 275.6802769999922,
+    "samples_ms": [
+      470.7107820013334,
+      192.84313899879635,
+      212.68935700027214,
+      187.99164399933943,
+      226.84418099925097,
+      224.1405439999653,
+      188.29216599988285,
+      275.6802769999922,
+      213.87358600077278,
+      201.14101999934064,
+      224.40899499997613,
+      228.01571099989815,
+      205.15170199905697,
+      261.6613089994644,
+      214.67152300101588,
+      206.0487180006021,
+      254.27598600072088,
+      211.79458599908685,
+      225.20225399966876,
+      252.54795299952093
+    ],
+    "suspend_seconds": 5.099991540191695e-07,
+    "method": "xdotool key dispatch to first XGetImage preview pixel change; 2ms polling; private Xvfb, software GL"
+  },
+  "xelatex-preview": {
+    "pass": true,
+    "origin": [
+      "FullCompilation"
+    ],
+    "engine": "XeLatex"
+  }
+}
