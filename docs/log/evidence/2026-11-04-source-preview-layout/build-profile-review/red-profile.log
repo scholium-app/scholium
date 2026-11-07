@@ -1,0 +1,32 @@
+   Compiling syn v3.0.5
+   Compiling serde_core v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling thiserror-impl v2.0.20
+   Compiling tokio-macros v2.7.2
+   Compiling tokio v1.53.3
+   Compiling thiserror v2.0.20
+   Compiling scholium-build v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-build)
+error[E0599]: no associated function or constant named `typst_preview` found for struct `Sandbox` in the current scope
+  --> crates/scholium-build/src/tests/typst_profile.rs:11:32
+   |
+11 |     let mut sandbox = Sandbox::typst_preview(&exe, &request).expect("configuration");
+   |                                ^^^^^^^^^^^^^ associated function or constant not found in `Sandbox`
+   |
+  ::: crates/scholium-build/src/sandbox.rs:65:1
+   |
+65 | pub struct Sandbox {
+   | ------------------ associated function or constant `typst_preview` not found for this struct
+
+error[E0599]: no variant, associated function, or constant named `TypstPreview` found for enum `BuildProfile` in the current scope
+  --> crates/scholium-build/src/tests/typst_profile.rs:14:49
+   |
+14 |     assert_eq!(sandbox.profile(), BuildProfile::TypstPreview);
+   |                                                 ^^^^^^^^^^^^ variant, associated function, or constant not found in `BuildProfile`
+   |
+  ::: crates/scholium-build/src/sandbox.rs:28:1
+   |
+28 | pub enum BuildProfile {
+   | --------------------- variant, associated function, or constant `TypstPreview` not found for this enum
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `scholium-build` (lib test) due to 2 previous errors

@@ -1,5 +1,4 @@
 //! Source authority with an isolated, revision-tagged Typst preview.
-mod sandbox;
 #[cfg(test)]
 mod tests;
 pub(crate) mod worker;

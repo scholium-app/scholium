@@ -5,24 +5,9 @@ use std::{
     path::{Path, PathBuf},
     time::Duration,
 };
-use tokio::process::Command;
 
 const MIB: u64 = 1024 * 1024;
 const PROBE_TIMEOUT: Duration = Duration::from_secs(10);
-const TOOLS: &[&str] = &["prlimit", "lualatex", "luahbtex", "kpsewhich", "true"];
-const RUNTIME: &[&str] = &[
-    "/usr/lib/locale",
-    "/usr/share/fonts",
-    "/usr/share/fontconfig",
-    "/etc/fonts",
-    "/usr/share/texmf-dist",
-    "/usr/share/texmf",
-    "/usr/share/texlive/texmf-dist",
-    "/etc/texmf",
-    "/var/lib/texmf",
-    "/var/cache/fontconfig",
-];
-
 /// Declarative policies for resident live sessions and bounded one-shot compilation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum BuildProfile {
@@ -30,6 +15,8 @@ pub enum BuildProfile {
     Rtex,
     /// Bounded one-shot LaTeX compilation; no rtex runtime is required.
     FullCompilation,
+    /// Bounded external Typst source preview, without a TeX runtime or font cache.
+    TypstPreview,
 }
 
 /// Session-wide cgroup limits. Resident processes have neither a wall-clock nor CPU-seconds limit.
@@ -60,13 +47,13 @@ pub struct RtexToolchain {
     pub font_cache: PathBuf,
 }
 
-/// A prepared Linux rtex runtime. Construction probes both namespace and cgroup enforcement.
+/// A prepared Linux toolchain runtime. Construction probes both namespace and cgroup enforcement.
 #[derive(Debug)]
 pub struct Sandbox {
     pub(crate) mounts: BTreeMap<PathBuf, PathBuf>,
-    toolchain: RtexToolchain,
-    limits: ResourceLimits,
-    profile: BuildProfile,
+    pub(crate) toolchain: Option<RtexToolchain>,
+    pub(crate) limits: ResourceLimits,
+    pub(crate) profile: BuildProfile,
 }
 impl Sandbox {
     /// Prepare the runtime, probe isolation, and warm a private cache with fixed trusted source.
@@ -82,7 +69,7 @@ impl Sandbox {
         }
         let mut sandbox = Self {
             mounts: BTreeMap::new(),
-            toolchain,
+            toolchain: Some(toolchain),
             limits,
             profile: BuildProfile::Rtex,
         };
@@ -116,11 +103,11 @@ impl Sandbox {
         }
         let mut sandbox = Self {
             mounts: BTreeMap::new(),
-            toolchain: RtexToolchain {
+            toolchain: Some(RtexToolchain {
                 binary: "/usr/bin/true".into(),
                 tex_directory: "/usr/share/texmf-dist".into(),
                 font_cache,
-            },
+            }),
             limits,
             profile: BuildProfile::FullCompilation,
         };
@@ -147,7 +134,9 @@ impl Sandbox {
         self.profile
     }
 
-    /// Run a bounded setup/capability command in the same sandbox policy as a session.
+    /// Run a bounded command under this profile, with stdout/stderr capped at 1 MiB each.
+    /// TypstPreview clamps the requested wall deadline to 10 seconds. Timeout,
+    /// cancellation and output rejection drop the shared process-tree owner.
     ///
     /// # Errors
     /// Reports isolation, launch, output-budget, exit-status and deadline failures.
@@ -158,7 +147,16 @@ impl Sandbox {
         argv: &[OsString],
         deadline: Duration,
     ) -> Result<Vec<u8>, BuildError> {
-        self.launch(project, work, argv)?.output(deadline).await
+        let result = self
+            .launch(project, work, argv)?
+            .output(self.deadline(deadline))
+            .await;
+        match result {
+            Err(BuildError::Timeout(_)) if self.profile == BuildProfile::TypstPreview => Err(
+                BuildError::Timeout("Typst preview exceeded its 10 second budget"),
+            ),
+            result => result,
+        }
     }
 
     /// Launch argv inside the fixed profile. The executable must use a sandbox path.
@@ -174,11 +172,21 @@ impl Sandbox {
     ) -> Result<SandboxProcess, BuildError> {
         let project = project.canonicalize()?;
         let work = work.canonicalize()?;
-        let persistent = self.toolchain.font_cache.canonicalize()?;
-        if overlaps(&project, &work)
-            || overlaps(&project, &persistent)
-            || overlaps(&work, &persistent)
-        {
+        if overlaps(&project, &work) {
+            return Err(BuildError::Configuration(
+                "project and output must be separate".into(),
+            ));
+        }
+        if self.profile == BuildProfile::TypstPreview {
+            if self.mounts.values().any(|input| overlaps(input, &work)) {
+                return Err(BuildError::Configuration(
+                    "trusted inputs and output must be separate".into(),
+                ));
+            }
+            return self.spawn(&project, &work, tempfile::tempdir()?, argv);
+        }
+        let persistent = self.cache_path()?.canonicalize()?;
+        if overlaps(&project, &persistent) || overlaps(&work, &persistent) {
             return Err(BuildError::Configuration(
                 "project, build and trusted cache must be separate".into(),
             ));
@@ -190,200 +198,19 @@ impl Sandbox {
         self.spawn(&project, &work, session, argv)
     }
 
-    pub(crate) fn cache_path(&self) -> &Path {
-        &self.toolchain.font_cache
+    pub(crate) fn cache_path(&self) -> Result<&Path, BuildError> {
+        self.toolchain
+            .as_ref()
+            .map(|t| t.font_cache.as_path())
+            .ok_or_else(|| BuildError::Configuration("profile has no TeX font cache".into()))
     }
 
-    pub(crate) fn spawn(
-        &self,
-        project: &Path,
-        work: &Path,
-        cache: tempfile::TempDir,
-        argv: &[OsString],
-    ) -> Result<SandboxProcess, BuildError> {
-        let scope = format!(
-            "scholium-rtex-{}-{}.scope",
-            std::process::id(),
-            cache
-                .path()
-                .file_name()
-                .unwrap_or_default()
-                .to_string_lossy()
-        );
-        let mut command = Command::new("/usr/bin/systemd-run");
-        command.args([
-            "--user",
-            "--scope",
-            "--quiet",
-            "--expand-environment=no",
-            "--unit",
-            &scope,
-        ]);
-        command.args([
-            "-p",
-            &format!("MemoryMax={}", self.limits.memory_bytes),
-            "-p",
-            "MemorySwapMax=0",
-            "-p",
-            &format!("TasksMax={}", self.limits.tasks),
-            "-p",
-            "OOMPolicy=kill",
-            "--",
-            "/usr/bin/bwrap",
-        ]);
-        command.args(self.arguments(project, work, cache.path(), argv));
-        SandboxProcess::spawn(command, scope, cache)
-    }
-
-    fn arguments(
-        &self,
-        project: &Path,
-        work: &Path,
-        cache: &Path,
-        argv: &[OsString],
-    ) -> Vec<OsString> {
-        let mut args: Vec<OsString> = [
-            "--unshare-all",
-            "--die-with-parent",
-            "--new-session",
-            "--cap-drop",
-            "ALL",
-            "--clearenv",
-        ]
-        .map(Into::into)
-        .to_vec();
-        for (key, value) in [
-            ("PATH", "/usr/bin"),
-            ("HOME", "/tmp"),
-            ("LANG", "C.UTF-8"),
-            ("RTEX_TEXLIVE_BIN", "/usr/bin"),
-            ("RTEX_TEXDIR", "/rtex/tex"),
-            ("TEXMFVAR", "/rtex/texmf-var"),
-            ("TEXMFCONFIG", "/tmp/texmf-config"),
-            ("TEXMFHOME", "/tmp/texmf-home"),
-            ("TEXINPUTS", ".:/project:"),
-            ("TEXPICTS", "/project:"),
-        ] {
-            args.extend(["--setenv".into(), key.into(), value.into()]);
+    pub(crate) fn deadline(&self, requested: Duration) -> Duration {
+        if self.profile == BuildProfile::TypstPreview {
+            requested.min(crate::typst_preview::WALL_TIME)
+        } else {
+            requested
         }
-        for dir in ["/usr", "/usr/bin", "/usr/lib", "/usr/share"] {
-            args.extend(["--dir".into(), dir.into()]);
-        }
-        for (source, target) in [
-            ("usr/bin", "/bin"),
-            ("usr/lib", "/lib"),
-            ("usr/lib", "/lib64"),
-            ("lib", "/usr/lib64"),
-        ] {
-            args.extend(["--symlink".into(), source.into(), target.into()]);
-        }
-        for (target, source) in &self.mounts {
-            args.extend(["--ro-bind".into(), source.into(), target.into()]);
-        }
-        args.extend(
-            [
-                "--proc",
-                "/proc",
-                "--dev",
-                "/dev",
-                "--size",
-                "268435456",
-                "--tmpfs",
-                "/tmp",
-            ]
-            .map(Into::into),
-        );
-        for (mode, source, target) in [
-            ("--ro-bind", project, "/project"),
-            ("--bind", work, "/work"),
-            ("--bind", cache, "/rtex/texmf-var"),
-        ] {
-            args.extend([mode.into(), source.into(), target.into()]);
-        }
-        args.extend(
-            [
-                "--chdir",
-                "/work",
-                "/usr/bin/prlimit",
-                "--fsize=67108864",
-                "--nofile=128",
-                "--",
-            ]
-            .map(Into::into),
-        );
-        if self.profile == BuildProfile::FullCompilation {
-            args.insert(args.len() - 1, "--cpu=60".into());
-        }
-        args.extend_from_slice(argv);
-        args
-    }
-
-    async fn runtime(&mut self) -> Result<(), BuildError> {
-        let mut binaries = Vec::new();
-        if self.profile == BuildProfile::Rtex {
-            self.mounts.insert(
-                "/rtex/bin/rtex".into(),
-                self.toolchain.binary.canonicalize()?,
-            );
-            self.mounts.insert(
-                "/rtex/tex".into(),
-                self.toolchain.tex_directory.canonicalize()?,
-            );
-            if !self.toolchain.tex_directory.join("rtex-dl.lua").is_file() {
-                return Err(BuildError::Configuration(
-                    "matching rtex support tree required".into(),
-                ));
-            }
-            binaries.push(self.toolchain.binary.clone());
-        }
-        let mut tools = TOOLS.to_vec();
-        if self.profile == BuildProfile::FullCompilation {
-            tools.extend(["pdflatex", "pdftex", "xelatex", "xetex", "xdvipdfmx"]);
-        }
-        for tool in tools {
-            let path = PathBuf::from(format!("/usr/bin/{tool}"));
-            self.mounts.insert(path.clone(), path.canonicalize()?);
-            binaries.push(path);
-        }
-        for binary in binaries {
-            self.libraries(&binary).await?;
-        }
-        if self.profile == BuildProfile::FullCompilation {
-            for path in ["/etc/paperspecs", "/etc/papersize"] {
-                if Path::new(path).exists() {
-                    self.mounts
-                        .insert(path.into(), Path::new(path).canonicalize()?);
-                }
-            }
-        }
-        for path in RUNTIME {
-            if Path::new(path).exists() {
-                self.mounts
-                    .insert((*path).into(), Path::new(path).canonicalize()?);
-            }
-        }
-        Ok(())
-    }
-
-    pub(crate) async fn libraries(&mut self, executable: &Path) -> Result<(), BuildError> {
-        let mut command = Command::new("/usr/bin/ldd");
-        command.arg(executable).kill_on_drop(true);
-        let output = tokio::time::timeout(PROBE_TIMEOUT, command.output())
-            .await
-            .map_err(|_| BuildError::Timeout("runtime libraries"))??;
-        if !output.status.success() {
-            return Err(BuildError::Unavailable(format!(
-                "ldd failed for {}",
-                executable.display()
-            )));
-        }
-        for word in String::from_utf8_lossy(&output.stdout).split_whitespace() {
-            if word.starts_with('/') {
-                let path = PathBuf::from(word);
-                self.mounts.insert(path.clone(), path.canonicalize()?);
-            }
-        }
-        Ok(())
     }
 }
 

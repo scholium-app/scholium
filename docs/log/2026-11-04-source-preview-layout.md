@@ -106,3 +106,49 @@ Scoped exception：最小 `scholium-typst` 语法/快照 API 及测试、其模�
 5,000 行单次修改复用 5,000/5,001 行。窗口最终覆盖 60/60（全量 59/60 后修正新增超时夹具，受影响检查双语言复跑 2/2、32 个断言）；前后截图覆盖 zh/en、light/dark。
 
 **待办**：跨平台源码 worker、包缓存与用户字体集成另行实现；问题面板和阶段 3 公式编辑保持后续任务范围。
+
+## 2026-11-07 评审修订：统一 build 沙箱
+
+协调者接受布局后指出 app 的 `typst_source/sandbox.rs` 重复了共享构建沙箱。修订删除了该文件，
+新增 `scholium-build::BuildProfile::TypstPreview` 与 `Sandbox::prepare_typst_preview`。
+原 Sandbox 的 scope 启动、bwrap 挂载构造和动态库白名单沿职责拆到 `launch.rs`、`runtime.rs`，
+三个 profile 共用同一启动器及 `SandboxProcess` 的输出预算、取消和 Drop 回收。Typst 不再携带 TeX 缓存配置。
+app 仅保留协议、请求组装和结果检查，源码树检查确认没有 bwrap、systemd-run 或 systemctl 调用残留。
+
+预算保持 ADR 0055：4 GiB MemoryMax/地址空间、64 tasks、零 swap、10 秒墙钟、30 CPU 秒、
+单文件 64 MiB、128 fd、无网络。固定 worker/prlimit/动态库/request/resources 只读挂载，
+独立临时输出是唯一可写宿主挂载；prepare 在同一 profile 内执行固定探针，不可用即失败。
+共享 run 将 Typst 调用者的 deadline 收紧到最多 10 秒，stdout/stderr 各最多 1 MiB。
+app/Typst 内核仍负责协议元数据、页数、尺寸及 RGBA 总量预算；不将单文件限额称为累计磁盘配额。
+
+范围例外新增 `crates/scholium-build/**`、`docs/modules/build.md`，由协调者明确授权；
+ADR 0055 与 app 模块文档同步修正边界。不更改 TeX 的公开接口或既有预算，不新增依赖、产品启动命令入口或宿主 fallback。
+
+评审修订的 [门禁汇总](evidence/2026-11-04-source-preview-layout/build-profile-review/summary.json)及同目录日志：
+fmt、clippy、locked workspace test、rustdoc、size、doc-links、UI strings、layers、deny 和 bins build 全部通过。
+最终 workspace 为 **711 passed / 0 failed / 16 ignored**。deny 仅保留原有未遇到 Unicode-DFS-2016 allowance 提示。
+
+新增无 namespace 单元测试验证 profile argv/完整挂载白名单、deadline 收紧、重叠目录及非普通输入拒绝，
+另有 TeX profile 缓存挂载与 CPU 策略不变回归测试。
+[先红证据](evidence/2026-11-04-source-preview-layout/build-profile-review/red-profile.log)记录实现前缺少该 profile/API。
+新增 ignored 原生测试已显式运行并[通过](evidence/2026-11-04-source-preview-layout/build-profile-review/native-final.log)：
+真实只读输入、宿主文件/网络阻断、cgroup/rlimit 值、stdio 超限、后代整树取消、请求 60 秒时仍在 10 秒终止。
+固定测试 worker 仅在测试时由 rustc 编译，不链接或随产品挂载。
+
+目标窗口检查重跑 `source-preview-layout` zh-Hans/en：2/2、32 个断言通过，包含真实编译、超时及恢复，
+详见 [中文](evidence/2026-11-04-source-preview-layout/build-profile-review/window-zh-Hans.json)与
+[英文](evidence/2026-11-04-source-preview-layout/build-profile-review/window-en.json)。
+全量双语言窗口套件最终 **60/60** 通过，完整日志归档为
+[all-windows.log](evidence/2026-11-04-source-preview-layout/build-profile-review/all-windows.log)。
+
+### 本次 PR 正文补充
+
+**问题**：Typst 预览在 UI crate 中重复实现沙箱，违背共享构建执行边界。
+
+**改动**：迁入 build 的 TypstPreview profile，复用 Sandbox 启动、挂载、探针、有界输出和整树回收；
+删除 app 沙箱，更新 ADR 0055/build/app 文档。Scoped exception：协调者明确授权的 build crate 与模块文档。
+
+**验证**：全部 Rust/静态门禁通过，711 passed / 0 failed；新增 profile 单元测试及显式 ignored 原生测试通过；
+目标窗口双语言 2/2（32 断言）通过；全量窗口 60/60 通过。
+
+**待办**：跨平台等价隔离、包缓存和用户字体仍为既有后续项；本次无未完成的迁移工作。

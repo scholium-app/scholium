@@ -378,7 +378,8 @@ LaTeX 的“页面编辑”在阶段 3 前显示全宽预览与一行公式编�
 面板统一重做与源码诊断跳转属于后续批次。
 
 `typst_source` 用 SourceProject 保存唯一源码权威；打开即聚焦编辑器，IME 预编辑不提交草稿。
-`SourceHighlighter` 仅增量解析语法，不求值。源码快照通过固定 `--source-preview-worker` 模式在 Linux bwrap/systemd 用户 scope 内编译；
+`SourceHighlighter` 仅增量解析语法，不求值。源码快照通过固定 `--source-preview-worker` 模式编译；
+`scholium-build::Sandbox::prepare_typst_preview` 提供统一的 Linux 隔离 profile，app 不实现沙箱或启动系统隔离命令；
 工作线程负责 150 ms 去抖、取消旧请求及读取有界结果；UI 只接收 revision、诊断和 RGBA 页面，旧 revision 丢弃。
 无隔离能力的平台或主机明确报不可用，不在主进程降级求值。资源与预算边界见
 [ADR 0055](../adr/ADR-0055-source-preview-worker.md)。

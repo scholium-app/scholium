@@ -90,7 +90,19 @@ async fn compile(root: &Path, request: &Request) -> std::io::Result<Update> {
     let output = work.path().join("output");
     std::fs::create_dir(&output)?;
     std::fs::write(&input, serde_json::to_vec(request)?)?;
-    super::sandbox::run(root, &input, &output).await?;
+    let executable = std::env::current_exe()?;
+    let sandbox = scholium_build::Sandbox::prepare_typst_preview(&executable, &input)
+        .await
+        .map_err(std::io::Error::other)?;
+    sandbox
+        .run(
+            root,
+            &output,
+            &["/worker".into(), "--source-preview-worker".into()],
+            Duration::from_secs(10),
+        )
+        .await
+        .map_err(std::io::Error::other)?;
     let bytes = bounded_read(&output.join("response.json"), 1024 * 1024)?;
     let metadata: Metadata = serde_json::from_slice(&bytes)?;
     if metadata.version != 1
