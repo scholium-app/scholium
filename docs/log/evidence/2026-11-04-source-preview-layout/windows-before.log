@@ -1,0 +1,10 @@
+waiting for another window-check run
+output: /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t46-before/layout-final
+running source-preview-layout [zh-Hans] ...
+running source-preview-layout [en] ...
+
+check                            result      seconds
+source-preview-layout [zh-Hans]  pass           14.5
+source-preview-layout [en]       pass           14.6
+
+2/2 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t46-before/layout-final

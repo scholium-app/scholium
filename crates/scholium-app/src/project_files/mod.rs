@@ -2,7 +2,7 @@
 mod confirmation;
 mod conflict;
 mod dialog;
-mod environment;
+pub(crate) mod environment;
 mod new_project;
 mod picker;
 mod recent;

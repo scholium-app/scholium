@@ -1,0 +1,126 @@
+{
+  "gates": [
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.439
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--workspace",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 0.285
+    },
+    {
+      "name": "test",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--workspace"
+      ],
+      "exit_code": 0,
+      "seconds": 30.351
+    },
+    {
+      "name": "doc",
+      "command": [
+        "cargo",
+        "doc",
+        "--locked",
+        "--workspace",
+        "--no-deps"
+      ],
+      "exit_code": 0,
+      "seconds": 0.238
+    },
+    {
+      "name": "rust-size",
+      "command": [
+        "python3",
+        "scripts/check-rust-size.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.026
+    },
+    {
+      "name": "doc-links",
+      "command": [
+        "python3",
+        "scripts/check-doc-links.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.09
+    },
+    {
+      "name": "ui-strings",
+      "command": [
+        "python3",
+        "scripts/check-ui-strings.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.144
+    },
+    {
+      "name": "layers",
+      "command": [
+        "python3",
+        "scripts/check-layers.py"
+      ],
+      "exit_code": 0,
+      "seconds": 0.292
+    },
+    {
+      "name": "deny",
+      "command": [
+        "cargo",
+        "deny",
+        "--locked",
+        "check",
+        "licenses",
+        "bans",
+        "sources"
+      ],
+      "exit_code": 0,
+      "seconds": 0.598
+    },
+    {
+      "name": "build",
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "-p",
+        "scholium-app",
+        "-p",
+        "scholium-storage",
+        "--bins"
+      ],
+      "exit_code": 0,
+      "seconds": 0.19
+    }
+  ],
+  "workspace_test_counts": {
+    "passed": 711,
+    "failed": 0,
+    "ignored": 16
+  },
+  "windows": "60/60",
+  "native_typst": "passed"
+}

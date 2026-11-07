@@ -15,7 +15,7 @@ pub(crate) enum ProjectWorkspace {
         handle: ProjectHandle,
         editor: Box<EditorSession>,
     },
-    Source(SourceProject),
+    Source(Box<crate::typst_source::Workspace>),
     Latex(Box<crate::latex_workspace::Workspace>),
 }
 
@@ -39,8 +39,11 @@ impl ProjectWorkspace {
             return open_latex_workspace(&handle, ctx).map_err(|e| message(&e, state));
         }
         if handle.authority() == Authority::Source {
+            state.mode = crate::state::ViewMode::Source;
             return SourceProject::open(handle)
-                .map(Self::Source)
+                .map(|source| {
+                    Self::Source(Box::new(crate::typst_source::Workspace::open(source, ctx)))
+                })
                 .map_err(|e| message(&e, state));
         }
         let editor =
@@ -58,14 +61,14 @@ impl ProjectWorkspace {
     pub(crate) fn handle(&self) -> &ProjectHandle {
         match self {
             Self::Typst { handle, .. } => handle,
-            Self::Source(s) => s.handle(),
+            Self::Source(s) => s.source().handle(),
             Self::Latex(w) => w.source().handle(),
         }
     }
     pub(crate) fn dirty(&self) -> bool {
         match self {
             Self::Typst { editor, .. } => editor.unsaved_project(),
-            Self::Source(s) => s.dirty(),
+            Self::Source(s) => s.source().dirty(),
             Self::Latex(w) => w.source().dirty(),
         }
     }
@@ -73,12 +76,12 @@ impl ProjectWorkspace {
         match self {
             Self::Typst { editor, .. } => editor.pending_input(),
             Self::Latex(w) => w.pending_input(),
-            Self::Source(_) => false,
+            Self::Source(s) => s.pending_input(),
         }
     }
     pub(crate) fn source_mut(&mut self) -> Option<&mut SourceProject> {
         match self {
-            Self::Source(s) => Some(s),
+            Self::Source(s) => Some(s.source_mut()),
             Self::Latex(w) => Some(w.source_mut()),
             _ => None,
         }
@@ -86,7 +89,7 @@ impl ProjectWorkspace {
     pub(crate) fn save(&mut self) -> Result<(), String> {
         match self {
             Self::Typst { editor, .. } => editor.save_project().map_err(|e| e.to_string()),
-            Self::Source(s) => s.save().map_err(|e| e.to_string()),
+            Self::Source(s) => s.source_mut().save().map_err(|e| e.to_string()),
             Self::Latex(w) => w.source_mut().save().map_err(|e| e.to_string()),
         }
     }
@@ -103,14 +106,7 @@ impl ProjectWorkspace {
             Self::Typst { handle, editor } => {
                 *handle = editor.save_as_project(path).map_err(|e| e.to_string())?;
             }
-            Self::Source(s) => {
-                let handle = s
-                    .handle()
-                    .copy_source(path, s.text().as_bytes())
-                    .map_err(|e| e.to_string())?;
-                let next = SourceProject::open(handle).map_err(|e| e.to_string())?;
-                *s = next;
-            }
+            Self::Source(s) => s.save_as(path).map_err(|e| e.to_string())?,
         }
         Ok(())
     }
@@ -129,11 +125,10 @@ impl ProjectWorkspace {
         state.project_entry = Some(self.handle().entry().display().to_string());
         state.kernel_status = None;
         state.source_problems = 0;
-        if let Self::Source(_) = self {
-            state.kernel_status = Some(i18n::text(
-                state.locale.resolve(),
-                "chrome.status.typ_source",
-            ));
+        if let Self::Source(source) = self {
+            state.source_problems = source.problem_count();
+            state.composition = source.pending_input().then(String::new);
+            state.kernel_status = Some(source.status(state.locale.resolve()));
         }
         if let Self::Latex(w) = self {
             state.kernel_status = Some(w.status(state.locale.resolve()));
@@ -141,12 +136,12 @@ impl ProjectWorkspace {
             state.composition = w.pending_input().then(String::new);
         }
         state.source_language = match self {
-            Self::Source(s) => Some(s.handle().language()),
+            Self::Source(s) => Some(s.source().handle().language()),
             Self::Latex(w) => Some(w.source().handle().language()),
             _ => None,
         };
         let source = match self {
-            Self::Source(s) => Some(s),
+            Self::Source(s) => Some(s.source()),
             Self::Latex(w) => Some(w.source()),
             _ => None,
         };
@@ -157,6 +152,11 @@ impl ProjectWorkspace {
                 can_redo: state.source_redo,
                 words: crate::chrome::count_words(s.text()),
                 dirty: s.dirty(),
+                preview_page: match self {
+                    Self::Source(w) => w.page_info(),
+                    Self::Latex(w) => w.page_info(),
+                    _ => None,
+                },
                 ..Default::default()
             });
         }
@@ -176,34 +176,8 @@ impl ProjectWorkspace {
         let Self::Source(source) = self else {
             return;
         };
-        egui::CentralPanel::default().show(ui, |ui| {
-            ui.heading(name(source.handle()));
-            ui.label(source.handle().entry().display().to_string());
-            if let Some(error) = &state.storage_error {
-                ui.colored_label(ui.visuals().error_fg_color, error);
-            }
-            let mut input = source.text().to_owned();
-            if std::mem::take(&mut state.focus_requested) {
-                ui.ctx()
-                    .memory_mut(|m| m.request_focus(egui::Id::new("typ-source")));
-            }
-            let output = egui::TextEdit::multiline(&mut input)
-                .id(egui::Id::new("typ-source"))
-                .interactive(!state.file_modal)
-                .code_editor()
-                .desired_width(f32::INFINITY)
-                .show(ui);
-            let response = &output.response;
-            crate::source_editor::publish_status(&output, &input, state);
-            audit_rect("source", response.rect);
-            if response.changed() {
-                match source.edit(input) {
-                    Ok(()) => state.storage_error = None,
-                    Err(error) => state.storage_error = Some(message(&error, state)),
-                }
-            }
-        });
-        audit_source(source, state, ui.ctx());
+        source.show(ui, state);
+        audit_source(source.source(), state, ui.ctx());
         self.metadata(state);
     }
 }

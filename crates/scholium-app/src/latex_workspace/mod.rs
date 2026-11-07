@@ -1,6 +1,7 @@
 //! Project-backed LaTeX source authority and same-engine preview workbench.
 #[cfg(test)]
 mod tests;
+mod view;
 mod worker;
 use crate::{
     i18n::{self, Locale},
@@ -25,6 +26,10 @@ pub(crate) struct Workspace {
     shown_revision: Option<u64>,
     generation: u64,
     editor: SourceEditor,
+    page_index: usize,
+    page_rect: Option<egui::Rect>,
+    diagnostics: scholium_model::diagnostic::DiagnosticBatch,
+    environment: crate::project_files::environment::Environment,
     backend: Option<Backend>,
     pages: BTreeMap<u64, Page>,
     error: Option<String>,
@@ -56,6 +61,10 @@ impl Workspace {
             shown_revision: None,
             generation: 0,
             editor: SourceEditor::default(),
+            page_index: 0,
+            page_rect: None,
+            diagnostics: Default::default(),
+            environment: Default::default(),
             unavailable: backend.is_none(),
             backend,
             pages: BTreeMap::new(),
@@ -138,6 +147,8 @@ impl Workspace {
         self.shown_revision = None;
         self.generation = 0;
         self.pages.clear();
+        self.page_index = 0;
+        self.diagnostics = Default::default();
         self.editor = SourceEditor::default();
         self.edited_at = None;
         self.presented = None;
@@ -145,42 +156,7 @@ impl Workspace {
     pub(crate) fn show(&mut self, ui: &mut egui::Ui, state: &mut crate::state::WorkspaceState) {
         let locale = state.locale.resolve();
         self.poll(ui.ctx());
-        let mut text = self.source.text().to_owned();
-        egui::CentralPanel::default().show(ui, |ui| {
-            ui.columns(2, |columns| {
-                self.source_rect = Some(columns[0].available_rect_before_wrap());
-                if std::mem::take(&mut state.focus_requested) {
-                    columns[0]
-                        .ctx()
-                        .memory_mut(|m| m.request_focus(egui::Id::new("source-editor")));
-                }
-                let highlights = syntax(&text, columns[0].visuals());
-                let changed = columns[0]
-                    .add_enabled_ui(!state.file_modal, |ui| {
-                        self.editor.show(ui, &mut text, &highlights, &[], locale)
-                    })
-                    .inner;
-                if changed {
-                    if let Err(error) = self.edit(text.clone()) {
-                        state.storage_error =
-                            Some(crate::project_workspace::message(&error, state));
-                    } else {
-                        state.storage_error = None;
-                    }
-                }
-                self.preview_rect = Some(columns[1].available_rect_before_wrap());
-                egui::ScrollArea::both()
-                    .id_salt("latex-preview")
-                    .show(&mut columns[1], |ui| {
-                        for page in self.pages.values() {
-                            let width = ui.available_width().min(page.size.x);
-                            let size = page.size * (width / page.size.x);
-                            ui.add(egui::Image::new((page.texture.id(), size)));
-                            ui.add_space(12.0);
-                        }
-                    });
-            });
-        });
+        self.show_panes(ui, state);
         if self.shown_revision == Some(self.revision) && self.presented.is_none() {
             self.presented = self.edited_at.map(|t| t.elapsed());
         }
@@ -201,6 +177,11 @@ impl Workspace {
                 break;
             };
             match update {
+                Update::Diagnostics(batch) => {
+                    if batch.revision == self.revision {
+                        self.diagnostics = batch;
+                    }
+                }
                 Update::Ready { engine } => {
                     self.engine = engine;
                     self.unavailable = false;
@@ -308,7 +289,13 @@ impl Workspace {
     }
 
     pub(crate) fn problem_count(&self) -> usize {
-        usize::from(self.error.is_some() && !self.unavailable)
+        self.diagnostics
+            .items
+            .len()
+            .max(usize::from(self.error.is_some() && !self.unavailable))
+    }
+    pub(crate) fn page_info(&self) -> Option<(usize, usize)> {
+        (!self.pages.is_empty()).then_some((self.page_index + 1, self.pages.len()))
     }
 
     fn audit(&mut self) {
@@ -316,7 +303,7 @@ impl Workspace {
             return;
         }
         let rect = |r: Option<egui::Rect>| r.map(|r| [r.min.x, r.min.y, r.max.x, r.max.y]);
-        let fact = serde_json::json!({"kind":"latex","revision":self.revision,"shown_revision":self.shown_revision,"generation":self.generation,"text":self.source.text(),"entry":self.source.handle().entry(),"dirty":self.source.dirty(),"engine":format!("{:?}",self.engine),"toolchain_unavailable":self.unavailable,"error":self.error,"pages":self.pages.len(),"source_rect":rect(self.source_rect),"preview_rect":rect(self.preview_rect),"paragraph":self.paragraph,"pixels_per_point":scholium_latex::view::PIXELS_PER_POINT,"origin":self.pages.values().map(|p|format!("{:?}",p.origin)).collect::<Vec<_>>(),"submitted_ms":self.presented.map(|d|d.as_secs_f64()*1000.0)});
+        let fact = serde_json::json!({"kind":"latex","revision":self.revision,"shown_revision":self.shown_revision,"generation":self.generation,"text":self.source.text(),"entry":self.source.handle().entry(),"dirty":self.source.dirty(),"engine":format!("{:?}",self.engine),"toolchain_unavailable":self.unavailable,"error":self.error,"pages":self.pages.len(),"source_rect":rect(self.source_rect),"preview_rect":rect(self.preview_rect),"page_rect":rect(self.page_rect),"page_index":self.page_index,"paragraph":self.paragraph,"pixels_per_point":scholium_latex::view::PIXELS_PER_POINT,"origin":self.pages.values().map(|p|format!("{:?}",p.origin)).collect::<Vec<_>>(),"submitted_ms":self.presented.map(|d|d.as_secs_f64()*1000.0)});
         if self.audit_last.as_ref() != Some(&fact) {
             eprintln!("AUDIT {fact}");
             self.audit_last = Some(fact);

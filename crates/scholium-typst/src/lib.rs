@@ -18,6 +18,10 @@ pub use fonts::{FontProfile, bundled_cjk_font_bytes};
 use typst_layout::{PagedDocument, PagedIntrospector};
 
 mod compiler;
+mod source_preview;
+mod source_syntax;
+pub use source_preview::{SourcePreview, compile_source_snapshot};
+pub use source_syntax::{SourceHighlighter, SourceToken, highlight_source};
 mod diagnostics;
 pub use diagnostics::map_diagnostics;
 #[cfg(feature = "editor")]

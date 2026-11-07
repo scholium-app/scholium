@@ -6,7 +6,7 @@ const TRUSTED_SOURCE: &str = "\\documentclass{article}\n\\usepackage{fontspec}\n
 pub(crate) const CACHE_VERSION: &str = "scholium-font-cache-v1";
 
 pub(crate) async fn warm(sandbox: &Sandbox) -> Result<(), BuildError> {
-    let root = sandbox.cache_path();
+    let root = sandbox.cache_path()?;
     fs::create_dir_all(root)?;
     fs::set_permissions(root, fs::Permissions::from_mode(0o700))?;
     let ready = root.join("ready");

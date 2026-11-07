@@ -4,23 +4,17 @@ pub(crate) fn source_job(
     source: &str,
     highlight: Option<std::ops::Range<usize>>,
 ) -> egui::text::LayoutJob {
-    let font = egui::FontId::monospace(13.0);
-    let color = ui.visuals().text_color();
-    let plain = egui::TextFormat::simple(font.clone(), color);
-    let marked = egui::TextFormat {
-        background: crate::theme::tokens(ui.ctx()).active_bg,
-        ..egui::TextFormat::simple(font, color)
-    };
-    let mut job = egui::text::LayoutJob::default();
-    match highlight.filter(|r| source.get(r.clone()).is_some()) {
-        Some(range) => {
-            job.append(&source[..range.start], 0.0, plain.clone());
-            job.append(&source[range.clone()], 0.0, marked);
-            job.append(&source[range.end..], 0.0, plain);
-        }
-        None => job.append(source, 0.0, plain),
-    }
-    job
+    let tokens = scholium_typst::highlight_source(source);
+    let highlights = super::typst_styles(&tokens, ui.visuals());
+    let marks: Vec<_> = highlight
+        .into_iter()
+        .map(|bytes| super::Mark {
+            bytes,
+            color: crate::theme::tokens(ui.ctx()).active_bg,
+            message: None,
+        })
+        .collect();
+    super::highlight::job(ui, source, &highlights, &marks)
 }
 
 /// Read-only adapter used by generated source projections. Cache jobs, never atlas galleys.
@@ -28,7 +22,7 @@ pub(crate) fn source_job(
 pub(crate) struct ReadOnlySource {
     key: usize,
     highlight: Option<std::ops::Range<usize>>,
-    colors: Option<[egui::Color32; 2]>,
+    colors: Option<[egui::Color32; 5]>,
     job: egui::text::LayoutJob,
 }
 impl ReadOnlySource {
@@ -42,6 +36,9 @@ impl ReadOnlySource {
         let colors = [
             ui.visuals().text_color(),
             crate::theme::tokens(ui.ctx()).active_bg,
+            ui.visuals().hyperlink_color,
+            ui.visuals().weak_text_color(),
+            ui.visuals().warn_fg_color,
         ];
         let moved = self.key != key || self.highlight != highlight || self.colors.is_none();
         if moved || self.colors != Some(colors) {
@@ -65,15 +62,38 @@ impl ReadOnlySource {
             .id_salt("generated-source")
             .auto_shrink([false, false])
             .show(ui, |ui| {
-                let response = ui.add(egui::Label::new(galley.clone()));
-                if let Some(range) = follow {
-                    let chars = source[..range.start].chars().count();
-                    let row = galley.pos_from_cursor(egui::text::CCursor::new(chars));
-                    ui.scroll_to_rect(
-                        row.translate(response.rect.min.to_vec2()),
-                        Some(egui::Align::Center),
-                    );
-                }
+                ui.horizontal_top(|ui| {
+                    ui.spacing_mut().item_spacing.x = 0.0;
+                    let gutter_width = super::gutter::width(source);
+                    let height = ui.available_height().max(galley.size().y);
+                    let gutter = ui
+                        .allocate_exact_size(egui::vec2(gutter_width, height), egui::Sense::hover())
+                        .0;
+                    let response = ui.add(egui::Label::new(galley.clone()));
+                    let painter = ui.painter().with_clip_rect(ui.clip_rect());
+                    for (index, row) in galley.rows.iter().enumerate() {
+                        let top = response.rect.top() + row.pos.y;
+                        if top + row.size.y >= ui.clip_rect().top()
+                            && top <= ui.clip_rect().bottom()
+                        {
+                            painter.text(
+                                egui::pos2(gutter.right() - 8.0, top),
+                                egui::Align2::RIGHT_TOP,
+                                (index + 1).to_string(),
+                                egui::FontId::monospace(13.0),
+                                crate::theme::tokens(ui.ctx()).text_dim,
+                            );
+                        }
+                    }
+                    if let Some(range) = follow {
+                        let chars = source[..range.start].chars().count();
+                        let row = galley.pos_from_cursor(egui::text::CCursor::new(chars));
+                        ui.scroll_to_rect(
+                            row.translate(response.rect.min.to_vec2()),
+                            Some(egui::Align::Center),
+                        );
+                    }
+                });
             });
     }
 }

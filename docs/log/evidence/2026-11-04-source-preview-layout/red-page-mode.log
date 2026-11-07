@@ -1,0 +1,57 @@
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+warning: associated function `typst` is never used
+  --> crates/scholium-app/src/source_editor/mod.rs:42:19
+   |
+40 | impl SourceEditor {
+   | ----------------- associated function in this implementation
+41 |     fn id(&self) -> egui::Id { egui::Id::new(self.id.unwrap_or("source-editor")) }
+42 |     pub(crate) fn typst() -> Self { Self { id: Some("typ-source"), typst: true, ..Default::default() } }
+   |                   ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `HANDLE` is never used
+ --> crates/scholium-app/src/source_layout.rs:5:7
+  |
+5 | const HANDLE: f32 = 8.0;
+  |       ^^^^^^
+
+warning: constant `KEY_STEP` is never used
+ --> crates/scholium-app/src/source_layout.rs:7:7
+  |
+7 | const KEY_STEP: f32 = 0.02;
+  |       ^^^^^^^^
+
+warning: function `location` is never used
+  --> crates/scholium-app/src/source_layout.rs:12:4
+   |
+12 | fn location() -> Option<PathBuf> {
+   |    ^^^^^^^^
+
+warning: function `panes` is never used
+  --> crates/scholium-app/src/source_layout.rs:38:15
+   |
+38 | pub(crate) fn panes(ui: &mut egui::Ui, project: &Path, enabled: bool) -> (egui::Ui, egui::Ui) {
+   |               ^^^^^
+
+warning: `scholium-app` (bin "scholium-app" test) generated 5 warnings
+    Finished `test` profile [unoptimized] target(s) in 1.39s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-c7f7311f39cf7208)
+
+running 1 test
+
+thread 'latex_workspace::tests::page_mode_uses_the_full_preview_and_source_mode_restores_the_split' (773430) panicked at crates/scholium-app/src/latex_workspace/tests.rs:25:9:
+assertion `left == right` failed: source is visible only in source mode
+  left: true
+ right: false
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test latex_workspace::tests::page_mode_uses_the_full_preview_and_source_mode_restores_the_split ... FAILED
+
+failures:
+
+failures:
+    latex_workspace::tests::page_mode_uses_the_full_preview_and_source_mode_restores_the_split
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 358 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`

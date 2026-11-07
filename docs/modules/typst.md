@@ -237,3 +237,16 @@ Content cache 只使前后受影响正文叶及其段落失效；未变的段落
 `submit_generated(document, generation, GeneratedSource)` 连同当前块映射提交，供原生项目按节点定位；
 原有 `submit` 没有源节点映射，仅提供文件/行列。调用方仍按文档身份与 generation 拒绝旧结果。
 此接口不扩大 in-process preview 的执行权限；外部 `.typ` 编译仍须遵守既有沙箱规则。
+
+## 源码项目的隔离预览入口
+
+`SourceHighlighter::highlight` 用官方 CST 的增量 replace/reparse 与 highlight tag 提供不重叠 UTF-8 样式范围，
+`highlight_source` 是不可变生成源码的便捷入口。两者只解析，不执行用户程序。
+
+`compile_source_snapshot(entry, files, scale)` 仅供受监督的 OS 隔离 worker 调用；外部源码不得在 UI 进程调用此入口。
+显式资源 map 是 World 的唯一 source/file 能力，路径必须为规范项目相对路径；包、网络、宿主任意路径及系统时间不可访问。
+入口必须存在且为 UTF-8，资源总量最多 16 MiB；编译后最多 100 页、RGBA 总量 64 MiB、单边 8192 px，
+在栅格化前检查，越界返回失败，不能截断为成功。返回页图、真实 Typst 诊断与失败文本，不跨进程传 PagedDocument。
+宿主负责 OS 网络/挂载、内存、CPU、墙钟预算与取消整棵进程树；失败后保留最后成功页面且不得进程内重试。
+原生生成源码的 PreviewCompiler 执行权限保持原有约束。部署边界见
+[ADR 0055](../adr/ADR-0055-source-preview-worker.md)。

@@ -1,0 +1,19 @@
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 1.58s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-c7f7311f39cf7208)
+
+running 1 test
+
+thread 'source_editor::tests::short_source_editor_fills_the_pane_height' (764587) panicked at crates/scholium-app/src/source_editor/tests.rs:172:5:
+editor 457.75 must fill pane 900
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test source_editor::tests::short_source_editor_fills_the_pane_height ... FAILED
+
+failures:
+
+failures:
+    source_editor::tests::short_source_editor_fills_the_pane_height
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 355 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`

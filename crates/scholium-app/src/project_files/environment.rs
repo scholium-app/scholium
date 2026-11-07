@@ -4,11 +4,15 @@ use eframe::egui;
 use scholium_latex::toolchain::{DetectionConfig, Message, ToolchainDetector, ToolchainStatus};
 
 #[derive(Default)]
-pub(super) struct Environment {
+pub(crate) struct Environment {
     detector: Option<ToolchainDetector>,
     initialized: bool,
+    refreshed: bool,
 }
 impl Environment {
+    pub(crate) fn take_refresh(&mut self) -> bool {
+        std::mem::take(&mut self.refreshed)
+    }
     pub fn show(&mut self, ui: &mut egui::Ui, locale: i18n::Locale) {
         let text = |key| i18n::text(locale, key);
         if !self.initialized {
@@ -65,6 +69,7 @@ impl Environment {
             .clicked()
             {
                 detector.refresh();
+                self.refreshed = true;
             }
             ui.ctx()
                 .request_repaint_after(std::time::Duration::from_millis(150));

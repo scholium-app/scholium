@@ -1,0 +1,45 @@
+//! Trusted native-test fixture, never linked into the product or mounted as an extra tool.
+use std::{fs, io::Write, net::TcpStream, process::Command, time::Duration};
+
+fn main() {
+    match std::env::args().nth(1).as_deref() {
+        Some("hang") => {
+            let mut child = Command::new("/worker").arg("child").spawn().expect("child");
+            child.wait().expect("wait");
+        }
+        Some("child") => loop {
+            fs::write("/out/ticks", format!("{:?}", std::time::Instant::now())).expect("tick");
+            std::thread::sleep(Duration::from_millis(25));
+        },
+        Some("spam") => {
+            std::io::stdout().write_all(&vec![b'x'; 2 * 1024 * 1024]).expect("output");
+        }
+        _ => verify(),
+    }
+}
+
+fn verify() {
+    let request = fs::read_to_string("/request.json").expect("request read");
+    let mut lines = request.lines();
+    let secret = lines.next().expect("secret path");
+    let address = lines.next().expect("host listener").parse().expect("address");
+    assert!(fs::read(secret).is_err(), "host file visible");
+    assert!(TcpStream::connect_timeout(&address, Duration::from_millis(200)).is_err(), "host network visible");
+    assert_eq!(fs::read_to_string("/project/input").expect("resource"), "resource");
+    for path in ["/project/input", "/request.json", "/worker", "/usr/bin/prlimit"] {
+        assert!(fs::write(path, "poison").is_err(), "writable {path}");
+    }
+    let limits = fs::read_to_string("/proc/self/limits").expect("rlimits");
+    for (prefix, value) in [
+        ("Max cpu time", "30"),
+        ("Max address space", "4294967296"),
+        ("Max file size", "67108864"),
+        ("Max open files", "128"),
+    ] {
+        let line = limits.lines().find(|line| line.starts_with(prefix)).expect("limit");
+        let columns: Vec<_> = line.trim_start_matches(prefix).split_whitespace().collect();
+        assert_eq!(&columns[..2], [value, value], "{line}");
+    }
+    fs::write("/out/result", "isolated").expect("output");
+    println!("Typst profile isolation and rlimits enforced");
+}

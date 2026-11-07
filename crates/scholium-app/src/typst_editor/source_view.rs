@@ -28,11 +28,9 @@ fn preview_px_per_pt(width: f32, ppp: f32, max_side: u32) -> f64 {
         .min(side / A4_PT[1])
         .clamp(PX_PER_PT_RANGE.0, PX_PER_PT_RANGE.1)
 }
-/// Preview pane share of the source workspace, per P1_UI's roughly equal split.
-const PREVIEW_SHARE: f32 = 0.5;
-
 #[derive(Default)]
 pub(super) struct SourceView {
+    pub(super) project: std::path::PathBuf,
     compiler: Option<PreviewCompiler>,
     generation: u64,
     submitted: Option<Arc<StructuredDocument>>,
@@ -119,12 +117,7 @@ impl SourceView {
             self.generation += 1;
             let generated = generate_source(snapshot, SourceMode::Preview);
             self.blocks = generated.blocks.iter().map(|b| b.node).collect();
-            compiler.submit(
-                snapshot.document,
-                self.generation,
-                generated.source,
-                self.blocks.len(),
-            );
+            compiler.submit_generated(snapshot.document, self.generation, generated);
             self.submitted = Some(snapshot.clone());
         }
         while let Some(event) = self.compiler.as_mut().and_then(PreviewCompiler::poll) {
@@ -284,28 +277,36 @@ impl SourceView {
 }
 
 impl EditorSession {
-    /// Source workspace: generated Typst (read-only) and its quick preview.
+    #[cfg(test)]
     pub(super) fn show_source(&mut self, ui: &mut egui::Ui, locale: Locale) {
+        let mut state = WorkspaceState {
+            locale: match locale {
+                Locale::En => crate::i18n::LocaleSetting::En,
+                Locale::ZhHans => crate::i18n::LocaleSetting::ZhHans,
+            },
+            ..Default::default()
+        };
+        self.show_source_state(ui, &mut state);
+    }
+
+    /// Generated source and its preview share the project-keyed splitter and chrome zoom.
+    pub(super) fn show_source_state(&mut self, ui: &mut egui::Ui, state: &mut WorkspaceState) {
         let focus_block = self.cursor_block();
         let snapshot = self.snapshot.clone();
         self.source_view.sync(ui.ctx(), &snapshot, focus_block);
-        let preview_width = ui.available_width() * PREVIEW_SHARE;
+        let project = self.source_view.project.clone();
+        let (mut source, mut preview) =
+            crate::source_layout::panes(ui, &project, !state.file_modal);
         let t = crate::theme::tokens(ui.ctx());
-        egui::Panel::right("source-preview")
-            .exact_size(preview_width)
-            .frame(
-                egui::Frame::new()
-                    .fill(t.canvas)
-                    .inner_margin(egui::Margin::same(8)),
-            )
-            .show(ui, |ui| self.preview_pane(ui, locale));
-        egui::CentralPanel::default()
-            .frame(
-                egui::Frame::new()
-                    .fill(t.field)
-                    .inner_margin(egui::Margin::same(8)),
-            )
-            .show(ui, |ui| self.source_pane(ui, focus_block, locale));
+        source
+            .painter()
+            .rect_filled(source.max_rect(), 0.0, t.field);
+        egui::Frame::new()
+            .inner_margin(egui::Margin::same(8))
+            .show(&mut source, |ui| {
+                self.source_pane(ui, focus_block, state.locale.resolve());
+            });
+        self.preview_pane(&mut preview, state);
     }
 
     fn cursor_block(&self) -> Option<NodeId> {
@@ -341,7 +342,8 @@ impl EditorSession {
         );
     }
 
-    fn preview_pane(&mut self, ui: &mut egui::Ui, locale: Locale) {
+    fn preview_pane(&mut self, ui: &mut egui::Ui, state: &mut WorkspaceState) {
+        let locale = state.locale.resolve();
         let document = self.snapshot.document;
         ui.horizontal(|ui| {
             let pages = self
@@ -365,44 +367,38 @@ impl EditorSession {
         });
         let ppp = ui.ctx().pixels_per_point();
         let max_side = ui.ctx().input(|i| i.max_texture_side) as u32;
-        self.source_view.px_per_pt = preview_px_per_pt(ui.available_width(), ppp, max_side);
+        let scale = crate::source_layout::scale(state, ui.available_width(), A4_PT[0] as f32);
+        self.source_view.px_per_pt = preview_px_per_pt(A4_PT[0] as f32 * scale, ppp, max_side);
         self.source_view.track_resolution(ui.ctx(), document);
         // While a new generation compiles, keep the last page visible but inert.
         let Some(page) = self.source_view.texture.as_ref() else {
             return;
         };
         let current = page.generation == self.source_view.generation;
-        // A raster made for this pane maps texel to physical pixel; otherwise stretch to width.
-        let size = if (page.px_per_pt - self.source_view.px_per_pt).abs() < 1e-6 {
-            egui::vec2(page.px[0] as f32, page.px[1] as f32) / ppp
-        } else {
-            page.size_pt * (ui.available_width() / page.size_pt.x)
-        };
+        let size = page.size_pt * scale;
         let scale = size.x / page.size_pt.x;
         let texture = page.texture.id();
-        let mut clicked = None;
-        let mut shown_at = None;
-        egui::ScrollArea::vertical()
-            .id_salt("preview-page")
-            .auto_shrink([false, false])
-            .show(ui, |ui| {
-                let (rect, response) = ui.allocate_exact_size(size, egui::Sense::click());
-                let drawn = egui::Rect::from_min_size(raster::snap_pos(rect.min, ppp), size);
-                ui.painter().image(
-                    texture,
-                    drawn,
-                    egui::Rect::from_min_max(egui::Pos2::ZERO, egui::pos2(1.0, 1.0)),
-                    crate::theme::Tokens::LIGHT.page,
-                );
-                shown_at = Some((response.rect, scale));
-                if current
-                    && response.clicked()
-                    && let Some(pos) = response.interact_pointer_pos()
-                {
-                    clicked = Some((pos.y - response.rect.top()) / scale);
-                }
-            });
-        self.source_view.shown_at = shown_at;
+        if !current {
+            ui.weak(crate::i18n::text_with(
+                locale,
+                "preview.retained",
+                &[("revision", (page.generation as i64).into())],
+            ));
+        }
+        let rect = crate::source_layout::page(ui, texture, size, "preview-page");
+        let response = ui.interact(
+            rect,
+            egui::Id::new("generated-preview-page"),
+            egui::Sense::click(),
+        );
+        self.source_view.shown_at = Some((rect, scale));
+        let clicked = if current && response.clicked() {
+            response
+                .interact_pointer_pos()
+                .map(|pos| (pos.y - rect.top()) / scale)
+        } else {
+            None
+        };
         if let Some(block) = clicked.and_then(|y| self.source_view.locate(y)) {
             self.cursor_to_block(block);
         }

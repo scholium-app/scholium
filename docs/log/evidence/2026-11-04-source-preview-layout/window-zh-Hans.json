@@ -1,0 +1,134 @@
+{
+  "source-opens-focused-and-updates-preview": {
+    "pass": true,
+    "elapsed_ms": 243.134244
+  },
+  "editor-fills-workspace-height": {
+    "pass": true,
+    "rect": [
+      0.0,
+      126.0,
+      636.0,
+      876.0
+    ]
+  },
+  "splitter-drag-and-keyboard": {
+    "pass": true,
+    "drag": 771.0,
+    "key": 745.40625
+  },
+  "splitter-persists-per-project": {
+    "pass": true
+  },
+  "splitter-double-click-resets": {
+    "pass": true,
+    "x": 640.0
+  },
+  "preview-follows-status-zoom-and-fit": {
+    "pass": true,
+    "actual": [
+      762.0,
+      171.0,
+      1162.0,
+      704.3333740234375
+    ],
+    "zoom": [
+      742.0,
+      171.0,
+      1182.0,
+      757.6666870117188
+    ],
+    "fit": [
+      660.0,
+      171.0,
+      1264.0,
+      976.3333129882812
+    ]
+  },
+  "syntax-error-retains-last-good-pages-and-diagnostics": {
+    "pass": true,
+    "preview": {
+      "diagnostics": {
+        "items": [
+          {
+            "code": null,
+            "kernel": "typst",
+            "log": null,
+            "message": "unknown variable: unknown_function",
+            "node": null,
+            "range": {
+              "bytes": {
+                "end": 86,
+                "start": 70
+              },
+              "end": {
+                "column": 18,
+                "line": 4
+              },
+              "start": {
+                "column": 2,
+                "line": 4
+              }
+            },
+            "resource": "main.typ",
+            "severity": "error"
+          }
+        ],
+        "revision": 1
+      },
+      "elapsed_ms": 244.779411,
+      "error": "unknown variable: unknown_function",
+      "page": 0,
+      "page_rect": [
+        660.0,
+        171.0,
+        1264.0,
+        976.3333129882812
+      ],
+      "pages": 1,
+      "preview_rect": [
+        644.0,
+        126.0,
+        1280.0,
+        876.0
+      ],
+      "revision": 1,
+      "shown_revision": 0,
+      "source_rect": [
+        0.0,
+        126.0,
+        636.0,
+        876.0
+      ]
+    }
+  },
+  "source-preview-recovers": {
+    "pass": true
+  },
+  "preview-page-navigation": {
+    "pass": true
+  },
+  "isolated-preview-denies-host-files": {
+    "pass": true
+  },
+  "isolated-preview-bounds-expensive-evaluation": {
+    "pass": true,
+    "error": "Typst preview exceeded its 10 second budget",
+    "elapsed_ms": 10017.058857
+  },
+  "source-preview-recovers-after-budget": {
+    "pass": true
+  },
+  "latex-missing-toolchain-centred-state": {
+    "pass": true
+  },
+  "latex-page-mode-full-preview": {
+    "pass": true
+  },
+  "latex-source-mode-restores-split": {
+    "pass": true
+  },
+  "generated-source-stays-read-only": {
+    "pass": true
+  }
+}

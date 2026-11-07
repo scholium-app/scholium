@@ -11,9 +11,11 @@ mod latex_workspace;
 mod project_files;
 mod project_workspace;
 mod source_editor;
+mod source_layout;
 mod state;
 mod theme;
 mod typst_editor;
+mod typst_source;
 mod widgets;
 
 use eframe::egui;
@@ -63,6 +65,16 @@ impl eframe::App for ScholiumApp {
 }
 
 fn main() -> eframe::Result {
+    if std::env::args_os()
+        .nth(1)
+        .is_some_and(|arg| arg == "--source-preview-worker")
+    {
+        if let Err(error) = typst_source::worker::entry() {
+            eprintln!("{error}");
+            std::process::exit(1);
+        }
+        return Ok(());
+    }
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_title("Scholium")

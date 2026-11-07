@@ -1,0 +1,7 @@
+    Finished `test` profile [unoptimized] target(s) in 0.09s
+     Running unittests src/lib.rs (target/debug/deps/scholium_build-69edb31adc8a72a3)
+
+running 1 test
+test tests::typst_native::typst_preview_enforces_mounts_budgets_and_cancels_descendants ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 11.38s
