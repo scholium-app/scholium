@@ -663,3 +663,13 @@ command-edit-find_next =
 command-edit-find_previous =
     .title = Find previous
     .tooltip = Find previous match
+
+export-progress = Exporting PDF…
+export-done = PDF exported · { $pages } pages
+export-failed = PDF export failed
+export-report = { $engine } · revision { $revision } · { $ms } ms · { $path }
+export-unsaved = { " " }(includes unsaved edits)
+export-no_bibliography = { " " }Bibliography processing was not run.
+export-path = PDF destination
+export-current = Export the current editor revision, including unsaved edits.
+export-settings_failed = Could not remember the PDF destination: { $error }

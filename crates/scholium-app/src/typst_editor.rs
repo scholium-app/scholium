@@ -143,6 +143,10 @@ impl std::fmt::Debug for EditorSession {
 }
 
 impl EditorSession {
+    pub(crate) fn export_snapshot(&self) -> Arc<StructuredDocument> {
+        self.snapshot.clone()
+    }
+
     pub(crate) fn open_project(
         ctx: &egui::Context,
         state: &mut WorkspaceState,

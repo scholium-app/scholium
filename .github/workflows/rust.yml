@@ -51,7 +51,7 @@ jobs:
           cache-key: test
           packages: >-
             libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libegl1-mesa-dev xvfb xdotool xclip
-            imagemagick fonts-noto-cjk at-spi2-core dbus python3-gi gir1.2-atspi-2.0
+            imagemagick fonts-noto-cjk at-spi2-core dbus python3-gi gir1.2-atspi-2.0 poppler-utils
       - run: cargo build --locked --workspace --bins
       - run: cargo test --locked --workspace
       - name: Real-window checks (discovered by scripts/window-checks.py)

@@ -258,3 +258,17 @@ Content cache 只使前后受影响正文叶及其段落失效；未变的段落
 `breadcrumbs(text, caret)` 使用官方 syntax CST 返回 caret 前的标题祖先，以及包围 caret 的 Equation / Raw。
 每项为源码标签或 math/raw 类别及 UTF-8 byte 起点；按标题深度替换同级与后代，不将注释或 raw/code 内的标题状文本当作文档标题。
 该入口只解析，不求值、不读取资源、不改变源码，供 app 的光标面包屑与点击跳转使用。
+
+## PDF 输出
+
+同一 pin 的未修改 typst-pdf 与完整 fork 版本组共同链接，并受 verify-typst-fork.py 的源文件清单校验。
+`export_generated_pdf` 使用与原生 A4 预览相同的 PreviewWorld、生成源码和字体策略；
+RawMath 与未填槽先拒绝，不把占位图形当正式输出，不求值用户数学文字。
+`export_source_pdf` 只在 OS 隔离 worker 中使用，与 compile_source_snapshot 共用显式资源 World。
+两者返回完整 PDF bytes、页数、真实诊断，失败 bytes=None；PDF 专用病态输出上限为 100,000 页、2 GiB，独立于预览预算；沙箱 /work 配额仍约束构建。
+PDF 选项采用 fork 默认值，不注入系统时间；PDF 编码错误也经 map_diagnostics 映射。
+
+常规测试用相同 fixture 分别调用上述 API 与直接 typst::compile + typst_pdf::pdf，
+经 hayro 在固定 300 dpi 比较页数、尺寸及全部 RGBA，容差为零。元数据差异不参与判断；
+不得通过放宽容差接受以后升级的排版差异。另测试跨文件 source snapshot 与损坏语法/未填槽拒绝。
+最终文件发布和共同报告属于 app，见 [ADR 0056](../adr/ADR-0056-pdf-export.md)。

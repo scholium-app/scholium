@@ -167,3 +167,8 @@ keys = ["F3"]
 command = "edit.find_previous"
 scope = "source"
 keys = ["Shift+F3"]
+
+[[binding]]
+command = "file.export"
+scope = "global"
+keys = ["Ctrl+Shift+E"]

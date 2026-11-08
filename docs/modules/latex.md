@@ -179,7 +179,7 @@ OpenType 字形经 skrifa；TFM 通过固定宿主 kpsewhich 的 pdftex.map/enco
 覆盖已加载资源的未保存文本，再通过 `BuildProfile::FullCompilation` 编译。pdfLaTeX 直接输出 PDF；
 XeLaTeX 使用 `-no-pdf` 输出 XDV，再显式执行 xdvipdfmx，避免 shell。最多两轮，所有子进程共用宿主 deadline，
 栅格完成后也检查 deadline。结果携带 source revision、固定引擎、整编来源和耗时，旧 revision 不采纳。
-此接口生成预览，不写回源码、不实现导出/文件菜单或 bibliography 工具链。
+此接口生成预览，不写回源码、不实现文件菜单或 bibliography 工具链。
 
 `highlight` 返回 UTF-8 byte ranges 与控制序列、注释、数学切换、花括号、普通文本类别；不展开宏或声称 CST 语义。
 绘制边界与回退裁决见 [ADR 0052](../adr/ADR-0052-latex-view-workbench.md)。
@@ -276,3 +276,17 @@ EOF/截断、超额消息终止或按现有恢复策略处理。页数最多 256
 hayro 仅在 `scholium-pdf-worker` 的 PdfDecode 子进程执行。宿主验证 version、页码顺序、256 页、
 8192 px 单边、每页 2400 万像素、累计 9600 万像素以及每一 RGBA 帧精确长度；不信任 decoder 元数据。
 decoder 必须与应用同目录安装。Typst 源码预览直接输出受限 RGBA，不解析 PDF；原生 Typst 导出只写 PDF，不在宿主重新解码。
+
+
+## PDF 导出整编
+
+`full::export_pdf` 独立于实时预览选择，允许固定的 pdfLaTeX、XeLaTeX 和 LuaLaTeX，
+仍要求 FullCompilation 沙箱。与 full::compile 共用资源快照、未保存 documents overlay、
+最多两轮引用编译、XeLaTeX 的显式 XDV 转 PDF 和总 deadline；不改变 live 路由或 preview 的 Lua 拒绝。
+结果 FullPdf 包含完整 PDF bytes、最后一轮 transcript 和统一诊断；编译失败保留 FullFailure。
+PDF 读取仅以 2 GiB 拒绝病态输出，沙箱 /work 配额仍约束构建；预览栅格限制独立保留。
+本模块不发布用户目标文件，app 验证页面后原子发布。没有 BibTeX/Biber 流水线，报告须明确未处理。
+
+app 的显式 ignored 原生测试比较沙箱导出与宿主相同引擎，在 hayro 300 dpi 下要求页数、尺寸和
+RGBA 完全相同（容差零），覆盖未保存输入、pdfLaTeX、XeLaTeX 和 LuaLaTeX 中英混排。
+缺引擎、字体或沙箱失败明确报未运行/失败，不能计通过。参见 [ADR 0056](../adr/ADR-0056-pdf-export.md)。
