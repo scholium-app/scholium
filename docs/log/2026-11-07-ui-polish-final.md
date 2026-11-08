@@ -6,16 +6,50 @@
 
 ## 证据
 
-`docs/log/evidence/ui-polish-final/before/` 与 `after/` 保存 zh-Hans/en、light/dark、1440/1024/480 的主界面、源码/预览、问题面板、对话框、起始页和命令框截图，截图的最终数量见文末验证记录。新增 `ui-polish-final-check.py` 运行面包屑逐级跳转、顶部/底部命令框避让、对话框窄窗边界及主题矩阵。
+按评审保留一套最终 after：每个主界面的 zh/en、light/dark、1440×900，1024/480 仅保留三种内核主窗口。before 仅保留下表直接比较的 4 张。PNG 用 `magick -strip +dither -colors 256 PNG8:` 量化，不保留初轮或中间运行文件。
 
-| 代表场景 | 之前 | 之后 |
+| 对照场景 | 之前 | 之后 |
 | --- | --- | --- |
 | 中文深色 LaTeX 480 | [before](evidence/ui-polish-final/before/zh-Hans/tex/tex-source-dark-480.png) | [after](evidence/ui-polish-final/after/zh-Hans/tex/tex-source-dark-480.png) |
 | 英文浅色 LaTeX 1440 | [before](evidence/ui-polish-final/before/en/tex/tex-source-light-1440.png) | [after](evidence/ui-polish-final/after/en/tex/tex-source-light-1440.png) |
-| 中文深色命令框 1024 | [before](evidence/ui-polish-final/before/zh-Hans/native/command-dark-1024.png) | [after](evidence/ui-polish-final/after/zh-Hans/native/command-dark-1024.png) |
+| 中文深色命令框 1440 | [before](evidence/ui-polish-final/before/zh-Hans/native/command-dark-1440.png) | [after](evidence/ui-polish-final/after/zh-Hans/native/command-dark-1440.png) |
 | 英文深色 Typst 源码 480 | [before](evidence/ui-polish-final/before/en/typ/typ-source-dark-480.png) | [after](evidence/ui-polish-final/after/en/typ/typ-source-dark-480.png) |
 
-布局参考为 [LaTeX 工作台](../plan/assets/p1-ui/2026-11/latex-workbench.png) 与 [公式命令框](../plan/assets/p1-ui/2026-11/typst-math-focus.png)。真实界面保留项目当前已实现的操作；没有为复刻设计图加入不可用入口。
+1440×900 最终主界面：
+
+| 场景 | 中文浅色 | 中文深色 | 英文浅色 | 英文深色 |
+| --- | --- | --- | --- | --- |
+| 原生页面 | [zh light](evidence/ui-polish-final/after/zh-Hans/native/native-page-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/native/native-page-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/native/native-page-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/native/native-page-dark-1440.png) |
+| 原生公式 | [zh light](evidence/ui-polish-final/after/zh-Hans/native/native-math-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/native/native-math-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/native/native-math-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/native/native-math-dark-1440.png) |
+| 导航 | [zh light](evidence/ui-polish-final/after/zh-Hans/native/navigation-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/native/navigation-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/native/navigation-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/native/navigation-dark-1440.png) |
+| 生成源码 | [zh light](evidence/ui-polish-final/after/zh-Hans/native/generated-source-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/native/generated-source-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/native/generated-source-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/native/generated-source-dark-1440.png) |
+| 页面命令框 | [zh light](evidence/ui-polish-final/after/zh-Hans/native/command-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/native/command-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/native/command-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/native/command-dark-1440.png) |
+| 起始页 | [zh light](evidence/ui-polish-final/after/zh-Hans/native/start-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/native/start-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/native/start-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/native/start-dark-1440.png) |
+| 新建 | [zh light](evidence/ui-polish-final/after/zh-Hans/native/new-project-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/native/new-project-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/native/new-project-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/native/new-project-dark-1440.png) |
+| 打开 | [zh light](evidence/ui-polish-final/after/zh-Hans/native/open-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/native/open-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/native/open-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/native/open-dark-1440.png) |
+| LaTeX 源码 | [zh light](evidence/ui-polish-final/after/zh-Hans/tex/tex-source-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/tex/tex-source-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/tex/tex-source-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/tex/tex-source-dark-1440.png) |
+| LaTeX 预览 | [zh light](evidence/ui-polish-final/after/zh-Hans/tex/tex-preview-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/tex/tex-preview-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/tex/tex-preview-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/tex/tex-preview-dark-1440.png) |
+| LaTeX 问题面板（真实 LuaLaTeX） | [zh light](evidence/ui-polish-final/after/zh-Hans/tex/tex-problems-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/tex/tex-problems-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/tex/tex-problems-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/tex/tex-problems-dark-1440.png) |
+| 项目设置 | [zh light](evidence/ui-polish-final/after/zh-Hans/tex/settings-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/tex/settings-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/tex/settings-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/tex/settings-dark-1440.png) |
+| 外部冲突 | [zh light](evidence/ui-polish-final/after/zh-Hans/tex/conflict-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/tex/conflict-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/tex/conflict-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/tex/conflict-dark-1440.png) |
+| LaTeX 命令框 | [zh light](evidence/ui-polish-final/after/zh-Hans/tex/command-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/tex/command-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/tex/command-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/tex/command-dark-1440.png) |
+| Typst 源码 | [zh light](evidence/ui-polish-final/after/zh-Hans/typ/typ-source-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/typ/typ-source-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/typ/typ-source-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/typ/typ-source-dark-1440.png) |
+| Typst 预览 | [zh light](evidence/ui-polish-final/after/zh-Hans/typ/typ-preview-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/typ/typ-preview-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/typ/typ-preview-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/typ/typ-preview-dark-1440.png) |
+| Typst 问题面板 | [zh light](evidence/ui-polish-final/after/zh-Hans/typ/typ-problems-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/typ/typ-problems-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/typ/typ-problems-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/typ/typ-problems-dark-1440.png) |
+| Typst 命令框 | [zh light](evidence/ui-polish-final/after/zh-Hans/typ/command-light-1440.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/typ/command-dark-1440.png) | [en light](evidence/ui-polish-final/after/en/typ/command-light-1440.png) | [en dark](evidence/ui-polish-final/after/en/typ/command-dark-1440.png) |
+
+主窗口的较窄视图（高 700 px）：
+
+| 内核 | 宽度 | 中文浅色 | 中文深色 | 英文浅色 | 英文深色 |
+| --- | --- | --- | --- | --- | --- |
+| 原生 | 1024 | [zh light](evidence/ui-polish-final/after/zh-Hans/native/native-page-light-1024.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/native/native-page-dark-1024.png) | [en light](evidence/ui-polish-final/after/en/native/native-page-light-1024.png) | [en dark](evidence/ui-polish-final/after/en/native/native-page-dark-1024.png) |
+| 原生 | 480 | [zh light](evidence/ui-polish-final/after/zh-Hans/native/native-page-light-480.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/native/native-page-dark-480.png) | [en light](evidence/ui-polish-final/after/en/native/native-page-light-480.png) | [en dark](evidence/ui-polish-final/after/en/native/native-page-dark-480.png) |
+| LaTeX | 1024 | [zh light](evidence/ui-polish-final/after/zh-Hans/tex/tex-source-light-1024.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/tex/tex-source-dark-1024.png) | [en light](evidence/ui-polish-final/after/en/tex/tex-source-light-1024.png) | [en dark](evidence/ui-polish-final/after/en/tex/tex-source-dark-1024.png) |
+| LaTeX | 480 | [zh light](evidence/ui-polish-final/after/zh-Hans/tex/tex-source-light-480.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/tex/tex-source-dark-480.png) | [en light](evidence/ui-polish-final/after/en/tex/tex-source-light-480.png) | [en dark](evidence/ui-polish-final/after/en/tex/tex-source-dark-480.png) |
+| Typst 源码 | 1024 | [zh light](evidence/ui-polish-final/after/zh-Hans/typ/typ-source-light-1024.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/typ/typ-source-dark-1024.png) | [en light](evidence/ui-polish-final/after/en/typ/typ-source-light-1024.png) | [en dark](evidence/ui-polish-final/after/en/typ/typ-source-dark-1024.png) |
+| Typst 源码 | 480 | [zh light](evidence/ui-polish-final/after/zh-Hans/typ/typ-source-light-480.png) | [zh dark](evidence/ui-polish-final/after/zh-Hans/typ/typ-source-dark-480.png) | [en light](evidence/ui-polish-final/after/en/typ/typ-source-light-480.png) | [en dark](evidence/ui-polish-final/after/en/typ/typ-source-dark-480.png) |
+
+共 100 张 PNG（before 4、after 96）；[清单](evidence/ui-polish-final/manifest.json) 记录每张量化后图片的尺寸与 SHA-256。布局参考为 [LaTeX 工作台](../plan/assets/p1-ui/2026-11/latex-workbench.png) 与 [公式命令框](../plan/assets/p1-ui/2026-11/typst-math-focus.png)。清单仅收录当前保留的截图，并区分基线、真实诊断和本轮构建的来源。
 
 ## 可读性
 
@@ -37,24 +71,24 @@ T48 调整了深色 `border` `#5A5A60 -> #96969D`、`text_dim` `#A6A6A6 -> #B6B6
 
 | 编号 | 历史发现 | 状态与修复来源 |
 | --- | --- | --- |
-| 1 | LaTeX 错误未进入问题面板 | 已修复：#105；T48 复测真实编译诊断与截图 |
-| 2 | `.typ` 源码缺预览及初始焦点 | 已修复：#104；T48 双主题三宽度复测 |
-| 3 | 打开对话框 Esc 不关闭 | 已修复：#103；T48 对话框矩阵复测 |
-| 4 | LaTeX 页面编辑切换无效 | 已修复：#104；T48 全宽预览复测 |
-| 5 | 480 px 对话框越界 | 已修复：#103；T48 边界断言复测 |
-| 6 | 外壳未按项目语言装配 | 已修复：#101/#103/#104/#105；T48 三内核复核 |
-| 7 | LaTeX 面板显示 Typst Content | 已修复：#104/#105；T48 复核 |
-| 8 | 大量禁用入口与空菜单 | 已修复：#101；T48 去除重复标签提示，保留不可用原因 |
-| 9 | 开发 revision/cache/layout 外露 | 已修复：#104/#105；仅 AUDIT 保留 |
-| 10 | 生成源码、导航与默认标签术语 | 已修复：#104；T48 复核 |
-| 11 | LaTeX 工具链与引擎标签混乱 | 已修复：#103/#105；T48 状态复核 |
-| 12 | 引擎/同步/模式切换提示含混 | 已修复：#101/T48；增加引擎设置动作提示，去重复提示 |
-| 13 | 生成源码缺行号/高亮/当前块 | 已修复：#104；T48 生成源码矩阵复测 |
-| 14 | LaTeX 固定矮源码框、无行号/分隔调整 | 已修复：#104；T48 布局窗口检查复测 |
-| 15 | 预览缩放/适合宽度/空状态 | 已修复：#104；T48 三内核预览矩阵复测 |
-| 16 | 新建/打开对话框字段与操作层次 | 已修复：#103；T48 深浅主题和窄窗复测 |
-| 17 | 外部冲突说明与按钮层次 | 已修复：#103；T48 真实外部编辑复测 |
-| 18 | 锁定项目/空起始页缺操作 | 已修复：#103；T48 起始页矩阵及全量锁定检查复测 |
+| 1 | LaTeX 错误未进入问题面板 | 已修复：#105；T48 复测真实编译诊断与截图；[最终界面](evidence/ui-polish-final/after/zh-Hans/tex/tex-problems-dark-1440.png) |
+| 2 | `.typ` 源码缺预览及初始焦点 | 已修复：#104；T48 双主题三宽度复测；[最终界面](evidence/ui-polish-final/after/zh-Hans/typ/typ-source-dark-1440.png) |
+| 3 | 打开对话框 Esc 不关闭 | 已修复：#103；T48 对话框矩阵复测；[最终界面](evidence/ui-polish-final/after/zh-Hans/native/open-dark-1440.png) |
+| 4 | LaTeX 页面编辑切换无效 | 已修复：#104；T48 全宽预览复测；[最终界面](evidence/ui-polish-final/after/zh-Hans/tex/tex-preview-dark-1440.png) |
+| 5 | 480 px 对话框越界 | 已修复：#103；T48 边界断言复测；[最终界面](evidence/ui-polish-final/after/zh-Hans/native/new-project-dark-1440.png) |
+| 6 | 外壳未按项目语言装配 | 已修复：#101/#103/#104/#105；T48 三内核复核；[最终界面](evidence/ui-polish-final/after/zh-Hans/tex/tex-source-dark-1440.png) |
+| 7 | LaTeX 面板显示 Typst Content | 已修复：#104/#105；T48 复核；[最终界面](evidence/ui-polish-final/after/zh-Hans/tex/tex-problems-dark-1440.png) |
+| 8 | 大量禁用入口与空菜单 | 已修复：#101；T48 去除重复标签提示，保留不可用原因；[最终界面](evidence/ui-polish-final/after/zh-Hans/native/native-page-dark-1440.png) |
+| 9 | 开发 revision/cache/layout 外露 | 已修复：#104/#105；仅 AUDIT 保留；[最终界面](evidence/ui-polish-final/after/zh-Hans/tex/tex-problems-dark-1440.png) |
+| 10 | 生成源码、导航与默认标签术语 | 已修复：#104；T48 复核；[最终界面](evidence/ui-polish-final/after/zh-Hans/native/generated-source-dark-1440.png) |
+| 11 | LaTeX 工具链与引擎标签混乱 | 已修复：#103/#105；T48 状态复核；[最终界面](evidence/ui-polish-final/after/zh-Hans/tex/tex-source-dark-1440.png) |
+| 12 | 引擎/同步/模式切换提示含混 | 已修复：#101/T48；增加引擎设置动作提示，去重复提示；[最终界面](evidence/ui-polish-final/after/zh-Hans/native/native-page-dark-1440.png) |
+| 13 | 生成源码缺行号/高亮/当前块 | 已修复：#104；T48 生成源码矩阵复测；[最终界面](evidence/ui-polish-final/after/zh-Hans/native/generated-source-dark-1440.png) |
+| 14 | LaTeX 固定矮源码框、无行号/分隔调整 | 已修复：#104；T48 布局窗口检查复测；[最终界面](evidence/ui-polish-final/after/zh-Hans/tex/tex-source-dark-1440.png) |
+| 15 | 预览缩放/适合宽度/空状态 | 已修复：#104；T48 三内核预览矩阵复测；[最终界面](evidence/ui-polish-final/after/zh-Hans/tex/tex-preview-dark-1440.png) |
+| 16 | 新建/打开对话框字段与操作层次 | 已修复：#103；T48 深浅主题和窄窗复测；[最终界面](evidence/ui-polish-final/after/zh-Hans/native/new-project-dark-1440.png) |
+| 17 | 外部冲突说明与按钮层次 | 已修复：#103；T48 真实外部编辑复测；[最终界面](evidence/ui-polish-final/after/zh-Hans/tex/conflict-dark-1440.png) |
+| 18 | 锁定项目/空起始页缺操作 | 已修复：#103；T48 起始页矩阵及全量锁定检查复测；[最终界面](evidence/ui-polish-final/after/zh-Hans/native/start-dark-1440.png) |
 
 ## 结论
 
@@ -69,39 +103,24 @@ T48 调整了深色 `border` `#5A5A60 -> #96969D`、`text_dim` `#A6A6A6 -> #B6B6
 
 ## 验证
 
-| 命令 | 结果 |
-| --- | --- |
-| `cargo fmt --all -- --check` | 通过 |
-| `cargo clippy --locked --workspace --all-targets -- -D warnings` | 通过 |
-| `cargo test --locked --workspace` | 740 通过、0 失败、16 显式忽略 |
-| `RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps` | 通过 |
-| `python3 scripts/check-rust-size.py` | 通过 |
-| `python3 scripts/check-doc-links.py` | 通过 |
-| `python3 scripts/check-ui-strings.py` | 通过；39 项既有白名单 |
-| `python3 scripts/check-layers.py` | 通过 |
-| `cargo deny --locked check licenses bans sources` | 通过；既有未使用 Unicode-DFS-2016 allowance 提示 |
-| `cargo build --locked -p scholium-app -p scholium-storage --bins` | 通过 |
-| `python3 scripts/window-checks.py --locale zh-Hans en` | 完整 64 项均验证通过；固定最终构建完整运行 62 项通过，应用名修正后的同字节 AT-SPI 复测 2 项通过，详见下文 |
+初次交付的完整门禁已通过：workspace 740 通过、16 忽略；完整窗口 64 项均有通过证据。固定构建使用 `t48-delivery-app` 文件名时 AT-SPI 两项因硬编码查找 `scholium-app` 应用名失败；相同二进制改为该名称后双语 2/2 通过。仅保留最终断言汇总：[中文 AT-SPI](evidence/ui-polish-final/a11y-zh-Hans-summary.json)、[英文 AT-SPI](evidence/ui-polish-final/a11y-en-summary.json)，不归因于 Xvfb，不保留中间或初轮运行文件。
 
-Typst 独立对照按 `typst-fork.yml` 的 fork-check / stock reference / compare 三条命令运行，系统字体与 `SCHOLIUM_TEST_FONTS=bundled` 均为 31/31 像素完全一致；不需要改变独立 reference 或阈值。
-新增测试先观察失败再修复，覆盖面包屑跳转和窄宽度、两类弹出框避让、取消补全后保留源码焦点、Typst 片段、按下态对比度以及无系统字体候选字形。[先失败再修复的记录](evidence/ui-polish-final/test-first.txt) 与最终门禁分开保存，不能把开发中的预期失败计作最终检查结果。
+真实 LuaLaTeX 检查双语 2/2、各 22/22 断言通过：[native 汇总](evidence/ui-polish-final/native-window-checks.txt)、[中文断言](evidence/ui-polish-final/latex-live-zh-Hans-summary.json)、[英文断言](evidence/ui-polish-final/latex-live-en-summary.json)。它覆盖错误与未定义引用、行选择、成员文件跳转、清除问题和主题菜单；最终只保留主问题面板的 1440×900 深浅主题截图。
 
-### 窗口与截图结果
+独立 stock Typst 系统字体和仅打包字体均 31/31 像素一致：[system](evidence/ui-polish-final/stock-parity-system.json)、[bundled](evidence/ui-polish-final/stock-parity-bundled.json)。本次仅改无损字体容器，不改变解压后的字体字节或正文 FontBook。
 
-- 第一轮 `python3 scripts/window-checks.py --locale zh-Hans en --out target/t48-window-final` 为 64/64 通过，见 [初轮完整记录](evidence/ui-polish-final/window-checks-initial.txt)。期间补充了部分截图场景，因此交付截图统一以固定最终构建的复跑为准。
-- 固定构建执行 `python3 scripts/window-checks.py --binary target/t48-delivery-app --locale zh-Hans en --out target/t48-delivery-windows`，62/64 通过，见 [完整复跑记录](evidence/ui-polish-final/window-checks-final.txt)。两项 AT-SPI 均在查找正文对象时超时：脚本硬编码按 `scholium-app` 找应用根对象，而固定二进制改名成了 `t48-delivery-app`。这不是产品代码修改；同一字节复制到 `target/t48-delivery/scholium-app`，SHA-256 均为 `7a323fabcc534a00b45f6a23ddfe1b150488922f9c2a4d8b0f314a14d4ae5a6b`，再单独复测两种语言的 a11y。未把此失败归因于 Xvfb 或外部 agent。
-- `python3 scripts/window-checks.py --binary target/t48-delivery/scholium-app --only a11y --locale zh-Hans en --out target/t48-delivery-a11y` 为 2/2 通过，每种语言 11 条断言通过；见 [同字节 AT-SPI 复测](evidence/ui-polish-final/window-checks-a11y-recheck.txt)。最终构建完整 64 项因此均有通过证据，没有放宽检查或修改产品实现。
-- T48 专项两种语言各 36/36 断言通过，覆盖面包屑跟随和逐级跳转、源码/页面命令框上下避让、四类对话框边界，以及主题/尺寸矩阵；[中文](evidence/ui-polish-final/ui-polish-zh-Hans-summary.json)、[英文](evidence/ui-polish-final/ui-polish-en-summary.json)。
-- 真实 LuaLaTeX 扩展运行 `SCHOLIUM_T47_NATIVE=1 SCHOLIUM_T47_LIVE=1 SCHOLIUM_T48_MATRIX=1`，复用本机已验证 rtex PIN 和只用于检查的显式工具链路径，双语 2/2 检查、各 22/22 断言通过；见 [native 汇总](evidence/ui-polish-final/native-window-checks.txt)。包含错误和未定义引用、选中范围、成员文件跳转、清除问题、主题菜单及三宽度截图。标准全套中可选 native 条目的 skip 由本次真实补充检查覆盖。
-- 基线二进制来自 `e625189`，通过 `SCHOLIUM_T48_BASELINE=1` 仅采集旧界面，不执行尚不存在的新接口断言，双语 2/2 采集通过；见 [before 记录](evidence/ui-polish-final/before-window-checks.txt)。没有切换或改写工作树来采集旧版。
-- 提交截图共 534 张：before 224、after 310（其中主界面矩阵 224、真实诊断补充 86）。主界面覆盖两种语言、两套主题和 1440×900 / 1024×700 / 480×700；另有顶部/底部命令框和 480×900 诊断场景。全部 PNG 已解码验证，[manifest](evidence/ui-polish-final/manifest.json) 记录各文件尺寸、哈希与基线/最终二进制哈希。
+### 评审修订
+
+数学字体以 `NotoSansMath-Regular.ttf.br` 保存：原始 990,564 bytes，压缩 390,512 bytes；原始 SHA-256 为 `d51afd5739c7ba6c44fcab35a88160e25dfb69a2d4ad0bd99533f8d894af1f96`。复用现有纯 Rust Brotli 解压函数和进程内缓存；新增单测校验原始长度、SHA-256 和缓存复用，原有候选字形测试通过。界面加载路径和资产说明同步更新，OFL 许可保留。
+
+本次按要求重跑 fmt、clippy、workspace tests、Rust 文件规模、文档链接以及 `ui-polish-final` 双语窗口检查，均通过；workspace 为 741 通过、0 失败、16 忽略。窗口检查为双语 2/2 通过（[最终运行记录](evidence/ui-polish-final/window-checks.txt)）。窗口专项断言汇总：[中文](evidence/ui-polish-final/ui-polish-zh-Hans-summary.json)、[英文](evidence/ui-polish-final/ui-polish-en-summary.json)。截图更新后再次运行文档链接检查。证据目录为 100 PNG（4 before、96 after），整目录大小约 1.8 MB，低于 3 MB。不合并 main，不创建 PR。
 
 ## PR 正文素材
 
-**问题**：源码焦点缺少结构导航，命令候选没有统一的光标避让与信息层次，部分深色文字/边界对比度不足，悬停提示存在重复标签。
+**问题**：源码焦点缺结构导航，命令候选和提示层次不统一，部分配色与候选字形不完整；原始证据与字体资产体积过大。
 
-**改动**：接入 LaTeX / Typst 内核只读面包屑与点击跳转；共用命令框显示符号、等宽查询、命令名和类别，底部自动翻转；整理状态栏动作与提示，保留整段优先级删除；修正深浅主题对比度和无系统字体下的候选缺字；补齐 18 项审查追溯与 534 张截图。Scoped exceptions 为任务允许的两个内核辅助接口及模块文档，以及窗口 runner 的两项屏幕尺寸配置。
+**改动**：内核只读面包屑与跳转、共用命令框、状态栏动作与提示、深浅配色和数学字体回退；证据精简为最终 96 张 after 和 4 张直接比较的 before，PNG 统一 256 色，字体改为 Brotli 无损容器。Scoped exceptions 为任务允许的内核导航接口及模块文档、共用字体解压入口，以及窗口 runner 的屏幕尺寸配置。
 
-**验证**：全部共享门禁通过；workspace 740 通过 / 0 失败 / 16 忽略；完整窗口 64 项均验证通过（最终固定构建 62/64，加同字节应用名修正后的 2/2 AT-SPI 复测）；真实 LuaLaTeX 双语 2/2，T48 专项各 36/36；系统/仅打包字体 stock 对照均为 31/31 像素一致。原始失败记录和复测均保留。
+**验证**：fmt、clippy、workspace tests（741/0/16）、Rust 文件规模、文档链接和双语 `ui-polish-final` 均通过。证据目录 100 张 PNG、约 1.8 MB；数学字体原始哈希和候选 glyph 测试通过。
 
-**待办**：本任务无未完成项。LaTeX 不展开宏或推断章节编号，页面公式编辑继续按任务边界留在阶段 3；未修改 P1_UI 规划。分支直接推送，PR 由协调者创建。
+**待办**：本任务无新增未完成项。LaTeX 不展开宏或推断章节编号，页面公式编辑仍属阶段 3。PR 由协调者创建。

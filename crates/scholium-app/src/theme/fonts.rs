@@ -79,10 +79,7 @@ pub(super) fn definitions(db: &fontdb::Database) -> (FontDefinitions, Chosen) {
     );
     fonts.font_data.insert(
         "noto-math".into(),
-        FontData::from_static(include_bytes!(
-            "../../assets/fonts/NotoSansMath-Regular.ttf"
-        ))
-        .into(),
+        FontData::from_static(scholium_typst::bundled_math_font_bytes()).into(),
     );
     let ui = load_first(db, &UI_FONTS, &mut fonts);
     let latin = load_first(db, &LATIN_FONTS, &mut fonts);

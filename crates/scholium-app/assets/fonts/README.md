@@ -1,7 +1,7 @@
 # 随应用分发的字体
 
 字体资产依据 [ADR 0011](../../../../docs/adr/ADR-0011-font-asset-licenses.md)，全部保留原始字体字节、名称、版权与许可；未修改、未子集化。
-正文使用五个 `.br` 无损容器；界面数学符号回退另带原始 Noto Sans Math TTF，直接交给 egui，避免补全候选显示缺字方框。
+正文使用五个 `.br` 无损容器；界面数学符号回退使用第六个 Noto Sans Math `.ttf.br` 容器，经同一纯 Rust Brotli 解压路径交给 egui，避免补全候选显示缺字方框。
 运行时不下载字体，首次离线启动即可使用。
 
 ## Noto Sans CJK SC Regular
@@ -38,23 +38,23 @@ System 与 Bundled 都加载这些打包字体及 Typst embedded；System 额外
 五个原始字体共 17,953,440 bytes；Brotli-11 压缩为 11,833,855 bytes，节省 6,119,585 bytes。
 `.br` 是原始字体字节的无损容器，不是字体修改版。构建仅嵌入 `.br`，纯 Rust `brotli-decompressor` 在首次加载时
 解压一次并缓存，界面与 Typst 共用 Noto 字节。单元测试核验每个解压结果的上述 SHA-256。
-再生成命令（先按上述来源在临时目录取得五个原始字体，再在该目录执行；
+再生成命令（先按各节来源在临时目录取得六个原始字体，再在该目录执行；
 仅将生成的 `.br` 复制回本目录。需本地 Brotli CLI，常规构建与运行不依赖该工具）：
 
 ```sh
-for font in NotoSansCJKsc-Regular.otf LiberationSerif-*.ttf; do
+for font in NotoSansCJKsc-Regular.otf LiberationSerif-*.ttf NotoSansMath-Regular.ttf; do
     brotli -q 11 -f -o "$font.br" "$font"
 done
 ```
 
-分发二进制时须同时保留本说明、OFL.txt、OFL-Liberation.txt 与字体中的版权信息。
+分发二进制时须同时保留本说明、OFL.txt、OFL-Liberation.txt、OFL-Math.txt 与字体中的版权信息。
 
 
 ## Noto Sans Math Regular 3.000（界面符号回退）
 
 - 来源：https://github.com/notofonts/math ，本机 `noto-fonts 1:2026.11.01-1` 原始字体，未修改、未子集化。
-- 文件：`NotoSansMath-Regular.ttf`，990,564 bytes。
+- 原始文件：`NotoSansMath-Regular.ttf`，990,564 bytes；Brotli-11 存储文件：`NotoSansMath-Regular.ttf.br`，390,512 bytes，节省 600,052 bytes。
 - SHA-256：`d51afd5739c7ba6c44fcab35a88160e25dfb69a2d4ad0bd99533f8d894af1f96`。
 - 字体内嵌版权：Copyright 2022 Google LLC. All Rights Reserved.；内嵌许可明确为 SIL OFL 1.1，完整许可见 [OFL-Math.txt](OFL-Math.txt)。
 - 仅作为界面字体链中缺字时的回退，不改变正文 Typst 字体配置；无系统字体的单测覆盖全部命令候选符号。
-- 分发时同时带本说明与 OFL-Math.txt。TTF 原始字节直接嵌入，运行时无需读取系统路径或下载。
+- 分发时同时带本说明与 OFL-Math.txt。仅嵌入 `.br`，启动时通过 `scholium_typst::bundled_math_font_bytes()` 复用现有 Brotli 解压函数并在进程内缓存；单测校验原始字节长度和 SHA-256，运行时无需读取系统路径或下载。

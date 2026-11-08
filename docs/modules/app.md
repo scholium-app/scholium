@@ -68,7 +68,7 @@ Typst 编辑页与源码预览使用同一字体策略（见 [typst.md](typst.md
 SimSun → Noto Sans CJK SC，标题将 SimSun 换为 SimHei。System 始终载入打包的四种 Liberation Serif 与 Noto，
 并扫描宿主字体，使已安装的 TNR/宋体/黑体优先；Bundled 完全跳过宿主扫描，场景与 parity 验收使用它。
 打包字体以 Brotli 无损字节嵌入，纯 Rust 解压器在进程内首次加载时解压一次；界面 Noto 回退经
-`scholium_typst::bundled_cjk_font_bytes()` 复用同一缓存，避免再嵌入未压缩的 Noto。首次离线启动不下载字体。
+`scholium_typst::bundled_cjk_font_bytes()` 复用同一缓存；数学符号经 `bundled_math_font_bytes()` 使用同一解压路径和独立缓存，不加入正文 FontBook。首次离线启动不下载字体。
 界面字体偏好与文档字体列表相互独立；不同字体的外观可不同，混排断行与原始字节哈希由字体回归测试约束。
 
 ## 诊断

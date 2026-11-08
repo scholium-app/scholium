@@ -1,0 +1,9 @@
+output: /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t48-review-window-final
+running ui-polish-final [zh-Hans] ...
+running ui-polish-final [en] ...
+
+check                      result      seconds
+ui-polish-final [zh-Hans]  pass          161.6
+ui-polish-final [en]       pass          157.0
+
+2/2 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t48-review-window-final

@@ -14,7 +14,7 @@ use typst::{Library, LibraryExt};
 use typst_kit::fonts::FontStore;
 
 mod fonts;
-pub use fonts::{FontProfile, bundled_cjk_font_bytes};
+pub use fonts::{FontProfile, bundled_cjk_font_bytes, bundled_math_font_bytes};
 use typst_layout::{PagedDocument, PagedIntrospector};
 
 mod compiler;

@@ -82,6 +82,7 @@ stock 对照同时覆盖默认字体集和仅打包字体集，两者都要求�
 parity 窗口子进程通过 `SCHOLIUM_TEST_FONTS=bundled` 选择它。World 创建后字体集不再改变。
 五个打包字体以 Brotli-11 无损字节嵌入；纯 Rust 解压器在进程内首次加载时解压一次并缓存，
 `bundled_cjk_font_bytes()` 让界面复用同一 Noto 原始字节，无文件读取或网络下载。
+`bundled_math_font_bytes()` 通过同一解压函数和进程缓存提供额外的 Noto Sans Math `.ttf.br` 原始字节；该字体只供界面回退，不加入 Typst 正文字体集。
 来源、版本、原始 SHA-256、许可与压缩再生成命令见[字体资产说明](../../crates/scholium-app/assets/fonts/README.md)。
 `submit(Arc<StructuredDocument>, SceneStamp, RasterSpec, ViewRange)` 传递完整已接受快照、栅格分辨率与页面可见范围（pt），`poll()` 非阻塞返回
 带 stamp 的结果。队列和结果分别只保留最新一份派生工作；关闭不在 UI join。
