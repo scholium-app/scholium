@@ -84,9 +84,9 @@ pub(crate) fn dialog(
     });
     if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
         let r = shown.response.rect;
-        println!(
-            "DIALOG_FRAME {}",
-            serde_json::json!({"id": id, "title": title.trim_end_matches(['…', '.']), "rect": [r.min.x, r.min.y, r.max.x, r.max.y]})
+        crate::audit_line::emit(
+            "DIALOG_FRAME",
+            &serde_json::json!({"id": id, "title": title.trim_end_matches(['…', '.']), "rect": [r.min.x, r.min.y, r.max.x, r.max.y]}),
         );
     }
     if action.is_none() && keys.1 {

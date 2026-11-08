@@ -211,9 +211,9 @@ pub(crate) fn message(error: &StoreError, state: &WorkspaceState) -> String {
 }
 pub(crate) fn audit_rect(control: &str, rect: egui::Rect) {
     if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
-        println!(
-            "PROJECT_UI {}",
-            serde_json::json!({"control": control, "center": [rect.center().x, rect.center().y]})
+        crate::audit_line::emit(
+            "PROJECT_UI",
+            &serde_json::json!({"control": control, "center": [rect.center().x, rect.center().y]}),
         );
     }
 }
@@ -223,9 +223,9 @@ mod tests;
 
 fn audit_source(source: &SourceProject, state: &WorkspaceState, ctx: &egui::Context) {
     if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
-        println!(
-            "PROJECT {}",
-            serde_json::json!({"language":format!("{:?}",source.handle().language()),"entry":source.handle().entry(),"dirty":source.dirty(),"text":source.text(),"error":state.storage_error,"chrome":crate::widgets::audit::facts_json(ctx),"controls":crate::widgets::audit::controls_json(ctx)})
+        crate::audit_line::emit(
+            "PROJECT",
+            &serde_json::json!({"language":format!("{:?}",source.handle().language()),"entry":source.handle().entry(),"dirty":source.dirty(),"text":source.text(),"error":state.storage_error,"chrome":crate::widgets::audit::facts_json(ctx),"controls":crate::widgets::audit::controls_json(ctx)}),
         );
     }
 }
