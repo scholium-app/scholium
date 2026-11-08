@@ -22,7 +22,7 @@ const RUNTIME: &[&str] = &[
 
 impl Sandbox {
     pub(crate) async fn runtime(&mut self) -> Result<(), BuildError> {
-        if self.profile == BuildProfile::TypstPreview {
+        if self.profile.is_worker() {
             let binary = self
                 .mounts
                 .get(Path::new("/worker"))

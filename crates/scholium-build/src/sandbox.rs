@@ -17,6 +17,14 @@ pub enum BuildProfile {
     FullCompilation,
     /// Bounded external Typst source preview, without a TeX runtime or font cache.
     TypstPreview,
+    /// Isolated PDF decoder; no project fonts or TeX runtime.
+    PdfDecode,
+}
+
+impl BuildProfile {
+    pub(crate) fn is_worker(self) -> bool {
+        matches!(self, Self::TypstPreview | Self::PdfDecode)
+    }
 }
 
 /// Session-wide cgroup limits. Resident processes have neither a wall-clock nor CPU-seconds limit.
@@ -166,9 +174,9 @@ impl Sandbox {
             .output(self.deadline(deadline))
             .await;
         match result {
-            Err(BuildError::Timeout(_)) if self.profile == BuildProfile::TypstPreview => Err(
-                BuildError::Timeout("Typst preview exceeded its 10 second budget"),
-            ),
+            Err(BuildError::Timeout(_)) if self.profile.is_worker() => Err(BuildError::Timeout(
+                "Typst preview exceeded its 10 second budget",
+            )),
             result => result,
         }
     }
@@ -191,7 +199,7 @@ impl Sandbox {
                 "project and output must be separate".into(),
             ));
         }
-        if self.profile == BuildProfile::TypstPreview {
+        if self.profile.is_worker() {
             if self.mounts.values().any(|input| overlaps(input, &work)) {
                 return Err(BuildError::Configuration(
                     "trusted inputs and output must be separate".into(),
@@ -233,7 +241,7 @@ impl Sandbox {
     }
 
     pub(crate) fn deadline(&self, requested: Duration) -> Duration {
-        if self.profile == BuildProfile::TypstPreview {
+        if self.profile.is_worker() {
             requested.min(crate::typst_preview::WALL_TIME)
         } else {
             requested

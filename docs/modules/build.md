@@ -108,3 +108,6 @@ RGBA 总量 64 MiB、单边 8192 px 的检查。输出目录同时受独立 tmpf
 cgroup 与 rlimit、stdio 超限、显式整树取消及 10 秒超时；缺少原生前提时失败并注明未运行，不计通过。
 
 `read_output(work, relative, limit)` 经私有 tmpfs capability 句柄读取正在运行的会话文件，拒绝根外路径与超限数据。
+
+`PdfDecode` 复用无 TeX 的 worker 隔离白名单，限制 1 GiB、16 tasks、零 swap、10 CPU 秒与 10 秒 wall；
+它只读取 `/project/input.pdf` 与固定 request，输出 RGBA 和小型元数据，缺少隔离即拒绝解码。

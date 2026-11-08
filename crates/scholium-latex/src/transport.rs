@@ -3,12 +3,7 @@ use crate::{
     protocol::{self, Incoming},
 };
 use scholium_build::{Sandbox, SandboxProcess};
-use std::{
-    ffi::OsString,
-    path::PathBuf,
-    sync::{Arc, atomic::AtomicUsize},
-    time::Duration,
-};
+use std::{ffi::OsString, path::PathBuf, sync::Arc, time::Duration};
 use tokio::{io::AsyncWriteExt, process::ChildStdin, sync::mpsc, task::JoinHandle};
 
 #[derive(Debug, Clone)]
@@ -171,6 +166,7 @@ pub(crate) struct Worker {
     input: ChildStdin,
     pub(crate) messages: mpsc::Receiver<Incoming>,
     readers: Vec<JoinHandle<()>>,
+    budget: Arc<protocol::Budget>,
 }
 impl Worker {
     fn new(mut process: Process, config: &LiveConfig) -> Result<Self, LatexError> {
@@ -185,9 +181,17 @@ impl Worker {
             return Err(LatexError::Stopped);
         };
         let (sender, messages) = mpsc::channel(8);
-        let total = Arc::new(AtomicUsize::new(0));
+        let quota = match &process {
+            Process::Sandbox(child) => child.output_quota_exceeded(),
+            #[cfg(test)]
+            Process::Fake(_) => Default::default(),
+        };
+        let total = Arc::new(protocol::Budget {
+            quota,
+            ..Default::default()
+        });
         let limits = (config.line_bytes, config.total_bytes);
-        let mut readers = vec![
+        let readers = vec![
             tokio::spawn(protocol::read(
                 out,
                 sender.clone(),
@@ -195,29 +199,20 @@ impl Worker {
                 total.clone(),
                 false,
             )),
-            tokio::spawn(protocol::read(err, sender.clone(), limits, total, true)),
+            tokio::spawn(protocol::read(
+                err,
+                sender.clone(),
+                limits,
+                total.clone(),
+                true,
+            )),
         ];
-        let quota = match &process {
-            Process::Sandbox(child) => Some(child.output_quota_exceeded()),
-            #[cfg(test)]
-            Process::Fake(_) => None,
-        };
-        if let Some(exceeded) = quota {
-            readers.push(tokio::spawn(async move {
-                loop {
-                    tokio::time::sleep(Duration::from_millis(10)).await;
-                    if exceeded.load(std::sync::atomic::Ordering::Acquire) {
-                        let _ = sender.send(Incoming::OutputQuota).await;
-                        break;
-                    }
-                }
-            }));
-        }
         Ok(Self {
             process,
             input,
             messages,
             readers,
+            budget: total,
         })
     }
     pub(crate) async fn send(
@@ -225,6 +220,9 @@ impl Worker {
         value: serde_json::Value,
         timeout: Duration,
     ) -> Result<(), LatexError> {
+        if matches!(value["cmd"].as_str(), Some("edit" | "set_document")) {
+            self.budget.revision();
+        }
         let mut bytes = serde_json::to_vec(&value).map_err(std::io::Error::other)?;
         bytes.push(b'\n');
         tokio::time::timeout(timeout, self.input.write_all(&bytes))

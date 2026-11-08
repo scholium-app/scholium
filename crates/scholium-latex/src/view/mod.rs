@@ -3,7 +3,10 @@ mod dl;
 mod fonts;
 mod paint;
 mod pdf;
+mod pdf_worker;
+pub use pdf_worker::entry as pdf_worker_entry;
 mod scene;
+pub(crate) mod validate;
 
 use crate::LatexError;
 pub use scene::{Drawing, Renderer};
@@ -42,7 +45,14 @@ fn invalid(reason: &str) -> LatexError {
     std::io::Error::other(reason).into()
 }
 fn dimensions(w: f64, h: f64) -> Result<(), LatexError> {
-    if !w.is_finite() || !h.is_finite() || w <= 0.0 || h <= 0.0 || w * h > MAX_PIXELS as f64 {
+    if !w.is_finite()
+        || !h.is_finite()
+        || w <= 0.0
+        || h <= 0.0
+        || w > 8192.0
+        || h > 8192.0
+        || w.ceil() * h.ceil() > MAX_PIXELS as f64
+    {
         return Err(invalid("raster dimensions exceed budget"));
     }
     Ok(())

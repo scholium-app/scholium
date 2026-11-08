@@ -37,6 +37,28 @@ impl Sandbox {
         Ok(sandbox)
     }
 
+    /// Prepare an isolated PDF decoder with 1 GiB memory, 16 tasks, 10 CPU/wall seconds.
+    /// # Errors
+    /// Fails closed when the trusted worker, namespaces, helper or cgroup limits are unavailable.
+    pub async fn prepare_pdf_decode(executable: &Path, request: &Path) -> Result<Self, BuildError> {
+        let mut sandbox = Self::typst_preview(executable, request)?;
+        sandbox.profile = BuildProfile::PdfDecode;
+        sandbox.limits.memory_bytes = 1024 * 1024 * 1024;
+        sandbox.limits.tasks = 16;
+        sandbox.runtime().await?;
+        let project = tempfile::tempdir()?;
+        let work = tempfile::tempdir()?;
+        sandbox
+            .run(
+                project.path(),
+                work.path(),
+                &["/usr/bin/prlimit".into(), "--version".into()],
+                WALL_TIME,
+            )
+            .await?;
+        Ok(sandbox)
+    }
+
     pub(crate) fn typst_preview(executable: &Path, request: &Path) -> Result<Self, BuildError> {
         let executable = executable.canonicalize()?;
         let request = request.canonicalize()?;

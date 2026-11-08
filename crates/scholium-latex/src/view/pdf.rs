@@ -8,7 +8,7 @@ use hayro::{PixmapSettings, RenderCache, RenderSettings};
 /// Rasterize a bounded PDF at the product density. Used for fallback and full compilation.
 /// # Errors
 /// Reports invalid PDF, excessive page dimensions/count and unavailable pages.
-pub(super) fn render(
+pub(super) fn render_untrusted(
     data: &[u8],
     wanted: Option<u64>,
     origin: RasterOrigin,
@@ -60,4 +60,12 @@ pub(super) fn render(
         return Err(invalid("PDF page unavailable"));
     }
     Ok(pages)
+}
+
+pub(super) fn render(
+    data: &[u8],
+    wanted: Option<u64>,
+    origin: RasterOrigin,
+) -> Result<Vec<RasterPage>, LatexError> {
+    super::pdf_worker::render(data, wanted, origin)
 }

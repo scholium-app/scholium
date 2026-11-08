@@ -13,7 +13,7 @@ impl Sandbox {
     ) -> Result<SandboxProcess, BuildError> {
         let scope = format!(
             "scholium-{}-{}-{}.scope",
-            if self.profile == BuildProfile::TypstPreview {
+            if self.profile.is_worker() {
                 "typst"
             } else {
                 "rtex"
@@ -134,7 +134,7 @@ impl Sandbox {
                 "--dev",
                 "/dev",
                 "--size",
-                if self.profile == BuildProfile::TypstPreview {
+                if self.profile.is_worker() {
                     "67108864"
                 } else {
                     "268435456"
@@ -144,14 +144,14 @@ impl Sandbox {
             ]
             .map(Into::into),
         );
-        let output = if self.profile == BuildProfile::TypstPreview {
+        let output = if self.profile.is_worker() {
             "/out"
         } else {
             "/work"
         };
         args.extend(["--ro-bind".into(), project.into(), "/project".into()]);
         bind_output(&mut args, work, output);
-        if self.profile != BuildProfile::TypstPreview {
+        if !self.profile.is_worker() {
             bind_output(&mut args, cache, "/rtex/texmf-var");
         }
         args.extend(
@@ -165,8 +165,16 @@ impl Sandbox {
             .map(Into::into),
         );
         match self.profile {
-            BuildProfile::TypstPreview => {
-                args.extend(["--as=4294967296", "--cpu=30"].map(Into::into))
+            BuildProfile::TypstPreview | BuildProfile::PdfDecode => {
+                args.push(format!("--as={}", self.limits.memory_bytes).into());
+                args.push(
+                    if self.profile == BuildProfile::PdfDecode {
+                        "--cpu=10"
+                    } else {
+                        "--cpu=30"
+                    }
+                    .into(),
+                );
             }
             BuildProfile::FullCompilation => args.push("--cpu=60".into()),
             BuildProfile::Rtex => {}
@@ -177,7 +185,7 @@ impl Sandbox {
     }
 
     fn environment(&self) -> &'static [(&'static str, &'static str)] {
-        if self.profile == BuildProfile::TypstPreview {
+        if self.profile.is_worker() {
             &[
                 ("LANG", "C.UTF-8"),
                 ("HOME", "/tmp"),
