@@ -124,10 +124,13 @@ pub(crate) async fn export_pdf(
 ) -> std::io::Result<scholium_typst::PdfExport> {
     let (work, metadata) = execute(root, request).await?;
     let bytes = if metadata.error.is_none() {
-        if metadata.page_count == 0 || metadata.page_count > scholium_typst::MAX_PREVIEW_PAGES {
+        if metadata.page_count == 0 || metadata.page_count > crate::pdf_export::MAX_PDF_PAGES {
             return Err(std::io::ErrorKind::InvalidData.into());
         }
-        let bytes = bounded_read(&work.path().join("output/document.pdf"), OUTPUT_LIMIT)?;
+        let bytes = bounded_read(
+            &work.path().join("output/document.pdf"),
+            crate::pdf_export::MAX_PDF_BYTES as u64,
+        )?;
         if !bytes.starts_with(b"%PDF-") {
             return Err(std::io::ErrorKind::InvalidData.into());
         }

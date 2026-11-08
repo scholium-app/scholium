@@ -1,5 +1,5 @@
 //! Export work never blocks the UI; only complete validated bytes reach a target.
-use super::{Input, Report, Request};
+use super::{Input, MAX_PDF_BYTES, MAX_PDF_PAGES, Report, Request};
 use hayro_syntax::Pdf;
 use scholium_model::diagnostic::{DiagnosticBatch, DiagnosticKernel};
 use std::{
@@ -94,8 +94,6 @@ pub(super) fn publish_pdf(
     expected_pages: Option<usize>,
     target: &Path,
 ) -> Result<usize, String> {
-    const MAX_PDF_BYTES: usize = 64 * 1024 * 1024;
-    const MAX_PDF_PAGES: usize = 256;
     if bytes.len() > MAX_PDF_BYTES {
         return Err("PDF exceeds budget".into());
     }

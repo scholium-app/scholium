@@ -88,3 +88,22 @@ PDF 每语言 10 个断言分别见[中文](evidence/2026-11-08-pdf-export/windo
 [中文](evidence/2026-11-08-pdf-export/review-window-zh-Hans.json)与
 [英文](evidence/2026-11-08-pdf-export/review-window-en.json)各 10 个断言全部通过。
 本次按协调者限定的受影响门禁复验，没有重跑全套窗口/stock 比较；未开 PR、未轮询 CI。
+
+
+## Review follow-up：长论文与图片 PDF 上限
+
+协调者指出 256 页 / 64 MiB 会拒绝正常论文。此批把发布路径改为命名的 100,000 页 / 2 GiB
+病态输出保护上限，注释说明沙箱 /work 配额才是实际构建限制。向前追踪还发现 Typst 导出复用了
+100 页预览限制、worker PDF 读取与 LaTeX 输出读取仍为 64 MiB；一并改为 PDF 专用宽松上限，
+预览页数/像素限制、输入资源预算和沙箱挂载/配额不变。
+
+[300 页回归红灯](evidence/2026-11-08-pdf-export/bounds-red.log.gz)先复现了 Typst 的旧页数限制；
+修复后[同一生成源码和发布测试](evidence/2026-11-08-pdf-export/bounds-focused.log.gz)通过，
+验证完整 PDF 计数 300 页且目标文件存在，没有为测试栅格化全部页面。
+[fmt](evidence/2026-11-08-pdf-export/bounds-fmt.log.gz)、
+[workspace clippy](evidence/2026-11-08-pdf-export/bounds-clippy.log.gz)及
+[app 测试](evidence/2026-11-08-pdf-export/bounds-test.log.gz)通过（394 passed、0 failed、1 ignored）。
+没有生成 2 GiB 夹具或运行性能基准；按协调者要求未重跑窗口检查。未开 PR、未轮询 CI。
+
+因修改了 PDF 生产者和输出读取，[Typst/LaTeX 测试](evidence/2026-11-08-pdf-export/bounds-kernels.log.gz)
+也通过（90 passed、0 failed、10 ignored）。

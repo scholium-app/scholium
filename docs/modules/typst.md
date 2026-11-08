@@ -265,7 +265,7 @@ Content cache 只使前后受影响正文叶及其段落失效；未变的段落
 `export_generated_pdf` 使用与原生 A4 预览相同的 PreviewWorld、生成源码和字体策略；
 RawMath 与未填槽先拒绝，不把占位图形当正式输出，不求值用户数学文字。
 `export_source_pdf` 只在 OS 隔离 worker 中使用，与 compile_source_snapshot 共用显式资源 World。
-两者返回完整 PDF bytes、页数、真实诊断，失败 bytes=None；最多 100 页、PDF 64 MiB。
+两者返回完整 PDF bytes、页数、真实诊断，失败 bytes=None；PDF 专用病态输出上限为 100,000 页、2 GiB，独立于预览预算；沙箱 /work 配额仍约束构建。
 PDF 选项采用 fork 默认值，不注入系统时间；PDF 编码错误也经 map_diagnostics 映射。
 
 常规测试用相同 fixture 分别调用上述 API 与直接 typst::compile + typst_pdf::pdf，

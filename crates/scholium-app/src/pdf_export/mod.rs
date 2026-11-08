@@ -7,6 +7,11 @@ use crate::{i18n, project_workspace::ProjectWorkspace};
 use scholium_model::diagnostic::{DiagnosticBatch, DiagnosticKernel};
 use std::{path::PathBuf, sync::Arc};
 
+// Pathological-output guards, not document-size policy: theses and image-heavy
+// papers must export. The sandbox /work quota is the practical build limiter.
+pub(crate) const MAX_PDF_BYTES: usize = 2 * 1024 * 1024 * 1024;
+pub(crate) const MAX_PDF_PAGES: usize = 100_000;
+
 pub(crate) enum Input {
     Native(Arc<scholium_model::structured::StructuredDocument>),
     Typst {

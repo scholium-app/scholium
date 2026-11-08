@@ -4,6 +4,11 @@ use scholium_model::diagnostic::{Diagnostic, DiagnosticKernel, Severity};
 use std::collections::BTreeMap;
 use typst_layout::PagedDocument;
 
+// Guard only pathological exports, not normal theses or image-heavy papers.
+// Sandboxed builds are practically bounded by their /work quota, not preview budgets.
+const MAX_PDF_PAGES: usize = 100_000;
+const MAX_PDF_BYTES: usize = 2 * 1024 * 1024 * 1024;
+
 /// A complete PDF or a failed compilation with the original mapped diagnostics.
 #[derive(Debug)]
 pub struct PdfExport {
@@ -55,11 +60,11 @@ fn compile_pdf(world: &dyn typst::World, blocks: &[SourceBlock]) -> PdfExport {
             };
         }
     };
-    if document.pages().len() > crate::MAX_PREVIEW_PAGES {
+    if document.pages().len() > MAX_PDF_PAGES {
         return failure("PDF exceeds the page budget");
     }
     match typst_pdf::pdf(&document, &typst_pdf::PdfOptions::default()) {
-        Ok(bytes) if bytes.len() <= 64 * 1024 * 1024 => PdfExport {
+        Ok(bytes) if bytes.len() <= MAX_PDF_BYTES => PdfExport {
             bytes: Some(bytes),
             page_count: document.pages().len(),
             diagnostics,

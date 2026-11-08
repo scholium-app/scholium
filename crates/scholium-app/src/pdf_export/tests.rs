@@ -137,6 +137,23 @@ fn export_worker_never_calls_the_preview_rasterizer() {
 }
 
 #[test]
+fn thesis_export_publishes_more_than_256_pages() {
+    let root = tempfile::tempdir().expect("export");
+    let target = root.path().join("thesis.pdf");
+    let generated = scholium_typst::GeneratedSource {
+        source: "#for n in range(300) { if n > 0 { pagebreak() }; [Page #n] }".into(),
+        ..Default::default()
+    };
+    let pdf = scholium_typst::export_generated_pdf(&generated);
+    assert_eq!(pdf.page_count, 300, "{:?}", pdf.diagnostics);
+    assert_eq!(
+        worker::publish_pdf(pdf.bytes.expect("PDF"), Some(300), &target).expect("export"),
+        300
+    );
+    assert!(target.exists());
+}
+
+#[test]
 fn hundred_page_export_is_independent_of_preview_pixel_budgets() {
     let root = tempfile::tempdir().expect("export");
     let target = root.path().join("large.pdf");

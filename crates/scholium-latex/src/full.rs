@@ -9,6 +9,10 @@ use std::{
     time::{Duration, Instant},
 };
 
+// Stop pathological output without rejecting image-heavy papers; the sandbox
+// /work quota is the practical build limiter. Preview keeps its own raster limits.
+const MAX_EXPORT_PDF_BYTES: u64 = 2 * 1024 * 1024 * 1024;
+
 /// A complete one-shot preview and its source identity.
 #[derive(Debug)]
 pub struct FullPreview {
@@ -129,7 +133,7 @@ pub async fn export_pdf(
     }
     let path = work.path().join("preview.pdf");
     let meta = std::fs::symlink_metadata(&path)?;
-    if !meta.is_file() || meta.len() > 64 * 1024 * 1024 {
+    if !meta.is_file() || meta.len() > MAX_EXPORT_PDF_BYTES {
         return Err(std::io::Error::other("invalid preview PDF").into());
     }
     let data = std::fs::read(path)?;

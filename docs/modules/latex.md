@@ -270,6 +270,7 @@ LiveSession 的 edit 在当前项目 capability 下先加载目标资源，再�
 仍要求 FullCompilation 沙箱。与 full::compile 共用资源快照、未保存 documents overlay、
 最多两轮引用编译、XeLaTeX 的显式 XDV 转 PDF 和总 deadline；不改变 live 路由或 preview 的 Lua 拒绝。
 结果 FullPdf 包含完整 PDF bytes、最后一轮 transcript 和统一诊断；编译失败保留 FullFailure。
+PDF 读取仅以 2 GiB 拒绝病态输出，沙箱 /work 配额仍约束构建；预览栅格限制独立保留。
 本模块不发布用户目标文件，app 验证页面后原子发布。没有 BibTeX/Biber 流水线，报告须明确未处理。
 
 app 的显式 ignored 原生测试比较沙箱导出与宿主相同引擎，在 hayro 300 dpi 下要求页数、尺寸和
