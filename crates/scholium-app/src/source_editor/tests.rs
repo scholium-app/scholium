@@ -108,6 +108,7 @@ fn find_marks_exact_utf8_match_in_large_scrollable_source() {
                 bytes: 1..7,
                 color: egui::Color32::YELLOW,
                 message: None,
+                severity: None,
             }],
         );
         section = job

@@ -1,4 +1,5 @@
 //! Project-backed LaTeX source authority and same-engine preview workbench.
+mod jump;
 #[cfg(test)]
 mod tests;
 mod view;
@@ -29,6 +30,7 @@ pub(crate) struct Workspace {
     page_index: usize,
     page_rect: Option<egui::Rect>,
     diagnostics: scholium_model::diagnostic::DiagnosticBatch,
+    output: String,
     environment: crate::project_files::environment::Environment,
     backend: Option<Backend>,
     pages: BTreeMap<u64, Page>,
@@ -64,6 +66,7 @@ impl Workspace {
             page_index: 0,
             page_rect: None,
             diagnostics: Default::default(),
+            output: String::new(),
             environment: Default::default(),
             unavailable: backend.is_none(),
             backend,
@@ -100,7 +103,15 @@ impl Workspace {
         if let Some(backend) = &self.backend {
             let _ = backend.edits.send(Edit {
                 revision: self.revision,
+                path: self.source.active_path().to_string_lossy().into_owned(),
                 text: self.source.text().into(),
+                inputs: self
+                    .source
+                    .inputs()
+                    .unwrap_or_default()
+                    .into_iter()
+                    .map(|(p, t)| (p.to_string_lossy().into_owned(), t))
+                    .collect(),
             });
         }
         result
@@ -114,11 +125,21 @@ impl Workspace {
         &mut self,
         path: &Path,
     ) -> Result<(), scholium_storage::project::StoreError> {
-        let handle = self
-            .source
-            .handle()
-            .copy_source(path, self.source.text().as_bytes())?;
-        let next = scholium_storage::project::SourceProject::open(handle)?;
+        let inputs = self.source.inputs()?;
+        let handle = self.source.handle();
+        let entry = inputs
+            .iter()
+            .find(|(p, _)| p == handle.entry())
+            .map(|(_, t)| t.as_bytes());
+        let disk = std::fs::read(handle.root().join(handle.entry()))?;
+        let handle = handle.copy_source(path, entry.unwrap_or(&disk))?;
+        let mut next = scholium_storage::project::SourceProject::open(handle)?;
+        for (resource, text) in inputs {
+            next.select_resource(&resource)?;
+            next.edit(text)?;
+            next.save()?;
+        }
+        next.select_resource(self.source.active_path())?;
         self.source = next;
         self.reset_preview();
         Ok(())
@@ -156,6 +177,7 @@ impl Workspace {
     pub(crate) fn show(&mut self, ui: &mut egui::Ui, state: &mut crate::state::WorkspaceState) {
         let locale = state.locale.resolve();
         self.poll(ui.ctx());
+        self.diagnostic_jump(ui.ctx(), state);
         self.show_panes(ui, state);
         if self.shown_revision == Some(self.revision) && self.presented.is_none() {
             self.presented = self.edited_at.map(|t| t.elapsed());
@@ -165,6 +187,24 @@ impl Workspace {
         state.source_words = crate::chrome::count_words(self.source.text());
         state.kernel_status = Some(self.status(locale));
         state.source_problems = self.problem_count();
+        let mut batch = self.diagnostics.clone();
+        if batch.revision != self.revision {
+            batch = scholium_model::diagnostic::DiagnosticBatch {
+                revision: self.revision,
+                items: vec![],
+            };
+        }
+        if batch.items.is_empty()
+            && let Some(error) = &self.error
+        {
+            batch.items.push(crate::diagnostics::failure(
+                scholium_model::diagnostic::DiagnosticKernel::Latex,
+                error.clone(),
+            ));
+        }
+        state
+            .problems
+            .publish(self.revision, batch, self.output.clone());
         self.audit();
     }
     fn poll(&mut self, ctx: &egui::Context) {
@@ -180,6 +220,11 @@ impl Workspace {
                 Update::Diagnostics(batch) => {
                     if batch.revision == self.revision {
                         self.diagnostics = batch;
+                    }
+                }
+                Update::Output { revision, log } => {
+                    if revision == self.revision {
+                        self.output = log;
                     }
                 }
                 Update::Ready { engine } => {
@@ -303,7 +348,7 @@ impl Workspace {
             return;
         }
         let rect = |r: Option<egui::Rect>| r.map(|r| [r.min.x, r.min.y, r.max.x, r.max.y]);
-        let fact = serde_json::json!({"kind":"latex","revision":self.revision,"shown_revision":self.shown_revision,"generation":self.generation,"text":self.source.text(),"entry":self.source.handle().entry(),"dirty":self.source.dirty(),"engine":format!("{:?}",self.engine),"toolchain_unavailable":self.unavailable,"error":self.error,"pages":self.pages.len(),"source_rect":rect(self.source_rect),"preview_rect":rect(self.preview_rect),"page_rect":rect(self.page_rect),"page_index":self.page_index,"paragraph":self.paragraph,"pixels_per_point":scholium_latex::view::PIXELS_PER_POINT,"origin":self.pages.values().map(|p|format!("{:?}",p.origin)).collect::<Vec<_>>(),"submitted_ms":self.presented.map(|d|d.as_secs_f64()*1000.0)});
+        let fact = serde_json::json!({"kind":"latex","revision":self.revision,"shown_revision":self.shown_revision,"generation":self.generation,"text":self.source.text(),"diagnostics":self.diagnostics,"selection":self.editor.selection(),"active_resource":self.source.active_path(),"entry":self.source.handle().entry(),"dirty":self.source.dirty(),"engine":format!("{:?}",self.engine),"toolchain_unavailable":self.unavailable,"error":self.error,"pages":self.pages.len(),"source_rect":rect(self.source_rect),"preview_rect":rect(self.preview_rect),"page_rect":rect(self.page_rect),"page_index":self.page_index,"paragraph":self.paragraph,"pixels_per_point":scholium_latex::view::PIXELS_PER_POINT,"origin":self.pages.values().map(|p|format!("{:?}",p.origin)).collect::<Vec<_>>(),"submitted_ms":self.presented.map(|d|d.as_secs_f64()*1000.0)});
         if self.audit_last.as_ref() != Some(&fact) {
             eprintln!("AUDIT {fact}");
             self.audit_last = Some(fact);
@@ -343,9 +388,18 @@ fn preview_source(
             LatexEngine::PdfLatex => Engine::PdfLatex,
         });
     }
-    if snapshot.text(entry) != Some(source.text()) {
-        let len = snapshot.text(entry).unwrap_or_default().len();
-        snapshot.edit(entry, 0..len, source.text())?;
+    for (path, text) in source
+        .inputs()
+        .map_err(|e| std::io::Error::other(e.to_string()))?
+    {
+        let path = path
+            .to_str()
+            .ok_or(scholium_latex::LatexError::Configuration)?;
+        snapshot.load(path)?;
+        if snapshot.text(path) != Some(&text) {
+            let len = snapshot.text(path).unwrap_or_default().len();
+            snapshot.edit(path, 0..len, &text)?;
+        }
     }
     Ok(snapshot)
 }

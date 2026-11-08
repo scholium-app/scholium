@@ -250,6 +250,25 @@ impl SourceView {
             .then_some((self.page + 1, compiled.page_count))
     }
 
+    pub(super) fn diagnostics(
+        &self,
+        snapshot: &Arc<StructuredDocument>,
+    ) -> scholium_model::diagnostic::DiagnosticBatch {
+        let revision = snapshot.revision.0;
+        let items = self
+            .compiled
+            .as_ref()
+            .filter(|c| {
+                c.revision == self.generation
+                    && self
+                        .submitted
+                        .as_ref()
+                        .is_some_and(|s| Arc::ptr_eq(s, snapshot))
+            })
+            .map_or_else(Vec::new, |c| c.diagnostics.items.clone());
+        scholium_model::diagnostic::DiagnosticBatch { revision, items }
+    }
+
     fn status(&self, locale: Locale) -> String {
         match &self.compiled {
             None => crate::i18n::text(locale, "source.preview.compiling"),
@@ -405,22 +424,19 @@ impl EditorSession {
     }
 
     /// Put the caret at the start of a block's first body text, else its first math slot.
-    fn cursor_to_block(&mut self, block: NodeId) {
+    pub(super) fn cursor_to_block(&mut self, block: NodeId) {
         let leaves = input::leaves(&self.snapshot);
         let in_block = || leaves.iter().filter(|l| l.block == block);
         let Some(leaf) = in_block().find(|l| !l.math).or_else(|| in_block().next()) else {
             return;
         };
         let leaf = (leaf.id, leaf.block);
-        self.move_to(
-            Position {
-                leaf: leaf.0,
-                byte: 0,
-                affinity: Affinity::Downstream,
-            },
-            false,
-        );
+        self.jump(crate::diagnostics::Target {
+            node: leaf.0,
+            byte: 0,
+        });
         self.drag = None;
+        self.focus = true;
     }
 }
 

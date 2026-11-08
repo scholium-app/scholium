@@ -2,9 +2,11 @@
 mod completion;
 mod gutter;
 mod highlight;
+mod jump;
 pub(crate) mod layout;
 #[cfg(test)]
 mod tests;
+mod underline;
 
 use eframe::egui;
 use scholium_math_input::Engine;
@@ -16,6 +18,7 @@ pub(crate) struct Mark {
     pub bytes: Range<usize>,
     pub color: egui::Color32,
     pub message: Option<String>,
+    pub severity: Option<scholium_model::diagnostic::Severity>,
 }
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) struct Highlight {
@@ -27,6 +30,8 @@ pub(crate) struct SourceEditor {
     id: Option<&'static str>,
     typst: bool,
     cursor: usize,
+    selection: Option<Range<usize>>,
+    follow_selection: bool,
     history: (bool, bool),
     query: String,
     find_open: bool,
@@ -106,14 +111,20 @@ impl SourceEditor {
                 bytes: start..start + hit.len(),
                 color: crate::theme::tokens(ui.ctx()).active_bg,
                 message: None,
+                severity: None,
             }));
         }
         let mut output = self.surface(ui, &mut buffer, highlights, &ranges, marks);
+        self.follow_selection = false;
         if let Some(cursor) = output
             .cursor_range
             .or_else(|| output.state.cursor.char_range())
         {
             self.cursor = cursor.primary.index.into();
+            self.selection = (!cursor.is_empty()).then(|| {
+                let r = cursor.as_sorted_char_range();
+                usize::from(r.start)..usize::from(r.end)
+            });
         }
         self.history = history(&output, &buffer);
         if !self.focus && ui.is_enabled() {
@@ -180,7 +191,15 @@ impl SourceEditor {
                         .min_size(egui::vec2(0.0, height - 4.0))
                         .layouter(&mut layouter)
                         .show(ui);
+                    if self.follow_selection {
+                        let rect = output
+                            .galley
+                            .pos_from_cursor(egui::text::CCursor::new(self.cursor))
+                            .translate(output.galley_pos.to_vec2());
+                        ui.scroll_to_rect(rect, Some(egui::Align::Center));
+                    }
                     gutter::paint(ui, buffer, &output, gutter, marks);
+                    underline::paint(ui, buffer, &output, marks);
                     crate::project_workspace::audit_rect(
                         "source",
                         output.response.rect.intersect(pane),
@@ -214,22 +233,7 @@ pub(crate) fn diagnostic_marks(
         })
         .filter_map(|d| {
             let location = d.range.as_ref()?;
-            let bytes = location
-                .bytes
-                .clone()
-                .filter(|r| text.get(r.clone()).is_some())
-                .or_else(|| {
-                    let start = text
-                        .split_inclusive('\n')
-                        .take(location.start.line.saturating_sub(1))
-                        .map(str::len)
-                        .sum::<usize>();
-                    let end = text
-                        .get(start..)?
-                        .find('\n')
-                        .map_or(text.len(), |n| start + n);
-                    Some(start..end)
-                })?;
+            let bytes = crate::diagnostics::source_range(text, location)?;
             Some(Mark {
                 bytes,
                 color: match d.severity {
@@ -237,6 +241,7 @@ pub(crate) fn diagnostic_marks(
                     _ => visuals.warn_fg_color,
                 },
                 message: Some(d.message.clone()),
+                severity: Some(d.severity),
             })
         })
         .collect()

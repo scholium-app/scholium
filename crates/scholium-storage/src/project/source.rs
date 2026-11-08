@@ -6,11 +6,12 @@ use super::{
 /// Locked source project with durable private input and an exact-byte disk baseline.
 #[derive(Debug)]
 pub struct SourceProject {
-    handle: ProjectHandle,
-    store: ProjectStore,
-    text: String,
-    base: Option<ContentHash>,
-    dirty: bool,
+    pub(super) handle: ProjectHandle,
+    pub(super) active: super::Resource,
+    pub(super) store: ProjectStore,
+    pub(super) text: String,
+    pub(super) base: Option<ContentHash>,
+    pub(super) dirty: bool,
 }
 impl SourceProject {
     /// Open source/draft without applying pending materializations or replacing source bytes.
@@ -26,6 +27,7 @@ impl SourceProject {
         let resource = handle.resource()?;
         let (text, base, dirty) = read_input(&store, &resource)?;
         Ok(Self {
+            active: resource,
             handle,
             store,
             text,
@@ -44,19 +46,23 @@ impl SourceProject {
     /// Rejects unsafe or cross-language entries, dirty entry switches, external declaration changes,
     /// invalid source encoding, unfinished materializations and failed durable publication.
     pub fn update_settings(&mut self, settings: super::ProjectSettings) -> Result<(), StoreError> {
-        let next = self.handle.prepare_settings(settings)?;
+        let mut next = self.handle.prepare_settings(settings)?;
         let changed = next.entry() != self.handle.entry();
         if changed && (self.dirty || !self.store.recover()?.steps.is_empty()) {
             return Err(StoreError::RecoveryRequired);
         }
         let input = if changed {
-            let resource = next.resource()?;
+            let resource = self.resource_at(next.entry())?;
+            next.bind_entry(&resource);
             Some(read_input(&self.store, &resource)?)
         } else {
             None
         };
         self.handle.publish_settings(&next)?;
         self.handle = next;
+        if changed {
+            self.active = self.handle.resource()?;
+        }
         if let Some((text, base, dirty)) = input {
             self.text = text;
             self.base = base;
@@ -80,14 +86,14 @@ impl SourceProject {
         self.text = text;
         self.dirty = true;
         self.store
-            .save_draft(&self.handle.resource()?, self.base, self.text.as_bytes())
+            .save_draft(&self.active.clone(), self.base, self.text.as_bytes())
     }
     /// Publish the current source, rejecting external hash changes. No syntax execution or parsing.
     ///
     /// # Errors
     /// Returns conflicts and failed materializations; private input is retained.
     pub fn save(&mut self) -> Result<(), StoreError> {
-        let resource = self.handle.resource()?;
+        let resource = self.active.clone();
         let plan = self.store.recover()?;
         if plan.steps.iter().any(|s| s.resource == resource) {
             self.store.resume_materialization(&resource)?;
@@ -114,7 +120,7 @@ impl SourceProject {
     /// # Errors
     /// Unsafe reads, invalid UTF-8 and failed draft deletion preserve current input.
     pub fn reload(&mut self) -> Result<(), StoreError> {
-        let resource = self.handle.resource()?;
+        let resource = self.active.clone();
         if self
             .store
             .recover()?
@@ -144,7 +150,7 @@ impl SourceProject {
     }
 }
 // Opening and selecting an entry share the exact same crash-window baseline rule.
-fn read_input(
+pub(super) fn read_input(
     store: &ProjectStore,
     resource: &super::Resource,
 ) -> Result<(String, Option<ContentHash>, bool), StoreError> {
@@ -249,6 +255,7 @@ mod tests {
         .expect("open")
         .store;
         let mut source = SourceProject {
+            active: handle.resource().expect("resource"),
             handle,
             store,
             text: "old".into(),
@@ -258,6 +265,12 @@ mod tests {
         assert!(source.edit("keep my input".into()).is_err());
         assert_eq!(source.text(), "keep my input");
         assert!(source.dirty());
+        assert!(
+            source
+                .select_resource(std::path::Path::new("chapter.typ"))
+                .is_err()
+        );
+        assert_eq!(source.text(), "keep my input");
         assert_eq!(
             std::fs::read(dir.path().join("main.typ")).expect("disk"),
             b"old"

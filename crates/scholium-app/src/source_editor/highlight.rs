@@ -36,9 +36,6 @@ pub(super) fn job(
         let mut format = egui::TextFormat::simple(egui::FontId::monospace(13.0), color);
         if let Some(mark) = marks.iter().find(|m| m.bytes.contains(&range.start)) {
             format.background = mark.color.gamma_multiply(0.2);
-            if mark.message.is_some() {
-                format.underline = egui::Stroke::new(1.0, mark.color);
-            }
         }
         job.append(&text[range], 0.0, format);
     }

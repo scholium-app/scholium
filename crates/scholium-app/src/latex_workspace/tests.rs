@@ -159,3 +159,40 @@ fn declaration_engine_controls_preview_without_rewriting_source_or_draft() {
     assert_eq!(std::fs::read(path).expect("disk"), bytes);
     assert!(source.dirty());
 }
+
+#[test]
+fn member_jump_keeps_entry_drafts_in_build_snapshots_and_save_as() {
+    use scholium_storage::project::{ProjectHandle, SourceProject};
+    let dir = tempfile::tempdir().expect("project");
+    std::fs::write(dir.path().join("main.tex"), "main").expect("main");
+    std::fs::write(dir.path().join("chapter.tex"), "chapter").expect("chapter");
+    let handle = ProjectHandle::open(&dir.path().join("main.tex"), None).expect("handle");
+    let mut source = SourceProject::open(handle).expect("source");
+    source.edit("main draft".into()).expect("draft");
+    source
+        .select_resource(Path::new("chapter.tex"))
+        .expect("member");
+    source.edit("chapter draft".into()).expect("draft");
+    let snapshot = preview_source(&source).expect("snapshot");
+    assert_eq!(snapshot.entry(), "main.tex");
+    assert_eq!(snapshot.text("main.tex"), Some("main draft"));
+    assert_eq!(snapshot.text("chapter.tex"), Some("chapter draft"));
+    let ctx = egui::Context::default();
+    let mut workspace = Workspace::open(source, &ctx);
+    workspace.backend = None;
+    let copy = tempfile::tempdir().expect("copy parent");
+    workspace.save_as(&copy.path().join("paper")).expect("copy");
+    workspace.backend = None;
+    assert_eq!(workspace.source.active_path(), Path::new("chapter.tex"));
+    assert_eq!(workspace.source.handle().entry(), Path::new("main.tex"));
+    for (name, expected) in [("main.tex", "main draft"), ("chapter.tex", "chapter draft")] {
+        assert_eq!(
+            std::fs::read_to_string(copy.path().join("paper").join(name)).expect("copy"),
+            expected
+        );
+    }
+    assert_eq!(
+        std::fs::read_to_string(dir.path().join("main.tex")).expect("original"),
+        "main"
+    );
+}

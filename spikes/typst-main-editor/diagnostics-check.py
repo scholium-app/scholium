@@ -145,6 +145,12 @@ try:
         click_rect(rows(state())[index]["rect"])
         s = wait(settled(lambda s, i=index: at_target(s, i)), f"row {index} jumps")
     record("05-row-click-lands-in-the-same-formula", at_target(s, 0))
+    f8 = str(chrome_ui.keycode(env["DISPLAY"], "F8"))
+    xdo("key", "--clearmodifiers", f8)
+    wait(settled(lambda s: at_target(s, 1)), "F8 next native node")
+    xdo("key", "--clearmodifiers", "shift+" + f8)
+    wait(settled(lambda s: at_target(s, 0)), "Shift F8 previous native node")
+    record("05b-f8-cycles-native-nodes", True)
 
     # Keyboard: the panel row has the focus after Ctrl+J, Down/Enter jumps to the next, Esc returns to the page.
     xdo("key", "--clearmodifiers", "ctrl+End")

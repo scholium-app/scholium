@@ -285,6 +285,10 @@ impl EditorSession {
         if let Some(error) = &self.core.persistence_error {
             state.storage_error = Some(error.clone());
         }
+        let batch = self.source_view.diagnostics(&self.snapshot);
+        state
+            .problems
+            .publish(self.snapshot.revision.0, batch, String::new());
         let problems = self.problems(state);
         self.shown_problems = problems.clone();
         let panel_open = state.diagnostics;
@@ -381,6 +385,16 @@ impl EditorSession {
         }
         if std::mem::take(&mut state.redo_requested) {
             self.history(true, state);
+        }
+        if let Some(issue) = state.problems.jump.take()
+            && state.problems.batch.revision == self.snapshot.revision.0
+            && let Some(node) = issue.node
+        {
+            state.mode = crate::state::ViewMode::Page;
+            if !self.jump(crate::diagnostics::Target { node, byte: 0 }) {
+                self.cursor_to_block(node);
+                self.focus = true;
+            }
         }
         if let Some(target) = state.jump_request.take() {
             self.jump(target);

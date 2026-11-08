@@ -3,6 +3,7 @@ mod data;
 mod handle;
 mod settings;
 pub use settings::{BibliographyTool, LatexEngine, ProjectSettings};
+mod member;
 mod source;
 pub use handle::{Authority, ProjectHandle, ProjectLanguage};
 pub use source::SourceProject;

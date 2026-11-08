@@ -359,13 +359,20 @@ fn ctrl_j_docks_the_panel_and_layout_stats_leave_the_status_bar() {
     let size = egui::vec2(1280.0, 900.0);
     frame(&mut f, size, vec![]);
     let closed = frame(&mut f, size, vec![]);
-    assert!(!painted_text(&closed).iter().any(|(_, t)| t == "问题"));
+    assert!(
+        !painted_text(&closed)
+            .iter()
+            .any(|(_, t)| t.starts_with("问题 ("))
+    );
     frame(&mut f, size, vec![command(egui::Key::J)]);
     frame(&mut f, size, vec![]);
     let open = frame(&mut f, size, vec![]);
     assert!(f.state.diagnostics);
     let texts = painted_text(&open);
-    assert!(texts.iter().any(|(_, t)| t == "问题"), "{texts:?}");
+    assert!(
+        texts.iter().any(|(_, t)| t.starts_with("问题 (")),
+        "{texts:?}"
+    );
     assert!(texts.iter().any(|(_, t)| t == "没有问题"), "{texts:?}");
     assert!(
         !texts.iter().any(|(_, t)| t.starts_with("Content 新建")),
@@ -379,7 +386,11 @@ fn ctrl_j_docks_the_panel_and_layout_stats_leave_the_status_bar() {
     frame(&mut f, size, vec![command(egui::Key::J)]);
     let shut = frame(&mut f, size, vec![]);
     assert!(!f.state.diagnostics);
-    assert!(!painted_text(&shut).iter().any(|(_, t)| t == "问题"));
+    assert!(
+        !painted_text(&shut)
+            .iter()
+            .any(|(_, t)| t.starts_with("问题 ("))
+    );
 }
 
 fn click_at(f: &mut Fixture, size: egui::Vec2, pos: egui::Pos2) {

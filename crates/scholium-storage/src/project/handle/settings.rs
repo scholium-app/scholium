@@ -1,6 +1,22 @@
 use super::*;
 
 impl ProjectHandle {
+    pub(in crate::project) fn resource_at(&self, path: &Path) -> [u8; 16] {
+        if path == self.entry() {
+            return self.declaration.resource;
+        }
+        self.declaration
+            .entry_resources
+            .get(path)
+            .copied()
+            .unwrap_or_else(|| scholium_model::RequestId::fresh().as_bytes())
+    }
+    pub(in crate::project) fn bind_entry(&mut self, resource: &Resource) {
+        self.declaration.resource = resource.id;
+        self.declaration
+            .entry_resources
+            .insert(resource.path().into(), resource.id);
+    }
     /// Current shareable entry and build choices. No filesystem access or locking.
     pub fn settings(&self) -> ProjectSettings {
         ProjectSettings {

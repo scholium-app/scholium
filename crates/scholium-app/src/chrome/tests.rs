@@ -97,7 +97,7 @@ impl Window {
             .unwrap_or_else(|| panic!("no control {id} on {surface}"))
     }
 
-    fn hover(&mut self, id: &str, surface: &str) {
+    pub(crate) fn hover(&mut self, id: &str, surface: &str) {
         let pos = self.find(id, surface).rect.center();
         self.frame(vec![egui::Event::PointerMoved(pos)]);
         self.settle();
@@ -170,7 +170,10 @@ impl Window {
 
     /// The panel's rectangle once drawn, `None` while it is closed.
     pub(crate) fn panel_rect(&self) -> Option<egui::Rect> {
-        let open = self.texts().iter().any(|t| t == "问题" || t == "Problems");
+        let open = self
+            .texts()
+            .iter()
+            .any(|t| t.starts_with("问题 (") || t.starts_with("Problems ("));
         let state = egui::containers::panel::PanelState::load(
             &self.ctx,
             crate::diagnostics::panel::panel_id(),

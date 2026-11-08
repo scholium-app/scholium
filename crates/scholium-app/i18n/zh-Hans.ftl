@@ -183,7 +183,7 @@ command-view-navigation =
     .tooltip = 显示或隐藏文件导航
 
 command-view-diagnostics =
-    .title = 诊断
+    .title = 问题
     .tooltip = 诊断信息
 
 command-view-split =
@@ -614,3 +614,13 @@ project-environment-rtex = 实时预览引擎 rtex
 project-environment-invalid = 安装不完整或校验失败
 project-environment-fonts_ready = 字体缓存已准备
 project-environment-separator = { "、" }
+
+diag-panel-output = 构建输出
+diag-panel-close = 关闭问题面板
+diag-panel-unmapped = 文档 / 构建
+command-view-problem-next =
+    .title = 下一个问题
+    .tooltip = 跳转到下一个问题
+command-view-problem-previous =
+    .title = 上一个问题
+    .tooltip = 跳转到上一个问题

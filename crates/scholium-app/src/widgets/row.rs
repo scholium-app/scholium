@@ -24,9 +24,13 @@ pub(crate) struct Row<'a> {
 
 /// Draw one full-width row described by `meta` (its name is the accessible name).
 pub(crate) fn row(ui: &mut Ui, spec: &Row<'_>, meta: Meta) -> Response {
+    sized_row(ui, spec, meta, Tokens::STATUS_BAR)
+}
+
+pub(crate) fn sized_row(ui: &mut Ui, spec: &Row<'_>, meta: Meta, height: f32) -> Response {
     let t = theme::tokens(ui.ctx());
     let font = theme::font(Tokens::SMALL_TEXT);
-    let size = egui::vec2(ui.available_width(), Tokens::STATUS_BAR);
+    let size = egui::vec2(ui.available_width(), height);
     let response = meta.place(ui, size);
     let state = State::of(&response, meta.enabled, spec.selected, false);
     if let Some(fill) = state.background(&t) {
@@ -72,12 +76,20 @@ pub(crate) fn row(ui: &mut Ui, spec: &Row<'_>, meta: Meta) -> Response {
     };
     ui.painter()
         .galley(text_pos(response.rect, left, &primary), primary, t.text);
+    let secondary_color = if height > Tokens::STATUS_BAR {
+        t.text_faint
+    } else {
+        t.text_dim
+    };
     if let Some(secondary) = spec.secondary {
         let rest = response.rect.right() - PAD - after;
-        if rest > 24.0 {
-            let galley = single_line(ui, secondary, font, t.text_dim, rest);
-            ui.painter()
-                .galley(text_pos(response.rect, after, &galley), galley, t.text_dim);
+        if rest > 0.0 {
+            let galley = single_line(ui, secondary, font, secondary_color, rest);
+            ui.painter().galley(
+                text_pos(response.rect, after, &galley),
+                galley,
+                secondary_color,
+            );
         }
     }
     focus_ring(ui, &response, Tokens::RADIUS_CONTROL);

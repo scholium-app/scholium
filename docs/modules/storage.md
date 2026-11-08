@@ -28,6 +28,7 @@ src/project/
 ├── handle.rs       不可变项目/资源身份、语言与入口声明、同格式副本
 ├── native.rs       临时版本信封、原生 Action 重放与快照
 ├── source.rs       私人草稿、磁盘基线、保存/重新载入
+├── member.rs       同锁编辑资源选择与派生构建草稿输入
 ├── migration.rs    只读会话导入、新项目验证与保留原库报告
 ├── files.rs        capability-relative 文件操作、同目录临时发布
 ├── materialize.rs  revision/manifest、恢复检查与显式继续
@@ -96,6 +97,13 @@ SQLite 连接不跨线程共享。浏览器存储另行适配，不将宿主持�
 外部 hash 变化返回 Conflict；没有未完成意图时 `reload` 显式丢弃 draft 并重读磁盘。
 物化完成但草稿清理前崩溃，磁盘/draft/已完成 manifest hash 三者一致时恢复新基线，避免假外部冲突。
 源文件缺失和空文件基线不同；损坏编码、锁冲突或失败提交不标记保存成功。
+
+`SourceProject::active_path` 表示当前编辑资源，独立于声明的构建入口。`select_resource` 在既有锁下校验同语言的安全相对路径，
+恢复该资源草稿，不发布项目设置；离开脏资源前重试 durable draft，失败保留当前内存输入与编辑目标。
+资源身份复用数据库与声明映射，更换构建入口时复用已编辑成员的身份。`save` / `reload` 只操作当前资源，
+其余私人草稿继续保留，可在再次选中时恢复；不提供多文件原子发布。
+`inputs` 返回校验后的全部保留草稿及当前输入，供派生编译和独立副本使用，不把副本变成另一正文权威。
+没有保存的其他成员不会因切换或关闭被丢弃；副本按资源分别物化全部输入，原项目磁盘保持原样。
 
 `migrate_session(source,target)` 只读一致验证 schema 0 或 structured v1 会话，生成独立项目及兼容报告；
 当前 head 作为一次导入事件，旧历史仍在保留的原会话。RawMath 保留并报告数量。

@@ -1,38 +1,31 @@
-//! The docked diagnostics panel (视图 → 诊断, Ctrl+J, or the status-bar count): 「问题」 rows
-//! only; layout facts remain in AUDIT. It sits above the status bar inside the editing
-//! area, resizes with a splitter and never covers the bars.
-use super::{Diagnostic, Severity};
+//! Flush, resizable problem dock. Its rows consume only kernel-neutral diagnostic batches.
 use crate::{
-    i18n::{self, Locale},
+    i18n,
     icons::Glyph,
     state::WorkspaceState,
     theme::{self, Tokens},
-    widgets::{Meta, Row, row, status_text},
+    widgets::{self, Meta, Row},
 };
 use eframe::egui::{self, Frame, Margin, Panel, Ui};
-use fluent_bundle::FluentValue;
+use scholium_model::diagnostic::{Diagnostic, Severity};
 
-/// Starting height of the panel in logical px.
 pub(crate) const DEFAULT_HEIGHT: f32 = 180.0;
 const MIN_HEIGHT: f32 = 64.0;
-/// Widest the panel may grow, as a share of the editing area.
 const MAX_SHARE: f32 = 0.6;
-/// Control id of the rows, which window checks click by index.
+const ROW_HEIGHT: f32 = 26.0;
+const GROUP_HEIGHT: f32 = 24.0;
 pub(crate) const ROW_ID: &str = "ui.diagnostics.row";
 const SURFACE: &str = "diagnostics";
 
 pub(crate) fn panel_id() -> egui::Id {
     egui::Id::new("scholium-diagnostics-panel")
 }
-
 fn was_open_id() -> egui::Id {
-    egui::Id::new("scholium-diagnostics-was-open")
+    panel_id().with("was-open")
 }
-
 pub(crate) fn row_id(index: usize) -> egui::Id {
     Meta::new(ROW_ID, SURFACE, "").indexed(index).id_for()
 }
-
 pub(crate) fn show(ui: &mut Ui, state: &mut WorkspaceState) {
     let ctx = ui.ctx().clone();
     let open = state.diagnostics && state.editor.is_some();
@@ -53,110 +46,208 @@ pub(crate) fn show(ui: &mut Ui, state: &mut WorkspaceState) {
         .frame(
             Frame::new()
                 .fill(t.focusbar)
-                .inner_margin(Margin::symmetric(Tokens::PAD_BAR as i8, 4)),
+                .inner_margin(Margin::symmetric(Tokens::PAD_BAR as i8, 0)),
         )
         .show(ui, |ui| contents(ui, state));
-    let rect = panel.response.rect;
     ui.painter().hline(
-        rect.x_range(),
-        rect.top() + 0.5,
+        panel.response.rect.x_range(),
+        panel.response.rect.top() + 0.5,
         egui::Stroke::new(1.0, t.separator),
     );
-    let rows = panel.inner;
-    if !was_open && rows > 0 {
-        ctx.memory_mut(|m| m.request_focus(row_id(0)));
+    if !was_open && let Some(index) = panel.inner.first() {
+        ctx.memory_mut(|m| m.request_focus(row_id(*index)));
     }
-    navigate(&ctx, state, rows);
+    navigate(&ctx, state, &panel.inner);
 }
-
-/// Draws the problem list and returns the number of rows.
-fn contents(ui: &mut Ui, state: &mut WorkspaceState) -> usize {
-    let locale = state.locale.resolve();
-    let Some(view) = state.editor.as_ref() else {
-        return 0;
-    };
-    let problems = view.problems.clone();
-    let jump = problems_section(ui, &problems, locale);
-    if let Some(index) = jump {
-        activate(state, &problems, index);
-    }
-    problems.len()
-}
-
-/// A click or Enter on a row: jump to its location, or just keep the panel open.
-fn activate(state: &mut WorkspaceState, problems: &[Diagnostic], index: usize) {
-    if let Some(target) = problems.get(index).and_then(|d| d.target) {
-        state.jump_request = Some(target);
-    }
-}
-
-fn section_title(ui: &mut Ui, key: &str, locale: Locale) {
-    let t = theme::tokens(ui.ctx());
-    ui.label(
-        egui::RichText::new(i18n::text(locale, key))
-            .font(theme::font(Tokens::SMALL_TEXT))
-            .color(t.text_dim),
-    );
-}
-
-fn problems_section(ui: &mut Ui, problems: &[Diagnostic], locale: Locale) -> Option<usize> {
-    let t = theme::tokens(ui.ctx());
+fn contents(ui: &mut Ui, state: &mut WorkspaceState) -> Vec<usize> {
+    let batch = super::current_batch(state);
     ui.spacing_mut().item_spacing.y = 0.0;
-    section_title(ui, "diag.panel.problems", locale);
-    let mut clicked = None;
+    header(ui, state, &batch.items);
+    if state.problems.output_tab {
+        egui::ScrollArea::both()
+            .id_salt("build-output")
+            .auto_shrink([false, false])
+            .show(ui, |ui| {
+                ui.add(
+                    egui::Label::new(egui::RichText::new(&state.problems.output).monospace())
+                        .selectable(true)
+                        .wrap_mode(egui::TextWrapMode::Extend),
+                );
+            });
+        return vec![];
+    }
+    let mut visible = vec![];
     egui::ScrollArea::vertical()
         .id_salt("diagnostics-rows")
         .auto_shrink([false, false])
         .show(ui, |ui| {
-            if problems.is_empty() {
-                let text = i18n::text(locale, "diag.panel.empty");
-                status_text(ui, &text, None, None);
+            if batch.items.is_empty() {
+                ui.label(i18n::text(state.locale.resolve(), "diag.panel.empty"));
             }
-            for (index, problem) in problems.iter().enumerate() {
-                let message = problem.text(locale);
-                let name = i18n::text_with(
-                    locale,
-                    "diag.panel.row",
-                    &[
-                        (
-                            "severity",
-                            i18n::text(locale, problem.severity.key()).into(),
-                        ),
-                        ("message", FluentValue::from(message.as_str())),
-                    ],
+            for (path, indices) in super::groups(&batch.items) {
+                let key = path.map(str::to_owned);
+                let collapsed = state.problems.collapsed.contains(&key);
+                let name = path
+                    .map(str::to_owned)
+                    .unwrap_or_else(|| i18n::text(state.locale.resolve(), "diag.panel.unmapped"));
+                let title = format!("{name} ({})", indices.len());
+                let meta = Meta::new("ui.problems.group", "problem-header", title.clone())
+                    .indexed(indices[0])
+                    .checked(Some(!collapsed));
+                let response = meta.place(ui, egui::vec2(ui.available_width(), GROUP_HEIGHT));
+                crate::icons::paint(
+                    ui.painter(),
+                    egui::Rect::from_center_size(
+                        response.rect.left_center() + egui::vec2(6.0, 0.0),
+                        egui::vec2(12.0, 12.0),
+                    ),
+                    if collapsed {
+                        Glyph::ChevronRight
+                    } else {
+                        Glyph::ChevronDown
+                    },
+                    (12.0, 1.0),
+                    theme::tokens(ui.ctx()).text_dim,
                 );
-                let (glyph, tint) = match problem.severity {
-                    Severity::Error => (Glyph::Error, t.error),
-                    Severity::Warning => (Glyph::Warning, t.warning),
-                    Severity::Info => (Glyph::Info, t.text_dim),
-                };
-                let spec = Row {
-                    secondary_right: false,
-                    glyph,
-                    tint,
-                    primary: &message,
-                    secondary: problem.excerpt.as_deref(),
-                    selected: false,
-                };
-                let meta = Meta::new(ROW_ID, SURFACE, name).indexed(index);
-                let response = row(ui, &spec, meta);
+                ui.painter().text(
+                    response.rect.left_center() + egui::vec2(16.0, 0.0),
+                    egui::Align2::LEFT_CENTER,
+                    title,
+                    theme::font(Tokens::SMALL_TEXT),
+                    theme::tokens(ui.ctx()).text_dim,
+                );
                 if response.clicked() {
-                    clicked = Some(index);
+                    if collapsed {
+                        state.problems.collapsed.remove(&key);
+                    } else {
+                        state.problems.collapsed.insert(key);
+                    }
+                }
+                if collapsed {
+                    continue;
+                }
+                for index in indices {
+                    visible.push(index);
+                    problem_row(ui, state, &batch.items[index], index);
                 }
             }
         });
-    clicked
+    visible
 }
-
-/// Up/Down move focus between rows; Esc hands focus back to the page.
-fn navigate(ctx: &egui::Context, state: &mut WorkspaceState, rows: usize) {
-    let focused = (0..rows).find(|i| ctx.memory(|m| m.has_focus(row_id(*i))));
-    let Some(index) = focused else {
+fn header(ui: &mut Ui, state: &mut WorkspaceState, items: &[Diagnostic]) {
+    let locale = state.locale.resolve();
+    ui.horizontal(|ui| {
+        let label = i18n::text(locale, "diag.panel.problems");
+        let title = format!("{label} ({})", items.len());
+        let meta = Meta::new("ui.problems.tab", "problem-header", title.clone())
+            .checked(Some(!state.problems.output_tab));
+        if widgets::status_button(ui, None, Some(&title), meta).clicked() {
+            state.problems.output_tab = false;
+        }
+        let title = i18n::text(locale, "diag.panel.output");
+        let meta = Meta::new("ui.problems.output", "problem-header", title.clone())
+            .checked(Some(state.problems.output_tab));
+        if widgets::status_button(ui, None, Some(&title), meta).clicked() {
+            state.problems.output_tab = true;
+        }
+        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            let meta = Meta::new(
+                "ui.problems.close",
+                "problem-header",
+                i18n::text(locale, "diag.panel.close"),
+            );
+            if widgets::status_button(ui, Some(Glyph::Close), None, meta).clicked() {
+                state.diagnostics = false;
+            }
+            for severity in [Severity::Warning, Severity::Error] {
+                let count = items
+                    .iter()
+                    .filter(|d| d.severity == severity)
+                    .count()
+                    .to_string();
+                widgets::status_button(
+                    ui,
+                    Some(if severity == Severity::Error {
+                        Glyph::Error
+                    } else {
+                        Glyph::Warning
+                    }),
+                    Some(&count),
+                    Meta::new(
+                        if severity == Severity::Error {
+                            "ui.problems.errors"
+                        } else {
+                            "ui.problems.warnings"
+                        },
+                        "problem-header",
+                        format!(
+                            "{} {count}",
+                            i18n::text(
+                                locale,
+                                if severity == Severity::Error {
+                                    "diag.severity.error"
+                                } else {
+                                    "diag.severity.warning"
+                                }
+                            )
+                        ),
+                    ),
+                );
+            }
+        });
+    });
+}
+fn problem_row(ui: &mut Ui, state: &mut WorkspaceState, issue: &Diagnostic, index: usize) {
+    let t = theme::tokens(ui.ctx());
+    let (glyph, tint, key) = match issue.severity {
+        Severity::Error => (Glyph::Error, t.error, "diag.severity.error"),
+        Severity::Warning => (Glyph::Warning, t.warning, "diag.severity.warning"),
+        Severity::Info => (Glyph::Info, t.text_dim, "diag.severity.info"),
+    };
+    let location = issue
+        .range
+        .as_ref()
+        .map(|r| format!("{}:{}", r.start.line, r.start.column))
+        .or_else(|| issue.log.as_ref().map(|l| format!("log:{}", l.line)));
+    let name = format!(
+        "{}: {} {} {}",
+        i18n::text(state.locale.resolve(), key),
+        issue.message,
+        issue.resource.as_deref().unwrap_or_default(),
+        location.as_deref().unwrap_or_default()
+    );
+    let spec = Row {
+        glyph,
+        tint,
+        primary: &issue.message,
+        secondary: location.as_deref(),
+        secondary_right: true,
+        selected: state.problems.selected == Some(index),
+    };
+    let response = widgets::sized_row(
+        ui,
+        &spec,
+        Meta::new(ROW_ID, SURFACE, name).indexed(index),
+        ROW_HEIGHT,
+    );
+    // Indexed ids retain each row's keyboard focus across repaints.
+    if response.clicked() {
+        super::activate(state, index);
+    }
+    if response.has_focus() {
+        response.scroll_to_me(Some(egui::Align::Center));
+    }
+}
+fn navigate(ctx: &egui::Context, state: &mut WorkspaceState, rows: &[usize]) {
+    let Some(position) = rows
+        .iter()
+        .position(|i| ctx.memory(|m| m.has_focus(row_id(*i))))
+    else {
         return;
     };
     ctx.memory_mut(|m| {
         m.set_focus_lock_filter(
-            row_id(index),
+            row_id(rows[position]),
             egui::EventFilter {
                 tab: false,
                 horizontal_arrows: false,
@@ -165,25 +256,23 @@ fn navigate(ctx: &egui::Context, state: &mut WorkspaceState, rows: usize) {
             },
         )
     });
-    crate::widgets::consume_activation(ctx);
+    widgets::consume_activation(ctx);
     let (down, up, escape) = ctx.input_mut(|i| {
-        let none = egui::Modifiers::NONE;
         (
-            i.consume_key(none, egui::Key::ArrowDown),
-            i.consume_key(none, egui::Key::ArrowUp),
-            i.consume_key(none, egui::Key::Escape),
+            i.consume_key(egui::Modifiers::NONE, egui::Key::ArrowDown),
+            i.consume_key(egui::Modifiers::NONE, egui::Key::ArrowUp),
+            i.consume_key(egui::Modifiers::NONE, egui::Key::Escape),
         )
     });
-    let next = if down && index + 1 < rows {
-        Some(index + 1)
-    } else if up && index > 0 {
-        Some(index - 1)
+    let next = if down {
+        (position + 1).min(rows.len() - 1)
+    } else if up {
+        position.saturating_sub(1)
     } else {
-        None
+        position
     };
-    if let Some(next) = next {
-        ctx.memory_mut(|m| m.request_focus(row_id(next)));
-        // The next frame draws the new focus; the one after lets the row hold the arrows.
+    if next != position {
+        ctx.memory_mut(|m| m.request_focus(row_id(rows[next])));
         ctx.request_repaint();
     }
     if escape {
