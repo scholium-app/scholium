@@ -166,6 +166,19 @@ impl FullBuild<'_> {
                 log
             }),
             Err(error) => {
+                if matches!(error, scholium_build::BuildError::OutputQuota) {
+                    return Err(Box::new(FullFailure {
+                        revision: self.source.revision(),
+                        log,
+                        diagnostics: scholium_model::diagnostic::DiagnosticBatch {
+                            revision: self.source.revision(),
+                            items: vec![scholium_model::diagnostic::Diagnostic::output_quota(
+                                scholium_model::diagnostic::DiagnosticKernel::Latex,
+                            )],
+                        },
+                    })
+                    .into());
+                }
                 if !matches!(error, scholium_build::BuildError::Tool(_)) {
                     return Err(error.into());
                 }

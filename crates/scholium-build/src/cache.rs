@@ -51,7 +51,7 @@ pub(crate) fn copy(source: &Path, destination: &Path) -> Result<(), BuildError> 
                 "symlink in trusted font cache".into(),
             ));
         } else if kind.is_dir() {
-            fs::create_dir(&target)?;
+            fs::create_dir_all(&target)?;
             copy(&entry.path(), &target)?;
         } else if kind.is_file() {
             fs::copy(entry.path(), target)?;

@@ -85,6 +85,22 @@ pub struct Diagnostic {
     pub log: Option<LogPosition>,
 }
 
+impl Diagnostic {
+    /// An unmapped, localizable infrastructure failure for a kernel's output quota.
+    pub fn output_quota(kernel: DiagnosticKernel) -> Self {
+        Self {
+            severity: Severity::Error,
+            kernel,
+            resource: None,
+            range: None,
+            node: None,
+            message: "Build output byte or inode limit exceeded".into(),
+            code: Some("diag.build.output_quota".into()),
+            log: None,
+        }
+    }
+}
+
 /// Complete current diagnostic list for one host revision.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct DiagnosticBatch {

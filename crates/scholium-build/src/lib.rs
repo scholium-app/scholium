@@ -2,6 +2,7 @@
 mod cache;
 mod launch;
 mod process;
+mod quota;
 mod runtime;
 mod sandbox;
 mod typst_preview;
@@ -18,6 +19,9 @@ pub enum BuildError {
     /// A filesystem or process operation failed.
     #[error(transparent)]
     Io(#[from] std::io::Error),
+    /// The kernel-enforced session output budget was exhausted.
+    #[error("build output byte or inode limit exceeded")]
+    OutputQuota,
     /// Trusted configuration violates the sandbox boundary.
     #[error("invalid sandbox configuration: {0}")]
     Configuration(String),

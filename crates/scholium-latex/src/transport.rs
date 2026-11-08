@@ -24,22 +24,17 @@ pub(crate) enum Launcher {
 
 impl Launcher {
     pub(crate) fn layout_pdf(&self, version: u64) -> Option<Vec<u8>> {
-        let work = match self {
-            Self::Sandbox { work, .. } => work,
+        match self {
+            Self::Sandbox { sandbox, work, .. } => sandbox
+                .read_output(
+                    work,
+                    std::path::Path::new(&format!("build/bg/layout-{version}.pdf")),
+                    64 * 1024 * 1024,
+                )
+                .ok(),
             #[cfg(test)]
-            Self::Fake { .. } => return None,
-        };
-        let path = work
-            .join(format!("build/bg/layout-{version}.pdf"))
-            .canonicalize()
-            .ok()?;
-        if !path.starts_with(work)
-            || !path.is_file()
-            || path.metadata().ok()?.len() > 64 * 1024 * 1024
-        {
-            return None;
+            Self::Fake { .. } => None,
         }
-        std::fs::read(path).ok()
     }
     pub(crate) async fn capabilities(
         &self,
@@ -192,7 +187,7 @@ impl Worker {
         let (sender, messages) = mpsc::channel(8);
         let total = Arc::new(AtomicUsize::new(0));
         let limits = (config.line_bytes, config.total_bytes);
-        let readers = vec![
+        let mut readers = vec![
             tokio::spawn(protocol::read(
                 out,
                 sender.clone(),
@@ -200,8 +195,24 @@ impl Worker {
                 total.clone(),
                 false,
             )),
-            tokio::spawn(protocol::read(err, sender, limits, total, true)),
+            tokio::spawn(protocol::read(err, sender.clone(), limits, total, true)),
         ];
+        let quota = match &process {
+            Process::Sandbox(child) => Some(child.output_quota_exceeded()),
+            #[cfg(test)]
+            Process::Fake(_) => None,
+        };
+        if let Some(exceeded) = quota {
+            readers.push(tokio::spawn(async move {
+                loop {
+                    tokio::time::sleep(Duration::from_millis(10)).await;
+                    if exceeded.load(std::sync::atomic::Ordering::Acquire) {
+                        let _ = sender.send(Incoming::OutputQuota).await;
+                        break;
+                    }
+                }
+            }));
+        }
         Ok(Self {
             process,
             input,

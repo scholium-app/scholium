@@ -42,8 +42,10 @@ Typst 编译、LaTeX 整编与 rtex 共用一个 Sandbox 产品执行路径；�
 - 取消杀整个 scope 和宿主进程组；清理完成前不释放会话缓存。进程在宿主退出时受 bubblewrap parent/PID 边界约束。
 - 后台 pass 超时由上游配置，宿主监督会话心跳与单次操作计时；不把整个会话截止时间当作编译超时。
 
-资源机制的决策见 [ADR 0050](../adr/ADR-0050-linux-live-session-cgroups.md)。累计 `/work` 磁盘配额尚未实现；
-单文件限制不代表累计配额。其他平台不提供无隔离降级。
+资源机制的决策见 [ADR 0050](../adr/ADR-0050-linux-live-session-cgroups.md)。每次执行树的 `/work` 或 `/out` 与字体缓存使用独立 tmpfs，默认总量 512 MiB/32768 inode，
+由 ResourceLimits 配置；输出不再直接写宿主目录。空间或 inode 耗尽终止 scope 并报告 OutputQuota。
+宿主仅 capability 读取 live 文件或在整编结束后双预算复制普通文件，后续 pass 恢复有界状态。
+机制和安装 helper 要求见 [ADR 0058](../adr/ADR-0058-output-quota-decoder-boundary.md)。其他平台不提供无隔离降级。
 
 ## 失败处理
 
@@ -97,10 +99,12 @@ app 不持有 sandbox 实现，只组装请求、调用 build、检查 revision 
 
 执行复用 `Sandbox::launch/run`、`SandboxProcess` 的进程组/scope 取消和有界 stdout/stderr（各 1 MiB）。
 请求/页面协议不由 build 解析；app 与 Typst 内核保持输入 16 MiB、元数据 1 MiB、最多 100 页、
-RGBA 总量 64 MiB、单边 8192 px 的检查。单文件限制不代表输出目录累计磁盘配额。
+RGBA 总量 64 MiB、单边 8192 px 的检查。输出目录同时受独立 tmpfs 的总 byte/inode 配额。
 边界见 [ADR 0055](../adr/ADR-0055-source-preview-worker.md)。
 
 常规单元测试无需真实 namespace，验证 Typst 的完整 argv、唯一挂载白名单、截止时间收紧、目录重叠拒绝，
 以及 TeX profile 的原缓存/CPU 策略。ignored 原生测试
 `typst_preview_enforces_mounts_budgets_and_cancels_descendants` 编译固定受信 fixture，验证真实文件/网络隔离、
 cgroup 与 rlimit、stdio 超限、显式整树取消及 10 秒超时；缺少原生前提时失败并注明未运行，不计通过。
+
+`read_output(work, relative, limit)` 经私有 tmpfs capability 句柄读取正在运行的会话文件，拒绝根外路径与超限数据。

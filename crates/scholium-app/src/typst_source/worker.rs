@@ -65,7 +65,16 @@ impl Backend {
                         error: Some(error.to_string()),
                         diagnostics: DiagnosticBatch {
                             revision: request.revision,
-                            items: Vec::new(),
+                            items: if error
+                                .to_string()
+                                .contains("output byte or inode limit exceeded")
+                            {
+                                vec![scholium_model::diagnostic::Diagnostic::output_quota(
+                                    scholium_model::diagnostic::DiagnosticKernel::Typst,
+                                )]
+                            } else {
+                                Vec::new()
+                            },
                         },
                         pages: Vec::new(),
                         elapsed: started.elapsed(),

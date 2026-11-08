@@ -262,3 +262,5 @@ LiveSession 的 edit 在当前项目 capability 下先加载目标资源，再�
 轻量词法扫描识别 part/chapter/section/subsection/subsubsection/paragraph/subparagraph、星号与可选短标题、嵌套标题组、begin/end；
 跳过注释、转义控制序列、verb 与 verbatim/lstlisting/minted 中的假结构，document 不占环境层级。
 不展开宏、不推断计数器或宏生成的章节；破损未闭合标题不创建目标。调用方按当前文本失效缓存，不保存第二份源码权威。
+
+Live quota 事件终止会话并保留可保存的源码快照；整编 quota 错误作为当前 revision 的 FullFailure 诊断返回。live PDF 由 build 私有卷的 capability 读取。

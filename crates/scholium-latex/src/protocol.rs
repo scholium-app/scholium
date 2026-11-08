@@ -13,6 +13,7 @@ use tokio::{
 #[derive(Debug)]
 pub(crate) enum Incoming {
     Message(Value),
+    OutputQuota,
     Diagnostic(String),
     Fatal(String),
 }

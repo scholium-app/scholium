@@ -25,8 +25,39 @@ impl Sandbox {
                 .unwrap_or_default()
                 .to_string_lossy()
         );
-        let command = self.command(project, work, cache.path(), &scope, argv);
-        SandboxProcess::spawn(command, scope, cache)
+        let volume = std::sync::Arc::new(crate::quota::Volume::create(self.limits)?);
+        crate::quota::copy_tree(work, &volume.path, volume.budget)?;
+        let private_cache = volume.path.join(".font-cache");
+        crate::cache::copy(cache.path(), &private_cache)?;
+        use std::os::fd::AsRawFd;
+        let mounted = volume.stage.path().join("mount");
+        let template = self.command(
+            project,
+            &mounted,
+            &mounted.join(".font-cache"),
+            &scope,
+            argv,
+        );
+        let mut command = Command::new(template.as_std().get_program());
+        for arg in template.as_std().get_args() {
+            if arg == "/usr/bin/bwrap" {
+                command
+                    .arg("/usr/bin/nsenter")
+                    .arg("--preserve-credentials")
+                    .arg(format!(
+                        "--user=/proc/self/fd/{}",
+                        volume.namespace.as_raw_fd()
+                    ))
+                    .arg(format!(
+                        "--mount=/proc/self/fd/{}",
+                        volume.mount_namespace.as_raw_fd()
+                    ))
+                    .arg("--");
+            }
+            command.arg(arg);
+        }
+        crate::quota::register(work, &volume);
+        SandboxProcess::spawn(command, scope, cache, volume, work.to_owned())
     }
 
     pub(crate) fn command(
@@ -118,12 +149,10 @@ impl Sandbox {
         } else {
             "/work"
         };
-        for (mode, source, target) in [("--ro-bind", project, "/project"), ("--bind", work, output)]
-        {
-            args.extend([mode.into(), source.into(), target.into()]);
-        }
+        args.extend(["--ro-bind".into(), project.into(), "/project".into()]);
+        bind_output(&mut args, work, output);
         if self.profile != BuildProfile::TypstPreview {
-            args.extend(["--bind".into(), cache.into(), "/rtex/texmf-var".into()]);
+            bind_output(&mut args, cache, "/rtex/texmf-var");
         }
         args.extend(
             [
@@ -169,4 +198,8 @@ impl Sandbox {
             ]
         }
     }
+}
+
+fn bind_output(args: &mut Vec<OsString>, source: &Path, target: &str) {
+    args.extend(["--bind".into(), source.into(), target.into()]);
 }

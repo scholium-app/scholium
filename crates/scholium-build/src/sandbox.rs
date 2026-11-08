@@ -26,12 +26,18 @@ pub struct ResourceLimits {
     pub memory_bytes: u64,
     /// Maximum number of processes/threads in the cgroup.
     pub tasks: u32,
+    /// Total allocated output bytes per session (includes the writable font cache).
+    pub output_bytes: u64,
+    /// Total output files and directories per session, including the root inode.
+    pub output_inodes: u64,
 }
 impl Default for ResourceLimits {
     fn default() -> Self {
         Self {
             memory_bytes: 2 * 1024 * MIB,
             tasks: 64,
+            output_bytes: 512 * MIB,
+            output_inodes: 32_768,
         }
     }
 }
@@ -64,7 +70,11 @@ impl Sandbox {
         toolchain: RtexToolchain,
         limits: ResourceLimits,
     ) -> Result<Self, BuildError> {
-        if limits.memory_bytes == 0 || limits.tasks == 0 {
+        if limits.memory_bytes == 0
+            || limits.tasks == 0
+            || limits.output_bytes == 0
+            || limits.output_inodes == 0
+        {
             return Err(BuildError::Configuration("zero resource budget".into()));
         }
         let mut sandbox = Self {
@@ -98,7 +108,11 @@ impl Sandbox {
         font_cache: PathBuf,
         limits: ResourceLimits,
     ) -> Result<Self, BuildError> {
-        if limits.memory_bytes == 0 || limits.tasks == 0 {
+        if limits.memory_bytes == 0
+            || limits.tasks == 0
+            || limits.output_bytes == 0
+            || limits.output_inodes == 0
+        {
             return Err(BuildError::Configuration("zero resource budget".into()));
         }
         let mut sandbox = Self {
@@ -196,6 +210,19 @@ impl Sandbox {
             .tempdir()?;
         cache::copy(&persistent.join("ready"), session.path())?;
         self.spawn(&project, &work, session, argv)
+    }
+
+    /// Read a bounded regular file from a running session's private output volume.
+    /// Relative paths are capability-confined; outputs are not exposed as host mounts.
+    /// # Errors
+    /// Reports a missing session/file, escaped paths, non-regular files or excess bytes.
+    pub fn read_output(
+        &self,
+        work: &Path,
+        relative: &Path,
+        limit: u64,
+    ) -> Result<Vec<u8>, BuildError> {
+        crate::quota::read(&work.canonicalize()?, relative, limit)
     }
 
     pub(crate) fn cache_path(&self) -> Result<&Path, BuildError> {

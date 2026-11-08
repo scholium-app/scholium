@@ -112,3 +112,5 @@ ResourceGeneration/SceneStamp；场景采纳比较全部字段，不能仅比较
 Windows 分隔符与盘符。映射失败时 resource/range 留空，不能改指主文件或邻近节点。
 `LogPosition` 保存原日志中从 1 开始的行号与 UTF-8 header 范围，独立于源码位置；原始日志由生产者保留。
 枚举序列化为显式 snake_case 名称；该接口是编译结果 DTO，不是新的持久化 schema。
+
+统一 Diagnostic 的 `diag.build.output_quota` code 表示无源码位置的输出配额错误；文案由 app 本地化。

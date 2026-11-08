@@ -54,6 +54,7 @@ impl Sandbox {
             limits: ResourceLimits {
                 memory_bytes: 4 * 1024 * 1024 * 1024,
                 tasks: 64,
+                ..ResourceLimits::default()
             },
             profile: BuildProfile::TypstPreview,
         })

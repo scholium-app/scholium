@@ -10,7 +10,9 @@ publish = false
 thiserror = "=2.0.20"
 tokio = { version = "=1.53.3", features = ["process", "io-util", "time", "sync", "rt", "macros"] }
 tempfile = "=3.27.0"
-nix = { version = "=0.31.3", features = ["signal", "process"] }
+nix = { version = "=0.31.3", features = ["signal", "process", "mount", "socket", "uio", "fs"] }
+
+cap-std = "3"
 
 [dev-dependencies]
 serde_json = "=1.0.151"

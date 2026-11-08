@@ -639,3 +639,5 @@ math-input-category-punctuation = Punctuation
 math-input-category-structure = Structure
 
 chrome-status-settings_hint = Open project settings to change the preview engine
+
+diag-build-output_quota = Build stopped: output byte or file-count budget exceeded. Reduce generated files or restart the session.

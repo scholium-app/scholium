@@ -3383,6 +3383,7 @@ dependencies = [
  "cfg-if",
  "cfg_aliases",
  "libc",
+ "memoffset",
 ]
 
 [[package]]
@@ -4699,6 +4700,7 @@ dependencies = [
 name = "scholium-build"
 version = "0.1.0"
 dependencies = [
+ "cap-std",
  "nix",
  "serde_json",
  "tempfile",
