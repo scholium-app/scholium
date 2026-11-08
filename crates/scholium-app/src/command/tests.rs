@@ -255,7 +255,6 @@ fn composition_blocks_writes_file_actions_and_mode_switches() {
 #[test]
 fn unimplemented_commands_are_absent_from_the_registry_and_keymap() {
     for id in [
-        "file.export",
         "edit.find",
         "format.underline",
         "document.page_size",
@@ -439,4 +438,24 @@ fn labelled_menu_commands_do_not_repeat_labels_in_tooltips() {
         command.meta(&state, "toolbar").tip.is_some(),
         "icons need a name and shortcut"
     );
+}
+
+#[test]
+fn pdf_export_is_available_for_every_open_project_kernel() {
+    let export = registry::get("file.export").expect("shared PDF export command");
+    for language in [
+        None,
+        Some(scholium_storage::project::ProjectLanguage::Typst),
+        Some(scholium_storage::project::ProjectLanguage::Latex),
+    ] {
+        let state = WorkspaceState {
+            editor: Some(Default::default()),
+            source_language: language,
+            ..Default::default()
+        };
+        assert!(export.visible(&state));
+        assert!((export.availability)(&CommandContext::of(&state)).is_enabled());
+    }
+    assert!(!(export.availability)(&CommandContext::of(&WorkspaceState::default())).is_enabled());
+    assert!(super::keymap::effective().hint("file.export").is_some());
 }

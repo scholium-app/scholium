@@ -51,6 +51,10 @@ struct Page {
     origin: RasterOrigin,
 }
 impl Workspace {
+    pub(crate) fn export_revision(&self) -> u64 {
+        self.revision
+    }
+
     pub(crate) fn open(
         source: scholium_storage::project::SourceProject,
         ctx: &egui::Context,
@@ -383,7 +387,7 @@ fn preview(
 }
 
 // Preview snapshots are derived from the durable editor, including recovered unsaved drafts.
-fn preview_source(
+pub(crate) fn preview_source(
     source: &scholium_storage::project::SourceProject,
 ) -> Result<SourceSession, scholium_latex::LatexError> {
     let handle = source.handle();

@@ -3,6 +3,7 @@ mod confirmation;
 mod conflict;
 mod dialog;
 pub(crate) mod environment;
+mod export;
 mod new_project;
 mod picker;
 mod recent;
@@ -23,6 +24,7 @@ pub(crate) enum FileDialog {
     Open,
     Recent,
     SaveAs,
+    Export,
     Import,
     Settings,
     Entry,
@@ -37,6 +39,7 @@ enum Operation {
 #[derive(Default)]
 pub(crate) struct ProjectFiles {
     dialog: Option<FileDialog>,
+    export: Option<std::sync::mpsc::Receiver<crate::pdf_export::Completed>>,
     path: String,
     entry: String,
     new: new_project::NewProject,
@@ -89,6 +92,16 @@ impl ProjectFiles {
                         picker::Purpose::Open,
                         Box::new(picker::FallbackPicker::open()),
                     ));
+                }
+                FileDialog::Export => {
+                    self.path = project
+                        .as_ref()
+                        .map(|p| {
+                            crate::pdf_export::default_target(p.handle())
+                                .display()
+                                .to_string()
+                        })
+                        .unwrap_or_default();
                 }
                 FileDialog::Settings => {
                     self.settings = project.as_ref().map(|p| p.handle().settings())
@@ -239,6 +252,8 @@ impl ProjectFiles {
         match result {
             Ok(Some(next)) => {
                 *project = Some(next);
+                state.problems.export = None;
+                state.export_status = Default::default();
                 self.locked = None;
                 state.storage_error = None;
                 state.edit_error = None;

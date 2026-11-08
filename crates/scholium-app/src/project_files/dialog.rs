@@ -13,6 +13,7 @@ impl ProjectFiles {
         let title = match dialog {
             FileDialog::Recent => "command.file.recent.title",
             FileDialog::SaveAs => "command.file.save_as.title",
+            FileDialog::Export => "command.file.export.title",
             FileDialog::Import => "project.import",
             FileDialog::Entry => "project.entry.required",
             _ => return,
@@ -27,6 +28,7 @@ impl ProjectFiles {
             submit.enabled = !self.path.trim().is_empty()
                 && (!matches!(dialog, FileDialog::Import | FileDialog::Entry)
                     || !self.entry.trim().is_empty());
+            submit.enabled &= dialog != FileDialog::Export || self.export.is_none();
             buttons.push(submit);
         }
         let action = crate::widgets::dialog(
@@ -55,13 +57,18 @@ impl ProjectFiles {
                         audit_rect(&format!("entry.{label}"), r.rect);
                     }
                 } else {
-                    ui.label(text(if dialog == FileDialog::Import {
+                    ui.label(text(if dialog == FileDialog::Export {
+                        "export.path"
+                    } else if dialog == FileDialog::Import {
                         "project.path.open"
                     } else {
                         "project.path.new"
                     }));
                     let path = crate::widgets::text_input(ui, &mut self.path, None);
                     audit_rect("path", path.rect);
+                    if dialog == FileDialog::Export {
+                        ui.label(text("export.current"));
+                    }
                     if dialog == FileDialog::Import {
                         crate::widgets::field_gap(ui);
                         ui.label(text("project.import.target"));
@@ -93,6 +100,11 @@ impl ProjectFiles {
                 state,
                 project,
             ),
+            FileDialog::Export => {
+                if let Some(p) = project {
+                    self.begin_export(ctx, state, p, path);
+                }
+            }
             FileDialog::SaveAs => {
                 if let Some(p) = project {
                     match p.save_as(&path) {

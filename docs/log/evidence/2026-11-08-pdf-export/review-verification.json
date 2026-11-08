@@ -1,0 +1,32 @@
+{
+  "app_latex_tests": {
+    "passed": 446,
+    "failed": 0,
+    "ignored": 9
+  },
+  "native_latex": {
+    "passed": 1,
+    "engines": [
+      "pdflatex",
+      "xelatex",
+      "lualatex"
+    ],
+    "dpi": 300,
+    "rgba_tolerance": 0
+  },
+  "regression": {
+    "hundred_page_pdf": "pass",
+    "no_full_rasterizer_in_worker": "pass",
+    "before_fix_failures": 2
+  },
+  "performance_benchmark_run": false,
+  "window": {
+    "passed": 2,
+    "failed": 0,
+    "assertions_per_locale": 10,
+    "locales": [
+      "zh-Hans",
+      "en"
+    ]
+  }
+}

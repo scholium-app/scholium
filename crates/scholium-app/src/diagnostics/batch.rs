@@ -5,6 +5,7 @@ use std::collections::BTreeSet;
 #[derive(Debug, Default)]
 pub(crate) struct Problems {
     pub batch: DiagnosticBatch,
+    pub export: Option<DiagnosticBatch>,
     pub output: String,
     pub selected: Option<usize>,
     pub output_tab: bool,

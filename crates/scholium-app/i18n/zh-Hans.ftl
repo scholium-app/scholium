@@ -633,3 +633,13 @@ math-input-category-punctuation = 标点
 math-input-category-structure = 结构
 
 chrome-status-settings_hint = 打开项目设置，调整预览引擎
+
+export-progress = 正在导出 PDF…
+export-done = PDF 已导出 · { $pages } 页
+export-failed = PDF 导出失败
+export-report = { $engine } · 修订 { $revision } · { $ms } 毫秒 · { $path }
+export-unsaved = （包含未保存的编辑）
+export-no_bibliography = 本次未运行参考文献处理。
+export-path = PDF 保存位置
+export-current = 导出编辑器当前修订，包含尚未保存的编辑。
+export-settings_failed = 无法记住 PDF 保存位置：{ $error }
