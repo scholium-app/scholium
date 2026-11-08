@@ -635,3 +635,19 @@ math-input-category-structure = 结构
 chrome-status-settings_hint = 打开项目设置，调整预览引擎
 
 diag-build-output_quota = 构建已停止：输出总字节数或文件数量超出配额。请减少生成文件或重新启动会话。
+
+source-find-previous = 上一个
+source-find-next = 下一个
+source-find-case = 区分大小写
+source-find-word = 全字匹配
+source-find-close = 关闭
+source-find-replacement = 替换为
+source-find-replace = 替换
+source-find-replace_all = 全部替换
+source-find-count = 第 {$current} 个，共 {$count} 个匹配
+source-find-scanning = 查找中…已找到 {$count} 个
+source-find-limited = 达到查找上限，请缩小查询范围
+reason-source_find = 查找仅用于可编辑源码视图。
+command-edit-replace =
+    .title = 替换…
+    .tooltip = 在源码中查找与替换

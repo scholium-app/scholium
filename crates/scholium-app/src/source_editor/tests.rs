@@ -96,7 +96,7 @@ fn find_marks_exact_utf8_match_in_large_scrollable_source() {
     let mut f = Fixture::new(&"large 文本 source\n".repeat(3000));
     f.events(vec![key(egui::Key::F, egui::Modifiers::COMMAND)]);
     assert!(f.editor.find_open);
-    f.editor.query = "文本".into();
+    f.editor.search.query = "文本".into();
     f.events(vec![]);
     let mut section = None;
     let mut output = f.ctx.run_ui(egui::RawInput::default(), |ui| {
@@ -251,4 +251,22 @@ fn cancelling_a_source_command_keeps_focus_for_the_next_edit() {
     f.events(vec![release]);
     f.events(vec![egui::Event::Paste("next".into())]);
     assert_eq!(f.text, "originalnext");
+}
+
+#[test]
+fn replacing_all_unicode_matches_is_one_native_undo_step() {
+    let initial = "alpha 中 alpha\nalpha";
+    let mut f = Fixture::new(initial);
+    f.editor.search.query = "alpha".into();
+    f.editor.search.replacement = "β".into();
+    f.editor.search.refresh(&f.text);
+    while !f.editor.search.complete() {
+        f.editor.search.step();
+    }
+    let replaced = f.editor.search.replaced(true).expect("matches");
+    f.editor.replace_transaction(&f.ctx, &mut f.text, replaced);
+    f.events(vec![]);
+    assert_eq!(f.text, "β 中 β\nβ");
+    f.events(vec![key(egui::Key::Z, egui::Modifiers::COMMAND)]);
+    assert_eq!(f.text, initial);
 }

@@ -147,3 +147,23 @@ keys = ["F8"]
 command = "view.problem.previous"
 scope = "global"
 keys = ["Shift+F8"]
+
+[[binding]]
+command = "edit.find"
+scope = "source"
+keys = ["Ctrl+F"]
+
+[[binding]]
+command = "edit.replace"
+scope = "source"
+keys = ["Ctrl+H"]
+
+[[binding]]
+command = "edit.find_next"
+scope = "source"
+keys = ["F3"]
+
+[[binding]]
+command = "edit.find_previous"
+scope = "source"
+keys = ["Shift+F3"]

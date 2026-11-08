@@ -11,8 +11,43 @@ pub(super) fn specs() -> Vec<CommandSpec> {
         "edit.find",
         icon: IconId::Find,
         menu: menu!(Edit, 2, 0),
-        availability: avail::unimplemented,
+        availability: avail::source_find,
+        routing: Routing::Editor,
+        action: Action::SourceFind(crate::source_editor::find::FindAction::Open),
     });
+    for (id, action) in [
+        (
+            "edit.replace",
+            crate::source_editor::find::FindAction::Replace,
+        ),
+        (
+            "edit.find_next",
+            crate::source_editor::find::FindAction::Next,
+        ),
+        (
+            "edit.find_previous",
+            crate::source_editor::find::FindAction::Previous,
+        ),
+    ] {
+        let mut spec = super::spec::CommandSpec {
+            id,
+            title: "command.edit.replace.title",
+            tooltip: "command.edit.replace.tooltip",
+            action: Action::SourceFind(action),
+            availability: avail::source_find,
+            routing: Routing::Editor,
+            ..super::spec::CommandSpec::BASE
+        };
+        if id == "edit.replace" {
+            spec.menu = Some(super::spec::MenuPlacement {
+                menu: super::spec::MenuId::Edit,
+                submenu: None,
+                group: 2,
+                order: 1,
+            });
+        }
+        specs.push(spec);
+    }
     specs.push(command! {
         "edit.select_all",
         routing: Routing::Editor,
@@ -20,7 +55,10 @@ pub(super) fn specs() -> Vec<CommandSpec> {
         action: Action::Editor(crate::typst_editor::Command::SelectAll),
     });
     for spec in &mut specs {
-        if !matches!(spec.action, Action::Undo | Action::Redo) {
+        if !matches!(
+            spec.action,
+            Action::Undo | Action::Redo | Action::SourceFind(_)
+        ) {
             spec.kernels = super::spec::Kernel::NATIVE;
         }
     }
