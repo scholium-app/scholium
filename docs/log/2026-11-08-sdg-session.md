@@ -47,7 +47,7 @@ seed 在 actor attach 时建立，避免第一次 checkpoint 前的历史丢失�
 
 ## 测试与门禁
 
-最终 [workspace 测试日志](evidence/2026-11-08-sdg-session/tests.log.gz) 记录了 **758 passed、0 failed、18 ignored**。
+合并 main 前的 [workspace 测试日志](evidence/2026-11-08-sdg-session/tests.log.gz) 记录了 **758 passed、0 failed、18 ignored**。
 新增覆盖包括：四类结构冲突（wrap/delete、竞争 parent move、删除祖先/远端 child、并发 wrap）、
 模拟远端 actor 的 undo/redo、三个固定种子的乱序/重复/随机穿插重放、含 pending 的 snapshot 恢复、
 复合命令单 Action、拒绝输入回滚、ENOSPC 提交失败重试、严格旧格式迁移与未知版本拒绝。
@@ -83,12 +83,12 @@ system 与 `SCHOLIUM_TEST_FONTS=bundled` 两个 profile 均 **31/31 pixels equal
 保留了证据。最终二进制的 [SHA-256](evidence/2026-11-08-sdg-session/window-binaries.json) 在完整重跑前记录。
 所有窗口运行均通过 runner 的机器级锁和私有 Xvfb，没有接触用户桌面。
 
-最终完整运行 `python3 scripts/window-checks.py --locale zh-Hans en --out target/t52-windows-final2`
+合并 main 前完整运行 `python3 scripts/window-checks.py --locale zh-Hans en --out target/t52-windows-final2`
 退出码 0，**64/64 PASS（中文 32/32、英文 32/32）**，没有跳过或重试单项。
 [最终完整日志](evidence/2026-11-08-sdg-session/windows-final.log)、
 [逐项结果与耗时](evidence/2026-11-08-sdg-session/windows-final.json) 保留全部门禁结果。
 `undo-group`、`backspace-block-merge`、全部 `math-*` 两个语言配置均通过，且脚本保持原样。
-最终构建哈希在运行前后完全一致。大量原始 AUDIT/截图留在 ignored `target/t52-windows-final2`，
+该轮构建哈希在运行前后完全一致。大量原始 AUDIT/截图留在 ignored `target/t52-windows-final2`，
 提交证据仅保留引用的最终/失败记录，合计小于 1.5 MB。
 
 ## 延迟测量
@@ -110,7 +110,7 @@ p50 约翻倍、p95 增加约 21%，属于可见回归；新增 CRDT preflight�
 
 ## 偏离、边界与未做项
 
-保持了 `undo-group`、`backspace-block-merge`、`math-*` 窗口脚本原样。
+本任务没有直接修改 `undo-group`、`backspace-block-merge`、`math-*` 窗口脚本。
 `native-check.py` 的旧断言要求 undo 回退共享 revision，与追加式 Action 冲突；改为逐项精确比较 document/blocks
 （含全部 NodeId），同时验证 revision 递增，保存/重开仍比较完整 snapshot，没有放松像素或时延阈值。
 `source-preview-layout-check.py` 使用失效的 `SCHOLIUM_RTEX_BINARY`，没有触发缺失工具链场景；
@@ -121,3 +121,35 @@ p50 约翻倍、p95 增加约 21%，属于可见回归；新增 CRDT preflight�
 设备 journal 随会话历史增长，失败回滚重放其历史；大型文档/长会话性能仍需单独验证。
 没有自动阈值 checkpoint 调度、持久化 undo、网络协议、协作 UI、历史 DAG、GC、跨平台断电或真实断电验收。
 这次完成初始化/迁移/显式保存的 durable checkpoints 与真实 SIGKILL 恢复，不据此宣称上述未做项通过。
+
+
+## 推送前 main 更新与最终重验
+
+最后一次 fetch 时 main 合入了 #111（`8b7f6fc`，输入等待计数和审计行单次写入），任务提交
+`ea36e8e` 已先推送；随后按约定用带签署行的 `fd198cf` 合并 main，没有冲突，没有 rebase。
+main 带来的 `math-enter`/`parity` 脚本调整原样保留，不将它们归为本任务放宽检查。
+合并后的全部 gates 重新运行：**759 passed、0 failed、18 ignored**，其余门禁全部 PASS，
+两个 stock profile 再次各 31/31 pixel equal，完整双语言窗口再次 **64/64 PASS**。
+最终执行 `python3 scripts/window-checks.py --locale zh-Hans en --out target/t52-windows-merged`，
+返回 0；[完整窗口日志](evidence/2026-11-08-sdg-session/windows-merged.log) 与
+[运行前后相同的二进制哈希](evidence/2026-11-08-sdg-session/window-merged-binaries.json) 可核对。
+
+合并后的最终门禁与证据：
+
+| 命令 | 结果 | 证据 |
+|---|---|---|
+| `cargo fmt --all -- --check` | PASS | [fmt](evidence/2026-11-08-sdg-session/merged-fmt.log) |
+| `cargo clippy --locked --workspace --all-targets -- -D warnings` | PASS | [clippy](evidence/2026-11-08-sdg-session/merged-clippy.log) |
+| `cargo test --locked --workspace` | PASS | [tests](evidence/2026-11-08-sdg-session/merged-tests.log.gz) |
+| `RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps` | PASS | [rustdoc](evidence/2026-11-08-sdg-session/merged-doc.log) |
+| `python3 scripts/check-rust-size.py` | PASS | [size](evidence/2026-11-08-sdg-session/merged-size.log) |
+| `python3 scripts/check-doc-links.py` | PASS | [links](evidence/2026-11-08-sdg-session/merged-links.log) |
+| `python3 scripts/check-ui-strings.py` | PASS | [strings](evidence/2026-11-08-sdg-session/merged-strings.log) |
+| `python3 scripts/check-layers.py` | PASS | [layers](evidence/2026-11-08-sdg-session/merged-layers.log) |
+| `cargo deny --locked check licenses bans sources` | PASS | [deny](evidence/2026-11-08-sdg-session/merged-deny.log) |
+| `cargo build --locked -p scholium-app -p scholium-storage --bins` | PASS | [build](evidence/2026-11-08-sdg-session/merged-build.log) |
+
+最终 [门禁退出码](evidence/2026-11-08-sdg-session/merged-gates.json)、
+[stock system](evidence/2026-11-08-sdg-session/merged-stock-system.json)、
+[stock bundled](evidence/2026-11-08-sdg-session/merged-stock-bundled.json) 保留重跑记录。
+最终只补充验证文档及证据，没有再改实现。未创建 PR，未轮询 CI。
