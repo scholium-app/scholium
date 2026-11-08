@@ -129,3 +129,30 @@ class Chrome:
     def overflow(self, command_id):
         self.click("ui.toolbar.overflow", "toolbar")
         self.click(command_id, "overflow")
+
+
+XDO_VALUE_OPTIONS = {"--delay", "--window", "--repeat"}
+
+
+def expected_inputs(args):
+    """Fewest counted app input events an xdotool input command produces.
+
+    Every typed character yields a Text or key-press event, every key chord one key press and
+    every click one button press. Waiting for all of them keeps a check from reading the state
+    while part of a typed word is still queued and then attributing it to the next command.
+    """
+    command, rest = args[0], [str(a) for a in args[1:]]
+    if command == "click":
+        return int(rest[rest.index("--repeat") + 1]) if "--repeat" in rest else 1
+    words, index = [], 0
+    while index < len(rest):
+        if rest[index] == "--":
+            words += rest[index + 1:]
+            break
+        if rest[index] in XDO_VALUE_OPTIONS:
+            index += 2
+            continue
+        if not rest[index].startswith("--"):
+            words.append(rest[index])
+        index += 1
+    return sum(len(w) for w in words) if command == "type" else len(words)

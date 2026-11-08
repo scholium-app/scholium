@@ -12,6 +12,8 @@ import subprocess
 import sys
 import time
 
+from chrome_ui import expected_inputs
+
 binary = Path(sys.argv[1]).resolve()
 output = Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
@@ -29,17 +31,25 @@ def state():
     return json.loads(lines[-1][6:]) if lines else None
 
 
+# input_seq the app must reach before a state counts: every event of the last input command.
+pending_input = 0
+
+
 def wait(predicate, what, timeout=60):
     end = time.monotonic() + timeout
     while time.monotonic() < end:
         current = state()
-        if current and predicate(current):
+        if current and current.get("input_seq", 0) >= pending_input and predicate(current):
             return current
         time.sleep(0.05)
     raise RuntimeError(f"timeout: {what}")
 
 
 def xdo(*args):
+    global pending_input
+    if args[0] in {"key", "type", "click"}:
+        current = state()
+        pending_input = (current.get("input_seq", 0) if current else 0) + expected_inputs(args)
     subprocess.run(["xdotool", *map(str, args)], check=True, env=env)
 
 

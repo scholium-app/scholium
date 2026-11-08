@@ -150,7 +150,7 @@ impl EditorSession {
         );
         let value = value.to_string();
         if self.last_audit.as_ref() != Some(&value) {
-            println!("AUDIT {value}");
+            crate::audit_line::emit("AUDIT", &value);
             self.last_audit = Some(value);
         }
     }
