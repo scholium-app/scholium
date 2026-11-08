@@ -1,3 +1,4 @@
+use super::supervision::{Fixture, ready, until};
 use crate::{transport::Launcher, *};
 use scholium_model::diagnostic::DiagnosticBatch;
 use std::time::Duration;
@@ -57,4 +58,62 @@ async fn wait_layout(live: &mut LiveSession, revision: u64) {
     })
     .await
     .expect("layout deadline");
+}
+
+#[tokio::test]
+async fn edit_after_a_confirmed_pass_timeout_restarts_once_with_repaired_source() {
+    let fixture = Fixture::new();
+    let mut live = fixture.start("timeout-repair").await;
+    ready(&mut live).await;
+    live.edit("main.tex", 0..0, "loop ").await.expect("loop");
+    until(&mut live, |event| {
+        matches!(
+            event,
+            LiveEvent::Pages {
+                revision: Some(1),
+                outcome: CompileOutcome::Failed,
+                ..
+            }
+        )
+    })
+    .await;
+    assert_eq!(
+        fixture.launches().len(),
+        1,
+        "no automatic timeout restart loop"
+    );
+    live.edit("main.tex", 0..5, "fixed ").await.expect("repair");
+    until(&mut live, |event| {
+        matches!(
+            event,
+            LiveEvent::Engine {
+                generation: 1,
+                state: EngineState::Recovering,
+                ..
+            }
+        )
+    })
+    .await;
+    until(&mut live, |event| {
+        matches!(
+            event,
+            LiveEvent::Pages {
+                generation: 1,
+                revision: Some(2),
+                outcome: CompileOutcome::Complete,
+                ..
+            }
+        )
+    })
+    .await;
+    assert_eq!(fixture.launches().len(), 2);
+    assert!(
+        fixture
+            .commands()
+            .iter()
+            .any(|command| command["generation"] == 2
+                && command["cmd"] == "set_document"
+                && command["text"] == "fixed Hello 中文 world")
+    );
+    live.cancel().await.expect("cancel");
 }

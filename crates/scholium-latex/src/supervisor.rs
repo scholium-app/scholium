@@ -28,6 +28,7 @@ pub(crate) struct Supervisor {
     locations: VecDeque<String>,
     layout_since: Instant,
     recovering: bool,
+    timed_out_revision: Option<u64>,
     drawing: crate::view::Drawing,
     diagnostics: crate::diagnostics::Diagnostics,
 }
@@ -57,6 +58,7 @@ impl Supervisor {
             locations: VecDeque::new(),
             layout_since: Instant::now(),
             recovering: false,
+            timed_out_revision: None,
             drawing: Default::default(),
             diagnostics: Default::default(),
         }
@@ -133,6 +135,7 @@ impl Supervisor {
             );
         }
         self.restarts += 1;
+        self.timed_out_revision = None;
         self.generation += 1;
         self.engine(EngineState::Recovering, Some(reason)).await?;
         self.worker = self
@@ -177,6 +180,11 @@ impl Supervisor {
                 if accepted {
                     self.edit_started
                         .insert(self.source.revision(), Instant::now());
+                    if self.timed_out_revision.take().is_some() {
+                        self.restart("source edited after pass_timeout".into())
+                            .await?;
+                        return Ok(false);
+                    }
                     self.pending.push_back(self.source.revision());
                     if let Err(error) = self.send(json!({"cmd":"edit", "path":path, "start":range.start, "end":range.end, "text":text})).await {
                         self.restart(error.to_string()).await?;
@@ -223,6 +231,7 @@ impl Supervisor {
         if let Some(reply) = value["reply"].as_str() {
             return self.reply(reply, value).await;
         }
+        self.audit_timing(value);
         match value["event"].as_str() {
             Some("EngineState") => self.engine_message(value).await?,
             Some("ParagraphUpdate") => {
@@ -248,6 +257,13 @@ impl Supervisor {
                 if let Some(items) = self.diagnostics.pending.take()
                     && let Some(&revision) = self.revisions.get(&layout.versions.source_revision)
                 {
+                    if revision == self.source.revision()
+                        && items
+                            .iter()
+                            .any(|item| item.code.as_deref() == Some("pass_timeout"))
+                    {
+                        self.timed_out_revision = Some(revision);
+                    }
                     self.diagnostics.replace(
                         "background",
                         scholium_model::diagnostic::DiagnosticBatch { revision, items },
@@ -280,6 +296,28 @@ impl Supervisor {
             None => return Err(std::io::Error::other("message needs event or reply").into()),
         }
         Ok(())
+    }
+
+    fn audit_timing(&self, value: &Value) {
+        if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_none() {
+            return;
+        }
+        let (event, elapsed_ms) = match value["event"].as_str() {
+            Some("ParagraphUpdate") => (
+                "paragraph",
+                value["timing"]["total_us"].as_f64().map(|us| us / 1000.0),
+            ),
+            Some("LayoutUpdate") => ("layout", value["wall_ms"].as_f64()),
+            _ => return,
+        };
+        let revision = value["versions"]["source_revision"]
+            .as_u64()
+            .and_then(|upstream| self.revisions.get(&upstream));
+        eprintln!(
+            "AUDIT {}",
+            json!({"kind":"latex-engine-timing", "event":event,
+                "generation":self.generation, "revision":revision, "elapsed_ms":elapsed_ms})
+        );
     }
 
     async fn engine_message(&mut self, value: &Value) -> Result<()> {

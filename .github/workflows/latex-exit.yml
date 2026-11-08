@@ -1,0 +1,48 @@
+name: LaTeX stage 1 exit
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'crates/scholium-latex/**'
+      - 'crates/scholium-build/**'
+      - 'crates/scholium-app/src/latex_workspace/**'
+      - 'crates/scholium-app/i18n/**'
+      - 'spikes/typst-main-editor/latex-exit/**'
+      - 'spikes/typst-main-editor/latex-exit-check.py'
+      - 'spikes/typst-main-editor/latex_exit_*.py'
+      - 'scripts/window-checks.py'
+      - 'scripts/bundle-rtex.py'
+      - 'spikes/rtex-eval/PIN'
+      - '.github/workflows/latex-exit.yml'
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+jobs:
+  real-engine:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+        with:
+          cache-key: latex-exit
+          packages: >-
+            libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libegl1-mesa-dev
+            xvfb xdotool xclip imagemagick fonts-noto-cjk bubblewrap
+            texlive-luatex texlive-xetex texlive-latex-recommended texlive-lang-chinese
+      - name: Cache pinned external rtex build
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/scholium-eval
+          key: rtex-exit-${{ runner.os }}-${{ hashFiles('spikes/rtex-eval/PIN', 'rust-toolchain.toml', 'scripts/bundle-rtex.py') }}
+      - run: python3 scripts/bundle-rtex.py
+      - run: cargo build --locked -p scholium-app --bin scholium-app
+      - name: Real-engine window acceptance (both locales)
+        run: python3 scripts/window-checks.py --only latex-exit --locale zh-Hans en --out /tmp/latex-exit
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: latex-exit
+          path: /tmp/latex-exit

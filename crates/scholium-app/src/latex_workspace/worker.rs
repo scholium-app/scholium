@@ -6,10 +6,15 @@ use scholium_latex::{
 };
 use std::{
     collections::BTreeMap,
-    sync::Arc,
+    sync::{
+        Arc,
+        atomic::{AtomicU64, Ordering},
+    },
     time::{Duration, Instant},
 };
 use tokio::sync::{mpsc, oneshot, watch};
+
+const FULL_BUILD_IDLE: Duration = Duration::from_millis(750);
 
 #[derive(Debug, Clone, Default)]
 pub(super) struct Edit {
@@ -31,6 +36,10 @@ impl Edit {
 }
 #[derive(Debug)]
 pub(super) enum Update {
+    Engine {
+        state: scholium_latex::EngineState,
+        reason: Option<String>,
+    },
     Ready {
         engine: scholium_latex::Engine,
     },
@@ -52,6 +61,7 @@ pub(super) enum Update {
 }
 pub(super) struct Backend {
     pub edits: watch::Sender<Edit>,
+    pub page: Arc<AtomicU64>,
     pub resync: mpsc::Sender<()>,
     pub updates: mpsc::Receiver<Update>,
     thread: Option<std::thread::JoinHandle<()>>,
@@ -69,6 +79,8 @@ impl Backend {
         let (sender, updates) = mpsc::channel(4);
         let (resync, requests) = mpsc::channel(1);
         let (cancel, cancelled) = oneshot::channel();
+        let page = Arc::new(AtomicU64::new(1));
+        let selected = page.clone();
         let thread = std::thread::spawn(move || {
             let runtime = tokio::runtime::Builder::new_current_thread()
                 .enable_all()
@@ -77,7 +89,7 @@ impl Backend {
                 Ok(rt) => rt.block_on(async {
                     tokio::select! {
                         _ = cancelled => {},
-                        result = run(source, receiver, requests, &sender, &wake) => {
+                        result = run(source, receiver, requests, selected, &sender, &wake) => {
                             if let Err(error) = result {
                                 publish(&sender, &wake, Update::Unavailable(error.to_string())).await;
                             }
@@ -92,6 +104,7 @@ impl Backend {
         });
         Self {
             edits,
+            page,
             resync,
             updates,
             thread: Some(thread),
@@ -116,6 +129,7 @@ async fn run(
     source: SourceSession,
     edits: watch::Receiver<Edit>,
     requests: mpsc::Receiver<()>,
+    page: Arc<AtomicU64>,
     sender: &mpsc::Sender<Update>,
     wake: &eframe::egui::Context,
 ) -> Result<(), scholium_latex::LatexError> {
@@ -154,7 +168,7 @@ async fn run(
         (source.revision(), work.path().to_path_buf()),
         live,
         edits,
-        requests,
+        (requests, page),
         sender,
         wake,
     )
@@ -172,13 +186,15 @@ async fn live_loop(
     source: (u64, std::path::PathBuf),
     mut live: LiveSession,
     mut edits: watch::Receiver<Edit>,
-    mut requests: mpsc::Receiver<()>,
+    requests: (mpsc::Receiver<()>, Arc<AtomicU64>),
     sender: &mpsc::Sender<Update>,
     wake: &eframe::egui::Context,
 ) -> Result<(), scholium_latex::LatexError> {
-    let jobs = raster_worker(sender.clone(), wake.clone());
+    let (mut requests, page) = requests;
+    let jobs = raster_worker(sender.clone(), wake.clone(), page);
     let mut revisions = BTreeMap::from([(source.0, 0)]);
     let mut logged: Option<scholium_model::diagnostic::DiagnosticBatch> = None;
+    let mut quiet = None;
     loop {
         tokio::select! {
             result=edits.changed()=>{
@@ -186,7 +202,12 @@ async fn live_loop(
                 let edit=edits.borrow_and_update().clone();
                 let revision=apply_live_inputs(&live, &edit).await?;
                 revisions.insert(revision,edit.revision);
+                quiet = Some(tokio::time::Instant::now() + FULL_BUILD_IDLE);
                 while revisions.len()>1024 {revisions.pop_first();}
+            }
+            _=async { match quiet { Some(deadline) => tokio::time::sleep_until(deadline).await, None => std::future::pending().await } }=>{
+                quiet = None;
+                live.request_layout().await?;
             }
             request=requests.recv()=>{if request.is_none(){break;} live.request_layout().await?;}
             event=live.next_event()=>{
@@ -197,7 +218,7 @@ async fn live_loop(
                     LiveEvent::Paragraph{generation,revision:Some(r),drawing,elapsed,paragraph,..}=>Some(RasterWork{generation,revision:*revisions.get(&r).unwrap_or(&u64::MAX),drawing,paragraph:Some(paragraph),elapsed:elapsed.unwrap_or_default(),count:None}),
                     LiveEvent::LayoutRequired{..}=>{live.request_layout().await?;None}
                     LiveEvent::Diagnostic{message}=>{publish(sender,wake,Update::Error(message)).await;None}
-                    LiveEvent::Engine{state:scholium_latex::EngineState::Failed,reason:Some(reason),..}=>{publish(sender,wake,Update::Error(reason)).await;None}
+                    LiveEvent::Engine{state,reason,..}=>{publish(sender,wake,Update::Engine{state,reason}).await;None}
                     _=>None,
                 };
                 publish_diagnostics(&live, &revisions, logged.as_ref(), sender, wake).await?;
@@ -313,6 +334,7 @@ impl Backend {
         let (resync, _) = mpsc::channel(1);
         Self {
             edits,
+            page: Arc::new(AtomicU64::new(1)),
             resync,
             updates,
             thread: None,
@@ -399,36 +421,31 @@ fn enrich(
 fn raster_worker(
     output: mpsc::Sender<Update>,
     repaint: eframe::egui::Context,
+    selected: Arc<AtomicU64>,
 ) -> mpsc::Sender<RasterWork> {
     let (jobs, mut raster) = mpsc::channel::<RasterWork>(4);
     std::thread::spawn(move || {
         let mut renderer = Renderer::default();
         let mut generation = 0;
-        let mut retained = BTreeMap::new();
         while let Some(job) = raster.blocking_recv() {
             if generation != job.generation {
                 renderer = Renderer::default();
-                retained.clear();
                 generation = job.generation;
             }
+            let page = selected.load(Ordering::Relaxed);
+            let page = job.count.map_or(page, |count| page.min(count).max(1));
+            selected.store(page, Ordering::Relaxed);
             let started = Instant::now();
-            let event = match renderer.apply(&job.drawing, job.paragraph) {
-                Ok(pages) => {
-                    if let Some(count) = job.count {
-                        retained.retain(|n, _| *n <= count);
-                    }
-                    for page in pages {
-                        retained.insert(page.page, page);
-                    }
-                    Update::Page {
-                        revision: job.revision,
-                        generation,
-                        pages: retained.values().cloned().collect(),
-                        elapsed: job.elapsed + started.elapsed(),
-                        paragraph: job.paragraph.is_some(),
-                        count: job.count,
-                    }
-                }
+            let event = match renderer.apply_page(&job.drawing, job.paragraph, page) {
+                Ok(pages) if pages.is_empty() => continue,
+                Ok(pages) => Update::Page {
+                    revision: job.revision,
+                    generation,
+                    pages,
+                    elapsed: job.elapsed + started.elapsed(),
+                    paragraph: job.paragraph.is_some(),
+                    count: job.count,
+                },
                 Err(error) => Update::Error(error.to_string()),
             };
             if output.blocking_send(event).is_err() {

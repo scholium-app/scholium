@@ -633,3 +633,4 @@ math-input-category-punctuation = 标点
 math-input-category-structure = 结构
 
 chrome-status-settings_hint = 打开项目设置，调整预览引擎
+latex-restarting = 正在重启预览

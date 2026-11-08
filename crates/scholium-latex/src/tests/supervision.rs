@@ -2,12 +2,12 @@ use crate::{transport::Launcher, *};
 use serde_json::Value;
 use std::{path::Path, time::Duration};
 
-struct Fixture {
+pub(super) struct Fixture {
     root: tempfile::TempDir,
     fake: tempfile::TempDir,
 }
 impl Fixture {
-    fn new() -> Self {
+    pub(super) fn new() -> Self {
         let root = tempfile::tempdir().expect("project");
         std::fs::write(root.path().join("main.tex"), "Hello 中文 world").expect("source");
         Self {
@@ -15,7 +15,7 @@ impl Fixture {
             fake: tempfile::tempdir().expect("fake state"),
         }
     }
-    async fn start(&self, mode: &str) -> LiveSession {
+    pub(super) async fn start(&self, mode: &str) -> LiveSession {
         self.start_config(mode, config()).await.expect("launch")
     }
     async fn start_config(
@@ -34,10 +34,10 @@ impl Fixture {
         )
         .await
     }
-    fn commands(&self) -> Vec<Value> {
+    pub(super) fn commands(&self) -> Vec<Value> {
         jsonl(&self.fake.path().join("commands.jsonl"))
     }
-    fn launches(&self) -> Vec<Value> {
+    pub(super) fn launches(&self) -> Vec<Value> {
         jsonl(&self.fake.path().join("launch.jsonl"))
     }
 }
@@ -57,7 +57,10 @@ fn config() -> LiveConfig {
         ..LiveConfig::default()
     }
 }
-async fn until(live: &mut LiveSession, predicate: impl Fn(&LiveEvent) -> bool) -> LiveEvent {
+pub(super) async fn until(
+    live: &mut LiveSession,
+    predicate: impl Fn(&LiveEvent) -> bool,
+) -> LiveEvent {
     tokio::time::timeout(Duration::from_secs(5), async {
         loop {
             let event = live.next_event().await.expect("event stream closed");
@@ -69,7 +72,7 @@ async fn until(live: &mut LiveSession, predicate: impl Fn(&LiveEvent) -> bool) -
     .await
     .expect("expected event before test deadline")
 }
-async fn ready(live: &mut LiveSession) {
+pub(super) async fn ready(live: &mut LiveSession) {
     until(live, |e| {
         matches!(
             e,

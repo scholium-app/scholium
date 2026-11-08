@@ -85,9 +85,19 @@ impl Workspace {
             }
             return;
         }
-        self.page_index = self.page_index.min(self.pages.len() - 1);
+        self.page_index = self.page_index.min(self.page_count.saturating_sub(1));
         ui.horizontal(|ui| {
-            crate::source_layout::navigation(ui, &mut self.page_index, self.pages.len());
+            let previous = self.page_index;
+            crate::source_layout::navigation(ui, &mut self.page_index, self.page_count);
+            if previous != self.page_index
+                && let Some(backend) = &self.backend
+            {
+                backend.page.store(
+                    self.page_index as u64 + 1,
+                    std::sync::atomic::Ordering::Relaxed,
+                );
+                let _ = backend.resync.try_send(());
+            }
             if self.shown_revision != Some(self.revision) {
                 ui.weak(i18n::text_with(
                     locale,
@@ -99,7 +109,7 @@ impl Workspace {
                 }
             }
         });
-        let Some(page) = self.pages.values().nth(self.page_index) else {
+        let Some(page) = self.pages.get(&(self.page_index as u64 + 1)) else {
             return;
         };
         let size_pt = page.size / scholium_latex::view::PIXELS_PER_POINT as f32;

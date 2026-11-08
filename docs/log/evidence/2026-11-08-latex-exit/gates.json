@@ -1,0 +1,62 @@
+[
+  {
+    "command": "cargo fmt --all -- --check",
+    "exit": 0,
+    "seconds": 0.6258615619954071
+  },
+  {
+    "command": "cargo clippy --locked --workspace --all-targets -- -D warnings",
+    "exit": 0,
+    "seconds": 2.585042478996911
+  },
+  {
+    "command": "cargo test --locked --workspace",
+    "exit": 0,
+    "seconds": 44.18858862399793
+  },
+  {
+    "command": "RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps",
+    "exit": 0,
+    "seconds": 3.3202007720028632
+  },
+  {
+    "command": "python3 scripts/check-rust-size.py",
+    "exit": 0,
+    "seconds": 0.047929606000252534
+  },
+  {
+    "command": "python3 scripts/check-doc-links.py",
+    "exit": 0,
+    "seconds": 0.15171307499986142
+  },
+  {
+    "command": "python3 scripts/check-ui-strings.py",
+    "exit": 0,
+    "seconds": 0.2499977960032993
+  },
+  {
+    "command": "python3 scripts/check-layers.py",
+    "exit": 0,
+    "seconds": 0.4071673959988402
+  },
+  {
+    "command": "cargo deny --locked check licenses bans sources",
+    "exit": 0,
+    "seconds": 0.7575240900041535
+  },
+  {
+    "command": "cargo build --locked -p scholium-app -p scholium-storage --bins",
+    "exit": 0,
+    "seconds": 2.5959145559972967
+  },
+  {
+    "command": "python3 scripts/test-bundle-rtex.py",
+    "exit": 0,
+    "seconds": 0.1345427420019405
+  },
+  {
+    "command": "git diff --check",
+    "exit": 0,
+    "seconds": 0.008227140999224503
+  }
+]

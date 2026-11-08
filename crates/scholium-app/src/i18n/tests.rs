@@ -154,6 +154,7 @@ fn the_catalog_has_no_key_that_nothing_uses() {
             "latex.unavailable",
             "latex.building",
             "latex.stale",
+            "latex.restarting",
             "latex.full",
             "latex.live",
             "source.editor.find",
