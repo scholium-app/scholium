@@ -27,9 +27,9 @@ impl Environment {
             if let Some(status) = detector.cached() {
                 let items = summary(&status, locale, cfg!(debug_assertions));
                 if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
-                    println!(
-                        "ENVIRONMENT {}",
-                        serde_json::json!({"items": items.iter().map(|i| &i.text).collect::<Vec<_>>()})
+                    crate::audit_line::emit(
+                        "ENVIRONMENT",
+                        &serde_json::json!({"items": items.iter().map(|i| &i.text).collect::<Vec<_>>()}),
                     );
                 }
                 for (index, item) in items.iter().enumerate() {

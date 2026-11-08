@@ -14,7 +14,7 @@ import subprocess
 import sys
 import time
 
-from chrome_ui import Chrome, keycode
+from chrome_ui import Chrome, expected_inputs, keycode
 
 ROOT = Path(__file__).resolve().parent
 TIMEOUT = 20
@@ -57,8 +57,10 @@ class Replay:
         self.writer = self.log.open("w")
         self.proc = subprocess.Popen([str(binary)], env=self.env, stdout=self.writer, stderr=subprocess.STDOUT)
         self.window = None
-        # input_seq before the last input command; ready() waits until the app has seen it.
+        # input_seq before the last input command and the events it produces; ready() waits
+        # until the app has seen all of them.
         self.sent_after = None
+        self.expected = 0
 
     def close(self):
         self.proc.terminate()
@@ -73,6 +75,7 @@ class Replay:
         if args and args[0] in INPUT_COMMANDS:
             state = self.state()
             self.sent_after = state.get("input_seq", 0) if state else 0
+            self.expected = expected_inputs(args)
         return subprocess.run(["xdotool", *map(str, args)], env=self.env, check=True,
                               capture_output=True, text=True, timeout=TIMEOUT).stdout.strip()
 
@@ -90,7 +93,7 @@ class Replay:
             if state and state.get("layout_error"):
                 raise RuntimeError(f"layout failed: {state['layout_error']}")
             delivered = (state is not None and self.sent_after is not None
-                         and state.get("input_seq", 0) > self.sent_after)
+                         and state.get("input_seq", 0) >= self.sent_after + self.expected)
             if state and (self.sent_after is None or delivered) and state["current"] and state["deferred"] == 0:
                 if state == previous:
                     self.sent_after = None

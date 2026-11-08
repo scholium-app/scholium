@@ -43,9 +43,9 @@ impl ProjectFiles {
                 );
             });
         if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
-            println!(
-                "PROJECT {}",
-                serde_json::json!({"closed":true,"controls":widgets::audit::controls_json(&ctx),"chrome":widgets::audit::facts_json(&ctx),"locked":self.locked,"recent":self.recent})
+            crate::audit_line::emit(
+                "PROJECT",
+                &serde_json::json!({"closed":true,"controls":widgets::audit::controls_json(&ctx),"chrome":widgets::audit::facts_json(&ctx),"locked":self.locked,"recent":self.recent}),
             );
         }
     }
