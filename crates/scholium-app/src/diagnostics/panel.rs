@@ -209,8 +209,8 @@ fn problem_row(ui: &mut Ui, state: &mut WorkspaceState, issue: &Diagnostic, inde
         .as_ref()
         .map(|r| format!("{}:{}", r.start.line, r.start.column))
         .or_else(|| issue.log.as_ref().map(|l| format!("log:{}", l.line)));
-    let message = if issue.code.as_deref() == Some("diag.build.output_quota") {
-        i18n::text(state.locale.resolve(), "diag.build.output_quota")
+    let message = if issue.code.as_deref() == Some("diag.build.output.quota") {
+        i18n::text(state.locale.resolve(), "diag.build.output.quota")
     } else {
         issue.message.clone()
     };

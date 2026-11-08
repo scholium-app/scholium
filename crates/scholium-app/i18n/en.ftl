@@ -640,7 +640,7 @@ math-input-category-structure = Structure
 
 chrome-status-settings_hint = Open project settings to change the preview engine
 
-diag-build-output_quota = Build stopped: output byte or file-count budget exceeded. Reduce generated files or restart the session.
+diag-build-output-quota = Build stopped: output byte or file-count budget exceeded. Reduce generated files or restart the session.
 
 source-find-previous = Previous
 source-find-next = Next
@@ -657,3 +657,9 @@ reason-source_find = Find is available in editable source views.
 command-edit-replace =
     .title = Replace…
     .tooltip = Find and replace in source
+command-edit-find_next =
+    .title = Find next
+    .tooltip = Find next match
+command-edit-find_previous =
+    .title = Find previous
+    .tooltip = Find previous match

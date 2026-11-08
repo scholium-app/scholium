@@ -119,17 +119,17 @@ fn receive(socket: &UnixDatagram) -> std::io::Result<(File, File, File)> {
         MsgFlags::MSG_CMSG_CLOEXEC,
     )?;
     for item in message.cmsgs()? {
-        if let ControlMessageOwned::ScmRights(fds) = item {
-            if let [fd, namespace, mount_namespace] = fds.as_slice() {
-                // SCM_RIGHTS transferred ownership of this fd; the sender has already mounted tmpfs.
-                return Ok(unsafe {
-                    (
-                        File::from_raw_fd(*fd),
-                        File::from_raw_fd(*namespace),
-                        File::from_raw_fd(*mount_namespace),
-                    )
-                });
-            }
+        if let ControlMessageOwned::ScmRights(fds) = item
+            && let [fd, namespace, mount_namespace] = fds.as_slice()
+        {
+            // SAFETY: SCM_RIGHTS transferred ownership of these three new fds.
+            return Ok(unsafe {
+                (
+                    File::from_raw_fd(*fd),
+                    File::from_raw_fd(*namespace),
+                    File::from_raw_fd(*mount_namespace),
+                )
+            });
         }
     }
     Err(std::io::Error::other(

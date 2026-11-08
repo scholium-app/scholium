@@ -17,7 +17,7 @@ const SETUP_OUTPUT_LIMIT: u64 = 1024 * 1024;
 pub struct SandboxProcess {
     child: Child,
     scope: String,
-    cache: tempfile::TempDir,
+    _cache: tempfile::TempDir,
     volume: std::sync::Arc<crate::quota::Volume>,
     work: std::path::PathBuf,
     monitor: tokio::task::JoinHandle<()>,
@@ -40,8 +40,8 @@ impl SandboxProcess {
         use std::os::fd::AsRawFd;
         let mount_fd = volume.mount_namespace.as_raw_fd();
         let namespace_fd = volume.namespace.as_raw_fd();
-        // Only the private tmpfs fd crosses exec; fcntl is async-signal-safe. bwrap consumes
-        // the fd during mount setup, and the untrusted process cannot reach any host directory.
+        // SAFETY: fcntl is async-signal-safe, both namespace fds remain owned by volume
+        // across spawn, and no host directory fd is made inheritable.
         unsafe {
             command.pre_exec(move || {
                 if nix::libc::fcntl(mount_fd, nix::libc::F_SETFD, 0) == -1
@@ -67,11 +67,19 @@ impl SandboxProcess {
         Ok(Self {
             child,
             scope,
-            cache,
+            _cache: cache,
             volume,
             work,
             monitor,
         })
+    }
+
+    pub(crate) fn copy_trusted_cache(&self, target: &std::path::Path) -> Result<(), BuildError> {
+        crate::quota::copy_tree(
+            &self.volume.path.join(".font-cache"),
+            target,
+            self.volume.budget,
+        )
     }
 
     /// Take the bounded protocol writer's input pipe, once.
@@ -158,7 +166,6 @@ impl SandboxProcess {
             // Cancel descendants before copying outputs. Host writes are bounded independently.
             let _ = scope_kill(&self.scope).await;
             self.volume.export(&self.work)?;
-            crate::cache::copy(&self.volume.path.join(".font-cache"), self.cache.path())?;
         }
         result
     }

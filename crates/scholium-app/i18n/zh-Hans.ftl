@@ -634,7 +634,7 @@ math-input-category-structure = 结构
 
 chrome-status-settings_hint = 打开项目设置，调整预览引擎
 
-diag-build-output_quota = 构建已停止：输出总字节数或文件数量超出配额。请减少生成文件或重新启动会话。
+diag-build-output-quota = 构建已停止：输出总字节数或文件数量超出配额。请减少生成文件或重新启动会话。
 
 source-find-previous = 上一个
 source-find-next = 下一个
@@ -651,3 +651,9 @@ reason-source_find = 查找仅用于可编辑源码视图。
 command-edit-replace =
     .title = 替换…
     .tooltip = 在源码中查找与替换
+command-edit-find_next =
+    .title = 下一个匹配
+    .tooltip = 查找下一个匹配
+command-edit-find_previous =
+    .title = 上一个匹配
+    .tooltip = 查找上一个匹配

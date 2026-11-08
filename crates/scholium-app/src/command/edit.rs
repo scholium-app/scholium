@@ -15,24 +15,30 @@ pub(super) fn specs() -> Vec<CommandSpec> {
         routing: Routing::Editor,
         action: Action::SourceFind(crate::source_editor::find::FindAction::Open),
     });
-    for (id, action) in [
+    for (id, action, title, tooltip) in [
         (
             "edit.replace",
             crate::source_editor::find::FindAction::Replace,
+            "command.edit.replace.title",
+            "command.edit.replace.tooltip",
         ),
         (
             "edit.find_next",
             crate::source_editor::find::FindAction::Next,
+            "command.edit.find_next.title",
+            "command.edit.find_next.tooltip",
         ),
         (
             "edit.find_previous",
             crate::source_editor::find::FindAction::Previous,
+            "command.edit.find_previous.title",
+            "command.edit.find_previous.tooltip",
         ),
     ] {
         let mut spec = super::spec::CommandSpec {
             id,
-            title: "command.edit.replace.title",
-            tooltip: "command.edit.replace.tooltip",
+            title,
+            tooltip,
             action: Action::SourceFind(action),
             availability: avail::source_find,
             routing: Routing::Editor,

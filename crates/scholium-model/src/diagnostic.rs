@@ -95,7 +95,7 @@ impl Diagnostic {
             range: None,
             node: None,
             message: "Build output byte or inode limit exceeded".into(),
-            code: Some("diag.build.output_quota".into()),
+            code: Some("diag.build.output.quota".into()),
             log: None,
         }
     }
