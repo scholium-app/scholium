@@ -12,15 +12,14 @@ mod io;
 mod materialize;
 mod migration;
 mod native;
-pub use migration::{ProjectMigrationReport, migrate_session, session_has_head};
-pub use native::NativeProject;
+pub use migration::{ProjectMigrationReport, import_session, migrate_session, session_has_head};
+pub use native::{NativeProject, import_native_v1};
 mod schema;
 mod types;
 
 use cap_std::fs::Dir;
 pub use io::{IoHooks, IoPoint, SystemIo};
 use rusqlite::Connection;
-use std::fs::File;
 use std::path::Path;
 use std::sync::Arc;
 pub use types::*;
@@ -72,7 +71,7 @@ pub struct ProjectStore {
     db: Connection,
     root: Dir,
     hooks: Arc<dyn IoHooks>,
-    _lock: File,
+    _lock: files::ProjectLock,
 }
 /// Open store and inspection of unfinished materializations; no implicit file recovery.
 #[derive(Debug)]
@@ -108,7 +107,7 @@ impl ProjectStore {
             db,
             root: root_dir,
             hooks,
-            _lock: lock,
+            _lock: files::ProjectLock(lock),
         };
         let recovery = store.recover()?;
         Ok(OpenReport { store, recovery })

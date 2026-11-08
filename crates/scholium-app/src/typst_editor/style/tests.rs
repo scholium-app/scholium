@@ -119,7 +119,7 @@ fn selection_styling_is_one_undo_step_that_restores_the_document_and_selection()
     assert_ne!(f.editor.snapshot, before);
     f.state.undo_requested = true;
     f.editor.controls(&f.ctx, &mut f.state);
-    assert_eq!(*f.editor.snapshot, *before);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &before);
     assert_eq!(selected_text(&f), "world");
 }
 
@@ -167,7 +167,7 @@ fn pending_style_in_the_middle_splits_the_leaf_and_undoes_in_one_step() {
     );
     f.state.undo_requested = true;
     f.editor.controls(&f.ctx, &mut f.state);
-    assert_eq!(*f.editor.snapshot, *before);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &before);
 }
 
 #[test]
@@ -252,7 +252,7 @@ fn style_commands_are_rejected_inside_a_formula_without_changing_the_document() 
     f.events(vec![text("$"), text("1")]);
     let before = f.editor.snapshot.clone();
     f.events(vec![key(egui::Key::B, true)]);
-    assert_eq!(f.editor.snapshot, before);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &before);
     assert!(f.state.edit_error.is_some());
     assert_eq!(f.editor.pending_style(), None);
 }

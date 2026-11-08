@@ -7,6 +7,8 @@ mod lower;
 mod project;
 mod replica;
 mod reserve;
+mod transaction;
+pub use transaction::ReplicaCheckpoint;
 mod schema;
 pub use codec::{Action, Origin};
 pub use error::Error;

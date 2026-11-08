@@ -67,8 +67,14 @@ impl EditorCore {
     /// # Errors
     /// Returns a structured command error and restores the pre-input checkpoint when the
     /// event is rejected or panics.
+    ///
+    /// # Panics
+    /// Panics if the validated private device journal cannot reconstruct its prior
+    /// engine state/undo stack, indicating an internal invariant violation.
     pub fn input(&mut self, input: Input) -> Result<Outcome, CommandError> {
         let checkpoint = self.checkpoint()?;
+        let replica_checkpoint = self.replica.checkpoint()?;
+        let pending_len = self.pending_persistence.len();
         let epoch = self.session.layout_epoch();
         let before = self.cursor;
         let draft = match &input {
@@ -83,10 +89,21 @@ impl EditorCore {
         let inject = std::mem::take(&mut self.fail_next_input);
         #[cfg(not(test))]
         let inject = false;
+        self.input_transaction = true;
         let result =
             std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| self.apply_input(input)));
+        self.input_transaction = false;
+        if !matches!(&result, Ok(Ok(_))) || inject {
+            self.replica
+                .rollback(replica_checkpoint)
+                .expect("validated SDG device journal restores rejected input");
+            self.pending_persistence.truncate(pending_len);
+        }
         match result {
             Ok(Ok(outcome)) if !inject => {
+                if let Err(error) = self.persist_pending() {
+                    self.persistence_error = Some(error.to_string());
+                }
                 if self.cursor != before || self.selected() {
                     self.pending_style = None;
                 }

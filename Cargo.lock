@@ -4773,6 +4773,7 @@ dependencies = [
  "scholium-document",
  "scholium-math-input",
  "scholium-model",
+ "scholium-sdg",
  "scholium-storage",
  "scholium-typst",
  "serde_json",

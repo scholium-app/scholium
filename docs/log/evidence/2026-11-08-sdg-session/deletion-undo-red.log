@@ -1,0 +1,30 @@
+   Compiling scholium-sdg v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-sdg)
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
+    Finished `test` profile [unoptimized] target(s) in 2.11s
+     Running unittests src/lib.rs (target/debug/deps/scholium_session-13e23dced1046ec7)
+
+running 1 test
+T52 identity graph 38
+
+thread 'typst::display_tests::display_insertion_splits_body_and_undo_restores_caret' (981022) panicked at crates/scholium-session/src/typst/tests.rs:26:46:
+command: Sdg(Identity)
+stack backtrace:
+   0: __rustc::rust_begin_unwind
+   1: core::panicking::panic_fmt
+   2: core::result::unwrap_failed
+   3: <core::result::Result<scholium_session::typst::command::Outcome, scholium_session::typst::command::CommandError>>::expect
+   4: <scholium_session::typst::tests::Fixture>::run
+   5: scholium_session::typst::display_tests::display_insertion_splits_body_and_undo_restores_caret
+   6: scholium_session::typst::display_tests::display_insertion_splits_body_and_undo_restores_caret::{closure#0}
+   7: <scholium_session::typst::display_tests::display_insertion_splits_body_and_undo_restores_caret::{closure#0} as core::ops::function::FnOnce<()>>::call_once
+note: Some details are omitted, run with `RUST_BACKTRACE=full` for a verbose backtrace.
+test typst::display_tests::display_insertion_splits_body_and_undo_restores_caret ... FAILED
+
+failures:
+
+failures:
+    typst::display_tests::display_insertion_splits_body_and_undo_restores_caret
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.02s
+
+error: test failed, to rerun pass `-p scholium-session --lib`

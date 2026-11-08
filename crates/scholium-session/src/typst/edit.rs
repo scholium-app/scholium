@@ -41,6 +41,7 @@ impl EditorCore {
                 if !outcome.changed {
                     return Some(outcome);
                 }
+                state.new_group |= before.is_some();
                 self.push_undo(before);
                 self.publish(state);
                 Some(outcome)
@@ -53,9 +54,6 @@ impl EditorCore {
     }
     pub(super) fn publish(&mut self, state: &mut EditState) {
         self.snapshot = self.session.shared_snapshot();
-        if matches!(self.store, persistence::Backing::Project(_)) {
-            state.pending.push(self.record());
-        }
         self.layout_error = None;
         self.overflows.clear();
         state.edit_error = None;

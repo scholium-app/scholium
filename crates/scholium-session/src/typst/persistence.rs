@@ -1,26 +1,12 @@
 //! Restore and save the single local authority; no UI or environment policy.
 use super::*;
-use scholium_storage::project::{NativeProject, ProjectHandle};
-
-#[derive(Debug)]
-pub(super) enum Backing {
-    Legacy(SessionStore),
-    Project(Box<NativeProject>),
-}
-
-#[cfg(test)]
-impl Backing {
-    pub(super) fn legacy(&self) -> &SessionStore {
-        match self {
-            Self::Legacy(store) => store,
-            Self::Project(_) => panic!("legacy fixture required"),
-        }
-    }
-}
-
+use scholium_storage::project::{ProjectHandle, ProjectLanguage};
 /// Failure opening, migrating or persisting a local editing session.
 #[derive(Debug, thiserror::Error)]
 pub enum SessionError {
+    /// SDG codec, projection or engine rejected the recovered state.
+    #[error(transparent)]
+    Sdg(#[from] scholium_sdg::Error),
     /// Formal project open/commit failure.
     #[error(transparent)]
     Project(#[from] scholium_storage::project::StoreError),
@@ -47,38 +33,51 @@ impl EditorCore {
     /// # Errors
     /// Returns schema, filesystem or document validation failures without replacing the file.
     pub fn open(path: &Path) -> Result<Self, SessionError> {
-        let store = if path.try_exists()? {
-            SessionStore::open_structured(path)?
+        let target = path.with_extension("sdg-project");
+        // Read-only import remains available if a prior attempt died after declaration
+        // publication. A nonempty SDG head ignores this seed; an empty target resumes it.
+        let initial = if !target.try_exists()? && path.try_exists()? {
+            scholium_storage::project::import_session(path)?.map(|p| p.snapshot)
         } else {
-            SessionStore::create_structured(path)?
+            None
         };
-        let persisted = store.load_structured()?;
-        let has_saved = persisted.is_some();
-        let session = match persisted {
-            Some(p) => LocalSession::restore_structured(p.snapshot, p.requests)?,
-            None => blank()?,
+        let handle = if target.try_exists()? {
+            ProjectHandle::open(&target, None)?
+        } else {
+            ProjectHandle::create(&target, ProjectLanguage::Typst)?
         };
-        let saved = has_saved.then(|| session.shared_snapshot());
-        Self::from_authority(session, Backing::Legacy(store), saved)
-    }
-
-    /// Open a formal project and restore durable Actions after its last checkpoint.
-    ///
-    /// # Errors
-    /// Returns exclusive-lock, schema, journal or document validation errors.
-    pub fn open_project(handle: ProjectHandle) -> Result<Self, SessionError> {
-        let project = NativeProject::open(handle, blank()?.shared_snapshot().as_ref().clone())?;
-        let session = LocalSession::restore_structured(
-            project.document().clone(),
-            project.requests().to_vec(),
+        let (store, replica) = sdg_project::SdgProject::open_import(
+            handle,
+            initial.unwrap_or(blank()?.snapshot()),
+            Some(path),
         )?;
-        let saved = Some(Arc::new(project.saved_document().clone()));
-        Self::from_authority(session, Backing::Project(Box::new(project)), saved)
+        Self::from_sdg(store, replica)
     }
 
-    fn from_authority(
+    /// Open a formal project; migrate retired native v1 records once, retaining their bytes.
+    /// # Errors
+    /// Rejects locks, unknown versions, corrupt or incomplete causal history.
+    pub fn open_project(handle: ProjectHandle) -> Result<Self, SessionError> {
+        Self::open_sdg(handle, blank()?.snapshot())
+    }
+
+    fn open_sdg(handle: ProjectHandle, initial: StructuredDocument) -> Result<Self, SessionError> {
+        let (store, replica) = sdg_project::SdgProject::open(handle, initial)?;
+        Self::from_sdg(store, replica)
+    }
+    fn from_sdg(
+        store: sdg_project::SdgProject,
+        replica: scholium_sdg::Replica,
+    ) -> Result<Self, SessionError> {
+        let session = LocalSession::restore_structured(replica.document()?, replica.action_ids()?)?;
+        let saved = Some(Arc::new(store.saved.clone()));
+        Self::from_authority(session, Box::new(store), replica, saved)
+    }
+
+    pub(super) fn from_authority(
         session: LocalSession<StructuredDocument>,
-        store: Backing,
+        store: Box<sdg_project::SdgProject>,
+        replica: scholium_sdg::Replica,
         saved: Option<Arc<StructuredDocument>>,
     ) -> Result<Self, SessionError> {
         let snapshot = session.shared_snapshot();
@@ -95,6 +94,8 @@ impl EditorCore {
             session: ReadAuthority::new(session),
             snapshot,
             store,
+            replica,
+            input_transaction: false,
             pending_persistence: Default::default(),
             persistence_error: None,
             saved,
@@ -143,11 +144,20 @@ impl EditorCore {
             .scene_stamp(ProfileGeneration(0), ResourceGeneration(0))
     }
 
+    /// Deterministic structural repair diagnostics from the shared authority.
+    /// # Errors
+    /// Returns engine/schema/capacity failures while projecting malformed state.
+    pub fn shared_repairs(&self) -> Result<Vec<scholium_sdg::Repair>, scholium_sdg::Error> {
+        Ok(self.replica.projection()?.repairs)
+    }
+
     /// Whether the accepted content differs from the last successfully saved head.
     pub fn dirty(&self) -> bool {
         !self.pending_persistence.is_empty()
             || self.persistence_error.is_some()
-            || self.saved.as_ref() != Some(&self.snapshot)
+            || self.saved.as_ref().is_none_or(|saved| {
+                saved.document != self.snapshot.document || saved.blocks != self.snapshot.blocks
+            })
     }
 
     /// Persist accepted content. Called only after command success and outside IME preedit.
@@ -155,23 +165,15 @@ impl EditorCore {
     /// # Errors
     /// Returns the store's transaction failure; the saved baseline changes only after success.
     pub fn save(&mut self) -> Result<(), SessionError> {
-        let requests: Vec<_> = self.session.actions().iter().map(|a| a.request).collect();
         self.persist_pending()?;
-        match &mut self.store {
-            Backing::Legacy(store) => store.save_structured(&self.snapshot, &requests)?,
-            Backing::Project(project) => project.save()?,
-        }
+        self.store.save(&self.replica)?;
         self.saved = Some(self.snapshot.clone());
         Ok(())
     }
 
     pub(super) fn persist_pending(&mut self) -> Result<(), SessionError> {
-        let Backing::Project(project) = &mut self.store else {
-            self.pending_persistence.clear();
-            return Ok(());
-        };
-        while let Some(entry) = self.pending_persistence.front() {
-            project.append_edit(entry.snapshot.0.as_ref().clone(), entry.requests.to_vec())?;
+        while let Some(action) = self.pending_persistence.front() {
+            self.store.append(action)?;
             self.pending_persistence.pop_front();
         }
         self.persistence_error = None;
@@ -183,33 +185,25 @@ impl EditorCore {
     /// # Errors
     /// Returns validation/commit failures, preserving the accepted input for recovery.
     pub fn discard_project(&mut self) -> Result<(), SessionError> {
-        let Backing::Project(project) = &self.store else {
-            return Ok(());
-        };
-        let snapshot = project.saved_document().clone();
-        // Saved journal is restored from its revision prefix only when it is available.
-        // History restoration can replace the local journal; the checkpoint stores its own IDs.
-        let requests = project.saved_requests().to_vec();
-        self.restore_document(snapshot, requests)
+        let snapshot = self.store.saved.clone();
+        let mut planned = snapshot;
+        planned.revision = self.snapshot.revision;
+        self.restore_document(planned, self.replica.action_ids()?)
     }
 
-    /// Create an independent native copy of the accepted state, keeping the original project.
-    ///
+    /// Create an independent SDG project containing the accepted state and resource files.
     /// # Errors
-    /// Rejects an existing target or a failed publication/checkpoint. Failed copies are retained.
+    /// Rejects existing targets and failed durable publication; preserves the original.
     pub fn save_as_project(&mut self, target: &Path) -> Result<ProjectHandle, SessionError> {
-        let handle = match &self.store {
-            Backing::Project(project) => project.handle().copy_native(target)?,
-            Backing::Legacy(_) => {
-                ProjectHandle::create(target, scholium_storage::project::ProjectLanguage::Typst)?
-            }
-        };
-        let mut project =
-            NativeProject::open(handle.clone(), blank()?.shared_snapshot().as_ref().clone())?;
-        let requests = self.session.actions().iter().map(|a| a.request).collect();
-        project.append_edit(self.snapshot.as_ref().clone(), requests)?;
-        project.save()?;
-        self.store = Backing::Project(Box::new(project));
+        let handle = self.store.handle.copy_native(target)?;
+        let (store, replica) =
+            sdg_project::SdgProject::open(handle.clone(), self.snapshot.as_ref().clone())?;
+        *self.store = store;
+        self.replica = replica;
+        self.adopt_replica()?;
+        self.undo.clear();
+        self.redo.clear();
+        self.run = None;
         self.pending_persistence.clear();
         self.persistence_error = None;
         self.saved = Some(self.snapshot.clone());
@@ -226,45 +220,44 @@ impl EditorCore {
         snapshot: StructuredDocument,
         requests: impl AsRef<[RequestId]>,
     ) -> Result<(), SessionError> {
-        self.session = ReadAuthority::new(LocalSession::restore_structured_shared(
-            Arc::new(snapshot),
-            requests.as_ref(),
-        )?);
-        self.snapshot = self.session.shared_snapshot();
-        if matches!(self.store, Backing::Project(_)) {
-            self.pending_persistence.push_back(self.record());
-            self.persist_pending()?;
+        LocalSession::restore_structured_shared(Arc::new(snapshot.clone()), requests.as_ref())?;
+        // External restoration is an explicit append-only replacement, never an undo stack.
+        // A changed document identity is only allowed for a private, newly initialized fixture.
+        if snapshot.document != self.snapshot.document {
+            let empty = self.snapshot.blocks.len() == 1
+                && self.snapshot.blocks[0]
+                    .content
+                    .iter()
+                    .all(|i| matches!(&i.body, InlineBody::Text { text, .. } if text.is_empty()));
+            if !empty || self.snapshot.revision.0 != 1 || !self.pending_persistence.is_empty() {
+                return Err(scholium_storage::project::StoreError::Corrupt(
+                    "document replacement requires a fresh empty session",
+                )
+                .into());
+            }
+            let (replica, action) =
+                scholium_sdg::Replica::initialize(snapshot, super::sdg_project::new_actor())?;
+            self.replica = replica;
+            self.pending_persistence.push_back(action);
+        } else if let Some(action) = self.replica.apply_effects(
+            RequestId::fresh(),
+            scholium_sdg::Origin::System("restore".into()),
+            self.snapshot.revision,
+            snapshot,
+        )? {
+            self.pending_persistence.push_back(action);
         }
+        self.adopt_replica()?;
+        self.persist_pending()?;
         Ok(())
     }
 
     pub(super) fn new_document(&mut self) -> Result<(), CommandError> {
-        if matches!(self.store, Backing::Project(_)) {
-            return Err(CommandError::Arguments);
-        }
-        self.math_input.reset();
-        self.session = ReadAuthority::new(blank()?);
-        self.anchor = None;
-        self.placeholder = None;
-        self.undo.clear();
-        self.run = None;
-        self.redo.clear();
-        self.saved = None;
-        self.layout_error = None;
-        self.overflows.clear();
-        self.snapshot = self.session.shared_snapshot();
-        if let Some(leaf) = input::leaves(&self.snapshot).first() {
-            self.cursor = Position {
-                leaf: leaf.id,
-                byte: 0,
-                affinity: Affinity::Downstream,
-            };
-        }
-        Ok(())
+        Err(CommandError::Arguments)
     }
 }
 
-fn blank() -> Result<LocalSession<StructuredDocument>, scholium_document::EditError> {
+pub(super) fn blank() -> Result<LocalSession<StructuredDocument>, scholium_document::EditError> {
     LocalSession::default()
         .into_structured()
         .map(|(session, _)| session)

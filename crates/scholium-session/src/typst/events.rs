@@ -147,8 +147,10 @@ mod tests {
             format!("{:?}", core.checkpoint().expect("checkpoint")),
             before
         );
+        let expected = core.snapshot.clone();
+        drop(core);
         let reopened = EditorCore::open(&file).expect("saved head");
-        assert_eq!(reopened.snapshot, core.snapshot);
+        assert_eq!(reopened.snapshot, expected);
         let _ = std::fs::remove_file(file);
     }
 }

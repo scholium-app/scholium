@@ -79,13 +79,17 @@ impl EditorCore {
         if self.snapshot.revision != held.after || self.undo.len() != held.undo_len {
             return;
         }
-        let entry = held.before;
-        match LocalSession::restore_structured_shared(entry.snapshot.0, &entry.requests) {
-            Ok(session) => {
+        match self.replica.undo() {
+            Ok(action) => {
+                state.actions.extend(action);
+
                 self.undo.pop();
                 self.run = None;
-                self.session = ReadAuthority::new(session);
-                self.publish(state);
+                if let Err(error) = self.adopt_replica() {
+                    state.edit_error = Some(error.into());
+                } else {
+                    self.publish(state);
+                }
             }
             Err(error) => state.edit_error = Some(error.into()),
         }
