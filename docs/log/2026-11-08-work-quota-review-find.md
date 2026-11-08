@@ -59,3 +59,91 @@ Unicode 编辑和同帧高亮的回归先复现了 stale UTF-8 byte range panic�
 最终常规门禁通过：fmt、clippy `-D warnings`、workspace tests（756 passed / 18 ignored）、
 rustdoc `-D warnings`、Rust size、doc links、UI strings、layers、cargo-deny 与 app/storage bins 构建。
 allocator/PDF helper 也单独构建通过。byte/inode 各 profile 原生攻击与 Typst 原生隔离/取消回归再次通过。
+
+## 最终窗口证据与接手边界
+
+首轮全量双语运行 63/66：source-find 两语言 undo 焦点失败，zh-Hans source-preview-layout
+的 missing-toolchain fixture 失败；修复及先红后绿单元回归见上文。定向双语复验 4/4 通过。
+最终代码全量复验先完成 58 个成功组合，随后主机 `/tmp` user quota 耗尽（shell 也报
+`disk quota exceeded`，runner 以 120 退出且日志截断）。只迁移本任务 evidence 到 `/home`，
+释放约 3.5 GiB 临时配额；通过同一 machine-wide lock runner 重跑剩余英文 8 项，8/8、exit 0。
+最终同一代码的 33 checks × 2 locales 全覆盖通过；没有把被中断的单次运行称为 66/66 exit 0。
+未绕过锁、未并行窗口、未重试不明失败、未接触真实桌面、未放宽阈值。
+
+原生 rtex E2 的 7 个 host-positive / sandbox-negative 攻击对照再次通过，
+包括文件读取、绝对 input、shell、Lua/openout/项目写入与网络；实际 cgroup 预算不变。
+本分支提供了阶段 1 接手门禁 item 4 的本地工程证据：总输出 quota 与宿主 decoder/IPC 边界审查完成。
+没有编辑 SPK-0012；阶段状态的最终集成裁决仍由协调者记录。
+
+Evidence 根目录：`/home/ation_ciger/.cache/scholium-eval/t51-window-evidence/`：
+
+- `scholium-window-t51/`：首轮失败 evidence。
+- `scholium-window-t51-fixed/`：定向 4/4。
+- `scholium-window-t51-final/`：全量 58 个完成项及 host quota 中断。
+- `remaining-en/`、`remaining-en-run.log`：剩余 8/8。
+- `/tmp/t51-final-windows.log`：保留的中断 runner 日志。
+- `/tmp/t51-final-workspace-tests.log`：756 passed / 18 ignored。
+- `/tmp/t51-rtex-native-final.log`、`/tmp/t51-render-final/`：原生隔离与 rendering。
+- `/tmp/t51-stock-comparison.json`、`/tmp/t51-stock-bundled-comparison.json`：每套 31 cases equal pixels。
+
+所有权交叉还包括 `source-preview-layout-check.py` 的单行 detector override 名称修正，
+其余 T50 工作区逻辑未改。未开 PR、未轮询 CI；分支由协调者起草 PR。
+
+## 变更文件清单
+
+```text
+Cargo.lock
+crates/scholium-app/i18n/en.ftl
+crates/scholium-app/i18n/zh-Hans.ftl
+crates/scholium-app/src/command/avail.rs
+crates/scholium-app/src/command/context.rs
+crates/scholium-app/src/command/default-keymap.toml
+crates/scholium-app/src/command/edit.rs
+crates/scholium-app/src/command/exec.rs
+crates/scholium-app/src/command/spec.rs
+crates/scholium-app/src/command/tests.rs
+crates/scholium-app/src/command/ui.rs
+crates/scholium-app/src/diagnostics/panel.rs
+crates/scholium-app/src/project_files/mod.rs
+crates/scholium-app/src/source_editor/find.rs
+crates/scholium-app/src/source_editor/mod.rs
+crates/scholium-app/src/source_editor/search.rs
+crates/scholium-app/src/source_editor/tests.rs
+crates/scholium-app/src/typst_source/worker.rs
+crates/scholium-build/Cargo.toml
+crates/scholium-build/src/bin/scholium-sandbox-fs.rs
+crates/scholium-build/src/cache.rs
+crates/scholium-build/src/launch.rs
+crates/scholium-build/src/lib.rs
+crates/scholium-build/src/process.rs
+crates/scholium-build/src/quota.rs
+crates/scholium-build/src/runtime.rs
+crates/scholium-build/src/sandbox.rs
+crates/scholium-build/src/tests/mod.rs
+crates/scholium-build/src/tests/quota.rs
+crates/scholium-build/src/tests/quota_profiles.rs
+crates/scholium-build/src/tests/typst_native.rs
+crates/scholium-build/src/typst_preview.rs
+crates/scholium-build/tests/support/typst_worker.rs
+crates/scholium-latex/src/bin/scholium-pdf-worker.rs
+crates/scholium-latex/src/full.rs
+crates/scholium-latex/src/log.rs
+crates/scholium-latex/src/protocol.rs
+crates/scholium-latex/src/supervisor.rs
+crates/scholium-latex/src/tests/boundaries.rs
+crates/scholium-latex/src/tests/mod.rs
+crates/scholium-latex/src/transport.rs
+crates/scholium-latex/src/view/mod.rs
+crates/scholium-latex/src/view/pdf.rs
+crates/scholium-latex/src/view/pdf_worker.rs
+crates/scholium-latex/src/view/validate.rs
+crates/scholium-model/src/diagnostic.rs
+docs/adr/ADR-0058-output-quota-decoder-boundary.md
+docs/log/2026-11-08-work-quota-review-find.md
+docs/modules/app.md
+docs/modules/build.md
+docs/modules/latex.md
+docs/modules/model.md
+spikes/typst-main-editor/source-find-check.py
+spikes/typst-main-editor/source-preview-layout-check.py
+```
