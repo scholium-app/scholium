@@ -22,6 +22,9 @@ const RUNTIME: &[&str] = &[
 
 impl Sandbox {
     pub(crate) async fn runtime(&mut self) -> Result<(), BuildError> {
+        let helper = crate::quota::helper()?;
+        self.mounts.insert("/quota-helper".into(), helper.clone());
+        self.libraries(&helper).await?;
         if self.profile.is_worker() {
             let binary = self
                 .mounts

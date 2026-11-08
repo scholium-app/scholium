@@ -62,21 +62,44 @@ fn deeply_nested_output_fails_without_unbounded_host_recursion() {
 }
 
 #[test]
-#[ignore = "requires unprivileged user/mount namespaces and the installed allocator"]
-fn kernel_output_volume_bounds_bytes_and_inodes_after_allocator_exit() {
-    let limits = ResourceLimits {
-        output_bytes: 16_384,
-        output_inodes: 8,
-        ..Default::default()
-    };
-    let volume = crate::quota::Volume::create(limits).expect("quota unavailable: NOT RUN");
-    let data = vec![0; 32_768];
-    assert!(std::fs::write(volume.path.join("too-large"), data).is_err());
-    assert!(volume.full());
-    std::fs::remove_file(volume.path.join("too-large")).expect("reset");
-    for index in 0..6 {
-        std::fs::write(volume.path.join(index.to_string()), []).expect("inode");
+fn every_profile_uses_bwrap_tmpfs_without_external_namespace_mounts() {
+    for profile in [
+        crate::BuildProfile::Rtex,
+        crate::BuildProfile::FullCompilation,
+        crate::BuildProfile::TypstPreview,
+        crate::BuildProfile::PdfDecode,
+    ] {
+        let sandbox = Sandbox {
+            mounts: Default::default(),
+            toolchain: None,
+            limits: Default::default(),
+            profile,
+        };
+        let command = sandbox.command(
+            std::path::Path::new("/input"),
+            std::path::Path::new("/output"),
+            std::path::Path::new("/socket"),
+            "quota.scope",
+            &["/worker".into()],
+        );
+        let args: Vec<_> = command
+            .as_std()
+            .get_args()
+            .map(|s| s.to_string_lossy().into_owned())
+            .collect();
+        assert!(
+            !args
+                .iter()
+                .any(|s| s == "/usr/bin/unshare" || s == "/usr/bin/nsenter" || s == "--bind")
+        );
+        let output = if profile.is_worker() { "/out" } else { "/work" };
+        assert!(
+            args.windows(4)
+                .any(|w| w == ["--size", "536870912", "--tmpfs", output])
+        );
+        assert!(
+            args.windows(3)
+                .any(|w| w == ["--", "/quota-helper", output])
+        );
     }
-    assert!(std::fs::write(volume.path.join("extra"), []).is_err());
-    assert!(volume.full());
 }

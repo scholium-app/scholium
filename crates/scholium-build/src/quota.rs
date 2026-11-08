@@ -1,4 +1,4 @@
-//! A kernel-bounded tmpfs, retained by an fd after the allocator namespace exits.
+//! Bwrap-created tmpfs retained by a directory fd; this module never mounts or enters namespaces.
 use crate::{BuildError, ResourceLimits};
 use cap_std::fs::{FileTypeExt, OpenOptionsExt};
 use nix::sys::{
@@ -10,88 +10,102 @@ use std::{
     io::{IoSliceMut, Read},
     os::{
         fd::{AsRawFd, FromRawFd},
-        unix::net::UnixDatagram,
+        unix::net::UnixStream,
     },
     path::{Path, PathBuf},
-    process::Stdio,
     sync::{
         Arc,
         atomic::{AtomicBool, Ordering},
     },
-    time::Duration,
 };
 
 #[derive(Debug)]
 pub(crate) struct Volume {
     _root: File,
-    pub namespace: File,
-    pub mount_namespace: File,
-    pub stage: tempfile::TempDir,
     pub path: PathBuf,
     pub exhausted: Arc<AtomicBool>,
     pub budget: (u64, u64),
 }
 impl Volume {
-    pub fn create(limits: ResourceLimits) -> Result<Self, BuildError> {
-        let stage = tempfile::tempdir()?;
-        let target = stage.path().join("mount");
-        std::fs::create_dir(&target)?;
-        let address = stage.path().join("socket");
-        let socket = UnixDatagram::bind(&address)?;
-        socket.set_read_timeout(Some(Duration::from_secs(5)))?;
-        let mut child = std::process::Command::new("/usr/bin/unshare")
-            .args([
-                "--user",
-                "--map-root-user",
-                "--mount",
-                "--propagation",
-                "private",
-            ])
-            .arg(allocator()?)
-            .arg(&target)
-            .arg(&address)
-            .arg(limits.output_bytes.to_string())
-            .arg(limits.output_inodes.to_string())
-            .stdin(Stdio::null())
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .spawn()?;
-        let result = receive(&socket);
-        // The allocator has no input other than trusted paths and budgets, and exits after sendmsg.
-        let _ = child.kill();
-        let _ = child.wait();
-        let (root, namespace, mount_namespace) =
-            result.map_err(|e| BuildError::Unavailable(format!("output quota tmpfs: {e}")))?;
-        let path = PathBuf::from(format!(
-            "/proc/{}/fd/{}",
-            std::process::id(),
-            root.as_raw_fd()
-        ));
-        std::fs::create_dir(path.join(".font-cache"))?;
-        Ok(Self {
-            _root: root,
-            namespace,
-            mount_namespace,
-            stage,
-            path,
-            exhausted: Arc::new(AtomicBool::new(false)),
-            budget: (limits.output_bytes, limits.output_inodes),
-        })
+    pub fn receive(socket: &UnixStream, limits: ResourceLimits) -> Result<Self, BuildError> {
+        let mut byte = [0];
+        let mut control = nix::cmsg_space!([std::os::fd::RawFd; 1]);
+        let mut slices = [IoSliceMut::new(&mut byte)];
+        let message = recvmsg::<()>(
+            socket.as_raw_fd(),
+            &mut slices,
+            Some(&mut control),
+            MsgFlags::MSG_CMSG_CLOEXEC,
+        )
+        .map_err(std::io::Error::from)?;
+        let mut directories = Vec::new();
+        for item in message.cmsgs().map_err(std::io::Error::from)? {
+            if let ControlMessageOwned::ScmRights(fds) = item {
+                for fd in fds {
+                    // SAFETY: SCM_RIGHTS transfers ownership of each new fd. Own all so
+                    // malformed ancillary data cannot leak descriptors on error.
+                    directories.push(unsafe { File::from_raw_fd(fd) });
+                }
+            }
+        }
+        if directories.len() == 1 && !message.flags.contains(MsgFlags::MSG_CTRUNC) {
+            let root = directories.remove(0);
+            if !root.metadata()?.is_dir() {
+                return Err(BuildError::Unavailable(
+                    "invalid output directory fd".into(),
+                ));
+            }
+            let path = PathBuf::from(format!(
+                "/proc/{}/fd/{}",
+                std::process::id(),
+                root.as_raw_fd()
+            ));
+            return Ok(Self {
+                _root: root,
+                path,
+                exhausted: Arc::new(AtomicBool::new(false)),
+                budget: (limits.output_bytes, limits.output_inodes),
+            });
+        }
+        Err(BuildError::Unavailable(
+            "bwrap output handshake did not supply a directory fd".into(),
+        ))
     }
     pub fn full(&self) -> bool {
         let full = statvfs(&self.path)
-            .map(|s| s.blocks_available() == 0 || s.files_available() == 0)
-            .unwrap_or(true);
+            .map(|s| s.blocks_available() == 0)
+            .unwrap_or(true)
+            || cap_std::fs::Dir::open_ambient_dir(&self.path, cap_std::ambient_authority())
+                .and_then(|root| inode_count(&root, &mut self.budget.1.saturating_sub(1), 0))
+                .is_err();
         if full {
             self.exhausted.store(true, Ordering::Release);
         }
-        full
+        full || self.exhausted.load(Ordering::Acquire)
     }
     pub fn export(&self, work: &Path) -> Result<(), BuildError> {
+        if self.full() {
+            return Err(BuildError::OutputQuota);
+        }
         copy_tree(&self.path, work, self.budget)
     }
 }
-fn allocator() -> Result<PathBuf, BuildError> {
+fn inode_count(root: &cap_std::fs::Dir, remaining: &mut u64, depth: usize) -> std::io::Result<()> {
+    if depth > 128 {
+        return Err(std::io::Error::other("output nesting limit"));
+    }
+    for entry in root.entries()? {
+        let entry = entry?;
+        *remaining = remaining
+            .checked_sub(1)
+            .ok_or_else(|| std::io::Error::other("output file count"))?;
+        if entry.file_type()?.is_dir() {
+            inode_count(&root.open_dir(entry.file_name())?, remaining, depth + 1)?;
+        }
+    }
+    Ok(())
+}
+pub(crate) fn helper() -> Result<PathBuf, BuildError> {
     let executable = std::env::current_exe()?;
     let mut parent = executable
         .parent()
@@ -108,34 +122,6 @@ fn allocator() -> Result<PathBuf, BuildError> {
         ));
     }
     Ok(path)
-}
-fn receive(socket: &UnixDatagram) -> std::io::Result<(File, File, File)> {
-    let mut byte = [0];
-    let mut control = nix::cmsg_space!([std::os::fd::RawFd; 3]);
-    let mut slices = [IoSliceMut::new(&mut byte)];
-    let message = recvmsg::<()>(
-        socket.as_raw_fd(),
-        &mut slices,
-        Some(&mut control),
-        MsgFlags::MSG_CMSG_CLOEXEC,
-    )?;
-    for item in message.cmsgs()? {
-        if let ControlMessageOwned::ScmRights(fds) = item
-            && let [fd, namespace, mount_namespace] = fds.as_slice()
-        {
-            // SAFETY: SCM_RIGHTS transferred ownership of these three new fds.
-            return Ok(unsafe {
-                (
-                    File::from_raw_fd(*fd),
-                    File::from_raw_fd(*namespace),
-                    File::from_raw_fd(*mount_namespace),
-                )
-            });
-        }
-    }
-    Err(std::io::Error::other(
-        "allocator did not supply a directory fd",
-    ))
 }
 
 pub(crate) fn copy_tree(
@@ -223,9 +209,6 @@ pub(crate) fn read(work: &Path, relative: &Path, limit: u64) -> Result<Vec<u8>, 
     drop(map);
     let root = cap_std::fs::Dir::open_ambient_dir(&volume.path, cap_std::ambient_authority())?;
     let file = regular(&root, relative)?;
-    if !file.metadata()?.is_file() {
-        return Err(BuildError::Configuration("non-regular output".into()));
-    }
     let mut bytes = Vec::new();
     file.take(limit + 1).read_to_end(&mut bytes)?;
     if bytes.len() as u64 > limit {

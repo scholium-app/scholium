@@ -19,7 +19,7 @@ pub enum BuildError {
     /// A filesystem or process operation failed.
     #[error(transparent)]
     Io(#[from] std::io::Error),
-    /// The kernel-enforced session output budget was exhausted.
+    /// The session output byte or monitored file-count budget was exhausted.
     #[error("build output byte or inode limit exceeded")]
     OutputQuota,
     /// Trusted configuration violates the sandbox boundary.

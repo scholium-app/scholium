@@ -147,3 +147,30 @@ docs/modules/model.md
 spikes/typst-main-editor/source-find-check.py
 spikes/typst-main-editor/source-preview-layout-check.py
 ```
+
+
+## PR #110 Ubuntu restricted-userns 修订
+
+协调者报告 Ubuntu 26.04 AppArmor 开启 restricted userns 时所有构建失败。
+本机是 AppArmor 未启用的 Arch，不能把本机结果称为 Ubuntu 原生验收。
+先保留旧 allocator，在 bwrap 丢弃全部能力后执行，得到 `Error: EPERM`，
+复现其对子进程 mount 能力的错误依赖；日志为 `t51-ubuntu-fix/old-mount-denied.log`。
+
+移除 unshare/nsenter allocator 路径，改由 bwrap `--size --tmpfs` 建立输出卷。
+无挂载 helper 在能力已丢弃后设置 NO_NEW_PRIVS 与继承的 seccomp，拒绝所有 mount
+和 namespace 进入/创建 syscall，再交付目录 fd、等待有界初始化并 exec。
+四 profile 的 argv 回归验证只有 bwrap 挂载、无可写 host bind 和外部 unshare/nsenter。
+原生 fixture 验证 CapEff=0、NoNewPrivs=1，unshare(0) 和 mount 均返回 EPERM。
+因此后续原生/窗口验收一直在非 bwrap 子进程不能挂载的条件下执行；
+这满足协调者允许的最低验证路径，不替代真实 Ubuntu AppArmor 集成验收。
+
+采用 fd capability 保留 live 输出和退出后的复制能力，无需跨 AppArmor 读取子进程 root。
+字节仍由内核 tmpfs size 限制；inode 数改为 20 ms 监督与复制前检查，
+内核 memcg 约束 tmpfs 页与 inode/dentry slab 的分配内存；复制仍有独立 byte/inode 预算。
+ADR 0058 保留旧方案作为拒绝的替代项，并引用 Linux 官方 cgroup v2 memory 记账规范。
+
+新增原生记账测试中，写入 32 MiB 并创建 12000 个空文件，实际 scope 的
+`memory.stat (shmem, slab)` 从 `(0, 0)` 增至 `(33554432, 11488376)` bytes；
+取消后 fd 仍能复制出完整 32 MiB 产物。host 初始化页面不宣称计入子 memcg。
+原生 quota 测试验证 Rtex、FullCompilation、TypstPreview 的 byte/inode 六种攻击均为 OutputQuota。
+证据根目录为 `/home/ation_ciger/.cache/scholium-eval/t51-ubuntu-fix/`。

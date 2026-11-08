@@ -28,7 +28,8 @@ impl SandboxProcess {
         mut command: Command,
         scope: String,
         cache: tempfile::TempDir,
-        volume: std::sync::Arc<crate::quota::Volume>,
+        listener: std::os::unix::net::UnixListener,
+        limits: crate::ResourceLimits,
         work: std::path::PathBuf,
     ) -> Result<Self, BuildError> {
         command
@@ -37,22 +38,15 @@ impl SandboxProcess {
             .stderr(Stdio::piped());
         command.process_group(0);
         command.kill_on_drop(true);
-        use std::os::fd::AsRawFd;
-        let mount_fd = volume.mount_namespace.as_raw_fd();
-        let namespace_fd = volume.namespace.as_raw_fd();
-        // SAFETY: fcntl is async-signal-safe, both namespace fds remain owned by volume
-        // across spawn, and no host directory fd is made inheritable.
-        unsafe {
-            command.pre_exec(move || {
-                if nix::libc::fcntl(mount_fd, nix::libc::F_SETFD, 0) == -1
-                    || nix::libc::fcntl(namespace_fd, nix::libc::F_SETFD, 0) == -1
-                {
-                    return Err(std::io::Error::last_os_error());
-                }
-                Ok(())
-            });
-        }
-        let child = command.spawn()?;
+        let mut child = command.spawn()?;
+        let (mut socket, volume) = handshake(&listener, &mut child, limits)?;
+        let volume = std::sync::Arc::new(volume);
+        crate::quota::copy_tree(&work, &volume.path, volume.budget)?;
+        let private_cache = volume.path.join(".font-cache");
+        std::fs::create_dir_all(&private_cache)?;
+        crate::cache::copy(cache.path(), &private_cache)?;
+        crate::quota::register(&work, &volume);
+        std::io::Write::write_all(&mut socket, b"G")?;
         let checked = volume.clone();
         let unit = scope.clone();
         let monitor = tokio::spawn(async move {
@@ -165,6 +159,34 @@ impl SandboxProcess {
             self.volume.export(&self.work)?;
         }
         result
+    }
+}
+
+fn handshake(
+    listener: &std::os::unix::net::UnixListener,
+    child: &mut Child,
+    limits: crate::ResourceLimits,
+) -> Result<(std::os::unix::net::UnixStream, crate::quota::Volume), BuildError> {
+    let deadline = std::time::Instant::now() + CONTROL_TIMEOUT;
+    loop {
+        match listener.accept() {
+            Ok((socket, _)) => {
+                socket.set_read_timeout(Some(CONTROL_TIMEOUT))?;
+                let volume = crate::quota::Volume::receive(&socket, limits)?;
+                return Ok((socket, volume));
+            }
+            Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {}
+            Err(e) => return Err(e.into()),
+        }
+        if let Some(status) = child.try_wait()? {
+            return Err(BuildError::Unavailable(format!(
+                "bwrap output handshake: {status}"
+            )));
+        }
+        if std::time::Instant::now() >= deadline {
+            return Err(BuildError::Timeout("bwrap output handshake"));
+        }
+        std::thread::sleep(Duration::from_millis(5));
     }
 }
 

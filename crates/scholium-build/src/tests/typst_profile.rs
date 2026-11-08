@@ -75,7 +75,7 @@ fn assert_typst_mounts(args: &[String], exe: &Path, request: &Path) {
         ("--ro-bind", "/host/prlimit", "/usr/bin/prlimit"),
         ("--ro-bind", "/host/libworker.so", "/usr/lib/libworker.so"),
         ("--ro-bind", "/input", "/project"),
-        ("--bind", "/output", "/out"),
+        ("--ro-bind", "/unused-cache", "/quota-socket"),
     ];
     assert_eq!(mounts.len(), fixed.len());
     for (mode, source, target) in fixed {
@@ -96,12 +96,13 @@ fn assert_typst_mounts(args: &[String], exe: &Path, request: &Path) {
     );
     assert!(args.ends_with(&[
         "--".into(),
+        "/quota-helper".into(),
+        "/out".into(),
         "/worker".into(),
         "--source-preview-worker".into()
     ]));
     for forbidden in [
         "--share-net",
-        "/unused-cache",
         "/rtex/texmf-var",
         "TEXINPUTS",
         "/usr/share/fonts",
@@ -157,7 +158,7 @@ fn tex_profiles_keep_their_cache_mounts_and_distinct_cpu_policy() {
         assert!(args.iter().any(|arg| arg == "MemoryMax=2147483648"));
         assert!(
             args.windows(3)
-                .any(|w| w == ["--bind", "/cache", "/rtex/texmf-var"])
+                .any(|w| w == ["--symlink", "/work/.font-cache", "/rtex/texmf-var"])
         );
         assert!(args.windows(2).any(|w| w == ["--chdir", "/work"]));
         assert_eq!(

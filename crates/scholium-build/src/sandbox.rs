@@ -36,7 +36,8 @@ pub struct ResourceLimits {
     pub tasks: u32,
     /// Total allocated output bytes per session (includes the writable font cache).
     pub output_bytes: u64,
-    /// Total output files and directories per session, including the root inode.
+    /// Monitored output entry count and strict copy-out budget, including the root inode.
+    /// Inode/slab allocation itself is hard-bounded by the session memory cgroup.
     pub output_inodes: u64,
 }
 impl Default for ResourceLimits {
