@@ -2,6 +2,38 @@
 use super::*;
 use serde_json::json;
 
+/// Counts keyboard and text input once per egui pass, including keys the editor ignores.
+///
+/// Window checks compare it before and after an action, so a delivered no-op key is visible
+/// in the audit and a check never mistakes the pre-input state for the settled result.
+#[derive(Debug, Default)]
+pub(super) struct InputCounter {
+    seen: u64,
+    pass: Option<u64>,
+}
+
+impl InputCounter {
+    pub(super) fn observe(&mut self, ctx: &egui::Context) -> u64 {
+        let pass = ctx.cumulative_pass_nr();
+        if self.pass != Some(pass) {
+            self.pass = Some(pass);
+            self.seen += ctx.input(|i| i.events.iter().filter(|e| counts(e)).count()) as u64;
+        }
+        self.seen
+    }
+}
+
+fn counts(event: &egui::Event) -> bool {
+    matches!(
+        event,
+        egui::Event::Key { pressed: true, .. }
+            | egui::Event::PointerButton { pressed: true, .. }
+            | egui::Event::Text(_)
+            | egui::Event::Paste(_)
+            | egui::Event::Ime(egui::ImeEvent::Commit(_))
+    )
+}
+
 impl EditorSession {
     pub(super) fn audit(
         &mut self,
@@ -31,6 +63,7 @@ impl EditorSession {
         if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_none() {
             return;
         }
+        let input_seq = self.audit_input.observe(ctx);
         let carets: Vec<_> = self.scene().into_iter().flat_map(|s| &s.geometry.carets).map(|c| json!({
             "leaf": format!("{:?}", c.position.leaf), "byte": c.position.byte,
             "affinity": format!("{:?}", c.position.affinity),
@@ -104,6 +137,7 @@ impl EditorSession {
                 "source_reads": s.stats.source_reads, "elapsed_ms": s.stats.elapsed_ms,
             })),
             "document_geometry": self.core.document_scene_is_current(),
+            "input_seq": input_seq,
             "preedit_caret": self.scene().and_then(|s| s.preedit.as_ref()).map(|c| json!({
                 "leaf": format!("{:?}", c.position.leaf), "byte": c.position.byte,
                 "x": rect.left() + c.top[0] as f32 * scale,
@@ -119,5 +153,60 @@ impl EditorSession {
             println!("AUDIT {value}");
             self.last_audit = Some(value);
         }
+    }
+}
+
+#[cfg(test)]
+mod input_counter_tests {
+    use super::*;
+
+    fn key(pressed: bool) -> egui::Event {
+        egui::Event::Key {
+            key: egui::Key::ArrowLeft,
+            physical_key: None,
+            pressed,
+            repeat: false,
+            modifiers: egui::Modifiers::NONE,
+        }
+    }
+
+    fn pass(
+        ctx: &egui::Context,
+        counter: &mut InputCounter,
+        time: f64,
+        events: Vec<egui::Event>,
+    ) -> u64 {
+        let mut seen = 0;
+        let raw = egui::RawInput {
+            screen_rect: Some(egui::Rect::from_min_size(
+                egui::Pos2::ZERO,
+                egui::vec2(400.0, 300.0),
+            )),
+            events,
+            time: Some(time),
+            ..Default::default()
+        };
+        let mut output = ctx.run_ui(raw, |ui| {
+            // A second audit in the same pass must not count the events again.
+            counter.observe(ui.ctx());
+            seen = counter.observe(ui.ctx());
+        });
+        output.textures_delta.clear();
+        seen
+    }
+
+    #[test]
+    fn counts_delivered_presses_and_text_once_per_pass_including_ignored_keys() {
+        let ctx = egui::Context::default();
+        crate::theme::install(&ctx);
+        let mut counter = InputCounter::default();
+        let events = vec![key(true), key(false), egui::Event::Text("a".into())];
+        assert_eq!(pass(&ctx, &mut counter, 0.1, events), 2);
+        assert_eq!(
+            pass(&ctx, &mut counter, 0.2, Vec::new()),
+            2,
+            "idle passes add nothing"
+        );
+        assert_eq!(pass(&ctx, &mut counter, 0.3, vec![key(true)]), 3);
     }
 }

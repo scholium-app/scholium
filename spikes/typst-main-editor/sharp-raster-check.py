@@ -68,12 +68,17 @@ def run(label, extra_env, scroll=False):
         lines = [l for l in log_path.read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
         return json.loads(lines[-1][6:]) if lines else None
 
-    def wait(predicate, what, timeout=60):
+    def wait(predicate, what, timeout=60, progress=False):
+        """Fail after `timeout` s; with `progress`, only after `timeout` s without a new revision."""
         end = time.monotonic() + timeout
+        last_revision = None
         while time.monotonic() < end:
             current = state()
             if current and predicate(current):
                 return current
+            if progress and current and current["revision"] != last_revision:
+                last_revision = current["revision"]
+                end = time.monotonic() + timeout
             time.sleep(0.05)
         raise RuntimeError(f"timeout: {what}: {state()}")
 
@@ -110,10 +115,13 @@ def scroll_case(window, env, wait, sharp):
     """Lengthen the page past the viewport, then scroll to both ends: sharp strips follow."""
     xdo = lambda *args: subprocess.run(["xdotool", *map(str, args)], check=True, env=env)
     xdo("key", "Return")
+    # Short lines give the same page height as long ones with a fraction of the keystrokes,
+    # so a busy runner is not asked to absorb thousands of key events at once.
     for number in range(150):
-        xdo("type", "--delay", "2", f"Line {number} of a page longer than the viewport")
+        xdo("type", "--delay", "2", f"Line {number}")
         xdo("key", "Return")
-    wait(lambda s: s["current"] and s["raster"] and s["raster"]["height_px"] > 4000, "long page laid out")
+    wait(lambda s: s["current"] and s["raster"] and s["raster"]["height_px"] > 4000, "long page laid out",
+         progress=True)
     xdo("mousemove", "--window", window, "600", "400")
     seen = {}
     for name, button in (("top", 4), ("bottom", 5)):
