@@ -142,6 +142,16 @@ fn shared_source_rows_have_file_locations_close_tabs_and_accessible_names() {
         assert!(window.texts().contains(&"compiler message".into()));
         let rows = window.rects("diagnostics");
         assert_eq!(rows[0].height(), 26.0);
+        window.click("ui.menu.view", "menubar");
+        window.hover("ui.menu.view.theme", "menu");
+        assert!(window.ids("menu").contains(&"view.theme.light".into()));
+        assert!(window.ids("menu").contains(&"view.theme.dark".into()));
+        window.click("view.theme.dark", "menu");
+        assert_eq!(
+            window.ids("diagnostics").len(),
+            1,
+            "theme menus keep the dock and diagnostics alive"
+        );
         window.click("ui.problems.output", "problem-header");
         assert!(window.texts().contains(&"compiler output".into()));
         assert!(window.ids("diagnostics").is_empty());

@@ -13,6 +13,7 @@ import chrome_ui
 binary, output = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
 results = {}
+baseline = os.environ.get("SCHOLIUM_T47_BASELINE") == "1"
 
 
 def record(name, condition, **facts):
@@ -37,9 +38,11 @@ def rows(app):
 def capture_themes(app, name):
     controller = Chrome(lambda: app.source(), app.xdo, app.window)
     for theme in ["light", "dark"]:
+        print("STEP theme menu " + name + " " + theme, flush=True)
         controller.menu("ui.menu.view", "ui.menu.view.theme", "view.theme." + theme)
-        time.sleep(0.3)
+        app.source(lambda s: s["chrome"]["facts"]["theme"].lower() == theme)
         app.capture(name + "-" + theme)
+        record(name + "-theme-" + theme, True)
 
 
 def case(kind, source, fixed, member=None):
@@ -59,6 +62,14 @@ def case(kind, source, fixed, member=None):
         prefix = "AUDIT " if kind.startswith("latex") else "SOURCE_PREVIEW "
         def diagnostic(predicate):
             return latest(app, prefix, lambda s: (not kind.startswith("latex") or s.get("kind") == "latex") and "diagnostics" in s and predicate(s))
+        if baseline:
+            latest(app, "AUDIT ", lambda s: s.get("kind") == "latex" and s.get("pages", 0) > 0)
+            app.key("ctrl+j")
+            capture_themes(app, "problems")
+            app.xdo("windowsize", app.window, 480, 900)
+            latest(app, "AUDIT ", lambda s: s.get("kind") == "latex" and s.get("source_rect") and s["source_rect"][2] < 480)
+            capture_themes(app, "problems-narrow")
+            return
         s = diagnostic(lambda s: bool(s["diagnostics"]["items"]))
         app.key("ctrl+j")
         app.source(lambda s: bool(s["controls"].get("ui.diagnostics.row")))
@@ -74,6 +85,12 @@ def case(kind, source, fixed, member=None):
         if member is not None:
             record(kind + "-opens-member-without-changing-entry", selected["active_resource"] == "chapter.tex" and app.source()["entry"] == "main.tex")
         capture_themes(app, "problems")
+        if kind.startswith("latex"):
+            app.xdo("windowsize", app.window, 480, 900)
+            latest(app, "AUDIT ", lambda s: s.get("kind") == "latex" and s.get("source_rect") and s["source_rect"][2] < 480)
+            capture_themes(app, "problems-narrow")
+            app.xdo("windowsize", app.window, 1280, 900)
+            latest(app, "AUDIT ", lambda s: s.get("kind") == "latex" and s.get("source_rect") and s["source_rect"][2] > 480)
         # F8 follows the loaded keymap and wraps in both directions.
         before = selected["selection"]
         app.key(str(chrome_ui.keycode(app.env["DISPLAY"], "F8")))
@@ -113,9 +130,11 @@ try:
     # CI has no TeX installation. The native case must be explicitly reported, never faked.
     if os.environ.get("SCHOLIUM_T47_NATIVE"):
         case("latex-live" if engine == "lualatex" else "latex-full", latex, fixed)
-        case("latex-member", "% !TEX program = " + engine + "\n\\documentclass{article}\n\\begin{document}\n\\input{chapter}\n\\end{document}\n", "Fixed\n", "\\cite{missing}\n\\foo\n")
+        if not baseline:
+            case("latex-member", "% !TEX program = " + engine + "\n\\documentclass{article}\n\\begin{document}\n\\input{chapter}\n\\end{document}\n", "Fixed\n", "\\cite{missing}\n\\foo\n")
     else:
         results["latex-native"] = {"skip": "requires TeX Live and product namespaces; run SCHOLIUM_T47_NATIVE=1"}
-    case("typ-source", '= Source\n#unknown_function()', '= Source\nFixed')
+    if not baseline:
+        case("typ-source", '= Source\n#unknown_function()', '= Source\nFixed')
 finally:
     (output / "summary.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")

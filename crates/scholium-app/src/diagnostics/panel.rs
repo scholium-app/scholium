@@ -90,17 +90,27 @@ fn contents(ui: &mut Ui, state: &mut WorkspaceState) -> Vec<usize> {
                 let name = path
                     .map(str::to_owned)
                     .unwrap_or_else(|| i18n::text(state.locale.resolve(), "diag.panel.unmapped"));
-                let title = format!(
-                    "{} {name} ({})",
-                    if collapsed { "▸" } else { "▾" },
-                    indices.len()
-                );
+                let title = format!("{name} ({})", indices.len());
                 let meta = Meta::new("ui.problems.group", "problem-header", title.clone())
                     .indexed(indices[0])
                     .checked(Some(!collapsed));
                 let response = meta.place(ui, egui::vec2(ui.available_width(), GROUP_HEIGHT));
+                crate::icons::paint(
+                    ui.painter(),
+                    egui::Rect::from_center_size(
+                        response.rect.left_center() + egui::vec2(6.0, 0.0),
+                        egui::vec2(12.0, 12.0),
+                    ),
+                    if collapsed {
+                        Glyph::ChevronRight
+                    } else {
+                        Glyph::ChevronDown
+                    },
+                    (12.0, 1.0),
+                    theme::tokens(ui.ctx()).text_dim,
+                );
                 ui.painter().text(
-                    response.rect.left_center(),
+                    response.rect.left_center() + egui::vec2(16.0, 0.0),
                     egui::Align2::LEFT_CENTER,
                     title,
                     theme::font(Tokens::SMALL_TEXT),

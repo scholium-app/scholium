@@ -97,7 +97,7 @@ impl Window {
             .unwrap_or_else(|| panic!("no control {id} on {surface}"))
     }
 
-    fn hover(&mut self, id: &str, surface: &str) {
+    pub(crate) fn hover(&mut self, id: &str, surface: &str) {
         let pos = self.find(id, surface).rect.center();
         self.frame(vec![egui::Event::PointerMoved(pos)]);
         self.settle();

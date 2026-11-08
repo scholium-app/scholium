@@ -18,6 +18,17 @@ pub(super) struct Edit {
     pub path: String,
     pub inputs: Vec<(String, String)>,
 }
+impl Edit {
+    fn inputs(&self) -> BTreeMap<&str, &str> {
+        let mut inputs: BTreeMap<_, _> = self
+            .inputs
+            .iter()
+            .map(|(p, t)| (p.as_str(), t.as_str()))
+            .collect();
+        inputs.insert(&self.path, &self.text);
+        inputs
+    }
+}
 #[derive(Debug)]
 pub(super) enum Update {
     Ready {
@@ -209,11 +220,7 @@ async fn full(
 ) -> Result<(), scholium_latex::LatexError> {
     loop {
         let edit = edits.borrow_and_update().clone();
-        for (path, text) in edit
-            .inputs
-            .iter()
-            .chain(std::iter::once(&(edit.path.clone(), edit.text.clone())))
-        {
+        for (path, text) in edit.inputs() {
             source.load(path)?;
             let old = source.text(path).unwrap_or_default().len();
             if source.text(path) != Some(text) {
@@ -440,11 +447,7 @@ async fn apply_live_inputs(
     let mut snapshot = live.snapshot().await?;
     let mut revision = snapshot.revision();
     // watch coalesces changes: each value carries all drafts so edits to another file survive.
-    for (path, text) in edit
-        .inputs
-        .iter()
-        .chain(std::iter::once(&(edit.path.clone(), edit.text.clone())))
-    {
+    for (path, text) in edit.inputs() {
         snapshot.load(path)?;
         let old = snapshot.text(path).unwrap_or_default();
         if old != text {
@@ -474,6 +477,29 @@ async fn publish_diagnostics(
 #[cfg(test)]
 mod diagnostic_tests {
     use super::*;
+    #[test]
+    fn current_resource_is_applied_once_even_when_also_present_in_draft_inputs() {
+        let edit = Edit {
+            revision: 1,
+            path: "main.tex".into(),
+            text: "Fixed".into(),
+            inputs: vec![
+                ("main.tex".into(), "older draft".into()),
+                ("chapter.tex".into(), "中é".into()),
+            ],
+        };
+        let inputs = edit.inputs();
+        assert_eq!(
+            inputs.get("main.tex"),
+            Some(&"Fixed"),
+            "current input wins over retained draft"
+        );
+        assert_eq!(
+            inputs.len(),
+            2,
+            "each resource gets one patch computed from its previous source"
+        );
+    }
     #[test]
     fn transcript_enrichment_requires_matching_revision_severity_and_message() {
         let parsed = scholium_latex::log::parse_log(

@@ -1,0 +1,98 @@
+[
+  {
+    "file": "before/en/problems-dark.png",
+    "phase": "before",
+    "app_source": "aa6ad1397df410f9968f5e55aed62d875071c9cc",
+    "sha256": "99fd4cad771aeaf7613af9835a922a8facbaaf72ec63b421a76c06b1f2a1c6d6"
+  },
+  {
+    "file": "before/en/problems-light.png",
+    "phase": "before",
+    "app_source": "aa6ad1397df410f9968f5e55aed62d875071c9cc",
+    "sha256": "f82492c970b7d6ee66e65d7709fa630aaf2742244bf828e04f049518c01611ac"
+  },
+  {
+    "file": "before/en/problems-narrow-dark.png",
+    "phase": "before",
+    "app_source": "aa6ad1397df410f9968f5e55aed62d875071c9cc",
+    "sha256": "1c39f8dda8c2053221821534a8fd514bbcfd2b3504a3730d6b0337c964fe7fbe"
+  },
+  {
+    "file": "before/en/problems-narrow-light.png",
+    "phase": "before",
+    "app_source": "aa6ad1397df410f9968f5e55aed62d875071c9cc",
+    "sha256": "4251667156add8b2ff7a73ace7305caaac6193e8946cd9216730d8f74bea4a5a"
+  },
+  {
+    "file": "before/zh-Hans/problems-dark.png",
+    "phase": "before",
+    "app_source": "aa6ad1397df410f9968f5e55aed62d875071c9cc",
+    "sha256": "3a68d10c0964c3c8cff0745ed5da99bbc899dcd2b40baa3976f414eb5fe59d63"
+  },
+  {
+    "file": "before/zh-Hans/problems-light.png",
+    "phase": "before",
+    "app_source": "aa6ad1397df410f9968f5e55aed62d875071c9cc",
+    "sha256": "0bbb97e1df21db636a6564ecc1831cf75bd34bae59e1ab15dd54c18c3b0e684b"
+  },
+  {
+    "file": "before/zh-Hans/problems-narrow-dark.png",
+    "phase": "before",
+    "app_source": "aa6ad1397df410f9968f5e55aed62d875071c9cc",
+    "sha256": "15183a709ea45230f2ef6f9339f523562478d9abd9b1c65caafc7c27328ffba9"
+  },
+  {
+    "file": "before/zh-Hans/problems-narrow-light.png",
+    "phase": "before",
+    "app_source": "aa6ad1397df410f9968f5e55aed62d875071c9cc",
+    "sha256": "93055e15a1754d6d06207e7981e7c975be5cdc3359e942f2b1024e0ad8e07c1c"
+  },
+  {
+    "file": "after/en/problems-dark.png",
+    "phase": "after",
+    "app_source": "head with T47 review fix",
+    "sha256": "f4327c77e26ad6cb3d0be2b4dbb030087b098098cc50bdc85c1c509d32671d52"
+  },
+  {
+    "file": "after/en/problems-light.png",
+    "phase": "after",
+    "app_source": "head with T47 review fix",
+    "sha256": "40fd5e455a3478ce84aadc1d5fc0b25c18d6b6d9864ed4fd8e1fd1276808407e"
+  },
+  {
+    "file": "after/en/problems-narrow-dark.png",
+    "phase": "after",
+    "app_source": "head with T47 review fix",
+    "sha256": "3da6721f172f7c7e586994499b7c3e0e471a3b92516a674f1fa51e830c4c37f0"
+  },
+  {
+    "file": "after/en/problems-narrow-light.png",
+    "phase": "after",
+    "app_source": "head with T47 review fix",
+    "sha256": "9087f0bba2cdba5527b17e7372d16fa71e5b9851bfe93d51e5ce070e68ffde61"
+  },
+  {
+    "file": "after/zh-Hans/problems-dark.png",
+    "phase": "after",
+    "app_source": "head with T47 review fix",
+    "sha256": "ad3313a48101bb4cde9e0302c2d7002ffeca145043eebaf64eb6112c4db4ccf1"
+  },
+  {
+    "file": "after/zh-Hans/problems-light.png",
+    "phase": "after",
+    "app_source": "head with T47 review fix",
+    "sha256": "35f80155cad076408c49120dd79e8c665523bf551e48125d6db336ebf52102c2"
+  },
+  {
+    "file": "after/zh-Hans/problems-narrow-dark.png",
+    "phase": "after",
+    "app_source": "head with T47 review fix",
+    "sha256": "394fd755a411c173e4d1697b67796aa9b854f5f227c02835d481b8605023d026"
+  },
+  {
+    "file": "after/zh-Hans/problems-narrow-light.png",
+    "phase": "after",
+    "app_source": "head with T47 review fix",
+    "sha256": "0b1d3b4e72bf6f2c0294dab86de4757db1e8e0a94ed61e78e5b2ffe3ab655e44"
+  }
+]

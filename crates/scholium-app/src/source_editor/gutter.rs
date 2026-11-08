@@ -57,10 +57,10 @@ pub(super) fn paint(
                     &painter,
                     egui::Rect::from_center_size(
                         egui::pos2(rect.left() + 8.0, rect.center().y),
-                        egui::vec2(10.0, 10.0),
+                        egui::vec2(10.0, 1.0),
                     ),
                     glyph,
-                    (10.0, 10.0),
+                    (10.0, 1.0),
                     mark.color,
                 );
                 ui.interact(
