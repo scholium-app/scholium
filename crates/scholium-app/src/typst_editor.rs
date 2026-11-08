@@ -126,6 +126,8 @@ pub(crate) struct EditorSession {
     /// The problems last published to the view, for the window audit.
     shown_problems: Vec<crate::diagnostics::Diagnostic>,
     last_audit: Option<String>,
+    /// Input events seen by audited frames, so window checks can wait for delivery.
+    audit_input: audit::InputCounter,
     clicks: selection::ClickRun,
     follow: follow::Follow,
     /// File stem of an explicitly chosen document file (shown as the tab title).
@@ -207,6 +209,7 @@ impl EditorSession {
             notice: None,
             shown_problems: Vec::new(),
             last_audit: None,
+            audit_input: audit::InputCounter::default(),
             clicks: selection::ClickRun::default(),
             follow: Default::default(),
             title: None,

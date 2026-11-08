@@ -18,6 +18,8 @@ from chrome_ui import Chrome, keycode
 
 ROOT = Path(__file__).resolve().parent
 TIMEOUT = 20
+# xdotool commands that deliver keyboard, text or pointer-press input to the app.
+INPUT_COMMANDS = {"key", "type", "click"}
 KEYS = {"ArrowLeft": "Left", "ArrowRight": "Right", "ArrowUp": "Up", "ArrowDown": "Down",
         "Enter": "Return", "Escape": "Escape", "Delete": "Delete", "Backspace": "BackSpace",
         "Home": "Home", "End": "End", "Tab": "Tab", "Slash": "slash"}
@@ -55,6 +57,8 @@ class Replay:
         self.writer = self.log.open("w")
         self.proc = subprocess.Popen([str(binary)], env=self.env, stdout=self.writer, stderr=subprocess.STDOUT)
         self.window = None
+        # input_seq before the last input command; ready() waits until the app has seen it.
+        self.sent_after = None
 
     def close(self):
         self.proc.terminate()
@@ -66,6 +70,9 @@ class Replay:
         self.writer.close()
 
     def xdo(self, *args):
+        if args and args[0] in INPUT_COMMANDS:
+            state = self.state()
+            self.sent_after = state.get("input_seq", 0) if state else 0
         return subprocess.run(["xdotool", *map(str, args)], env=self.env, check=True,
                               capture_output=True, text=True, timeout=TIMEOUT).stdout.strip()
 
@@ -82,8 +89,11 @@ class Replay:
             state = self.state()
             if state and state.get("layout_error"):
                 raise RuntimeError(f"layout failed: {state['layout_error']}")
-            if state and state["current"] and state["deferred"] == 0:
+            delivered = (state is not None and self.sent_after is not None
+                         and state.get("input_seq", 0) > self.sent_after)
+            if state and (self.sent_after is None or delivered) and state["current"] and state["deferred"] == 0:
                 if state == previous:
+                    self.sent_after = None
                     return state
                 previous = state
             time.sleep(0.1)
