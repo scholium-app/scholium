@@ -16,6 +16,22 @@ results = {}
 failures = []
 
 
+def chrome_states(app):
+    return [json.loads(line.split(' ', 1)[1]) for line in app.log.read_text().split('\n')[:-1]
+            if line.startswith(('PROJECT {', 'AUDIT {'))]
+
+
+def close_dialog(app):
+    """Escape, then wait for a frame reported after it with no dialog open.
+
+    Clicking or typing before the dialog has gone sends the input to the dialog's backdrop.
+    """
+    before = len(chrome_states(app))
+    app.key('Escape')
+    app.wait(lambda: any(not s.get('chrome', {}).get('facts', {}).get('file_modal', True)
+                         for s in chrome_states(app)[before:]))
+
+
 def run(theme):
     folder = output / theme
     folder.mkdir()
@@ -102,11 +118,11 @@ def run(theme):
         app.key('ctrl+n')
         app.control('path')
         capture('new-project')
-        app.key('Escape')
+        close_dialog(app)
         app.key('ctrl+o')
         app.control('path')
         capture('open')
-        app.key('Escape')
+        close_dialog(app)
         if baseline:
             # Open before-state source through the old chooser to capture conflict/settings absence.
             root = folder / 'paper'
@@ -121,7 +137,7 @@ def run(theme):
         else:
             app.key('ctrl+o')
             modal('file-picker')
-            app.key('Escape')
+            close_dialog(app)
             app.control('recent.0')
             app.state(lambda s: s.get('current'))
             close()
@@ -138,7 +154,7 @@ def run(theme):
             app.key('Return')
             app.wait(lambda: app.entries('PROJECT_FORM ')[-1].get('error') == 'project.new.exists')
             capture('new-existing-error')
-            app.key('Escape')
+            close_dialog(app)
             assert not (existing / '.scholium').exists()
             app.key('ctrl+n')
             modal('project-chooser')
@@ -167,7 +183,7 @@ def run(theme):
             Chrome(visible, app.xdo, app.window).click('document.project_settings', 'status')
             modal('project-settings')
             capture('project-settings-xelatex')
-            app.key('Escape')
+            close_dialog(app)
         # Durable draft plus external writer; every conflict action must preserve disk bytes.
         s = app.state(lambda s: s.get('kind') == 'latex' and s.get('source_rect'))
         x, y, _, _ = s['source_rect']
@@ -222,7 +238,7 @@ def run(theme):
             app.control('start.import')
             modal('project-chooser')
             capture('import')
-            app.key('Escape')
+            close_dialog(app)
             results[theme] = {'recent_click': True, 'recent_remove': True, 'keyboard': True,
                               'latex_default': True, 'inline_errors': True, 'engine_persisted': True, 'engine_applied': engine_applied,
                               'status_engine_updated': 'XeLaTeX' in status, 'diff_cancel_save_as': True, 'entry_choice': True}
@@ -298,12 +314,12 @@ def notices(theme):
         else:
             app.wait(lambda: any(d['id'] == 'project-error' for d in app.entries('DIALOG_FRAME ')))
         app.capture('project-locked')
-        app.key('Escape')
+        close_dialog(app)
         chrome.menu('ui.menu.file', 'file.close')
         app.source(lambda s: s.get('closed'))
         open_path(held)
         if baseline:
-            app.key('Escape')
+            close_dialog(app)
         else:
             app.source(lambda s: s.get('closed') and s.get('locked'))
         app.capture('start-locked')
