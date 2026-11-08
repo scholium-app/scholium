@@ -58,7 +58,33 @@ PDF 每语言 10 个断言分别见[中文](evidence/2026-11-08-pdf-export/windo
 
 ## 边界
 
-未实现 bibliography、打印、PDF/A 或选区导出。已有预览/导出页数、资源和栅格预算仍可能拒绝超大文档。
+未实现 bibliography、打印、PDF/A 或选区导出。已有导出页数、文件/资源预算仍可能拒绝超大文档；
+栅格预算只属于预览和像素比较测试。
 本机路径设置不进入共享项目，也不随新身份的另存为继承。目录同步在 rename 后失败可能留下完整新 PDF，
 但报告仍为失败，不承诺“不产生任何完整产物”。其它 OS 的沙箱与系统原生选择器未在本批验收。
 未开 PR，未轮询 CI；由协调者起草 PR。
+
+
+## Review follow-up：导出只解析一次 PDF
+
+协调者指出 LaTeX 导出先为计数、再为验证，两次在产品密度下栅格化完整 PDF；Typst 也走了后一次。
+本次移除全部导出 worker 栅格调用，三类产物统一在发布前经 hayro-syntax 打开一次、读取页数，
+并直接从解析器持有的原字节发布，不复制 PDF buffer。LaTeX 不再提前计数，Typst 保留编译器页数校对。
+64 MiB 与 1–256 页检查、诊断、同目录原子发布等其它行为保留；没有执行页面解码或性能基准。
+
+[失败先行记录](evidence/2026-11-08-pdf-export/review-red.log.gz)中两项回归均失败：worker 调用了完整
+预览栅格器，100 页 PDF 被预览像素预算拒绝。100 页夹具刻意使用大页面，让误调用在分配像素前失败；
+修复后同一发布路径成功导出/计数 100 页，并覆盖无引擎页数提示、错误页数提示、损坏 PDF 保留原目标。
+另有源码边界检查禁止 worker 重新调用完整栅格器。既有像素一致性测试继续保留 300 dpi、零容差。
+
+[格式](evidence/2026-11-08-pdf-export/review-fmt.log.gz)、
+[workspace clippy](evidence/2026-11-08-pdf-export/review-clippy.log.gz)、
+[app/LaTeX 测试](evidence/2026-11-08-pdf-export/review-test.log.gz)通过（446 passed、0 failed、9 ignored）。
+[重建 app](evidence/2026-11-08-pdf-export/review-build.log.gz)通过，
+[三引擎显式原生验收](evidence/2026-11-08-pdf-export/review-latex-native.log.gz)另外通过 1 项，
+三引擎均为 1 页、300 dpi、零 RGBA 差异。
+
+[PDF 窗口复验](evidence/2026-11-08-pdf-export/review-window.log.gz)遵守机器锁等待后通过 2/2，
+[中文](evidence/2026-11-08-pdf-export/review-window-zh-Hans.json)与
+[英文](evidence/2026-11-08-pdf-export/review-window-en.json)各 10 个断言全部通过。
+本次按协调者限定的受影响门禁复验，没有重跑全套窗口/stock 比较；未开 PR、未轮询 CI。

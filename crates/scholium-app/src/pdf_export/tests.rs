@@ -130,6 +130,39 @@ fn export_diagnostics_merge_without_duplicate_preview_issues_and_expire_on_edit(
 mod native;
 
 #[test]
+fn export_worker_never_calls_the_preview_rasterizer() {
+    let worker = include_str!("worker.rs");
+    assert!(!worker.contains("render_pdf"));
+    assert!(!worker.contains("hayro::render"));
+}
+
+#[test]
+fn hundred_page_export_is_independent_of_preview_pixel_budgets() {
+    let root = tempfile::tempdir().expect("export");
+    let target = root.path().join("large.pdf");
+    // Oversized pages reject any accidental preview rasterization before allocating pixels.
+    let files = std::collections::BTreeMap::from([(
+        "main.typ".into(),
+        b"#set page(width: 10000pt, height: 10000pt)\n#for n in range(100) { if n > 0 { pagebreak() }; [Page #n] }".to_vec(),
+    )]);
+    let pdf = scholium_typst::export_source_pdf("main.typ", &files).expect("fixture");
+    assert_eq!(pdf.page_count, 100);
+    assert_eq!(
+        worker::publish_pdf(pdf.bytes.expect("PDF"), Some(100), &target).expect("export"),
+        100
+    );
+    assert!(target.exists());
+    let original = std::fs::read(&target).expect("published PDF");
+    assert_eq!(
+        worker::publish_pdf(original.clone(), None, &target).expect("count without engine hint"),
+        100
+    );
+    assert!(worker::publish_pdf(original.clone(), Some(99), &target).is_err());
+    assert!(worker::publish_pdf(b"%PDF-invalid".to_vec(), None, &target).is_err());
+    assert_eq!(std::fs::read(target).expect("preserved PDF"), original);
+}
+
+#[test]
 fn export_report_marks_unsaved_drafts_in_inactive_latex_members() {
     use scholium_storage::project::{ProjectHandle, SourceProject};
     let root = tempfile::tempdir().expect("project");

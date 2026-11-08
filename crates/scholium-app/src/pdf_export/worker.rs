@@ -1,5 +1,6 @@
 //! Export work never blocks the UI; only complete validated bytes reach a target.
 use super::{Input, Report, Request};
+use hayro_syntax::Pdf;
 use scholium_model::diagnostic::{DiagnosticBatch, DiagnosticKernel};
 use std::{
     io::Write,
@@ -10,14 +11,14 @@ use std::{
 
 struct Artifact {
     bytes: Option<Vec<u8>>,
-    page_count: usize,
+    expected_pages: Option<usize>,
     diagnostics: Vec<scholium_model::diagnostic::Diagnostic>,
 }
 impl From<scholium_typst::PdfExport> for Artifact {
     fn from(pdf: scholium_typst::PdfExport) -> Self {
         Self {
             bytes: pdf.bytes,
-            page_count: pdf.page_count,
+            expected_pages: Some(pdf.page_count),
             diagnostics: pdf.diagnostics,
         }
     }
@@ -75,13 +76,7 @@ pub(super) fn run(request: Request) -> Report {
         let Some(bytes) = pdf.bytes else {
             return Ok(());
         };
-        // hayro validates the complete PDF before any destination file is opened.
-        let pages = scholium_latex::view::render_pdf(&bytes).map_err(|e| e.to_string())?;
-        if pages.len() != pdf.page_count {
-            return Err("PDF page count mismatch".into());
-        }
-        publish(&request.target, &bytes).map_err(|e| e.to_string())?;
-        report.page_count = pages.len();
+        report.page_count = publish_pdf(bytes, pdf.expected_pages, &request.target)?;
         report.success = true;
         Ok(())
     });
@@ -93,6 +88,28 @@ pub(super) fn run(request: Request) -> Report {
     }
     report.elapsed_ms = started.elapsed().as_millis() as u64;
     report
+}
+pub(super) fn publish_pdf(
+    bytes: Vec<u8>,
+    expected_pages: Option<usize>,
+    target: &Path,
+) -> Result<usize, String> {
+    const MAX_PDF_BYTES: usize = 64 * 1024 * 1024;
+    const MAX_PDF_PAGES: usize = 256;
+    if bytes.len() > MAX_PDF_BYTES {
+        return Err("PDF exceeds budget".into());
+    }
+    // Parse once and retain the original bytes; export never allocates page rasters.
+    let pdf = Pdf::new(bytes).map_err(|_| "invalid PDF".to_string())?;
+    let page_count = pdf.pages().len();
+    if page_count == 0 || page_count > MAX_PDF_PAGES {
+        return Err("PDF page count exceeds budget or is empty".into());
+    }
+    if expected_pages.is_some_and(|expected| expected != page_count) {
+        return Err("PDF page count mismatch".into());
+    }
+    publish(target, pdf.data().as_ref()).map_err(|e| e.to_string())?;
+    Ok(page_count)
 }
 fn build(input: Input) -> Result<Artifact, String> {
     if let Input::Native(document) = &input {
@@ -130,19 +147,14 @@ async fn latex(source: scholium_latex::SourceSession) -> Result<Artifact, String
     .await
     .map_err(|e| e.to_string())?;
     match scholium_latex::full::export_pdf(&source, &sandbox, Duration::from_secs(120)).await {
-        Ok(pdf) => {
-            let page_count = scholium_latex::view::render_pdf(&pdf.bytes)
-                .map_err(|e| e.to_string())?
-                .len();
-            Ok(Artifact {
-                bytes: Some(pdf.bytes),
-                page_count,
-                diagnostics: pdf.diagnostics.items,
-            })
-        }
+        Ok(pdf) => Ok(Artifact {
+            bytes: Some(pdf.bytes),
+            expected_pages: None,
+            diagnostics: pdf.diagnostics.items,
+        }),
         Err(scholium_latex::LatexError::Compilation(failed)) => Ok(Artifact {
             bytes: None,
-            page_count: 0,
+            expected_pages: None,
             diagnostics: failed.diagnostics.items,
         }),
         Err(error) => Err(error.to_string()),
