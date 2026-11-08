@@ -1,5 +1,6 @@
 //! A kernel-bounded tmpfs, retained by an fd after the allocator namespace exits.
 use crate::{BuildError, ResourceLimits};
+use cap_std::fs::OpenOptionsExt;
 use nix::sys::{
     socket::{ControlMessageOwned, MsgFlags, recvmsg},
     statvfs::statvfs,
@@ -167,7 +168,7 @@ fn copy_dir(
                 remaining,
             )?;
         } else if kind.is_file() {
-            let mut input = source.open(&name)?;
+            let mut input = regular(source, Path::new(&name))?;
             let size = input.metadata()?.len();
             remaining.0 = remaining
                 .0
@@ -209,7 +210,7 @@ pub(crate) fn read(work: &Path, relative: &Path, limit: u64) -> Result<Vec<u8>, 
         .ok_or_else(|| BuildError::Configuration("no active output volume".into()))?;
     drop(map);
     let root = cap_std::fs::Dir::open_ambient_dir(&volume.path, cap_std::ambient_authority())?;
-    let file = root.open(relative)?;
+    let file = regular(&root, relative)?;
     if !file.metadata()?.is_file() {
         return Err(BuildError::Configuration("non-regular output".into()));
     }
@@ -219,4 +220,16 @@ pub(crate) fn read(work: &Path, relative: &Path, limit: u64) -> Result<Vec<u8>, 
         return Err(BuildError::OutputQuota);
     }
     Ok(bytes)
+}
+
+fn regular(root: &cap_std::fs::Dir, path: &Path) -> Result<cap_std::fs::File, BuildError> {
+    let mut options = cap_std::fs::OpenOptions::new();
+    options
+        .read(true)
+        .custom_flags(nix::libc::O_NONBLOCK | nix::libc::O_NOFOLLOW);
+    let file = root.open_with(path, &options)?;
+    if !file.metadata()?.is_file() {
+        return Err(BuildError::Configuration("non-regular output".into()));
+    }
+    Ok(file)
 }

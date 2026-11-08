@@ -74,14 +74,6 @@ impl SandboxProcess {
         })
     }
 
-    pub(crate) fn copy_trusted_cache(&self, target: &std::path::Path) -> Result<(), BuildError> {
-        crate::quota::copy_tree(
-            &self.volume.path.join(".font-cache"),
-            target,
-            self.volume.budget,
-        )
-    }
-
     /// Take the bounded protocol writer's input pipe, once.
     pub fn take_stdin(&mut self) -> Option<ChildStdin> {
         self.child.stdin.take()

@@ -29,7 +29,7 @@ pub(crate) async fn warm(sandbox: &Sandbox) -> Result<(), BuildError> {
     let stage_path = stage.path().to_path_buf();
     let mut warm = sandbox.spawn(project.path(), work.path(), stage, &argv)?;
     warm.output(Duration::from_secs(120)).await?;
-    warm.copy_trusted_cache(&stage_path)?;
+    crate::cache::copy(&stage_path.join(".font-cache"), &stage_path)?;
     fs::write(
         stage_path.join(CACHE_VERSION),
         "trusted fixed source; never mount in a document session\n",

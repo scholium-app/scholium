@@ -11,6 +11,13 @@ fn main() {
             fs::write("/out/ticks", format!("{:?}", std::time::Instant::now())).expect("tick");
             std::thread::sleep(Duration::from_millis(25));
         },
+        Some("quota-bytes") | Some("quota-inodes") => {
+            let bytes = std::env::args().nth(1).as_deref() == Some("quota-bytes");
+            for index in 0..1024 {
+                let data = if bytes { vec![b'x'; 8192] } else { Vec::new() };
+                if fs::write(format!("/out/file-{index}"), data).is_err() { break; }
+            }
+        }
         Some("spam") => {
             std::io::stdout().write_all(&vec![b'x'; 2 * 1024 * 1024]).expect("output");
         }
