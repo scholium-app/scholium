@@ -90,3 +90,33 @@ fn broken_source_and_unfilled_slots_never_return_pdf_bytes() {
     };
     assert!(export_generated_pdf(&generated).bytes.is_none());
 }
+
+#[test]
+fn only_designed_fallback_font_warnings_are_dropped_from_native_export() {
+    use scholium_model::diagnostic::{Diagnostic, DiagnosticKernel, Severity};
+    let warning = |message: &str| Diagnostic {
+        severity: Severity::Warning,
+        kernel: DiagnosticKernel::Typst,
+        resource: None,
+        range: None,
+        node: None,
+        message: message.into(),
+        code: None,
+        log: None,
+    };
+    assert!(super::missing_fallback_family(&warning(
+        "unknown font family: times new roman"
+    )));
+    assert!(super::missing_fallback_family(&warning(
+        "unknown font family: simhei"
+    )));
+    assert!(!super::missing_fallback_family(&warning(
+        "unknown font family: comic sans"
+    )));
+    assert!(!super::missing_fallback_family(&warning(
+        "unknown variable: x"
+    )));
+    let mut error = warning("unknown font family: simsun");
+    error.severity = Severity::Error;
+    assert!(!super::missing_fallback_family(&error));
+}

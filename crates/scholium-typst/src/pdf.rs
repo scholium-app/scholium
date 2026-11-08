@@ -30,7 +30,25 @@ pub fn export_generated_pdf(generated: &GeneratedSource) -> PdfExport {
     }
     let world = PreviewWorld::new();
     world.set_source(generated.source.clone());
-    compile_pdf(&world, &generated.blocks)
+    let mut export = compile_pdf(&world, &generated.blocks);
+    export.diagnostics.retain(|d| !missing_fallback_family(d));
+    export
+}
+
+/// The generated preamble lists portable fallback chains (`BODY_FONTS`, `HEADING_FONTS`);
+/// Typst warns for every listed family that is not installed even when a later one renders.
+/// Those warnings point at text the user cannot edit and do not affect the output.
+fn missing_fallback_family(diagnostic: &Diagnostic) -> bool {
+    diagnostic.severity == Severity::Warning
+        && diagnostic
+            .message
+            .strip_prefix("unknown font family: ")
+            .is_some_and(|family| {
+                crate::BODY_FONTS
+                    .iter()
+                    .chain(crate::HEADING_FONTS)
+                    .any(|listed| listed.eq_ignore_ascii_case(family))
+            })
 }
 
 /// Compile external source only inside the supervised OS-isolated Typst worker.
