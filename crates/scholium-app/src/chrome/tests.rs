@@ -170,7 +170,10 @@ impl Window {
 
     /// The panel's rectangle once drawn, `None` while it is closed.
     pub(crate) fn panel_rect(&self) -> Option<egui::Rect> {
-        let open = self.texts().iter().any(|t| t == "问题" || t == "Problems");
+        let open = self
+            .texts()
+            .iter()
+            .any(|t| t.starts_with("问题 (") || t.starts_with("Problems ("));
         let state = egui::containers::panel::PanelState::load(
             &self.ctx,
             crate::diagnostics::panel::panel_id(),

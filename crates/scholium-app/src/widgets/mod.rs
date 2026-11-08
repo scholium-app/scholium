@@ -29,7 +29,7 @@ pub(crate) use form::{button, popover_frame, text_input};
 pub(crate) use menu::{
     BarMenu, MenuItem, bar_menu, button_menu, menu_item, menu_separator, menu_width, submenu_item,
 };
-pub(crate) use row::{Row, row};
+pub(crate) use row::{Row, row, sized_row};
 pub(crate) use segmented::{Segment, segment_width, segmented};
 pub(crate) use separator::{group_separator, status_separator};
 pub(crate) use status::{status_button, status_fixed, status_text, warning_segment};

@@ -183,7 +183,7 @@ command-view-navigation =
     .tooltip = Show or hide file navigation
 
 command-view-diagnostics =
-    .title = Diagnostics
+    .title = Problems
     .tooltip = Show diagnostics
 
 command-view-split =
@@ -620,3 +620,13 @@ project-environment-rtex = Live preview engine rtex
 project-environment-invalid = Incomplete or invalid installation
 project-environment-fonts_ready = Font cache ready
 project-environment-separator = { ", " }
+
+diag-panel-output = Build Output
+diag-panel-close = Close Problems
+diag-panel-unmapped = Document / build
+command-view-problem-next =
+    .title = Next Problem
+    .tooltip = Go to the next problem
+command-view-problem-previous =
+    .title = Previous Problem
+    .tooltip = Go to the previous problem

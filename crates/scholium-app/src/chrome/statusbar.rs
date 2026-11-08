@@ -119,29 +119,20 @@ fn right(ui: &mut Ui, state: &mut WorkspaceState) -> f32 {
 }
 
 fn problem_icon(state: &WorkspaceState) -> Glyph {
-    use diagnostics::Severity;
-    let severity = if state.source_language.is_some() {
-        (state.source_problems > 0).then_some(Severity::Error)
+    use scholium_model::diagnostic::Severity;
+    let batch = diagnostics::current_batch(state);
+    if batch.items.iter().any(|d| d.severity == Severity::Error) {
+        Glyph::Error
+    } else if batch.items.iter().any(|d| d.severity == Severity::Warning) {
+        Glyph::Warning
     } else {
-        state
-            .editor
-            .as_ref()
-            .and_then(|v| v.problems.iter().map(|p| p.severity).min())
-    };
-    match severity {
-        Some(Severity::Error) => Glyph::Error,
-        Some(Severity::Warning) => Glyph::Warning,
-        Some(Severity::Info) | None => Glyph::Info,
+        Glyph::Info
     }
+}
+fn problem_count(state: &WorkspaceState) -> usize {
+    diagnostics::current_batch(state).items.len()
 }
 
-fn problem_count(state: &WorkspaceState) -> usize {
-    if state.source_language.is_some() {
-        state.source_problems
-    } else {
-        state.editor.as_ref().map_or(0, |v| v.problems.len())
-    }
-}
 fn backend_label(state: &WorkspaceState) -> String {
     if let Some(label) = &state.kernel_status {
         return label.clone();

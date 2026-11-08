@@ -69,3 +69,16 @@ fn modifiers_are_independent_and_an_unbound_old_math_key_does_not_match() {
         Some("insert.fraction")
     );
 }
+
+#[test]
+fn problem_navigation_defaults_are_overridable_function_key_bindings() {
+    let defaults = Keymap::defaults();
+    assert_eq!(defaults.hint("view.problem.next").as_deref(), Some("F8"));
+    assert_eq!(
+        defaults.hint("view.problem.previous").as_deref(),
+        Some("Shift+F8")
+    );
+    let custom = defaults
+        .overlay("[[binding]]\ncommand='view.problem.next'\nscope='global'\nkeys=['Ctrl+L']");
+    assert_eq!(custom.hint("view.problem.next").as_deref(), Some("Ctrl+L"));
+}

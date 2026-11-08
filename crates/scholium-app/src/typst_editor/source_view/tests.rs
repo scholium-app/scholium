@@ -246,3 +246,58 @@ fn clicking_a_preview_block_moves_the_caret_to_that_block() {
         "lands in body text"
     );
 }
+
+#[test]
+fn generated_diagnostics_only_use_the_current_snapshot_and_node_jumps_follow_the_page() {
+    use scholium_model::diagnostic::{Diagnostic, DiagnosticBatch, DiagnosticKernel, Severity};
+    let mut f = Fixture::new();
+    f.events(vec![egui::Event::Paste("first\nsecond".into())]);
+    shown(&mut f);
+    let snapshot = f.editor.snapshot.clone();
+    let node = snapshot.blocks[0].node;
+    let issue = Diagnostic {
+        severity: Severity::Error,
+        kernel: DiagnosticKernel::Typst,
+        resource: None,
+        range: None,
+        node: Some(node),
+        message: "generated issue".into(),
+        code: None,
+        log: None,
+    };
+    f.editor
+        .source_view
+        .compiled
+        .as_mut()
+        .expect("compiled")
+        .diagnostics
+        .items = vec![issue.clone()];
+    let batch = f.editor.source_view.diagnostics(&snapshot);
+    assert_eq!(batch.revision, snapshot.revision.0);
+    assert_eq!(batch.items, vec![issue.clone()]);
+    f.state
+        .problems
+        .publish(snapshot.revision.0, batch, String::new());
+    f.state.problems.jump = Some(issue);
+    f.state.mode = crate::state::ViewMode::Source;
+    f.editor.intents(&mut f.state);
+    assert_eq!(f.state.mode, crate::state::ViewMode::Page);
+    assert_eq!(f.editor.cursor_block(), Some(node));
+    assert!(f.editor.focus);
+    // A different snapshot, even one cloned with the same numeric revision, is not this map.
+    assert!(
+        f.editor
+            .source_view
+            .diagnostics(&Arc::new((*snapshot).clone()))
+            .items
+            .is_empty()
+    );
+    f.editor.source_view.generation += 1;
+    assert!(f.editor.source_view.diagnostics(&snapshot).items.is_empty());
+    f.editor
+        .source_view
+        .compiled
+        .as_mut()
+        .expect("compiled")
+        .diagnostics = DiagnosticBatch::default();
+}

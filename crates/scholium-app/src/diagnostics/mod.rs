@@ -2,7 +2,9 @@
 //! bar and as rows in the docked panel. A diagnostic carries a catalog key with its
 //! arguments (rendered in the interface language at draw time) and, when it has one, a
 //! stable location. Nothing here owns document content.
+mod batch;
 pub(crate) mod panel;
+pub(crate) use batch::{Problems, groups, source_range};
 #[cfg(test)]
 mod tests;
 
@@ -16,16 +18,6 @@ pub(crate) enum Severity {
     Error,
     Warning,
     Info,
-}
-
-impl Severity {
-    pub(crate) fn key(self) -> &'static str {
-        match self {
-            Self::Error => "diag.severity.error",
-            Self::Warning => "diag.severity.warning",
-            Self::Info => "diag.severity.info",
-        }
-    }
 }
 
 /// Where a diagnostic points: a text or math leaf by stable identity, never by screen
@@ -139,6 +131,9 @@ pub(crate) const CATALOG_KEYS: &[&str] = &[
     "diag.formula_overflow",
     "diag.caret_missing",
     "diag.panel.problems",
+    "diag.panel.output",
+    "diag.panel.close",
+    "diag.panel.unmapped",
     "diag.panel.empty",
     "diag.panel.layout",
     "diag.panel.backend",
@@ -148,3 +143,94 @@ pub(crate) const CATALOG_KEYS: &[&str] = &[
     "diag.panel.timing",
     "diag.panel.row",
 ];
+
+#[cfg(test)]
+mod batch_tests;
+
+/// Convert UI notices at the native editor boundary; the panel only receives model DTOs.
+pub(crate) fn current_batch(
+    state: &crate::state::WorkspaceState,
+) -> scholium_model::diagnostic::DiagnosticBatch {
+    if state.source_language.is_some() {
+        return state.problems.batch.clone();
+    }
+    let revision = state.editor.as_ref().map_or(0, |v| v.revision);
+    let mut batch = scholium_model::diagnostic::DiagnosticBatch {
+        revision,
+        items: vec![],
+    };
+    if state.problems.batch.revision == revision {
+        batch.items = state.problems.batch.items.clone();
+    }
+    if let Some(view) = &state.editor {
+        batch.items.extend(
+            view.problems
+                .iter()
+                .map(|d| scholium_model::diagnostic::Diagnostic {
+                    severity: match d.severity {
+                        Severity::Error => scholium_model::diagnostic::Severity::Error,
+                        Severity::Warning => scholium_model::diagnostic::Severity::Warning,
+                        Severity::Info => scholium_model::diagnostic::Severity::Info,
+                    },
+                    kernel: scholium_model::diagnostic::DiagnosticKernel::Typst,
+                    resource: None,
+                    range: None,
+                    node: d.target.map(|t| t.node),
+                    message: d.text(state.locale.resolve()),
+                    code: Some(d.key.into()),
+                    log: None,
+                }),
+        );
+    }
+    batch
+}
+pub(crate) fn activate(state: &mut crate::state::WorkspaceState, index: usize) {
+    let batch = current_batch(state);
+    state.problems.selected = Some(index);
+    if let Some(issue) = batch.items.get(index) {
+        state.problems.collapsed.remove(&issue.resource);
+        if let Some(target) = state
+            .editor
+            .as_ref()
+            .and_then(|v| {
+                v.problems
+                    .iter()
+                    .find(|d| d.target.is_some_and(|t| Some(t.node) == issue.node))
+            })
+            .and_then(|d| d.target)
+        {
+            state.jump_request = Some(target);
+        } else {
+            state.problems.jump = Some(issue.clone());
+        }
+    }
+}
+pub(crate) fn cycle(state: &mut crate::state::WorkspaceState, previous: bool) {
+    let batch = current_batch(state);
+    // Native notices are localized projections; keep their stable selection between key presses.
+    let original = std::mem::replace(&mut state.problems.batch, batch);
+    let next = state.problems.cycle(previous);
+    state.problems.batch = original;
+    if let Some(index) = next {
+        state.diagnostics = true;
+        state.problems.output_tab = false;
+        activate(state, index);
+    }
+}
+
+/// Infrastructure failures have no fabricated source target.
+pub(crate) fn failure(
+    kernel: scholium_model::diagnostic::DiagnosticKernel,
+    message: String,
+) -> scholium_model::diagnostic::Diagnostic {
+    scholium_model::diagnostic::Diagnostic {
+        severity: scholium_model::diagnostic::Severity::Error,
+        kernel,
+        resource: None,
+        range: None,
+        node: None,
+        message,
+        code: None,
+        log: None,
+    }
+}

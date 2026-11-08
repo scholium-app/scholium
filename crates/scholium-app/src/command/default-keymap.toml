@@ -137,3 +137,13 @@ keys = []
 command = "document.project_settings"
 scope = "global"
 keys = ["Ctrl+Alt+P"]
+
+[[binding]]
+command = "view.problem.next"
+scope = "global"
+keys = ["F8"]
+
+[[binding]]
+command = "view.problem.previous"
+scope = "global"
+keys = ["Shift+F8"]

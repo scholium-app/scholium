@@ -12,6 +12,7 @@ pub(crate) fn source_job(
             bytes,
             color: crate::theme::tokens(ui.ctx()).active_bg,
             message: None,
+            severity: None,
         })
         .collect();
     super::highlight::job(ui, source, &highlights, &marks)

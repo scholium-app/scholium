@@ -37,7 +37,7 @@ impl Workspace {
         let highlights = syntax(&text, ui.visuals());
         let marks = crate::source_editor::diagnostic_marks(
             &text,
-            self.source.handle().entry(),
+            self.source.active_path(),
             &self.diagnostics,
             self.revision,
             ui.visuals(),

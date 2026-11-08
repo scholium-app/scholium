@@ -247,3 +247,10 @@ LaTeX/宏包 warning/error、换行警告中的 `on input line N`、未定义引
 CI 使用 fake-rtex 验证事件→适配→当前列表、整编合并、修复清除和旧版本拒绝；真实 LuaLaTeX/XeLaTeX transcript
 夹具与任意 Unicode 输入检查覆盖日志解析。`real::native_undefined_control_sequence_reaches_revision_bound_diagnostics`
 及 `diagnostics_native` 是显式 ignored 的真实沙箱验收，必须在具备工具链的宿主另行运行。
+
+## 编辑资源接入
+
+LiveSession 的 edit 在当前项目 capability 下先加载目标资源，再按 UTF-8 byte range 修改派生会话；
+加载失败不发送引擎 edit，离线恢复队列遵循同一规则。构建入口保持 SourceSession 声明值，编辑成员不会改变入口。
+应用传入同一 host revision 的全部私人草稿，以避免 UI latest-only 队列合并跨文件修改时遗失 overlay；
+引擎内部 revision 由适配器映射回 host revision，过期批次不展示、不跳转。

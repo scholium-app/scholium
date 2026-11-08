@@ -168,7 +168,10 @@ impl Supervisor {
                 text,
                 reply,
             } => {
-                let revision = self.source.edit(&path, range.clone(), &text);
+                let revision = self
+                    .source
+                    .load(&path)
+                    .and_then(|()| self.source.edit(&path, range.clone(), &text));
                 let accepted = revision.is_ok();
                 let _ = reply.send(revision);
                 if accepted {
@@ -439,7 +442,11 @@ impl Supervisor {
                     text,
                     reply,
                 } => {
-                    let _ = reply.send(self.source.edit(&path, range, &text));
+                    let result = self
+                        .source
+                        .load(&path)
+                        .and_then(|()| self.source.edit(&path, range, &text));
+                    let _ = reply.send(result);
                 }
                 Command::Cancel(reply) => {
                     let _ = reply.send(Ok(()));

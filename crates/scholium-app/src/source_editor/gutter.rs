@@ -46,9 +46,21 @@ pub(super) fn paint(
             for mark in marks.iter().filter(|m| {
                 m.message.is_some() && m.bytes.start < end.max(byte + 1) && m.bytes.end >= byte
             }) {
-                painter.circle_filled(
-                    egui::pos2(rect.left() + 8.0, rect.center().y),
-                    3.0,
+                let glyph = match mark.severity {
+                    Some(scholium_model::diagnostic::Severity::Warning) => {
+                        crate::icons::Glyph::Warning
+                    }
+                    Some(scholium_model::diagnostic::Severity::Info) => crate::icons::Glyph::Info,
+                    _ => crate::icons::Glyph::Error,
+                };
+                crate::icons::paint(
+                    &painter,
+                    egui::Rect::from_center_size(
+                        egui::pos2(rect.left() + 8.0, rect.center().y),
+                        egui::vec2(10.0, 10.0),
+                    ),
+                    glyph,
+                    (10.0, 10.0),
                     mark.color,
                 );
                 ui.interact(

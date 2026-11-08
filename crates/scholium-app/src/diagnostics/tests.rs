@@ -146,18 +146,23 @@ fn the_count_toggles_the_panel() {
 }
 
 #[test]
-fn the_panel_lists_rows_with_excerpts_and_an_empty_state() {
+fn the_panel_lists_shared_rows_and_an_empty_state() {
     for (locale, empty, problems) in [(ZH, "没有问题", "问题"), (EN, "No problems", "Problems")]
     {
         let mut w = Window::new(1280.0, locale);
         w.state.diagnostics = true;
         w.settle();
         assert!(texts_contain(&w, empty), "{:?}", w.texts());
-        assert!(texts_contain(&w, problems));
+        assert!(w.texts().iter().any(|t| t.starts_with(problems)));
         w.editor().problems = vec![located("diag.formula_overflow", at(0)), overflow()];
         w.settle();
         assert!(!texts_contain(&w, empty));
-        assert!(texts_contain(&w, "excerpt"), "{:?}", w.texts());
+        assert!(
+            texts_contain(&w, "公式超出行宽")
+                || texts_contain(&w, "Formula is wider than the line"),
+            "{:?}",
+            w.texts()
+        );
         assert_eq!(w.ids("diagnostics"), ["ui.diagnostics.row"; 2]);
         let rows = w.rects("diagnostics");
         assert!(rows[1].min.y >= rows[0].max.y - 0.5, "rows stack: {rows:?}");

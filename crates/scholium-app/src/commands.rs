@@ -17,6 +17,8 @@ pub(crate) enum ViewCommand {
     ToggleMode,
     Navigation,
     Diagnostics,
+    NextProblem,
+    PreviousProblem,
     FitWidth,
     ZoomIn,
     ZoomOut,
@@ -70,6 +72,8 @@ pub(crate) fn dispatch(state: &mut WorkspaceState, command: ViewCommand) {
         }
         ViewCommand::Navigation => state.navigation = !state.navigation,
         ViewCommand::Diagnostics => state.diagnostics = !state.diagnostics,
+        ViewCommand::NextProblem => crate::diagnostics::cycle(state, false),
+        ViewCommand::PreviousProblem => crate::diagnostics::cycle(state, true),
         ViewCommand::FitWidth => state.fit_width = true,
         ViewCommand::ActualSize => set_zoom(state, 1.0),
         ViewCommand::ZoomIn => set_zoom(state, zoom + 0.1),

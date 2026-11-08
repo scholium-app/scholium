@@ -7,6 +7,7 @@ use crate::{commands::ViewCommand, i18n::LocaleSetting, theme::ThemeKind};
 
 pub(super) fn specs() -> Vec<CommandSpec> {
     let mut specs = workspace();
+    specs.extend(problems());
     specs.extend(zoom());
     specs.extend(appearance());
     specs
@@ -127,5 +128,12 @@ fn appearance() -> Vec<CommandSpec> {
             checked: Some(avail::locale_en),
             action: Action::View(ViewCommand::SetLocale(LocaleSetting::En)),
         },
+    ]
+}
+
+fn problems() -> Vec<CommandSpec> {
+    vec![
+        command! { "view.problem.next", availability: avail::save, action: Action::View(ViewCommand::NextProblem), },
+        command! { "view.problem.previous", availability: avail::save, action: Action::View(ViewCommand::PreviousProblem), },
     ]
 }

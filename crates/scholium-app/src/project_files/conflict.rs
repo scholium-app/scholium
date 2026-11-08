@@ -17,7 +17,7 @@ impl ProjectFiles {
         };
         let locale = state.locale.resolve();
         let text = |key| i18n::text(locale, key);
-        let path = source.handle().root().join(source.handle().entry());
+        let path = source.handle().root().join(source.active_path());
         let when = std::fs::metadata(&path)
             .and_then(|m| m.modified())
             .ok()
@@ -27,7 +27,7 @@ impl ProjectFiles {
             locale,
             "project.conflict.title",
             &[
-                ("file", source.handle().entry().display().to_string().into()),
+                ("file", source.active_path().display().to_string().into()),
                 ("when", when.into()),
             ],
         );

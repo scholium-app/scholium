@@ -1,4 +1,5 @@
 //! Source authority with an isolated, revision-tagged Typst preview.
+mod jump;
 #[cfg(test)]
 mod tests;
 pub(crate) mod worker;
@@ -142,6 +143,7 @@ impl Workspace {
     }
     pub(crate) fn show(&mut self, ui: &mut egui::Ui, state: &mut WorkspaceState) {
         self.sync(ui.ctx());
+        self.diagnostic_jump(ui.ctx(), state);
         egui::CentralPanel::default()
             .frame(egui::Frame::new().fill(crate::theme::tokens(ui.ctx()).canvas))
             .show(ui, |ui| {
@@ -161,6 +163,10 @@ impl Workspace {
         (state.source_undo, state.source_redo) = self.editor.history();
         state.source_words = crate::chrome::count_words(self.source.text());
         state.source_problems = self.problem_count();
+        let output = self.error.clone().unwrap_or_default();
+        state
+            .problems
+            .publish(self.revision, self.diagnostics.clone(), output);
         self.audit();
     }
     fn sync(&mut self, ctx: &egui::Context) {
@@ -183,11 +189,19 @@ impl Workspace {
         }
     }
     fn accept(&mut self, ctx: &egui::Context, update: worker::Update) {
-        if update.revision != self.revision {
+        if update.revision != self.revision || update.diagnostics.revision != self.revision {
             return;
         }
         self.error = update.error;
         self.diagnostics = update.diagnostics;
+        if self.diagnostics.items.is_empty()
+            && let Some(error) = &self.error
+        {
+            self.diagnostics.items.push(crate::diagnostics::failure(
+                scholium_model::diagnostic::DiagnosticKernel::Typst,
+                error.clone(),
+            ));
+        }
         self.elapsed = update.elapsed;
         if self.error.is_some() {
             return;
@@ -316,7 +330,7 @@ impl Workspace {
         let rect = |r: Option<egui::Rect>| r.map(|r| [r.left(), r.top(), r.right(), r.bottom()]);
         println!(
             "SOURCE_PREVIEW {}",
-            serde_json::json!({"revision":self.revision,"shown_revision":self.shown_revision,"pages":self.pages.len(),"page":self.page,"error":self.error,"diagnostics":self.diagnostics,"source_rect":rect(self.source_rect),"preview_rect":rect(self.preview_rect),"page_rect":rect(self.page_rect),"elapsed_ms":self.elapsed.as_secs_f64()*1000.0})
+            serde_json::json!({"revision":self.revision,"shown_revision":self.shown_revision,"pages":self.pages.len(),"page":self.page,"error":self.error,"diagnostics":self.diagnostics,"source_rect":rect(self.source_rect),"preview_rect":rect(self.preview_rect),"page_rect":rect(self.page_rect),"selection":self.editor.selection(),"elapsed_ms":self.elapsed.as_secs_f64()*1000.0})
         );
     }
 }

@@ -172,6 +172,10 @@ pub(crate) fn paint(
     size: (f32, f32),
     color: Color32,
 ) {
+    if glyph == Glyph::Error {
+        painter.circle_filled(rect.center(), size.0 * 0.3, color);
+        return;
+    }
     let ctx = painter.ctx();
     let Some(texture) = texture(ctx, glyph, size, color) else {
         return;

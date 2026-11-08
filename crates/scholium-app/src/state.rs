@@ -47,6 +47,7 @@ pub(crate) struct WorkspaceState {
     pub(crate) navigation: bool,
     /// The docked diagnostics panel is open (视图 → 诊断, Ctrl+J, or the status-bar count).
     pub(crate) diagnostics: bool,
+    pub(crate) problems: crate::diagnostics::Problems,
     /// A diagnostic asked to move the caret to its location; the editor runs it in order.
     pub(crate) jump_request: Option<crate::diagnostics::Target>,
     /// Page zoom relative to 100% (1 pt = 96/72 logical px).
@@ -87,6 +88,7 @@ impl Default for WorkspaceState {
             theme: Default::default(),
             navigation: false,
             diagnostics: false,
+            problems: Default::default(),
             jump_request: None,
             zoom: 1.0,
             fit_width: true,
