@@ -234,9 +234,9 @@ impl Workspace {
                 .frame_at
                 .replace(frame)
                 .map(|last| frame.duration_since(last));
-            eprintln!(
-                "AUDIT {}",
-                serde_json::json!({"kind":"latex-frame", "interval_ms":interval.map(|d|d.as_secs_f64()*1000.0), "work_ms":frame.elapsed().as_secs_f64()*1000.0})
+            crate::audit_line::emit(
+                "AUDIT",
+                &serde_json::json!({"kind":"latex-frame", "interval_ms":interval.map(|d|d.as_secs_f64()*1000.0), "work_ms":frame.elapsed().as_secs_f64()*1000.0}),
             );
             ui.ctx().request_repaint_after(Duration::from_millis(16));
         }

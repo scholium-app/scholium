@@ -313,11 +313,15 @@ impl Supervisor {
         let revision = value["versions"]["source_revision"]
             .as_u64()
             .and_then(|upstream| self.revisions.get(&upstream));
-        eprintln!(
-            "AUDIT {}",
+        let line = format!(
+            "AUDIT {}\n",
             json!({"kind":"latex-engine-timing", "event":event,
                 "generation":self.generation, "revision":revision, "elapsed_ms":elapsed_ms})
         );
+        // One write per line: sandboxed engines share this output and must not split the line.
+        let mut out = std::io::stdout().lock();
+        let _ = std::io::Write::write_all(&mut out, line.as_bytes())
+            .and_then(|()| std::io::Write::flush(&mut out));
     }
 
     async fn engine_message(&mut self, value: &Value) -> Result<()> {
