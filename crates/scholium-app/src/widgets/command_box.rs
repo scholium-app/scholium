@@ -71,9 +71,9 @@ pub(crate) fn command_box(ctx: &egui::Context, input: CommandBox<'_>) -> Option<
         });
     if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
         let coords = |r: Rect| [r.left(), r.top(), r.right(), r.bottom()];
-        println!(
-            "COMMAND_BOX {}",
-            serde_json::json!({"rect":coords(rect),"caret":coords(input.caret),"above":rect.bottom() <= input.caret.top(),"query":input.query})
+        crate::audit_line::emit(
+            "COMMAND_BOX",
+            &serde_json::json!({"rect":coords(rect),"caret":coords(input.caret),"above":rect.bottom() <= input.caret.top(),"query":input.query}),
         );
     }
     chosen

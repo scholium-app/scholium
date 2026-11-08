@@ -401,7 +401,7 @@ impl Workspace {
         let rect = |r: Option<egui::Rect>| r.map(|r| [r.min.x, r.min.y, r.max.x, r.max.y]);
         let fact = serde_json::json!({"kind":"latex","revision":self.revision,"shown_revision":self.shown_revision,"generation":self.generation,"text":self.source.text(),"diagnostics":self.diagnostics,"selection":self.editor.selection(),"active_resource":self.source.active_path(),"entry":self.source.handle().entry(),"dirty":self.source.dirty(),"engine":format!("{:?}",self.engine),"toolchain_unavailable":self.unavailable,"error":self.error,"pages":self.pages.len(),"source_rect":rect(self.source_rect),"preview_rect":rect(self.preview_rect),"page_rect":rect(self.page_rect),"page_index":self.page_index,"paragraph":self.paragraph,"page_count":self.page_count,"raster_pages":self.pages.keys().copied().collect::<Vec<_>>(),"engine_state":format!("{:?}", self.engine_state),"status":self.status(Locale::En),"elapsed_ms":self.elapsed.as_secs_f64()*1000.0,"pixels_per_point":scholium_latex::view::PIXELS_PER_POINT,"origin":self.pages.values().map(|p|format!("{:?}",p.origin)).collect::<Vec<_>>(),"submitted_ms":self.presented.map(|d|d.as_secs_f64()*1000.0)});
         if self.audit_last.as_ref() != Some(&fact) {
-            eprintln!("AUDIT {fact}");
+            crate::audit_line::emit("AUDIT", &fact);
             self.audit_last = Some(fact);
         }
     }

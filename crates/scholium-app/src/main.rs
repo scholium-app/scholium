@@ -1,6 +1,7 @@
 //! Scholium 原生排版工作区：窗口外壳（菜单栏、工具栏、焦点工具栏、标签栏、状态栏）与
 //! Typst Content 编辑面共用一个结构会话。
 
+mod audit_line;
 mod chrome;
 mod command;
 mod commands;

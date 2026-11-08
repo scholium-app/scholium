@@ -340,9 +340,9 @@ impl Workspace {
             return;
         }
         let rect = |r: Option<egui::Rect>| r.map(|r| [r.left(), r.top(), r.right(), r.bottom()]);
-        println!(
-            "SOURCE_PREVIEW {}",
-            serde_json::json!({"revision":self.revision,"shown_revision":self.shown_revision,"pages":self.pages.len(),"page":self.page,"error":self.error,"diagnostics":self.diagnostics,"source_rect":rect(self.source_rect),"preview_rect":rect(self.preview_rect),"page_rect":rect(self.page_rect),"selection":self.editor.selection(),"elapsed_ms":self.elapsed.as_secs_f64()*1000.0})
+        crate::audit_line::emit(
+            "SOURCE_PREVIEW",
+            &serde_json::json!({"revision":self.revision,"shown_revision":self.shown_revision,"pages":self.pages.len(),"page":self.page,"error":self.error,"diagnostics":self.diagnostics,"source_rect":rect(self.source_rect),"preview_rect":rect(self.preview_rect),"page_rect":rect(self.page_rect),"selection":self.editor.selection(),"elapsed_ms":self.elapsed.as_secs_f64()*1000.0}),
         );
     }
 }
