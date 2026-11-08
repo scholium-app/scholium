@@ -430,3 +430,13 @@ fn script_commands_need_the_caret_in_a_formula_outside_source_and_composition() 
     assert_eq!(super::keymap::effective().hint("insert.superscript"), None);
     assert_eq!(super::keymap::effective().hint("insert.subscript"), None);
 }
+#[test]
+fn labelled_menu_commands_do_not_repeat_labels_in_tooltips() {
+    let state = crate::state::WorkspaceState::default();
+    let command = super::ui::resolve(&state, "file.new").expect("implemented command");
+    assert!(command.meta(&state, "menu").tip.is_none());
+    assert!(
+        command.meta(&state, "toolbar").tip.is_some(),
+        "icons need a name and shortcut"
+    );
+}

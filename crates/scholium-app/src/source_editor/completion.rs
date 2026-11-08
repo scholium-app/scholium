@@ -10,6 +10,15 @@ fn context() -> Context<'static> {
 }
 impl SourceEditor {
     pub(super) fn completion_input(&mut self, ui: &egui::Ui) {
+        // Escape cancels this transient query, not the TextEdit focus. Egui otherwise
+        // surrenders focus before the following source edit can reach the editor.
+        if self.command.command().is_some()
+            && ui.input_mut(|i| i.consume_key(egui::Modifiers::NONE, egui::Key::Escape))
+        {
+            self.command.reset();
+            ui.memory_mut(|m| m.request_focus(self.id()));
+            return;
+        }
         let focused = ui.memory(|m| m.has_focus(self.id()));
         if !focused {
             self.command.reset();
@@ -38,7 +47,7 @@ impl SourceEditor {
             };
             if let Some(input) = input {
                 let intent = self.command.feed(input, context());
-                if let Some(snippet) = snippet(intent) {
+                if let Some(snippet) = snippet(intent, self.typst) {
                     forwarded.push(egui::Event::Paste(snippet));
                 }
             } else if let egui::Event::Text(ref text) = event {
@@ -88,13 +97,13 @@ impl SourceEditor {
         &mut self,
         ui: &mut egui::Ui,
         output: &egui::text_edit::TextEditOutput,
+        locale: crate::i18n::Locale,
     ) {
         let Some(query) = self.command.command() else {
             return;
         };
         let candidates = self.command.candidates();
         let selected = self.command.selected();
-        let mut chosen = None;
         let caret = output
             .cursor_range
             .map(|c| {
@@ -102,26 +111,23 @@ impl SourceEditor {
                     .galley
                     .pos_from_cursor(c.primary)
                     .translate(output.galley_pos.to_vec2())
-                    .left_bottom()
             })
-            .unwrap_or(output.response.rect.left_bottom());
-        egui::Area::new("source-completion".into())
-            .order(egui::Order::Foreground)
-            .fixed_pos(caret)
-            .show(ui.ctx(), |ui| {
-                egui::Frame::popup(ui.style()).show(ui, |ui| {
-                    ui.label(format!("\\{query}"));
-                    for (i, c) in candidates.iter().take(8).enumerate() {
-                        if ui.selectable_label(i == selected, &c.name).clicked() {
-                            chosen = Some(i);
-                        }
-                    }
-                });
-            });
+            .unwrap_or(output.response.rect);
+        let chosen = crate::widgets::command_box(
+            ui.ctx(),
+            crate::widgets::CommandBox {
+                id: "source-completion",
+                caret,
+                query,
+                candidates: &candidates,
+                selected,
+                locale,
+            },
+        );
         if let Some(i) = chosen {
             let intent = self.command.feed(Event::Choose(i), context());
             // Feed through TextEdit next frame so selection replacement and native undo stay atomic.
-            if let Some(snippet) = snippet(intent) {
+            if let Some(snippet) = snippet(intent, self.typst) {
                 self.pending = Some(snippet);
             }
             output.response.request_focus();
@@ -129,7 +135,10 @@ impl SourceEditor {
         }
     }
 }
-pub(super) fn snippet(intent: Intent) -> Option<String> {
+pub(super) fn snippet(intent: Intent, typst: bool) -> Option<String> {
+    if typst {
+        return typst_snippet(intent);
+    }
     Some(match intent {
         Intent::Symbol(symbol) => scholium_math_input::data::core()
             .symbol
@@ -155,4 +164,25 @@ fn delimiter(c: char) -> String {
         '}' => "\\}".into(),
         _ => c.to_string(),
     }
+}
+
+fn typst_snippet(intent: Intent) -> Option<String> {
+    Some(match intent {
+        Intent::Symbol(symbol) => scholium_math_input::data::core()
+            .symbol
+            .iter()
+            .find(|s| s.unicode == symbol)?
+            .typst
+            .clone(),
+        Intent::Structure(template) => match template {
+            Template::Fraction => "()/()".into(),
+            Template::Root => "sqrt()".into(),
+            Template::Inline => "$ $".into(),
+            Template::Display => "$  $".into(),
+            Template::Sup => "^()".into(),
+            Template::Sub => "_()".into(),
+            Template::Delimiter(left, right) => format!("lr({left} {right})"),
+        },
+        _ => return None,
+    })
 }

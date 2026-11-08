@@ -82,6 +82,7 @@ stock 对照同时覆盖默认字体集和仅打包字体集，两者都要求�
 parity 窗口子进程通过 `SCHOLIUM_TEST_FONTS=bundled` 选择它。World 创建后字体集不再改变。
 五个打包字体以 Brotli-11 无损字节嵌入；纯 Rust 解压器在进程内首次加载时解压一次并缓存，
 `bundled_cjk_font_bytes()` 让界面复用同一 Noto 原始字节，无文件读取或网络下载。
+`bundled_math_font_bytes()` 通过同一解压函数和进程缓存提供额外的 Noto Sans Math `.ttf.br` 原始字节；该字体只供界面回退，不加入 Typst 正文字体集。
 来源、版本、原始 SHA-256、许可与压缩再生成命令见[字体资产说明](../../crates/scholium-app/assets/fonts/README.md)。
 `submit(Arc<StructuredDocument>, SceneStamp, RasterSpec, ViewRange)` 传递完整已接受快照、栅格分辨率与页面可见范围（pt），`poll()` 非阻塞返回
 带 stamp 的结果。队列和结果分别只保留最新一份派生工作；关闭不在 UI join。
@@ -250,3 +251,10 @@ Content cache 只使前后受影响正文叶及其段落失效；未变的段落
 宿主负责 OS 网络/挂载、内存、CPU、墙钟预算与取消整棵进程树；失败后保留最后成功页面且不得进程内重试。
 原生生成源码的 PreviewCompiler 执行权限保持原有约束。部署边界见
 [ADR 0055](../adr/ADR-0055-source-preview-worker.md)。
+
+
+## 源码焦点导航
+
+`breadcrumbs(text, caret)` 使用官方 syntax CST 返回 caret 前的标题祖先，以及包围 caret 的 Equation / Raw。
+每项为源码标签或 math/raw 类别及 UTF-8 byte 起点；按标题深度替换同级与后代，不将注释或 raw/code 内的标题状文本当作文档标题。
+该入口只解析，不求值、不读取资源、不改变源码，供 app 的光标面包屑与点击跳转使用。

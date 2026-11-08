@@ -254,3 +254,11 @@ LiveSession 的 edit 在当前项目 capability 下先加载目标资源，再�
 加载失败不发送引擎 edit，离线恢复队列遵循同一规则。构建入口保持 SourceSession 声明值，编辑成员不会改变入口。
 应用传入同一 host revision 的全部私人草稿，以避免 UI latest-only 队列合并跨文件修改时遗失 overlay；
 引擎内部 revision 由适配器映射回 host revision，过期批次不展示、不跳转。
+
+
+## 源码焦点导航
+
+`breadcrumbs(text, caret)` 返回章节祖先与尚未闭合的环境，每项为源码标签及 UTF-8 byte 起点。
+轻量词法扫描识别 part/chapter/section/subsection/subsubsection/paragraph/subparagraph、星号与可选短标题、嵌套标题组、begin/end；
+跳过注释、转义控制序列、verb 与 verbatim/lstlisting/minted 中的假结构，document 不占环境层级。
+不展开宏、不推断计数器或宏生成的章节；破损未闭合标题不创建目标。调用方按当前文本失效缓存，不保存第二份源码权威。

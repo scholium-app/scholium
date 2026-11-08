@@ -226,3 +226,29 @@ fn a_single_edit_in_five_thousand_lines_reuses_unchanged_layout_rows() {
         "unchanged lines must retain egui paragraph layouts"
     );
 }
+#[test]
+fn typst_source_completion_uses_typst_snippets_and_native_undo() {
+    let mut f = Fixture::new("");
+    f.editor.typst = true;
+    f.events(vec![text("\\")]);
+    f.events(vec![text("alpha")]);
+    assert_eq!(f.editor.command.command(), Some("alpha"));
+    f.events(vec![key(egui::Key::Tab, egui::Modifiers::NONE)]);
+    assert_eq!(f.text, "alpha");
+    f.events(vec![key(egui::Key::Z, egui::Modifiers::COMMAND)]);
+    assert_eq!(f.text, "");
+}
+#[test]
+fn cancelling_a_source_command_keeps_focus_for_the_next_edit() {
+    let mut f = Fixture::new("original");
+    f.events(vec![text("\\")]);
+    f.events(vec![text("al")]);
+    f.events(vec![key(egui::Key::Escape, egui::Modifiers::NONE)]);
+    let mut release = key(egui::Key::Escape, egui::Modifiers::NONE);
+    if let egui::Event::Key { pressed, .. } = &mut release {
+        *pressed = false;
+    }
+    f.events(vec![release]);
+    f.events(vec![egui::Event::Paste("next".into())]);
+    assert_eq!(f.text, "originalnext");
+}

@@ -624,3 +624,12 @@ command-view-problem-next =
 command-view-problem-previous =
     .title = 上一个问题
     .tooltip = 跳转到上一个问题
+
+math-input-category-letter = 字母
+math-input-category-relation = 关系
+math-input-category-arrow = 箭头
+math-input-category-constant = 常量
+math-input-category-punctuation = 标点
+math-input-category-structure = 结构
+
+chrome-status-settings_hint = 打开项目设置，调整预览引擎

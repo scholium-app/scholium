@@ -84,7 +84,12 @@ fn right(ui: &mut Ui, state: &mut WorkspaceState) -> f32 {
     status_separator(ui);
     let hint = command_ui::text(state, "chrome.status.engine_hint");
     let backend = if state.source_language.is_some() {
-        let meta = Meta::new("document.project_settings", "status", hint.clone());
+        let meta = Meta::new("document.project_settings", "status", backend_label(state)).tip(
+            crate::widgets::Tip {
+                title: command_ui::text(state, "chrome.status.settings_hint"),
+                ..Default::default()
+            },
+        );
         let response = status_button(ui, None, Some(&backend_label(state)), meta);
         if response.clicked() {
             command_ui::invoke(&ui.ctx().clone(), state, "document.project_settings");

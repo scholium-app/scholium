@@ -1,6 +1,7 @@
 //! The window chrome of P1_UI: menu bar 28, main toolbar 36, focus toolbar 32, document
 //! tab bar 30, editing area, status bar 24. Everything is drawn from the command registry
 //! and the design tokens; the operating system draws the title bar.
+mod breadcrumb;
 mod focusbar;
 mod layout;
 mod menubar;
@@ -43,6 +44,7 @@ pub(crate) const CATALOG_KEYS: &[&str] = &[
     "chrome.tab.unsaved",
     "chrome.tab.saved",
     "chrome.tab.list",
+    "chrome.status.settings_hint",
     "chrome.status.words",
     "chrome.status.page",
     "chrome.status.context.body",

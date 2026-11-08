@@ -64,10 +64,15 @@ impl Resolved {
 
     /// Control description for the widgets; `surface` names where it is drawn.
     pub(crate) fn meta(&self, state: &WorkspaceState, surface: &'static str) -> Meta {
-        Meta::new(self.spec.id, surface, self.title(state))
+        let mut meta = Meta::new(self.spec.id, surface, self.title(state))
             .enabled(self.enabled())
-            .checked(self.checked)
-            .tip(self.tip(state))
+            .checked(self.checked);
+        let text_control = matches!(surface, "menu" | "overflow" | "focus" | "focus-overflow");
+        let disabled_reason = self.availability.reason().is_some();
+        if !text_control || disabled_reason || self.spec.id == "view.mode.source" {
+            meta = meta.tip(self.tip(state));
+        }
+        meta
     }
 }
 

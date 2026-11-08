@@ -29,18 +29,27 @@ static DECOMPRESSED_ASSETS: OnceLock<Vec<Vec<u8>>> = OnceLock::new();
 mod layout_tests;
 
 fn decompressed_assets() -> &'static [Vec<u8>] {
-    DECOMPRESSED_ASSETS.get_or_init(|| {
-        BUNDLED_ASSETS
-            .iter()
-            .map(|compressed| {
-                let mut decoder = brotli_decompressor::Decompressor::new(*compressed, 16 * 1024);
-                let mut bytes = Vec::new();
-                decoder
-                    .read_to_end(&mut bytes)
-                    .expect("bundled Brotli font data must decompress");
-                bytes
-            })
-            .collect()
+    DECOMPRESSED_ASSETS.get_or_init(|| BUNDLED_ASSETS.iter().map(|data| decompress(data)).collect())
+}
+
+fn decompress(compressed: &[u8]) -> Vec<u8> {
+    let mut decoder = brotli_decompressor::Decompressor::new(compressed, 16 * 1024);
+    let mut bytes = Vec::new();
+    decoder
+        .read_to_end(&mut bytes)
+        .expect("bundled Brotli font data must decompress");
+    bytes
+}
+
+/// Original Noto Sans Math bytes for interface fallback, outside the document font set.
+/// Uses the shared lossless decoder and caches the bytes once per process.
+#[must_use]
+pub fn bundled_math_font_bytes() -> &'static [u8] {
+    static MATH: OnceLock<Vec<u8>> = OnceLock::new();
+    MATH.get_or_init(|| {
+        decompress(include_bytes!(
+            "../../scholium-app/assets/fonts/NotoSansMath-Regular.ttf.br"
+        ))
     })
 }
 
@@ -103,6 +112,17 @@ mod tests {
         "d754ba427cfe0bca54ae052384baa8f842da5bd6550ad4da024ac441e7a7d5ce",
         "f17db8af71e24d2066b587546021d4f0b296be389512b658dec3c09affeb11a7",
     ];
+
+    #[test]
+    fn bundled_math_font_restores_original_bytes() {
+        let bytes = super::bundled_math_font_bytes();
+        assert_eq!(bytes.len(), 990_564);
+        assert_eq!(
+            format!("{:x}", Sha256::digest(bytes)),
+            "d51afd5739c7ba6c44fcab35a88160e25dfb69a2d4ad0bd99533f8d894af1f96"
+        );
+        assert!(std::ptr::eq(bytes, super::bundled_math_font_bytes()));
+    }
 
     #[test]
     fn both_profiles_use_the_same_portable_document_families() {

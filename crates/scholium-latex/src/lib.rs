@@ -55,3 +55,6 @@ pub enum LatexError {
 
 #[cfg(test)]
 mod tests;
+
+mod breadcrumb;
+pub use breadcrumb::{Breadcrumb, breadcrumbs};

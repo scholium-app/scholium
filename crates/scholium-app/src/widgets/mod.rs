@@ -7,6 +7,8 @@
 //! hover, pressed, active, disabled and the keyboard focus ring.
 pub(crate) mod audit;
 mod button;
+mod command_box;
+pub(crate) use command_box::{CommandBox, command_box};
 mod dialog;
 #[cfg(test)]
 mod dialog_tests;

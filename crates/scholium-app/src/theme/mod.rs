@@ -76,7 +76,7 @@ impl Tokens {
         canvas: hex(0xE6E6E8),
         page: hex(0xFFFFFF),
         field: hex(0xFFFFFF),
-        border: hex(0xCFCFD4),
+        border: hex(0x797981),
         separator: hex(0xE0E0E3),
         hover: hex(0xE4E4E7),
         pressed: hex(0xD8D8DC),
@@ -85,7 +85,7 @@ impl Tokens {
         focus_ring: hex(0x1D5BD0),
         text: hex(0x1F1F1F),
         text_dim: hex(0x5C5C63),
-        text_faint: hex(0x8E8E95),
+        text_faint: hex(0x5C5C63),
         error: hex(0xC4311F),
         text_disabled: hex(0xA6A6A6),
         warning: hex(0x9A6700),
@@ -107,7 +107,7 @@ impl Tokens {
         canvas: hex(0x1B1B1B),
         page: hex(0xFFFFFF),
         field: hex(0x1F1F1F),
-        border: hex(0x5A5A60),
+        border: hex(0x96969D),
         separator: hex(0x3C3C3C),
         hover: hex(0x3A3A3A),
         pressed: hex(0x474747),
@@ -115,8 +115,8 @@ impl Tokens {
         accent: hex(0x6EA4FF),
         focus_ring: hex(0x6EA4FF),
         text: hex(0xE8E8E8),
-        text_dim: hex(0xA6A6A6),
-        text_faint: hex(0x7E7E84),
+        text_dim: hex(0xB6B6B6),
+        text_faint: hex(0xB6B6B6),
         error: hex(0xFF7A6B),
         text_disabled: hex(0x5E5E5E),
         warning: hex(0xE0A82E),
@@ -143,9 +143,6 @@ impl Tokens {
             spread: 0,
             color: Color32::from_black_alpha(46),
         }
-    }
-    pub(crate) fn overlay_border(dialog: bool) -> Color32 {
-        Color32::from_black_alpha(if dialog { 20 } else { 15 })
     }
 
     /// The page is white in both themes, so what is drawn on it (caret, selection, the

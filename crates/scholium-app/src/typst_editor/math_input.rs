@@ -5,6 +5,12 @@ use scholium_math_input::{Event, TabAction};
 #[cfg(test)]
 pub(crate) const CATALOG_KEYS: &[&str] = &[
     "math.input.command",
+    "math.input.category.letter",
+    "math.input.category.relation",
+    "math.input.category.arrow",
+    "math.input.category.constant",
+    "math.input.category.punctuation",
+    "math.input.category.structure",
     "math.input.no_candidates",
     "math.input.accept_hint",
     "math.input.tab.complete",
@@ -35,40 +41,23 @@ impl EditorSession {
         let Some((page, scale)) = self.placement else {
             return;
         };
-        let caret = self
-            .scene()
-            .and_then(|s| s.geometry.caret(self.cursor))
-            .map(|c| egui::pos2(c.bottom[0] as f32 * scale, c.bottom[1] as f32 * scale));
-        let at = page.min + caret.unwrap_or_default().to_vec2();
-        let locale = state.locale.resolve();
+        let Some(caret) = self.scene().and_then(|s| s.geometry.caret(self.cursor)) else {
+            return;
+        };
+        let point = |p: [f64; 2]| page.min + egui::vec2(p[0] as f32 * scale, p[1] as f32 * scale);
+        let caret = egui::Rect::from_two_pos(point(caret.top), point(caret.bottom));
         let candidates = self.core.math_input.candidates();
-        let selected = self.core.math_input.selected();
-        let mut chosen = None;
-        egui::Area::new(egui::Id::new("math-inline-command"))
-            .order(egui::Order::Foreground)
-            .fixed_pos(at)
-            .constrain(true)
-            .show(ctx, |ui| {
-                egui::Frame::popup(ui.style()).show(ui, |ui| {
-                    ui.set_max_width(320.0);
-                    ui.label(crate::i18n::text(locale, "math.input.command"));
-                    ui.monospace(format!("\\{query}"));
-                    if candidates.is_empty() {
-                        ui.label(crate::i18n::text(locale, "math.input.no_candidates"));
-                    }
-                    let start = selected.saturating_sub(7);
-                    for (index, candidate) in candidates.iter().enumerate().skip(start).take(8) {
-                        let label = match &candidate.symbol {
-                            Some(symbol) => format!("{}  {}", candidate.name, symbol),
-                            None => candidate.name.clone(),
-                        };
-                        if ui.selectable_label(index == selected, label).clicked() {
-                            chosen = Some(index);
-                        }
-                    }
-                    ui.weak(crate::i18n::text(locale, "math.input.accept_hint"));
-                });
-            });
+        let chosen = crate::widgets::command_box(
+            ctx,
+            crate::widgets::CommandBox {
+                id: "math-inline-command",
+                caret,
+                query: &query,
+                candidates: &candidates,
+                selected: self.core.math_input.selected(),
+                locale: state.locale.resolve(),
+            },
+        );
         if let Some(index) = chosen {
             self.submit(
                 scholium_session::typst::Input::Command(
