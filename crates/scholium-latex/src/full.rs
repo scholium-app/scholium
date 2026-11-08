@@ -62,6 +62,52 @@ pub async fn compile(
         return Err(LatexError::Configuration);
     }
     let started = Instant::now();
+    let pdf = export_pdf(source, sandbox, deadline).await?;
+    let pages = crate::view::render_pdf(&pdf.bytes)?;
+    if started.elapsed() > deadline {
+        return Err(LatexError::Timeout);
+    }
+    debug_assert!(
+        pages
+            .iter()
+            .all(|p| p.origin == RasterOrigin::FullCompilation)
+    );
+    Ok(FullPreview {
+        revision: source.revision(),
+        engine: source.engine(),
+        elapsed: started.elapsed(),
+        pages,
+        diagnostics: pdf.diagnostics,
+        log: pdf.log,
+    })
+}
+
+/// Complete same-engine PDF; the caller publishes these bytes atomically.
+#[derive(Debug)]
+pub struct FullPdf {
+    /// Complete PDF bytes read from the isolated work directory.
+    pub bytes: Vec<u8>,
+    /// Final compiler transcript; bibliography processors are not run.
+    pub log: String,
+    /// Final-pass errors and warnings bound to the source revision.
+    pub diagnostics: scholium_model::diagnostic::DiagnosticBatch,
+}
+
+/// Compile a PDF with the project's fixed engine, including LuaLaTeX.
+/// At most two passes for references; no BibTeX/Biber pipeline is invoked.
+///
+/// # Errors
+/// Rejects the wrong sandbox profile, zero deadline, unsafe/oversized resources,
+/// failed compilation, invalid PDF envelopes or exceeded operation deadline.
+pub async fn export_pdf(
+    source: &SourceSession,
+    sandbox: &Sandbox,
+    deadline: Duration,
+) -> Result<FullPdf, LatexError> {
+    if sandbox.profile() != BuildProfile::FullCompilation || deadline.is_zero() {
+        return Err(LatexError::Configuration);
+    }
+    let started = Instant::now();
     let project = tempfile::tempdir()?;
     let work = tempfile::tempdir()?;
     let mut budget = (0, 0);
@@ -87,20 +133,11 @@ pub async fn compile(
         return Err(std::io::Error::other("invalid preview PDF").into());
     }
     let data = std::fs::read(path)?;
-    let pages = crate::view::render_pdf(&data)?;
-    if started.elapsed() > deadline {
-        return Err(LatexError::Timeout);
+    if !data.starts_with(b"%PDF-") || started.elapsed() > deadline {
+        return Err(std::io::Error::other("invalid or late export PDF").into());
     }
-    debug_assert!(
-        pages
-            .iter()
-            .all(|p| p.origin == RasterOrigin::FullCompilation)
-    );
-    Ok(FullPreview {
-        revision: source.revision(),
-        engine: source.engine(),
-        elapsed: started.elapsed(),
-        pages,
+    Ok(FullPdf {
+        bytes: data,
         diagnostics: diagnostics(source, &log),
         log,
     })
@@ -123,7 +160,7 @@ impl FullBuild<'_> {
         let engine = match self.source.engine() {
             Engine::XeLatex => "/usr/bin/xelatex",
             Engine::PdfLatex => "/usr/bin/pdflatex",
-            Engine::LuaLatex => unreachable!("validated full-build engine"),
+            Engine::LuaLatex => "/usr/bin/lualatex",
         };
         let mut args = vec![
             engine.into(),

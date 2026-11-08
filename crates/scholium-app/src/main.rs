@@ -8,6 +8,7 @@ mod diagnostics;
 mod i18n;
 mod icons;
 mod latex_workspace;
+mod pdf_export;
 mod project_files;
 mod project_workspace;
 mod source_editor;
@@ -39,6 +40,8 @@ impl eframe::App for ScholiumApp {
         if let Some(project) = &self.project {
             project.metadata(&mut self.state);
         }
+        self.files
+            .poll_export(ui.ctx(), &mut self.state, &self.project);
         chrome::show(ui, &mut self.state);
         self.files
             .show(ui.ctx(), &mut self.state, &mut self.project);

@@ -147,3 +147,8 @@ keys = ["F8"]
 command = "view.problem.previous"
 scope = "global"
 keys = ["Shift+F8"]
+
+[[binding]]
+command = "file.export"
+scope = "global"
+keys = ["Ctrl+Shift+E"]

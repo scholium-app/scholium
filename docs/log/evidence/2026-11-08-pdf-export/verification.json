@@ -1,0 +1,45 @@
+{
+  "workspace_tests": {
+    "passed": 752,
+    "failed": 0,
+    "ignored": 17
+  },
+  "stock_system": {
+    "cases": 31,
+    "equal_pixels": 31
+  },
+  "stock_bundled": {
+    "cases": 31,
+    "equal_pixels": 31
+  },
+  "pdf_comparison": {
+    "dpi": 300,
+    "rgba_tolerance": 0
+  },
+  "window_initial": {
+    "en": "pass",
+    "zh-Hans": "XOpenDisplayFailed before app startup"
+  },
+  "ci_polled": false,
+  "pr_opened": false,
+  "latex_native": {
+    "passed": 1,
+    "engines": [
+      "pdflatex",
+      "xelatex",
+      "lualatex"
+    ],
+    "pages_per_fixture": 1,
+    "dpi": 300,
+    "differing_rgba_bytes": 0
+  },
+  "window_full": {
+    "passed": 66,
+    "failed": 0,
+    "locales": [
+      "zh-Hans",
+      "en"
+    ],
+    "pdf_assertions_per_locale": 10
+  }
+}

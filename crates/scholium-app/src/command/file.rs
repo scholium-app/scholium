@@ -50,7 +50,8 @@ pub(super) fn specs() -> Vec<CommandSpec> {
             "file.export",
             icon: IconId::Export,
             menu: menu!(File, 1, 2),
-            availability: avail::unimplemented,
+            availability: avail::save,
+            action: Action::View(ViewCommand::FileDialog(crate::project_files::FileDialog::Export)),
         },
         command! {
             "file.close",

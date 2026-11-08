@@ -1,0 +1,64 @@
+# 2026-11-08：两内核共用 PDF 导出
+
+本批在 `scholium-wt1` 的 `ation_ciger/feat/pdf-export` 实现了已打开原生 Typst、普通 `.typ` 和
+LaTeX 的统一 `file.export`，默认 Ctrl+Shift+E 仍通过可配置键表路由。目标表单、后台任务、
+状态栏与问题面板使用同一个导出报告，报告记录当前 host revision 和包含未保存编辑与否。
+
+## 改动记录
+
+- 原生输出编译当前提交快照的 A4 预览生成源码，使用相同字体/排版，拒绝 RawMath 和未填槽。
+  普通 `.typ` 复用了原有 TypstPreview worker，只增加 PDF 产物；未改 build 挂载/资源限制。
+- vendor 补入同一上游 pin 的未修改 typst-pdf；源重建校验清单增至 14 个库。
+- LaTeX 增加独立 full::export_pdf，支持三引擎；预览仍拒绝 Lua 的一次性入口，live 路由没有改变。
+  bibliography 没有运行，状态栏报告悬停与结构报告都明确保留这一边界。
+- 完整 PDF 经 hayro 验证后，同目录临时文件写入、同步并 rename；编译/验证/发布前失败保留原目标。
+- 最后成功目标按项目 ID 存在用户配置的本机项目设置，避免把绝对路径写入 ADR 0054 共享声明；
+  该裁决见 [ADR 0056](../adr/ADR-0056-pdf-export.md)。没有升级项目存储版本。
+- T50 所有的 `latex_workspace/mod.rs` 仅增加当前 revision 的只读 accessor，并把现有
+  preview_source 暴露给同 crate 导出编排；未改其 live/session/supervisor，未触碰 T51 所有文件。
+
+## 验证记录
+
+[命令红灯](evidence/2026-11-08-pdf-export/command-red.log.gz)复现了 file.export 不在有效注册表；
+随后同一测试与全部内核可见性、无文档禁用检查通过。
+[非活动 LaTeX 成员红灯](evidence/2026-11-08-pdf-export/member-red.log.gz)复现了切回干净入口后，
+报告遗漏其它成员未保存草稿的问题；修复后比较全部导出 overlay 与磁盘，回归测试通过。[目标记忆红灯](evidence/2026-11-08-pdf-export/settings-red.log.gz)还复现了大写 `.PDF`
+成功导出却不被恢复的问题；修复并加入回归。
+
+[Typst PDF 比较](evidence/2026-11-08-pdf-export/typst-pdf-parity.log.gz)的三个测试验证了
+生成源码 API、显式资源 API 与直接 fork typst-pdf 的逐页像素一致，以及语法错误/未填槽拒绝。
+app 常规测试补充了真实文件发布、当前未保存修订、字面文字/结构分式、旧目标保留、symlink 拒绝、
+临时文件清理与诊断去重/过期。两条比较路径都用了 hayro 的固定 300 dpi，容差为零；
+元数据时间不参与比较，没有放宽断言。
+
+[完整测试](evidence/2026-11-08-pdf-export/test.log.gz)通过 752 项，失败 0 项，17 项显式 opt-in 测试
+在常规门禁中跳过。任务新增的[三引擎 opt-in 验收](evidence/2026-11-08-pdf-export/latex-native.log.gz)另外在本机执行，
+1 项测试覆盖 pdfLaTeX/XeLaTeX/LuaLaTeX，三份 fixture 均为 1 页、300 dpi 下 RGBA 完全一致，
+源文件在未保存输入导出前后保持原字节。
+[clippy](evidence/2026-11-08-pdf-export/clippy.log.gz)、
+[rustdoc](evidence/2026-11-08-pdf-export/doc.log.gz)、
+[二进制构建](evidence/2026-11-08-pdf-export/build.log.gz)及
+[依赖策略](evidence/2026-11-08-pdf-export/deny.log.gz)通过；cargo deny 只留下原有未遇到许可证允许项提示。
+[fmt、Rust 文件规模、文档链接、UI strings、layers 脚本](evidence/2026-11-08-pdf-export/static-gates.log.gz)也通过。
+
+独立 stock 对照分别在[系统字体](evidence/2026-11-08-pdf-export/stock-comparison.json)与
+[打包字体](evidence/2026-11-08-pdf-export/stock-bundled-comparison.json)下各 31/31 逐像素相同。
+没有改变编辑面排版，独立参考源码无需更新；
+[源清单摘要](evidence/2026-11-08-pdf-export/fork-source.json)确认新增 PDF crate 完全来自原 pin。
+
+[首次 PDF 窗口检查](evidence/2026-11-08-pdf-export/window-initial.log.gz)中英文通过，
+中文在应用启动前出现 XOpenDisplayFailed，未计产品通过。
+[完整窗口门禁](evidence/2026-11-08-pdf-export/window-all.log.gz)在新目录最终通过 66/66，中文/英文各 33 项。
+PDF 每语言 10 个断言分别见[中文](evidence/2026-11-08-pdf-export/window-pdf-zh-Hans.json)与
+[英文](evidence/2026-11-08-pdf-export/window-pdf-en.json)，覆盖未保存正文和公式、报告版本、PDF 提取文字、
+重启后目标记忆、沙箱源码成功及错误拒绝。截图为
+[原生成功](evidence/2026-11-08-pdf-export/native-export.png)和
+[源码失败](evidence/2026-11-08-pdf-export/source-export-error.png)。全程
+遵守机器锁、私有 Xvfb、键表和 function-key keycode 约束，没有访问用户桌面。
+
+## 边界
+
+未实现 bibliography、打印、PDF/A 或选区导出。已有预览/导出页数、资源和栅格预算仍可能拒绝超大文档。
+本机路径设置不进入共享项目，也不随新身份的另存为继承。目录同步在 rename 后失败可能留下完整新 PDF，
+但报告仍为失败，不承诺“不产生任何完整产物”。其它 OS 的沙箱与系统原生选择器未在本批验收。
+未开 PR，未轮询 CI；由协调者起草 PR。

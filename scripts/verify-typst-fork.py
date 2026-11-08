@@ -13,13 +13,13 @@ repo = Path(__file__).resolve().parents[1]
 tag = "v0.15.1"
 commit = "9dfd3a08500b7896045f907433cf7b4b02434fad"
 names = ["typst", "typst-eval", "typst-html", "typst-kit", "typst-layout", "typst-library", "typst-macros",
-         "typst-realize", "typst-render", "typst-svg", "typst-syntax", "typst-timing", "typst-utils"]
+         "typst-pdf", "typst-realize", "typst-render", "typst-svg", "typst-syntax", "typst-timing", "typst-utils"]
 paths = ["Cargo.toml", "LICENSE", "README.md"] + [f"crates/{name}" for name in names]
 patch_dir = repo / "spikes/typst-edit-session/patches"
 
 
 def library_workspace(root):
-    """Shrink the upstream workspace to the 13 vendored libraries, as in vendor/typst-edit."""
+    """Shrink the upstream workspace to the 14 vendored libraries, as in vendor/typst-edit."""
     manifest = root / "Cargo.toml"
     text = manifest.read_text()
     members = 'members = ["crates/*", "docs", "tests", "tests/fuzz", "tests/wrapper"]'
@@ -54,7 +54,7 @@ def main():
                   "source_sha256": hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest(),
                   "file_count": len(files), "files": hashes,
                   "patches": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in patches},
-                  "workspace_scope": "13 libraries only; no upstream CLI/docs/tests/fuzz"}
+                  "workspace_scope": "14 libraries only; no upstream CLI/docs/tests/fuzz"}
         print(json.dumps(result, indent=2))
 
 
