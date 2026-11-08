@@ -52,9 +52,9 @@ pub(super) fn show(ui: &mut Ui, state: &mut WorkspaceState, room: f32) {
         }
     }
     if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
-        println!(
-            "BREADCRUMB {}",
-            serde_json::json!({"items":items.iter().map(|c| serde_json::json!({"label":c.label,"byte":c.byte})).collect::<Vec<_>>(),"visible":indices})
+        crate::audit_line::emit(
+            "BREADCRUMB",
+            &serde_json::json!({"items":items.iter().map(|c| serde_json::json!({"label":c.label,"byte":c.byte})).collect::<Vec<_>>(),"visible":indices}),
         );
     }
 }

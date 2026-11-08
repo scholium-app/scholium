@@ -179,9 +179,9 @@ impl ProjectFiles {
             },
         );
         if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
-            println!(
-                "PROJECT_FORM {}",
-                serde_json::json!({"latex":self.new.latex,"name":self.new.name,"location":self.new.location,"error":self.new.error.map(Validation::key)})
+            crate::audit_line::emit(
+                "PROJECT_FORM",
+                &serde_json::json!({"latex":self.new.latex,"name":self.new.name,"location":self.new.location,"error":self.new.error.map(Validation::key)}),
             );
         }
         if browse {
