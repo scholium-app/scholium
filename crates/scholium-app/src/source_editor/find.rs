@@ -141,6 +141,9 @@ impl SourceEditor {
         state.store(ctx, self.id());
         self.search.refresh(text);
         ctx.memory_mut(|m| m.request_focus(self.id()));
+        // A pointer release on the find button can clear focus while the source is laid out.
+        // Repeat the request after TextEdit has processed that same pointer frame.
+        self.focus = false;
     }
     pub(super) fn paint_matches(
         &self,
@@ -148,7 +151,8 @@ impl SourceEditor {
         text: &str,
         output: &egui::text_edit::TextEditOutput,
     ) {
-        if !self.find_open {
+        // TextEdit may have committed a Unicode edit after this frame's incremental scan.
+        if !self.find_open || self.search.source() != text {
             return;
         }
         let clip = ui.clip_rect().intersect(output.response.rect);

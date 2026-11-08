@@ -30,3 +30,32 @@ Part A 先加入零预算和拷贝预算/链接拒绝回归，确认失败后实
 | LaTeX log | 4 MiB input、64 KiB line/message、1024 diagnostics、128 stack | pathological_log_is_rejected_without_building_unbounded_diagnostics |
 
 Part B 的 plain hostile-input tests 通过；没有为此增加 fuzz 工具链依赖。
+
+## 共享源码查找与替换
+
+Typst Source Studio 与 LaTeX workbench 复用同一个查找栏和 literal-search model。
+查询、前后跳转、计数、区分大小写、整词、替换与全部替换均通过共享源码状态工作；
+快捷键来自 keymap，Esc 关闭并恢复编辑器焦点。可见匹配按主题 token 高亮。
+扫描每帧最多处理 32768 个 Unicode scalar，查询上限 4096 bytes、匹配上限 100 万；
+达到上限明确提示，扫描未完成或超限时禁止替换。多 MB 输入回归验证了逐帧上界。
+全部替换通过原生 TextEdit undo boundary 作为单步撤销，Unicode 回归验证恢复完整原文。
+Typst 原生页面编辑仍不提供 `edit.find`，本次没有实现页面搜索。
+
+两套 stock-Typst 像素对照（普通字体发现与仅 bundled fonts）均通过，未修改独立 reference
+或放宽阈值。实现按 A/B/C 三部分提交，随后补充分离的 hostile-input、窗口与原生配额测试提交；
+这是相对于“三部分、三个提交”的提交数量偏差，保留了可独立审查的验证与修复历史。
+
+首轮窗口验证发现 Replace All 的按钮释放帧会清除源码焦点，导致随后 Ctrl+Z 未送入源码。
+补充真实 pointer-click 单元回归后，把焦点恢复移到 TextEdit 处理该帧之后；单步 undo 回归通过。
+协议坐标检查曾误拒绝大整数 metadata；补充回归后只按字段语义检查标量与数组坐标。
+源码预览布局的 missing-toolchain negative control 改用真实 detector 的 `SCHOLIUM_RTEX_BIN` override。
+新缓存 native render 首次暴露预热缓存读取位置错误；修复为从受信固定文档的私有卷发布。
+真实 rtex cancel 还暴露会话 socket/FIFO 导出问题；回归验证省略 IPC 对象但保留双预算和链接拒绝。
+最终 native render 的两个测试通过：英文/中文 live 编辑、TikZ 隔离 PDF fallback、XeLaTeX/pdfLaTeX 整编，
+所有 Poppler 对照均通过既有 1% 阈值，未放宽阈值。
+追加 hostile-output nesting 回归后，宿主复制深度上限为 128；超过时有界错误退出。
+Unicode 编辑和同帧高亮的回归先复现了 stale UTF-8 byte range panic，再以 snapshot 一致性守卫修复。
+
+最终常规门禁通过：fmt、clippy `-D warnings`、workspace tests（756 passed / 18 ignored）、
+rustdoc `-D warnings`、Rust size、doc links、UI strings、layers、cargo-deny 与 app/storage bins 构建。
+allocator/PDF helper 也单独构建通过。byte/inode 各 profile 原生攻击与 Typst 原生隔离/取消回归再次通过。

@@ -32,6 +32,36 @@ fn quota_copy_rejects_links_and_never_exceeds_the_shared_budget() {
 }
 
 #[test]
+fn quota_export_omits_session_ipc_objects_and_copies_only_regular_artifacts() {
+    let source = tempfile::tempdir().expect("source");
+    let target = tempfile::tempdir().expect("target");
+    let _socket = std::os::unix::net::UnixListener::bind(source.path().join("socket"))
+        .expect("session socket");
+    nix::unistd::mkfifo(&source.path().join("pipe"), nix::sys::stat::Mode::S_IRUSR)
+        .expect("session pipe");
+    std::fs::write(source.path().join("result"), "artifact").expect("artifact");
+    crate::quota::copy_tree(source.path(), target.path(), (100, 10)).expect("export");
+    assert_eq!(
+        std::fs::read(target.path().join("result")).expect("result"),
+        b"artifact"
+    );
+    assert!(!target.path().join("socket").exists());
+    assert!(!target.path().join("pipe").exists());
+}
+
+#[test]
+fn deeply_nested_output_fails_without_unbounded_host_recursion() {
+    let source = tempfile::tempdir().expect("source");
+    let target = tempfile::tempdir().expect("target");
+    let mut path = source.path().to_owned();
+    for _ in 0..129 {
+        path.push("d");
+        std::fs::create_dir(&path).expect("directory");
+    }
+    assert!(crate::quota::copy_tree(source.path(), target.path(), (1024, 1024)).is_err());
+}
+
+#[test]
 #[ignore = "requires unprivileged user/mount namespaces and the installed allocator"]
 fn kernel_output_volume_bounds_bytes_and_inodes_after_allocator_exit() {
     let limits = ResourceLimits {

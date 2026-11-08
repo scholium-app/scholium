@@ -1,6 +1,6 @@
 //! A kernel-bounded tmpfs, retained by an fd after the allocator namespace exits.
 use crate::{BuildError, ResourceLimits};
-use cap_std::fs::OpenOptionsExt;
+use cap_std::fs::{FileTypeExt, OpenOptionsExt};
 use nix::sys::{
     socket::{ControlMessageOwned, MsgFlags, recvmsg},
     statvfs::statvfs,
@@ -145,13 +145,20 @@ pub(crate) fn copy_tree(
 ) -> Result<(), BuildError> {
     let source = cap_std::fs::Dir::open_ambient_dir(source, cap_std::ambient_authority())?;
     let target = cap_std::fs::Dir::open_ambient_dir(target, cap_std::ambient_authority())?;
-    copy_dir(&source, &target, &mut (budget.0, budget.1))
+    copy_dir(&source, &target, &mut (budget.0, budget.1), 0)
 }
 fn copy_dir(
     source: &cap_std::fs::Dir,
     target: &cap_std::fs::Dir,
     remaining: &mut (u64, u64),
+    depth: usize,
 ) -> Result<(), BuildError> {
+    const MAX_OUTPUT_DEPTH: usize = 128;
+    if depth > MAX_OUTPUT_DEPTH {
+        return Err(BuildError::Configuration(
+            "build output nesting limit exceeded".into(),
+        ));
+    }
     for entry in source.entries()? {
         let entry = entry?;
         let name = entry.file_name();
@@ -160,12 +167,17 @@ fn copy_dir(
         }
         remaining.1 = remaining.1.checked_sub(1).ok_or(BuildError::OutputQuota)?;
         let kind = entry.file_type()?;
+        // rtex leaves private session IPC endpoints behind. Never open or export them.
+        if kind.is_socket() || kind.is_fifo() {
+            continue;
+        }
         if kind.is_dir() {
             target.create_dir_all(&name)?;
             copy_dir(
                 &source.open_dir(&name)?,
                 &target.open_dir(&name)?,
                 remaining,
+                depth + 1,
             )?;
         } else if kind.is_file() {
             let mut input = regular(source, Path::new(&name))?;

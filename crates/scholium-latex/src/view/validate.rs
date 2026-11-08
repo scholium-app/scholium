@@ -66,18 +66,18 @@ fn display_list(value: &Value) -> Result<(), LatexError> {
 }
 fn coordinates(value: &Value) -> Result<(), LatexError> {
     // Depth is capped by serde_json. Total nodes are capped independently of encoded byte length.
-    let mut pending = vec![value];
+    let mut pending = vec![(value, false)];
     let mut visited = 0;
-    while let Some(value) = pending.pop() {
+    while let Some((value, coordinate)) = pending.pop() {
         visited += 1;
         if visited > MAX_ITEMS * 12 {
             return Err(invalid("JSON node limit exceeded"));
         }
         match value {
-            Value::Array(a) => pending.extend(a),
+            Value::Array(a) => pending.extend(a.iter().map(|v| (v, coordinate))),
             Value::Object(m) => {
                 for (key, v) in m {
-                    if matches!(
+                    let coordinate = matches!(
                         key.as_str(),
                         "x" | "y"
                             | "w"
@@ -90,16 +90,17 @@ fn coordinates(value: &Value) -> Result<(), LatexError> {
                             | "size"
                             | "slant"
                             | "extend"
-                    ) && v
-                        .as_f64()
-                        .is_some_and(|n| !n.is_finite() || n.abs() > MAX_COORDINATE)
-                    {
-                        return Err(invalid("drawing coordinate limit exceeded"));
-                    }
-                    pending.push(v);
+                            | "xs"
+                            | "baselines"
+                    );
+                    pending.push((v, coordinate));
                 }
             }
-            Value::Number(n) if n.as_f64().is_some_and(|n| n.abs() > MAX_COORDINATE) => {
+            Value::Number(n)
+                if coordinate
+                    && n.as_f64()
+                        .is_some_and(|n| !n.is_finite() || n.abs() > MAX_COORDINATE) =>
+            {
                 return Err(invalid("numeric coordinate limit exceeded"));
             }
             _ => {}

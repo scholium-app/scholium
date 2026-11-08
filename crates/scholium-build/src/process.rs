@@ -74,6 +74,11 @@ impl SandboxProcess {
         })
     }
 
+    pub(crate) fn copy_trusted_cache(&self, target: &std::path::Path) -> Result<(), BuildError> {
+        // This is used only for the fixed trusted warm-up, never for project execution.
+        crate::cache::copy(&self.volume.path.join(".font-cache"), target)
+    }
+
     /// Take the bounded protocol writer's input pipe, once.
     pub fn take_stdin(&mut self) -> Option<ChildStdin> {
         self.child.stdin.take()

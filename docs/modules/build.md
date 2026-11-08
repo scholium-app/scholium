@@ -42,9 +42,11 @@ Typst 编译、LaTeX 整编与 rtex 共用一个 Sandbox 产品执行路径；�
 - 取消杀整个 scope 和宿主进程组；清理完成前不释放会话缓存。进程在宿主退出时受 bubblewrap parent/PID 边界约束。
 - 后台 pass 超时由上游配置，宿主监督会话心跳与单次操作计时；不把整个会话截止时间当作编译超时。
 
-资源机制的决策见 [ADR 0050](../adr/ADR-0050-linux-live-session-cgroups.md)。每次执行树的 `/work` 或 `/out` 与字体缓存使用独立 tmpfs，默认总量 512 MiB/32768 inode，
+资源机制的决策见 [ADR 0050](../adr/ADR-0050-linux-live-session-cgroups.md)。每次执行树的 `/work` 或 `/out` 与字体缓存共用独立于其他会话的 tmpfs，默认总量 512 MiB/32768 inode，
 由 ResourceLimits 配置；输出不再直接写宿主目录。空间或 inode 耗尽终止 scope 并报告 OutputQuota。
 宿主仅 capability 读取 live 文件或在整编结束后双预算复制普通文件，后续 pass 恢复有界状态。
+复制拒绝链接和设备文件，省略会话 socket/FIFO；可信固定文档的缓存预热单独从私有卷发布缓存。
+宿主复制目录深度最多 128 层，超过时返回有界配置错误。
 机制和安装 helper 要求见 [ADR 0058](../adr/ADR-0058-output-quota-decoder-boundary.md)。其他平台不提供无隔离降级。
 
 ## 失败处理
@@ -94,7 +96,7 @@ app 不持有 sandbox 实现，只组装请求、调用 build、检查 revision 
 
 `TypstPreview` 固定为 4 GiB MemoryMax/地址空间、64 tasks、零 swap、CPU 30 秒、单文件 64 MiB、128 fd；
 `run` 将调用者的 wall deadline 收紧到最多 10 秒。网络通过 `--unshare-all` 关闭，环境清空，
-只读挂载 worker、prlimit、动态库、`/request.json` 与 `/project`；唯一可写宿主挂载为独立临时 `/out`，
+只读挂载 worker、prlimit、动态库、`/request.json` 与 `/project`；`/out` 为独立私有 tmpfs，
 另有受限 64 MiB `/tmp`。拒绝输出与资源/请求/运行时路径重叠，没有 shell 或宿主降级。
 
 执行复用 `Sandbox::launch/run`、`SandboxProcess` 的进程组/scope 取消和有界 stdout/stderr（各 1 MiB）。
