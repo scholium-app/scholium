@@ -71,11 +71,18 @@ fn load(db: &fontdb::Database, name: &str) -> Option<FontData> {
     })
 }
 
-fn definitions(db: &fontdb::Database) -> (FontDefinitions, Chosen) {
+pub(super) fn definitions(db: &fontdb::Database) -> (FontDefinitions, Chosen) {
     let mut fonts = FontDefinitions::default();
     fonts.font_data.insert(
         BUNDLED.into(),
         FontData::from_static(scholium_typst::bundled_cjk_font_bytes()).into(),
+    );
+    fonts.font_data.insert(
+        "noto-math".into(),
+        FontData::from_static(include_bytes!(
+            "../../assets/fonts/NotoSansMath-Regular.ttf"
+        ))
+        .into(),
     );
     let ui = load_first(db, &UI_FONTS, &mut fonts);
     let latin = load_first(db, &LATIN_FONTS, &mut fonts);
@@ -111,5 +118,6 @@ fn prefer(fonts: &mut FontDefinitions, family: FontFamily, names: [&Option<Strin
     let list = fonts.families.entry(family).or_default();
     let front: Vec<String> = names.into_iter().flatten().map(|n| data_key(n)).collect();
     list.splice(0..0, front);
+    list.push("noto-math".into());
     list.push(BUNDLED.into());
 }

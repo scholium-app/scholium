@@ -178,10 +178,22 @@ impl Workspace {
         let locale = state.locale.resolve();
         self.poll(ui.ctx());
         self.diagnostic_jump(ui.ctx(), state);
+        self.editor.navigation(
+            ui.ctx(),
+            self.source.text(),
+            self.source.active_path(),
+            state,
+        );
         self.show_panes(ui, state);
         if self.shown_revision == Some(self.revision) && self.presented.is_none() {
             self.presented = self.edited_at.map(|t| t.elapsed());
         }
+        self.editor.navigation(
+            ui.ctx(),
+            self.source.text(),
+            self.source.active_path(),
+            state,
+        );
         state.source_position = self.editor.position(self.source.text());
         (state.source_undo, state.source_redo) = self.editor.history();
         state.source_words = crate::chrome::count_words(self.source.text());

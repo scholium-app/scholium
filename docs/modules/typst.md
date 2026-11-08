@@ -250,3 +250,10 @@ Content cache 只使前后受影响正文叶及其段落失效；未变的段落
 宿主负责 OS 网络/挂载、内存、CPU、墙钟预算与取消整棵进程树；失败后保留最后成功页面且不得进程内重试。
 原生生成源码的 PreviewCompiler 执行权限保持原有约束。部署边界见
 [ADR 0055](../adr/ADR-0055-source-preview-worker.md)。
+
+
+## 源码焦点导航
+
+`breadcrumbs(text, caret)` 使用官方 syntax CST 返回 caret 前的标题祖先，以及包围 caret 的 Equation / Raw。
+每项为源码标签或 math/raw 类别及 UTF-8 byte 起点；按标题深度替换同级与后代，不将注释或 raw/code 内的标题状文本当作文档标题。
+该入口只解析，不求值、不读取资源、不改变源码，供 app 的光标面包屑与点击跳转使用。

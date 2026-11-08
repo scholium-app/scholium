@@ -1,7 +1,7 @@
 use super::{ThemeKind, Tokens, fonts};
 use std::path::{Path, PathBuf};
 
-/// The P1_UI token table: (name, light, dark).
+/// The reviewed accessible token table (base P1_UI plus T48 contrast corrections): (name, light, dark).
 const TABLE: [(&str, u32, u32); 26] = [
     ("menubar", 0xF2F2F3, 0x2A2A2A),
     ("toolbar", 0xF2F2F3, 0x2A2A2A),
@@ -11,7 +11,7 @@ const TABLE: [(&str, u32, u32); 26] = [
     ("canvas", 0xE6E6E8, 0x1B1B1B),
     ("page", 0xFFFFFF, 0xFFFFFF),
     ("field", 0xFFFFFF, 0x1F1F1F),
-    ("border", 0xCFCFD4, 0x5A5A60),
+    ("border", 0x797981, 0x96969D),
     ("separator", 0xE0E0E3, 0x3C3C3C),
     ("hover", 0xE4E4E7, 0x3A3A3A),
     ("pressed", 0xD8D8DC, 0x474747),
@@ -19,8 +19,8 @@ const TABLE: [(&str, u32, u32); 26] = [
     ("accent", 0x1D5BD0, 0x6EA4FF),
     ("focus_ring", 0x1D5BD0, 0x6EA4FF),
     ("text", 0x1F1F1F, 0xE8E8E8),
-    ("text_dim", 0x5C5C63, 0xA6A6A6),
-    ("text_faint", 0x8E8E95, 0x7E7E84),
+    ("text_dim", 0x5C5C63, 0xB6B6B6),
+    ("text_faint", 0x5C5C63, 0xB6B6B6),
     ("error", 0xC4311F, 0xFF7A6B),
     ("text_disabled", 0xA6A6A6, 0x5E5E5E),
     ("warning", 0x9A6700, 0xE0A82E),
@@ -69,7 +69,7 @@ fn rgb(hex: u32) -> [u8; 3] {
 }
 
 #[test]
-fn every_semantic_token_has_the_p1_ui_value_in_both_themes() {
+fn every_semantic_token_has_the_reviewed_value_in_both_themes() {
     for (name, light, dark) in TABLE {
         assert_eq!(value(&Tokens::LIGHT, name), rgb(light), "light {name}");
         assert_eq!(value(&Tokens::DARK, name), rgb(dark), "dark {name}");
@@ -139,4 +139,70 @@ fn the_first_installed_family_of_each_preference_list_wins() {
         Some("HarmonyOS Sans SC")
     );
     assert_eq!(pick(&["DejaVu Sans"]), None, "Noto stays the last fallback");
+}
+
+fn contrast(a: eframe::egui::Color32, b: eframe::egui::Color32) -> f64 {
+    let luminance = |c: eframe::egui::Color32| {
+        let channel = |v: u8| {
+            let v = f64::from(v) / 255.0;
+            if v <= 0.04045 {
+                v / 12.92
+            } else {
+                ((v + 0.055) / 1.055).powf(2.4)
+            }
+        };
+        0.2126 * channel(c.r()) + 0.7152 * channel(c.g()) + 0.0722 * channel(c.b())
+    };
+    let (a, b) = (luminance(a), luminance(b));
+    (a.max(b) + 0.05) / (a.min(b) + 0.05)
+}
+#[test]
+fn readable_text_and_control_boundaries_meet_wcag_in_both_themes() {
+    for t in [Tokens::LIGHT, Tokens::DARK] {
+        for bg in [
+            t.field,
+            t.toolbar,
+            t.focusbar,
+            t.hover,
+            t.pressed,
+            t.active_bg,
+        ] {
+            for text in [t.text, t.text_dim, t.text_faint] {
+                assert!(
+                    contrast(text, bg) >= 4.5,
+                    "{:?} text {text:?} on {bg:?}: {}",
+                    t.kind,
+                    contrast(text, bg)
+                );
+            }
+            assert!(
+                contrast(t.border, bg) >= 3.0,
+                "{:?} border on {bg:?}: {}",
+                t.kind,
+                contrast(t.border, bg)
+            );
+            assert!(contrast(t.focus_ring, bg) >= 3.0);
+        }
+    }
+}
+
+#[test]
+fn bundled_interface_fonts_cover_every_command_candidate_symbol() {
+    let ctx = eframe::egui::Context::default();
+    let (definitions, _) = fonts::definitions(&fontdb::Database::new());
+    ctx.set_fonts(definitions);
+    let mut output = ctx.run_ui(eframe::egui::RawInput::default(), |ui| {
+        for symbol in &scholium_math_input::data::core().symbol {
+            assert!(
+                ui.fonts_mut(|f| symbol.unicode.chars().all(|c| f
+                    .fonts
+                    .font(&eframe::egui::FontFamily::Proportional)
+                    .characters()
+                    .contains_key(&c))),
+                "missing candidate symbol {}",
+                symbol.unicode
+            );
+        }
+    });
+    output.textures_delta.clear();
 }

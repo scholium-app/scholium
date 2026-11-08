@@ -23,7 +23,7 @@ pub(super) fn show(ui: &mut Ui, state: &mut WorkspaceState) {
     ui.with_layout(Layout::left_to_right(Align::Center), |ui| {
         ui.add_space(Tokens::ALIGN_LEFT - Tokens::PAD_BAR);
         if state.source_language.is_some() {
-            // Breadcrumbs arrive in the later focus-bar batch.
+            super::breadcrumb::show(ui, state, room);
         } else if in_math(state) {
             math(ui, state, room);
         } else if state.editor.as_ref().is_some_and(|v| v.command_open) {

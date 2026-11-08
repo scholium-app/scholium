@@ -69,7 +69,7 @@ pub(crate) fn popover_frame(ctx: &egui::Context) -> Frame {
     let t = theme::tokens(ctx);
     Frame::new()
         .fill(t.field)
-        .stroke(egui::Stroke::new(1.0, Tokens::overlay_border(false)))
+        .stroke(egui::Stroke::new(1.0, t.border))
         .corner_radius(Tokens::RADIUS_MENU)
         .shadow(Tokens::popup_shadow())
         .inner_margin(Margin::same(Tokens::PAD_MENU as i8))

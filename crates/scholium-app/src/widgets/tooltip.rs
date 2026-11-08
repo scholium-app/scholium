@@ -42,15 +42,11 @@ fn contents(ui: &mut egui::Ui, t: &Tokens, tip: &Tip) {
             ui.label(
                 RichText::new(shortcut)
                     .font(small.clone())
-                    .color(t.tooltip_text.gamma_multiply(0.7)),
+                    .color(t.tooltip_text),
             );
         }
     });
     if let Some(reason) = &tip.reason {
-        ui.label(
-            RichText::new(reason)
-                .font(small)
-                .color(t.tooltip_text.gamma_multiply(0.7)),
-        );
+        ui.label(RichText::new(reason).font(small).color(t.tooltip_text));
     }
 }

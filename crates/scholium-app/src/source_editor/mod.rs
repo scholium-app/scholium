@@ -4,6 +4,7 @@ mod gutter;
 mod highlight;
 mod jump;
 pub(crate) mod layout;
+pub(crate) mod navigation;
 #[cfg(test)]
 mod tests;
 mod underline;
@@ -91,7 +92,7 @@ impl SourceEditor {
                 }
             }
         }
-        if ui.is_enabled() && !self.typst {
+        if ui.is_enabled() {
             self.completion_input(ui);
         }
         if self.composing
@@ -146,8 +147,8 @@ impl SourceEditor {
             }
             *text = buffer;
         }
-        if ui.is_enabled() && !self.typst {
-            self.completion_popup(ui, &output);
+        if ui.is_enabled() {
+            self.completion_popup(ui, &output, locale);
         }
         *text != before
     }

@@ -203,3 +203,6 @@ pub fn block_at_click(anchors: &[BlockAnchor], page: usize, y: f32) -> Option<us
 
 #[cfg(test)]
 mod tests;
+
+mod breadcrumb;
+pub use breadcrumb::{Breadcrumb, breadcrumbs};

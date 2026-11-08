@@ -107,3 +107,54 @@ fn the_warning_segment_is_the_only_message_and_zoom_runs_commands() {
     w.click("view.zoom.fit_width", "status");
     assert!(w.state.fit_width);
 }
+#[test]
+fn source_status_has_kernel_specific_segments_and_engine_opens_settings() {
+    use scholium_storage::project::ProjectLanguage;
+    for language in [ProjectLanguage::Typst, ProjectLanguage::Latex] {
+        let mut w = Window::new(1440.0, EN);
+        w.state.source_language = Some(language);
+        w.state.source_position = (12, 56);
+        w.state.kernel_status = Some("Preview engine".into());
+        w.editor().words = 1284;
+        w.settle();
+        let texts = w.texts();
+        assert!(texts.iter().any(|t| t.contains("12") && t.contains("56")));
+        assert_eq!(
+            texts.contains(&"1,284 words".into()),
+            language == ProjectLanguage::Latex
+        );
+        assert!(!texts.contains(&"Body".into()));
+        w.click("document.project_settings", "status");
+        assert!(w.state.file_dialog.is_some());
+    }
+}
+#[test]
+fn breadcrumb_targets_are_clickable_and_stay_clear_of_the_mode_switch() {
+    use crate::source_editor::navigation::Crumb;
+    for width in [480.0, 1024.0, 1440.0] {
+        let mut w = Window::new(width, EN);
+        w.state.source_language = Some(scholium_storage::project::ProjectLanguage::Latex);
+        w.state.source_navigation.items = [
+            ("very-long-project-member-name.tex", 0),
+            ("Long introduction with Unicode 标题", 30),
+            ("A method subsection", 80),
+            ("equation", 120),
+        ]
+        .into_iter()
+        .map(|(label, byte)| Crumb {
+            label: label.into(),
+            byte,
+        })
+        .collect();
+        w.settle();
+        let rects = w.rects("focus");
+        assert!(
+            rects
+                .windows(2)
+                .all(|pair| pair[0].right() <= pair[1].left()),
+            "{width}: {rects:?}"
+        );
+        w.click("ui.breadcrumb.3", "focus");
+        assert_eq!(w.state.source_navigation.jump, Some(120));
+    }
+}

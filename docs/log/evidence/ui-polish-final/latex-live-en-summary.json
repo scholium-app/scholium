@@ -1,0 +1,209 @@
+{
+  "latex-live-compiler-rows": {
+    "pass": true,
+    "diagnostics": [
+      {
+        "code": null,
+        "kernel": "latex",
+        "log": {
+          "bytes": {
+            "end": 5980,
+            "start": 5910
+          },
+          "line": 94
+        },
+        "message": "Citation `missing' on page 1 undefined on input line 4.",
+        "node": null,
+        "range": {
+          "bytes": null,
+          "end": null,
+          "start": {
+            "column": 1,
+            "line": 4
+          }
+        },
+        "resource": "main.tex",
+        "severity": "warning"
+      },
+      {
+        "code": null,
+        "kernel": "latex",
+        "log": null,
+        "message": "Undefined control sequence.",
+        "node": null,
+        "range": {
+          "bytes": null,
+          "end": null,
+          "start": {
+            "column": 1,
+            "line": 5
+          }
+        },
+        "resource": "main.tex",
+        "severity": "error"
+      },
+      {
+        "code": null,
+        "kernel": "latex",
+        "log": null,
+        "message": "There were undefined references.",
+        "node": null,
+        "range": null,
+        "resource": null,
+        "severity": "warning"
+      }
+    ]
+  },
+  "latex-live-error-and-citation": {
+    "pass": true
+  },
+  "latex-live-enter-selects-range": {
+    "pass": true,
+    "selection": {
+      "end": 81,
+      "start": 67
+    }
+  },
+  "problems-theme-light": {
+    "pass": true
+  },
+  "problems-theme-dark": {
+    "pass": true
+  },
+  "problems-narrow-theme-light": {
+    "pass": true
+  },
+  "problems-narrow-theme-dark": {
+    "pass": true
+  },
+  "latex-live-f8-and-shift-f8-wrap": {
+    "pass": true
+  },
+  "latex-live-tabs-and-group-collapse": {
+    "pass": true
+  },
+  "latex-live-good-build-clears-problems": {
+    "pass": true
+  },
+  "latex-member-compiler-rows": {
+    "pass": true,
+    "diagnostics": [
+      {
+        "code": null,
+        "kernel": "latex",
+        "log": {
+          "bytes": {
+            "end": 5995,
+            "start": 5925
+          },
+          "line": 94
+        },
+        "message": "Citation `missing' on page 1 undefined on input line 1.",
+        "node": null,
+        "range": {
+          "bytes": null,
+          "end": null,
+          "start": {
+            "column": 1,
+            "line": 1
+          }
+        },
+        "resource": "chapter.tex",
+        "severity": "warning"
+      },
+      {
+        "code": null,
+        "kernel": "latex",
+        "log": null,
+        "message": "Undefined control sequence.",
+        "node": null,
+        "range": {
+          "bytes": null,
+          "end": null,
+          "start": {
+            "column": 1,
+            "line": 2
+          }
+        },
+        "resource": "chapter.tex",
+        "severity": "error"
+      },
+      {
+        "code": null,
+        "kernel": "latex",
+        "log": null,
+        "message": "There were undefined references.",
+        "node": null,
+        "range": null,
+        "resource": null,
+        "severity": "warning"
+      }
+    ]
+  },
+  "latex-member-error-and-citation": {
+    "pass": true
+  },
+  "latex-member-enter-selects-range": {
+    "pass": true,
+    "selection": {
+      "end": 14,
+      "start": 0
+    }
+  },
+  "latex-member-opens-member-without-changing-entry": {
+    "pass": true
+  },
+  "latex-member-f8-and-shift-f8-wrap": {
+    "pass": true
+  },
+  "latex-member-tabs-and-group-collapse": {
+    "pass": true
+  },
+  "latex-member-good-build-clears-problems": {
+    "pass": true
+  },
+  "typ-source-compiler-rows": {
+    "pass": true,
+    "diagnostics": [
+      {
+        "code": null,
+        "kernel": "typst",
+        "log": null,
+        "message": "unknown variable: unknown_function",
+        "node": null,
+        "range": {
+          "bytes": {
+            "end": 26,
+            "start": 10
+          },
+          "end": {
+            "column": 18,
+            "line": 2
+          },
+          "start": {
+            "column": 2,
+            "line": 2
+          }
+        },
+        "resource": "main.typ",
+        "severity": "error"
+      }
+    ]
+  },
+  "typ-source-enter-selects-range": {
+    "pass": true,
+    "selection": {
+      "end": 26,
+      "start": 10
+    }
+  },
+  "typ-source-f8-and-shift-f8-wrap": {
+    "pass": true
+  },
+  "typ-source-tabs-and-group-collapse": {
+    "pass": true
+  },
+  "typ-source-good-build-clears-problems": {
+    "pass": true
+  }
+}

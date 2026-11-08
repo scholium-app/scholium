@@ -43,6 +43,13 @@ def capture_themes(app, name):
         app.source(lambda s: s["chrome"]["facts"]["theme"].lower() == theme)
         app.capture(name + "-" + theme)
         record(name + "-theme-" + theme, True)
+        if os.environ.get("SCHOLIUM_T48_MATRIX"):
+            for width, height in [(1440, 900), (1024, 700), (480, 700)]:
+                app.xdo("windowsize", app.window, width, height)
+                time.sleep(0.3)
+                app.capture(f"{name}-{theme}-{width}")
+            app.xdo("windowsize", app.window, 1280, 900)
+            time.sleep(0.2)
 
 
 def case(kind, source, fixed, member=None):

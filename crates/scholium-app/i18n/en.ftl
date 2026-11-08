@@ -630,3 +630,12 @@ command-view-problem-next =
 command-view-problem-previous =
     .title = Previous Problem
     .tooltip = Go to the previous problem
+
+math-input-category-letter = Letter
+math-input-category-relation = Relation
+math-input-category-arrow = Arrow
+math-input-category-constant = Constant
+math-input-category-punctuation = Punctuation
+math-input-category-structure = Structure
+
+chrome-status-settings_hint = Open project settings to change the preview engine

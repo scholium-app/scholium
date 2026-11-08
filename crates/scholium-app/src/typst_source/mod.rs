@@ -144,6 +144,12 @@ impl Workspace {
     pub(crate) fn show(&mut self, ui: &mut egui::Ui, state: &mut WorkspaceState) {
         self.sync(ui.ctx());
         self.diagnostic_jump(ui.ctx(), state);
+        self.editor.navigation(
+            ui.ctx(),
+            self.source.text(),
+            self.source.active_path(),
+            state,
+        );
         egui::CentralPanel::default()
             .frame(egui::Frame::new().fill(crate::theme::tokens(ui.ctx()).canvas))
             .show(ui, |ui| {
@@ -159,6 +165,12 @@ impl Workspace {
                     self.preview(ui, state);
                 }
             });
+        self.editor.navigation(
+            ui.ctx(),
+            self.source.text(),
+            self.source.active_path(),
+            state,
+        );
         state.source_position = self.editor.position(self.source.text());
         (state.source_undo, state.source_redo) = self.editor.history();
         state.source_words = crate::chrome::count_words(self.source.text());

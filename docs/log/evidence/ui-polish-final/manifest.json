@@ -1,0 +1,4285 @@
+{
+  "base": "e625189f1e68eea4e76f419300c2c9055ff2ad57",
+  "baseline_binary_sha256": "c609f1d05b844cd3cdb31492ddc8b5718eed60e95587d56f23ccc7638b0858cb",
+  "final_binary_sha256": "7a323fabcc534a00b45f6a23ddfe1b150488922f9c2a4d8b0f314a14d4ae5a6b",
+  "surfaces": [
+    "tex/source, preview, problems, settings, conflict, command",
+    "typ/source, preview, problems, command",
+    "native/page, math, navigation, generated source, command, start, new, open",
+    "native-diagnostics/LuaLaTeX live, member, Typst source"
+  ],
+  "screenshots": [
+    {
+      "path": "after/en/native/command-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "d5c2d5ca4134583a6ae3a83c4611e1c804707343b639a11affd68a57da2e8ddd"
+    },
+    {
+      "path": "after/en/native/command-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "83f9682a6829e7afac3804f6b150910db104b5e6144e8df5628a0e9fecd9fbea"
+    },
+    {
+      "path": "after/en/native/command-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "4a501c9ecff95b5b8b0a6471d87f7be44ebfde8293d2f75caced744844ad086a"
+    },
+    {
+      "path": "after/en/native/command-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "62245709854e7aa8b189f99e9376a084d7ec4062d652a2c2728102b4fc268afc"
+    },
+    {
+      "path": "after/en/native/command-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "fb1728d2dac3f8dd34e7243bd15aa4f70f496f979bce7295887ddb334c6a30ae"
+    },
+    {
+      "path": "after/en/native/command-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "610619defcb0d7fc2ff21c25274a9c00f9aef6812bc8cace8dc5ed48682e58c1"
+    },
+    {
+      "path": "after/en/native/generated-source-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "2fbb4ba6e7f5d725502885bdd251369d8fd25c181ac19859dd82650389e53c75"
+    },
+    {
+      "path": "after/en/native/generated-source-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "ccd1242ec25c6e78712b0b90443ee9a05be7b0027ec3d011d850419e44ba0c3f"
+    },
+    {
+      "path": "after/en/native/generated-source-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "10b1f8aaf3aa6ad763e54cbdfe23085343ab3b7e3e8551058d16b4e0cc5a6c59"
+    },
+    {
+      "path": "after/en/native/generated-source-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "cd594fdaf415a0ea88dbc042c8e26903b6e4f19d7e49b9efa1ee670896dcab2e"
+    },
+    {
+      "path": "after/en/native/generated-source-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "41fbac0219788ffaee4e05217712f32bb9be351bc0e00407412d6d1338661694"
+    },
+    {
+      "path": "after/en/native/generated-source-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "dc8ede702995a885397f3635b6e5f13e2f826cc061e36134a171a91678c5bf08"
+    },
+    {
+      "path": "after/en/native/native-math-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "5a93e70b163b476b7329444935475676213339cab59ea8711224c7167c9ef33c"
+    },
+    {
+      "path": "after/en/native/native-math-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "816a73844ea9783b5571f73e78915766f699f8aaf2e1414ad84df977c46cbf66"
+    },
+    {
+      "path": "after/en/native/native-math-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "2e563f6cd1603d8dcd49e56ed521ec9f2b5657a6f5e36b88f5feded24e35059b"
+    },
+    {
+      "path": "after/en/native/native-math-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "f0954bfdf032b40df604b02212a21da279eed70f2fc26e5cfeab298b66a5a6fc"
+    },
+    {
+      "path": "after/en/native/native-math-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "eb3fae4ca3686cf427ddde76950e756752a49e8deeaa18b08d622093ef06a49e"
+    },
+    {
+      "path": "after/en/native/native-math-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "b37c6e506f071ecbdb90246d5d8e2fa4f7364c6db44d739b2601678810d35dfa"
+    },
+    {
+      "path": "after/en/native/native-page-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "aa719452610f0fca797bd365b5716364af3193e8f7aa42c937e38807d98d4cb7"
+    },
+    {
+      "path": "after/en/native/native-page-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "f570b6e48396cb2a0caa7a1caf797566a172c97940b41b431cbda99989bfbc86"
+    },
+    {
+      "path": "after/en/native/native-page-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "8298ae0ef75b501b42778bcd83c136e04a4698799c33069d29ee04ea85cd09a4"
+    },
+    {
+      "path": "after/en/native/native-page-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "f52f65116b22239c6319e882fd137b59fafc102534223c533cd985b02e81df9e"
+    },
+    {
+      "path": "after/en/native/native-page-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "19ca6650cee8f617e86c0940e4c13a616a69531a33f856295b4f0bec8d76b87c"
+    },
+    {
+      "path": "after/en/native/native-page-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "9381aa5bade8cdac1d84dfe0fdc22c4d8dc552179bfebca869ab96ce11511be7"
+    },
+    {
+      "path": "after/en/native/navigation-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "f6e6ca03fab1d68960762bce88de692bf510a0f7a9aad0ff7eb0df24c82afabc"
+    },
+    {
+      "path": "after/en/native/navigation-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "8e591bd3dd8026551015e76be0da7950f3e594d74462389b6455511f7352dc41"
+    },
+    {
+      "path": "after/en/native/navigation-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "8298ae0ef75b501b42778bcd83c136e04a4698799c33069d29ee04ea85cd09a4"
+    },
+    {
+      "path": "after/en/native/navigation-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "a193b0e075f52da946db6353b5d3a12859967093baa3be9521dc2d09e7e6c604"
+    },
+    {
+      "path": "after/en/native/navigation-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "83a07547f371dc926ddaf79ff1c67970b5e73a06a3c2ffd3e3daf7aed5ec6821"
+    },
+    {
+      "path": "after/en/native/navigation-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "9381aa5bade8cdac1d84dfe0fdc22c4d8dc552179bfebca869ab96ce11511be7"
+    },
+    {
+      "path": "after/en/native/new-project-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "b2c5792e0397f6f76ba2851903167ed8e9347cbaaa1c199401c0bf4c65c931ff"
+    },
+    {
+      "path": "after/en/native/new-project-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "16efdf9c3b4cceefb130d919711f61e5db5264ea1c915f11d41780e9067a7a27"
+    },
+    {
+      "path": "after/en/native/new-project-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "6058888dfb11e7f9008fbd558462e16a1592864edca0bc0b62f0de92f53121e2"
+    },
+    {
+      "path": "after/en/native/new-project-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "77e0b94b54fead925ca099d09c7f220cf0117d1436e3ee748c7758508a7131c5"
+    },
+    {
+      "path": "after/en/native/new-project-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "0060dac740506dacf17758e9fc6d5cee7c9e76bd679846acef8616d0d135b4af"
+    },
+    {
+      "path": "after/en/native/new-project-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "5c33520c79a69b063f6071225658fff18e784c8e8f512e383acf8dbc281cde99"
+    },
+    {
+      "path": "after/en/native/open-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "7e796ff3a460e194f53c71113d9144c754993db0f3cff31f98f8e79469325259"
+    },
+    {
+      "path": "after/en/native/open-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "4c408fa51c1212053f0da3a8e6cf544654b0b03b22e350419be527eccf0552be"
+    },
+    {
+      "path": "after/en/native/open-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "95372969ddab449ccea0c25d8e77e1c0a409da145dea88d8dd5c84400570c0a2"
+    },
+    {
+      "path": "after/en/native/open-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "c238c3bad1d420f8076418a2a9b373dc39d7797b95dbb5b319f09a02c6771bea"
+    },
+    {
+      "path": "after/en/native/open-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "a153f4d984dc583c34e40d7622fe2cf767034d61aef6f78aba801744144b8839"
+    },
+    {
+      "path": "after/en/native/open-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "c8180b66bdeee5a50b6edfe528d61cdbc5a4d358fe41ec8ca4926ba12dbd2fa9"
+    },
+    {
+      "path": "after/en/native/page-command-bottom.png",
+      "size": [
+        1280,
+        700
+      ],
+      "sha256": "60b19fe37e119f1f9608d234d22064bb3ca6bb87986696ffc2d67023208545b3"
+    },
+    {
+      "path": "after/en/native/page-command.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "07c0ace93051b0a78829c7971a2b92d96690e0eefa7f036450aadd575ad52aaf"
+    },
+    {
+      "path": "after/en/native/start-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "add1abdf3b424063c3da3a2e2a8711ee1f8426c0e5b8ea64e0c622c459ccda55"
+    },
+    {
+      "path": "after/en/native/start-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "202f157228f19ee2edab690563ad5057a21abd075b28f416c87c5d855d14d9d8"
+    },
+    {
+      "path": "after/en/native/start-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "e19fb1e4949ce1a34d08c3bb8d1bd82aea36d610be637a2374cc02252f342ef7"
+    },
+    {
+      "path": "after/en/native/start-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "e73c78a0bf83715e163dd89559e99e6514a6e427c0da9d167836d270a7f8d23c"
+    },
+    {
+      "path": "after/en/native/start-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "5519b02b7adbede2d3cc56499728d033e7abae4c6339a1781d27bd3f4a5eca7b"
+    },
+    {
+      "path": "after/en/native/start-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "9f5f2f860941deba129ebe415e1f04a03d83a8d2bd84b22792fe9ec41b2191a9"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/build-output.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "61e7ac0e7e279c98c84031b23e35a46efc83e73c4ca4223af7f8875c13ba31de"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "1905cd6894a2a56150875a18209630e1a8ab4861b59b39d211f0ed60d4acd5a8"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-dark-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "b52c11b24c5608bc474d8a8ae523710a5a84d9a098c08dcab70c39850abc6562"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "8089511c29aa41ab643d672ebd11d0cd7505db65d1841fe12caa3f8b31812fc1"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-dark.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "7d7c98e700568c55883d4b94c07c5168b827fd3f22ca545f0781ec08a3d0aa96"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "184f14073ee498d95fa872dc7066eb9970c2c329c2be37c2a3e9df335dec8dce"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-light-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "0b28f6200f90055ab78165e449679d912478cad7264d4df8cd23cb85eb8953a3"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "1abfcbc69c5e50bd70da43d442771adb55a63f3c8f2c4c777d20f7c8213cdcce"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-light.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "b96c29f7ec2cd0c2b69ef1c299ca80e7bc3f7a653db4c8578289794408becffc"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-narrow-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "1905cd6894a2a56150875a18209630e1a8ab4861b59b39d211f0ed60d4acd5a8"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-narrow-dark-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "b52c11b24c5608bc474d8a8ae523710a5a84d9a098c08dcab70c39850abc6562"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-narrow-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "8089511c29aa41ab643d672ebd11d0cd7505db65d1841fe12caa3f8b31812fc1"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-narrow-dark.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "7d7c98e700568c55883d4b94c07c5168b827fd3f22ca545f0781ec08a3d0aa96"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-narrow-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "184f14073ee498d95fa872dc7066eb9970c2c329c2be37c2a3e9df335dec8dce"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-narrow-light-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "0b28f6200f90055ab78165e449679d912478cad7264d4df8cd23cb85eb8953a3"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-narrow-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "1abfcbc69c5e50bd70da43d442771adb55a63f3c8f2c4c777d20f7c8213cdcce"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-live/problems-narrow-light.png",
+      "size": [
+        480,
+        900
+      ],
+      "sha256": "c0f94298135c7bb002f392477f40b91865aa8c07d2522799f85cc3a71223039c"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/build-output.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "8078a4c48cc48c55317624727c2e72c2938772f4fa023637b449c9b11e1728b8"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "fe32dcb96162e0cae8745723d297561f036685e21ad4d025651b722f2e1004a5"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-dark-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "369ec4fd38c160a8224d0f08870bd81a59dd0a953c51ca169acd325312d8e467"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "33ffeb9f49dd57f97020858407863525ea2b6f55fe7ac7bd492aacc181112f0d"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-dark.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "b99e6cb76f6a85cd1873a4353074572482315ff7c3670eb1b94a1d35a0d70d77"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "05f1c6728bb3ba6544a054625ece674a4ffd563ba6872a725a99be6c5d52349a"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-light-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "06e401e9ab8b1b52fdbfb64365332342c7f90e750ad71e1d973c3c683819740b"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "c87eaf65b918336019d005449077dce7a8dca1b4fd277a5d471602e778634ab9"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-light.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "683652706e7cd0494e891125cf3526a727e69195ba8982c2df12e78eac72d538"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-narrow-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "fe32dcb96162e0cae8745723d297561f036685e21ad4d025651b722f2e1004a5"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-narrow-dark-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "369ec4fd38c160a8224d0f08870bd81a59dd0a953c51ca169acd325312d8e467"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-narrow-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "33ffeb9f49dd57f97020858407863525ea2b6f55fe7ac7bd492aacc181112f0d"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-narrow-dark.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "b99e6cb76f6a85cd1873a4353074572482315ff7c3670eb1b94a1d35a0d70d77"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-narrow-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "05f1c6728bb3ba6544a054625ece674a4ffd563ba6872a725a99be6c5d52349a"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-narrow-light-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "06e401e9ab8b1b52fdbfb64365332342c7f90e750ad71e1d973c3c683819740b"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-narrow-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "c87eaf65b918336019d005449077dce7a8dca1b4fd277a5d471602e778634ab9"
+    },
+    {
+      "path": "after/en/native-diagnostics/latex-member/problems-narrow-light.png",
+      "size": [
+        480,
+        900
+      ],
+      "sha256": "996566ea0c8119fbf6436c9432f61843481307797022d8eedbcb5215e751be30"
+    },
+    {
+      "path": "after/en/native-diagnostics/typ-source/build-output.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "2ea5bd0e9d343e8c33f7eb703ba0e1657ef836ee40bb075025df348bc6c94d1e"
+    },
+    {
+      "path": "after/en/native-diagnostics/typ-source/problems-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "152bc0ca9d9fece7993e8b5df20ebb37bac8912c9804d1fdd0aab1ce189b9e62"
+    },
+    {
+      "path": "after/en/native-diagnostics/typ-source/problems-dark-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "ed27d73891fa6d844574d2877df789456abab9be6f1e390c5af182e472dc235b"
+    },
+    {
+      "path": "after/en/native-diagnostics/typ-source/problems-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "20c19c1d85bc3425f88736ab62825a79f3a7ef8bb430f7f52a8af6140b561140"
+    },
+    {
+      "path": "after/en/native-diagnostics/typ-source/problems-dark.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "0c36b8931430ffbec6e046188fc7d52c6b043d06802691da34c2d5dd5672c81b"
+    },
+    {
+      "path": "after/en/native-diagnostics/typ-source/problems-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "08943694fea043a05be1505e9c208d9ef22161aff52c02a8e8d9ae39e050b969"
+    },
+    {
+      "path": "after/en/native-diagnostics/typ-source/problems-light-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "6e6891cb162d6d88f9f6ec34ba00b314813c5f5a73738e4f1eaa07ec2ce2b838"
+    },
+    {
+      "path": "after/en/native-diagnostics/typ-source/problems-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "051b08855b094d8f245d1a017c7d7e0576b3fc9f9cff7aeb2baff92a940ec775"
+    },
+    {
+      "path": "after/en/native-diagnostics/typ-source/problems-light.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "ecabc797b98356b626bc48372aa113abf1c34973b1fc919f8f2a181dc784972d"
+    },
+    {
+      "path": "after/en/tex/command-bottom.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "83a32ae88ca89b6b84cfd8d5afe0da06d52c72ffb289a1f4a832f3b246012152"
+    },
+    {
+      "path": "after/en/tex/command-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "c33029937df7cbf286c015378911c47aa1a4cfd13f2524bc3a1bf33eb5c465a6"
+    },
+    {
+      "path": "after/en/tex/command-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "1fcad846ef8ebca162e47a59a3904f3a4b7607b02763d590f84e268b0a5ffc97"
+    },
+    {
+      "path": "after/en/tex/command-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "5bcbb441c92255359fa7866fe062d58e86928fe88ad8a454fe34fa8af109e936"
+    },
+    {
+      "path": "after/en/tex/command-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "17bf50775b887d2ea32a27f00d5e288159e10984c3f389ae0b943f2bc637bd47"
+    },
+    {
+      "path": "after/en/tex/command-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "f6074fdbea34fda6b4c3b83bfd726d3a00f99ebf585e343becf7f78e5dd74889"
+    },
+    {
+      "path": "after/en/tex/command-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "630851ad98483028ebbed345350f884dc1ddaca1d3f72bcb50d1844da7d9ffe7"
+    },
+    {
+      "path": "after/en/tex/command-top.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "9c6a66cb42fd02d7c80bc16222ae0f71df263b2d7a1ee7e29756c55559b5d7b3"
+    },
+    {
+      "path": "after/en/tex/conflict-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "e21aaf358583327b426096736455a143a553787607458f8cf57b0b35ae8ed43d"
+    },
+    {
+      "path": "after/en/tex/conflict-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "09046af6a613ed4849eaaafe4a8c7701bd22bb9782da887c90deb5242a63e829"
+    },
+    {
+      "path": "after/en/tex/conflict-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "5e670f1a451e3054bf4c5c6cf2c304a15ec4512a502c96ce19f0ee4839428bc6"
+    },
+    {
+      "path": "after/en/tex/conflict-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "f4fc30eec0672a21ae4302b6bbf247600d169969fd340d364d11aa5b66115649"
+    },
+    {
+      "path": "after/en/tex/conflict-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "b24e1583db2c9182edcc7e81db6b17413c56e44b8d9133728994fe31ea0549f0"
+    },
+    {
+      "path": "after/en/tex/conflict-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "b9660af98fc0fe90411a6e6de8bf51ae52c8ef4ca4afb485439a11cece0fbc65"
+    },
+    {
+      "path": "after/en/tex/settings-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "ba126052301a01e4ef58e151926937fea0df82a8df00ce66abb7e55990c96e48"
+    },
+    {
+      "path": "after/en/tex/settings-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "13e16a60899a621476026e183d70f88b347de1a868dddb2da7cd6b5871451250"
+    },
+    {
+      "path": "after/en/tex/settings-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "6486a6cc3be473b5bac584ef207fd46d163277c48f6f31b9f0690d3bfbc483a6"
+    },
+    {
+      "path": "after/en/tex/settings-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "8a3ea1e55b7130cdcd7c5c515670121001d2bd036b37902e9e450e72ffc8573f"
+    },
+    {
+      "path": "after/en/tex/settings-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "17c8d43f89baf19079588db7fd73e14aaf52e9ead3a5124315db74350ea542e6"
+    },
+    {
+      "path": "after/en/tex/settings-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "0878e99713efcc8422d715d6be38cd3a3b9b780a03e3a11ba83224963764cf7b"
+    },
+    {
+      "path": "after/en/tex/tex-preview-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "0ab6d55515b815a2ba9700780df831cef6173b702b2e0fc710173f1106c30dcb"
+    },
+    {
+      "path": "after/en/tex/tex-preview-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "347c48f68a6e8801bd6b9c393c09f80bb773e0f560da89c96361f002c9e2569c"
+    },
+    {
+      "path": "after/en/tex/tex-preview-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "0480d9b1c1f6abda432acdabf9ae80f0f2e4b0197a851a2552ad6133ea96a0e8"
+    },
+    {
+      "path": "after/en/tex/tex-preview-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "b0a37ae8912b3181a59a386421b27222b3ee40309e5e438d01cfb1f73138bc0e"
+    },
+    {
+      "path": "after/en/tex/tex-preview-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "a96f7ec13e1b0e3e6288eea365d7c0573b3f8341173e88eeafa5f0dce2f20151"
+    },
+    {
+      "path": "after/en/tex/tex-preview-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "77711fcbdbdfe4cf8be3445ec24273f42d186e8a8db97aae65608b56f63c0e53"
+    },
+    {
+      "path": "after/en/tex/tex-problems-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "7e1b3230def939bc28146070e86441dc17fbf04a46878473b662b0115e108b61"
+    },
+    {
+      "path": "after/en/tex/tex-problems-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "c9677d5b2e54d717abffb5c3fc26c7d73358fe2e7dd4efb3a90c1e935b3efc0b"
+    },
+    {
+      "path": "after/en/tex/tex-problems-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "715bc2333f5fc9a9710eb9992fa56dd3b9c75755fcc5e215ccd5de65ee97372c"
+    },
+    {
+      "path": "after/en/tex/tex-problems-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "2faf98f6760683f73d5c12e1b0b6fde588d29f2fad2710c7edfa26d5adf95616"
+    },
+    {
+      "path": "after/en/tex/tex-problems-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "79513b105c726782d0cbe1418dde18f32b1e480e18d39148eb64a24e08e930ec"
+    },
+    {
+      "path": "after/en/tex/tex-problems-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "4543fd27d89671bf97edbf53dfdaba04f218c71bbfb693837ae3a3f793c2d6fa"
+    },
+    {
+      "path": "after/en/tex/tex-source-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "da94e7e160b3e7d0be28cced80e459a4cd1bd059e362c82900a98c78d0ca7d07"
+    },
+    {
+      "path": "after/en/tex/tex-source-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "4643cd8d7e5fa6aa5343ee249a581d3830fcdf6754ec013198690d0d7a4dcac9"
+    },
+    {
+      "path": "after/en/tex/tex-source-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "c71fcac307542af82e69b9bfc04faca47d11c0024bdc6d19f4f67f98f2858281"
+    },
+    {
+      "path": "after/en/tex/tex-source-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "2817938cf678c48137a48aad4d9c2d0aaf6cc384495f4f220e1c5e453ee59cb2"
+    },
+    {
+      "path": "after/en/tex/tex-source-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "39fa7f4d1e9e3e5982f716317e331a6857cedd7da92b9a01d63c61c699c5de4b"
+    },
+    {
+      "path": "after/en/tex/tex-source-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "3524aacc9a9919f81574bde0cbb9f0dfd23246852762fb12636d20ab4bdf732f"
+    },
+    {
+      "path": "after/en/typ/command-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "38cb015fcdb95c1161ded06160fb92040e9df069b3157713e62d83ac297c5be3"
+    },
+    {
+      "path": "after/en/typ/command-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "f393b724b96ac5a98c564d90b42a6e498520f8c219f768a7fb02f942039106f9"
+    },
+    {
+      "path": "after/en/typ/command-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "d3819df8b5abd8e9fa08b865d0e30a109455b9e7bcb90b1590ef421ee3502773"
+    },
+    {
+      "path": "after/en/typ/command-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "a7048942199dba574c8de402103448c0211ce2812df9ffd80975858ea3cb98fa"
+    },
+    {
+      "path": "after/en/typ/command-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "83deccff25fc6c59d94cea48f61a72930c5f0c1b528474598a553eb892fa9e29"
+    },
+    {
+      "path": "after/en/typ/command-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "58a887c5bd75ed05e0d2f7759e7f181191f94261de1c70af8332f7c082a0c1aa"
+    },
+    {
+      "path": "after/en/typ/typ-preview-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "1a5f280a99b1c37e4fc17e36c53b9bb28d7854bea70f4514b2b457d4bcff07a2"
+    },
+    {
+      "path": "after/en/typ/typ-preview-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "b8ada020641d81bbf20ab303190cfc12cb900284113f28131b20810443695467"
+    },
+    {
+      "path": "after/en/typ/typ-preview-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "0467235f65d64992dd7f855ebb782ad936cb343e1bbcadb84f2a335bf048ab2c"
+    },
+    {
+      "path": "after/en/typ/typ-preview-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "e86b927145b2030cf8af939c9d9c3dd50d301fb72f5062bd3c816dcc9fcec632"
+    },
+    {
+      "path": "after/en/typ/typ-preview-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "0019a31bf57d5c51dfdce5cff6a77eb1b9e05b47536ad958cb0747f204de5f3d"
+    },
+    {
+      "path": "after/en/typ/typ-preview-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "f779e953f91c9cdbea0a6860be54510fa78b393fbc74582341681cbc8bdb9d09"
+    },
+    {
+      "path": "after/en/typ/typ-problems-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "ccd0f0d5abd48677fc686cf7bcfe0a1835ba3a94885e62c0798c3e35e1aef385"
+    },
+    {
+      "path": "after/en/typ/typ-problems-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "6a752e3f213bc950d5b7d9e9f41737214c6355ba2c4fbbd48fee1876bfbffac3"
+    },
+    {
+      "path": "after/en/typ/typ-problems-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "1ce646068b1236698841fa80260d08ef27ff119491e161adfd66cfc2938f097f"
+    },
+    {
+      "path": "after/en/typ/typ-problems-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "15f0aaf04a0842d2be1050648bea49f78f1bb7e740f28e3f64f1d718655f3583"
+    },
+    {
+      "path": "after/en/typ/typ-problems-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "9c4ea50afd7365a86c29b5c75c656f35dcd018f11884d8fecfb90e04052138db"
+    },
+    {
+      "path": "after/en/typ/typ-problems-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "b4106de70f4dd169a6163a7028857740c71b07742aa664eb8ee9676ef28cbd9a"
+    },
+    {
+      "path": "after/en/typ/typ-source-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "20de1d466c9bb01fc85a011b019b1a56fb92b5a5786be940df2fb934aad631c0"
+    },
+    {
+      "path": "after/en/typ/typ-source-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "d7b5c33fba4db791dfd7b9f1195441c0ecf8f7e1b9dc786260e46e1bac15fdc7"
+    },
+    {
+      "path": "after/en/typ/typ-source-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "f4747e3fe8d1359f4aed330e6e1166041de4e4d156a28b4e02c51457e645450f"
+    },
+    {
+      "path": "after/en/typ/typ-source-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "15da03e849895affa055285b37c2afa9ee3e9435c213242965203547adc0c0cb"
+    },
+    {
+      "path": "after/en/typ/typ-source-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "8eb9ca42551cf41c0db3aa7e13c0135f13e4ad289fd11c8cbd89d9698f29d535"
+    },
+    {
+      "path": "after/en/typ/typ-source-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "da6a5750b890d0dab24f39105ceb0a53d3039bdf7ca982071a6c54d9987ac6d5"
+    },
+    {
+      "path": "after/zh-Hans/native/command-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "d8aca15e9a822f48f0a2e34405b0204c9934b44f2f2b84865bc1342a48b96a49"
+    },
+    {
+      "path": "after/zh-Hans/native/command-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "6e8dcd01027c7e85345aa26c254fa1f91b5746dfb9fffc1176a5562220fc59c3"
+    },
+    {
+      "path": "after/zh-Hans/native/command-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "581f5878e5b5eea68da0dad9bb03c587c6663dca2b6cbd20a1acfca4a77c27d7"
+    },
+    {
+      "path": "after/zh-Hans/native/command-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "6df56225b8fb532bf61b2c9a07fdbced81d2e46f8cf2ce32a3843c9276669784"
+    },
+    {
+      "path": "after/zh-Hans/native/command-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "f67bf65165b13b0687652bcd11711b0287efb279d21a7a3a3a43b85e455dddab"
+    },
+    {
+      "path": "after/zh-Hans/native/command-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "334d91c4a1c4a8ceca88e96421fef1d0b595de3cc025c0ee2abb0888c6cf9b03"
+    },
+    {
+      "path": "after/zh-Hans/native/generated-source-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "09c7ad1e3e253009a15c654a919fc080a052cc1df43dc7379fa2e9335d7e717b"
+    },
+    {
+      "path": "after/zh-Hans/native/generated-source-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "37c1ff30b6af7e9c25c9242a2ca2700d43e573be349113670b1fc0a5033740f7"
+    },
+    {
+      "path": "after/zh-Hans/native/generated-source-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "441c982c35abadf1ef3c34f3421efce001f0b45f4b69e23452eab20f6910a623"
+    },
+    {
+      "path": "after/zh-Hans/native/generated-source-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "5d4f76cb3ef77685bbec5a81e89ca608c8d1fac12445f900218bb58f65a4b48d"
+    },
+    {
+      "path": "after/zh-Hans/native/generated-source-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "cb591f074620606edd11c3ae97ef2a83c7a87e19b4d4f06efc36fdb900627c31"
+    },
+    {
+      "path": "after/zh-Hans/native/generated-source-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "413e5bc91f5b5fca1d7161f75ad1b5689989e4107efe2dfbb248d7a2bf117d90"
+    },
+    {
+      "path": "after/zh-Hans/native/native-math-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "596438a2b742414429745e212ba373051d2c726320e342a100b7f021430945ed"
+    },
+    {
+      "path": "after/zh-Hans/native/native-math-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "cb06c302d99d06c829ae0d59c04229e9a61b76427262f1ed8100bc28e8b0adf1"
+    },
+    {
+      "path": "after/zh-Hans/native/native-math-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "c921e5b48a0c02a5303fd4d55f15f531c875c139c16bc80ab3f479aa6b6edfb5"
+    },
+    {
+      "path": "after/zh-Hans/native/native-math-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "8ec9972a1ec1be4eb96dc679ac1b32c85f4deb0036c0535bf015d17a250f36b3"
+    },
+    {
+      "path": "after/zh-Hans/native/native-math-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "69feac00373bc3f2cb7c5bb8604f67b2cda38b2c0b797c33a02c6caa270ea5a0"
+    },
+    {
+      "path": "after/zh-Hans/native/native-math-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "7fb847bffc89fea9e00e66ae20071631bb70efdc2218f2a93623aa0462d47cf6"
+    },
+    {
+      "path": "after/zh-Hans/native/native-page-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "f759c5879e68e494b6c4fb233ba6a7f9c997225b8f491a50c13ee7a31422e1be"
+    },
+    {
+      "path": "after/zh-Hans/native/native-page-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "035fe323f4fde170b9f640283ffdee032df28de2a2a56b36ad72a3e15de50961"
+    },
+    {
+      "path": "after/zh-Hans/native/native-page-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "6a59e2c5447d64ce9b6b767bfd4418fbe59fc2e8b7f7a291cdf1879fc64ebb5f"
+    },
+    {
+      "path": "after/zh-Hans/native/native-page-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "dbcb225ec54dda0b0cb421d819940281177325d45c2a83a3d5defa2225a5f3e4"
+    },
+    {
+      "path": "after/zh-Hans/native/native-page-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "238d28c8eb6ded1f6cf2c114dff8cd19c3ceb78dbe30122c411036c8cb8dd1b1"
+    },
+    {
+      "path": "after/zh-Hans/native/native-page-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "30c3d0d80496ee8d2789acf48b1c0ceb147257933c4b835533650b9c4fee8fff"
+    },
+    {
+      "path": "after/zh-Hans/native/navigation-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "1a6e196e76a413e81e5ebd39856c0a2e725512d52abaa3b1ba7c2132723c31f7"
+    },
+    {
+      "path": "after/zh-Hans/native/navigation-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "a3e3bb4db1b53c46558eccc278d9083e7b8f830ed019aef7b07c6aa77fc9c932"
+    },
+    {
+      "path": "after/zh-Hans/native/navigation-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "6a59e2c5447d64ce9b6b767bfd4418fbe59fc2e8b7f7a291cdf1879fc64ebb5f"
+    },
+    {
+      "path": "after/zh-Hans/native/navigation-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "5f452538f4aaf306effe0f200b45667844c8bcd1cfc2781541bd0d710e76095b"
+    },
+    {
+      "path": "after/zh-Hans/native/navigation-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "741574ff71d702801916d239c44d3e4d3c603825d418d770a1c67dd25abf04d3"
+    },
+    {
+      "path": "after/zh-Hans/native/navigation-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "30c3d0d80496ee8d2789acf48b1c0ceb147257933c4b835533650b9c4fee8fff"
+    },
+    {
+      "path": "after/zh-Hans/native/new-project-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "217dc3f5037b012afaae7b23b7d66b72d73c2ac567b743ba3d686764dfb7b2c3"
+    },
+    {
+      "path": "after/zh-Hans/native/new-project-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "237e546be22d54293f393461d8b08e1f855c4048d822eae1eb215b2a20e2bb7c"
+    },
+    {
+      "path": "after/zh-Hans/native/new-project-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "7c0d63707d0a182ef4234a962f819b0fac1f25857bc56a814ab34d33629a1b9d"
+    },
+    {
+      "path": "after/zh-Hans/native/new-project-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "5edf04dcded09cc9451b0e50de8d87da906d3c872ed7ecebafe4eca6bfff15d0"
+    },
+    {
+      "path": "after/zh-Hans/native/new-project-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "d4b335bc6a50a47805ee162d8fed3c72a586409207480d48a3041a95c8d52d31"
+    },
+    {
+      "path": "after/zh-Hans/native/new-project-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "d80e4f1a62564fcaaaf3a1a741a40af091a6d91cf9b32a9c4a615b6c28b3e39c"
+    },
+    {
+      "path": "after/zh-Hans/native/open-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "ce8e72eae92014f53c6f74bb17675030a82fc419e62354e8c8c5b519b5bd035b"
+    },
+    {
+      "path": "after/zh-Hans/native/open-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "b68175cb42287cda49ea12b89c1c0ef9faee9a5ffb271d51683bbd0dba7b9137"
+    },
+    {
+      "path": "after/zh-Hans/native/open-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "73b52057c0f55e37b5a252a3fd4eb388d2ebbc16ce77811d66749ad22eaa9fef"
+    },
+    {
+      "path": "after/zh-Hans/native/open-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "2226f795c59169f9f3de6a3a225ca32c32446f5d7716b973bad086eb0e4cef89"
+    },
+    {
+      "path": "after/zh-Hans/native/open-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "88f89140919aef2d5708c38697a5e35c497efe30abc3eb0042457c6b0c3de191"
+    },
+    {
+      "path": "after/zh-Hans/native/open-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "7a7b92891355ac5abbc7ad127d19b2c65dfc9fc417628ffd178ad522cd0bc442"
+    },
+    {
+      "path": "after/zh-Hans/native/page-command-bottom.png",
+      "size": [
+        1280,
+        700
+      ],
+      "sha256": "bb791ea027f7db65f3114dcba338085543542a3481c6768a3ce9caae0bacbb2f"
+    },
+    {
+      "path": "after/zh-Hans/native/page-command.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "c89c25a01c2af72cafb999e87d55a8abda5724ed07bab9a35130ccf902f286cd"
+    },
+    {
+      "path": "after/zh-Hans/native/start-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "c7ba627b3e5a267544d92709d143d837e04319919f6d655561c4cf564c16000a"
+    },
+    {
+      "path": "after/zh-Hans/native/start-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "5096cda60ecfbdb21f106c53b4b5e3c5ee277e699bb12335497332d6e1b876b5"
+    },
+    {
+      "path": "after/zh-Hans/native/start-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "f2f339ac76443a307901b74c36e3f5f7e6e9a04688f8814168f12f3ffc9438eb"
+    },
+    {
+      "path": "after/zh-Hans/native/start-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "7abd6f4a11c965092dd0a06706029db930a9153e54e508d06cbf959a37394440"
+    },
+    {
+      "path": "after/zh-Hans/native/start-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "b493d929872da97ae7970ab3dc201010abc81a46bc2f59b34d530c8df1082962"
+    },
+    {
+      "path": "after/zh-Hans/native/start-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "5d8ffef408fa0b0a6b3a55ec91e847254d0e58ccefec58cba0243eac012508f1"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/build-output.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "019dfb9658f2e950d974b0bc2ff9242743ff34af1fe36d6cd7d7f3a1e008467a"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "cd82e2f55f08db2c217ea2dc2f7dc43bd99a242d4e71b93c2630a8c0d75698e7"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-dark-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "42e1f8b8bc3258689926d7d1accaaa269e564a019ca375e0874d2e8b852e7e58"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "03abc04550f7d50a9785896bda195981c612fe46b6f0237ccfc70738b835f2cd"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-dark.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "3146ade6a14611ce93b7f39813961d45a1bbb131200f6411b94110ac56eb68c3"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "728d00ed0ed108381370d3412fc868ce83ba3168dae3e44ab88a8af5eddb4d6c"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-light-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "aa8c5f743ac08cd0b67064e7a2b6e32227b67e49fea802170273fa62e5af3b2c"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "f3197236bdb1848ce649e31cf6950bf1d4abf382bd04d0c3b4ec459bf0d1e296"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-light.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "da59c59cf3c99cfd7ee09650a69cf8f43b8497454d3f313e61042641d4f281a3"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-narrow-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "cd82e2f55f08db2c217ea2dc2f7dc43bd99a242d4e71b93c2630a8c0d75698e7"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-narrow-dark-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "42e1f8b8bc3258689926d7d1accaaa269e564a019ca375e0874d2e8b852e7e58"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-narrow-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "03abc04550f7d50a9785896bda195981c612fe46b6f0237ccfc70738b835f2cd"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-narrow-dark.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "3146ade6a14611ce93b7f39813961d45a1bbb131200f6411b94110ac56eb68c3"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-narrow-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "728d00ed0ed108381370d3412fc868ce83ba3168dae3e44ab88a8af5eddb4d6c"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-narrow-light-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "aa8c5f743ac08cd0b67064e7a2b6e32227b67e49fea802170273fa62e5af3b2c"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-narrow-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "f3197236bdb1848ce649e31cf6950bf1d4abf382bd04d0c3b4ec459bf0d1e296"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-live/problems-narrow-light.png",
+      "size": [
+        480,
+        900
+      ],
+      "sha256": "36b7117da9d7a53379d6d0ee4965337f6a1f571221b7f253409f0b91d0869b67"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/build-output.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "36a3fc8d8f2595f0493c0e8b43fa226ecbc49fbe83be5f1fff126f8e0f8eba30"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "0718664774c2abd12f65bebef809da2f17fa9de4bbd6193c80be05c2f3cf48c2"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-dark-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "a2f669ef2621691ba7385bf60b71eb0706e0a52b4e096f30c04bcee601199bb5"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "94d25c647172b9e6171e460b527832abc9d953d006d676503bc7386b31b40ffc"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-dark.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "1e1bdb33d79973663a99cc10324d9a0e339ca66c395d8a0f175764a172d4a05b"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "de0210f18fee872c5e91e664c25f6a85437e015ef5ad1cfb5d7bf2073c697757"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-light-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "2cfce9ad2454d8b5bdbc5ed77a28e4c76bc314ce5d29a1452478a1beeae1f2c9"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "223cda20898cd3f8952c639946535be2ddeb9f4befa2b08d8c8500d5000dcd15"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-light.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "3de8a355d82994997606eea7fe90de5a652fee191ef5363878d0fed9494b51e3"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-narrow-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "0718664774c2abd12f65bebef809da2f17fa9de4bbd6193c80be05c2f3cf48c2"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-narrow-dark-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "a2f669ef2621691ba7385bf60b71eb0706e0a52b4e096f30c04bcee601199bb5"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-narrow-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "94d25c647172b9e6171e460b527832abc9d953d006d676503bc7386b31b40ffc"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-narrow-dark.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "1e1bdb33d79973663a99cc10324d9a0e339ca66c395d8a0f175764a172d4a05b"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-narrow-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "de0210f18fee872c5e91e664c25f6a85437e015ef5ad1cfb5d7bf2073c697757"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-narrow-light-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "2cfce9ad2454d8b5bdbc5ed77a28e4c76bc314ce5d29a1452478a1beeae1f2c9"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-narrow-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "223cda20898cd3f8952c639946535be2ddeb9f4befa2b08d8c8500d5000dcd15"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/latex-member/problems-narrow-light.png",
+      "size": [
+        480,
+        900
+      ],
+      "sha256": "66b2ac2d83d82eda89f9261f9e303f6414282273ce34e5903c3927a5358da2de"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/typ-source/build-output.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "9154465abea5ca541272d7dacce58ebc817d0450313dc56bf7d912421e392e0d"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/typ-source/problems-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "ff85e3f7594225cb4f9cae217612ac05fe3739e7613940f085a052bec9f54209"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/typ-source/problems-dark-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "83735645f765aed0116329a30eec953466e034fe2b46924f9ea43675fa6a8b92"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/typ-source/problems-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "dd123c4414f8f701204a7058652f0e10740b268c6d695a8aee1cfe26a5688323"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/typ-source/problems-dark.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "f1efdb2826f881c529a44ef8b39e897c1bea64df484c0758839b484539434edc"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/typ-source/problems-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "6c6934e278c7c5fed9ca817c720f8bb03c2e4055df923b0014dcf6851d9642a8"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/typ-source/problems-light-1440.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "29ea8c81b44d2a0291e3c7f159be149f9c0638ffecfda1ef73c20cd2f1b057fe"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/typ-source/problems-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "8686fba8ac5f11e6d44a4b8cd566c365d57d38d6f1d6bb4ad929c7c75cb076df"
+    },
+    {
+      "path": "after/zh-Hans/native-diagnostics/typ-source/problems-light.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "688ea5d09d8e598371dc19debbde18307d83b0ff988dd4458b69ced8c7c24100"
+    },
+    {
+      "path": "after/zh-Hans/tex/command-bottom.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "d99db7e3cf52f8bad970430486b82df5cf6c8a8894bf208b989108bea96b6fcd"
+    },
+    {
+      "path": "after/zh-Hans/tex/command-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "d70d088a4c906b2fb1dd28a2db5787d3126a062ba037e5bdd63ea2f997f4467d"
+    },
+    {
+      "path": "after/zh-Hans/tex/command-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "4e23f39acc0fd4cb7202a3ceb20ee10f0503c37cec4c081ef1dfe14f5200a734"
+    },
+    {
+      "path": "after/zh-Hans/tex/command-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "a63616b90e653fa4c180f4fa22257a1fa062b8b48257c44dbf2d130de0126f1f"
+    },
+    {
+      "path": "after/zh-Hans/tex/command-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "94d6d7ae69d192010502c9d0f6174c157ccefc83ed194e947cd1b128cb27ac00"
+    },
+    {
+      "path": "after/zh-Hans/tex/command-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "91f4799a66b588dee31baeb0295bd63b9cedb19578483281587ce1de773c7c4f"
+    },
+    {
+      "path": "after/zh-Hans/tex/command-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "67b967ca679bbb521533a0d380049ae9cc89291d97bfcdada691b377f3703093"
+    },
+    {
+      "path": "after/zh-Hans/tex/command-top.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "f409e72499c2d01458717f68d13566f1eaae0a2b8bc33986151934938b39e29d"
+    },
+    {
+      "path": "after/zh-Hans/tex/conflict-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "899377ee46dc103e0f4198b7c33f4404e0288c0071c3c7198126b18cc8154b2e"
+    },
+    {
+      "path": "after/zh-Hans/tex/conflict-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "ccea8748db99e905b77adff6a2d05f637108dc03f55f39b104c77533c6152618"
+    },
+    {
+      "path": "after/zh-Hans/tex/conflict-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "53ac8b1c0b5b5b3f01c844924a1a3331ff4d701479a9aa56ec840d961a157ee6"
+    },
+    {
+      "path": "after/zh-Hans/tex/conflict-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "d5d3bae3fd7bb8e85a8fe7250636c0ea513b20a4ef84a0e4f5831aaed07d54fa"
+    },
+    {
+      "path": "after/zh-Hans/tex/conflict-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "3d84516dd1712a7fbbf80e1ad8f122ee42b5dc7f333f28a6c06b8da4789da827"
+    },
+    {
+      "path": "after/zh-Hans/tex/conflict-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "75a6d4e94041196304190e02133b3cdccd7c0bcf51405888cb2a45c4f2bf894b"
+    },
+    {
+      "path": "after/zh-Hans/tex/settings-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "04f8ff1ca4e42f005fe0df77c5a372de8eb242fb2416307968ef92db1b0a5b46"
+    },
+    {
+      "path": "after/zh-Hans/tex/settings-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "26f03811d8034a159b0b28c44928670abfebf40d1a4a473da7eec8d796bfa68b"
+    },
+    {
+      "path": "after/zh-Hans/tex/settings-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "dff5d6f88a5178824acadec80acc70d3ae35faf31238c871c0cf6da94c9143fd"
+    },
+    {
+      "path": "after/zh-Hans/tex/settings-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "2fef082b1547a0ad55bd384a57556bf66dcb6cb6699badaee5dacab0bf847e21"
+    },
+    {
+      "path": "after/zh-Hans/tex/settings-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "d6748db524fe8f3e985470847605d989431b251f31d1f1157ea1ba8f695577d6"
+    },
+    {
+      "path": "after/zh-Hans/tex/settings-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "3ae479ee6a87cc5e895ef2c555a68141013ffebd9229793cdb2618424700d08d"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-preview-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "9c946c9de5b60af7d6ce19e24f8746970152183c3d1771ee6abc5a55951836ad"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-preview-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "2c3bf8ef1b8d01fa100523907768abde7b5d6ba677b1f70c130fe002f0840dc4"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-preview-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "543a88a5a19405f88b17a180425c1271a1633b4b9e8b10b50049d5df5a194423"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-preview-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "5c84597ddef67b2de34879a947c1ae589470affcbe040cc8ee26050d5e65ab05"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-preview-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "7a92fc372db2c54d8f7b16b645aa527d5ae33bd9904c54c5ceed1509f95cd77a"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-preview-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "71e29aea55bc83738039a26cc9a3d8deaf27e6fe67981c9076e7f59830a4a8d2"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-problems-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "b69defb264dc9212afe99cae181ee323f564875922efa88c4471ccaab7295b2e"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-problems-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "bb3d0e0f25271099baa4ff32b554bbd02e892b169c10fcd91e92d06954b7fb18"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-problems-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "b96965b51f076e534c1dcfda0b21fd39a636aaa6cc06ce563322b43fe64a6735"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-problems-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "6a239e993ddbcf4c6fada9dbe22c48327f940965e13b449b30a9641f82127feb"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-problems-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "3adf2a871e128f034be7d2bb00a93184f812775248137c956c8504c07a69aa61"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-problems-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "c8645044b4fc8de36ccb77c170823a215d22d29e74218a1e18d367d46594cf64"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-source-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "aa455fdbb682bcdb82bbd29f0508f3aad27a70352dbf18d0fb964b6af48b756c"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-source-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "ca1511d9eb13f555a8e8407f4081a1276fecd68e81e77ca0691e332b6e1090bf"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-source-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "5cc763f996da747a746a73a3f27edec6117747d116bce264dfe0b03a61c001ba"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-source-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "b70abcd98ebe21b55018b339e64dbbb34b1afbc85d65cd52e413e2945fb9e17f"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-source-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "9521a7a72e33c489f9812d11058ce1b938f96c64817519bb8a592c4d3b6a6d3f"
+    },
+    {
+      "path": "after/zh-Hans/tex/tex-source-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "51588fabb5226b0737dca04716c428a04a58eb818c6573659e094fcc8b2f2732"
+    },
+    {
+      "path": "after/zh-Hans/typ/command-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "7a74b6b47df1369a42d2039f3e6bd01ce738e82b2ca32e80e5e306bac00d5608"
+    },
+    {
+      "path": "after/zh-Hans/typ/command-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "a07fa9195b6ef9a39ad5918458bff3d98f22f95d0d2a2fdb59062477b271a47e"
+    },
+    {
+      "path": "after/zh-Hans/typ/command-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "ccafaaf0a34b23c10405ec7c760ed290202c2c37ee547c79f3b2277e581bedec"
+    },
+    {
+      "path": "after/zh-Hans/typ/command-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "0978699bb9ea13dee143e9c8177643b8488c0a9329c7df538187bc986176b2ee"
+    },
+    {
+      "path": "after/zh-Hans/typ/command-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "b00c6f4c756605b87750444553e580174cf3f6bfbae6f573447fccdb32a922a3"
+    },
+    {
+      "path": "after/zh-Hans/typ/command-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "dac02f8e40a0445b15367a097a54bb61b500e55c4a7bc49acb87257c992ac54f"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-preview-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "f8e233d86b561961887b7e7b323a3511d5ecf5a214d630fbddc922c300d935b0"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-preview-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "8f510e3550a14c941fed05e3b06cb34feb66006493495bdf368d47f361a7d90a"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-preview-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "2e8cf6b3cd76104375acba97899fbded19a436cc134782a56ed8aa8a97b8e89e"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-preview-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "ad5b667fc2f6c11903439777603e392e50a648f75ab831dd96cc2607e8ee1320"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-preview-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "6b6458fc5f55643769e0e2a91c40ddb6e008048f723b01a9e9399605e5e6935e"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-preview-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "ca60fd53ea14de954ffb61ca78225d94b7cbc6a3eb1fd1822a70388cb5934ebe"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-problems-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "2fe08c560d0deb3fb02240ce71e4aa91fb7a222943c5c415fba14d98fc59ec94"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-problems-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "a48d110d2fa203102ae7e16280b8e581d4bf1d9a14690a6293214593a31e0ee1"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-problems-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "ebab0763ab685eed682b9f1f2fa78c8c912bfdf468ef56e4fc951af138c5db30"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-problems-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "6870b09b74410a7937b4060825e4bf0497a51624bf589f933489b70f782fac9b"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-problems-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "840ef0aebeae6f0d02128288600be70c2f51ab28e910830660cdfe9fca8df455"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-problems-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "9cbbeddfd135130f0eb7212a617ab309b529c60fc1e0fa5e3bee2d3013b04a33"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-source-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "bcc81ed0003cd66178d77beddfe26d237f8f012edd136e79e361ab7eb2dc1caf"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-source-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "284c19aae677b9f92d2b367605c56978844a57d1a71e5306f507b4b65279d6c2"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-source-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "d2bf00863918ccd8caee1db4a2b34d98b13d3a02f8b35d7b0a6e6c5d77826e11"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-source-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "4e0c564bdb51d2b497c9f75ad76c45771b1dfbb045aa1bd7b2ca74642fb41a4f"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-source-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "fa1f2052e481c75f68466e7586a59f438ec6de4093a43b81a05eb66d96d59877"
+    },
+    {
+      "path": "after/zh-Hans/typ/typ-source-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "8f0ff419d39d731c682b8277b3a6d697634712acf530d2b3c55fb055993cf1dd"
+    },
+    {
+      "path": "before/en/native/command-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "99522c79024c687feb5ca3ce3e4202f6dde12bda3fc1f2d3d787b9194b6f4a37"
+    },
+    {
+      "path": "before/en/native/command-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "ab621ab4414a27a68f44dae7803d44f2e7365de67e20b5fb327d814a3cd61b81"
+    },
+    {
+      "path": "before/en/native/command-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "b969726ce0858c821c23cc14148de0fda40cc2437c96c03692c73989c9096821"
+    },
+    {
+      "path": "before/en/native/command-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "2c1f41f5b42f5992b3f4e710f161780fccb69cb85b4598684fcd3121222808b5"
+    },
+    {
+      "path": "before/en/native/command-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "c3ca5e50864253346b9f48c9f4e86820991a9687cd1d249df362ba8cceca2e1d"
+    },
+    {
+      "path": "before/en/native/command-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "8c81ba28288adc0ec6be03baacfa66d60aefcfb355633f4c3b47e691fe230bd0"
+    },
+    {
+      "path": "before/en/native/generated-source-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "61052291682b23f9ae19c38ce963bc3690c3a05d949e03285b55203067d20778"
+    },
+    {
+      "path": "before/en/native/generated-source-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "dd6b31b575fb8fcf7d362053fbaeebf1bcffdcbce9464d203b7158b121f97466"
+    },
+    {
+      "path": "before/en/native/generated-source-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "ba2b8dfed570297d7f355d81886e225ac0c43c771ebb030fb552b2c380e3e659"
+    },
+    {
+      "path": "before/en/native/generated-source-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "06e5ed9a10b6febef615cda144446959f589756770b471973f8ae63a7560711e"
+    },
+    {
+      "path": "before/en/native/generated-source-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "474ef6b6296697f4fc8304baa19a2cdfd0c5839bc381677f134a0bd80c0e12d4"
+    },
+    {
+      "path": "before/en/native/generated-source-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "f902984585fc8745d5f40da57b1187f7049dc966a4c236c683b72472e9910914"
+    },
+    {
+      "path": "before/en/native/native-math-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "44fdc630a2c06b3ca7bc9ad9182df5d7a3ed1adcc721e4c466eeb536ee58d101"
+    },
+    {
+      "path": "before/en/native/native-math-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "a4d4c117d1077b84d220c6b7c9308b1878ff03b17902b8e957351cad910307bf"
+    },
+    {
+      "path": "before/en/native/native-math-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "60db07b4bb56ab50da6bad9bba67048ba5377bd630a22d63cb699523ce772519"
+    },
+    {
+      "path": "before/en/native/native-math-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "2a668e53e258133ee15c1cd4c794fa833cfb171ff8814928238230b6b023396d"
+    },
+    {
+      "path": "before/en/native/native-math-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "9191358e8dde8d41d6f25420fd5e5232d43552794de39d6b904a0ce5f08b69c5"
+    },
+    {
+      "path": "before/en/native/native-math-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "5804feabf0a5338dea98dd3e56db81110335973439df45773bd52447ca6dee76"
+    },
+    {
+      "path": "before/en/native/native-page-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "7014ab22348dbf62dbfbb8286832280838753018eebf2e0ce4177f7a6594dbfa"
+    },
+    {
+      "path": "before/en/native/native-page-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "12115a973acb0e1b06540563ac77321bb84500dac160d338834859255e52351b"
+    },
+    {
+      "path": "before/en/native/native-page-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "79af329dfecb272d24d9b7e34ff3373dd818eca43e2e973043bf47a0d1d6aa5f"
+    },
+    {
+      "path": "before/en/native/native-page-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "3562b7d6a17de5e2e5ce6eb66141a768e8a5d1ffd8eb909179d465bfb02ad44d"
+    },
+    {
+      "path": "before/en/native/native-page-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "d77fb7078a1b8fc69f1bae07f3fe4d72c1b9e33d9b1b35e117e430bf793d9a89"
+    },
+    {
+      "path": "before/en/native/native-page-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "efec603d7953d3cb15036344649230a080752f2d8450e9bf8824b3200ba84953"
+    },
+    {
+      "path": "before/en/native/navigation-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "30523bc282aa44d7f650a303bbdd8f9f8d5c4d745fbab8265f6a993c53b7ba0d"
+    },
+    {
+      "path": "before/en/native/navigation-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "7cc572634ec16e0a136dfd092ab36d19921c5b82214094f2e9c8fb55558ae33f"
+    },
+    {
+      "path": "before/en/native/navigation-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "79af329dfecb272d24d9b7e34ff3373dd818eca43e2e973043bf47a0d1d6aa5f"
+    },
+    {
+      "path": "before/en/native/navigation-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "f8d5793f631d26b491ff8e2483b4f3d6f4f3fcbc23fdb32d5cd3dfbc495a35eb"
+    },
+    {
+      "path": "before/en/native/navigation-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "476b70a2962124994a0280293f6aff9123879ee11747aeb9c31e91c643ebfe93"
+    },
+    {
+      "path": "before/en/native/navigation-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "efec603d7953d3cb15036344649230a080752f2d8450e9bf8824b3200ba84953"
+    },
+    {
+      "path": "before/en/native/new-project-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "f2d6f6e5447b0eb99e9aa6321557182c0f8e851b3dd033f3c4597337db4c29ad"
+    },
+    {
+      "path": "before/en/native/new-project-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "bf154281ecedabe7160137a977a1636ffcf45d3277b13ee2b54a1a4b502b2331"
+    },
+    {
+      "path": "before/en/native/new-project-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "41ea4be156137ebc35bb2b40d05e8346214cc351584ad83423d9fc73ac7079da"
+    },
+    {
+      "path": "before/en/native/new-project-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "dd61d4e7769511c94e7a99f7884383c754d026a9e982360f3754fda5378bf2b2"
+    },
+    {
+      "path": "before/en/native/new-project-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "962d574e77fc6a8304c06d15a9a4693decb160ee5268c40f23867ecd715ee6c2"
+    },
+    {
+      "path": "before/en/native/new-project-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "fe4314346c53f4745842ceb8a1b5db10ed68ec534b4d9dcc831d75a4f61a444b"
+    },
+    {
+      "path": "before/en/native/open-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "fe33410e0050adbfb81124363a35787c0835e1ad03f18f4ed56d8fe42656e5a4"
+    },
+    {
+      "path": "before/en/native/open-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "f07fc319c4fd0195ad48ad8610c1813ad4703a572855608dfe1ea7d5e2ce5eac"
+    },
+    {
+      "path": "before/en/native/open-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "d56216871852dc8829d58c8614dddb7bab4838eda24e31c0ae7c99375d7920b0"
+    },
+    {
+      "path": "before/en/native/open-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "71645d23344e5fe29a3e54f94ec25e0491cb029db2e9623a7901b2b5e2c15762"
+    },
+    {
+      "path": "before/en/native/open-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "89b0ba6f278b038835896836de8b5a91bfc857c4a87236b4053d0de54994f3a3"
+    },
+    {
+      "path": "before/en/native/open-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "47c4636008eadbb84c873a8ff5ffe242369d267ca4df2461534f505816dbe260"
+    },
+    {
+      "path": "before/en/native/page-command-bottom.png",
+      "size": [
+        1280,
+        700
+      ],
+      "sha256": "2048f4295c095cf9ee408a9e5da3ecc2181c9e3b0485d750e17953eb2d4df160"
+    },
+    {
+      "path": "before/en/native/page-command.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "9fea5e116a8d8dd33289fd23a46ffaf2973e0cef8d7bee80439181267f63ea82"
+    },
+    {
+      "path": "before/en/native/start-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "46c34cba1dbba8a6f4ee63f82b5a19438030e0b9a37dc191469dc1c752062677"
+    },
+    {
+      "path": "before/en/native/start-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "1d534d2431fc58695b5c884105b13aed996378ab83a8d312ff9b5d7a01ed259a"
+    },
+    {
+      "path": "before/en/native/start-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "f9e2328a5bf7d22c4e4f5e7416ab0d5321bd120b4abbd1a74bbfbc8cc495f580"
+    },
+    {
+      "path": "before/en/native/start-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "15df197778fb711088bc1cd11138f3239a7215357dc97d8fc0914e646d2c1a68"
+    },
+    {
+      "path": "before/en/native/start-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "25634c2b51f87db27846850a8a142339f5a3664f81894c0544113e2738559df3"
+    },
+    {
+      "path": "before/en/native/start-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "c7559267ec740a891ae4a578669acc4f4445dbf85c77e8f3b463288b80fc20e1"
+    },
+    {
+      "path": "before/en/tex/command-bottom.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "d84a8e67c45bf74da0360a0fcd45ea3be131017916e7abda736b32877cefd50a"
+    },
+    {
+      "path": "before/en/tex/command-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "37fdbf820841dea35e0e9c1be42cb4de925de3a069502e023dababa6bbae2ee0"
+    },
+    {
+      "path": "before/en/tex/command-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "e02f74a63f7365eb4d22481c0b8c665afa27db0b087bdf4c934386ca740c9e22"
+    },
+    {
+      "path": "before/en/tex/command-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "cfa097d96de24a0fd80abab8cb4f5f76f923f8d0ee519d7b82e5b76258970ed8"
+    },
+    {
+      "path": "before/en/tex/command-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "868ff59b4a56c14dca0e115fd0fbb526c8bd4e23a52fbd3a7ff127b462e0d0ee"
+    },
+    {
+      "path": "before/en/tex/command-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "e1b95a74dc99cfa121c1b9120a6dee8da861aeb5e21417f26ecc19bc4597ea45"
+    },
+    {
+      "path": "before/en/tex/command-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "36a964b28270547f5f97683e505b8319458fedfb2e41e2cb0793e838fef28249"
+    },
+    {
+      "path": "before/en/tex/command-top.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "9e9d4f3adf6a2b4a30c37673d9af21178914a2cfcfb53351fe7096c90f0b9552"
+    },
+    {
+      "path": "before/en/tex/conflict-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "3139e3a446c9c79db35cec4368cc33e6082e7935c7624c4b4ece8a7e1a445a9e"
+    },
+    {
+      "path": "before/en/tex/conflict-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "13f8a9adf61a129e4db293f9f8ecc9e807bf88c20da654296b770ec0dfc39c38"
+    },
+    {
+      "path": "before/en/tex/conflict-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "fb31f4d60af996e0d2980ff2021f7b9b9c0e8b3fe9a7815ba81a767af0870e10"
+    },
+    {
+      "path": "before/en/tex/conflict-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "bd1232e33a62e1b8abd203ced93c3e704d49088393e649837dc6179a5e470b4b"
+    },
+    {
+      "path": "before/en/tex/conflict-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "37f7cfdbd6fede08e5f859f083890be592766fd36ef12e92de365cb6df2f1538"
+    },
+    {
+      "path": "before/en/tex/conflict-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "a06c733c911388bee0ae0d544cc5b278f210c2df3c40c3ae11901ad98a432c24"
+    },
+    {
+      "path": "before/en/tex/settings-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "686e8ff5c95148810ce7ef18ad37e93efebe09897428570c0baa4292b4198672"
+    },
+    {
+      "path": "before/en/tex/settings-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "d84a0f0c9a364ef0fdcf591a964f251372cd726202819890c48a09986108fc47"
+    },
+    {
+      "path": "before/en/tex/settings-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "abf394837d3883849296e8988559a8522ade515113c4f17e33c42d4b44809fdd"
+    },
+    {
+      "path": "before/en/tex/settings-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "743858ddd47bcfde566a68244b1e580fdf7df809b70a960093f03213fa0dd71f"
+    },
+    {
+      "path": "before/en/tex/settings-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "f0943f3add084d715285b842092c4a70d4f68d2fdc10102e05cf508bcfb57042"
+    },
+    {
+      "path": "before/en/tex/settings-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "00e83afd4bd01a0cdff571d15d1c591685d67ad15fb855277d2708542252d77f"
+    },
+    {
+      "path": "before/en/tex/tex-preview-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "bf050cb81b22becf2c08cb48f98625b59c174f3633cbbb2b6325c7de16f3590d"
+    },
+    {
+      "path": "before/en/tex/tex-preview-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "37c9f9a2669a36652f2d035098eb71c5fee48585adb84d12ec2fdfc79d1e8c12"
+    },
+    {
+      "path": "before/en/tex/tex-preview-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "a224a124016bded69db9f0523d18a217af78cc19f222f3e5ab1b8185cc4f4822"
+    },
+    {
+      "path": "before/en/tex/tex-preview-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "0e26f2643d1741d94ef872cd3812af1426e7aa0d0e716dcc512bb17c54bd3efd"
+    },
+    {
+      "path": "before/en/tex/tex-preview-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "a36cdd10991791d365277a325a8557de9f923f18416b5a0bf209f8291f93dec0"
+    },
+    {
+      "path": "before/en/tex/tex-preview-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "fbf10f8daa8f6c69c99180e472d15c2748fcb13c47e5e870c4f668d620bc3c0e"
+    },
+    {
+      "path": "before/en/tex/tex-problems-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "1c0cdc8ec6584a5d893aa27305ab6f2a6856e008e7ffebc1f39827c2c630042a"
+    },
+    {
+      "path": "before/en/tex/tex-problems-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "7cc9f7b121c3d2d353785d01faf8d85438d97f0915ca08c3a6ef808d0f6c2f77"
+    },
+    {
+      "path": "before/en/tex/tex-problems-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "524e791f37369279fc40d31993b7a6273e05a860b72cd4ac9a0ac316e6f2309b"
+    },
+    {
+      "path": "before/en/tex/tex-problems-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "1770a4e6f67258be1b4a4b44ae1297a28906fe747b5999a50f8ccc234c09cbb2"
+    },
+    {
+      "path": "before/en/tex/tex-problems-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "0f27da3f5be2fe6218f6b14a42aed4e1b850036299c2c9623e9edeb8223d265a"
+    },
+    {
+      "path": "before/en/tex/tex-problems-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "dc7509aa6cf155b5748b32faa2f4ec1f2db39523c93443b0843ff18bb03fc989"
+    },
+    {
+      "path": "before/en/tex/tex-source-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "ca9b71c8f31e77d8ecd306c745e85ff19da3a158ab83b85916d5b1853af26efe"
+    },
+    {
+      "path": "before/en/tex/tex-source-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "e7cd9e6686aa9701d17d92442b2368c890aaeb23075ba0b239e7af9d138316bd"
+    },
+    {
+      "path": "before/en/tex/tex-source-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "1a1d733a8917785653f26f78eb5469e6410dd488617e1b580c91ba2eeb0f34d6"
+    },
+    {
+      "path": "before/en/tex/tex-source-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "4366d4fea6e110d8cdd3be79e36019ffbcdfb4aea1ed3cfecbc8ccdfdd7e1e1c"
+    },
+    {
+      "path": "before/en/tex/tex-source-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "135254f5b3f06607302478ceae73df9c2e6a0d38aad5c7e59ca337e912ae3984"
+    },
+    {
+      "path": "before/en/tex/tex-source-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "66012dd25382277976b83d214239a91c145a07afe662c0ec27a384c0b1afad6b"
+    },
+    {
+      "path": "before/en/typ/command-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "041fcf396701212e36ff49e5816b4d306688a3fda274c524249c7f3e5b88cdc1"
+    },
+    {
+      "path": "before/en/typ/command-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "5d213042b6d622f17c2365bf73347a594edaaecf6568c946dd9f23023488444e"
+    },
+    {
+      "path": "before/en/typ/command-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "452c123befc6601abe50e776cb4a6869bdd1de6317f643d072b92c093a7885b9"
+    },
+    {
+      "path": "before/en/typ/command-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "d5f4af58e9689b799e9f1d04eb8bd658d3e2260d3cf2602b02d56a123df44c58"
+    },
+    {
+      "path": "before/en/typ/command-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "eb33e7726eb85c66d82214fad657a6dfad84a79209ac18af17b3b6e5afd49812"
+    },
+    {
+      "path": "before/en/typ/command-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "4e292aa68905e66c089c9cbf21f432cef2d8e220c09ee295e471262b9f7b36b8"
+    },
+    {
+      "path": "before/en/typ/typ-preview-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "33814fe6906d6c93795a9cd0121de93715e00038bdb415631016bbfc158ae7a4"
+    },
+    {
+      "path": "before/en/typ/typ-preview-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "40107349ed5be9d63e7a9c03489933f9fbb6c186a405ccf1ddc47e2ce859031b"
+    },
+    {
+      "path": "before/en/typ/typ-preview-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "8eeee2fc5da562751f419e58afd4a4aa2701dfe4c94c5b52f6ee844e9d996455"
+    },
+    {
+      "path": "before/en/typ/typ-preview-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "b5e7ca3c65f6bf3af05c1756ae47288512cb99401d354a19caa8da6869124374"
+    },
+    {
+      "path": "before/en/typ/typ-preview-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "be15b18b9a5670ea19c000b59d43f712ebf11a0b2bb6d82e28f330c773226c79"
+    },
+    {
+      "path": "before/en/typ/typ-preview-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "a2bee8355b68f6852660fb09442372419b76fa5133c3faa07f655b096497555e"
+    },
+    {
+      "path": "before/en/typ/typ-problems-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "8226b6143d36940706d47079d08a9d8cd78c56e6ffd679e480b9e1f90bfe9918"
+    },
+    {
+      "path": "before/en/typ/typ-problems-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "736d745ba09f3710997790d452c29148be0441572c24e29f1d507dc62874d5de"
+    },
+    {
+      "path": "before/en/typ/typ-problems-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "b536297c441d689b2979fa9330e0738c39a782fe7345a5a82364bce613789d15"
+    },
+    {
+      "path": "before/en/typ/typ-problems-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "e6417672578f4a100e36273d736228742ce7b697f47f138a8e0549065069ed45"
+    },
+    {
+      "path": "before/en/typ/typ-problems-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "774c1b3106c0355a85ef5e8e30f894201ee998c3d11f979d8f600e4005b66687"
+    },
+    {
+      "path": "before/en/typ/typ-problems-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "c0c98a6b2e5749b05bd9f89e634012cd286124d3ca66790e9d70703f5d5fb9c1"
+    },
+    {
+      "path": "before/en/typ/typ-source-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "3938bed2ea946ae3dd06f8eef5df64ae0dfe0b78a75ce9dde9ac672295c936d1"
+    },
+    {
+      "path": "before/en/typ/typ-source-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "0be9d877e0826a3dd91e697fbd0da8880d1acfdcfc5b0a19ad8a74a4f22eb3e7"
+    },
+    {
+      "path": "before/en/typ/typ-source-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "7e6fd4de9bc03d2d13ca1a06ab2116dfadb0515409f0ce6cb0934bbf6803c683"
+    },
+    {
+      "path": "before/en/typ/typ-source-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "919bf50d01fbd44f76798626ae9a5408505c45c9231f173499d7845c2cfb36ac"
+    },
+    {
+      "path": "before/en/typ/typ-source-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "b399625b8a19a70a0c74ce07077882536ad0e5b1cccf82f8e80f291744c63432"
+    },
+    {
+      "path": "before/en/typ/typ-source-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "714bf9d4317b3023e21f06cd67a7a6516277a21e12404aacb293284e27c06e04"
+    },
+    {
+      "path": "before/zh-Hans/native/command-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "04331df39ed887efc7fb01610be34751275061f2bb540aabd51af65517431f13"
+    },
+    {
+      "path": "before/zh-Hans/native/command-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "8b2160d79141f171d6b8405f41648ab6493d664297f100923aabf680b91d9ae6"
+    },
+    {
+      "path": "before/zh-Hans/native/command-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "941bc64634b6c697aec6be93a7349fb292d92628773b6a76f80de04000293eac"
+    },
+    {
+      "path": "before/zh-Hans/native/command-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "9dccc967ce9dd1b0bf7a29ecb050f494c25398ff2bb459ef7e256697eaffeca6"
+    },
+    {
+      "path": "before/zh-Hans/native/command-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "19ed82b6c4e96675ddb3319dfad60610470a894244e99974bbedf63c815251d1"
+    },
+    {
+      "path": "before/zh-Hans/native/command-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "74b4c80e73ba6fc7dc20720a741c46df7a1af1b01e901c64a8ca2823dff1b24f"
+    },
+    {
+      "path": "before/zh-Hans/native/generated-source-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "5141eadadbefeb962977a4662566f2304b146c36219081921701595b8097b8d6"
+    },
+    {
+      "path": "before/zh-Hans/native/generated-source-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "c7442acda30ae525a84fef52b9766cde6b66a0945f2c6338046cbacd2fde2f00"
+    },
+    {
+      "path": "before/zh-Hans/native/generated-source-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "2666f579c9ca8c273af00dc029e213e174f48c7eb1b85d2ec2fdf7040f42f898"
+    },
+    {
+      "path": "before/zh-Hans/native/generated-source-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "82689c4e1498b54c19ea67a971a9f2429d6c85aa418c53fd99125fefbfc7eccc"
+    },
+    {
+      "path": "before/zh-Hans/native/generated-source-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "0c173650539e24e0a79e5f292607ea69b6a797feca99d43c2666b0b8365b92cf"
+    },
+    {
+      "path": "before/zh-Hans/native/generated-source-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "968cbcf4d89047fc57e22da0a70c1237f8d0c471c6ce4755e6fcd6554e919304"
+    },
+    {
+      "path": "before/zh-Hans/native/native-math-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "b4abd9ebf10daa9df33d22de5aede31038127072509bb81bcae625f53dafddf8"
+    },
+    {
+      "path": "before/zh-Hans/native/native-math-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "70933ae7c28091274ea5595094d2ba3e473cbfb972228943794b72ee91d96d07"
+    },
+    {
+      "path": "before/zh-Hans/native/native-math-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "be379ac58ef97b21874189e0a1d16954c0750596ed4bf5e98a88234a752bf721"
+    },
+    {
+      "path": "before/zh-Hans/native/native-math-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "3fdd69989fa8d796a2a177b872a5509161409029d34ec0b061b5fd2183de8baf"
+    },
+    {
+      "path": "before/zh-Hans/native/native-math-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "b4ec20891279b0d25663cc699662ea9b39b36fd269be0b2a648a19845150de23"
+    },
+    {
+      "path": "before/zh-Hans/native/native-math-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "809eb9608c559a56c14244cbf5c239388769474f066c45b5237822db6bd457c3"
+    },
+    {
+      "path": "before/zh-Hans/native/native-page-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "791b27a9d73d84aaa32a342f459f16b93d11732c68ab9e1c71a9c1a866a9e131"
+    },
+    {
+      "path": "before/zh-Hans/native/native-page-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "b220261e3b010bab0b639c0dec25f542ed88a0f543bd5331fa9458ce9b08a0dc"
+    },
+    {
+      "path": "before/zh-Hans/native/native-page-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "6be1539c5aea83c373753decbcfa6c7eb90b357a4ce91d76d09ba5532e191184"
+    },
+    {
+      "path": "before/zh-Hans/native/native-page-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "43faad00054966691add01fa7e6275fb53a0a22512bdb0da5422f10ae219f04d"
+    },
+    {
+      "path": "before/zh-Hans/native/native-page-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "9641651f2ab63b7a29fee4309200ae00a3286283e6d46c8178117e3bbb326b17"
+    },
+    {
+      "path": "before/zh-Hans/native/native-page-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "6471367892813283a9990f9226879f95715298af26de00d12b30eaa79a6f6594"
+    },
+    {
+      "path": "before/zh-Hans/native/navigation-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "18e4f11bf3dc91cfc61d00027317f769b300f0df00a1a350f0a4d10440edd4ac"
+    },
+    {
+      "path": "before/zh-Hans/native/navigation-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "6bb9eee07f5857be2cdef8a21f1a4925551ccde5a8ebebb8841ca5d5f4f88dec"
+    },
+    {
+      "path": "before/zh-Hans/native/navigation-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "6be1539c5aea83c373753decbcfa6c7eb90b357a4ce91d76d09ba5532e191184"
+    },
+    {
+      "path": "before/zh-Hans/native/navigation-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "d1c91331fd3f5e6bf02c415c2e23bd86ff04ccc46dd411eaa67de38e275600cd"
+    },
+    {
+      "path": "before/zh-Hans/native/navigation-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "6d09505a45f4a863f1ad6feab855c479e826ec9eb23b8506e43ac176f1218d3c"
+    },
+    {
+      "path": "before/zh-Hans/native/navigation-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "6471367892813283a9990f9226879f95715298af26de00d12b30eaa79a6f6594"
+    },
+    {
+      "path": "before/zh-Hans/native/new-project-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "3c3fe3f111d3ea6f15591a330cfe5eee67ab6bbb211b758279619c8195093796"
+    },
+    {
+      "path": "before/zh-Hans/native/new-project-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "62dc8fee170f11f17b7939f6d19ca40de9a78af47faf7d71f78774e2f9198db3"
+    },
+    {
+      "path": "before/zh-Hans/native/new-project-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "b3988a9fa75bf6126fd06a97de7cd47bba7b795902bd44f0d2c55197c0b46eae"
+    },
+    {
+      "path": "before/zh-Hans/native/new-project-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "8df3493c09a272330032df8dee23729dbcef19ec68dbe3b5990127b19eb5d463"
+    },
+    {
+      "path": "before/zh-Hans/native/new-project-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "280fd1b075b4015779dcb98d84501e05560e693dba0da836e8f6fec9748f115d"
+    },
+    {
+      "path": "before/zh-Hans/native/new-project-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "754b5f6ed623e586984c4b379376bc88023c4e46842c66042debcfb8ac6b143d"
+    },
+    {
+      "path": "before/zh-Hans/native/open-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "7ffd382c839b4bd503706dd2baf53c7db0d5189dba6acedd31abcc5986d02ca3"
+    },
+    {
+      "path": "before/zh-Hans/native/open-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "8bfadd97d97fafe7f66973df95c2f6645293dcee2e699fb970f8aa9ff550eca0"
+    },
+    {
+      "path": "before/zh-Hans/native/open-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "2aa9da63c93fabbba3bc38c6bffb629663f1654bac9d4433574e4f903dac112f"
+    },
+    {
+      "path": "before/zh-Hans/native/open-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "bf57c463ffcc9c722ac018ebc9b39ff6cb47ac19bba3f191b64f9d294fba086d"
+    },
+    {
+      "path": "before/zh-Hans/native/open-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "98fa7dc8c3f009c521d944177117f9871232e592b1ea6dddd78fc70e3dcc08df"
+    },
+    {
+      "path": "before/zh-Hans/native/open-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "2e206f357e878c91d5641d9037acf364be1afb3aca3ff47976205cbed59ed3b9"
+    },
+    {
+      "path": "before/zh-Hans/native/page-command-bottom.png",
+      "size": [
+        1280,
+        700
+      ],
+      "sha256": "34e2c7e3c342e3786a4588d6d445011ab4522188a5d2b43f672a01b6e16b43ba"
+    },
+    {
+      "path": "before/zh-Hans/native/page-command.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "8bb6622976e41d6847a6dc45616d0079a93846babe28d87eb7fac6c0d26879e8"
+    },
+    {
+      "path": "before/zh-Hans/native/start-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "121732109ef42963226dd4c58393400f30714a8103920f90486d20e836c89700"
+    },
+    {
+      "path": "before/zh-Hans/native/start-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "0a0fe28af4b84f88c530a5aaf5cc41b6ee95608b03754d81f61cb4a458324729"
+    },
+    {
+      "path": "before/zh-Hans/native/start-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "63cc63240866f09181128d167e62ae75e00eb61ffc19415b17e04e5b0c3fb675"
+    },
+    {
+      "path": "before/zh-Hans/native/start-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "a7a95c175b3922697757955a0147507d1f46166aecadd58561d8ae411cf9c587"
+    },
+    {
+      "path": "before/zh-Hans/native/start-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "41fa9dd06e4b9e415582645985211c91c6a6dae08e11f628301d05895dd8ef42"
+    },
+    {
+      "path": "before/zh-Hans/native/start-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "051092310767e4b99ed3bb939ed167bc5c5f669d2184936d2088e10a83fccbd6"
+    },
+    {
+      "path": "before/zh-Hans/tex/command-bottom.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "e8c5a55deeff8dd7b1cf02e43b79060c9b631d87c71cb2ae512a767efecaf1dc"
+    },
+    {
+      "path": "before/zh-Hans/tex/command-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "2be26de32655b5344a1c78d0c61df169e1a7159f48af5f0b653199de2d46b790"
+    },
+    {
+      "path": "before/zh-Hans/tex/command-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "47fa0e4f247f8086b7ebac230d8b4b179b247bce4d263f22ee8baa69dec4366d"
+    },
+    {
+      "path": "before/zh-Hans/tex/command-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "ba67b8621c3e86b39753413897b05b6ef6b7206493ed9efe13220eb22f5bea40"
+    },
+    {
+      "path": "before/zh-Hans/tex/command-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "ff2329736aac4a4aa3f858c595ab5176dbf8dafce3c44ea28ac76acf128bce22"
+    },
+    {
+      "path": "before/zh-Hans/tex/command-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "e8c399060cd124abfaf1828cc428258b81f90ba239cd7ec0f2a48ae5deb820d8"
+    },
+    {
+      "path": "before/zh-Hans/tex/command-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "c027c6e88a1a7e96b5202405a7bcb1c512dcdb792120da4caa56625ec1f8d7bb"
+    },
+    {
+      "path": "before/zh-Hans/tex/command-top.png",
+      "size": [
+        1280,
+        900
+      ],
+      "sha256": "8863426f1a6ee442687a464422279abe563d167c744fe70efabe1d7d1c608fc0"
+    },
+    {
+      "path": "before/zh-Hans/tex/conflict-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "87809bade905de6b1cb31aba2bbd4eb045c456ca34dc9e2aaa477d6d80e6f638"
+    },
+    {
+      "path": "before/zh-Hans/tex/conflict-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "9adf9ba1d7b9d0cb31830c12fd9cb87d2aba0e94db0311c809c2d2945720315c"
+    },
+    {
+      "path": "before/zh-Hans/tex/conflict-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "f85b570fabaa8ab3ea9b17ac7d0a486a1ab15cf894642725ba59744e081f0a80"
+    },
+    {
+      "path": "before/zh-Hans/tex/conflict-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "15bf16a06878664639d1eaa00db73bde740132c9f644c02547d476867d5a8ed0"
+    },
+    {
+      "path": "before/zh-Hans/tex/conflict-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "70e0a7f4b7218b272e473ce6be5f8f8a4a62ca19a9a8cf6027a342443e5aa1d6"
+    },
+    {
+      "path": "before/zh-Hans/tex/conflict-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "561132134a6bfb47e40895028f07a991a2236cdf6178e03f82418b3b8be6264e"
+    },
+    {
+      "path": "before/zh-Hans/tex/settings-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "a96063a656fb534eea81013a7a78724238d356c59452f197d1a919483cf5a976"
+    },
+    {
+      "path": "before/zh-Hans/tex/settings-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "ec3927fa02314e35ddfd6b81d4c601af5f227b500166a57b8eef30aec14de902"
+    },
+    {
+      "path": "before/zh-Hans/tex/settings-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "47f6bff3dc81a5dc2d5466f27f98f4db4c7913289fd85a383123bc66313c949a"
+    },
+    {
+      "path": "before/zh-Hans/tex/settings-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "9b85ffc3d30d3fc8d20a18628303cee6f9dc14cf451b86e8d602dd2af8e65d8c"
+    },
+    {
+      "path": "before/zh-Hans/tex/settings-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "56112a5b02fb757ed9884943592be5eda432b68abfa03eb5c5f176005e1f3b61"
+    },
+    {
+      "path": "before/zh-Hans/tex/settings-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "8b43ad11afa6ea7e1d462f6049d31381d68ec62dde8b912ecd1f4d87b86aa5cf"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-preview-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "035940e1490bf60f8c828a1916632c4b980e38a6572a10b09a5e697f3ad7025d"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-preview-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "4af9bc81cd8e4e14d9f659d33a845f058f70c67f6ecdc96c1d0f7ae5564b104a"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-preview-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "64b0eb48483673c8bb941e93c112e604b19a9dc6d09c1da3039ba3d21828b70a"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-preview-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "d1c1885aa8c58a5ab63c7cf84dc753c3a6ece259122ef392a6caa2c3ccbe7aa8"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-preview-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "c36bae4b375938902bc3e4804517edb3966dd44c50f57684b2090a0779da6f06"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-preview-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "b67b8b1f934cce5d004d2dbb1628f64bb8f5a54011f975f8ec995be39549638f"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-problems-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "319d96465f234a05b4dd55d032ea8d5b7fe00405ae32b51c3a458e8bcc7a1edb"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-problems-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "fc2abbabe7950ba983d559e86cb427966d5dd3db3b9c9e0bb08feb9d4b8671d2"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-problems-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "2d52bd021735c6860f27b0f6a919445fee7cdf8f29f6fc1b14815155ad2c6f7c"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-problems-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "8a65cad5482ee15f5a16e5f35cbe763e971138578538cc6980953697646e6919"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-problems-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "d03df3e97e75f05a4586ffa6b0062bd32683f2ed3b1cb0d56084010b21a30cc9"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-problems-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "e6858b80471f9edf346b249e569130c9c1c69383d380d273d94217a235252f71"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-source-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "b8487bb9d764d94f58ae6cc00f8508a4be1e08805e8cd9f2e095e8bd295a5cad"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-source-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "0aea4c448cd76192f8f374fdcf8fef4394cc1d68dff5f30d57e79b0655fd31c5"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-source-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "29d05bf1c26d1ca6d9a679a95f5104aed1466bd5d55fcf35d2d5323344d123e6"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-source-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "cc2c9ad975d2adc9302870b0fd8486190a7dd13293ec8d71662e7c194c65dff9"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-source-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "882d56511aad24a4fbd081ffca92e904d3cf24cef183ccfa47bd061e5d287fa5"
+    },
+    {
+      "path": "before/zh-Hans/tex/tex-source-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "4635928c856ff8cd33ac98c03c3a69fe71c424742c5e3c4b3f3236be2c055225"
+    },
+    {
+      "path": "before/zh-Hans/typ/command-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "2d3edce041481d00873381543c7f058f3e1ffd4379d2df5e0d1420eee0d88510"
+    },
+    {
+      "path": "before/zh-Hans/typ/command-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "9788f074973b78922550b071c905873b78dccb893afaff8214001bbdc46c7745"
+    },
+    {
+      "path": "before/zh-Hans/typ/command-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "55878badeab33af443860ec6245d750c73f5d0ecd7432cfee483905075d15034"
+    },
+    {
+      "path": "before/zh-Hans/typ/command-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "a1aeabf173ea0904b4d233331a0db291d4e2d7681c2baab56afd07d825618c17"
+    },
+    {
+      "path": "before/zh-Hans/typ/command-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "2f8f872c615db1e276c20f5b2aea5c7ef6be25123f14d7817a19be8f7b58b425"
+    },
+    {
+      "path": "before/zh-Hans/typ/command-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "7aedf05328342f0676cd5edaab5156957a177d2df7e0d53884b28bec6d1e85d2"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-preview-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "6d09d0978f24a252238c65d39c24cd784416452808f0517c01fec29e6bbe5278"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-preview-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "e76bca5284cea6beab76c8b7fefc07a987e88e27228e73475c03b92e30da344e"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-preview-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "df68333750c77db0cf91d1017d49d2a01a58b67052689e5998f11df38f258292"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-preview-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "c17b42cfe57ed87887ab08cda200b9e885fde794d42a363b6323ffe3290b51ff"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-preview-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "99fa68922e3f9cabf4c52a537b2a7966e5f91a18871ab5c164f8057837eb980d"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-preview-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "cfc34eb1cad9bd6a0e5bde5f0d2ce626ec491fbf9af84252158f5f62ca959e85"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-problems-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "c93dde6879213904f7e112d14bf21d28e075e3d5baddab5fb132053cc52400ff"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-problems-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "387cf0bea674fe594fc9112021d1ebb1850f200c4b287d709da46db007a9dd39"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-problems-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "18e77e5242da88c20ca08c4aab50108ddf80bce45933982ea7616f955da59154"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-problems-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "0c0d8136e1ebf7bccfb23be5bc8656a08a5460ac322df58a9e821dcfc862199c"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-problems-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "7c26ccd5ca7cbe64428d2bef15236f977547373ffcc1f00ed231dcbbeb6f6696"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-problems-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "ba483b7725b2837ab5aac661ab91c3ad7457f2f48153869603adeced79699aef"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-source-dark-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "e4e4fd39c331af87afba0dd392e734160830d384688b8d9550591345526430d0"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-source-dark-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "63a8ef9f56ec0d9426013690c36001ecb3f827338ed153f2899eb8130d033e6c"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-source-dark-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "3ab597038848c919b62f8fd207a0cf3bebe32ff491ee3038678f5e31e79fb33b"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-source-light-1024.png",
+      "size": [
+        1024,
+        700
+      ],
+      "sha256": "306fdbb8605880c742990c3fd9e1a58d5ff36c135d8fe516620ab5185add7c53"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-source-light-1440.png",
+      "size": [
+        1440,
+        900
+      ],
+      "sha256": "fac16771b3d495d7dcbda5154ef137ab6391203c5debd280d4e862fefe9c4708"
+    },
+    {
+      "path": "before/zh-Hans/typ/typ-source-light-480.png",
+      "size": [
+        480,
+        700
+      ],
+      "sha256": "606a23918324b93518c0b8ac44164f638672c789ce48103121cc8c310b684eff"
+    }
+  ]
+}

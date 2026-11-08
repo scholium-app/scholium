@@ -58,7 +58,7 @@ pub(crate) fn dialog(
     };
     let frame = Frame::new()
         .fill(t.field)
-        .stroke(egui::Stroke::new(1.0, Tokens::overlay_border(true)))
+        .stroke(egui::Stroke::new(1.0, t.border))
         .corner_radius(8)
         .shadow(Tokens::dialog_shadow())
         .inner_margin(Margin::same(BODY_PAD));

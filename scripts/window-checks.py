@@ -33,6 +33,8 @@ A11Y = "a11y"
 # name -> overrides: screen (Xvfb geometry), timeout (s), extra (inserted after the
 # binary), session ("dbus" wraps the check in dbus-run-session), skip (reason).
 EXCEPTIONS = {
+    "problem-panel": {"screen": "1440x900x24"},
+    "ui-polish-final": {"screen": "1440x900x24"},
     "sharp-raster": {"screen": "1920x1400x24"},
     "default-launch": {"extra": ["target/debug/hammer"]},
     A11Y: {"session": "dbus"},

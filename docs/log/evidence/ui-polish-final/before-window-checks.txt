@@ -1,0 +1,10 @@
+waiting for another window-check run
+output: /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t48-before-matrix-final
+running ui-polish-final [zh-Hans] ...
+running ui-polish-final [en] ...
+
+check                      result      seconds
+ui-polish-final [zh-Hans]  pass          147.2
+ui-polish-final [en]       pass          146.9
+
+2/2 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t48-before-matrix-final

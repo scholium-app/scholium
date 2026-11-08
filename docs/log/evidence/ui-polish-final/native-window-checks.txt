@@ -1,0 +1,10 @@
+waiting for another window-check run
+output: /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t48-native-live
+running problem-panel [zh-Hans] ...
+running problem-panel [en] ...
+
+check                    result      seconds
+problem-panel [zh-Hans]  pass           59.3
+problem-panel [en]       pass           58.0
+
+2/2 ok; logs and evidence in /home/ation_ciger/Projects/Mogan/scholium-wt1/target/t48-native-live

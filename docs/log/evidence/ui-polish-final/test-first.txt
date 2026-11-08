@@ -1,0 +1,316 @@
+T48 test-first development evidence. Expected failures below precede the fixes; final workspace gate passes are recorded separately.
+
+## t48-test-first.log
+   Compiling typst-realize v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst-realize)
+   Compiling typst v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt1/vendor/typst-edit/crates/typst)
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-typst)
+    Finished `test` profile [unoptimized] target(s) in 1m 06s
+     Running unittests src/lib.rs (target/debug/deps/scholium_latex-53a31d2f522ac7bc)
+
+running 3 tests
+test breadcrumb::tests::comments_escaped_commands_and_verbatim_do_not_create_structure ... FAILED
+test breadcrumb::tests::optional_titles_and_incomplete_groups_are_safe ... FAILED
+test breadcrumb::tests::cursor_follows_section_hierarchy_and_nested_environments ... FAILED
+
+failures:
+
+---- breadcrumb::tests::comments_escaped_commands_and_verbatim_do_not_create_structure stdout ----
+
+thread 'breadcrumb::tests::comments_escaped_commands_and_verbatim_do_not_create_structure' (261237) panicked at crates/scholium-latex/src/breadcrumb.rs:31:49:
+index out of bounds: the len is 0 but the index is 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- breadcrumb::tests::optional_titles_and_incomplete_groups_are_safe stdout ----
+
+thread 'breadcrumb::tests::optional_titles_and_incomplete_groups_are_safe' (261239) panicked at crates/scholium-latex/src/breadcrumb.rs:37:49:
+index out of bounds: the len is 0 but the index is 0
+
+---- breadcrumb::tests::cursor_follows_section_hierarchy_and_nested_environments stdout ----
+
+thread 'breadcrumb::tests::cursor_follows_section_hierarchy_and_nested_environments' (261238) panicked at crates/scholium-latex/src/breadcrumb.rs:24:9:
+assertion `left == right` failed
+  left: []
+ right: ["引言", "方法", "equation"]
+
+
+failures:
+    breadcrumb::tests::comments_escaped_commands_and_verbatim_do_not_create_structure
+    breadcrumb::tests::cursor_follows_section_hierarchy_and_nested_environments
+    breadcrumb::tests::optional_titles_and_incomplete_groups_are_safe
+
+test result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 40 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-latex --lib`
+
+## t48-kernel-tests.log
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/render_native.rs (target/debug/deps/render_native-83e427c3f8b94d9e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/toolchain.rs (target/debug/deps/toolchain-8c12e9be003e85a8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/scholium_typst-3e96e4c78e111e3f)
+
+running 2 tests
+test breadcrumb::tests::headings_and_enclosing_math_follow_utf8_caret ... ok
+test breadcrumb::tests::comments_and_raw_heading_text_are_not_sections ... FAILED
+
+failures:
+
+---- breadcrumb::tests::comments_and_raw_heading_text_are_not_sections stdout ----
+
+thread 'breadcrumb::tests::comments_and_raw_heading_text_are_not_sections' (264410) panicked at crates/scholium-typst/src/breadcrumb.rs:100:9:
+assertion `left == right` failed
+  left: ["Real"]
+ right: ["Real", "raw"]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    breadcrumb::tests::comments_and_raw_heading_text_are_not_sections
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-typst --lib`
+
+## t48-popup-test-first.log
+warning: constant `MAX_ROWS` is never used
+  --> crates/scholium-app/src/widgets/command_box.rs:12:7
+   |
+12 | const MAX_ROWS: usize = 5;
+   |       ^^^^^^^^
+
+warning: struct `CommandBox` is never constructed
+  --> crates/scholium-app/src/widgets/command_box.rs:18:19
+   |
+18 | pub(crate) struct CommandBox<'a> {
+   |                   ^^^^^^^^^^
+
+warning: function `command_box` is never used
+  --> crates/scholium-app/src/widgets/command_box.rs:26:15
+   |
+26 | pub(crate) fn command_box(_ctx: &egui::Context, _input: CommandBox<'_>) -> Option<usize> { None }
+   |               ^^^^^^^^^^^
+
+warning: `scholium-app` (bin "scholium-app" test) generated 10 warnings (run `cargo fix --bin "scholium-app" -p scholium-app --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized] target(s) in 7.37s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-c7f7311f39cf7208)
+
+running 1 test
+test widgets::command_box::tests::popup_flips_above_without_covering_the_caret_line ... FAILED
+
+failures:
+
+---- widgets::command_box::tests::popup_flips_above_without_covering_the_caret_line stdout ----
+
+thread 'widgets::command_box::tests::popup_flips_above_without_covering_the_caret_line' (266820) panicked at crates/scholium-app/src/widgets/command_box.rs:38:13:
+assertion failed: bounds.contains_rect(popup)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    widgets::command_box::tests::popup_flips_above_without_covering_the_caret_line
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 374 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`
+
+## t48-contrast-test-first.log
+warning: constant `MAX_ROWS` is never used
+  --> crates/scholium-app/src/widgets/command_box.rs:12:7
+   |
+12 | const MAX_ROWS: usize = 5;
+   |       ^^^^^^^^
+
+warning: struct `CommandBox` is never constructed
+  --> crates/scholium-app/src/widgets/command_box.rs:18:19
+   |
+18 | pub(crate) struct CommandBox<'a> {
+   |                   ^^^^^^^^^^
+
+warning: function `command_box` is never used
+  --> crates/scholium-app/src/widgets/command_box.rs:26:15
+   |
+26 | pub(crate) fn command_box(_ctx: &egui::Context, _input: CommandBox<'_>) -> Option<usize> { None }
+   |               ^^^^^^^^^^^
+
+warning: `scholium-app` (bin "scholium-app" test) generated 10 warnings (run `cargo fix --bin "scholium-app" -p scholium-app --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized] target(s) in 0.22s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-c7f7311f39cf7208)
+
+running 1 test
+test theme::tests::readable_text_and_control_boundaries_meet_wcag_in_both_themes ... FAILED
+
+failures:
+
+---- theme::tests::readable_text_and_control_boundaries_meet_wcag_in_both_themes stdout ----
+
+thread 'theme::tests::readable_text_and_control_boundaries_meet_wcag_in_both_themes' (266836) panicked at crates/scholium-app/src/theme/tests.rs:157:17:
+Light text #8E_8E_95_FF on #FF_FF_FF_FF: 3.2541277355443547
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    theme::tests::readable_text_and_control_boundaries_meet_wcag_in_both_themes
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 374 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`
+
+## t48-typ-completion-test-first.log
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 1.76s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-c7f7311f39cf7208)
+
+running 1 test
+test source_editor::tests::typst_source_completion_uses_typst_snippets_and_native_undo ... FAILED
+
+failures:
+
+---- source_editor::tests::typst_source_completion_uses_typst_snippets_and_native_undo stdout ----
+
+thread 'source_editor::tests::typst_source_completion_uses_typst_snippets_and_native_undo' (271458) panicked at crates/scholium-app/src/source_editor/tests.rs:235:5:
+assertion `left == right` failed
+  left: None
+ right: Some("alpha")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    source_editor::tests::typst_source_completion_uses_typst_snippets_and_native_undo
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 376 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`
+
+## t48-typ-completion-fixed.log
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 3.02s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-c7f7311f39cf7208)
+
+running 1 test
+test source_editor::tests::typst_source_completion_uses_typst_snippets_and_native_undo ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 379 filtered out; finished in 0.01s
+
+
+## t48-cancel-test-first.log
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-typst)
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-latex)
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-session)
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 4.68s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-c7f7311f39cf7208)
+
+running 1 test
+test source_editor::tests::cancelling_a_source_command_keeps_focus_for_the_next_edit ... FAILED
+
+failures:
+
+---- source_editor::tests::cancelling_a_source_command_keeps_focus_for_the_next_edit stdout ----
+
+thread 'source_editor::tests::cancelling_a_source_command_keeps_focus_for_the_next_edit' (283894) panicked at crates/scholium-app/src/source_editor/tests.rs:251:5:
+assertion `left == right` failed
+  left: "original"
+ right: "nextoriginal"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    source_editor::tests::cancelling_a_source_command_keeps_focus_for_the_next_edit
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 381 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`
+
+## t48-cancel-fixed.log
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 1.61s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-c7f7311f39cf7208)
+
+running 1 test
+test source_editor::tests::cancelling_a_source_command_keeps_focus_for_the_next_edit ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 381 filtered out; finished in 0.01s
+
+
+## t48-pressed-test-first.log
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 2.01s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-c7f7311f39cf7208)
+
+running 1 test
+test theme::tests::readable_text_and_control_boundaries_meet_wcag_in_both_themes ... FAILED
+
+failures:
+
+---- theme::tests::readable_text_and_control_boundaries_meet_wcag_in_both_themes stdout ----
+
+thread 'theme::tests::readable_text_and_control_boundaries_meet_wcag_in_both_themes' (296203) panicked at crates/scholium-app/src/theme/tests.rs:164:17:
+Dark text #A6_A6_A6_FF on #47_47_47_FF: 3.8167059911121077
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    theme::tests::readable_text_and_control_boundaries_meet_wcag_in_both_themes
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 381 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`
+
+## t48-contrast-fixed.log
+   Compiling scholium-latex v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-latex)
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 5.79s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-c7f7311f39cf7208)
+
+running 1 test
+test theme::tests::readable_text_and_control_boundaries_meet_wcag_in_both_themes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 381 filtered out; finished in 0.00s
+
+
+## t48-symbol-font-test-first.log
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 2.71s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-c7f7311f39cf7208)
+
+running 1 test
+test theme::tests::bundled_interface_fonts_cover_every_command_candidate_symbol ... FAILED
+
+failures:
+
+---- theme::tests::bundled_interface_fonts_cover_every_command_candidate_symbol stdout ----
+
+thread 'theme::tests::bundled_interface_fonts_cover_every_command_candidate_symbol' (338732) panicked at crates/scholium-app/src/theme/tests.rs:195:13:
+missing candidate symbol ⩽
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    theme::tests::bundled_interface_fonts_cover_every_command_candidate_symbol
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 382 filtered out; finished in 0.27s
+
+error: test failed, to rerun pass `-p scholium-app --bin scholium-app`
+
+## t48-symbol-font-fixed.log
+   Compiling scholium-app v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt1/crates/scholium-app)
+    Finished `test` profile [unoptimized] target(s) in 2.37s
+     Running unittests src/main.rs (target/debug/deps/scholium_app-c7f7311f39cf7208)
+
+running 1 test
+test theme::tests::bundled_interface_fonts_cover_every_command_candidate_symbol ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 382 filtered out; finished in 0.16s

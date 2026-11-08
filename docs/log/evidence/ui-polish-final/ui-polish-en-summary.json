@@ -1,0 +1,378 @@
+{
+  "tex-cursor-context": {
+    "pass": true,
+    "items": [
+      {
+        "byte": 0,
+        "label": "main.tex"
+      },
+      {
+        "byte": 24,
+        "label": "Introduction"
+      },
+      {
+        "byte": 47,
+        "label": "Method"
+      },
+      {
+        "byte": 67,
+        "label": "equation"
+      }
+    ]
+  },
+  "tex-jump-2": {
+    "pass": true,
+    "position": [
+      3,
+      1
+    ]
+  },
+  "tex-jump-1": {
+    "pass": true,
+    "position": [
+      2,
+      1
+    ]
+  },
+  "tex-jump-0": {
+    "pass": true,
+    "position": [
+      1,
+      1
+    ]
+  },
+  "settings-light-1440-fits": {
+    "pass": true,
+    "rect": [
+      440.0,
+      274.0,
+      1000.0,
+      627.0
+    ]
+  },
+  "settings-light-1024-fits": {
+    "pass": true,
+    "rect": [
+      232.0,
+      174.0,
+      792.0,
+      527.0
+    ]
+  },
+  "settings-light-480-fits": {
+    "pass": true,
+    "rect": [
+      16.0,
+      165.0,
+      464.0,
+      535.0
+    ]
+  },
+  "settings-dark-1440-fits": {
+    "pass": true,
+    "rect": [
+      440.0,
+      274.0,
+      1000.0,
+      627.0
+    ]
+  },
+  "settings-dark-1024-fits": {
+    "pass": true,
+    "rect": [
+      232.0,
+      174.0,
+      792.0,
+      527.0
+    ]
+  },
+  "settings-dark-480-fits": {
+    "pass": true,
+    "rect": [
+      16.0,
+      165.0,
+      464.0,
+      535.0
+    ]
+  },
+  "source-popup-below-caret": {
+    "pass": true,
+    "popup": {
+      "above": false,
+      "caret": [
+        42.0,
+        126.0,
+        42.0,
+        143.0
+      ],
+      "query": "al",
+      "rect": [
+        42.0,
+        147.0,
+        362.0,
+        237.0
+      ]
+    }
+  },
+  "source-popup-flips-above": {
+    "pass": true,
+    "popup": {
+      "above": true,
+      "caret": [
+        42.0,
+        908.0,
+        42.0,
+        925.0
+      ],
+      "query": "",
+      "rect": [
+        42.0,
+        710.0,
+        362.0,
+        904.0
+      ]
+    }
+  },
+  "conflict-light-1440-fits": {
+    "pass": true,
+    "rect": [
+      440.0,
+      350.0,
+      1000.0,
+      550.0
+    ]
+  },
+  "conflict-light-1024-fits": {
+    "pass": true,
+    "rect": [
+      232.0,
+      250.0,
+      792.0,
+      450.0
+    ]
+  },
+  "conflict-light-480-fits": {
+    "pass": true,
+    "rect": [
+      16.0,
+      250.0,
+      464.0,
+      450.0
+    ]
+  },
+  "conflict-dark-1440-fits": {
+    "pass": true,
+    "rect": [
+      440.0,
+      350.0,
+      1000.0,
+      550.0
+    ]
+  },
+  "conflict-dark-1024-fits": {
+    "pass": true,
+    "rect": [
+      232.0,
+      250.0,
+      792.0,
+      450.0
+    ]
+  },
+  "conflict-dark-480-fits": {
+    "pass": true,
+    "rect": [
+      16.0,
+      250.0,
+      464.0,
+      450.0
+    ]
+  },
+  "typ-cursor-context": {
+    "pass": true,
+    "items": [
+      {
+        "byte": 0,
+        "label": "main.typ"
+      },
+      {
+        "byte": 0,
+        "label": "Introduction"
+      },
+      {
+        "byte": 15,
+        "label": "Method"
+      },
+      {
+        "byte": 25,
+        "label": "math"
+      }
+    ]
+  },
+  "typ-jump-2": {
+    "pass": true,
+    "position": [
+      2,
+      1
+    ]
+  },
+  "typ-jump-1": {
+    "pass": true,
+    "position": [
+      1,
+      1
+    ]
+  },
+  "typ-jump-0": {
+    "pass": true,
+    "position": [
+      1,
+      1
+    ]
+  },
+  "page-popup-clears-caret": {
+    "pass": true,
+    "popup": {
+      "above": false,
+      "caret": [
+        522.9773559570312,
+        342.1616516113281,
+        522.9773559570312,
+        361.0807800292969
+      ],
+      "query": "al",
+      "rect": [
+        522.9773559570312,
+        365.0807800292969,
+        842.9773559570312,
+        455.0807800292969
+      ]
+    }
+  },
+  "page-popup-flips-above": {
+    "pass": true,
+    "popup": {
+      "above": true,
+      "caret": [
+        234.80380249023438,
+        515.24462890625,
+        234.80380249023438,
+        531.8916015625
+      ],
+      "query": "",
+      "rect": [
+        234.80380249023438,
+        317.24462890625,
+        554.8038330078125,
+        511.24462890625
+      ]
+    }
+  },
+  "new-project-light-1440-fits": {
+    "pass": true,
+    "rect": [
+      440.0,
+      236.0,
+      1000.0,
+      664.0
+    ]
+  },
+  "new-project-light-1024-fits": {
+    "pass": true,
+    "rect": [
+      232.0,
+      136.0,
+      792.0,
+      564.0
+    ]
+  },
+  "new-project-light-480-fits": {
+    "pass": true,
+    "rect": [
+      16.0,
+      136.0,
+      464.0,
+      564.0
+    ]
+  },
+  "new-project-dark-1440-fits": {
+    "pass": true,
+    "rect": [
+      440.0,
+      236.0,
+      1000.0,
+      664.0
+    ]
+  },
+  "new-project-dark-1024-fits": {
+    "pass": true,
+    "rect": [
+      232.0,
+      136.0,
+      792.0,
+      564.0
+    ]
+  },
+  "new-project-dark-480-fits": {
+    "pass": true,
+    "rect": [
+      16.0,
+      136.0,
+      464.0,
+      564.0
+    ]
+  },
+  "open-light-1440-fits": {
+    "pass": true,
+    "rect": [
+      440.0,
+      336.0,
+      1000.0,
+      564.0
+    ]
+  },
+  "open-light-1024-fits": {
+    "pass": true,
+    "rect": [
+      232.0,
+      236.0,
+      792.0,
+      464.0
+    ]
+  },
+  "open-light-480-fits": {
+    "pass": true,
+    "rect": [
+      16.0,
+      236.0,
+      464.0,
+      464.0
+    ]
+  },
+  "open-dark-1440-fits": {
+    "pass": true,
+    "rect": [
+      440.0,
+      336.0,
+      1000.0,
+      564.0
+    ]
+  },
+  "open-dark-1024-fits": {
+    "pass": true,
+    "rect": [
+      232.0,
+      236.0,
+      792.0,
+      464.0
+    ]
+  },
+  "open-dark-480-fits": {
+    "pass": true,
+    "rect": [
+      16.0,
+      236.0,
+      464.0,
+      464.0
+    ]
+  }
+}

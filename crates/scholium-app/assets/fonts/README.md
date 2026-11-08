@@ -1,7 +1,7 @@
 # 随应用分发的字体
 
 字体资产依据 [ADR 0011](../../../../docs/adr/ADR-0011-font-asset-licenses.md)，全部保留原始字体字节、名称、版权与许可；未修改、未子集化。
-仓库仅提交五个 `.br` 无损容器，不保存解压后的 `.otf` / `.ttf` 文件。
+正文使用五个 `.br` 无损容器；界面数学符号回退另带原始 Noto Sans Math TTF，直接交给 egui，避免补全候选显示缺字方框。
 运行时不下载字体，首次离线启动即可使用。
 
 ## Noto Sans CJK SC Regular
@@ -48,3 +48,13 @@ done
 ```
 
 分发二进制时须同时保留本说明、OFL.txt、OFL-Liberation.txt 与字体中的版权信息。
+
+
+## Noto Sans Math Regular 3.000（界面符号回退）
+
+- 来源：https://github.com/notofonts/math ，本机 `noto-fonts 1:2026.11.01-1` 原始字体，未修改、未子集化。
+- 文件：`NotoSansMath-Regular.ttf`，990,564 bytes。
+- SHA-256：`d51afd5739c7ba6c44fcab35a88160e25dfb69a2d4ad0bd99533f8d894af1f96`。
+- 字体内嵌版权：Copyright 2022 Google LLC. All Rights Reserved.；内嵌许可明确为 SIL OFL 1.1，完整许可见 [OFL-Math.txt](OFL-Math.txt)。
+- 仅作为界面字体链中缺字时的回退，不改变正文 Typst 字体配置；无系统字体的单测覆盖全部命令候选符号。
+- 分发时同时带本说明与 OFL-Math.txt。TTF 原始字节直接嵌入，运行时无需读取系统路径或下载。
