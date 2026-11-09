@@ -51,7 +51,7 @@ def run_case(folder, switch):
         app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
     try:
         wait(lambda s: s["current"], "first scene")
-        window = subprocess.check_output(["xdotool", "search", "--pid", str(app.pid)],
+        window = subprocess.check_output(["xdotool", "search", "--sync", "--onlyvisible", "--pid", str(app.pid)],
                                          env=env, text=True).split()[0]
         xdo("windowfocus", window)
         paste("主题切换 source text\n第二行 readable glyphs")
