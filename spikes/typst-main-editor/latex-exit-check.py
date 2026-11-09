@@ -56,7 +56,7 @@ def paper(engine):
         if engine == "lualatex":
             assert current_event(window, body_revision, True), "body paragraph update absent"
             assert current_event(window, body_revision, False), "body full build absent"
-        body_pixels = window.settled_pixels()
+        body_pixels = window.settled_pixels(unlike=initial_pixels, timeout=15)
         assert body_pixels != initial_pixels, "body edit did not alter preview pixels"
         # Replace a formula through the same native clipboard event path.
         text = window.state()["text"].replace("x^2+1", "x^3+2")
@@ -65,7 +65,7 @@ def paper(engine):
         window.ready(revision, full=True)
         if engine == "lualatex":
             assert current_event(window, revision, True), "formula paragraph update absent"
-        formula_pixels = window.settled_pixels()
+        formula_pixels = window.settled_pixels(unlike=body_pixels, timeout=15)
         assert formula_pixels != body_pixels, "formula edit did not alter preview pixels"
         record(engine + "-edit", body_revision=body_revision, formula_revision=revision,
                body_pixels=body_pixels, formula_pixels=formula_pixels,

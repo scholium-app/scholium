@@ -99,3 +99,11 @@ Typst fork 与独立 stock：系统字体 31/31、bundled 字体 31/31 像素对
 
 全部六条出口均完成本地自动验收；没有剩余实现项。专用 CI workflow 尚未运行，不轮询 CI；不创建 PR，由协调者起草。
 没有偏离验收要求；额外修改 source-preview-layout 仅为修复真实 bundle 暴露的过期工具链覆盖名。
+
+## 合并后 CI 的间歇失败（2026-11-09）
+
+合并 main 后专用 workflow 一次在英文 `formula edit did not alter preview pixels` 失败，同一提交重跑双语通过。
+CI 日志中 revision 2 的段落更新与整编均已呈现（`shown_revision` = 2），截图中公式位于采样区域内；
+失败原因是采样在新纹理所在帧呈现前就取到了 200 ms 稳定的旧帧。
+`settled_pixels(unlike=…)` 对“应当改变”的两处断言等待与之前不同的稳定帧（最长 15 s），超时仍返回稳定帧并按原断言失败；
+断言与阈值不变。本机真实 rtex 双语 2/2 通过。

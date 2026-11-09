@@ -117,16 +117,27 @@ class Window:
         return self.screen.pixels([max(r[0]+2, pane[0]+2), max(r[1]+2, pane[1]+35),
                                    min(r[2]-2, pane[2]-18), min(r[3]-2, pane[3]-18)])
 
-    def settled_pixels(self):
+    def settled_pixels(self, unlike=None, timeout=5):
+        """Front-buffer hash once it is stable for 200 ms.
+
+        With `unlike`, keep waiting for a stable frame that differs from it: the audit can report
+        a revision before the frame showing its texture is presented. If none arrives before the
+        timeout the stable frame is returned and the caller's change assertion fails as before.
+        """
         previous, since = None, time.monotonic()
-        deadline = since + 5
+        deadline = since + timeout
+        stable = None
         while time.monotonic() < deadline:
             current = self.pixels()
             if current != previous:
                 previous, since = current, time.monotonic()
             elif time.monotonic() - since >= .2:
-                return current
+                if unlike is None or current != unlike:
+                    return current
+                stable = current
             time.sleep(.02)
+        if stable is not None:
+            return stable
         raise AssertionError("front buffer did not settle")
 
     def snapshot(self, name):
