@@ -1,0 +1,14 @@
+[
+  {
+    "check": "pdf-export",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 13.0
+  },
+  {
+    "check": "pdf-export",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 12.9
+  }
+]

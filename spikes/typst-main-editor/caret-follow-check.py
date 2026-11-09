@@ -16,6 +16,8 @@ import subprocess
 import sys
 import time
 
+from log_reader import reset_log, log_latest
+
 LINES = 45
 WHEEL_CLICKS = 25
 
@@ -32,8 +34,7 @@ results = {}
 
 
 def state():
-    lines = [l for l in log_path.read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
-    return json.loads(lines[-1][6:]) if lines else None
+    return log_latest(log_path)
 
 
 def wait(predicate, what, timeout=90):
@@ -71,6 +72,7 @@ def visible(s):
             and f["caret_bottom_pt"] + margin(f) <= f["view_bottom_pt"] + 1)
 
 
+reset_log(log_path)
 with log_path.open("w") as log:
     app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
 try:

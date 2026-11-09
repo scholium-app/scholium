@@ -14,7 +14,6 @@ through chrome_ui, never by coordinate.
 `--full` keeps lossless PNGs; by default shots are quantized to 256 colors to keep the repository small.
 """
 import argparse
-import json
 import os
 from pathlib import Path
 import shutil
@@ -25,6 +24,8 @@ import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import chrome_ui  # noqa: E402
+
+from log_reader import reset_log, log_entries, log_latest
 
 parser = argparse.ArgumentParser()
 parser.add_argument("binary")
@@ -61,12 +62,12 @@ def run_session(locale, scale):
     log_path = work / "app.log"
 
     def state():
-        lines = [l for l in log_path.read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
-        return json.loads(lines[-1][6:]) if lines else None
+        return log_latest(log_path)
 
     def xdo(*a):
         subprocess.run(["xdotool", *map(str, a)], check=True, env=env)
 
+    reset_log(log_path)
     with log_path.open("w") as log:
         app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
     try:
@@ -130,13 +131,13 @@ def set_theme(chrome, theme):
 def new_document(chrome, work, xdo, window, scale):
     """File > New through the "+" tab button, confirming the discard dialog by its audited button."""
     log = work / "app.log"
-    seen = log.read_text().count("DIALOG ")
+    seen = len(log_entries(log, "DIALOG "))
     chrome.click("file.new", "tab")
     end = time.monotonic() + 10
     while time.monotonic() < end:
-        dialogs = [l for l in log.read_text().split("\n") if l.startswith("DIALOG ")]
+        dialogs = log_entries(log, "DIALOG ")
         if len(dialogs) > seen:
-            x, y = json.loads(dialogs[-1][7:])["proceed"]
+            x, y = dialogs[-1]["proceed"]
             time.sleep(0.3)
             xdo("mousemove", "--window", window, round(x * float(scale)), round(y * float(scale)))
             xdo("click", 1)

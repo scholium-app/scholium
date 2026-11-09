@@ -1,0 +1,8 @@
+{
+  "base_commit": "e39553f1432924af375ee21686e89506e2c36c10",
+  "platform": "Linux-7.2.14-arch1-1-x86_64-with-glibc2.44",
+  "python": "3.14.9",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "binary_sha256": "93d14adb63d16f96428400f283969627b564be477aff27c280c5eec745fd6c7b",
+  "cpu": "13th Gen Intel(R) Core(TM) i7-13650HX"
+}

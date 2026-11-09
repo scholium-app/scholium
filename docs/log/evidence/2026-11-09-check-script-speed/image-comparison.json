@@ -1,0 +1,14 @@
+{
+  "original_count": 526,
+  "evidence_count": 530,
+  "missing": [],
+  "additional": [
+    "zh-Hans/pdf-export/source/source-export-error.png",
+    "zh-Hans/problem-panel/typ-source/build-output.png",
+    "zh-Hans/problem-panel/typ-source/problems-dark.png",
+    "zh-Hans/problem-panel/typ-source/problems-light.png"
+  ],
+  "corrected_original_count": 530,
+  "corrected_missing": [],
+  "corrected_additional": []
+}

@@ -9,6 +9,8 @@ import sys
 import subprocess
 import time
 
+from check_evidence import evidence_enabled
+
 ROOT = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location("parity", ROOT / "parity-check.py")
 parity = importlib.util.module_from_spec(spec)
@@ -25,9 +27,10 @@ def main():
         caret = parity.cursor_caret(state)
         assert caret and caret["exact"], f"no exact edge caret at step {step}"
         assert state["chrome"]["facts"]["status"]["context"] == "chrome.status.context.math"
-        time.sleep(0.12)  # AUDIT precedes presentation; not a timing measurement.
-        subprocess.run(["import", "-window", replay.window, str(output / f"edge-{step}.png")],
-                       env=replay.env, check=True, timeout=20)
+        if evidence_enabled():
+            time.sleep(0.12)  # AUDIT precedes presentation; not a timing measurement.
+            subprocess.run(["import", "-window", replay.window, str(output / f"edge-{step}.png")],
+                           env=replay.env, check=True, timeout=20)
     parity.scenario(binary, scenario, output / "replay", on_step=capture)
     import json
     rows = json.loads((output / "replay" / "steps.json").read_text())

@@ -10,6 +10,8 @@ import time
 
 from latex_exit_window import Window
 
+from log_reader import log_entries
+
 binary, out = map(lambda p: Path(p).resolve(), sys.argv[1:3])
 out.mkdir(parents=True, exist_ok=True)
 assert not any(out.iterdir()), "output must be empty"
@@ -39,8 +41,8 @@ def paper(engine):
         if engine == "xelatex":
             assert initial["origin"] == ["FullCompilation"] * initial["pages"]
         window.settled_pixels()
-        ui_labels = [json.loads(line[8:])["chrome"]["facts"]["status"]["engine_state"]
-                     for line in window.log.read_text().splitlines() if line.startswith("PROJECT ")]
+        ui_labels = [s["chrome"]["facts"]["status"]["engine_state"]
+                     for s in log_entries(window.log, "PROJECT ")]
         ui_label = ui_labels[-1]
         assert ("Full build" if os.environ.get("SCHOLIUM_LOCALE") == "en" else "整编") in ui_label
         record(engine + "-open", page_count=initial["page_count"], status=initial["status"],

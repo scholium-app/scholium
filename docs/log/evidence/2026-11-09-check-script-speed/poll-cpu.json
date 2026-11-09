@@ -1,0 +1,32 @@
+[
+  {
+    "log": "/tmp/t53-before/zh-Hans/chrome/app.log",
+    "sha256": "d08b16871a1588fe97b7ef30fdd53d8936784d1ffc1a5bffe7ef9d873f6e6bfd",
+    "polls": 100,
+    "log_bytes": 1987156,
+    "legacy_bytes": 198715600,
+    "incremental_bytes": 1987156,
+    "legacy_cpu_seconds": 0.27506706000000003,
+    "incremental_cpu_seconds": 0.023339834000000004
+  },
+  {
+    "log": "/tmp/t53-before/zh-Hans/start-page-dialogs/light/dialogs.log",
+    "sha256": "dff2575bfa17194121e35b21b054f2e0a128ca5446105dda80689cc5ad4bf9ab",
+    "polls": 100,
+    "log_bytes": 15508389,
+    "legacy_bytes": 1550838900,
+    "incremental_bytes": 15508389,
+    "legacy_cpu_seconds": 4.700950478999999,
+    "incremental_cpu_seconds": 0.021760690999999888
+  },
+  {
+    "log": "/tmp/t53-before/zh-Hans/diagnostics/app.log",
+    "sha256": "a9b87bea7ed90bd166a7a5bf1ab683305b77192c8fba941556730056b0cf4e7a",
+    "polls": 100,
+    "log_bytes": 27405564,
+    "legacy_bytes": 2740556400,
+    "incremental_bytes": 27405564,
+    "legacy_cpu_seconds": 3.6253219270000008,
+    "incremental_cpu_seconds": 0.32595878799999944
+  }
+]

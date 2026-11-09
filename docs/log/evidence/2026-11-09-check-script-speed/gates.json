@@ -1,0 +1,132 @@
+[
+  {
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "seconds": 0.9938675869998406
+  },
+  {
+    "command": [
+      "cargo",
+      "clippy",
+      "--locked",
+      "--workspace",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 0,
+    "seconds": 5.492524108994985
+  },
+  {
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "--workspace"
+    ],
+    "exit_code": 0,
+    "seconds": 62.00033403899579
+  },
+  {
+    "command": [
+      "cargo",
+      "doc",
+      "--locked",
+      "--workspace",
+      "--no-deps"
+    ],
+    "exit_code": 0,
+    "seconds": 29.522369100006472
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/check-rust-size.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.027255196997430176
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/check-doc-links.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.17033201400045073
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/check-ui-strings.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.15631090300303185
+  },
+  {
+    "command": [
+      "python3",
+      "scripts/check-layers.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.33281735600030515
+  },
+  {
+    "command": [
+      "cargo",
+      "deny",
+      "--locked",
+      "check",
+      "licenses",
+      "bans",
+      "sources"
+    ],
+    "exit_code": 0,
+    "seconds": 0.6824327729991637
+  },
+  {
+    "command": [
+      "cargo",
+      "build",
+      "--locked",
+      "-p",
+      "scholium-app",
+      "-p",
+      "scholium-storage",
+      "--bins"
+    ],
+    "exit_code": 0,
+    "seconds": 0.2963806069965358
+  },
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "spikes/typst-main-editor",
+      "-p",
+      "test_*.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.09178670299297664
+  },
+  {
+    "command": [
+      "python3",
+      "-m",
+      "compileall",
+      "-q",
+      "spikes/typst-main-editor"
+    ],
+    "exit_code": 0,
+    "seconds": 0.05871255500096595
+  }
+]
