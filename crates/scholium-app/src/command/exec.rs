@@ -23,6 +23,6 @@ fn perform(state: &mut WorkspaceState, action: Action) {
         Action::Undo => state.undo_requested = true,
         Action::Redo => state.redo_requested = true,
         // Clipboard needs the window context; `ui::invoke` sends it.
-        Action::Clipboard(_) | Action::None => {}
+        Action::Clipboard(_) | Action::SourceFind(_) | Action::None => {}
     }
 }

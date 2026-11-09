@@ -3,16 +3,57 @@ use serde::Deserialize;
 use serde_json::Value;
 use std::sync::{
     Arc,
-    atomic::{AtomicUsize, Ordering},
+    atomic::{AtomicBool, AtomicUsize, Ordering},
 };
 use tokio::{
     io::{AsyncRead, AsyncReadExt},
     sync::mpsc,
 };
 
+const REVISION_BYTES: usize = 32 * 1024 * 1024;
+const REVISION_MESSAGES: usize = 4096;
+#[derive(Debug, Default)]
+pub(crate) struct Budget {
+    pub quota: Arc<AtomicBool>,
+    pub bytes: AtomicUsize,
+    pub revision_bytes: AtomicUsize,
+    pub messages: AtomicUsize,
+}
+impl Budget {
+    pub fn revision(&self) {
+        self.revision_bytes.store(0, Ordering::Relaxed);
+        self.messages.store(0, Ordering::Relaxed);
+    }
+}
+fn classify(value: Value) -> Incoming {
+    let known = value.get("reply").and_then(Value::as_str).is_some_and(|s| {
+        matches!(
+            s,
+            "status" | "edit" | "set_document" | "spans" | "error" | "request_layout" | "quit"
+        )
+    }) || value.get("event").and_then(Value::as_str).is_some_and(|s| {
+        matches!(
+            s,
+            "EngineState"
+                | "ParagraphUpdate"
+                | "LayoutUpdate"
+                | "Diagnostics"
+                | "BackgroundScheduled"
+        )
+    });
+    if !known {
+        return Incoming::Diagnostic("unknown protocol message".into());
+    }
+    match crate::view::validate::message(&value) {
+        Ok(()) => Incoming::Message(value),
+        Err(error) => Incoming::Fatal(error.to_string()),
+    }
+}
+
 #[derive(Debug)]
 pub(crate) enum Incoming {
     Message(Value),
+    OutputQuota,
     Diagnostic(String),
     Fatal(String),
 }
@@ -21,7 +62,7 @@ pub(crate) async fn read(
     mut reader: impl AsyncRead + Unpin,
     sender: mpsc::Sender<Incoming>,
     limits: (usize, usize),
-    total: Arc<AtomicUsize>,
+    total: Arc<Budget>,
     stderr: bool,
 ) {
     let mut line = Vec::new();
@@ -38,7 +79,12 @@ pub(crate) async fn read(
                             .await;
                     }
                 } else {
-                    let _ = sender.send(Incoming::Fatal("serve EOF".into())).await;
+                    let message = if total.quota.load(Ordering::Acquire) {
+                        Incoming::OutputQuota
+                    } else {
+                        Incoming::Fatal("serve EOF".into())
+                    };
+                    let _ = sender.send(message).await;
                 }
                 return;
             }
@@ -50,7 +96,17 @@ pub(crate) async fn read(
                 return;
             }
         };
-        if total.fetch_add(n, Ordering::Relaxed).saturating_add(n) > limits.1 {
+        if total
+            .bytes
+            .fetch_add(n, Ordering::Relaxed)
+            .saturating_add(n)
+            > limits.1
+            || total
+                .revision_bytes
+                .fetch_add(n, Ordering::Relaxed)
+                .saturating_add(n)
+                > REVISION_BYTES
+        {
             let _ = sender
                 .send(Incoming::Fatal("total output limit exceeded".into()))
                 .await;
@@ -67,11 +123,19 @@ pub(crate) async fn read(
                 return;
             }
             if byte == b'\n' {
+                if total.messages.fetch_add(1, Ordering::Relaxed) >= REVISION_MESSAGES {
+                    let _ = sender
+                        .send(Incoming::Fatal(
+                            "revision message count limit exceeded".into(),
+                        ))
+                        .await;
+                    return;
+                }
                 let message = if stderr {
                     Incoming::Diagnostic(String::from_utf8_lossy(&line).into_owned())
                 } else {
                     match serde_json::from_slice::<Value>(&line) {
-                        Ok(value) if value.is_object() => Incoming::Message(value),
+                        Ok(value) if value.is_object() => classify(value),
                         _ => Incoming::Diagnostic("malformed JSON message".into()),
                     }
                 };

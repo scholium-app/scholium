@@ -173,6 +173,7 @@ pub(crate) enum Action {
     Undo,
     Redo,
     Clipboard(ClipboardOp),
+    SourceFind(crate::source_editor::find::FindAction),
     /// Not integrated yet; availability reports `Unimplemented`.
     None,
 }
@@ -221,6 +222,7 @@ impl Kernel {
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct CommandContext {
     pub(crate) has_document: bool,
+    pub(crate) source_authority: bool,
     pub(crate) mode: ViewMode,
     pub(crate) composing: bool,
     pub(crate) in_math: bool,

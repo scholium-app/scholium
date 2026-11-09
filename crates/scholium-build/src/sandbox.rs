@@ -17,6 +17,14 @@ pub enum BuildProfile {
     FullCompilation,
     /// Bounded external Typst source preview, without a TeX runtime or font cache.
     TypstPreview,
+    /// Isolated PDF decoder; no project fonts or TeX runtime.
+    PdfDecode,
+}
+
+impl BuildProfile {
+    pub(crate) fn is_worker(self) -> bool {
+        matches!(self, Self::TypstPreview | Self::PdfDecode)
+    }
 }
 
 /// Session-wide cgroup limits. Resident processes have neither a wall-clock nor CPU-seconds limit.
@@ -26,12 +34,19 @@ pub struct ResourceLimits {
     pub memory_bytes: u64,
     /// Maximum number of processes/threads in the cgroup.
     pub tasks: u32,
+    /// Total allocated output bytes per session (includes the writable font cache).
+    pub output_bytes: u64,
+    /// Monitored output entry count and strict copy-out budget, including the root inode.
+    /// Inode/slab allocation itself is hard-bounded by the session memory cgroup.
+    pub output_inodes: u64,
 }
 impl Default for ResourceLimits {
     fn default() -> Self {
         Self {
             memory_bytes: 2 * 1024 * MIB,
             tasks: 64,
+            output_bytes: 512 * MIB,
+            output_inodes: 32_768,
         }
     }
 }
@@ -64,7 +79,11 @@ impl Sandbox {
         toolchain: RtexToolchain,
         limits: ResourceLimits,
     ) -> Result<Self, BuildError> {
-        if limits.memory_bytes == 0 || limits.tasks == 0 {
+        if limits.memory_bytes == 0
+            || limits.tasks == 0
+            || limits.output_bytes == 0
+            || limits.output_inodes == 0
+        {
             return Err(BuildError::Configuration("zero resource budget".into()));
         }
         let mut sandbox = Self {
@@ -98,7 +117,11 @@ impl Sandbox {
         font_cache: PathBuf,
         limits: ResourceLimits,
     ) -> Result<Self, BuildError> {
-        if limits.memory_bytes == 0 || limits.tasks == 0 {
+        if limits.memory_bytes == 0
+            || limits.tasks == 0
+            || limits.output_bytes == 0
+            || limits.output_inodes == 0
+        {
             return Err(BuildError::Configuration("zero resource budget".into()));
         }
         let mut sandbox = Self {
@@ -152,9 +175,9 @@ impl Sandbox {
             .output(self.deadline(deadline))
             .await;
         match result {
-            Err(BuildError::Timeout(_)) if self.profile == BuildProfile::TypstPreview => Err(
-                BuildError::Timeout("Typst preview exceeded its 10 second budget"),
-            ),
+            Err(BuildError::Timeout(_)) if self.profile.is_worker() => Err(BuildError::Timeout(
+                "Typst preview exceeded its 10 second budget",
+            )),
             result => result,
         }
     }
@@ -177,7 +200,7 @@ impl Sandbox {
                 "project and output must be separate".into(),
             ));
         }
-        if self.profile == BuildProfile::TypstPreview {
+        if self.profile.is_worker() {
             if self.mounts.values().any(|input| overlaps(input, &work)) {
                 return Err(BuildError::Configuration(
                     "trusted inputs and output must be separate".into(),
@@ -198,6 +221,19 @@ impl Sandbox {
         self.spawn(&project, &work, session, argv)
     }
 
+    /// Read a bounded regular file from a running session's private output volume.
+    /// Relative paths are capability-confined; outputs are not exposed as host mounts.
+    /// # Errors
+    /// Reports a missing session/file, escaped paths, non-regular files or excess bytes.
+    pub fn read_output(
+        &self,
+        work: &Path,
+        relative: &Path,
+        limit: u64,
+    ) -> Result<Vec<u8>, BuildError> {
+        crate::quota::read(&work.canonicalize()?, relative, limit)
+    }
+
     pub(crate) fn cache_path(&self) -> Result<&Path, BuildError> {
         self.toolchain
             .as_ref()
@@ -206,7 +242,7 @@ impl Sandbox {
     }
 
     pub(crate) fn deadline(&self, requested: Duration) -> Duration {
-        if self.profile == BuildProfile::TypstPreview {
+        if self.profile.is_worker() {
             requested.min(crate::typst_preview::WALL_TIME)
         } else {
             requested

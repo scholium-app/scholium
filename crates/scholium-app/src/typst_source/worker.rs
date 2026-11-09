@@ -69,7 +69,16 @@ impl Backend {
                         error: Some(error.to_string()),
                         diagnostics: DiagnosticBatch {
                             revision: request.revision,
-                            items: Vec::new(),
+                            items: if error
+                                .to_string()
+                                .contains("output byte or inode limit exceeded")
+                            {
+                                vec![scholium_model::diagnostic::Diagnostic::output_quota(
+                                    scholium_model::diagnostic::DiagnosticKernel::Typst,
+                                )]
+                            } else {
+                                Vec::new()
+                            },
                         },
                         pages: Vec::new(),
                         elapsed: started.elapsed(),
@@ -94,6 +103,9 @@ async fn compile(root: &Path, request: &Request) -> std::io::Result<Update> {
     let mut pages = Vec::new();
     let mut remaining = OUTPUT_LIMIT;
     for (index, [width, height]) in metadata.pages.into_iter().enumerate() {
+        if width == 0 || height == 0 || width > 8192 || height > 8192 {
+            return Err(std::io::ErrorKind::InvalidData.into());
+        }
         let size = u64::from(width)
             .checked_mul(u64::from(height))
             .and_then(|n| n.checked_mul(4))
@@ -169,6 +181,7 @@ async fn execute(root: &Path, request: &Request) -> std::io::Result<(tempfile::T
     if metadata.version != 1
         || metadata.revision != request.revision
         || metadata.diagnostics.revision != request.revision
+        || metadata.diagnostics.items.len() > 1024
         || metadata.pages.len() > scholium_typst::MAX_PREVIEW_PAGES
     {
         return Err(std::io::ErrorKind::InvalidData.into());
@@ -178,9 +191,11 @@ async fn execute(root: &Path, request: &Request) -> std::io::Result<(tempfile::T
 
 fn bounded_read(path: &Path, limit: u64) -> std::io::Result<Vec<u8>> {
     let mut bytes = Vec::new();
-    std::fs::File::open(path)?
-        .take(limit + 1)
-        .read_to_end(&mut bytes)?;
+    let file = std::fs::File::open(path)?;
+    if !file.metadata()?.is_file() {
+        return Err(std::io::ErrorKind::InvalidData.into());
+    }
+    file.take(limit + 1).read_to_end(&mut bytes)?;
     if bytes.len() as u64 > limit {
         return Err(std::io::ErrorKind::InvalidData.into());
     }

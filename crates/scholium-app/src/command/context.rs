@@ -7,6 +7,7 @@ impl CommandContext {
         let view = state.editor.as_ref();
         Self {
             has_document: state.has_document(),
+            source_authority: state.source_language.is_some(),
             mode: state.mode,
             composing: state.composition.is_some(),
             in_math: view.is_some_and(|v| v.in_math),

@@ -1,10 +1,12 @@
 //! Shared native source surface. Language kernels supply text, highlights and diagnostics.
 mod completion;
+pub(crate) mod find;
 mod gutter;
 mod highlight;
 mod jump;
 pub(crate) mod layout;
 pub(crate) mod navigation;
+mod search;
 #[cfg(test)]
 mod tests;
 mod underline;
@@ -34,8 +36,10 @@ pub(crate) struct SourceEditor {
     selection: Option<Range<usize>>,
     follow_selection: bool,
     history: (bool, bool),
-    query: String,
+    search: search::Search,
     find_open: bool,
+    replace_open: bool,
+    find_focus: bool,
     composing: bool,
     command: Engine,
     focus: bool,
@@ -73,16 +77,11 @@ impl SourceEditor {
         locale: crate::i18n::Locale,
     ) -> bool {
         let before = text.clone();
-        if ui.is_enabled()
-            && ui.input_mut(|i| i.consume_key(egui::Modifiers::COMMAND, egui::Key::F))
-        {
-            self.find_open = !self.find_open;
+        if ui.is_enabled() {
+            self.find_input(ui);
         }
         if self.find_open {
-            ui.horizontal(|ui| {
-                ui.label(crate::i18n::text(locale, "source.editor.find"));
-                crate::widgets::text_input(ui, &mut self.query, None);
-            });
+            self.find_bar(ui, text, locale);
         }
         if ui.is_enabled() && self.typst {
             for event in ui.input(|i| i.events.clone()) {
@@ -106,16 +105,9 @@ impl SourceEditor {
             self.ime_undo = Some(undo);
         }
         let mut buffer = self.draft.take().unwrap_or_else(|| text.clone());
-        let mut ranges = marks.to_vec();
-        if self.find_open && !self.query.is_empty() {
-            ranges.extend(text.match_indices(&self.query).map(|(start, hit)| Mark {
-                bytes: start..start + hit.len(),
-                color: crate::theme::tokens(ui.ctx()).active_bg,
-                message: None,
-                severity: None,
-            }));
-        }
+        let ranges = marks.to_vec();
         let mut output = self.surface(ui, &mut buffer, highlights, &ranges, marks);
+        self.paint_matches(ui, &buffer, &output);
         self.follow_selection = false;
         if let Some(cursor) = output
             .cursor_range

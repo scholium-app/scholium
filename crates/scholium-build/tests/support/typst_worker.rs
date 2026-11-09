@@ -11,6 +11,21 @@ fn main() {
             fs::write("/out/ticks", format!("{:?}", std::time::Instant::now())).expect("tick");
             std::thread::sleep(Duration::from_millis(25));
         },
+        Some("quota-bytes") | Some("quota-inodes") => {
+            let bytes = std::env::args().nth(1).as_deref() == Some("quota-bytes");
+            for index in 0..1024 {
+                let data = if bytes { vec![b'x'; 8192] } else { Vec::new() };
+                if fs::write(format!("/out/file-{index}"), data).is_err() { break; }
+            }
+        }
+        Some("memory-charge") => {
+            println!("ready");
+            std::io::stdin().read_line(&mut String::new()).expect("start");
+            fs::write("/out/pages", vec![0; 32 * 1024 * 1024]).expect("tmpfs pages");
+            for index in 0..12000 { fs::write(format!("/out/inode-{index}"), []).expect("tmpfs inode"); }
+            println!("charged");
+            std::io::stdin().read_line(&mut String::new()).expect("finish");
+        }
         Some("spam") => {
             std::io::stdout().write_all(&vec![b'x'; 2 * 1024 * 1024]).expect("output");
         }
@@ -19,6 +34,16 @@ fn main() {
 }
 
 fn verify() {
+    let status = fs::read_to_string("/proc/self/status").expect("status");
+    assert!(status.lines().any(|s| s == "CapEff:\t0000000000000000"), "capabilities retained");
+    assert!(status.lines().any(|s| s == "NoNewPrivs:\t1"), "no_new_privs missing");
+    unsafe extern "C" { fn unshare(flags: i32) -> i32; fn mount(source: *const u8, target: *const u8, filesystem: *const u8, flags: usize, data: *const u8) -> i32; }
+    // SAFETY: unshare(0) has no namespace side effect and is rejected by the inherited filter.
+    assert_eq!(unsafe { unshare(0) }, -1, "non-bwrap namespace syscall must be blocked");
+    assert_eq!(std::io::Error::last_os_error().raw_os_error(), Some(1));
+    // SAFETY: null arguments cannot mount anything; seccomp rejects before argument validation.
+    assert_eq!(unsafe { mount(std::ptr::null(), std::ptr::null(), std::ptr::null(), 0, std::ptr::null()) }, -1);
+    assert_eq!(std::io::Error::last_os_error().raw_os_error(), Some(1), "mount must return EPERM");
     let request = fs::read_to_string("/request.json").expect("request read");
     let mut lines = request.lines();
     let secret = lines.next().expect("secret path");

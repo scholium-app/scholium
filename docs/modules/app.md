@@ -495,6 +495,8 @@ LaTeX 结构不展开宏，章节保留源码标题而不猜 TeX 计数器；Typ
 界面字体链在缺数学字形时回退到打包的 Noto Sans Math（原始字体与 OFL 许可随应用分发），
 候选符号在无系统字体环境也完整显示；此回退不改变 Typst 正文排版字体。
 
+构建总输出配额错误按统一 Diagnostic 的 `diag.build.output_quota` code 在两种语言下展示。
+
 审计同时设置 `SCHOLIUM_EDITOR_AUDIT` 与 `SCHOLIUM_LATEX_FRAME_AUDIT` 时，LaTeX 窗口以 16 ms 间隔请求帧，
 输出独立 `latex-frame` 的 `interval_ms` 与 `work_ms`；正常运行不启用该测量。
 LaTeX audit 的 `page_count` 是整篇页数，`pages` 是已上传纹理数；`engine_state`、`status`、`elapsed_ms`
@@ -513,8 +515,8 @@ LaTeX FullCompilation 的三引擎整编入口。UI 只捕获输入并轮询完�
 成功状态、统一 DiagnosticBatch，以及 bibliography_processed=false。状态栏显示进度与结果，
 悬停显示具体版本、时间、路径和参考文献未处理说明；AUDIT 模式另输出 PDF_EXPORT JSON。
 
-全部内核产物在共用发布路径中经 hayro-syntax 打开一次并读取页数，不栅格化页面；
-仅以 2 GiB、1–100,000 页阻止病态输出，Typst 还校对编译器页数。
+宿主不解析产物 PDF：页数由编译器报告（Typst 文档页数、LaTeX 日志 `Output written on`），发布路径只检查头尾标记与字节/页数上限，不栅格化页面；
+仅以 2 GiB、1–100,000 页阻止病态输出。
 沙箱 /work 配额是实际构建限制；预览页数/像素预算不限制 PDF 导出。
 解析成功后才在目标同目录写独占临时文件、同步并原子替换。
 目标须为 .pdf，拒绝 symlink/非普通文件；失败不发布部分文件，已有完整目标保留。

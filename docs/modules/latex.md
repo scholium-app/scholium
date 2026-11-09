@@ -270,6 +270,20 @@ LiveSession 的 edit 在当前项目 capability 下先加载目标资源，再�
 跳过注释、转义控制序列、verb 与 verbatim/lstlisting/minted 中的假结构，document 不占环境层级。
 不展开宏、不推断计数器或宏生成的章节；破损未闭合标题不创建目标。调用方按当前文本失效缓存，不保存第二份源码权威。
 
+Live quota 事件终止会话并保留可保存的源码快照；整编 quota 错误作为当前 revision 的 FullFailure 诊断返回。live PDF 由 build 私有卷的 capability 读取。
+
+## 宿主解码预算
+
+协议每行最多 16 MiB、每 generation 总计 64 MiB；每个宿主编辑周期另有 32 MiB/4096 消息预算，
+只有宿主发送 edit/set_document 才重置，子进程声明的 revision 不重置预算。非法 JSON、未知消息产生有界诊断；
+EOF/截断、超额消息终止或按现有恢复策略处理。页数最多 256，drawing 最多 20000 rows/placements、
+100000 items、128 fonts，坐标有界；fragment 索引和数组长度在克隆和绘制前验证。
+日志输入最多 4 MiB、每行/消息 64 KiB、1024 条诊断、128 层文件栈；拒绝/截断带明确 limit 诊断。
+
+hayro 仅在 `scholium-pdf-worker` 的 PdfDecode 子进程执行。宿主验证 version、页码顺序、256 页、
+8192 px 单边、每页 2400 万像素、累计 9600 万像素以及每一 RGBA 帧精确长度；不信任 decoder 元数据。
+decoder 必须与应用同目录安装。Typst 源码预览直接输出受限 RGBA，不解析 PDF；原生 Typst 导出只写 PDF，不在宿主重新解码。
+
 当前 pin 的后台 pass 超时只给出固定格式文本；诊断适配器为无文件位置、error 且精确匹配该 envelope 的消息补充
 `code = pass_timeout`，保留原消息。不把其它引擎故障或普通文档错误标为 pass 超时。
 

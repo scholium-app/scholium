@@ -147,7 +147,7 @@ fn thesis_export_publishes_more_than_256_pages() {
     let pdf = scholium_typst::export_generated_pdf(&generated);
     assert_eq!(pdf.page_count, 300, "{:?}", pdf.diagnostics);
     assert_eq!(
-        worker::publish_pdf(pdf.bytes.expect("PDF"), Some(300), &target).expect("export"),
+        worker::publish_pdf(pdf.bytes.expect("PDF"), 300, &target).expect("export"),
         300
     );
     assert!(target.exists());
@@ -165,17 +165,14 @@ fn hundred_page_export_is_independent_of_preview_pixel_budgets() {
     let pdf = scholium_typst::export_source_pdf("main.typ", &files).expect("fixture");
     assert_eq!(pdf.page_count, 100);
     assert_eq!(
-        worker::publish_pdf(pdf.bytes.expect("PDF"), Some(100), &target).expect("export"),
+        worker::publish_pdf(pdf.bytes.expect("PDF"), 100, &target).expect("export"),
         100
     );
     assert!(target.exists());
     let original = std::fs::read(&target).expect("published PDF");
-    assert_eq!(
-        worker::publish_pdf(original.clone(), None, &target).expect("count without engine hint"),
-        100
-    );
-    assert!(worker::publish_pdf(original.clone(), Some(99), &target).is_err());
-    assert!(worker::publish_pdf(b"%PDF-invalid".to_vec(), None, &target).is_err());
+    assert!(worker::publish_pdf(original.clone(), 0, &target).is_err());
+    assert!(worker::publish_pdf(b"%PDF-invalid".to_vec(), 1, &target).is_err());
+    assert!(worker::publish_pdf(b"not a pdf %%EOF".to_vec(), 1, &target).is_err());
     assert_eq!(std::fs::read(target).expect("preserved PDF"), original);
 }
 

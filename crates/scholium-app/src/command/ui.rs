@@ -102,6 +102,12 @@ pub(crate) fn invoke(ctx: &egui::Context, state: &mut WorkspaceState, id: &str) 
         state.focus_requested = true;
         return;
     }
+    if let Action::SourceFind(action) = spec.action {
+        if (spec.availability)(&CommandContext::of(state)).is_enabled() {
+            crate::source_editor::find::request(ctx, action);
+        }
+        return;
+    }
     if id == "help.shortcuts" {
         ctx.data_mut(|d| d.insert_temp(egui::Id::new("shortcut-help"), true));
         return;

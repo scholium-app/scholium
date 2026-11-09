@@ -23,3 +23,9 @@ fn font_cache_copies_are_independent_and_reject_symlinks() {
 
 mod typst_native;
 mod typst_profile;
+
+mod quota;
+
+mod quota_profiles;
+
+mod memory_charge;

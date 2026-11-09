@@ -641,6 +641,30 @@ math-input-category-structure = Structure
 chrome-status-settings_hint = Open project settings to change the preview engine
 latex-restarting = Restarting preview
 
+diag-build-output-quota = Build stopped: output byte or file-count budget exceeded. Reduce generated files or restart the session.
+
+source-find-previous = Previous
+source-find-next = Next
+source-find-case = Match case
+source-find-word = Whole word
+source-find-close = Close
+source-find-replacement = Replace with
+source-find-replace = Replace
+source-find-replace_all = Replace all
+source-find-count = {$current} / {$count} matches
+source-find-scanning = Searching… {$count} matches
+source-find-limited = Search limit reached; narrow the query
+reason-source_find = Find is available in editable source views.
+command-edit-replace =
+    .title = Replace…
+    .tooltip = Find and replace in source
+command-edit-find_next =
+    .title = Find next
+    .tooltip = Find next match
+command-edit-find_previous =
+    .title = Find previous
+    .tooltip = Find previous match
+
 export-progress = Exporting PDF…
 export-done = PDF exported · { $pages } pages
 export-failed = PDF export failed

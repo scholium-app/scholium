@@ -42,6 +42,7 @@ fn context_from(bits: u32) -> CommandContext {
     let bit = |n: u32| bits & (1 << n) != 0;
     CommandContext {
         has_document: bit(0),
+        source_authority: false,
         mode: if bit(1) {
             ViewMode::Source
         } else {
@@ -255,7 +256,6 @@ fn composition_blocks_writes_file_actions_and_mode_switches() {
 #[test]
 fn unimplemented_commands_are_absent_from_the_registry_and_keymap() {
     for id in [
-        "edit.find",
         "format.underline",
         "document.page_size",
         "document.final_check",

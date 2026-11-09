@@ -38,7 +38,7 @@ jobs:
           path: ~/.cache/scholium-eval
           key: rtex-exit-${{ runner.os }}-${{ hashFiles('spikes/rtex-eval/PIN', 'rust-toolchain.toml', 'scripts/bundle-rtex.py') }}
       - run: python3 scripts/bundle-rtex.py
-      - run: cargo build --locked -p scholium-app --bin scholium-app
+      - run: cargo build --locked --workspace --bins  # app plus scholium-sandbox-fs and scholium-pdf-worker helpers (ADR 0058)
       - name: Real-engine window acceptance (both locales)
         run: python3 scripts/window-checks.py --only latex-exit --locale zh-Hans en --out /tmp/latex-exit
       - uses: actions/upload-artifact@v4

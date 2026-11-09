@@ -149,3 +149,11 @@ pub(super) fn strong(c: &CommandContext) -> bool {
 pub(super) fn emphasis(c: &CommandContext) -> bool {
     c.emphasis
 }
+
+pub(super) fn source_find(c: &CommandContext) -> Availability {
+    if c.source_authority && c.mode == ViewMode::Source && !c.composing {
+        Availability::Enabled
+    } else {
+        Availability::Disabled("reason.source_find")
+    }
+}

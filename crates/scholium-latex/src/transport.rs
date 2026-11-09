@@ -3,12 +3,7 @@ use crate::{
     protocol::{self, Incoming},
 };
 use scholium_build::{Sandbox, SandboxProcess};
-use std::{
-    ffi::OsString,
-    path::PathBuf,
-    sync::{Arc, atomic::AtomicUsize},
-    time::Duration,
-};
+use std::{ffi::OsString, path::PathBuf, sync::Arc, time::Duration};
 use tokio::{io::AsyncWriteExt, process::ChildStdin, sync::mpsc, task::JoinHandle};
 
 #[derive(Debug, Clone)]
@@ -24,22 +19,17 @@ pub(crate) enum Launcher {
 
 impl Launcher {
     pub(crate) fn layout_pdf(&self, version: u64) -> Option<Vec<u8>> {
-        let work = match self {
-            Self::Sandbox { work, .. } => work,
+        match self {
+            Self::Sandbox { sandbox, work, .. } => sandbox
+                .read_output(
+                    work,
+                    std::path::Path::new(&format!("build/bg/layout-{version}.pdf")),
+                    64 * 1024 * 1024,
+                )
+                .ok(),
             #[cfg(test)]
-            Self::Fake { .. } => return None,
-        };
-        let path = work
-            .join(format!("build/bg/layout-{version}.pdf"))
-            .canonicalize()
-            .ok()?;
-        if !path.starts_with(work)
-            || !path.is_file()
-            || path.metadata().ok()?.len() > 64 * 1024 * 1024
-        {
-            return None;
+            Self::Fake { .. } => None,
         }
-        std::fs::read(path).ok()
     }
     pub(crate) async fn capabilities(
         &self,
@@ -176,6 +166,7 @@ pub(crate) struct Worker {
     input: ChildStdin,
     pub(crate) messages: mpsc::Receiver<Incoming>,
     readers: Vec<JoinHandle<()>>,
+    budget: Arc<protocol::Budget>,
 }
 impl Worker {
     fn new(mut process: Process, config: &LiveConfig) -> Result<Self, LatexError> {
@@ -190,7 +181,15 @@ impl Worker {
             return Err(LatexError::Stopped);
         };
         let (sender, messages) = mpsc::channel(8);
-        let total = Arc::new(AtomicUsize::new(0));
+        let quota = match &process {
+            Process::Sandbox(child) => child.output_quota_exceeded(),
+            #[cfg(test)]
+            Process::Fake(_) => Default::default(),
+        };
+        let total = Arc::new(protocol::Budget {
+            quota,
+            ..Default::default()
+        });
         let limits = (config.line_bytes, config.total_bytes);
         let readers = vec![
             tokio::spawn(protocol::read(
@@ -200,13 +199,20 @@ impl Worker {
                 total.clone(),
                 false,
             )),
-            tokio::spawn(protocol::read(err, sender, limits, total, true)),
+            tokio::spawn(protocol::read(
+                err,
+                sender.clone(),
+                limits,
+                total.clone(),
+                true,
+            )),
         ];
         Ok(Self {
             process,
             input,
             messages,
             readers,
+            budget: total,
         })
     }
     pub(crate) async fn send(
@@ -214,6 +220,9 @@ impl Worker {
         value: serde_json::Value,
         timeout: Duration,
     ) -> Result<(), LatexError> {
+        if matches!(value["cmd"].as_str(), Some("edit" | "set_document")) {
+            self.budget.revision();
+        }
         let mut bytes = serde_json::to_vec(&value).map_err(std::io::Error::other)?;
         bytes.push(b'\n');
         tokio::time::timeout(timeout, self.input.write_all(&bytes))

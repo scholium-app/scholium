@@ -3450,6 +3450,7 @@ dependencies = [
  "cfg-if",
  "cfg_aliases",
  "libc",
+ "memoffset",
 ]
 
 [[package]]
@@ -4755,7 +4756,6 @@ dependencies = [
  "eframe",
  "fluent-bundle",
  "fontdb",
- "hayro-syntax 0.8.0",
  "resvg",
  "scholium-build",
  "scholium-document",
@@ -4779,6 +4779,7 @@ dependencies = [
 name = "scholium-build"
 version = "0.1.0"
 dependencies = [
+ "cap-std",
  "nix",
  "serde_json",
  "tempfile",

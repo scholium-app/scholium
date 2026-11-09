@@ -209,17 +209,22 @@ fn problem_row(ui: &mut Ui, state: &mut WorkspaceState, issue: &Diagnostic, inde
         .as_ref()
         .map(|r| format!("{}:{}", r.start.line, r.start.column))
         .or_else(|| issue.log.as_ref().map(|l| format!("log:{}", l.line)));
+    let message = if issue.code.as_deref() == Some("diag.build.output.quota") {
+        i18n::text(state.locale.resolve(), "diag.build.output.quota")
+    } else {
+        issue.message.clone()
+    };
     let name = format!(
         "{}: {} {} {}",
         i18n::text(state.locale.resolve(), key),
-        issue.message,
+        message,
         issue.resource.as_deref().unwrap_or_default(),
         location.as_deref().unwrap_or_default()
     );
     let spec = Row {
         glyph,
         tint,
-        primary: &issue.message,
+        primary: &message,
         secondary: location.as_deref(),
         secondary_right: true,
         selected: state.problems.selected == Some(index),

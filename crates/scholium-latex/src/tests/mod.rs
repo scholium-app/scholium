@@ -6,4 +6,5 @@ pub(crate) mod pixels;
 
 mod full;
 
+mod boundaries;
 mod diagnostics;

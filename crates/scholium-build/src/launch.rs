@@ -13,7 +13,7 @@ impl Sandbox {
     ) -> Result<SandboxProcess, BuildError> {
         let scope = format!(
             "scholium-{}-{}-{}.scope",
-            if self.profile == BuildProfile::TypstPreview {
+            if self.profile.is_worker() {
                 "typst"
             } else {
                 "rtex"
@@ -25,8 +25,19 @@ impl Sandbox {
                 .unwrap_or_default()
                 .to_string_lossy()
         );
-        let command = self.command(project, work, cache.path(), &scope, argv);
-        SandboxProcess::spawn(command, scope, cache)
+        let stage = tempfile::tempdir()?;
+        let address = stage.path().join("socket");
+        let listener = std::os::unix::net::UnixListener::bind(&address)?;
+        listener.set_nonblocking(true)?;
+        let command = self.command(project, work, &address, &scope, argv);
+        SandboxProcess::spawn(
+            command,
+            scope,
+            cache,
+            listener,
+            self.limits,
+            work.to_owned(),
+        )
     }
 
     pub(crate) fn command(
@@ -65,7 +76,7 @@ impl Sandbox {
     fn arguments(
         &self,
         project: &Path,
-        work: &Path,
+        _work: &Path,
         cache: &Path,
         argv: &[OsString],
     ) -> Vec<OsString> {
@@ -103,7 +114,7 @@ impl Sandbox {
                 "--dev",
                 "/dev",
                 "--size",
-                if self.profile == BuildProfile::TypstPreview {
+                if self.profile.is_worker() {
                     "67108864"
                 } else {
                     "268435456"
@@ -113,17 +124,28 @@ impl Sandbox {
             ]
             .map(Into::into),
         );
-        let output = if self.profile == BuildProfile::TypstPreview {
+        let output = if self.profile.is_worker() {
             "/out"
         } else {
             "/work"
         };
-        for (mode, source, target) in [("--ro-bind", project, "/project"), ("--bind", work, output)]
-        {
-            args.extend([mode.into(), source.into(), target.into()]);
-        }
-        if self.profile != BuildProfile::TypstPreview {
-            args.extend(["--bind".into(), cache.into(), "/rtex/texmf-var".into()]);
+        args.extend(["--ro-bind".into(), project.into(), "/project".into()]);
+        // Only bwrap performs mounts, including on Ubuntu's restricted AppArmor stack.
+        args.extend([
+            "--size".into(),
+            self.limits.output_bytes.to_string().into(),
+            "--tmpfs".into(),
+            output.into(),
+        ]);
+        args.extend(["--ro-bind".into(), cache.into(), "/quota-socket".into()]);
+        if !self.profile.is_worker() {
+            args.extend([
+                "--dir".into(),
+                "/work/.font-cache".into(),
+                "--symlink".into(),
+                "/work/.font-cache".into(),
+                "/rtex/texmf-var".into(),
+            ]);
         }
         args.extend(
             [
@@ -136,19 +158,27 @@ impl Sandbox {
             .map(Into::into),
         );
         match self.profile {
-            BuildProfile::TypstPreview => {
-                args.extend(["--as=4294967296", "--cpu=30"].map(Into::into))
+            BuildProfile::TypstPreview | BuildProfile::PdfDecode => {
+                args.push(format!("--as={}", self.limits.memory_bytes).into());
+                args.push(
+                    if self.profile == BuildProfile::PdfDecode {
+                        "--cpu=10"
+                    } else {
+                        "--cpu=30"
+                    }
+                    .into(),
+                );
             }
             BuildProfile::FullCompilation => args.push("--cpu=60".into()),
             BuildProfile::Rtex => {}
         }
-        args.push("--".into());
+        args.extend(["--".into(), "/quota-helper".into(), output.into()]);
         args.extend_from_slice(argv);
         args
     }
 
     fn environment(&self) -> &'static [(&'static str, &'static str)] {
-        if self.profile == BuildProfile::TypstPreview {
+        if self.profile.is_worker() {
             &[
                 ("LANG", "C.UTF-8"),
                 ("HOME", "/tmp"),

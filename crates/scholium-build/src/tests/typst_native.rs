@@ -72,7 +72,7 @@ async fn typst_preview_enforces_mounts_budgets_and_cancels_descendants() {
     let stdout = process.take_stdout().expect("stdout");
     let stderr = process.take_stderr().expect("stderr");
     drop((stdout, stderr));
-    wait_for_ticks(output.path()).await;
+    wait_for_ticks(&sandbox, output.path()).await;
     verify_cgroup(process.id().expect("supervisor"));
     process.cancel().await.expect("cancel entire tree");
     assert_ticks_stop(output.path()).await;
@@ -92,9 +92,12 @@ async fn typst_preview_enforces_mounts_budgets_and_cancels_descendants() {
     assert_ticks_stop(output.path()).await;
 }
 
-async fn wait_for_ticks(output: &Path) {
+async fn wait_for_ticks(sandbox: &Sandbox, output: &Path) {
     tokio::time::timeout(Duration::from_secs(5), async {
-        while !output.join("ticks").exists() {
+        while sandbox
+            .read_output(output, Path::new("ticks"), 1024)
+            .is_err()
+        {
             tokio::time::sleep(Duration::from_millis(25)).await;
         }
     })

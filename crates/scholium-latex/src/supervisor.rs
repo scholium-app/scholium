@@ -102,6 +102,14 @@ impl Supervisor {
                                 self.diagnostic(format!("malformed/failed protocol message: {error}")).await?;
                             }
                         }
+                        Some(Incoming::OutputQuota) => {
+                            let revision = self.source.revision();
+                            self.diagnostics.replace("quota", scholium_model::diagnostic::DiagnosticBatch {
+                                revision, items: vec![scholium_model::diagnostic::Diagnostic::output_quota(
+                                    scholium_model::diagnostic::DiagnosticKernel::Latex)],
+                            }, revision);
+                            return Err(scholium_build::BuildError::OutputQuota.into());
+                        }
                         Some(Incoming::Diagnostic(text)) => self.diagnostic(text).await?,
                         Some(Incoming::Fatal(reason)) if reason.contains("limit exceeded") => return Err(std::io::Error::other(reason).into()),
                         Some(Incoming::Fatal(reason)) => self.restart(reason).await?,

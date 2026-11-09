@@ -1,0 +1,101 @@
+{
+  "native-unsaved-text-and-formula-pdf": {
+    "pass": true,
+    "report": {
+      "kernel": "typst",
+      "engine": "Typst",
+      "revision": 3,
+      "unsaved": true,
+      "elapsed_ms": 596,
+      "output_path": "/home/ation_ciger/.cache/scholium-eval/t51-ubuntu-fix/final-main/windows/zh-Hans/pdf-export/native/current.pdf",
+      "page_count": 1,
+      "diagnostics": {
+        "revision": 3,
+        "items": []
+      },
+      "success": true,
+      "bibliography_processed": false
+    }
+  },
+  "native-pdf-contains-current-text": {
+    "pass": true
+  },
+  "native-empty-problem-panel": {
+    "pass": true
+  },
+  "project-export-destination-survives-reopen": {
+    "pass": true
+  },
+  "reopened-export-uses-remembered-destination": {
+    "pass": true
+  },
+  "sandboxed-source-exports-unsaved-revision": {
+    "pass": true,
+    "report": {
+      "kernel": "typst",
+      "engine": "Typst",
+      "revision": 1,
+      "unsaved": true,
+      "elapsed_ms": 428,
+      "output_path": "/home/ation_ciger/.cache/scholium-eval/t51-ubuntu-fix/final-main/windows/zh-Hans/pdf-export/source/source.pdf",
+      "page_count": 1,
+      "diagnostics": {
+        "revision": 1,
+        "items": []
+      },
+      "success": true,
+      "bibliography_processed": false
+    }
+  },
+  "source-pdf-contains-unsaved-editor-text": {
+    "pass": true
+  },
+  "source-disk-remains-unchanged": {
+    "pass": true
+  },
+  "syntax-error-never-publishes-pdf": {
+    "pass": true,
+    "report": {
+      "kernel": "typst",
+      "engine": "Typst",
+      "revision": 2,
+      "unsaved": true,
+      "elapsed_ms": 407,
+      "output_path": "/home/ation_ciger/.cache/scholium-eval/t51-ubuntu-fix/final-main/windows/zh-Hans/pdf-export/source/must-not-exist.pdf",
+      "page_count": 0,
+      "diagnostics": {
+        "revision": 2,
+        "items": [
+          {
+            "severity": "error",
+            "kernel": "typst",
+            "resource": "main.typ",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 15
+              },
+              "end": {
+                "line": 1,
+                "column": 16
+              },
+              "bytes": {
+                "start": 14,
+                "end": 15
+              }
+            },
+            "node": null,
+            "message": "unclosed delimiter",
+            "code": null,
+            "log": null
+          }
+        ]
+      },
+      "success": false,
+      "bibliography_processed": false
+    }
+  },
+  "export-error-reaches-problem-panel": {
+    "pass": true
+  }
+}

@@ -29,6 +29,7 @@ pub(crate) async fn warm(sandbox: &Sandbox) -> Result<(), BuildError> {
     let stage_path = stage.path().to_path_buf();
     let mut warm = sandbox.spawn(project.path(), work.path(), stage, &argv)?;
     warm.output(Duration::from_secs(120)).await?;
+    warm.copy_trusted_cache(&stage_path)?;
     fs::write(
         stage_path.join(CACHE_VERSION),
         "trusted fixed source; never mount in a document session\n",
@@ -51,7 +52,7 @@ pub(crate) fn copy(source: &Path, destination: &Path) -> Result<(), BuildError> 
                 "symlink in trusted font cache".into(),
             ));
         } else if kind.is_dir() {
-            fs::create_dir(&target)?;
+            fs::create_dir_all(&target)?;
             copy(&entry.path(), &target)?;
         } else if kind.is_file() {
             fs::copy(entry.path(), target)?;

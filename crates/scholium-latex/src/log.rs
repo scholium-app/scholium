@@ -9,9 +9,16 @@ use scholium_model::diagnostic::{
 /// Other absolute engine files stay unmapped.
 #[must_use]
 pub fn parse_log(text: &str) -> Vec<Diagnostic> {
+    if text.len() > 4 * 1024 * 1024 {
+        return vec![limit()];
+    }
     let mut parser = Parser::default();
     let mut offset = 0;
     for (index, raw) in text.split_inclusive('\n').enumerate() {
+        if raw.len() > 65_536 || parser.items.len() >= 1024 {
+            parser.items.push(limit());
+            break;
+        }
         let line = raw.trim_end_matches(['\r', '\n']);
         parser.line(line, index + 1, offset);
         offset += raw.len();
@@ -61,6 +68,10 @@ impl Parser {
             if (!line.is_empty() && !line.starts_with(['(', ')']))
                 || line.starts_with('(') && line.contains(") ")
             {
+                if self.items[index].message.len() + line.len() > 65_536 {
+                    self.pending_warning = None;
+                    return;
+                }
                 self.items[index].message.push(' ');
                 self.items[index].message.push_str(line.trim());
                 if let Some(n) = input_line(&self.items[index].message) {
@@ -131,6 +142,9 @@ impl Parser {
                 ]
                 .iter()
                 .any(|ext| token.ends_with(ext));
+                if self.stack.len() >= 128 {
+                    return;
+                }
                 self.stack.push(if is_file {
                     resource_path(token.strip_prefix("/project/").unwrap_or(token))
                 } else {
@@ -179,4 +193,17 @@ fn box_line(text: &str) -> Option<usize> {
         .or_else(|| text.split_once("at line "))?
         .1;
     leading_number(tail)
+}
+
+fn limit() -> Diagnostic {
+    Diagnostic {
+        severity: Severity::Error,
+        kernel: DiagnosticKernel::Latex,
+        resource: None,
+        range: None,
+        node: None,
+        message: "LaTeX log parsing limit exceeded".into(),
+        code: Some("latex.log.limit".into()),
+        log: None,
+    }
 }

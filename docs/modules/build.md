@@ -30,7 +30,7 @@ Typst 编译、LaTeX 整编与 rtex 共用一个 Sandbox 产品执行路径；�
 
 ## 不变量
 
-- 项目与构建目录必须分离且不重叠。项目只读挂在 `/project`，构建目录可写挂在 `/work`（TeX）或 `/out`（Typst）。
+- 项目与构建目录必须分离且不重叠。项目只读挂在 `/project`，输出由 bwrap 建立 sized tmpfs 于 `/work`（TeX）或 `/out`（Typst），不绑定可写宿主目录。
   TeX 的持久字体缓存还须与这两者分离；Typst 无此缓存。
 - `--unshare-all --clearenv --cap-drop ALL` 隔离进程、网络与环境；HOME 指向沙箱 `/tmp`，宿主 HOME 不可见。
 - TeX profile 仅挂载 rtex、其支持树、prlimit/LuaLaTeX/kpsewhich、解析出的动态库、固定 TeX/fontconfig/font/locale 路径；
@@ -42,8 +42,17 @@ Typst 编译、LaTeX 整编与 rtex 共用一个 Sandbox 产品执行路径；�
 - 取消杀整个 scope 和宿主进程组；清理完成前不释放会话缓存。进程在宿主退出时受 bubblewrap parent/PID 边界约束。
 - 后台 pass 超时由上游配置，宿主监督会话心跳与单次操作计时；不把整个会话截止时间当作编译超时。
 
-资源机制的决策见 [ADR 0050](../adr/ADR-0050-linux-live-session-cgroups.md)。累计 `/work` 磁盘配额尚未实现；
-单文件限制不代表累计配额。其他平台不提供无隔离降级。
+资源机制的决策见 [ADR 0050](../adr/ADR-0050-linux-live-session-cgroups.md)。每次执行树的 `/work` 或 `/out` 与字体缓存共用独立于其他会话的 tmpfs，默认字节硬上限 512 MiB、目录项监督预算 32768（含根），
+由 ResourceLimits 配置；输出不直接写宿主目录。bwrap 自身完成挂载，无 unshare/nsenter allocator。
+20 ms 扫描及复制前检查发现空间耗尽或目录项超预算后终止 scope 并报告 OutputQuota。
+新增 tmpfs 页面及 inode/dentry slab 由会话 memcg 记账并受 MemoryMax/零 swap 硬限制；
+初始化的宿主写入另由输出预算限制，不声称计入子 cgroup。目录项数不是精确内核 inode 硬上限。
+无挂载 helper 经 SCM_RIGHTS 交付输出目录 fd，宿主 ACK 前完成有界恢复；helper 设置继承的
+NO_NEW_PRIVS/seccomp，拒绝挂载与 namespace syscalls，随后 exec 原受信命令。
+宿主仅 capability 读取 live 文件或在整编结束后双预算复制普通文件，后续 pass 恢复有界状态。
+复制拒绝链接和设备文件，省略会话 socket/FIFO；可信固定文档的缓存预热单独从私有卷发布缓存。
+宿主复制目录深度最多 128 层，超过时返回有界配置错误。
+机制和安装 helper 要求见 [ADR 0058](../adr/ADR-0058-output-quota-decoder-boundary.md)。其他平台不提供无隔离降级。
 
 ## 失败处理
 
@@ -92,15 +101,20 @@ app 不持有 sandbox 实现，只组装请求、调用 build、检查 revision 
 
 `TypstPreview` 固定为 4 GiB MemoryMax/地址空间、64 tasks、零 swap、CPU 30 秒、单文件 64 MiB、128 fd；
 `run` 将调用者的 wall deadline 收紧到最多 10 秒。网络通过 `--unshare-all` 关闭，环境清空，
-只读挂载 worker、prlimit、动态库、`/request.json` 与 `/project`；唯一可写宿主挂载为独立临时 `/out`，
+只读挂载 worker、prlimit、动态库、`/request.json` 与 `/project`；`/out` 为独立私有 tmpfs，
 另有受限 64 MiB `/tmp`。拒绝输出与资源/请求/运行时路径重叠，没有 shell 或宿主降级。
 
 执行复用 `Sandbox::launch/run`、`SandboxProcess` 的进程组/scope 取消和有界 stdout/stderr（各 1 MiB）。
 请求/页面协议不由 build 解析；app 与 Typst 内核保持输入 16 MiB、元数据 1 MiB、最多 100 页、
-RGBA 总量 64 MiB、单边 8192 px 的检查。单文件限制不代表输出目录累计磁盘配额。
+RGBA 总量 64 MiB、单边 8192 px 的检查。输出目录受独立 tmpfs 字节硬上限、memcg 内存硬上限与目录项监督/复制预算。
 边界见 [ADR 0055](../adr/ADR-0055-source-preview-worker.md)。
 
 常规单元测试无需真实 namespace，验证 Typst 的完整 argv、唯一挂载白名单、截止时间收紧、目录重叠拒绝，
 以及 TeX profile 的原缓存/CPU 策略。ignored 原生测试
 `typst_preview_enforces_mounts_budgets_and_cancels_descendants` 编译固定受信 fixture，验证真实文件/网络隔离、
 cgroup 与 rlimit、stdio 超限、显式整树取消及 10 秒超时；缺少原生前提时失败并注明未运行，不计通过。
+
+`read_output(work, relative, limit)` 经私有 tmpfs 目录 fd 的宿主 `/proc/<pid>/fd/<fd>` capability 路径读取正在运行的会话文件，拒绝根外路径与超限数据。
+
+`PdfDecode` 复用无 TeX 的 worker 隔离白名单，限制 1 GiB、16 tasks、零 swap、10 CPU 秒与 10 秒 wall；
+它只读取 `/project/input.pdf` 与固定 request，输出 RGBA 和小型元数据，缺少隔离即拒绝解码。
