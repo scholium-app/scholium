@@ -174,3 +174,39 @@ ADR 0058 保留旧方案作为拒绝的替代项，并引用 Linux 官方 cgroup
 取消后 fd 仍能复制出完整 32 MiB 产物。host 初始化页面不宣称计入子 memcg。
 原生 quota 测试验证 Rtex、FullCompilation、TypstPreview 的 byte/inode 六种攻击均为 OutputQuota。
 证据根目录为 `/home/ation_ciger/.cache/scholium-eval/t51-ubuntu-fix/`。
+
+
+修复提交 `a0572fe` 后依次签署合并 main `8b7f6fc`（`2ee368e`）和
+PDF 导出集成 `9093c82`（`f5e1af3`）。后一次合并保留查找/PDF 导出双快捷键，
+把 Typst 的 1024 条诊断上限保留在新共用 execute 入口；其余双方功能和文档均保留。
+所有权交叉是这些集成冲突，未新增跨任务产品功能。
+
+`f5e1af3` 上 fmt、clippy、workspace tests（772 passed / 19 ignored）、
+rustdoc -D warnings、size、links、UI strings、layers、cargo-deny、app/storage bins、
+build/latex helper bins 和 rtex bundle 脚本测试均通过。
+原生 build 4/4（配额攻击、memcg、Typst 隔离/取消、rtex E2）和 latex render 2/2 再次通过。
+合并后的 stock Typst 对照在系统字体与 bundled-only 两组各 31/31 equal_pixels，
+固定上游对象与 vendor patch 重建校验通过。
+
+第一次 main 合并后全量窗口运行 66/66、exit 0。随后 main 合入 PDF 导出，
+重新运行全量 34 checks × 2 locales，并启用 SCHOLIUM_LATEX_NATIVE_WINDOW=1 与
+SCHOLIUM_T47_NATIVE=1。此轮中文 34 项全部完成、英文前两项完成后 runner 消失，
+日志停在空的英文 caret-follow，未计该项通过；后续通过同一 machine-wide lock
+在 fresh remaining-en 目录补跑剩余 32 项，不绕锁、不操作真实桌面。
+中文原生 latex-view 已实际验证 LuaLaTeX DisplayList、20 次输入呈现、XeLaTeX FullCompilation；
+problem-panel 已实际验证 LaTeX 整编错误、引用、成员文件跳转和成功编译清理；
+PDF 导出窗口验证原生未保存文字/公式和受限 .typ 导出。
+本机始终未启用 AppArmor，采用了协调者允许的无 allocator/unshare 路径与挂载禁止验证，
+不声称做过真正 Ubuntu AppArmor 原生验收。
+
+已提交的压缩证据在 [ubuntu-userns](evidence/2026-11-08-work-quota-review-find/ubuntu-userns/)，
+完整窗口 PNG/audit 留在上述 home cache；不重复提交大量截图。
+
+
+最终 remaining-en 32/32、exit 0；与中断前 34 个中文和 2 个英文成功项合计，
+`f5e1af3` 的 34 checks × 2 locales 全覆盖通过。不把中断轮次记成单次 68/68 exit 0。
+指定 problem-panel、source-preview-layout、project-source、latex-view 全部双语通过，
+其中 latex-view 和 problem-panel 开启真实 TeX 原生验收开关。
+额外运行 app 三引擎 PDF 导出原生测试，pdfLaTeX、XeLaTeX、LuaLaTeX 均在
+300 dpi 与宿主相同引擎输出零 RGBA 差异，LuaLaTeX 包含未保存中英混排。
+最后的证据提交只增加日志和压缩证据，不修改已验证代码。

@@ -1,0 +1,185 @@
+{
+  "validated_commit": "f5e1af3",
+  "main_commit": "9093c82",
+  "gates": [
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "rc": 0,
+      "seconds": 0.9722419109966722
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--workspace",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "rc": 0,
+      "seconds": 9.24696811499598
+    },
+    {
+      "name": "test",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--workspace"
+      ],
+      "rc": 0,
+      "seconds": 66.42447524399904
+    },
+    {
+      "name": "doc",
+      "command": [
+        "cargo",
+        "doc",
+        "--locked",
+        "--workspace",
+        "--no-deps"
+      ],
+      "rc": 0,
+      "seconds": 10.144797696993919
+    },
+    {
+      "name": "rust-size",
+      "command": [
+        "python3",
+        "scripts/check-rust-size.py"
+      ],
+      "rc": 0,
+      "seconds": 0.02875305699853925
+    },
+    {
+      "name": "doc-links",
+      "command": [
+        "python3",
+        "scripts/check-doc-links.py"
+      ],
+      "rc": 0,
+      "seconds": 0.16757627899642102
+    },
+    {
+      "name": "ui-strings",
+      "command": [
+        "python3",
+        "scripts/check-ui-strings.py"
+      ],
+      "rc": 0,
+      "seconds": 0.169540565002535
+    },
+    {
+      "name": "layers",
+      "command": [
+        "python3",
+        "scripts/check-layers.py"
+      ],
+      "rc": 0,
+      "seconds": 0.5219047650025459
+    },
+    {
+      "name": "deny",
+      "command": [
+        "cargo",
+        "deny",
+        "--locked",
+        "check",
+        "licenses",
+        "bans",
+        "sources"
+      ],
+      "rc": 0,
+      "seconds": 1.0118700950042694
+    },
+    {
+      "name": "build",
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "-p",
+        "scholium-app",
+        "-p",
+        "scholium-storage",
+        "--bins"
+      ],
+      "rc": 0,
+      "seconds": 7.305654648997006
+    },
+    {
+      "name": "helper-build",
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "-p",
+        "scholium-build",
+        "-p",
+        "scholium-latex",
+        "--bins"
+      ],
+      "rc": 0,
+      "seconds": 0.21573727799841436
+    }
+  ],
+  "window_checks": {
+    "discovered": 34,
+    "locales": [
+      "zh-Hans",
+      "en"
+    ],
+    "completed_before_interruption": 36,
+    "completed_in_remaining_en": 32,
+    "total_passed": 68,
+    "remaining_run_exit": 0,
+    "native_env": {
+      "SCHOLIUM_LATEX_NATIVE_WINDOW": "1",
+      "SCHOLIUM_T47_NATIVE": "1"
+    }
+  },
+  "workspace_tests": {
+    "passed": 772,
+    "failed": 0,
+    "ignored": 19
+  },
+  "native_build": {
+    "passed": 4,
+    "failed": 0
+  },
+  "native_render": {
+    "passed": 2,
+    "failed": 0
+  },
+  "native_export": {
+    "passed": 1,
+    "failed": 0,
+    "engines": [
+      "pdflatex",
+      "xelatex",
+      "lualatex"
+    ],
+    "rgba_difference_bytes": 0
+  },
+  "stock_parity": {
+    "system": {
+      "cases": 31,
+      "equal_pixels": true
+    },
+    "bundled": {
+      "cases": 31,
+      "equal_pixels": true
+    }
+  },
+  "environment_boundary": "Arch; AppArmor disabled; old allocator EPERM reproduced; helper seccomp forbids non-bwrap mounts/unshare; no unshare/nsenter executable path; actual Ubuntu AppArmor run not performed"
+}
