@@ -19,12 +19,14 @@ unicode-segmentation = "=1.13.3"
 typst = "=0.15.1"
 typst-kit = { version = "=0.15.1", features = ["embedded-fonts", "scan-fonts"] }
 typst-layout = "=0.15.1"
+typst-pdf = "=0.15.1"
 typst-render = "=0.15.1"
 
 [lints]
 workspace = true
 
 [dev-dependencies]
+hayro = { version = "=0.8.0", default-features = false }
 sha2 = "=0.10.9"
 serde_json = "=1.0.151"
 

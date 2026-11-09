@@ -79,10 +79,16 @@ receipt 对完整编码做 SHA-256，重复 ID/字节无效果，异值重用身
 
 adapter 的 actor undo/redo 是追加的普通 Action，排除远端与 system origin，保留远端文字，
 不恢复旧共享快照。身份出生和备用补充不撤销，用户 activation/文字/结构变化才进入 undo scope。
-每个命令一个 checkpoint，最多 1000 步；恢复快照后设备 UndoManager 栈为空。
+每个正文命令一个 durable Action；UI 词/删除分组用 adapter group 合并 undo item，不合并 Action。
+adapter 最多 1000 步，UI 保留 512 个组的端点记录；恢复快照后设备 UndoManager 栈为空。
 这不实现 checkpoint DAG、跨 branch revert 或跨重启产品 undo，也不改变阶段 0 recipe 的既有限制。
 
 `SCSDGS01` snapshot 同时保存 engine history、base revision、已接纳 Action receipts 和因果 pending；
 snapshot 后按 Action 重放，乱序输入等前驱到达后生效。semantic revision 为 base + 唯一 receipt 数，
-包括 pending，不能冒充同步完成标记。后续 session 将完整 Action bytes 交给 `ProjectStore::append_action`，
+包括 pending，不能冒充同步完成标记。session 将完整 Action bytes 交给 `ProjectStore::append_action`，
 只在已提交 durable sequence 保存对应 snapshot；本模块不直接依赖 storage。
+
+会话撤销不再恢复 HistorySnapshot：它只保存语义端点与供兼容测试读取的内容记录。
+Undo/Redo 追加 Action 后 revision 递增；已接纳 Action 身份集合保留，planner journal 采用 canonical ID 顺序，
+不能按数组下标解释因果历史。输入分组、临时 Hole 清理与复合命令边界见
+[ADR 0059](../adr/ADR-0059-sdg-session-durability.md)。内存失败回滚另保留设备 journal，永不跨重启持久化。

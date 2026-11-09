@@ -64,6 +64,7 @@ impl Workspace {
             revision: self.revision,
             entry: self.source.handle().entry().to_string_lossy().into_owned(),
             text: self.source.text().into(),
+            pdf: false,
         }
     }
     fn start(&mut self, ctx: &egui::Context) {
@@ -75,6 +76,9 @@ impl Workspace {
                 ctx.clone(),
             ));
         }
+    }
+    pub(crate) fn revision(&self) -> u64 {
+        self.revision
     }
     pub(crate) fn source(&self) -> &SourceProject {
         &self.source

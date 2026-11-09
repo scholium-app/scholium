@@ -26,6 +26,8 @@ pub(super) fn facts(state: &WorkspaceState) -> serde_json::Value {
         "diagnostic_count": problem_count(state),
         "source_position": state.source_position,
         "engine_state": backend_label(state),
+        "export": state.export_status.report,
+        "export_running": state.export_status.running,
         "backend": view.map(|v| if v.pending { "chrome.status.updating" } else { "chrome.status.backend" }),
     })
 }
@@ -82,11 +84,15 @@ fn right(ui: &mut Ui, state: &mut WorkspaceState) -> f32 {
     ui.spacing_mut().item_spacing.x = Tokens::GAP_BUTTON;
     zoom(ui, state);
     status_separator(ui);
-    let hint = command_ui::text(state, "chrome.status.engine_hint");
+    let hint = if state.export_status.running || state.export_status.report.is_some() {
+        state.export_status.detail(state.locale.resolve())
+    } else {
+        command_ui::text(state, "chrome.status.engine_hint")
+    };
     let backend = if state.source_language.is_some() {
         let meta = Meta::new("document.project_settings", "status", backend_label(state)).tip(
             crate::widgets::Tip {
-                title: command_ui::text(state, "chrome.status.settings_hint"),
+                title: hint.clone(),
                 ..Default::default()
             },
         );
@@ -155,6 +161,15 @@ fn locale_text(state: &WorkspaceState, key: &str, values: &[(&str, FluentValue<'
 }
 
 fn left(ui: &mut Ui, state: &WorkspaceState) {
+    if state.export_status.running || state.export_status.report.is_some() {
+        status_text(
+            ui,
+            &state.export_status.label(state.locale.resolve()),
+            Some(&state.export_status.detail(state.locale.resolve())),
+            Some(ui.available_width().max(1.0)),
+        );
+        return;
+    }
     let labels = labels(state);
     let widths: Vec<_> = labels
         .iter()

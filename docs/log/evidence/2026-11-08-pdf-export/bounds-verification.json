@@ -1,0 +1,16 @@
+{
+  "app_tests": {
+    "passed": 394,
+    "failed": 0,
+    "ignored": 1
+  },
+  "kernel_tests": {
+    "passed": 90,
+    "failed": 0,
+    "ignored": 10
+  },
+  "pdf_pages": 300,
+  "max_pdf_pages": 100000,
+  "max_pdf_bytes": 2147483648,
+  "large_bytes_fixture_run": false
+}

@@ -6,7 +6,7 @@ static NEXT: AtomicU64 = AtomicU64::new(0);
 
 pub(super) struct Fixture {
     pub(super) core: EditorCore,
-    path: PathBuf,
+    pub(super) path: PathBuf,
 }
 
 impl Fixture {
@@ -127,8 +127,11 @@ fn pending_bold_and_emphasis_apply_to_typed_text_and_save_reopens_identically() 
         .collect();
     assert_eq!(styles, [TextStyle::Strong, TextStyle::Emphasis]);
     f.core.save().expect("save");
-    let reopened = EditorCore::open(&f.path).expect("reopen");
-    assert_eq!(reopened.snapshot, f.core.snapshot);
+    let path = f.path.clone();
+    let expected = f.core.snapshot.clone();
+    drop(f);
+    let reopened = EditorCore::open(&path).expect("reopen");
+    assert_eq!(reopened.snapshot, expected);
     assert!(!reopened.dirty());
     assert_eq!(reopened.cursor.byte, 0);
     assert_eq!(reopened.anchor, None);
@@ -159,14 +162,13 @@ fn failed_and_panicking_commands_restore_every_checkpoint_field_and_saved_head()
     for id in [CommandId::FailAfterMutation, CommandId::PanicAfterMutation] {
         let before = format!("{:?}", f.core.checkpoint().expect("checkpoint"));
         let clock = f.core.clock.clone();
-        let saved = f
+        let durable = f
             .core
             .store
-            .legacy()
-            .load_structured()
-            .expect("head")
-            .expect("saved")
-            .snapshot;
+            .store
+            .actions_after(Default::default())
+            .expect("actions");
+        let saved = f.core.store.saved.clone();
         assert!(f.core.run(id, CommandArgs::None).is_err());
         assert!(Arc::ptr_eq(&clock, &f.core.clock));
         assert_eq!(
@@ -176,20 +178,12 @@ fn failed_and_panicking_commands_restore_every_checkpoint_field_and_saved_head()
         assert_eq!(
             f.core
                 .store
-                .legacy()
-                .load_structured()
-                .expect("head")
-                .expect("saved")
-                .snapshot,
-            saved
+                .store
+                .actions_after(Default::default())
+                .expect("actions"),
+            durable
         );
-        assert_eq!(
-            EditorCore::open(&f.path)
-                .expect("open saved")
-                .snapshot
-                .as_ref(),
-            &saved
-        );
+        assert_eq!(f.core.store.saved, saved);
     }
 }
 
@@ -213,7 +207,7 @@ fn malformed_arguments_and_rejected_edits_keep_selection_history_and_snapshot() 
             )
             .is_err()
     );
-    assert_eq!(f.core.snapshot.as_ref(), &before.snapshot);
+    super::tests::assert_content(&f.core.snapshot, &before.snapshot);
     assert_eq!(f.core.cursor, before.cursor);
     assert_eq!(f.core.anchor, before.anchor);
     assert_eq!(f.core.undo.len(), 1);
@@ -251,7 +245,7 @@ fn both_script_placeholders_settle_without_an_extra_undo_step() {
             affinity: Affinity::Downstream,
         };
         f.run(CommandId::SettlePlaceholder);
-        assert_eq!(f.core.snapshot, typed);
+        super::tests::assert_content(&f.core.snapshot, &typed);
         assert_eq!(f.core.undo.len(), 4);
         assert!(f.core.placeholder.is_none());
         assert_eq!(f.core.cursor.leaf, body_leaf);
@@ -261,7 +255,7 @@ fn both_script_placeholders_settle_without_an_extra_undo_step() {
         assert_eq!(f.core.cursor.leaf, hole);
         assert_eq!(f.core.cursor.byte, 0);
         f.run(CommandId::Redo);
-        assert_eq!(f.core.snapshot, typed);
+        super::tests::assert_content(&f.core.snapshot, &typed);
         assert_eq!(f.core.cursor.leaf, body_leaf);
         assert_eq!(f.core.cursor.byte, 0);
         f.core.cursor = Position {
@@ -295,3 +289,10 @@ pub(super) mod checkpoint_bench;
 
 #[path = "block_merge_tests.rs"]
 mod block_merge_tests;
+
+/// Undo/redo restore identified content through a new Action, so revision never goes back.
+pub(super) fn assert_content(actual: &StructuredDocument, expected: &StructuredDocument) {
+    assert_eq!(actual.document, expected.document);
+    assert_eq!(actual.blocks, expected.blocks);
+    assert!(actual.revision.0 >= expected.revision.0);
+}

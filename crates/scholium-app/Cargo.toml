@@ -7,6 +7,7 @@ rust-version.workspace = true
 publish = false
 
 [dependencies]
+hayro-syntax = "=0.8.0"
 time = { version = "=0.3.55", features = ["local-offset"] }
 scholium-latex = { path = "../scholium-latex", version = "0.1.0" }
 scholium-build = { path = "../scholium-build", version = "0.1.0" }

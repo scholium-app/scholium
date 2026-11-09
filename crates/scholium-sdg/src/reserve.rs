@@ -14,6 +14,8 @@ pub(crate) fn promote(
     records: &[Record],
     action: RequestId,
 ) -> Result<(), Error> {
+    let mut owners: Vec<_> = graph.entries.iter().collect();
+    owners.sort_by_key(|(id, _)| id.as_bytes());
     for record in records {
         let Some(entry) = graph.entries.get(&record.node).filter(|e| e.reserved) else {
             continue;
@@ -35,7 +37,7 @@ pub(crate) fn promote(
             )?;
             doc.get_map("schema").insert("fallback", key(&id))?;
         }
-        for (&owner, e) in &graph.entries {
+        for &(owner, e) in &owners {
             if e.fallback != Some(record.node) {
                 continue;
             }

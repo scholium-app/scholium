@@ -41,25 +41,10 @@ pub fn compile_source_snapshot(
     files: &BTreeMap<String, Vec<u8>>,
     scale: f32,
 ) -> std::io::Result<SourcePreview> {
-    let invalid = || std::io::Error::from(std::io::ErrorKind::InvalidInput);
-    if !scale.is_finite()
-        || !(0.25..=2.0).contains(&scale)
-        || files.values().map(Vec::len).sum::<usize>() > INPUT_BYTES
-        || files.keys().any(|key| resource_path(key).is_none())
-    {
-        return Err(invalid());
+    if !scale.is_finite() || !(0.25..=2.0).contains(&scale) {
+        return Err(std::io::ErrorKind::InvalidInput.into());
     }
-    let main = file_id(entry).ok_or_else(invalid)?;
-    let entry_bytes = files.get(entry).ok_or_else(invalid)?;
-    std::str::from_utf8(entry_bytes).map_err(|_| invalid())?;
-    let world = SnapshotWorld {
-        base: PreviewWorld::new(),
-        main,
-        files: files
-            .iter()
-            .filter_map(|(path, bytes)| Some((file_id(path)?, bytes.clone())))
-            .collect(),
-    };
+    let world = snapshot_world(entry, files)?;
     let result = typst::compile::<PagedDocument>(&world);
     let mut diagnostics = crate::map_diagnostics(&world, &result.warnings, &[]);
     let document = match result.output {
@@ -117,11 +102,34 @@ pub fn compile_source_snapshot(
     })
 }
 
+pub(crate) fn snapshot_world(
+    entry: &str,
+    files: &BTreeMap<String, Vec<u8>>,
+) -> std::io::Result<SnapshotWorld> {
+    let invalid = || std::io::Error::from(std::io::ErrorKind::InvalidInput);
+    if files.values().map(Vec::len).sum::<usize>() > INPUT_BYTES
+        || files.keys().any(|key| resource_path(key).is_none())
+    {
+        return Err(invalid());
+    }
+    let main = file_id(entry).ok_or_else(invalid)?;
+    let entry_bytes = files.get(entry).ok_or_else(invalid)?;
+    std::str::from_utf8(entry_bytes).map_err(|_| invalid())?;
+    Ok(SnapshotWorld {
+        base: PreviewWorld::new(),
+        main,
+        files: files
+            .iter()
+            .filter_map(|(path, bytes)| Some((file_id(path)?, bytes.clone())))
+            .collect(),
+    })
+}
+
 fn file_id(path: &str) -> Option<FileId> {
     resource_path(path)?;
     Some(RootedPath::new(VirtualRoot::Project, VirtualPath::new(path).ok()?).intern())
 }
-struct SnapshotWorld {
+pub(crate) struct SnapshotWorld {
     base: PreviewWorld,
     main: FileId,
     files: HashMap<FileId, Vec<u8>>,

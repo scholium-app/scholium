@@ -186,7 +186,7 @@ app 的 LuaLaTeX 工作台只保存当前页纹理，页码总数来自布局事
 覆盖已加载资源的未保存文本，再通过 `BuildProfile::FullCompilation` 编译。pdfLaTeX 直接输出 PDF；
 XeLaTeX 使用 `-no-pdf` 输出 XDV，再显式执行 xdvipdfmx，避免 shell。最多两轮，所有子进程共用宿主 deadline，
 栅格完成后也检查 deadline。结果携带 source revision、固定引擎、整编来源和耗时，旧 revision 不采纳。
-此接口生成预览，不写回源码、不实现导出/文件菜单或 bibliography 工具链。
+此接口生成预览，不写回源码、不实现文件菜单或 bibliography 工具链。
 
 `highlight` 返回 UTF-8 byte ranges 与控制序列、注释、数学切换、花括号、普通文本类别；不展开宏或声称 CST 语义。
 绘制边界与回退裁决见 [ADR 0052](../adr/ADR-0052-latex-view-workbench.md)。
@@ -282,3 +282,16 @@ LiveSession 的 edit 在当前项目 capability 下先加载目标资源，再�
 10/100 页夹具分别记录原生按键到 XGetImage 预览像素改变的 p50/p95；同时校验 host revision 与段落来源。
 输入接受耗时与 UI frame 耗时独立记录，引擎暂停期间继续输入，不以 rtex 自报耗时代替窗口测量。
 常规窗口批次跳过此检查，显式 `--only latex-exit` 运行它；专用 latex-exit workflow 安装真实工具链并检查两种界面语言。
+
+## PDF 导出整编
+
+`full::export_pdf` 独立于实时预览选择，允许固定的 pdfLaTeX、XeLaTeX 和 LuaLaTeX，
+仍要求 FullCompilation 沙箱。与 full::compile 共用资源快照、未保存 documents overlay、
+最多两轮引用编译、XeLaTeX 的显式 XDV 转 PDF 和总 deadline；不改变 live 路由或 preview 的 Lua 拒绝。
+结果 FullPdf 包含完整 PDF bytes、最后一轮 transcript 和统一诊断；编译失败保留 FullFailure。
+PDF 读取仅以 2 GiB 拒绝病态输出，沙箱 /work 配额仍约束构建；预览栅格限制独立保留。
+本模块不发布用户目标文件，app 验证页面后原子发布。没有 BibTeX/Biber 流水线，报告须明确未处理。
+
+app 的显式 ignored 原生测试比较沙箱导出与宿主相同引擎，在 hayro 300 dpi 下要求页数、尺寸和
+RGBA 完全相同（容差零），覆盖未保存输入、pdfLaTeX、XeLaTeX 和 LuaLaTeX 中英混排。
+缺引擎、字体或沙箱失败明确报未运行/失败，不能计通过。参见 [ADR 0056](../adr/ADR-0056-pdf-export.md)。

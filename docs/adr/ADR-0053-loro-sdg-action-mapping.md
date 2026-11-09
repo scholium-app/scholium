@@ -1,6 +1,6 @@
 # ADR 0053：结构 SDG 的 Loro 映射、Action v1 与确定性修复
 
-- 状态：Accepted（独立 adapter；不接入 session/app/storage）
+- 状态：Accepted（adapter 接入 Typst 会话，事务与迁移补充见 ADR 0059）
 - 日期：2026-11-03
 - 影响模块：scholium-sdg、后续协作/历史与会话持久化
 - 关联：[ADR 0009](ADR-0009-crdt-engine.md)、[ADR 0033](ADR-0033-structured-local-session-migration.md)、
@@ -82,7 +82,7 @@ revision = 初始 base_revision + 已接纳的唯一 Action 数（包括 pending
 |---|---|
 | 同段/同叶插字 | 由 Loro Text 合并；空 MathText 变同 ID Hole，Hole 留有并发文字时投影为同 ID MathText |
 | 同节点移动 | Loro 决定唯一 parent 和 sibling 顺序，应用层不另写父指针 LWW |
-| wrap 与 delete | tree tombstone 隐藏被删除子树；缺失固定槽的 wrapper 退化为保留现有合法数学子节点的 Row，空则 Hole |
+| wrap 与 delete | inactive tombstone（兼容旧 tree tombstone）隐藏被删除子树；缺失固定槽的 wrapper 退化为保留现有合法数学子节点的 Row，空则 Hole |
 | delete 与远端插子节点 | 删除祖先使该子树不可见；远端操作仍留在历史，不将孩子提升到其它非法 parent |
 | 固定槽缺失/重复/未知 | 容器退化为同 ID Row/Hole，保留合法数学孩子的 tree 顺序 |
 | 一个 inline 多个数学 root | 按 tree 顺序选择第一个 root，报告其余活跃节点；不拼装含重复身份的虚构根 |
@@ -98,7 +98,7 @@ revision = 初始 base_revision + 已接纳的唯一 Action 数（包括 pending
 ## Actor undo 与恢复
 
 每个设备 writer 使用不同非零 peer；不能复制 actor 到另一个并发 writer。UndoManager 只跟踪本 peer 的
-本地输入，排除 system/ 和 remote/ origin；用户命令不合并，最多保留 1000 步。
+本地输入，排除 system/ 和 remote/ origin；逐命令 Action 不合并；会话 UI 可显式组成 undo group，最多保留 1000 个设备 undo item。
 undo/redo 生成新操作和新 Action，不回退共享快照；远端文字、原有子树身份得以保留。
 过期/隐藏目标的本地请求拒绝，不修改权威。引擎消费但未生成操作的 undo item 返回 None，不误撤更早动作。
 
@@ -119,3 +119,10 @@ UndoManager 栈是设备会话状态，恢复后为空；本 ADR 不把其栈伪
 `ProjectStore::append_action` 取得 durable sequence 后才发布成功；存储失败回滚必须保持 actor/undo/receipt 一致，
 不能以恢复旧快照假装协作 undo。`save_snapshot(sequence, bytes)` 保存已提交 Action 边界，启动时重放后续 Action。
 本批不修改 session/app/storage，也不定义网络、DAG、权限或冲突 UI。
+
+## 会话接入补充
+
+[ADR 0059](ADR-0059-sdg-session-durability.md) 定义可恢复初始化 Action、命令/外层 Input 的原子边界、
+设备 journal 回滚、UI undo group、保留 TreeID 的 inactive 删除与旧 native/session 一次迁移。
+Typst 会话只持久化 adapter authority，恢复由 snapshot + 后续 Actions 重建 LocalSession 投影；
+设备 undo 栈仍不跨重启持久化。本 ADR 的 Loro 1.17.1 裁决、wire v1 与限额保持不变。

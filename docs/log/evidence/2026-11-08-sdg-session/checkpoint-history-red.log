@@ -1,0 +1,22 @@
+   Compiling scholium-sdg v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-sdg)
+    Finished `test` profile [unoptimized] target(s) in 1.76s
+     Running unittests src/lib.rs (target/debug/deps/scholium_sdg-ae9e45d272a3377f)
+
+running 1 test
+test tests::session_transaction::first_checkpoint_preserves_actor_history_from_earlier_edits ... FAILED
+
+failures:
+
+---- tests::session_transaction::first_checkpoint_preserves_actor_history_from_earlier_edits stdout ----
+
+thread 'tests::session_transaction::first_checkpoint_preserves_actor_history_from_earlier_edits' (1061812) panicked at crates/scholium-sdg/src/tests/session_transaction.rs:24:5:
+assertion failed: a.undo().expect("undo accepted edit").is_some()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    tests::session_transaction::first_checkpoint_preserves_actor_history_from_earlier_edits
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p scholium-sdg --lib`

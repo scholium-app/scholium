@@ -89,12 +89,7 @@ fn the_catalog_has_no_key_that_nothing_uses() {
     used.extend(MenuId::ALL.iter().map(|m| m.key().to_owned()));
     used.extend(crate::command::tests::submenu_keys());
     used.extend(crate::command::tests::reason_keys());
-    used.extend(crate::chrome::CATALOG_KEYS.iter().map(|k| (*k).to_owned()));
-    used.extend(
-        crate::diagnostics::CATALOG_KEYS
-            .iter()
-            .map(|k| (*k).to_owned()),
-    );
+    used.extend(module_catalog_keys());
     used.extend(
         [
             "reason.document_properties",
@@ -106,16 +101,6 @@ fn the_catalog_has_no_key_that_nothing_uses() {
             "chrome.status.position",
         ]
         .map(str::to_owned),
-    );
-    used.extend(
-        crate::project_files::CATALOG_KEYS
-            .iter()
-            .map(|k| (*k).to_owned()),
-    );
-    used.extend(
-        crate::typst_editor::math_input::CATALOG_KEYS
-            .iter()
-            .map(|k| (*k).to_owned()),
     );
     used.extend(
         [
@@ -232,4 +217,17 @@ fn fluent_selects_cldr_plural_forms_for_en_and_zh() {
         assert!(errors.is_empty());
         assert_eq!(shown, expected, "{tag} {count}");
     }
+}
+
+fn module_catalog_keys() -> impl Iterator<Item = String> {
+    [
+        crate::chrome::CATALOG_KEYS,
+        crate::diagnostics::CATALOG_KEYS,
+        crate::pdf_export::CATALOG_KEYS,
+        crate::project_files::CATALOG_KEYS,
+        crate::typst_editor::math_input::CATALOG_KEYS,
+    ]
+    .into_iter()
+    .flatten()
+    .map(|key| (*key).to_owned())
 }

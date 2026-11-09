@@ -18,6 +18,8 @@ pub use fonts::{FontProfile, bundled_cjk_font_bytes, bundled_math_font_bytes};
 use typst_layout::{PagedDocument, PagedIntrospector};
 
 mod compiler;
+mod pdf;
+pub use pdf::{PdfExport, export_generated_pdf, export_source_pdf};
 mod source_preview;
 mod source_syntax;
 pub use source_preview::{SourcePreview, compile_source_snapshot};

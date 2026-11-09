@@ -47,7 +47,7 @@ fn fraction_without_selection_splits_text_at_start_middle_and_end_and_undo_resto
             }
             assert_eq!(f.core.undo.len(), undo + 1);
             f.run(CommandId::Undo);
-            assert_eq!(f.core.snapshot.as_ref(), &before.snapshot);
+            super::tests::assert_content(&f.core.snapshot, &before.snapshot);
             assert_eq!(f.core.cursor, before.cursor);
         }
     }
@@ -85,7 +85,7 @@ fn fraction_wraps_only_the_selected_math_text_and_enters_denominator() {
     assert_eq!(f.core.cursor.leaf, denominator.node);
     assert!(f.core.anchor.is_none());
     f.run(CommandId::Undo);
-    assert_eq!(f.core.snapshot.as_ref(), &before.snapshot);
+    super::tests::assert_content(&f.core.snapshot, &before.snapshot);
     assert_eq!(f.core.cursor, before.cursor);
     assert_eq!(f.core.anchor, before.anchor);
 }
@@ -117,7 +117,7 @@ fn fraction_in_a_hole_and_a_nested_slot_enters_its_empty_numerator() {
             });
         assert!(parent.is_some(), "caret must enter the new numerator");
         f.run(CommandId::Undo);
-        assert_eq!(f.core.snapshot.as_ref(), &before.snapshot);
+        super::tests::assert_content(&f.core.snapshot, &before.snapshot);
         assert_eq!(f.core.cursor, before.cursor);
     }
 }

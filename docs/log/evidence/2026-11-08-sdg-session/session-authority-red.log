@@ -1,0 +1,51 @@
+   Compiling rustybuzz v0.20.1
+   Compiling image v0.25.10
+   Compiling rustix v1.1.4
+   Compiling hayro-interpret v0.7.0
+   Compiling vello_common v0.0.8
+   Compiling linux-raw-sys v0.12.1
+   Compiling tiny-skia v0.12.0
+   Compiling scholium-math-input v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-math-input)
+   Compiling scholium-document v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-document)
+   Compiling vello_cpu v0.0.8
+   Compiling usvg v0.47.0
+   Compiling hayro v0.7.1
+   Compiling hayro-svg v0.7.0
+   Compiling fs-set-times v0.20.3
+   Compiling rustix-linux-procfs v0.1.1
+   Compiling cap-primitives v3.4.6
+   Compiling typst-library v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-library)
+   Compiling resvg v0.47.0
+   Compiling cap-std v3.4.6
+   Compiling scholium-storage v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-storage)
+   Compiling typst-layout v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-layout)
+   Compiling typst-eval v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-eval)
+   Compiling typst-kit v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-kit)
+   Compiling typst-svg v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-svg)
+   Compiling typst-render v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-render)
+   Compiling typst-html v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-html)
+   Compiling typst-realize v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst-realize)
+   Compiling typst v0.15.1 (/home/ation_ciger/Projects/Mogan/scholium-wt2/vendor/typst-edit/crates/typst)
+   Compiling scholium-typst v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-typst)
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
+    Finished `test` profile [unoptimized] target(s) in 45.42s
+     Running unittests src/lib.rs (target/debug/deps/scholium_session-6e6ec1da3589e03f)
+
+running 1 test
+test typst::sdg_tests::native_commands_persist_sdg_actions_and_recover_after_checkpoint ... FAILED
+
+failures:
+
+---- typst::sdg_tests::native_commands_persist_sdg_actions_and_recover_after_checkpoint stdout ----
+
+thread 'typst::sdg_tests::native_commands_persist_sdg_actions_and_recover_after_checkpoint' (970512) panicked at crates/scholium-session/src/typst/sdg_tests.rs:23:9:
+assertion failed: action.record.payload.starts_with(b"SCSDGA01")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    typst::sdg_tests::native_commands_persist_sdg_actions_and_recover_after_checkpoint
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p scholium-session --lib`

@@ -59,8 +59,8 @@ fn full_history_and_authority_share_immutable_checkpoint_state() {
     assert_eq!(core.session.layout_epoch(), epoch);
     core.run(CommandId::Redo, CommandArgs::None).expect("redo");
     assert_eq!((core.undo.len(), core.redo.len()), (512, 0));
-    assert_eq!(original.revision.0, 511);
-    assert_eq!(core.snapshot.revision.0, 512);
+    assert_eq!(original.revision.0, 514);
+    assert_eq!(core.snapshot.revision.0, 515);
     drop(core);
     for suffix in ["", "-wal", "-shm"] {
         let _ = std::fs::remove_file(format!("{}{suffix}", path.display()));

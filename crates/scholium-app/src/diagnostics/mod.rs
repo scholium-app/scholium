@@ -152,7 +152,9 @@ pub(crate) fn current_batch(
     state: &crate::state::WorkspaceState,
 ) -> scholium_model::diagnostic::DiagnosticBatch {
     if state.source_language.is_some() {
-        return state.problems.batch.clone();
+        let mut batch = state.problems.batch.clone();
+        merge_export(state, &mut batch);
+        return batch;
     }
     let revision = state.editor.as_ref().map_or(0, |v| v.revision);
     let mut batch = scholium_model::diagnostic::DiagnosticBatch {
@@ -182,7 +184,22 @@ pub(crate) fn current_batch(
                 }),
         );
     }
+    merge_export(state, &mut batch);
     batch
+}
+fn merge_export(
+    state: &crate::state::WorkspaceState,
+    batch: &mut scholium_model::diagnostic::DiagnosticBatch,
+) {
+    if let Some(export) = &state.problems.export
+        && export.revision == batch.revision
+    {
+        for issue in &export.items {
+            if !batch.items.contains(issue) {
+                batch.items.push(issue.clone());
+            }
+        }
+    }
 }
 pub(crate) fn activate(state: &mut crate::state::WorkspaceState, index: usize) {
     let batch = current_batch(state);
