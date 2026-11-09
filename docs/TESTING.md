@@ -109,8 +109,10 @@ Iced → GPUI → C++ EUI-NEO → Slint 或 egui 使用 [同一验收集](plan/N
 - `Cargo.toml` 把依赖（含 Typst）在 dev/test profile 下设为 `opt-level = 2`，工作区自身 crate 保持 0：
   Typst 排版/光栅化在未优化下很慢，`cargo test --workspace` 暖缓存实测约 95 s → 约 22 s，冷重编一次约 150 s。
 - CI 的准备步骤（固定工具链、mold、`Swatinem/rust-cache`、apt 依赖）统一在复合 action `.github/actions/setup`；
-  缓存只在 `main` 保存，PR 只读取。`rust.yml` 只有两个 job：lint（fmt、clippy、doc、`cargo deny`、仓库门禁脚本）与
-  test（一次编译后跑 `cargo test` 和两种语言的真实窗口检查）。fork 与 stock Typst 的像素对照在 `typst-fork.yml`，
+  缓存只在 `main` 保存，PR 只读取。`rust.yml` 的 lint 负责 fmt、clippy、doc、`cargo deny` 和仓库门禁；build-window 一次编译并跑
+  `cargo test`，以 tar artifact 传递应用及四个 helper，保留执行权限；window 按两种语言 × 两个时长均衡分片运行，
+  每片 `--jobs 1`、独立上传证据，失败不取消其它分片。test 是依赖全部分片与构建的单一必需 gate，
+  上游失败、跳过或取消均阻断。LaTeX 出口 workflow 使用同一 setup action 的 `test` 缓存 key 和 target 路径。fork 与 stock Typst 的像素对照在 `typst-fork.yml`，
   只在 fork、`scholium-typst`、参考实现、锁文件或工具链变动时运行。
   `typst-upstream.yml` 每周一把补丁套到上游 Typst main 上，检查补丁能否应用、adapter 能否编译、像素是否一致，
   只按计划或手动触发，不在 push/PR 上运行、不阻塞合并（见 [scholium-typst 上游跟进](modules/typst.md#上游跟进)）。
@@ -118,7 +120,14 @@ Iced → GPUI → C++ EUI-NEO → Slint 或 egui 使用 [同一验收集](plan/N
 - 所有 workflow 显式固定同一个 runner 镜像 `ubuntu-26.04`，不用 `ubuntu-latest`：镜像升级会同时换掉 Xvfb、xkb-data
   和 xdotool，真实窗口检查对此敏感，换镜像必须是一个单独审查的 PR（经过见
   [ubuntu-26.04 窗口检查记录](log/2026-10-30-ubuntu-2604-window.md)）。
-- 真实窗口检查统一由 `python3 scripts/window-checks.py` 运行（自动发现、顺序执行、不重试、机器级锁），
+- 真实窗口检查统一由 `python3 scripts/window-checks.py` 运行（自动发现、不重试、跨 worktree 信号量），
+  `--jobs K` 覆盖 `SCHOLIUM_WINDOW_JOBS`，默认 `max(1, min(3, cores // 6))`；同机 worktree 应使用相同 K。
+  每个活动检查占一个 `/tmp/scholium-window-checks.<n>.lock`，独占检查通过机器级读写 gate 排斥所有其它窗口检查，
+  包括使用不同 K 的 runner 与旧单锁 runner。独占项为 latex-exit、latex-view、caret-follow、sharp-raster、parity、
+  source-preview-layout：保护 E6/输入延迟、连续重排、栅格 CPU 和昂贵求值预算。每项使用认证的私有 Xvfb 显示，
+  通过 `-displayfd` 等待服务器就绪，禁止使用桌面显示与 Wayland；退出/超时清理私有进程组。
+  `--shard i/n` 按 `durations.json` 秒数贪心最长优先分配，缺失项默认 15 秒；`--refresh-durations` 从完整成功运行
+  更新各检查的跨语言平均时长。`--evidence` 开启截图证据，`results.json` 区分执行和锁等待时长。
   新增检查无需修改 `rust.yml`，见 `spikes/typst-main-editor/README.md`。
   功能键（F1–F12）组合键按键码发送（`chrome_ui.keycode`，如 `ctrl+67`），不要写 `ctrl+F1`：Ubuntu 的 xdotool 3.20160805
   在 xkeyboard-config ≥ 2.46 下会给功能键 keysym 自动加上 Alt。

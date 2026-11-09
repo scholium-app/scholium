@@ -11,6 +11,8 @@ on:
       - 'spikes/typst-main-editor/latex-exit-check.py'
       - 'spikes/typst-main-editor/latex_exit_*.py'
       - 'scripts/window-checks.py'
+      - 'scripts/window_checks_runtime.py'
+      - '.github/actions/setup/**'
       - 'scripts/bundle-rtex.py'
       - 'spikes/rtex-eval/PIN'
       - '.github/workflows/latex-exit.yml'
@@ -27,7 +29,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
-          cache-key: latex-exit
+          cache-key: test  # same shared key and target paths as rust.yml build-window
           packages: >-
             libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libegl1-mesa-dev
             xvfb xdotool xclip imagemagick fonts-noto-cjk bubblewrap
@@ -40,7 +42,7 @@ jobs:
       - run: python3 scripts/bundle-rtex.py
       - run: cargo build --locked --workspace --bins  # app plus scholium-sandbox-fs and scholium-pdf-worker helpers (ADR 0058)
       - name: Real-engine window acceptance (both locales)
-        run: python3 scripts/window-checks.py --only latex-exit --locale zh-Hans en --out /tmp/latex-exit
+        run: python3 scripts/window-checks.py --only latex-exit --jobs 1 --evidence --locale zh-Hans en --out /tmp/latex-exit
       - uses: actions/upload-artifact@v4
         if: always()
         with:

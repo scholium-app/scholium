@@ -7,6 +7,14 @@ on:
     paths-ignore: ['docs/**', '**/*.md']
   pull_request:
     paths-ignore: ['docs/**', '**/*.md']
+  # Review screenshots are opt-in (SCHOLIUM_CHECK_EVIDENCE); PR and push runs keep only the
+  # captures that pixel assertions read. Run manually with evidence=true for the full image set.
+  workflow_dispatch:
+    inputs:
+      evidence:
+        description: Capture review screenshots in every window check
+        type: boolean
+        default: false
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -24,6 +32,7 @@ jobs:
         with:
           components: rustfmt, clippy
           cache-key: lint
+          packages: libxkbcommon-dev libwayland-dev libegl1-mesa-dev xvfb x11-utils
       - uses: taiki-e/install-action@v2
         with:
           tool: cargo-deny
@@ -35,30 +44,77 @@ jobs:
       - run: cargo deny --locked check licenses bans sources
       - name: Repository gates
         run: |
+          python3 scripts/test-window-checks.py
           python3 scripts/test-bundle-rtex.py
           python3 scripts/check-layers.py
           python3 scripts/check-rust-size.py
           python3 scripts/check-ui-strings.py
           python3 scripts/check-doc-links.py
-  # Unit tests and both locales of the real-window checks share one build.
-  test:
+  # Compile once; ship executables with their Unix modes preserved in a tar.
+  build-window:
     runs-on: ubuntu-26.04
-    timeout-minutes: 40
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
         with:
           cache-key: test
           packages: >-
-            libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libegl1-mesa-dev xvfb xdotool xclip
-            imagemagick fonts-noto-cjk at-spi2-core dbus python3-gi gir1.2-atspi-2.0 poppler-utils
+            libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libegl1-mesa-dev
+            fonts-noto-cjk poppler-utils
       - run: cargo build --locked --workspace --bins
       - run: cargo test --locked --workspace
-      - name: Real-window checks (discovered by scripts/window-checks.py)
-        timeout-minutes: 25
-        run: python3 scripts/window-checks.py --locale zh-Hans en --out /tmp/scholium-window
+      - name: Package window executables (including project and sandbox helpers)
+        run: >-
+          tar -cf /tmp/window-binaries.tar -C target/debug
+          scholium-app scholium-sandbox-fs scholium-pdf-worker hammer project_hammer
+      - uses: actions/upload-artifact@v4
+        with:
+          name: window-binaries
+          path: /tmp/window-binaries.tar
+          compression-level: 0
+          retention-days: 1
+  window:
+    needs: build-window
+    runs-on: ubuntu-26.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        locale: [zh-Hans, en]
+        shard: [1, 2]
+    steps:
+      - uses: actions/checkout@v4
+      # No Rust toolchain/cache download or compilation on the four window runners.
+      - name: Install native window dependencies
+        run: >-
+          bash scripts/install-ci-native-deps.sh
+          libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libegl1-mesa-dev libsqlite3-0
+          xvfb xdotool xclip
+          imagemagick fonts-noto-cjk bubblewrap at-spi2-core dbus python3-gi gir1.2-atspi-2.0 poppler-utils
+      - uses: actions/download-artifact@v4
+        with:
+          name: window-binaries
+          path: /tmp
+      - run: mkdir -p target/debug && tar -xf /tmp/window-binaries.tar -C target/debug
+      - name: Real-window checks (discovered, balanced, no retries)
+        run: >-
+          python3 scripts/window-checks.py --locale ${{ matrix.locale }}
+          --shard ${{ matrix.shard }}/2 --jobs 1 --out /tmp/scholium-window
+          ${{ inputs.evidence && '--evidence' || '' }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: window-evidence
+          name: window-evidence-${{ matrix.locale }}-${{ matrix.shard }}
           path: /tmp/scholium-window
+  # Keep the existing required-check name; skipped/cancelled dependencies fail closed.
+  test:
+    if: always()
+    needs: [build-window, window]
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Require build, unit tests and every locale/shard
+        env:
+          BUILD_RESULT: ${{ needs.build-window.result }}
+          WINDOW_RESULT: ${{ needs.window.result }}
+        run: test "$BUILD_RESULT" = success && test "$WINDOW_RESULT" = success
