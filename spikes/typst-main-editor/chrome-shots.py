@@ -73,7 +73,7 @@ def run_session(locale, scale):
         end = time.monotonic() + 60
         while time.monotonic() < end and not (state() or {}).get("current"):
             time.sleep(0.1)
-        window = subprocess.check_output(["xdotool", "search", "--pid", str(app.pid)], env=env, text=True).split()[0]
+        window = subprocess.check_output(["xdotool", "search", "--sync", "--onlyvisible", "--pid", str(app.pid)], env=env, text=True).split()[0]
         xdo("windowfocus", window)
         chrome = chrome_ui.Chrome(state, xdo, window)
         yield env, state, xdo, window, chrome
