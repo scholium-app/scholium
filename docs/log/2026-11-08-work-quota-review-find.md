@@ -210,3 +210,15 @@ PDF 导出窗口验证原生未保存文字/公式和受限 .typ 导出。
 额外运行 app 三引擎 PDF 导出原生测试，pdfLaTeX、XeLaTeX、LuaLaTeX 均在
 300 dpi 与宿主相同引擎输出零 RGBA 差异，LuaLaTeX 包含未保存中英混排。
 最后的证据提交只增加日志和压缩证据，不修改已验证代码。
+
+## 协调者整合：导出不在宿主解析 PDF
+
+合并 #109 后，导出发布路径仍在宿主用 `hayro-syntax` 解析 LaTeX 生成的 PDF 计页，与本 ADR 的“宿主不解码不可信 PDF”边界冲突。
+改为页数由编译器报告：LaTeX 取引擎日志最后一条 `Output written on … (N pages`（先去掉 TeX 的定宽换行再匹配），
+Typst 取文档页数；宿主只检查 `%PDF-` 头、尾部 `%%EOF`、字节与页数上限，再原子写出。
+`scholium-app` 去掉 `hayro-syntax` 依赖；ADR 0056 与 app 规范同步。
+同时把 #109/#110 新增的 `PDF_EXPORT`、`SOURCE_FIND` 输出改为 `audit_line::emit` 单次写出。
+
+验证：`reported_pages` 单元测试（含换行折断、多次输出取最后、缺失/非数字）；`scholium-app`、`scholium-latex` 测试通过；
+三引擎原生导出像素对照（`--ignored`）通过；窗口检查 pdf-export、source-find、problem-panel、source-preview-layout、
+project-latex、latex-view 中英 12/12 通过。

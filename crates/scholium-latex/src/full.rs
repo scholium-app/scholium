@@ -95,6 +95,25 @@ pub struct FullPdf {
     pub log: String,
     /// Final-pass errors and warnings bound to the source revision.
     pub diagnostics: scholium_model::diagnostic::DiagnosticBatch,
+    /// Page count the engine reported for the final pass; the host never parses the PDF.
+    pub page_count: usize,
+}
+
+/// Page count from the engine's last `Output written on <file> (<n> pages…` line.
+/// TeX breaks long log lines at a fixed width without adding characters, so line breaks
+/// are removed before matching.
+pub fn reported_pages(log: &str) -> Option<usize> {
+    let joined: String = log.chars().filter(|c| *c != '\n' && *c != '\r').collect();
+    let after = &joined[joined.rfind("Output written on ")?..];
+    let open = after.find(" (")? + 2;
+    let digits: String = after[open..]
+        .chars()
+        .take_while(char::is_ascii_digit)
+        .collect();
+    let rest = &after[open + digits.len()..];
+    (rest.starts_with(" page"))
+        .then(|| digits.parse().ok())
+        .flatten()
 }
 
 /// Compile a PDF with the project's fixed engine, including LuaLaTeX.
@@ -140,10 +159,14 @@ pub async fn export_pdf(
     if !data.starts_with(b"%PDF-") || started.elapsed() > deadline {
         return Err(std::io::Error::other("invalid or late export PDF").into());
     }
+    let page_count = reported_pages(&log)
+        .filter(|n| *n > 0)
+        .ok_or_else(|| std::io::Error::other("engine did not report the PDF page count"))?;
     Ok(FullPdf {
         bytes: data,
         diagnostics: diagnostics(source, &log),
         log,
+        page_count,
     })
 }
 struct FullBuild<'a> {

@@ -119,7 +119,7 @@ impl SourceEditor {
                 });
             }
             if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
-                println!("SOURCE_FIND {}", serde_json::json!({"query":self.search.query,"matches":self.search.matches.len(),"current":self.search.current,"scanning":!self.search.complete(),"selection":self.selection}));
+                crate::audit_line::emit("SOURCE_FIND", & serde_json::json!({"query":self.search.query,"matches":self.search.matches.len(),"current":self.search.current,"scanning":!self.search.complete(),"selection":self.selection}));
             }
         });
     }

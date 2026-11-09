@@ -16,7 +16,7 @@ LaTeX 的独立 export_pdf 入口复用 FullCompilation 的快照、两轮引用
 接受固定的三个引擎；实时预览的 LuaLaTeX 排除规则不变。不执行 bibliography 工具，报告明确说明。
 导出报告属于 app 编排层，不向无 IO 的 model 引入本机路径或具体 PDF 引擎类型。
 
-所有内核在共用发布路径中经 hayro-syntax 打开完整 PDF 一次并读取页数，不执行逐页栅格化。
+宿主不解析导出 PDF（ADR 0058 修订，2026-11-08）：页数取自编译器——Typst 取文档页数，LaTeX 取引擎日志最后一条 `Output written on … (N pages` ——宿主只检查 `%PDF-` 头、`%%EOF` 尾、字节与页数上限，再原子写出；不执行逐页栅格化。
 PDF 专用上限为 2 GiB / 100,000 页，仅阻止病态输出；沙箱 /work 配额是实际构建限制。
 保留 Typst 编译器页数校对；预览页数/像素预算不约束导出。
 解析成功后，在目标同目录创建独占临时文件、写入并同步、rename 替换，再同步目录。

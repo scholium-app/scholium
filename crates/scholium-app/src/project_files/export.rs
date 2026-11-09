@@ -77,9 +77,9 @@ impl ProjectFiles {
             }
         }
         if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some() {
-            println!(
-                "PDF_EXPORT {}",
-                serde_json::to_string(&report).unwrap_or_default()
+            crate::audit_line::emit(
+                "PDF_EXPORT",
+                &serde_json::to_string(&report).unwrap_or_default(),
             );
         }
         state.export_status = if project

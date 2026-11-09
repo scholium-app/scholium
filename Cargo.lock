@@ -4756,7 +4756,6 @@ dependencies = [
  "eframe",
  "fluent-bundle",
  "fontdb",
- "hayro-syntax 0.8.0",
  "resvg",
  "scholium-build",
  "scholium-document",

@@ -508,8 +508,8 @@ LaTeX FullCompilation 的三引擎整编入口。UI 只捕获输入并轮询完�
 成功状态、统一 DiagnosticBatch，以及 bibliography_processed=false。状态栏显示进度与结果，
 悬停显示具体版本、时间、路径和参考文献未处理说明；AUDIT 模式另输出 PDF_EXPORT JSON。
 
-全部内核产物在共用发布路径中经 hayro-syntax 打开一次并读取页数，不栅格化页面；
-仅以 2 GiB、1–100,000 页阻止病态输出，Typst 还校对编译器页数。
+宿主不解析产物 PDF：页数由编译器报告（Typst 文档页数、LaTeX 日志 `Output written on`），发布路径只检查头尾标记与字节/页数上限，不栅格化页面；
+仅以 2 GiB、1–100,000 页阻止病态输出。
 沙箱 /work 配额是实际构建限制；预览页数/像素预算不限制 PDF 导出。
 解析成功后才在目标同目录写独占临时文件、同步并原子替换。
 目标须为 .pdf，拒绝 symlink/非普通文件；失败不发布部分文件，已有完整目标保留。
