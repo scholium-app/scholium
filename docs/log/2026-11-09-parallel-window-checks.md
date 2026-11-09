@@ -120,3 +120,21 @@ layers、cargo deny licenses/bans/sources、workspace bins build、rtex bundle �
 
 按任务要求只推分支、不创建 PR、不轮询 CI；此 workflow 的 push 只触发 main，
 本分支的远端 CI 结果需要 coordinator 创建 PR 后记录，不能把本地测量写成已完成的 CI 成绩。
+
+## CI 实测（PR #116，coordinator 补记）
+
+[Rust workspace 运行 42643624632](https://github.com/scholium-app/scholium/actions/runs/42643624632)，提交 `876533f`：
+
+| 作业 | 用时 |
+|---|---:|
+| lint | 1m33s |
+| build-window（构建 + cargo test + 打包） | 3m38s |
+| window (zh-Hans, 1) / (zh-Hans, 2) | 5m11s / 5m15s |
+| window (en, 1) / (en, 2) | 5m02s / 4m38s |
+| test（gate） | 3s |
+| **整个工作流墙钟** | **9m05s**（此前 `test` 作业 23–25 分钟；#115 后 21m43s） |
+
+[LaTeX 真实引擎运行 42643624966](https://github.com/scholium-app/scholium/actions/runs/42643624966)：命中共享 `test` 缓存，
+`cargo build --workspace --bins` 401 秒 → 112 秒；作业 15m41s，其余主要是 setup 174 秒、rtex 打包 85 秒和
+真实引擎验收本身 554 秒（该工作流仅在相关路径变化时触发）。
+四个分片用时相差不到 40 秒，暂不需要增加分片数。
