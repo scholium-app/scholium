@@ -133,7 +133,7 @@ fn display_formula_accepts_one_ime_commit_and_keeps_current_caret_and_indicator(
         panic!("math")
     };
     assert!(matches!(&root.body, MathBody::Text { text } if text == "中"));
-    assert_eq!(f.editor.snapshot.revision.0, 2);
+    assert_eq!(f.editor.snapshot.revision.0, 3);
     assert!(scene.geometry.caret(f.editor.cursor).expect("caret").exact);
     assert!(f.editor.math_indicator().is_some());
 }

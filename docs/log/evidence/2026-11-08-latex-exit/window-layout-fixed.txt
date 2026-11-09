@@ -1,0 +1,10 @@
+waiting for another window-check run
+output: /tmp/t50-layout-fixed
+running source-preview-layout [zh-Hans] ...
+running source-preview-layout [en] ...
+
+check                            result      seconds
+source-preview-layout [zh-Hans]  pass           34.4
+source-preview-layout [en]       pass           34.6
+
+2/2 ok; logs and evidence in /tmp/t50-layout-fixed

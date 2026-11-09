@@ -30,6 +30,17 @@ impl Item {
                 end: None,
                 bytes: None,
             });
+        // This reviewed pin has no diagnostic code field. Match only its exact background
+        // timeout envelope; keep the original message and do not infer source coordinates.
+        let code = (self.severity == "error"
+            && self.file.is_none()
+            && self
+                .message
+                .starts_with("background pass: lualatex was stopped after ")
+            && self
+                .message
+                .ends_with(" s, the time limit of a pass (does the document loop forever?)"))
+        .then(|| "pass_timeout".into());
         Diagnostic {
             severity: match self.severity.as_str() {
                 "error" => Severity::Error,
@@ -41,7 +52,7 @@ impl Item {
             range,
             node: None,
             message: self.message,
-            code: None,
+            code,
             log: None,
         }
     }
@@ -87,6 +98,15 @@ impl Diagnostics {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn pinned_background_pass_timeout_keeps_a_machine_readable_code() {
+        let item: Item = serde_json::from_value(serde_json::json!({
+            "severity":"error", "message":"background pass: lualatex was stopped after 30 s, the time limit of a pass (does the document loop forever?)"
+        })).expect("timeout diagnostic");
+        let mapped = item.map();
+        assert_eq!(mapped.code.as_deref(), Some("pass_timeout"));
+        assert!(mapped.resource.is_none());
+    }
     #[test]
     fn invalid_upstream_lines_and_external_files_keep_messages_without_false_locations() {
         for (file, line) in [

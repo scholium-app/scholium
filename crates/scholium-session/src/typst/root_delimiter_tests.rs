@@ -43,7 +43,7 @@ fn root_and_delimiter_split_at_caret_and_wrap_only_selection_with_undo() {
                     assert!(matches!(slot.body, MathBody::Hole));
                 }
                 f.run(CommandId::Undo);
-                assert_eq!(f.core.snapshot.as_ref(), &before.snapshot);
+                super::tests::assert_content(&f.core.snapshot, &before.snapshot);
                 assert_eq!(f.core.cursor, before.cursor);
                 assert_eq!(f.core.anchor, before.anchor);
             }
@@ -68,7 +68,7 @@ fn focus_commands_add_and_edit_root_index_and_cycle_delimiters_with_undo() {
     );
     f.run(CommandId::Undo);
     f.run(CommandId::Undo);
-    assert_eq!(f.core.snapshot.as_ref(), &before.snapshot);
+    super::tests::assert_content(&f.core.snapshot, &before.snapshot);
     assert_eq!(f.core.cursor, before.cursor);
     f.run(CommandId::Delimiter);
     let before = f.core.record();
@@ -83,7 +83,7 @@ fn focus_commands_add_and_edit_root_index_and_cycle_delimiters_with_undo() {
         }
     ));
     f.run(CommandId::Undo);
-    assert_eq!(f.core.snapshot.as_ref(), &before.snapshot);
+    super::tests::assert_content(&f.core.snapshot, &before.snapshot);
     assert_eq!(f.core.cursor, before.cursor);
 }
 
@@ -195,7 +195,7 @@ fn root_and_delimiter_insert_at_compound_edges_and_inside_each_root_slot() {
             );
             f.run(CommandId::Undo);
             f.run(CommandId::Undo);
-            assert_eq!(f.core.snapshot.as_ref(), &before.snapshot);
+            super::tests::assert_content(&f.core.snapshot, &before.snapshot);
             assert_eq!(f.core.cursor, before.cursor);
         }
     }

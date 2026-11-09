@@ -639,6 +639,7 @@ math-input-category-punctuation = Punctuation
 math-input-category-structure = Structure
 
 chrome-status-settings_hint = Open project settings to change the preview engine
+latex-restarting = Restarting preview
 
 diag-build-output-quota = Build stopped: output byte or file-count budget exceeded. Reduce generated files or restart the session.
 

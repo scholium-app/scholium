@@ -90,7 +90,7 @@ def run(label, extra_env, scroll=False):
         app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
     try:
         wait(lambda s: s["current"], "first scene")
-        window = subprocess.check_output(["xdotool", "search", "--pid", str(app.pid)], env=env,
+        window = subprocess.check_output(["xdotool", "search", "--sync", "--onlyvisible", "--pid", str(app.pid)], env=env,
                                          text=True).split()[0]
         subprocess.run(["xdotool", "windowfocus", window], check=True, env=env)
         subprocess.run(["xdotool", "type", "--delay", "30", SENTENCE], check=True, env=env)

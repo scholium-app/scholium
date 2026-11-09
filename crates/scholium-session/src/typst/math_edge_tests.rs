@@ -72,7 +72,7 @@ fn backspace_enters_structure_without_history_then_deletes_only_graphemes() {
     assert_eq!(at(&f), (root, 1));
     key(&mut f, Key::Backspace);
     assert_eq!(at(&f), (denominator, length));
-    assert_eq!(f.core.snapshot, before);
+    super::tests::assert_content(&f.core.snapshot, &before);
     assert_eq!(f.core.undo.len(), undo);
     assert_eq!(format!("{:?}", f.core.run), run);
     key(&mut f, Key::Backspace);
@@ -106,9 +106,9 @@ fn typing_committing_and_pasting_at_each_edge_undo_and_delete_back_to_edge() {
             let typed = f.core.snapshot.clone();
             f.run(CommandId::Undo);
             assert_eq!(f.core.cursor, edge);
-            assert_eq!(f.core.snapshot, before);
+            super::tests::assert_content(&f.core.snapshot, &before);
             f.run(CommandId::Redo);
-            assert_eq!(f.core.snapshot, typed);
+            super::tests::assert_content(&f.core.snapshot, &typed);
             key(&mut f, Key::Backspace);
             assert_eq!(at(&f), (root, usize::from(right)));
             let empty: Vec<_> = input::leaves(&f.core.snapshot)
@@ -310,7 +310,7 @@ fn math_edges_at_imported_block_boundaries_still_merge_blocks() {
         assert_eq!(f.core.snapshot.blocks.len(), 1);
         assert!(f.core.math_node_at(root).is_some());
         f.run(CommandId::Undo);
-        assert_eq!(f.core.snapshot.as_ref(), &before.snapshot);
+        super::tests::assert_content(&f.core.snapshot, &before.snapshot);
         assert_eq!(f.core.cursor, before.cursor);
     }
 }
@@ -344,7 +344,7 @@ fn home_end_from_an_edge_use_the_containing_row_without_inventing_hidden_stops()
         let before = f.core.snapshot.clone();
         key(&mut f, Key::End);
         assert_eq!(at(&f), (right, 1));
-        assert_eq!(f.core.snapshot, before);
+        super::tests::assert_content(&f.core.snapshot, &before);
         f.core.cursor = Position {
             leaf: structure,
             byte: 0,

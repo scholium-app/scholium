@@ -112,6 +112,9 @@ pub enum CommandError {
     /// Structural validation rejected the edit.
     #[error(transparent)]
     Edit(#[from] scholium_document::EditError),
+    /// Shared SDG lowering rejected the command.
+    #[error(transparent)]
+    Sdg(#[from] scholium_sdg::Error),
     /// The command panicked; its payload is not published (it may contain user data).
     #[error("editing command panicked and was rolled back")]
     Panicked,
@@ -168,15 +171,21 @@ pub struct OverlayData {
 
 impl EditorCore {
     /// Execute one command atomically, including every constituent structural edit.
-    /// No store access occurs inside the unwind boundary; only `save` writes a head.
+    /// No store access occurs inside the unwind boundary; accepted Actions append afterward.
+    /// Only `save` writes an explicit checkpoint and advances the saved baseline.
     ///
     /// # Errors
     /// Rejects mismatched arguments, unsupported intents, document validation failures and
     /// caught panics. Every checkpoint field is restored before the error is returned.
+    ///
+    /// # Panics
+    /// Panics if the validated private device journal cannot reconstruct its prior
+    /// engine state/undo stack, indicating an internal invariant violation.
     pub fn run(&mut self, id: CommandId, args: CommandArgs) -> Result<Outcome, CommandError> {
         #[cfg(test)]
         let checkpoint_start = std::time::Instant::now();
         let checkpoint = self.checkpoint()?;
+        let replica_checkpoint = self.replica.checkpoint()?;
         #[cfg(test)]
         super::tests::checkpoint_bench::sample(checkpoint_start.elapsed());
         let draft = match (&id, &args) {
@@ -188,7 +197,18 @@ impl EditorCore {
         let mut state = EditState::default();
         // Only owned in-memory editing state is captured, with no UI objects or store writes.
         // The injected clock must only read time; even its panic is followed by full restore.
-        let result = catch_unwind(AssertUnwindSafe(|| self.execute(id, args, &mut state)));
+        let result = catch_unwind(AssertUnwindSafe(|| {
+            let applied = self.execute(id, args, &mut state)?;
+            if state.edit_error.is_none() {
+                self.lower_command(&mut state)?;
+                let actions = std::mem::take(&mut state.actions);
+                state
+                    .actions
+                    .extend(self.replica.finish_command(&replica_checkpoint, actions)?);
+                self.adopt_replica_if_changed()?;
+            }
+            Ok(applied)
+        }));
         let result = match result {
             Ok(Ok(applied)) => match state.edit_error {
                 Some(error) => Err(error),
@@ -199,8 +219,10 @@ impl EditorCore {
         };
         match result {
             Ok(applied) => {
-                self.pending_persistence.extend(state.pending);
-                if let Err(error) = self.persist_pending() {
+                self.pending_persistence.extend(state.actions);
+                if !self.input_transaction
+                    && let Err(error) = self.persist_pending()
+                {
                     self.persistence_error = Some(error.to_string());
                 }
                 if matches!(id, CommandId::Undo | CommandId::Redo) {
@@ -220,6 +242,9 @@ impl EditorCore {
                 })
             }
             Err(error) => {
+                self.replica
+                    .rollback(replica_checkpoint)
+                    .expect("validated in-memory SDG journal reconstructs the actor undo stack");
                 self.rollback(checkpoint);
                 if let Some(text) = draft {
                     self.rejected_input = Some(text);

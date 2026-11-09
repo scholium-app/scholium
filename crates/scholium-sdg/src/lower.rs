@@ -54,7 +54,7 @@ pub(crate) fn apply(
     doc.set_next_commit_origin("system/identity");
     for r in &records {
         if let Some(&id) = ids.get(&r.node) {
-            if !before_ids.contains(&r.node) {
+            if !before_ids.contains(&r.node) && graph.get(r.node)?.active {
                 return Err(Error::Identity);
             }
             ensure_fallback(doc, id, r, action)?;
@@ -82,7 +82,12 @@ pub(crate) fn apply(
                     .insert("active", false)?;
                 doc.get_tree("sdg").mov(ids[&old.node], None)?;
             } else {
-                doc.get_tree("sdg").delete(ids[&old.node])?;
+                // Keep metadata/text containers attached to their original TreeID. Loro tree
+                // deletion undo recreates child containers and duplicates immutable NodeIds.
+                // An inactive ancestor suppresses its subtree, including concurrent children.
+                doc.get_tree("sdg")
+                    .get_meta(ids[&old.node])?
+                    .insert("active", false)?;
             }
         }
     }

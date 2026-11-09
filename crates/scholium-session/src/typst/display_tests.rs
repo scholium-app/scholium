@@ -27,7 +27,7 @@ fn display_insertion_splits_body_and_undo_restores_caret() {
         };
         assert_eq!(f.core.cursor.leaf, root.node);
         f.run(CommandId::Undo);
-        assert_eq!(*f.core.snapshot, before.snapshot);
+        super::tests::assert_content(&f.core.snapshot, &before.snapshot);
         assert_eq!(f.core.cursor, before.cursor);
     }
 }
@@ -76,7 +76,7 @@ fn same_row_selection_moves_only_selected_math_into_display_and_undo_is_atomic()
     assert!(matches!(&root.body, MathBody::Text { text } if text == "b"));
     assert_eq!(f.core.undo.len(), depth + 1);
     f.run(CommandId::Undo);
-    assert_eq!(*f.core.snapshot, before.snapshot);
+    super::tests::assert_content(&f.core.snapshot, &before.snapshot);
     assert_eq!(f.core.anchor, before.anchor);
 }
 
@@ -93,7 +93,7 @@ fn body_selection_is_explicitly_rejected_without_mutation() {
         f.core.run(CommandId::DisplayMath, CommandArgs::None),
         Err(CommandError::Rejected(Rejection::StructuralSelection))
     ));
-    assert_eq!(*f.core.snapshot, before.snapshot);
+    super::tests::assert_content(&f.core.snapshot, &before.snapshot);
     assert_eq!(f.core.cursor, before.cursor);
     assert_eq!(f.core.anchor, before.anchor);
 }
@@ -210,7 +210,7 @@ fn roots_and_delimiters_in_display_equations_support_selection_extraction_and_un
     };
     assert!(matches!(&root.body, MathBody::Text { text } if text == "b"));
     f.run(CommandId::Undo);
-    assert_eq!(*f.core.snapshot, before.snapshot);
+    super::tests::assert_content(&f.core.snapshot, &before.snapshot);
     assert_eq!(f.core.cursor, before.cursor);
     assert_eq!(f.core.anchor, before.anchor);
 }

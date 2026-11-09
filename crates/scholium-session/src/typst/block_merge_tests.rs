@@ -45,12 +45,12 @@ fn assert_roundtrip(f: &mut Fixture, key_name: Key) {
     assert_eq!(f.core.undo.len(), depth + 1);
     let merged = f.core.record();
     f.run(CommandId::Undo);
-    assert_eq!(f.core.snapshot.as_ref(), &before.snapshot);
+    super::tests::assert_content(&f.core.snapshot, &before.snapshot);
     assert_eq!(f.core.cursor, before.cursor);
     assert_eq!(f.core.anchor, before.anchor);
     assert_eq!(f.core.undo.len(), depth);
     f.run(CommandId::Redo);
-    assert_eq!(f.core.snapshot.as_ref(), &merged.snapshot);
+    super::tests::assert_content(&f.core.snapshot, &merged.snapshot);
     assert_eq!(f.core.cursor, merged.cursor);
     assert_eq!(f.core.undo.len(), depth + 1);
 }
@@ -128,7 +128,7 @@ fn document_edges_are_noops_without_history_or_requests() {
         );
         let before = f.core.record();
         assert!(!key(&mut f, key_name).changed);
-        assert_eq!(f.core.snapshot.as_ref(), &before.snapshot);
+        super::tests::assert_content(&f.core.snapshot, &before.snapshot);
         assert_eq!(f.core.cursor, before.cursor);
         assert_eq!(f.core.session.actions().len(), before.requests.len());
         assert_eq!(f.core.undo.len(), 1);
@@ -195,7 +195,7 @@ fn backspace_after_a_formula_in_the_same_block_keeps_existing_behavior() {
     f.run(CommandId::Math);
     let before = f.core.record();
     assert!(!key(&mut f, Key::Backspace).changed);
-    assert_eq!(f.core.snapshot.as_ref(), &before.snapshot);
+    super::tests::assert_content(&f.core.snapshot, &before.snapshot);
     assert_eq!(f.core.undo.len(), 3);
 }
 

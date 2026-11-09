@@ -1,0 +1,10 @@
+waiting for another window-check run
+output: /tmp/t50-exit-final
+running latex-exit [zh-Hans] ...
+running latex-exit [en] ...
+
+check                 result      seconds
+latex-exit [zh-Hans]  pass          219.0
+latex-exit [en]       pass          220.1
+
+2/2 ok; logs and evidence in /tmp/t50-exit-final

@@ -3,7 +3,7 @@
 ## 职责
 
 提供不依赖 UI 的本地编辑会话，公共入口为 `scholium_session::typst::EditorCore`。
-Typst 模块持有唯一 `LocalSession<StructuredDocument>`、不可变 `Arc` 投影、正式项目 `NativeProject`（兼容 fixture 保留 `SessionStore`）、保存基线、
+Typst 模块持有唯一可提交的 `scholium_sdg::Replica`、只作命令规划/只读投影的 `LocalSession<StructuredDocument>`、正式 `ProjectStore` 和保存基线、
 光标/选区、撤销/重做与输入分组时钟、待输入样式、Attach 占位生命周期，以及纯数据诊断来源。
 项目路径与旧会话迁移选择由 app 决定；此层执行原生权威 restore、提交 Action 与 save。
 边界见 [ADR 0042](../adr/ADR-0042-session-editing-core.md)。
@@ -19,7 +19,7 @@ Scene 只在完整 stamp 与 wanted 相等时采纳；旧 Scene 可继续显示�
 抽象 deferred 记录由 core 持有并决定顺序、上限、指针拒绝和布局失败处理；匹配的 egui 事件 payload 队列仍在 app，
 只按 core 的 Execute/Queue/Wait/拒绝结果存取。IME 预编辑、栅格纹理、绘制、屏幕 placement、IME 锚点、AccessKit、
 源码视图、确认框、Fluent 诊断呈现和 AUDIT 打印由 [app](app.md) 持有。
-不实现协作 undo、项目权限协议、Pi/MCP/插件协议或 LaTeX 公共内核 trait。
+正文 Undo/Redo 使用 adapter 的 actor-only 补偿；不实现网络、协作 UI、项目权限协议、Pi/MCP/插件协议或 LaTeX 公共内核 trait。
 
 ## 内部结构
 
@@ -29,7 +29,8 @@ src/typst/command.rs          CommandId/CommandArgs/Outcome、原子 run 入口
 src/typst/command/checkpoint.rs  执行前 checkpoint、错误/panic 回滚
 src/typst/edit.rs             StructuralRequest、存活光标、历史与投影发布
 src/typst/persistence.rs      open/restore/save、空白文档、只读旧 head 迁移
-src/typst/history.rs          本地撤销/重做、输入/删除分组、可注入单调时钟
+src/typst/history.rs          actor 撤销/重做、语义端点记录、输入/删除分组与单调时钟
+src/typst/sdg_project.rs      SDG Action 提交、checkpoint、恢复与旧 native envelope 迁移
 src/typst/input.rs            抽象输入分发，以及字面文字、公式进出、分数与拆段
 src/typst/math_caret.rs       结构边缘导航、边缘输入及空 base 结构命令
 src/typst/structural_delete.rs  字素删除、空结构/公式移除与无编辑的逐停点进入
@@ -49,28 +50,30 @@ src/typst/indicator.rs        调用方证明当前的 Scene → Frame pt 指示
 src/typst/diagnose.rs         段落文字与公式溢出目标
 ```
 
-依赖仅向下：model、document、storage、typst（`editor`）、thiserror，以及从 app 搬来的同版本
+依赖仅向下：model、document、scholium-sdg、storage、typst（`editor`）、thiserror，以及从 app 搬来的同版本
 unicode-segmentation（保留组合字符、ZWJ、区域指示符的字素边界行为）。不得直接或传递依赖
 egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.py` 强制。
 
 ## 公共接口
 
 - `EditorCore::open_project(handle)` 持正式项目锁并恢复原生快照/Action；
-  `open_project_with_wake` 装配相同页面 worker。`open(path)` 保留兼容 v1 store；`prepare(target, legacy)` 只在目标不存在且旧文件有 head 时迁移。
+  `open_project_with_wake` 装配相同页面 worker。`open(path)` 只读导入旧 session，authority 位于相邻的 `.sdg-project` 正式项目；已迁移 head 不再读取旧库。
+  `prepare(target, legacy)` 保留只读旧格式导入工具，实验 SessionStore 不再成为编辑 authority。
   路径选择、迁移提示格式与启动失败页面由 app 提供。已有目标与旧文件从不覆盖。
 - `run(CommandId, CommandArgs) -> Result<Outcome, CommandError>` 是编辑命令的唯一执行入口。
   支持 app 注册表现有的公式、分数、上下标、文字样式、段落类型、undo/redo，以及 SelectAll、Delete 和
   `Text`（Typed、Commit、Paste）；语义替换、拆段、槽位离开/移除/收尾、新建和显式 StructuralEdit 同样经此入口。
   不匹配的参数形状返回错误。`Outcome` 告知投影是否变化、条件操作是否应用、旧 Scene 是否需要丢弃，
   以及 app 是否应清除旧编辑错误或拖选；不返回屏幕类型。
-- `save()` 重试未提交队列后写已接受快照 checkpoint，成功后更新保存基线；`dirty()` 比较完整保存内容并计入待写队列/提交错误。
-  每个成功结构请求在命令内收集状态，整条命令成功后依序 append_action；失败/恐慌的命令不提交收集状态。
-  存储失败保留接纳输入和待写队列，`persistence_error` 交给 app 可见显示，不冒充保存成功。
-  `save_as_project(target)` 复制资源与当前内容至新身份，成功后切换持锁后端；
-  `discard_project` / 本地 undo/redo 追加恢复事件，不删除旧 Action；当前不是协作 undo。
-  app 在 IME 组合和排队输入结束后才请求保存。
+- `save()` 重试未提交 Action 队列，再在最新 durable sequence 保存 `SCSDGS01` checkpoint；成功后更新内容保存基线。
+  一次成功正文命令只产生一个 `SCSDGA01` Action，完整 bytes 交给 `ProjectStore::append_action`；
+  内部多次结构规划、临时槽清理与拆段不额外暴露中间 Action。纯导航/no-op 不写正文 Action。
+  外层 Input 成功前不写库；提交失败保留接纳输入、待写队列和可见 `persistence_error`，不宣称保存成功。
+  `save_as_project(target)` 创建独立 Replica、复制资源并切换锁；`discard_project` 追加 system 恢复动作。
+  Undo/Redo 通过 actor 补偿追加新 Action，保存的历史快照不用于改写正文；重启后设备 undo 栈为空。
 - `session` 是不提供 `DerefMut` 和构造器的只读 authority 视图；`session()` 提供同一不可变引用。
-  app 不能从此调用可变 document 方法。`restore_document` 在验证后恢复本地文档，供恢复入口和 fixture 使用。
+  app 不能从此调用可变 document 方法。`restore_document` 验证文档/旧请求日志后追加 system 替换；DocumentId 更换只限刚初始化的空私有会话。
+  `shared_repairs()` 公开 adapter 的确定性修复诊断，不能将有修复的投影冒充无损发布。
 - app 只把 egui 文字、按键和页面指针翻译成 `Input`；光标/anchor、输入分组、输入样式、视觉导航、点击选区和
   follow 意图均由 core 更新。`record`、`range`、`selected`、`active_styles`、`in_math` 读取同一权威投影。
 - `Input::Pointer` 的双击选词、三击选段由 core 处理；`Release` 携带点击数时也独立完成该手势，
@@ -90,15 +93,18 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
 
 ## 不变量
 
-- 只有一个权威文档；排版、源码与界面读取同一已接受投影。输入文字不会作为 Typst 代码执行。
+- 只有 Replica 是可提交正文 authority；成功命令的 planner shared snapshot 与 Replica projection 完全相等（debug + tests）。
+  排版、源码与界面读取该投影。输入文字不会作为 Typst 代码执行。
 - 每个 `run` 在执行前保存快照、完整请求身份、光标/anchor、undo/redo、open run 与 clock、pending style、placeholder
   和保存/诊断基线。多次结构编辑（如插入后设置样式）同属一次命令事务。
 - 内存命令事务不包含 UI 或存储写入；注入时钟只读单调时间；`AssertUnwindSafe` 只包围可完整恢复的内存执行。存储不在 unwind 边界内。
 - 历史条目的 `HistorySnapshot` 包装 `Arc<StructuredDocument>`，请求日志为 `Arc<[RequestId]>`；
   克隆 undo/redo 只做 O(栈长) 的指针复制，占位持有的历史条目同样共享。`HistorySnapshot` 保留与 owned 文档的值比较。
-  正式存储的完整临时 payload 成本独立于 checkpoint；它将由 SDG adapter 增量 Action 替换。
+  正式存储仅持久化 SDG 增量 Action 与提交边界的 CRDT snapshot，不保存 planner 请求 JSON 作为正文更新。
   checkpoint 的权威直接保留 LocalSession 已验证的共享快照和 action journal，投影与 saved 基线也复用 Arc，
   不逐命令复制全文或重建/验证请求日志。接受结构编辑仍在独立规划副本上验证，提交时 action journal 写时复制。
+- SDG 事务 checkpoint 同时覆盖 engine、receipt 和设备 undo/redo。成功路径记录设备 journal，失败冷路径确定性重建；
+  wire snapshot 不含 undo 栈，不能单独冒充完整内存回滚。此 journal 不落盘、不作为产品历史。
 - 错误与 panic 恢复 checkpoint；已接受权威的回滚副本无需再次验证，恢复不执行可失败校验。失败前没有文档修改时保留 epoch；
   已部分修改的 authority 用 restore 换新 epoch，再请求 Scene，旧几何不得恢复命中权限。
 - 正文/数学文字位置是稳定叶 ID、叶内 UTF-8 字素边界与 affinity；Fraction/Attach/Root/Delimited 边缘以结构 ID 和
@@ -112,10 +118,10 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
   插入/删除后按已接受内容重新验证字素边界；undo/redo 保留边缘 Position。
 - Backspace/Delete 先删同叶对应方向字素；空 optional Attach 槽 RemoveSlot 优先；槽位对应边界的全空
   结构移除为 Hole（Row 中则摘除），空公式移除。其余只按左右方向移动一个停点，不写动作/历史或重置 run。
-- 本地历史最多 512 个分组；同叶、连续位置、间隔 <1 秒的键入与 IME 提交按词合并（含词尾空白）；
-  连续删除单独合并，粘贴单独一步，保存不打断分组。app 将导航和命令键的分组中断传给 core。
+- UI 历史最多 512 个分组；同叶、连续位置、间隔 <1 秒的键入与 IME 提交按词合并（含词尾空白）；
+  连续删除单独合并，粘贴单独一步，保存不打断分组。UI 分组对应 UndoManager group，逐命令 Action 不合并；app 将导航和命令键的分组中断传给 core。
 - 无选区时，正文块首 Backspace 合入前块、块尾 Delete 拉入后块；前块保留身份与类型，光标留在拼接点。
-  合并独立一步撤销，undo 恢复原块与原光标；首块块首/末块块尾的对应删除为空操作，不写历史或请求。
+  合并独立一步撤销，undo 恢复原块与原光标、追加新的共享 revision；首块块首/末块块尾的对应删除为空操作，不写历史或请求。
   相邻正文端点通过空文字 `ReplaceBodyRange` 合并；若边界直接是公式而无正文叶，复用 `MergeWithNext`，
   保留已有 caret 所指身份，不删除公式；块直接以公式边缘开始/结束时同样适用。
   数学空槽的 `RemoveSlot` 优先；同块公式后正文叶 byte 0 的 Backspace 逐停点进入公式。
@@ -135,7 +141,7 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
 ## 测试门禁
 
 无界面测试驱动同一 `run`，覆盖正文、公式进出、分数、上下标与临时槽位、粗体/强调、选区替换、
-输入分组与 undo/redo、保存重开，以及参数拒绝和修改后的 Err/panic 完整回滚（含磁盘 saved head）。
+输入分组与 undo/redo、保存重开，以及参数拒绝和修改后的 Err/panic 完整回滚（含磁盘 durable prefix）。
 既有 app 单元测试、双语言真实窗口和独立 stock Typst 像素对照保持原断言/阈值。
 工作区 fmt、clippy、test、rustdoc、规模/链接/UI 字串门禁与 layer gate 共同验收；layer gate 有真实 egui 负对照。
 共享回归测试检查满历史、redo、保存基线与权威的 Arc 身份，以及修改后 Err/panic 的隔离和 epoch 语义。
@@ -187,3 +193,13 @@ Attach 的 after edge 输入另一个脚本扩展同一 Attach，不制造空底
 命令框 Esc 只丢弃未提交 query，原文与 revision 不变。
 共享 `accept::cases()` 通过真实 Typst 会话执行并比较归一化公式树；冻结窗口场景对快捷键使用稳定语义命令 id，
 窗口 runner 从默认键位文件解析实际组合，核心 runner 直接执行命令。嵌套 Tab 场景显式走结构 after edge。
+
+## SDG 持久化与迁移
+
+初始化 `system/initialize-v1` Action 自带从空 version vector 导出的完整识别树；首个 snapshot 前崩溃
+可直接恢复该 Action。恢复顺序是 import `SCSDGS01` → receive 后续 `SCSDGA01` → 重建 planner，
+不恢复旧 JSON 快照后继续把请求栈当作共享更新。恢复时分配新的随机非零 actor。
+
+旧 temporary native v1 envelope 严格验证后一次追加 SDG 初始化与 snapshot，旧 Actions/snapshots 保留。
+实验 SessionStore 只读导入，目标声明已发布而没有 durable head 时重试导入；未知版本/损坏拒绝。
+边界、初始化 wire 语义和稳定 tombstone 见 [ADR 0059](../adr/ADR-0059-sdg-session-durability.md)。

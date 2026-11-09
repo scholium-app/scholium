@@ -120,7 +120,7 @@ fn multi_event_frame_inserts_fractions_without_moving_prior_text_into_numerators
         .map(|l| l.text.to_owned())
         .collect();
     assert_eq!(values, ["中文 English ", "12", "3", "4", "", "", ""]);
-    assert_eq!(f.editor.snapshot.revision.0, 7);
+    assert_eq!(f.editor.snapshot.revision.0, 8);
     f.settle();
     let scene = f.editor.scene.as_ref().expect("settled scene");
     assert_eq!(scene.stats.source_reads, 0);
@@ -128,18 +128,32 @@ fn multi_event_frame_inserts_fractions_without_moving_prior_text_into_numerators
 }
 
 #[test]
-fn undo_redo_preserves_request_ids_and_rejects_old_scene_at_same_revision() {
+fn undo_redo_appends_action_ids_and_rejects_old_scene() {
     let mut f = Fixture::new();
     f.events(vec![text("a")]);
     f.settle();
     f.editor.save(&mut f.state);
     let old = f.editor.scene.take().expect("scene");
     let old_stamp = old.stamp;
-    let request = f.editor.session.actions()[0].request;
+    let requests: Vec<_> = f
+        .editor
+        .session
+        .actions()
+        .iter()
+        .map(|a| a.request)
+        .collect();
     f.editor.history(false, &mut f.state);
     f.editor.history(true, &mut f.state);
-    assert_eq!(f.editor.session.actions()[0].request, request);
-    assert_eq!(f.editor.wanted.revision, old_stamp.revision);
+    let after: Vec<_> = f
+        .editor
+        .session
+        .actions()
+        .iter()
+        .map(|a| a.request)
+        .collect();
+    assert!(requests.iter().all(|id| after.contains(id)));
+    assert_eq!(after.len(), requests.len() + 2);
+    assert_eq!(f.editor.wanted.revision.0, old_stamp.revision.0 + 2);
     assert_ne!(f.editor.wanted.epoch, old_stamp.epoch);
     f.editor.adopt(&f.ctx, old_stamp, Ok(old));
     assert!(f.editor.scene.is_none());
@@ -147,11 +161,11 @@ fn undo_redo_preserves_request_ids_and_rejects_old_scene_at_same_revision() {
     f.editor.history(false, &mut f.state);
     f.events(vec![text("b")]);
     f.settle();
-    assert_ne!(f.editor.session.actions()[0].request, request);
-    assert_eq!(f.editor.snapshot.revision.0, 1);
+    assert_eq!(f.editor.session.actions().len(), requests.len() + 4);
+    assert_eq!(f.editor.snapshot.revision.0, old_stamp.revision.0 + 4);
     assert!(
         f.state.editor.as_ref().expect("view").dirty,
-        "same revision is not the saved content"
+        "compensating Actions preserve a distinct saved content baseline"
     );
 }
 
@@ -165,12 +179,17 @@ fn save_reopen_preserves_holes_and_can_continue_after_redo() {
     f.editor.save(&mut f.state);
     assert!(f.state.storage_error.is_none());
     let expected = f.editor.record();
-    let mut restored = EditorSession::open_file(&f.ctx, &mut f.state, &f.path).expect("reopen v1");
+    let epoch = f.editor.wanted.epoch;
+    let path = f.path.clone();
+    let ctx = f.ctx.clone();
+    let mut state = std::mem::take(&mut f.state);
+    drop(f); // Native projects have an exclusive writer lock.
+    let mut restored = EditorSession::open_file(&ctx, &mut state, &path).expect("reopen SDG");
     assert_eq!(*restored.snapshot, expected.snapshot);
     assert_eq!(restored.record().requests, expected.requests);
-    assert_ne!(restored.wanted.epoch, f.editor.wanted.epoch);
+    assert_ne!(restored.wanted.epoch, epoch);
     restored.cursor = hole;
-    restored.events(vec![text("d")], &mut f.state);
+    restored.events(vec![text("d")], &mut state);
     assert_eq!(
         input::leaves(&restored.snapshot)
             .into_iter()
@@ -225,12 +244,12 @@ fn ime_commit_and_duplicate_text_event_create_one_action_and_one_value() {
         text: "中文".into(),
         active_range_chars: None,
     })]);
-    assert_eq!(f.editor.snapshot.revision.0, 0);
+    assert_eq!(f.editor.snapshot.revision.0, 1);
     f.events(vec![
         egui::Event::Ime(egui::ImeEvent::Commit("中文".into())),
         text("中文"),
     ]);
-    assert_eq!(f.editor.snapshot.revision.0, 1);
+    assert_eq!(f.editor.snapshot.revision.0, 2);
     assert_eq!(input::leaves(&f.editor.snapshot)[0].text, "中文");
 }
 
@@ -272,7 +291,7 @@ fn every_scene_identity_field_gates_adoption_of_failed_results() {
     variants[0].document = scholium_model::DocumentId::fresh();
     variants[1].epoch = LayoutEpoch::fresh();
     variants[2].request = LayoutRequestId::fresh();
-    variants[3].revision = scholium_model::Revision(1);
+    variants[3].revision = scholium_model::Revision(stamp.revision.0 + 1);
     variants[4].profile = ProfileGeneration(1);
     variants[5].resources = ResourceGeneration(1);
     for stale in variants {
@@ -294,7 +313,7 @@ fn joining_emoji_graphemes_does_not_strand_following_input_inside_a_cluster() {
     f.events(vec![text("\u{200d}"), text("x")]);
     assert_eq!(input::leaves(&f.editor.snapshot)[0].text, "👩‍🔬x");
     assert_eq!(f.editor.cursor.byte, "👩‍🔬x".len());
-    assert_eq!(f.editor.snapshot.revision.0, 3);
+    assert_eq!(f.editor.snapshot.revision.0, 4);
     assert!(f.editor.rejected_input.is_none());
 }
 
@@ -306,7 +325,7 @@ fn deletion_that_joins_regional_indicators_keeps_a_valid_insertion_point() {
     f.events(vec![key(egui::Key::Backspace, false), text("y")]);
     assert_eq!(input::leaves(&f.editor.snapshot)[0].text, "🇦🇧y");
     assert_eq!(f.editor.cursor.byte, "🇦🇧y".len());
-    assert_eq!(f.editor.snapshot.revision.0, 3);
+    assert_eq!(f.editor.snapshot.revision.0, 4);
     assert!(f.editor.rejected_input.is_none());
 }
 
@@ -523,4 +542,11 @@ pub(super) fn press_alt(key: egui::Key, shift: bool) -> egui::Event {
             ..egui::Modifiers::NONE
         },
     }
+}
+
+/// Compensation restores identified content while appending a new shared revision.
+pub(super) fn assert_content(actual: &StructuredDocument, expected: &StructuredDocument) {
+    assert_eq!(actual.document, expected.document);
+    assert_eq!(actual.blocks, expected.blocks);
+    assert!(actual.revision.0 >= expected.revision.0);
 }

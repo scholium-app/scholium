@@ -26,7 +26,7 @@ src/project/
 ├── schema.rs       不覆盖创建、先校验后 writer、完整性验证
 ├── data.rs         Action、快照、草稿、内容寻址 blob
 ├── handle.rs       不可变项目/资源身份、语言与入口声明、同格式副本
-├── native.rs       临时版本信封、原生 Action 重放与快照
+├── native.rs       退役 native v1 严格只读解码与兼容迁移工具
 ├── source.rs       私人草稿、磁盘基线、保存/重新载入
 ├── member.rs       同锁编辑资源选择与派生构建草稿输入
 ├── migration.rs    只读会话导入、新项目验证与保留原库报告
@@ -57,6 +57,8 @@ src/project/
 新增永久 schema/envelope 必须提升版本，经一致备份和独立目标迁移验证后显式发布，保留失败目标及旧库。
 Unix 新库以 0600 创建，SQLite WAL/SHM 继承私有权限，不扩大已有库权限。
 SQLite 连接不跨线程共享。浏览器存储另行适配，不将宿主持久性回调冒充本机 fsync。
+`ProjectStore` 销毁时先关闭 SQLite，再显式解除 OS 项目锁；fork 到 exec 之间的子进程即使暂持同一
+文件描述符，也不会在 owner 退出后延长项目所有权。
 
 ## 公共接口
 
@@ -65,8 +67,8 @@ SQLite 连接不跨线程共享。浏览器存储另行适配，不将宿主持�
 - `append_action(&ActionRecord) -> DurableSequence`：version=1 的 Action/update 在 SQLite WAL/FULL 事务提交后返回；
   序号与语义 revision 不混用。`actions_after(sequence)` 供内核重放，零表示完整日志。
 - `save_snapshot(sequence, bytes)` / `latest_snapshot()`：由内核保证领域一致性的版本化 checkpoint。
-  正式增量 adapter 接入时在累计 1024 动作或 8 MiB 更新后请求快照；临时 native 信封由显式保存触发快照，
-  加载后重放其后的 Actions，不自动删日志/快照。
+  原生 SDG 会话在初始化/迁移及显式保存时写快照，加载后重放其后的 Actions，不自动删日志/快照。
+  累计 1024 动作或 8 MiB 更新后的自动 checkpoint 调度由后续会话策略提供，storage 不自行猜测领域边界。
 - `save_draft(resource, base_hash, bytes)` / `load_draft` / `discard_draft`：接受无效语法，保留原始基线，
   不触碰源文件、不生成 Action；草稿可先于文件目录存在。默认不进发布包，物化不自动清草稿。
 - `put_blob(bytes)` / `get_blob(hash)`：SHA-256 去重，读写验证内容，不按路径或 mtime 判等。
@@ -87,10 +89,17 @@ SQLite 连接不跨线程共享。浏览器存储另行适配，不将宿主持�
 声明与资源路径拒绝 symlink、不安全路径和语言/authority 不匹配。声明仅在首次创建/导入时不覆盖发布。
 `copy_source` / `copy_native` 复制普通资源并生成新身份，排除私人元数据；已有/嵌套目标和特殊文件拒绝。
 
-`NativeProject::open(handle, initial)` 持锁，验证并恢复快照及后续全部 Actions；空项目先提交初始化事件和快照。
-`append_edit` 提交版本 1 临时绝对状态信封，含 structured 文档、当前请求身份日志和事件身份；
-`save` 在最新 Action 边界写不可变快照，重复保存不覆盖。当前信封由共享 SDG adapter Action 替换，
-不代表 CRDT、协作 actor 或产品历史。`saved_document` / `saved_requests` 保留最后保存基线供显式丢弃追加。
+Typst 编辑会话由 session 层协调 `Replica` 与 `ProjectStore`，storage 不依赖 scholium-sdg。
+`ActionRecord.payload` 是完整 `SCSDGA01` bytes，`save_snapshot` 的 opaque bytes 是 `SCSDGS01`；
+外层 version/hash 不替代内核 Action magic/version。只在 durable Action 边界写 snapshot，恢复重放后续 Actions。
+初始化 Action 包含完整树增量，因此首个 snapshot 前崩溃也可恢复；边界见
+[ADR 0059](../adr/ADR-0059-sdg-session-durability.md)。
+
+`import_native_v1` 只读验证旧 temporary native v1 envelope 的文档与请求日志，未知版本拒绝。
+会话在原 append-only 库中追加初始化 Action 与新 snapshot，保留全部旧字节，不能覆盖旧 head。
+`NativeProject` 的旧写接口仅供兼容工具和迁移 fixture，不再由编辑会话调用。
+`import_session` 在只读一致事务内导入 legacy/structured experimental 文件；编辑 authority 位于正式项目，
+原实验文件不再被编辑/保存，已有 durable SDG head 不再次导入旧源。
 
 `SourceProject::open` 持锁并读取 UTF-8 源码或私人 draft，不执行语法或改源文件。
 `edit` 保留私人输入并提交 durable draft，失败仍保留新输入与未保存状态；`save` 显式恢复该资源的 pending 意图、执行 materialize，随后清 draft。

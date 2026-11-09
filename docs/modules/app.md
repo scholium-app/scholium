@@ -401,7 +401,10 @@ SourceSession/LiveSession 只持有派生的预览快照，恢复 draft 后先�
 文件模态框禁止工作台输入；源码项目的撤销/重做快捷键交给 TextEdit 原生历史，不被 Typst 历史命令截获。
 IME 预编辑不写草稿，并阻止保存/切换，提交后才进入持久化路径。
 工具链准备、协议、编译、字体与栅格工作全部离开 UI 线程，输入 watch 保留最新版本、队列有界。
-LuaLaTeX 经 LiveSession 转发最小 UTF-8 patch；显示段落更新。非 Lua 引擎使用一次性整编并丢弃旧 revision。
+LuaLaTeX 经 LiveSession 转发最小 UTF-8 patch；显示段落更新。最后一次输入静止 750 ms 后请求整编布局，
+每次输入重置该截止时间，不给常驻进程添加编译看门狗。实时/整编标签依据已采纳结果的实际来源。
+worker 转发生命周期；Recovering 在后续 Ready 排队时也至少呈现一帧本地化“正在重启预览”，随后恢复布局。
+LuaLaTeX 只上传当前可见页，保留真实总页数用于导航，不因 100 页文档而分配 100 张 300 dpi 纹理。非 Lua 引擎使用一次性整编并丢弃旧 revision。
 UI 始终标明项目引擎、实时/整编来源、耗时及更新中状态。审计 submitted_ms 只代表 UI 提交阶段；
 真实窗口 E6 通过私有 Xvfb 的 XGetImage 检测预览像素变化，不把协议回调或 UI 提交当作呈现。
 
@@ -494,6 +497,10 @@ LaTeX 结构不展开宏，章节保留源码标题而不猜 TeX 计数器；Typ
 
 构建总输出配额错误按统一 Diagnostic 的 `diag.build.output_quota` code 在两种语言下展示。
 
+审计同时设置 `SCHOLIUM_EDITOR_AUDIT` 与 `SCHOLIUM_LATEX_FRAME_AUDIT` 时，LaTeX 窗口以 16 ms 间隔请求帧，
+输出独立 `latex-frame` 的 `interval_ms` 与 `work_ms`；正常运行不启用该测量。
+LaTeX audit 的 `page_count` 是整篇页数，`pages` 是已上传纹理数；`engine_state`、`status`、`elapsed_ms`
+分别说明生命周期、来源标签及协议加栅格耗时，不将其视为屏幕呈现时间。
 ## PDF 文件导出
 
 `file.export` 对三类已打开项目使用同一个 FileDialog PDF 目标表单；默认键位为 Ctrl+Shift+E，

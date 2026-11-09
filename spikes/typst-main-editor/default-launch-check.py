@@ -32,7 +32,7 @@ def run(args, name, actions):
         app = subprocess.Popen([str(binary), *args], env=env, stdout=log, stderr=subprocess.STDOUT)
     try:
         time.sleep(4)
-        window = subprocess.check_output(["xdotool", "search", "--pid", str(app.pid)], env=env, text=True).split()[0]
+        window = subprocess.check_output(["xdotool", "search", "--sync", "--onlyvisible", "--pid", str(app.pid)], env=env, text=True).split()[0]
         subprocess.run(["xdotool", "windowfocus", window], env=env, check=True)
         actions(window)
         subprocess.run(["import", "-window", window, str(output / f"{name}.png")], env=env, check=True)

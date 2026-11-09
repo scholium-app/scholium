@@ -633,6 +633,7 @@ math-input-category-punctuation = 标点
 math-input-category-structure = 结构
 
 chrome-status-settings_hint = 打开项目设置，调整预览引擎
+latex-restarting = 正在重启预览
 
 diag-build-output-quota = 构建已停止：输出总字节数或文件数量超出配额。请减少生成文件或重新启动会话。
 
