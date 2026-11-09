@@ -1,0 +1,21 @@
+{
+  "wall_seconds": 6.716373566996481,
+  "jobs": 1,
+  "shard": null,
+  "checks": [
+    {
+      "name": "source-view",
+      "locale": "zh-Hans",
+      "seconds": 3.381747516003088,
+      "wait_seconds": 0.00012759200035361573,
+      "result": "pass"
+    },
+    {
+      "name": "source-view",
+      "locale": "en",
+      "seconds": 3.333496744999138,
+      "wait_seconds": 7.992700557224452e-05,
+      "result": "pass"
+    }
+  ]
+}

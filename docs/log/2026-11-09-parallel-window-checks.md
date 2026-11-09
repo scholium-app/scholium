@@ -1,8 +1,9 @@
 # T54：窗口检查分片与跨 worktree 并发
 
 本次在 `scholium-wt2`、`ation_ciger/ci/parallel-window-checks` 上从
-`e39553f1432924af375ee21686e89506e2c36c10` 实现了调度与 CI 修改。仅修改了 T53 拥有的 `ui-polish-final-check.py` 一行，作为任务明确允许的完整状态等待修复；
-其余检查脚本、`chrome_ui.py`、`latex_exit_*.py`、`a11y/` 和 coordinator 的 tasks 文件未改。
+`e39553f1432924af375ee21686e89506e2c36c10` 实现了调度与 CI 修改。最终差异没有修改 T53 拥有的检查脚本、`chrome_ui.py`、`latex_exit_*.py`、`a11y/` 或 tasks。
+按 coordinator 指示签署合并了 PR #115 后的 `origin/main`（`fe3cff0`），合并提交为 `58bce6c`；
+仅 runner docstring 冲突，保留 T53 的 evidence 说明与 T54 的调度说明。
 
 ## CI 与传输取舍
 
@@ -62,8 +63,9 @@ Xvfb 使用高编号显示、原子服务器锁、`-displayfd` 就绪通知、�
 而文件尾部可能只有一个多字节字符的首字节，触发 `UnicodeDecodeError`。一行改动先在 bytes 上按换行
 截取完整记录，再逐行严格 UTF-8 解码；未完整记录留待下次真实状态轮询。没有忽略解码错误、放宽断言
 或增加 sleep。使用“完整 AUDIT + 不完整 PROJECT UTF-8 尾”夹具复现旧失败，再验证新代码保留旧完整状态、
-写完新行后准确返回 Unicode 新状态。此行与 T53 日志读取工作重叠，coordinator 合并时需保留其完整行语义。
-失败轮次保留，不计入零失败连续证明；修复后重新执行三轮并行加一轮串行。
+写完新行后准确返回 Unicode 新状态。这行临时修复没有提交；合入 T53 后 `raw()` 使用 `log_latest`，reader 已按 bytes 缓存不完整尾部，
+因此删除临时修复，完全保留 T53 reader。失败轮次与合并前成功轮次均保留，只作诊断记录。
+最终零失败连续证明在合并树上重新执行三轮并行加一轮串行。
 
 ## 验证记录
 
@@ -84,12 +86,34 @@ layers、cargo deny licenses/bans/sources、workspace bins build、rtex bundle �
 | `python3 scripts/check-ui-strings.py` | PASS |
 | `python3 scripts/check-layers.py` | PASS |
 | `cargo deny --locked check licenses bans sources` | PASS；既有未用 license allowance 提示 |
-| `cargo build --locked -p scholium-app -p scholium-storage --bins` | workspace bins 更广构建已通过 |
+| `cargo build --locked -p scholium-app -p scholium-storage --bins` | PASS；workspace bins 更广构建也通过 |
 | `python3 scripts/test-window-checks.py` | PASS，9 项，显式 spawn context |
 | `python3 scripts/test-bundle-rtex.py` | PASS，3 项 |
 | `actionlint` 两个改动 workflow | PASS，临时登记固定镜像 label |
 
-完整稳定性序列、最终时长表与分片平衡将在结束后填入。原始记录保留于本 slot 的
+合并树 `58bce6c` 在相同二进制与检查脚本下连续执行了三轮 `--jobs 3 --locale zh-Hans en`：
+751.3、747.9、751.7 秒，均为 68 个实际 pass + 2 个预定 skip（latex-exit 双语独立 workflow），
+共 204 个实际检查全部通过。未使用证据开关，T53 的像素/行为断言仍全部运行。
+单线程同树运行 `--jobs 1 --locale zh-Hans en --refresh-durations` 通过，1105.8 秒（18 分 26 秒）。
+四轮合计 272 个实际 pass、8 个预定 skip、0 个失败。并行中位数 751.3 秒（12 分 31 秒），
+相对同树串行缩短 32.1%，约 1.47 倍吞吐。合并前结果不计入这张验收表。
+
+| 合并树运行 | jobs | 秒 | 实际 pass | 预定 skip | fail |
+| --- | --- | --- | --- | --- | --- |
+| merged-parallel-1 | 3 | 751.3 | 68 | 2 | 0 |
+| merged-parallel-2 | 3 | 747.9 | 68 | 2 | 0 |
+| merged-parallel-3 | 3 | 751.7 | 68 | 2 | 0 |
+| merged-serial | 1 | 1105.8 | 68 | 2 | 0 |
+
+`--refresh-durations` 已从串行成功运行更新全部常规项，latex-exit 为 0（常规套件跳过）。
+最终两片每语言预算为 276.27 / 276.60 秒；完整归属见
+[shard-balance.json](evidence/2026-11-09-parallel-window-checks/shard-balance.json)。
+结果、历史 CI、缓存/传输测量与门禁摘要在
+[证据目录](evidence/2026-11-09-parallel-window-checks/merged-serial.json)；这些均不包含用户文档。
+额外以 `--only source-view --locale zh-Hans en --jobs 1 --evidence` 实测开关：2/2 通过，
+6.7 秒，生成 6 张 PNG；[图像 manifest](evidence/2026-11-09-parallel-window-checks/evidence-images.json)
+记录文件大小与 SHA-256，证明 CLI 确实将 evidence 开关传至 T53 helper。
+原始记录保留于本 slot 的
 `target/t54-validation/`（不纳入 Git）。
 
 按任务要求只推分支、不创建 PR、不轮询 CI；此 workflow 的 push 只触发 main，

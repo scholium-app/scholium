@@ -1,0 +1,49 @@
+[
+  {
+    "shard": 1,
+    "seconds_per_locale": 276.27,
+    "checks": [
+      "ui-polish-final",
+      "sharp-raster",
+      "caret-follow",
+      "chrome",
+      "pdf-export",
+      "native",
+      "math-edge-caret",
+      "math-root-delimiter",
+      "problem-panel",
+      "project-native",
+      "backspace-block-merge",
+      "display-formula",
+      "inline-style",
+      "project-source",
+      "undo-group",
+      "ime-inline",
+      "latex-exit"
+    ]
+  },
+  {
+    "shard": 2,
+    "seconds_per_locale": 276.6,
+    "checks": [
+      "parity",
+      "start-page-dialogs",
+      "fraction-at-caret",
+      "source-preview-layout",
+      "ui-foundation",
+      "project-latex",
+      "diagnostics",
+      "math-enter",
+      "math-input",
+      "source-theme",
+      "interaction",
+      "default-launch",
+      "a11y",
+      "a4-surface",
+      "source-view",
+      "math-attach",
+      "source-find",
+      "latex-view"
+    ]
+  }
+]

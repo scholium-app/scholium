@@ -1,0 +1,497 @@
+{
+  "wall_seconds": 751.6762003839976,
+  "jobs": 3,
+  "shard": null,
+  "checks": [
+    {
+      "name": "a4-surface",
+      "locale": "zh-Hans",
+      "seconds": 3.1868137510027736,
+      "wait_seconds": 0.00013746399781666696,
+      "result": "pass"
+    },
+    {
+      "name": "backspace-block-merge",
+      "locale": "zh-Hans",
+      "seconds": 4.275203953999153,
+      "wait_seconds": 32.89666851900256,
+      "result": "pass"
+    },
+    {
+      "name": "caret-follow",
+      "locale": "zh-Hans",
+      "seconds": 29.709686631002114,
+      "wait_seconds": 3.186508965998655,
+      "result": "pass"
+    },
+    {
+      "name": "chrome",
+      "locale": "zh-Hans",
+      "seconds": 23.417030624004838,
+      "wait_seconds": 29.710277968995797,
+      "result": "pass"
+    },
+    {
+      "name": "default-launch",
+      "locale": "zh-Hans",
+      "seconds": 4.4183293570022215,
+      "wait_seconds": 0.0011391189982532524,
+      "result": "pass"
+    },
+    {
+      "name": "diagnostics",
+      "locale": "zh-Hans",
+      "seconds": 11.050510993998614,
+      "wait_seconds": 9.247200068784878e-05,
+      "result": "pass"
+    },
+    {
+      "name": "display-formula",
+      "locale": "zh-Hans",
+      "seconds": 4.427590405000956,
+      "wait_seconds": 0.00018229999841423705,
+      "result": "pass"
+    },
+    {
+      "name": "fraction-at-caret",
+      "locale": "zh-Hans",
+      "seconds": 31.656551182997646,
+      "wait_seconds": 8.257599984062836e-05,
+      "result": "pass"
+    },
+    {
+      "name": "ime-inline",
+      "locale": "zh-Hans",
+      "seconds": 1.9058770960036782,
+      "wait_seconds": 7.166100112954155e-05,
+      "result": "pass"
+    },
+    {
+      "name": "inline-style",
+      "locale": "zh-Hans",
+      "seconds": 3.27573675000167,
+      "wait_seconds": 0.00010284699965268373,
+      "result": "pass"
+    },
+    {
+      "name": "interaction",
+      "locale": "zh-Hans",
+      "seconds": 6.190691130999767,
+      "wait_seconds": 9.361399861518294e-05,
+      "result": "pass"
+    },
+    {
+      "name": "latex-exit",
+      "locale": "zh-Hans",
+      "seconds": 0.0,
+      "wait_seconds": 0.0,
+      "result": "skip (real rtex + TeX Live acceptance runs in latex-exit.yml)"
+    },
+    {
+      "name": "latex-view",
+      "locale": "zh-Hans",
+      "seconds": 1.221854039999016,
+      "wait_seconds": 17.086744466003438,
+      "result": "pass"
+    },
+    {
+      "name": "math-attach",
+      "locale": "zh-Hans",
+      "seconds": 2.3812325020044227,
+      "wait_seconds": 15.028719930996886,
+      "result": "pass"
+    },
+    {
+      "name": "math-edge-caret",
+      "locale": "zh-Hans",
+      "seconds": 7.67550000600022,
+      "wait_seconds": 1.222123189996637,
+      "result": "pass"
+    },
+    {
+      "name": "math-enter",
+      "locale": "zh-Hans",
+      "seconds": 9.20259335100127,
+      "wait_seconds": 0.0003494929987937212,
+      "result": "pass"
+    },
+    {
+      "name": "math-input",
+      "locale": "zh-Hans",
+      "seconds": 8.057280592001916,
+      "wait_seconds": 0.00011483800335554406,
+      "result": "pass"
+    },
+    {
+      "name": "math-root-delimiter",
+      "locale": "zh-Hans",
+      "seconds": 7.16056275000301,
+      "wait_seconds": 7.516500045312569e-05,
+      "result": "pass"
+    },
+    {
+      "name": "native",
+      "locale": "zh-Hans",
+      "seconds": 11.242382978998648,
+      "wait_seconds": 0.00013537199993152171,
+      "result": "pass"
+    },
+    {
+      "name": "parity",
+      "locale": "zh-Hans",
+      "seconds": 68.94358627300244,
+      "wait_seconds": 10.005199506995268,
+      "result": "pass"
+    },
+    {
+      "name": "pdf-export",
+      "locale": "zh-Hans",
+      "seconds": 12.33835782600363,
+      "wait_seconds": 74.55329085700214,
+      "result": "pass"
+    },
+    {
+      "name": "problem-panel",
+      "locale": "zh-Hans",
+      "seconds": 6.142737057001796,
+      "wait_seconds": 68.9445501520022,
+      "result": "pass"
+    },
+    {
+      "name": "project-latex",
+      "locale": "zh-Hans",
+      "seconds": 12.660705709000467,
+      "wait_seconds": 0.0009471930025028996,
+      "result": "pass"
+    },
+    {
+      "name": "project-native",
+      "locale": "zh-Hans",
+      "seconds": 6.6335383609985,
+      "wait_seconds": 8.84749970282428e-05,
+      "result": "pass"
+    },
+    {
+      "name": "project-source",
+      "locale": "zh-Hans",
+      "seconds": 2.2524300840013893,
+      "wait_seconds": 0.00010822599870152771,
+      "result": "pass"
+    },
+    {
+      "name": "sharp-raster",
+      "locale": "zh-Hans",
+      "seconds": 62.90209217499796,
+      "wait_seconds": 1.9294213070024853,
+      "result": "pass"
+    },
+    {
+      "name": "source-find",
+      "locale": "zh-Hans",
+      "seconds": 1.8682745679980144,
+      "wait_seconds": 64.71633577499597,
+      "result": "pass"
+    },
+    {
+      "name": "source-preview-layout",
+      "locale": "zh-Hans",
+      "seconds": 25.97507413400308,
+      "wait_seconds": 64.77042696299759,
+      "result": "pass"
+    },
+    {
+      "name": "source-theme",
+      "locale": "zh-Hans",
+      "seconds": 7.743720430000394,
+      "wait_seconds": 27.843794029999117,
+      "result": "pass"
+    },
+    {
+      "name": "source-view",
+      "locale": "zh-Hans",
+      "seconds": 3.0940054189995863,
+      "wait_seconds": 25.975738990004174,
+      "result": "pass"
+    },
+    {
+      "name": "start-page-dialogs",
+      "locale": "zh-Hans",
+      "seconds": 70.70289900399803,
+      "wait_seconds": 0.0009228700000676326,
+      "result": "pass"
+    },
+    {
+      "name": "ui-foundation",
+      "locale": "zh-Hans",
+      "seconds": 15.689725148004072,
+      "wait_seconds": 0.0001086490010493435,
+      "result": "pass"
+    },
+    {
+      "name": "ui-polish-final",
+      "locale": "zh-Hans",
+      "seconds": 98.00953047900111,
+      "wait_seconds": 9.721200331114233e-05,
+      "result": "pass"
+    },
+    {
+      "name": "undo-group",
+      "locale": "zh-Hans",
+      "seconds": 2.3702221350031323,
+      "wait_seconds": 8.758100011618808e-05,
+      "result": "pass"
+    },
+    {
+      "name": "a11y",
+      "locale": "zh-Hans",
+      "seconds": 5.497794773000351,
+      "wait_seconds": 9.771799523150548e-05,
+      "result": "pass"
+    },
+    {
+      "name": "a4-surface",
+      "locale": "en",
+      "seconds": 3.7600134419990354,
+      "wait_seconds": 9.916400449583307e-05,
+      "result": "pass"
+    },
+    {
+      "name": "backspace-block-merge",
+      "locale": "en",
+      "seconds": 4.43547597900033,
+      "wait_seconds": 0.00012915099796373397,
+      "result": "pass"
+    },
+    {
+      "name": "caret-follow",
+      "locale": "en",
+      "seconds": 29.611683535003976,
+      "wait_seconds": 70.90473396399466,
+      "result": "pass"
+    },
+    {
+      "name": "chrome",
+      "locale": "en",
+      "seconds": 23.287117718005902,
+      "wait_seconds": 64.66169063999405,
+      "result": "pass"
+    },
+    {
+      "name": "default-launch",
+      "locale": "en",
+      "seconds": 4.447138354000344,
+      "wait_seconds": 29.612248431003536,
+      "result": "pass"
+    },
+    {
+      "name": "diagnostics",
+      "locale": "en",
+      "seconds": 10.841451652006072,
+      "wait_seconds": 0.0005713239952456206,
+      "result": "pass"
+    },
+    {
+      "name": "display-formula",
+      "locale": "en",
+      "seconds": 4.285136708000209,
+      "wait_seconds": 8.469799649901688e-05,
+      "result": "pass"
+    },
+    {
+      "name": "fraction-at-caret",
+      "locale": "en",
+      "seconds": 31.76052704599715,
+      "wait_seconds": 0.0001171710027847439,
+      "result": "pass"
+    },
+    {
+      "name": "ime-inline",
+      "locale": "en",
+      "seconds": 1.8165609950010548,
+      "wait_seconds": 9.84190046438016e-05,
+      "result": "pass"
+    },
+    {
+      "name": "inline-style",
+      "locale": "en",
+      "seconds": 3.2176294879973284,
+      "wait_seconds": 8.008399890968576e-05,
+      "result": "pass"
+    },
+    {
+      "name": "interaction",
+      "locale": "en",
+      "seconds": 6.303216072003124,
+      "wait_seconds": 9.969699749490246e-05,
+      "result": "pass"
+    },
+    {
+      "name": "latex-exit",
+      "locale": "en",
+      "seconds": 0.0,
+      "wait_seconds": 0.0,
+      "result": "skip (real rtex + TeX Live acceptance runs in latex-exit.yml)"
+    },
+    {
+      "name": "latex-view",
+      "locale": "en",
+      "seconds": 1.2157342380014597,
+      "wait_seconds": 18.31361971500155,
+      "result": "pass"
+    },
+    {
+      "name": "math-attach",
+      "locale": "en",
+      "seconds": 2.4299653800044325,
+      "wait_seconds": 18.422435209999094,
+      "result": "pass"
+    },
+    {
+      "name": "math-edge-caret",
+      "locale": "en",
+      "seconds": 7.678121005999856,
+      "wait_seconds": 1.2166529780006385,
+      "result": "pass"
+    },
+    {
+      "name": "math-enter",
+      "locale": "en",
+      "seconds": 8.998478227003943,
+      "wait_seconds": 0.0015096269999048673,
+      "result": "pass"
+    },
+    {
+      "name": "math-input",
+      "locale": "en",
+      "seconds": 8.56190243599849,
+      "wait_seconds": 6.845399911981076e-05,
+      "result": "pass"
+    },
+    {
+      "name": "math-root-delimiter",
+      "locale": "en",
+      "seconds": 7.088147593000031,
+      "wait_seconds": 0.0001275609974982217,
+      "result": "pass"
+    },
+    {
+      "name": "native",
+      "locale": "en",
+      "seconds": 11.206608644999505,
+      "wait_seconds": 0.0001526100022601895,
+      "result": "pass"
+    },
+    {
+      "name": "parity",
+      "locale": "en",
+      "seconds": 69.47228779900615,
+      "wait_seconds": 9.214734836998105,
+      "result": "pass"
+    },
+    {
+      "name": "pdf-export",
+      "locale": "en",
+      "seconds": 12.56144991999463,
+      "wait_seconds": 74.91204062000179,
+      "result": "pass"
+    },
+    {
+      "name": "problem-panel",
+      "locale": "en",
+      "seconds": 6.341910226998152,
+      "wait_seconds": 69.47265471600258,
+      "result": "pass"
+    },
+    {
+      "name": "project-latex",
+      "locale": "en",
+      "seconds": 12.83355327299796,
+      "wait_seconds": 0.0011186769988853484,
+      "result": "pass"
+    },
+    {
+      "name": "project-native",
+      "locale": "en",
+      "seconds": 6.8804947690005065,
+      "wait_seconds": 0.0001266799954464659,
+      "result": "pass"
+    },
+    {
+      "name": "project-source",
+      "locale": "en",
+      "seconds": 2.5636387810009182,
+      "wait_seconds": 9.973700070986524e-05,
+      "result": "pass"
+    },
+    {
+      "name": "sharp-raster",
+      "locale": "en",
+      "seconds": 65.11612836400309,
+      "wait_seconds": 2.290590117998363,
+      "result": "pass"
+    },
+    {
+      "name": "source-find",
+      "locale": "en",
+      "seconds": 1.9433401170026627,
+      "wait_seconds": 67.01882207299786,
+      "result": "pass"
+    },
+    {
+      "name": "source-preview-layout",
+      "locale": "en",
+      "seconds": 26.587304446002236,
+      "wait_seconds": 67.05935775599937,
+      "result": "pass"
+    },
+    {
+      "name": "source-theme",
+      "locale": "en",
+      "seconds": 8.264601727001718,
+      "wait_seconds": 28.531212879999657,
+      "result": "pass"
+    },
+    {
+      "name": "source-view",
+      "locale": "en",
+      "seconds": 3.2658207400018,
+      "wait_seconds": 26.58776865099935,
+      "result": "pass"
+    },
+    {
+      "name": "start-page-dialogs",
+      "locale": "en",
+      "seconds": 71.01109899599396,
+      "wait_seconds": 0.0008020260065677576,
+      "result": "pass"
+    },
+    {
+      "name": "ui-foundation",
+      "locale": "en",
+      "seconds": 16.227367154002422,
+      "wait_seconds": 0.00014184899919200689,
+      "result": "pass"
+    },
+    {
+      "name": "ui-polish-final",
+      "locale": "en",
+      "seconds": 98.53167789999861,
+      "wait_seconds": 0.00014940500113880262,
+      "result": "pass"
+    },
+    {
+      "name": "undo-group",
+      "locale": "en",
+      "seconds": 2.578475227004674,
+      "wait_seconds": 9.137199958786368e-05,
+      "result": "pass"
+    },
+    {
+      "name": "a11y",
+      "locale": "en",
+      "seconds": 5.490105671000492,
+      "wait_seconds": 8.417000208282843e-05,
+      "result": "pass"
+    }
+  ]
+}

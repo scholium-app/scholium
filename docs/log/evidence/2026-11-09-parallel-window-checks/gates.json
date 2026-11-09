@@ -1,0 +1,26 @@
+{
+  "tree": "58bce6c",
+  "workspace_tests": {
+    "passed": 795,
+    "ignored": 21,
+    "failed": 0
+  },
+  "runner_tests": 9,
+  "T53_helper_tests": 7,
+  "passed": [
+    "cargo fmt --all -- --check",
+    "cargo clippy --locked --workspace --all-targets -- -D warnings",
+    "cargo test --locked --workspace",
+    "RUSTDOCFLAGS=-D warnings cargo doc --locked --workspace --no-deps",
+    "python3 scripts/check-rust-size.py",
+    "python3 scripts/check-doc-links.py",
+    "python3 scripts/check-ui-strings.py",
+    "python3 scripts/check-layers.py",
+    "cargo deny --locked check licenses bans sources",
+    "cargo build --locked --workspace --bins",
+    "python3 scripts/test-window-checks.py",
+    "python3 -m unittest discover -s spikes/typst-main-editor -p test_*.py",
+    "actionlint -config-file /tmp/t54/actionlint.yaml .github/workflows/rust.yml .github/workflows/latex-exit.yml"
+  ],
+  "CI_after": "coordinator must create PR and measure; no polling performed"
+}
