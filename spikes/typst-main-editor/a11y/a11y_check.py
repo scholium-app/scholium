@@ -157,11 +157,14 @@ try:
     xdo("key", "--clearmodifiers", "shift+Left", "shift+Left")
     xdo("key", "--clearmodifiers", "alt+f")
     root = app_root()
-    math = wait(lambda: find(app_root(), lambda n: n.get_role_name() == "math"), "math object")
     expected_math, expected_status = {
         "zh-Hans": ("公式：分数（分子：12；分母：空）", "分数分母：空"),
         "en": ("Formula: Fraction (numerator: 12; denominator: empty)", "Fraction denominator: empty"),
     }[locale]
+    # The math node appears before its spoken name catches up with the typed numerator;
+    # wait for the settled name instead of sampling the first frame that exposes the role.
+    math = wait(lambda: find(app_root(), lambda n: n.get_role_name() == "math"
+                             and n.get_name() == expected_math), "math object")
     status = wait(lambda: find(app_root(), lambda n: n.get_name() == expected_status), "slot status")
     record("08-math-object-and-slot-status",
            math.get_name() == expected_math and status.get_name() == expected_status,

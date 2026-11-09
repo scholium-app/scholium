@@ -40,7 +40,7 @@ with log_path.open("w") as log:
     app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
 try:
     wait(lambda current: current["current"], "initial scene")
-    window = subprocess.check_output(["xdotool", "search", "--pid", str(app.pid)], env=env, text=True).split()[0]
+    window = subprocess.check_output(["xdotool", "search", "--sync", "--onlyvisible", "--pid", str(app.pid)], env=env, text=True).split()[0]
     run = lambda *args: subprocess.run(["xdotool", *args], env=env, check=True)
     run("windowfocus", window)
     run("type", "--delay", "20", "alpha")

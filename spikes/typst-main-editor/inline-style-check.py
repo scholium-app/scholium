@@ -69,7 +69,7 @@ with log_path.open("w") as log:
     app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
 try:
     wait(lambda s: s["current"], "first scene")
-    window = subprocess.check_output(["xdotool", "search", "--pid", str(app.pid)], env=env, text=True).split()[0]
+    window = subprocess.check_output(["xdotool", "search", "--sync", "--onlyvisible", "--pid", str(app.pid)], env=env, text=True).split()[0]
     xdo("windowfocus", window)
     xdo("type", "--delay", "40", "alpha beta gamma delta")
     wait(lambda s: s["current"] and runs(s) == [("alpha beta gamma delta", "plain")], "typed")

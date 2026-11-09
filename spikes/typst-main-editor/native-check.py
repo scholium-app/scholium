@@ -139,7 +139,7 @@ def start(name):
         # Plain launch: the Typst Content editor is the default (ADR 0036).
         app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
     state = wait(lambda s: s["current"])
-    window = subprocess.check_output(["xdotool", "search", "--pid", str(app.pid)], env=env, text=True).splitlines()[0]
+    window = subprocess.check_output(["xdotool", "search", "--sync", "--onlyvisible", "--pid", str(app.pid)], env=env, text=True).splitlines()[0]
     command("windowfocus", window)
     return state
 
