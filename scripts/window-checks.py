@@ -20,6 +20,11 @@ live below. --shard is one-based, greedy longest-first with stable name tie brea
 unrecorded checks cost DEFAULT_SECONDS. --refresh-durations updates successful
 checks' mean per-locale seconds in durations.json (run unsharded, without --only).
 Machine-readable results.json includes execution time separately from slot wait.
+
+SCHOLIUM_LOCALE selects chrome by command id. With multiple locales, evidence goes
+under <out>/<locale>/<name>. --evidence or SCHOLIUM_CHECK_EVIDENCE=1 captures review
+images and full picture-only size matrices. Pixel measurements and every
+layout/behaviour assertion always run, including with evidence disabled.
 """
 import argparse
 from concurrent.futures import ThreadPoolExecutor

@@ -1,0 +1,14 @@
+[
+  {
+    "check": "display-formula",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 6.7
+  },
+  {
+    "check": "display-formula",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 6.7
+  }
+]

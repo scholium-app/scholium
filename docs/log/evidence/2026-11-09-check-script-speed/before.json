@@ -1,0 +1,410 @@
+[
+  {
+    "check": "a4-surface",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 7.1
+  },
+  {
+    "check": "backspace-block-merge",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 7.0
+  },
+  {
+    "check": "caret-follow",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 33.7
+  },
+  {
+    "check": "chrome",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 26.9
+  },
+  {
+    "check": "default-launch",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 7.4
+  },
+  {
+    "check": "diagnostics",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 15.2
+  },
+  {
+    "check": "display-formula",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 6.5
+  },
+  {
+    "check": "fraction-at-caret",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 35.1
+  },
+  {
+    "check": "ime-inline",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 4.3
+  },
+  {
+    "check": "inline-style",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 5.8
+  },
+  {
+    "check": "interaction",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 8.0
+  },
+  {
+    "check": "latex-view",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 3.8
+  },
+  {
+    "check": "math-attach",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 5.0
+  },
+  {
+    "check": "math-edge-caret",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 11.4
+  },
+  {
+    "check": "math-enter",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 11.7
+  },
+  {
+    "check": "math-input",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 10.7
+  },
+  {
+    "check": "math-root-delimiter",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 9.9
+  },
+  {
+    "check": "native",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 17.8
+  },
+  {
+    "check": "parity",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 72.5
+  },
+  {
+    "check": "pdf-export",
+    "locale": "zh-Hans",
+    "result": "FAIL(1)",
+    "seconds": 8.3
+  },
+  {
+    "check": "problem-panel",
+    "locale": "zh-Hans",
+    "result": "FAIL(1)",
+    "seconds": 64.1
+  },
+  {
+    "check": "project-latex",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 13.6
+  },
+  {
+    "check": "project-native",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 8.4
+  },
+  {
+    "check": "project-source",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 5.2
+  },
+  {
+    "check": "sharp-raster",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 57.9
+  },
+  {
+    "check": "source-find",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 5.0
+  },
+  {
+    "check": "source-preview-layout",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 34.3
+  },
+  {
+    "check": "source-theme",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 8.7
+  },
+  {
+    "check": "source-view",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 5.7
+  },
+  {
+    "check": "start-page-dialogs",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 80.5
+  },
+  {
+    "check": "ui-foundation",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 20.0
+  },
+  {
+    "check": "ui-polish-final",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 156.2
+  },
+  {
+    "check": "undo-group",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 4.8
+  },
+  {
+    "check": "a11y",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 6.6
+  },
+  {
+    "check": "a4-surface",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 6.2
+  },
+  {
+    "check": "backspace-block-merge",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 7.0
+  },
+  {
+    "check": "caret-follow",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 31.8
+  },
+  {
+    "check": "chrome",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 27.0
+  },
+  {
+    "check": "default-launch",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 7.5
+  },
+  {
+    "check": "diagnostics",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 15.4
+  },
+  {
+    "check": "display-formula",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 6.5
+  },
+  {
+    "check": "fraction-at-caret",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 35.0
+  },
+  {
+    "check": "ime-inline",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 4.3
+  },
+  {
+    "check": "inline-style",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 5.7
+  },
+  {
+    "check": "interaction",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 8.1
+  },
+  {
+    "check": "latex-view",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 3.8
+  },
+  {
+    "check": "math-attach",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 5.0
+  },
+  {
+    "check": "math-edge-caret",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 11.4
+  },
+  {
+    "check": "math-enter",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 11.7
+  },
+  {
+    "check": "math-input",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 10.7
+  },
+  {
+    "check": "math-root-delimiter",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 10.3
+  },
+  {
+    "check": "native",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 17.7
+  },
+  {
+    "check": "parity",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 70.9
+  },
+  {
+    "check": "pdf-export",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 10.6
+  },
+  {
+    "check": "problem-panel",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 10.6
+  },
+  {
+    "check": "project-latex",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 12.7
+  },
+  {
+    "check": "project-native",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 7.5
+  },
+  {
+    "check": "project-source",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 5.1
+  },
+  {
+    "check": "sharp-raster",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 54.3
+  },
+  {
+    "check": "source-find",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 5.0
+  },
+  {
+    "check": "source-preview-layout",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 34.1
+  },
+  {
+    "check": "source-theme",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 8.7
+  },
+  {
+    "check": "source-view",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 5.7
+  },
+  {
+    "check": "start-page-dialogs",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 78.1
+  },
+  {
+    "check": "ui-foundation",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 20.0
+  },
+  {
+    "check": "ui-polish-final",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 146.4
+  },
+  {
+    "check": "undo-group",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 4.7
+  },
+  {
+    "check": "a11y",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 6.5
+  }
+]

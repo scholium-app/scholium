@@ -15,6 +15,9 @@ import time
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import chrome_ui  # noqa: E402
 
+from check_evidence import evidence_enabled
+from log_reader import reset_log, log_latest
+
 binary = Path(sys.argv[1]).resolve()
 output = Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
@@ -28,8 +31,7 @@ results = {}
 
 
 def state():
-    lines = [l for l in log_path.read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
-    return json.loads(lines[-1][6:]) if lines else None
+    return log_latest(log_path)
 
 
 def wait(predicate, what, timeout=60):
@@ -52,6 +54,8 @@ def paste(value):
 
 
 def shot(name):
+    if not evidence_enabled():
+        return
     time.sleep(0.12)  # audit precedes GPU presentation; not a latency measurement
     subprocess.run(["import", "-window", window, str(output / f"{name}.png")], check=True, env=env)
 
@@ -68,6 +72,7 @@ def texts(s):
             if b["body"]["kind"] == "text"]
 
 
+reset_log(log_path)
 with log_path.open("w") as log:
     app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
 try:

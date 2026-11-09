@@ -10,6 +10,8 @@ import subprocess
 import sys
 import time
 
+from check_evidence import evidence_enabled
+
 ROOT = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location("parity", ROOT / "parity-check.py")
 parity = importlib.util.module_from_spec(spec)
@@ -26,9 +28,10 @@ def main():
             assert area and area[3] > area[1], (step, area)
             assert state["selection_geometry_error"] is None, (step, state["selection_geometry_error"])
             if name == "fraction-at-caret" and step in (4, 6, 11, 39):
-                time.sleep(0.12)  # AUDIT precedes GPU presentation; not a timing measurement.
-                subprocess.run(["import", "-window", replay.window, str(output / f"{name}-{step}.png")],
-                               env=replay.env, check=True, timeout=20)
+                if evidence_enabled():
+                    time.sleep(0.12)  # AUDIT precedes GPU presentation; not a timing measurement.
+                    subprocess.run(["import", "-window", replay.window, str(output / f"{name}-{step}.png")],
+                                   env=replay.env, check=True, timeout=20)
         parity.scenario(binary, ROOT / "scenarios" / f"{name}.json", output / name, on_step=check)
     print("PASS fraction commands, selection geometry and every audited native walk stop", flush=True)
 

@@ -1,0 +1,8 @@
+{
+  "wall_seconds": 1485.3609115630024,
+  "boot_seconds": 1485.360937610003,
+  "user_seconds": 9727.763097,
+  "system_seconds": 182.688992,
+  "max_rss_kib": 6538780,
+  "exit_code": 1
+}

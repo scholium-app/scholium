@@ -14,6 +14,9 @@ import subprocess
 import sys
 import time
 
+from check_evidence import evidence_enabled
+from log_reader import reset_log, log_entries
+
 binary = Path(sys.argv[1]).resolve()
 out = Path(sys.argv[2]).resolve()
 out.mkdir(parents=True, exist_ok=True)
@@ -81,8 +84,7 @@ def run(name, source, native=False):
     log_path = root / "app.log"
 
     def state():
-        lines = [l for l in log_path.read_text().split("\n")[:-1] if l.startswith("AUDIT ") and json.loads(l[6:]).get("kind") == "latex"]
-        return json.loads(lines[-1][6:]) if lines else None
+        return next((s for s in reversed(log_entries(log_path)) if s.get("kind") == "latex"), None)
 
     def wait(predicate, what, timeout=80):
         end = time.monotonic() + timeout
@@ -96,6 +98,7 @@ def run(name, source, native=False):
     def xdo(*args):
         subprocess.run(["xdotool", *map(str, args)], check=True, env=env)
 
+    reset_log(log_path)
     with log_path.open("w") as log:
         app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
     screen = None
@@ -146,8 +149,9 @@ def run(name, source, native=False):
                 percentile = lambda q: ordered[math.ceil(q*len(ordered))-1]
                 record("e6-key-to-present", True, n=len(samples), p50_ms=percentile(.5), p95_ms=percentile(.95),
                        samples_ms=samples, suspend_seconds=suspended, method="xdotool key dispatch to first XGetImage preview pixel change; 2ms polling; private Xvfb, software GL")
-        time.sleep(.15)
-        subprocess.run(["import", "-window", window, str(root / "window.png")], env=env, check=True)
+        if evidence_enabled():
+            time.sleep(.15)
+            subprocess.run(["import", "-window", window, str(root / "window.png")], env=env, check=True)
     finally:
         if screen:
             screen.close()

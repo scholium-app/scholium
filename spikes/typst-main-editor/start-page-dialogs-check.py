@@ -9,6 +9,9 @@ import subprocess
 from project_ui import ProjectApp
 from chrome_ui import Chrome
 
+from check_evidence import evidence_enabled
+from log_reader import log_entries, log_latest
+
 binary, output = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
 baseline = os.environ.get('SCHOLIUM_T45_BASELINE') == '1'
@@ -17,8 +20,7 @@ failures = []
 
 
 def chrome_states(app):
-    return [json.loads(line.split(' ', 1)[1]) for line in app.log.read_text().split('\n')[:-1]
-            if line.startswith(('PROJECT {', 'AUDIT {'))]
+    return log_entries(app.log, ("PROJECT ", "AUDIT "))
 
 
 def close_dialog(app):
@@ -41,10 +43,7 @@ def run(theme):
     app.env['SCHOLIUM_RTEX_TEXDIR'] = str(folder / 'unavailable-tex')
 
     def raw():
-        for line in reversed(app.log.read_text().split('\n')[:-1]):
-            if line.startswith(('PROJECT ', 'AUDIT ')):
-                return json.loads(line.split(' ', 1)[1])
-        return {}
+        return log_latest(app.log, ("AUDIT ", "PROJECT ")) or {}
 
     def visible():
         return {'controls': raw().get('controls', {})}
@@ -58,7 +57,8 @@ def run(theme):
         app.type(str(value))
 
     def capture(name):
-        time.sleep(0.25)
+        if evidence_enabled():
+            time.sleep(0.25)
         app.capture(name)
         if not baseline and name in ('new-project', 'project-settings', 'external-conflict'):
             title = app.entries('DIALOG_FRAME ')[-1]['title']
@@ -256,10 +256,7 @@ def notices(theme):
     holder = None
 
     def visible():
-        for line in reversed(app.log.read_text().split('\n')[:-1]):
-            if line.startswith(('PROJECT ', 'AUDIT ')):
-                return {'controls': json.loads(line.split(' ', 1)[1]).get('controls', {})}
-        return {'controls': {}}
+        return {'controls': (log_latest(app.log, ('PROJECT ', 'AUDIT ')) or {}).get('controls', {})}
 
     def fill(name, value):
         app.control(name)

@@ -13,6 +13,9 @@ import subprocess
 import sys
 import time
 
+from check_evidence import evidence_enabled
+from log_reader import reset_log, log_latest
+
 binary = Path(sys.argv[1]).resolve()
 output = Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
@@ -26,8 +29,7 @@ results = {}
 
 
 def state():
-    lines = [l for l in log_path.read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
-    return json.loads(lines[-1][6:]) if lines else None
+    return log_latest(log_path)
 
 
 def wait(predicate, what, timeout=60):
@@ -44,7 +46,9 @@ def xdo(*args):
     subprocess.run(["xdotool", *map(str, args)], check=True, env=env)
 
 
-def shot(name):
+def shot(name, required=False):
+    if not required and not evidence_enabled():
+        return None
     time.sleep(0.12)  # audit precedes GPU presentation; not a latency measurement
     path = output / f"{name}.png"
     subprocess.run(["import", "-window", window, str(path)], check=True, env=env)
@@ -84,6 +88,7 @@ def tinted_pixels(path):
     return count
 
 
+reset_log(log_path)
 with log_path.open("w") as log:
     app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
 try:
@@ -98,13 +103,13 @@ try:
     s = wait(lambda s: s["current"] and len(s["snapshot"]["blocks"]) > 1
          and any(i["body"]["kind"] == "math" for i in s["snapshot"]["blocks"][1]["content"])
          and "3" in json.dumps(s["snapshot"]["blocks"][1]), "formula")
-    inside = shot("01-caret-in-formula")
+    inside = shot("01-caret-in-formula", required=True)
     xdo("key", "alt+m")
     xdo("type", "--delay", "30", " end")
     xdo("key", "Return")
     xdo("type", "--delay", "30", "gamma")
     s = wait(lambda s: s["current"] and len(body_leaves(s)) == 4 and s["cursor_byte"] == 5, "three paragraphs")
-    outside = shot("02-caret-in-body")
+    outside = shot("02-caret-in-body", required=True)
     record("01-math-indicator-tints-only-inside-the-formula",
            tinted_pixels(inside) > 200 and tinted_pixels(outside) < tinted_pixels(inside) // 4,
            inside=tinted_pixels(inside), outside=tinted_pixels(outside))

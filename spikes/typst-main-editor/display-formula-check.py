@@ -7,6 +7,9 @@ import subprocess
 import sys
 import time
 
+from check_evidence import evidence_enabled
+from log_reader import log_latest, reset_log
+
 binary, output = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
 if any(output.iterdir()):
@@ -18,8 +21,7 @@ log_path = output / "app.log"
 
 
 def state():
-    lines = [line for line in log_path.read_text().splitlines() if line.startswith("AUDIT ")]
-    return json.loads(lines[-1][6:]) if lines else None
+    return log_latest(log_path)
 
 
 def wait(predicate, description):
@@ -36,6 +38,7 @@ def blocks(snapshot):
     return snapshot["snapshot"]["blocks"]
 
 
+reset_log(log_path)
 with log_path.open("w") as log:
     app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
 try:
@@ -53,8 +56,9 @@ try:
     math = blocks(equation)[equation_index]["content"]
     assert len(math) == 1 and math[0]["body"]["kind"] == "math", math
     assert equation["cursor_leaf"] == f'NodeId({math[0]["body"]["root"]["node"]})'
-    time.sleep(0.15)
-    subprocess.run(["import", "-window", window, str(output / "display-equation.png")], env=env, check=True)
+    if evidence_enabled():
+        time.sleep(0.15)
+        subprocess.run(["import", "-window", window, str(output / "display-equation.png")], env=env, check=True)
 
     run("key", "Return")
     below = wait(lambda current: current["current"] and len(blocks(current)) == 3, "Enter creates paragraph below")
@@ -74,6 +78,7 @@ finally:
 
 
 import importlib.util
+
 spec = importlib.util.spec_from_file_location("parity", Path(__file__).with_name("parity-check.py"))
 parity = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(parity)

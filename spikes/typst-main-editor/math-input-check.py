@@ -9,6 +9,8 @@ import subprocess
 import sys
 import time
 
+from check_evidence import evidence_enabled
+
 ROOT = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location("parity", ROOT / "parity-check.py")
 parity = importlib.util.module_from_spec(spec)
@@ -31,9 +33,10 @@ def run_case(binary, output, name, check):
             (out / "audit.json").write_text(json.dumps(rows, ensure_ascii=False, indent=2) + "\n")
             return state
         check(replay, act)
-        time.sleep(0.15)
-        subprocess.run(["import", "-window", replay.window, str(out / "window.png")],
-                       env=replay.env, check=True, timeout=20)
+        if evidence_enabled():
+            time.sleep(0.15)
+            subprocess.run(["import", "-window", replay.window, str(out / "window.png")],
+                           env=replay.env, check=True, timeout=20)
     finally:
         replay.close()
     print(f"PASS math input {name}", flush=True)
@@ -82,9 +85,10 @@ def commands(replay, act):
     assert state["math_input"]["query"] == "sqrt"
     assert state["math_input"]["tab"] == "Complete"
     assert state["semantic"]["snapshot"] == before and state["revision"] == revision
-    time.sleep(0.15)
-    subprocess.run(["import", "-window", replay.window, str(replay.output / "command-overlay.png")],
-                   env=replay.env, check=True, timeout=20)
+    if evidence_enabled():
+        time.sleep(0.15)
+        subprocess.run(["import", "-window", replay.window, str(replay.output / "command-overlay.png")],
+                       env=replay.env, check=True, timeout=20)
     state = act("key", "Tab")
     assert formula(state)["kind"] == "root"
     assert state["semantic"]["cursor"]["path"].endswith("/radicand")
