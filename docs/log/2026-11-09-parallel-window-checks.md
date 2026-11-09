@@ -32,7 +32,9 @@ LaTeX workflow 保留原有工具链包，setup 的共享 key 改为 `test`，�
 job 名称为 `lint`、`build-window`、`window (zh-Hans, 1)`、`window (zh-Hans, 2)`、
 `window (en, 1)`、`window (en, 2)`、`test`。必需检查仍为 `test`；该 job 的 `always()`
 与成功状态判断使构建/任意分片失败、跳过或取消均无法放行。矩阵关闭 fail-fast，所有分片独立上传日志与证据。
-每片 `--jobs 1 --evidence`，没有增加逐项 workflow step，也没有改变现有 LaTeX 独立验收范围。
+每片 `--jobs 1`，没有增加逐项 workflow step，也没有改变现有 LaTeX 独立验收范围。
+PR/push 运行不加 `--evidence`，只保留像素断言需要的截图（T53）；手动 `workflow_dispatch` 且 `evidence=true` 时
+各分片生成完整审阅截图。LaTeX 独立验收仍带 `--evidence`。（coordinator 审阅时修改）
 
 ## 本机信号量和独占项
 
