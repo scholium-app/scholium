@@ -9,6 +9,9 @@ import time
 from project_ui import ProjectApp
 from chrome_ui import Chrome
 
+from check_evidence import evidence_enabled
+from log_reader import log_latest
+
 binary, output = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
 baseline = os.environ.get('SCHOLIUM_T48_BASELINE') == '1'
@@ -20,10 +23,7 @@ def latest(app, prefix, predicate=lambda s: True):
 
 
 def raw(app):
-    for line in reversed(app.log.read_text().split('\n')[:-1]):
-        if line.startswith(('AUDIT ', 'PROJECT ')):
-            return json.loads(line.split(' ', 1)[1])
-    return {}
+    return log_latest(app.log, ("AUDIT ", "PROJECT ")) or {}
 
 
 def paste(app, text):
@@ -45,7 +45,8 @@ def matrix(app, name):
         # Menus remain accessible at every supported width.
         c.menu('ui.menu.view', 'ui.menu.view.theme', 'view.theme.' + theme)
         app.wait(lambda: raw(app).get('chrome', {}).get('facts', {}).get('theme') == theme.title())
-        for width, height in ((1440, 900), (1024, 700), (480, 700)):
+        sizes = ((1440, 900), (1024, 700), (480, 700)) if evidence_enabled() else ((1440, 900),)
+        for width, height in sizes:
             app.xdo('windowsize', app.window, width, height)
             time.sleep(0.35)
             app.capture(f'{name}-{theme}-{width}')

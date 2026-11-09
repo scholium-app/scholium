@@ -17,6 +17,8 @@ import subprocess
 import sys
 import time
 
+from log_reader import reset_log, log_latest
+
 SCALE = "1.5"
 SENTENCE = "Sharp text rendering at fractional scale keeps stems and serifs crisp"
 GAIN_REQUIRED = 1.2
@@ -65,8 +67,7 @@ def run(label, extra_env, scroll=False):
     log_path = folder / "app.log"
 
     def state():
-        lines = [l for l in log_path.read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
-        return json.loads(lines[-1][6:]) if lines else None
+        return log_latest(log_path)
 
     def wait(predicate, what, timeout=60, progress=False):
         """Fail after `timeout` s; with `progress`, only after `timeout` s without a new revision."""
@@ -86,6 +87,7 @@ def run(label, extra_env, scroll=False):
         r = s.get("raster")
         return bool(r) and abs(r["px_per_pt"] - r["wanted_px_per_pt"]) < 1e-6 and r["visible_sharp"]
 
+    reset_log(log_path)
     with log_path.open("w") as log:
         app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
     try:

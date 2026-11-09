@@ -16,6 +16,8 @@ import time
 
 from chrome_ui import Chrome, expected_inputs, keycode
 
+from log_reader import reset_log, log_latest
+
 ROOT = Path(__file__).resolve().parent
 TIMEOUT = 20
 # xdotool commands that deliver keyboard, text or pointer-press input to the app.
@@ -54,6 +56,7 @@ class Replay:
                         SCHOLIUM_EDITOR_AUDIT="1", WINIT_UNIX_BACKEND="x11", WINIT_X11_SCALE_FACTOR="1")
         self.env["SCHOLIUM_TEST_FONTS"] = "bundled"
         self.env.pop("WAYLAND_DISPLAY", None)
+        reset_log(self.log)
         self.writer = self.log.open("w")
         self.proc = subprocess.Popen([str(binary)], env=self.env, stdout=self.writer, stderr=subprocess.STDOUT)
         self.window = None
@@ -82,8 +85,7 @@ class Replay:
     def state(self):
         if self.proc.poll() is not None:
             raise RuntimeError(f"app exited: {self.proc.returncode}; see {self.log}")
-        lines = [line[6:] for line in self.log.read_text().split("\n")[:-1] if line.startswith("AUDIT ")]
-        return json.loads(lines[-1]) if lines else None
+        return log_latest(self.log)
 
     def ready(self):
         deadline = time.monotonic() + TIMEOUT

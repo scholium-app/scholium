@@ -1,5 +1,4 @@
 """Real app harness: ordinary project open, native keys/clipboard, audit observations."""
-import json
 import os
 from pathlib import Path
 import signal
@@ -7,6 +6,9 @@ import subprocess
 import time
 
 from latex_exit_screen import Screen
+
+from check_evidence import evidence_enabled
+from log_reader import LogReader
 
 
 class Window:
@@ -32,7 +34,8 @@ class Window:
     def start(self):
         self.serial += 1
         self.log = self.root / f"app-{self.serial}.log"
-        self.offset, self.partial, self.events, self.current = 0, b"", [], None
+        self.reader = LogReader(self.log, ("PROJECT_UI ", "AUDIT "))
+        self.events, self.current = [], None
         with self.log.open("w") as output:
             self.app = subprocess.Popen([str(self.binary)], env=self.env, stdout=output,
                                         stderr=subprocess.STDOUT)
@@ -44,21 +47,10 @@ class Window:
         self.screen = Screen(self.window)
 
     def state(self):
-        # Bytes, not text: a read can end inside a multi-byte character (the app and TeX share the
-        # log). Only complete lines are decoded; the incomplete tail waits for the next read.
-        with self.log.open("rb") as stream:
-            stream.seek(self.offset)
-            data = stream.read()
-            self.offset = stream.tell()
-        chunks = (self.partial + data).split(b"\n")
-        self.partial = chunks.pop()
-        lines = [chunk.decode("utf-8", errors="replace") for chunk in chunks]
-        for line in lines:
-            if line.startswith("PROJECT_UI "):
-                value = json.loads(line[11:])
+        for prefix, value in self.reader.poll():
+            if prefix == "PROJECT_UI ":
                 self.controls[value["control"]] = value["center"]
-            if line.startswith("AUDIT "):
-                value = json.loads(line[6:])
+            if prefix == "AUDIT ":
                 if value.get("kind") == "latex-frame":
                     self.frames.append(value)
                 if value.get("kind") == "latex-engine-timing":
@@ -144,6 +136,8 @@ class Window:
         raise AssertionError("front buffer did not settle")
 
     def snapshot(self, name):
+        if not evidence_enabled():
+            return
         subprocess.run(["import", "-window", self.window, str(self.root / name)],
                        env=self.env, check=True)
 

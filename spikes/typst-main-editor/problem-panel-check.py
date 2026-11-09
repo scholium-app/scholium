@@ -10,6 +10,8 @@ from project_ui import ProjectApp
 from chrome_ui import Chrome
 import chrome_ui
 
+from check_evidence import evidence_enabled
+
 binary, output = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
 results = {}
@@ -43,7 +45,7 @@ def capture_themes(app, name):
         app.source(lambda s: s["chrome"]["facts"]["theme"].lower() == theme)
         app.capture(name + "-" + theme)
         record(name + "-theme-" + theme, True)
-        if os.environ.get("SCHOLIUM_T48_MATRIX"):
+        if evidence_enabled() and os.environ.get("SCHOLIUM_T48_MATRIX"):
             for width, height in [(1440, 900), (1024, 700), (480, 700)]:
                 app.xdo("windowsize", app.window, width, height)
                 time.sleep(0.3)

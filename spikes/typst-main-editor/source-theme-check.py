@@ -10,6 +10,8 @@ import time
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import chrome_ui  # noqa: E402
 
+from log_reader import reset_log, log_latest
+
 binary = Path(sys.argv[1]).resolve()
 output = Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
@@ -27,8 +29,7 @@ def run_case(folder, switch):
     log_path = folder / "app.log"
 
     def state():
-        lines = [line for line in log_path.read_text().split("\n")[:-1] if line.startswith("AUDIT ")]
-        return json.loads(lines[-1][6:]) if lines else None
+        return log_latest(log_path)
 
     def wait(predicate, what):
         end = time.monotonic() + 60
@@ -47,6 +48,7 @@ def run_case(folder, switch):
                        check=True, env=env)
         xdo("key", "--clearmodifiers", "ctrl+v")
 
+    reset_log(log_path)
     with log_path.open("w") as log:
         app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
     try:

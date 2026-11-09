@@ -13,6 +13,9 @@ lock serialises concurrent runs so parallel tasks never contend for the CPU.
 Every check runs once per `--locale` (default zh-Hans; CI runs zh-Hans and en in one job after one build)
 with SCHOLIUM_LOCALE set, so chrome is found by command id in either language. With more than
 one locale the evidence goes to `<out>/<locale>/<name>`.
+
+Set SCHOLIUM_CHECK_EVIDENCE=1 to capture review images and full picture-only size
+matrices. Pixel measurements and every layout/behaviour assertion always run.
 """
 import argparse
 import fcntl

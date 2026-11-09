@@ -20,6 +20,9 @@ import time
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import chrome_ui  # noqa: E402
 
+from check_evidence import evidence_enabled
+from log_reader import reset_log, log_entries, log_latest
+
 binary = Path(sys.argv[1]).resolve()
 output = Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
@@ -35,8 +38,7 @@ MENUS = ["file", "edit", "insert", "format", "view", "help"]
 
 
 def state():
-    lines = [l for l in log_path.read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
-    return json.loads(lines[-1][6:]) if lines else None
+    return log_latest(log_path)
 
 
 def wait(predicate, what, timeout=30):
@@ -54,6 +56,8 @@ def xdo(*args):
 
 
 def shot(name):
+    if not evidence_enabled():
+        return
     time.sleep(0.3)
     subprocess.run(["import", "-window", window, str(output / f"{name}.png")], check=True, env=env)
 
@@ -110,6 +114,7 @@ def focus_page():
     time.sleep(0.2)
 
 
+reset_log(log_path)
 with log_path.open("w") as log:
     app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
 try:
@@ -265,9 +270,9 @@ try:
     chrome.click("file.close", "tab")
     controls.control("discard")
     end = time.monotonic() + 15
-    while not any(json.loads(line[8:]).get("closed") for line in log_path.read_text().splitlines() if line.startswith("PROJECT ")) and time.monotonic() < end:
+    while not any(s.get("closed") for s in log_entries(log_path, "PROJECT ")) and time.monotonic() < end:
         time.sleep(0.1)
-    record("11b-tab-close-discards-and-releases-the-project", any(json.loads(line[8:]).get("closed") for line in log_path.read_text().splitlines() if line.startswith("PROJECT ")))
+    record("11b-tab-close-discards-and-releases-the-project", any(s.get("closed") for s in log_entries(log_path, "PROJECT ")))
 
 finally:
     (output / "summary.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n")

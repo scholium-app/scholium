@@ -11,6 +11,9 @@ import subprocess
 import sys
 import time
 
+from check_evidence import evidence_enabled
+from log_reader import reset_log, log_latest, log_tail
+
 binary = Path(sys.argv[1]).resolve()
 output = Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
@@ -26,14 +29,13 @@ results = {}
 
 
 def state():
-    lines = [line for line in log_path.read_text().split("\n")[:-1] if line.startswith("AUDIT ")]
-    return json.loads(lines[-1][6:]) if lines else None
+    return log_latest(log_path)
 
 
 def wait(predicate, what):
     end = time.monotonic() + 60
     while time.monotonic() < end:
-        assert app.poll() is None, log_path.read_text()
+        assert app.poll() is None, log_tail(log_path)
         s = state()
         if s and predicate(s):
             return s
@@ -68,6 +70,7 @@ def record(name, detail):
     print(f"PASS {name}: {detail}", flush=True)
 
 
+reset_log(log_path)
 with log_path.open("w") as log:
     app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
 try:
@@ -100,8 +103,9 @@ try:
     assert abs(composing["ime_area"][0] - end_x) < 0.1
     record("inline-no-overlap-and-caret-anchor", {"preedit_width_px": width,
            "following_shift_px": following_end_x - old_end_x, "ime_area": composing["ime_area"]})
-    time.sleep(0.12)
-    subprocess.run(["import", "-window", window, str(output / "inline-preedit.png")], env=env, check=True)
+    if evidence_enabled():
+        time.sleep(0.12)
+        subprocess.run(["import", "-window", window, str(output / "inline-preedit.png")], env=env, check=True)
 
     ime(preedit="中文", cursor_chars=1)
     inside = wait(lambda s: current(s) and s["preedit_caret"] and s["preedit_caret"]["byte"] == 3, "IME cursor")

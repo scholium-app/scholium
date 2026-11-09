@@ -9,6 +9,9 @@ import subprocess
 import sys
 import time
 
+from check_evidence import evidence_enabled
+from log_reader import reset_log, log_entries, log_tail
+
 binary = Path(sys.argv[1]).resolve()
 output = Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
@@ -24,20 +27,19 @@ window = None
 
 def entries(prefix="AUDIT "):
     # The app may be mid-write; only newline-terminated lines are complete audits.
-    return [json.loads(line[len(prefix):]) for line in log_path.read_text().split("\n")[:-1]
-            if line.startswith(prefix)]
+    return log_entries(log_path, prefix)
 
 
 def wait(predicate, timeout=30):
     end = time.monotonic() + timeout
     while time.monotonic() < end:
         if app.poll() is not None:
-            raise RuntimeError(f"application exited: {log_path.read_text()}")
+            raise RuntimeError(f"application exited: {log_tail(log_path)}")
         events = entries()
         if events and predicate(events[-1]):
             return events[-1]
         time.sleep(0.03)
-    raise RuntimeError(f"state timeout: {entries()[-1] if entries() else log_path.read_text()}")
+    raise RuntimeError(f"state timeout: {entries()[-1] if entries() else log_tail(log_path)}")
 
 
 def command(*args):
@@ -127,14 +129,16 @@ def record(name, state):
     (output / f"{name}.json").write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n")
     # Audit is emitted before the GPU swap. Allow presentation before capturing;
     # this capture delay is not an input latency measurement.
-    time.sleep(0.12)
-    subprocess.run(["import", "-window", str(window), str(output / f"{name}.png")], check=True, env=env)
+    if evidence_enabled():
+        time.sleep(0.12)
+        subprocess.run(["import", "-window", str(window), str(output / f"{name}.png")], check=True, env=env)
     print(f"PASS {name}", flush=True)
 
 
 def start(name):
     global app, log_path, window
     log_path = output / f"{name}.log"
+    reset_log(log_path)
     with log_path.open("w") as log:
         # Plain launch: the Typst Content editor is the default (ADR 0036).
         app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)

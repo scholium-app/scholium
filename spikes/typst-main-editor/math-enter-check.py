@@ -14,6 +14,9 @@ import time
 
 from chrome_ui import expected_inputs
 
+from check_evidence import evidence_enabled
+from log_reader import reset_log, log_latest
+
 binary = Path(sys.argv[1]).resolve()
 output = Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
@@ -27,8 +30,7 @@ results = {}
 
 
 def state():
-    lines = [l for l in log_path.read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
-    return json.loads(lines[-1][6:]) if lines else None
+    return log_latest(log_path)
 
 
 # input_seq the app must reach before a state counts: every event of the last input command.
@@ -54,6 +56,8 @@ def xdo(*args):
 
 
 def shot(name):
+    if not evidence_enabled():
+        return
     time.sleep(0.12)  # audit precedes GPU presentation; not a latency measurement
     subprocess.run(["import", "-window", window, str(output / f"{name}.png")], check=True, env=env)
 
@@ -83,6 +87,7 @@ def settled(predicate):
     return lambda s: s["current"] and predicate(s)
 
 
+reset_log(log_path)
 with log_path.open("w") as log:
     app = subprocess.Popen([str(binary)], env=env, stdout=log, stderr=subprocess.STDOUT)
 try:

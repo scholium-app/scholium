@@ -1,9 +1,11 @@
 """Observed project controls for real-window checks; all coordinates come from UI audits."""
-import json
 import os
 from pathlib import Path
 import subprocess
 import time
+
+from check_evidence import evidence_enabled
+from log_reader import log_entries, log_tail, reset_log
 
 
 class ProjectApp:
@@ -18,18 +20,17 @@ class ProjectApp:
         self.log = None
 
     def entries(self, prefix):
-        return [json.loads(l[len(prefix):]) for l in self.log.read_text().split("\n")[:-1]
-                if l.startswith(prefix)]
+        return log_entries(self.log, prefix)
 
     def wait(self, predicate, timeout=60):
         end = time.monotonic() + timeout
         while time.monotonic() < end:
-            assert self.app.poll() is None, self.log.read_text()
+            assert self.app.poll() is None, log_tail(self.log)
             found = predicate()
             if found:
                 return found
             time.sleep(0.04)
-        raise AssertionError("project UI timeout: " + self.log.read_text()[-4000:])
+        raise AssertionError("project UI timeout: " + log_tail(self.log))
 
     def state(self, predicate=lambda s: s["current"]):
         return self.wait(lambda: next((s for s in self.entries("AUDIT ")[-1:] if predicate(s)), None))
@@ -42,6 +43,7 @@ class ProjectApp:
 
     def start(self, name):
         self.log = self.output / f"{name}.log"
+        reset_log(self.log)
         with self.log.open("w") as log:
             self.app = subprocess.Popen([self.binary], env=self.env, stdout=log, stderr=subprocess.STDOUT)
         self.wait(lambda: subprocess.run(["xdotool", "search", "--onlyvisible", "--pid", str(self.app.pid)],
@@ -72,6 +74,8 @@ class ProjectApp:
         self.control("submit")
 
     def capture(self, name):
+        if not evidence_enabled():
+            return
         time.sleep(0.15)
         subprocess.run(["import", "-window", self.window, str(self.output / f"{name}.png")], env=self.env, check=True)
 

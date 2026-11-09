@@ -9,6 +9,9 @@ import subprocess
 import sys
 import time
 
+from check_evidence import evidence_enabled
+from log_reader import reset_log, log_entries
+
 binary = Path(sys.argv[1]).resolve()
 # scholium-storage's `hammer` writes genuine legacy (schema 0) heads; the legacy editor is gone.
 hammer = Path(sys.argv[2]).resolve()
@@ -28,6 +31,7 @@ target = project / ".scholium/history/project.sqlite3"
 
 
 def run(args, name, actions):
+    reset_log(output / f"{name}.log")
     with (output / f"{name}.log").open("w") as log:
         app = subprocess.Popen([str(binary), *args], env=env, stdout=log, stderr=subprocess.STDOUT)
     try:
@@ -35,7 +39,8 @@ def run(args, name, actions):
         window = subprocess.check_output(["xdotool", "search", "--sync", "--onlyvisible", "--pid", str(app.pid)], env=env, text=True).split()[0]
         subprocess.run(["xdotool", "windowfocus", window], env=env, check=True)
         actions(window)
-        subprocess.run(["import", "-window", window, str(output / f"{name}.png")], env=env, check=True)
+        if evidence_enabled():
+            subprocess.run(["import", "-window", window, str(output / f"{name}.png")], env=env, check=True)
     finally:
         app.terminate()
         app.wait(timeout=15)
@@ -51,8 +56,7 @@ def current(window):
     # Cold debug starts scan fonts before the first Content layout; wait for it.
     end = time.monotonic() + 60
     log = output / "default.log"
-    while not any(l.startswith("AUDIT ") and json.loads(l[6:])["current"]
-                  for l in log.read_text().split("\n")[:-1]):
+    while not any(s["current"] for s in log_entries(log)):
         assert time.monotonic() < end, "first Typst scene timeout"
         time.sleep(0.1)
     time.sleep(0.12)
@@ -61,7 +65,7 @@ def current(window):
 run([], "default", current)
 assert target.exists(), "plain launch created the project by migration"
 assert hashlib.sha256(legacy.read_bytes()).hexdigest() == before, "legacy file untouched"
-audits = [json.loads(l[6:]) for l in (output / "default.log").read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
+audits = log_entries(output / "default.log")
 last = audits[-1]
 assert last["backend"] == "Typst Content main app" and last["current"]
 assert all(a["page_text_draws"] == 0 for a in audits)

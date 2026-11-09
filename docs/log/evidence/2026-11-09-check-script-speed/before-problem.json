@@ -1,0 +1,14 @@
+[
+  {
+    "check": "problem-panel",
+    "locale": "zh-Hans",
+    "result": "pass",
+    "seconds": 10.8
+  },
+  {
+    "check": "problem-panel",
+    "locale": "en",
+    "result": "pass",
+    "seconds": 10.7
+  }
+]

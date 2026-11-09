@@ -11,6 +11,8 @@ import time
 from project_ui import ProjectApp
 from chrome_ui import Chrome
 
+from check_evidence import evidence_enabled
+
 binary, output = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
 output.mkdir(parents=True, exist_ok=True)
 baseline = os.environ.get("SCHOLIUM_T46_BASELINE") == "1"
@@ -42,7 +44,7 @@ def chrome(app):
 
 def themes(app, prefix, controller=None):
     controller = controller or chrome(app)
-    for theme in ["light", "dark"]:
+    for theme in (["light", "dark"] if evidence_enabled() else ["light"]):
         controller.menu("ui.menu.view", "ui.menu.view.theme", "view.theme." + theme)
         time.sleep(0.3)
         app.capture(prefix + "-" + theme)

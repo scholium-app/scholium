@@ -14,6 +14,7 @@ from gi.repository import Atspi  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import chrome_ui  # noqa: E402
+from log_reader import log_entries  # noqa: E402
 
 locale = os.environ.get("SCHOLIUM_LOCALE", "zh-Hans")
 catalog = chrome_ui.catalog(locale)
@@ -30,7 +31,7 @@ results = {}
 
 
 def audits():
-    return [json.loads(l[6:]) for l in log_path.read_text().split("\n")[:-1] if l.startswith("AUDIT ")]
+    return log_entries(log_path)
 
 
 def wait(predicate, what, timeout=30):
