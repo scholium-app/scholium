@@ -231,7 +231,7 @@ project-latex、latex-view 中英 12/12 通过。
   “install scholium-sandbox-fs beside the application”。改为 `cargo build --workspace --bins`。发行打包同样必须携带这两个 helper。
 - 产品缺陷：100 页 LuaLaTeX 夹具的整页布局超过 `validate::coordinates` 的固定 120 万 JSON 节点上限，引擎被标为 Failed、无预览。
   该遍历发生在 serde 已按 16 MiB 行上限解析之后，固定节点上限只会误伤长文档；改为由行上限推导
-  （每个节点至少 2 字节，`DEFAULT_LINE_BYTES / 2`），仍以字节约束遍历。新增 150 万节点消息通过的回归。
+  （每个节点至少 2 字节，`DEFAULT_LINE_BYTES / 2`），仍以字节约束遍历。上限改为参数，以小消息测试边界（构造百万级节点的测试会在并行测试中拖慢计时敏感的 supervision 测试，CI 上曾因此超时），默认值由编译期断言绑定到行上限；长文档由 latex-exit 的 100 页场景端到端覆盖。
 - 检查脚本：增量读日志时以文本模式读取，读到多字节字符中间时抛 `UnicodeDecodeError`；改为按字节读取、只解码完整行。
 
 本机真实 rtex `latex-exit` 中英 2/2 通过（含 100 页 E6）。

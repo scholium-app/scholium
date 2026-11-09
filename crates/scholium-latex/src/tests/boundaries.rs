@@ -55,10 +55,18 @@ async fn protocol_truncation_malformed_unknown_and_oversized_inputs_are_bounded(
 }
 
 #[test]
-fn long_real_documents_are_not_rejected_by_the_json_node_walk() {
-    // A 100-page layout carries well over a million JSON nodes outside the counted lists.
-    let wide = vec![0u8; 1_500_000];
-    let value = json!({"event":"LayoutUpdate", "pages_total":100, "meta": wide});
-    assert!(crate::view::validate::message(&value).is_ok());
-    const { assert!(crate::view::validate::MAX_JSON_NODES >= crate::live::DEFAULT_LINE_BYTES / 2) };
+fn json_node_walk_is_bounded_by_its_limit_and_the_default_follows_the_line_limit() {
+    // The default must not undercut what one protocol line can carry: a 100-page layout
+    // exceeds a fixed 1.2M-node cap (covered end to end by latex-exit). Keep this test small;
+    // building millions of nodes in parallel tests starves the timing-sensitive supervision tests.
+    const {
+        assert!(
+            crate::view::validate::MAX_JSON_NODES == crate::live::DEFAULT_LINE_BYTES / 2
+                && crate::view::validate::MAX_JSON_NODES > 1_200_000
+        )
+    };
+    let value = json!({"event":"LayoutUpdate", "pages_total":1, "meta": vec![0u8; 98]});
+    // 1 root object + 3 values + 98 array elements.
+    assert!(crate::view::validate::coordinates(&value, 102).is_ok());
+    assert!(crate::view::validate::coordinates(&value, 101).is_err());
 }

@@ -46,7 +46,7 @@ pub(crate) fn message(value: &Value) -> Result<(), LatexError> {
     {
         return Err(invalid("scene count limit exceeded"));
     }
-    coordinates(value)
+    coordinates(value, MAX_JSON_NODES)
 }
 fn array(value: &Value) -> impl Iterator<Item = &Value> + Clone {
     value.as_array().into_iter().flatten()
@@ -68,13 +68,13 @@ fn display_list(value: &Value) -> Result<(), LatexError> {
     }
     Ok(())
 }
-fn coordinates(value: &Value) -> Result<(), LatexError> {
+pub(crate) fn coordinates(value: &Value, max_nodes: usize) -> Result<(), LatexError> {
     // Depth is capped by serde_json. Total nodes are capped independently of encoded byte length.
     let mut pending = vec![(value, false)];
     let mut visited = 0;
     while let Some((value, coordinate)) = pending.pop() {
         visited += 1;
-        if visited > MAX_JSON_NODES {
+        if visited > max_nodes {
             return Err(invalid("JSON node limit exceeded"));
         }
         match value {
