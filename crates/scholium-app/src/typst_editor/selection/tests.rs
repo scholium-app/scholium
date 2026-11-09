@@ -75,7 +75,7 @@ fn multiline_paste_keeps_empty_paragraphs_and_places_following_input_in_new_leaf
     let mut f = Fixture::new();
     f.events(vec![egui::Event::Paste("first\n\nsecond\r\n第三".into())]);
     assert_eq!(values(&f), ["first", "", "second", "第三"]);
-    assert_eq!(f.editor.snapshot.revision.0, 1);
+    assert_eq!(f.editor.snapshot.revision.0, 2);
     assert_eq!(f.editor.cursor.leaf, body_positions(&f)[3].leaf);
     f.events(vec![text("x")]);
     assert_eq!(values(&f), ["first", "", "second", "第三x"]);
@@ -92,7 +92,7 @@ fn multiline_paste_keeps_empty_paragraphs_and_places_following_input_in_new_leaf
     f.editor.history(false, &mut f.state);
     assert_eq!(values(&f)[3], "第三");
     f.editor.history(true, &mut f.state);
-    assert_eq!(f.editor.snapshot, snapshot);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &snapshot);
 }
 
 #[test]
@@ -172,7 +172,7 @@ fn reverse_drag_across_paragraphs_replaces_once_and_undo_restores_selection() {
     assert_eq!(f.editor.cursor.byte, 1);
     assert_eq!(f.editor.cursor.leaf, body_positions(&f)[1].leaf);
     f.editor.history(false, &mut f.state);
-    assert_eq!(f.editor.snapshot, before);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &before);
     assert_eq!(f.editor.range().expect("undo range"), selection);
     f.settle();
     assert!(
@@ -204,13 +204,13 @@ fn deletion_and_enter_each_replace_cross_paragraph_selection_as_one_action() {
     f.editor.move_to(end, true);
     f.events(vec![key(egui::Key::Backspace, false)]);
     assert_eq!(values(&f), ["a", "f"]);
-    assert_eq!(f.editor.snapshot.revision.0, 2);
+    assert_eq!(f.editor.snapshot.revision.0, 3);
     f.editor.history(false, &mut f.state);
     f.settle();
     f.events(vec![key(egui::Key::Enter, false)]);
     assert_eq!(values(&f), ["a", "", "f"]);
     assert_eq!(f.editor.snapshot.blocks.len(), 2);
-    assert_eq!(f.editor.snapshot.revision.0, 2);
+    assert_eq!(f.editor.snapshot.revision.0, 5);
     f.events(vec![text("X")]);
     assert_eq!(values(&f), ["a", "X", "f"]);
 }
@@ -261,7 +261,7 @@ fn drag_rejects_epoch_reuse_and_changed_placement() {
     f.editor.history(false, &mut f.state);
     f.editor.history(true, &mut f.state);
     f.settle();
-    assert_eq!(f.editor.wanted.revision, old.revision);
+    assert_eq!(f.editor.wanted.revision.0, old.revision.0 + 2);
     assert_ne!(f.editor.wanted.epoch, old.epoch);
     f.editor.drag = drag;
     assert!(!f.editor.pointer_drag(point));
@@ -297,7 +297,7 @@ fn rejected_capacity_preserves_selection_and_copyable_paste() {
     let selection = f.editor.range().expect("range");
     let paste = "x".repeat(MAX_LEAF_BYTES + 1);
     f.events(vec![egui::Event::Paste(paste.clone())]);
-    assert_eq!(*f.editor.snapshot, before.snapshot);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &before.snapshot);
     assert_eq!(f.editor.cursor, before.cursor);
     assert_eq!(f.editor.range().expect("range"), selection);
     assert_eq!(f.editor.rejected_input, Some(paste));
@@ -313,7 +313,7 @@ fn math_vertical_shift_is_rejected_and_selection_styles_only_the_text_around_a_f
     f.events(vec![shift(egui::Key::ArrowUp)]);
     assert!(f.state.edit_error.is_some());
     assert!(!f.editor.selected());
-    assert_eq!(f.editor.snapshot, before);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &before);
     f.events(vec![text("$"), text("Z"), shift(egui::Key::Home)]);
     // Visual line Home waits for the current Scene before extending.
     f.settle();
@@ -379,7 +379,7 @@ fn pending_range_covering_raw_math_is_rejected_without_losing_selection() {
     let selection = f.editor.range().expect("body selection");
     assert!(!f.editor.current());
     f.events(vec![egui::Event::Paste("replacement".into())]);
-    assert_eq!(*f.editor.snapshot, before.snapshot);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &before.snapshot);
     assert_eq!(f.editor.record().requests, before.requests);
     assert_eq!(f.editor.range().expect("preserved selection"), selection);
     assert_eq!(f.editor.rejected_input.as_deref(), Some("replacement"));
@@ -441,7 +441,7 @@ fn cut_selection_returns_exact_text_and_undo_restores_original_range() {
 
     f.editor.history(false, &mut f.state);
     f.settle();
-    assert_eq!(f.editor.snapshot, before);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &before);
     assert_eq!(f.editor.range().expect("restored range"), selected);
 }
 
@@ -466,7 +466,7 @@ fn copy_and_cut_reject_formula_selection_without_mutating_authority() {
     assert!(f.editor.copy_selection(&mut f.state).is_none());
     assert!(f.state.edit_error.is_some());
     assert!(f.editor.cut_selection(&mut f.state).is_none());
-    assert_eq!(f.editor.snapshot, before);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &before);
     assert_eq!(f.editor.range().expect("preserved range"), range);
 }
 

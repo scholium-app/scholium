@@ -179,6 +179,13 @@ def close():
     assert app.returncode == 0
 
 
+def restored_content(snapshot, prior):
+    # Actor undo/redo appends Actions. Identified content returns, revision advances.
+    return (snapshot["document"] == prior["document"]
+            and snapshot["blocks"] == prior["blocks"]
+            and snapshot["revision"] > prior["revision"])
+
+
 try:
     initial = start("first")
     record("01-initial", initial)
@@ -225,7 +232,9 @@ try:
     command("key", "--clearmodifiers", "ctrl+shift+z")
     wait(lambda s: s["current"] and values(s) == ["English 中文 空格", "12", "3", "", ""])
     command("key", "--clearmodifiers", "ctrl+shift+z")
-    state = wait(lambda s: s["current"] and s["snapshot"] == original)
+    state = wait(lambda s: s["current"] and restored_content(s["snapshot"], original))
+    assert state["revision"] == original["revision"] + 4
+    original = state["snapshot"]
     record("07-redo", state)
     denominator = state["cursor_leaf"]
     command("key", "--clearmodifiers", "ctrl+s")
@@ -286,7 +295,7 @@ try:
     assert state["revision"] == revision + 1
     record("15-whole-formula-replaced", state)
     command("key", "--clearmodifiers", "ctrl+z")
-    state = wait(lambda s: s["current"] and s["snapshot"] == original and s["selection"] is not None)
+    state = wait(lambda s: s["current"] and restored_content(s["snapshot"], original) and s["selection"] is not None)
     assert state["selection_quads"] > 0
     record("16-undo-restores-selection", state)
     first, last = state["body_leaves"][0], state["body_leaves"][-1]
@@ -314,11 +323,13 @@ try:
     record("20-range-replaced-and-continued", state)
     final_snapshot = state["snapshot"]
     command("key", "--clearmodifiers", "ctrl+z", "ctrl+z")
-    state = wait(lambda s: s["current"] and s["snapshot"] == original and s["selection"] is not None)
+    state = wait(lambda s: s["current"] and restored_content(s["snapshot"], original) and s["selection"] is not None)
     assert state["selection_quads"] > 0
     record("21-range-undo", state)
     command("key", "--clearmodifiers", "ctrl+shift+z", "ctrl+shift+z")
-    state = wait(lambda s: s["current"] and s["snapshot"] == final_snapshot)
+    state = wait(lambda s: s["current"] and restored_content(s["snapshot"], final_snapshot))
+    assert state["revision"] == final_snapshot["revision"] + 4
+    final_snapshot = state["snapshot"]
     record("22-range-redo", state)
     command("key", "--clearmodifiers", "ctrl+s")
     state = wait(lambda s: s["saved"])
@@ -363,7 +374,7 @@ try:
     assert state["selection"] is None
     record("30-vertical-selection-replaced", state)
     command("key", "--clearmodifiers", "ctrl+z")
-    state = wait(lambda s: s["current"] and s["snapshot"] == before and s["selection"] is not None)
+    state = wait(lambda s: s["current"] and restored_content(s["snapshot"], before) and s["selection"] is not None)
     assert state["selection_quads"] > 0
     record("31-vertical-selection-undo", state)
     first_value = values(state)[0]

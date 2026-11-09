@@ -26,6 +26,7 @@ mod runtime;
 mod runtime_tests;
 #[cfg(test)]
 mod scenario_tests;
+mod sdg_project;
 mod selection;
 mod structural_delete;
 pub mod style;
@@ -46,7 +47,7 @@ use scholium_document::{
     BodyTextPosition, LocalSession, StructuralEdit, StructuralOutcome, StructuralRequest,
 };
 use scholium_model::{RequestId, layout_identity::*, structured::*};
-use scholium_storage::SessionStore;
+
 use scholium_typst::editor::{
     Affinity, EditGeometry, EditorScene, Position, RasterSpec, ViewRange,
 };
@@ -78,8 +79,10 @@ pub struct EditorCore {
     pub session: ReadAuthority,
     /// Read-only accepted document projection; never an independent authority.
     pub snapshot: Arc<StructuredDocument>,
-    store: persistence::Backing,
-    pending_persistence: std::collections::VecDeque<HistoryEntry>,
+    store: Box<sdg_project::SdgProject>,
+    replica: scholium_sdg::Replica,
+    input_transaction: bool,
+    pending_persistence: std::collections::VecDeque<scholium_sdg::Action>,
     /// Durable commit failure; accepted input is retained and save retries the queue.
     pub persistence_error: Option<String>,
     saved: Option<Arc<StructuredDocument>>,
@@ -143,7 +146,8 @@ struct EditState {
     edit_error: Option<CommandError>,
     cleared_error: bool,
     reset_drag: bool,
-    pending: Vec<HistoryEntry>,
+    actions: Vec<scholium_sdg::Action>,
+    new_group: bool,
 }
 
 fn math_contains(node: &MathNode, leaf: scholium_model::NodeId) -> bool {
@@ -234,3 +238,12 @@ mod root_delimiter_tests;
 
 #[cfg(test)]
 mod math_input_tests;
+
+#[cfg(test)]
+mod sdg_conflict_tests;
+#[cfg(test)]
+mod sdg_kill_tests;
+#[cfg(test)]
+mod sdg_migration_tests;
+#[cfg(test)]
+mod sdg_tests;

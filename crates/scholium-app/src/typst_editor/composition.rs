@@ -110,7 +110,7 @@ mod tests {
         assert!(f.editor.texture.is_some());
         f.settle();
         assert_ne!(f.editor.scene().expect("new preedit").stamp, shown);
-        assert_eq!(f.editor.snapshot.revision.0, 1);
+        assert_eq!(f.editor.snapshot.revision.0, 2);
     }
 
     #[test]

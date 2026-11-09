@@ -1,0 +1,30 @@
+{
+  "before": {
+    "p50_ns": 289106,
+    "p95_ns": 530742,
+    "suspend_delta_s": 8.700590115040541e-08,
+    "command": [
+      "target/debug/deps/scholium_session-6e6ec1da3589e03f",
+      "--exact",
+      "typst::sdg_tests::typing_command_latency",
+      "--ignored",
+      "--nocapture"
+    ]
+  },
+  "after": {
+    "p50_ns": 602578,
+    "p95_ns": 641635,
+    "suspend_delta_s": 9.470022632740438e-07,
+    "command": [
+      "cargo",
+      "test",
+      "--locked",
+      "-p",
+      "scholium-session",
+      "typing_command_latency",
+      "--",
+      "--ignored",
+      "--nocapture"
+    ]
+  }
+}

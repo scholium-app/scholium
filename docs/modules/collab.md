@@ -51,7 +51,7 @@ StructuredAuthority 使用共享节点 map、children sequence 和文本 leaves�
 按 Loro → Yrs → Automerge 的顺序验证，候选必须比较 Unicode 位置、批量编辑、origin undo、快照大小、10 万次 update、线程模型、
 原生 Rust 线程/消息集成、可选 FFI 和长期维护；不以 JS/WASM 桥接作为桌面必要依赖。选择写 ADR；engine adapter 保留替换可能。
 
-`scholium-sdg` 是层 2 的结构权威 adapter，锁定 Loro 1.17.1。`Replica::new/restore` 创建单一权威；
+`scholium-sdg` 是层 2 的结构权威 adapter，锁定 Loro 1.17.1。`Replica::new/restore` 创建单一权威；session 通过 `initialize/from_initial_action` 建立可独立恢复的首个 Action；
 `edit(StructuralEdit, name)` 或 `apply_effects(request, origin, expected_revision, document)` 先规划/预演再写入。
 `document/projection` 只返回值，后者携带确定性修复报告；`tree_identity` 提供稳定映射 DTO。
 `receive(Action)` 校验 envelope、文档、peer 与结构后幂等导入，缺因果前驱的 Action 由 pending 保留；
@@ -99,3 +99,14 @@ Typst 结构项目同步语义树，源码项目同步权威文本；离线输�
 ## WASM 互通
 
 浏览器与原生共享 schema、相对锚点语义和版本化更新协议，验证双端快照/增量互通、撤销与权限撤销后的重连；引擎 WASM 支持必须实际编译运行。具体候选见[全栈清单](../plan/TECH_STACK.md)。
+
+## 会话事务边界
+
+Typst 会话在成功结构规划后调用 `apply_effects`，只提交 adapter Action，不并存两个可写正文模型。
+`checkpoint/rollback` 以设备 journal 恢复 engine、receipts、actor undo/redo；普通 `snapshot/restore`
+故意不恢复设备撤销栈。`finish_command` 将一个复合命令内的 delta 合并为单个 Action，去掉未发布的中间 receipts。
+`start_undo_group` 对接 UI 词/删除分组，undo 不按墙上时间随意合并。
+
+本地删除保留原 TreeID/metadata/text，以 inactive tombstone 隐藏子树，避免引擎撤销重建容器时复制 NodeId。
+已存在的物理 tree tombstone 仍可读取；重新激活隐藏身份复用原 TreeID。初始化、退役与迁移裁决见
+[ADR 0059](../adr/ADR-0059-sdg-session-durability.md)。网络与协作 UI 不属于此接入。

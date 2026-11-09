@@ -140,8 +140,6 @@ fn composition_layout_never_changes_snapshot_source_history_or_saved_session() {
         "composition geometry cannot answer document queries"
     );
     core.save().expect("even explicit save contains no preedit");
-    let reopened = EditorCore::open(&path).expect("saved session");
-    assert_eq!(reopened.snapshot, before);
     core.set_preedit(None);
     settle(&mut core);
     assert!(
@@ -149,8 +147,10 @@ fn composition_layout_never_changes_snapshot_source_history_or_saved_session() {
         "document queries resume after cancellation"
     );
     assert_eq!(core.snapshot, before);
-    drop(reopened);
     drop(core);
+    let reopened = EditorCore::open(&path).expect("saved session");
+    assert_eq!(reopened.snapshot, before);
+    drop(reopened);
     let _ = std::fs::remove_file(path);
 }
 

@@ -1,5 +1,5 @@
-//! Local undo/redo: snapshot entries. A run of typing, or a run of deletions, in one leaf
-//! shares a single entry so undo steps by word rather than by keystroke.
+//! Actor-local compensating undo/redo. UI groups retain semantic endpoints and read-only
+//! content records; the adapter's UndoManager changes the shared body, never a snapshot stack.
 use super::*;
 use scholium_model::NodeId;
 use std::time::{Duration, Instant};
@@ -136,13 +136,22 @@ impl EditorCore {
             return;
         };
         let current = self.record();
-        match LocalSession::restore_structured_shared(target.snapshot.0, &target.requests) {
-            Ok(session) => {
-                // Restore allocates a fresh epoch even when revision and IDs repeat.
-                self.session = ReadAuthority::new(session);
+        let action = if redo {
+            self.replica.redo()
+        } else {
+            self.replica.undo()
+        };
+        match action {
+            Ok(action) => {
+                state.actions.extend(action);
+
+                if let Err(error) = self.adopt_replica() {
+                    state.edit_error = Some(error.into());
+                    return;
+                }
                 self.cursor = target.cursor;
                 self.anchor = target.anchor;
-
+                self.validate_history_endpoints();
                 if redo {
                     self.undo.push(current);
                 } else {
@@ -154,5 +163,30 @@ impl EditorCore {
             }
             Err(error) => state.edit_error = Some(error.into()),
         }
+    }
+
+    pub(super) fn validate_history_endpoints(&mut self) {
+        let leaves = input::leaves(&self.snapshot);
+        let normalize = |mut position: Position| {
+            if let Some(leaf) = leaves.iter().find(|l| l.id == position.leaf) {
+                position.byte = position.byte.min(leaf.text.len());
+                while !leaf.text.is_char_boundary(position.byte) {
+                    position.byte -= 1;
+                }
+                Some(position)
+            } else if self.math_node_at(position.leaf).is_some() && position.byte <= 1 {
+                Some(position)
+            } else {
+                None
+            }
+        };
+        let cursor = normalize(self.cursor).unwrap_or_else(|| Position {
+            leaf: leaves.first().expect("valid document has input").id,
+            byte: 0,
+            affinity: Affinity::Downstream,
+        });
+        let anchor = self.anchor.and_then(normalize);
+        self.cursor = cursor;
+        self.anchor = anchor;
     }
 }

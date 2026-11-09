@@ -8,6 +8,17 @@ use std::sync::atomic::{AtomicU64, Ordering};
 static TEMP_SEQUENCE: AtomicU64 = AtomicU64::new(0);
 pub(super) const TEMP_PREFIX: &str = ".scholium-materialize-";
 
+#[derive(Debug)]
+pub(super) struct ProjectLock(pub File);
+
+impl Drop for ProjectLock {
+    fn drop(&mut self) {
+        // fork inherits this open file description until exec. Closing the owner's descriptor
+        // alone leaves flock held by that child; explicitly release after SQLite has closed.
+        let _ = self.0.unlock();
+    }
+}
+
 pub(super) fn open_directories(root: &Path) -> Result<(Dir, PathBuf, File), StoreError> {
     let root = root.canonicalize()?;
     let mut parent = root.clone();
@@ -145,5 +156,27 @@ impl ProjectStore {
         self.hooks.check(IoPoint::SyncDirectory)?;
         dir.open(".")?.sync_all()?;
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn dropping_store_releases_ownership_even_with_an_inherited_descriptor() {
+        let root = tempfile::tempdir().expect("root");
+        let store = ProjectStore::open(root.path(), Default::default())
+            .expect("store")
+            .store;
+        // A child between fork and exec holds the same open file description.
+        let inherited = store._lock.0.try_clone().expect("inherited descriptor");
+        drop(store);
+        let reopened = ProjectStore::open(root.path(), Default::default());
+        assert!(
+            reopened.is_ok(),
+            "store owner dropped while child still holds descriptor"
+        );
+        drop(inherited);
     }
 }

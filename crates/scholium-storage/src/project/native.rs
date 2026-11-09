@@ -55,6 +55,12 @@ impl NativeState {
         serde_json::to_vec(self).map_err(|_| StoreError::Corrupt("native encoding"))
     }
 }
+/// Read and validate the retired native v1 envelope without acquiring a writer or changing it.
+/// # Errors
+/// Rejects unknown versions and invalid documents/request journals.
+pub fn import_native_v1(bytes: &[u8]) -> Result<StructuredDocument, StoreError> {
+    Ok(NativeState::decode(bytes)?.document)
+}
 impl NativeProject {
     /// Open and validate snapshot plus subsequent Actions, or durably initialize the supplied blank.
     ///

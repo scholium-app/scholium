@@ -95,3 +95,13 @@ pub fn session_has_head(source: &Path) -> Result<bool, StoreError> {
         .map(|state| state.is_some())
         .map_err(|_| StoreError::Corrupt("session probe; original preserved"))
 }
+
+/// Read a retired experimental session consistently, without opening a writer.
+/// # Errors
+/// Rejects unknown schema versions, corrupt content and invalid request identities.
+pub fn import_session(
+    source: &Path,
+) -> Result<Option<crate::PersistedStructuredSession>, StoreError> {
+    crate::migration::read_project_head(source)
+        .map_err(|_| StoreError::Corrupt("session import; original preserved"))
+}

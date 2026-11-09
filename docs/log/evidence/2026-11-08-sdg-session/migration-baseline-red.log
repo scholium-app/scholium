@@ -1,0 +1,23 @@
+   Compiling scholium-sdg v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-sdg)
+   Compiling scholium-session v0.1.0 (/home/ation_ciger/Projects/Mogan/scholium-wt2/crates/scholium-session)
+    Finished `test` profile [unoptimized] target(s) in 1.99s
+     Running unittests src/lib.rs (target/debug/deps/scholium_session-13e23dced1046ec7)
+
+running 1 test
+test typst::sdg_migration_tests::retired_native_v1_migrates_once_and_preserves_all_original_bytes ... FAILED
+
+failures:
+
+---- typst::sdg_migration_tests::retired_native_v1_migrates_once_and_preserves_all_original_bytes stdout ----
+
+thread 'typst::sdg_migration_tests::retired_native_v1_migrates_once_and_preserves_all_original_bytes' (1051297) panicked at crates/scholium-session/src/typst/sdg_migration_tests.rs:59:9:
+migration publishes a new committed checkpoint
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    typst::sdg_migration_tests::retired_native_v1_migrates_once_and_preserves_all_original_bytes
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 72 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p scholium-session --lib`

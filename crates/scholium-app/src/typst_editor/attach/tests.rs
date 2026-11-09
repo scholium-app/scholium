@@ -235,7 +235,7 @@ fn backspace_in_an_empty_slot_removes_it_and_undo_restores_it() {
     assert_eq!(literal(&flat), "x");
     assert_eq!(caret(&f), (flat.node, 1));
     f.editor.history(false, &mut f.state);
-    assert_eq!(*f.editor.snapshot, *attached);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &attached);
 }
 
 #[test]
@@ -334,7 +334,7 @@ fn clicking_away_from_an_edge_preserves_the_state_after_the_script() {
     let mut f = Fixture::new();
     let (typed, depth) = into_edge(&mut f);
     click_body(&mut f);
-    assert_eq!(*f.editor.snapshot, typed);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &typed);
     assert_eq!(holes(&f), 0);
     assert_eq!(f.editor.undo.len(), depth, "no extra undo step");
 }
@@ -349,7 +349,7 @@ fn leaving_an_edge_by_left_or_ctrl_home_end_preserves_content() {
         let mut f = Fixture::new();
         let (typed, _) = into_edge(&mut f);
         f.events(vec![leave]);
-        assert_eq!(*f.editor.snapshot, typed);
+        crate::typst_editor::tests::assert_content(&f.editor.snapshot, &typed);
     }
 }
 
@@ -369,7 +369,7 @@ fn right_from_an_attach_edge_exits_the_formula() {
     let (typed, _) = into_edge(&mut f);
     f.events(vec![press(egui::Key::ArrowRight, false)]);
     assert!(f.editor.body_leaf(f.editor.cursor.leaf), "left the formula");
-    assert_eq!(*f.editor.snapshot, typed);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &typed);
 }
 
 #[test]
@@ -379,7 +379,7 @@ fn typing_at_an_edge_inserts_sibling_content() {
     f.events(vec![text("+y")]);
     let typed = (*f.editor.snapshot).clone();
     click_body(&mut f);
-    assert_eq!(*f.editor.snapshot, typed);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &typed);
     let formula = root(&f);
     let MathBody::Row { children } = &formula.body else {
         panic!("row kept: {formula:?}");
@@ -406,7 +406,7 @@ fn grouped_typing_at_an_edge_undoes_in_one_step() {
         "one typing group, with no navigation step"
     );
     f.editor.history(false, &mut f.state);
-    assert_eq!(*f.editor.snapshot, before_typing);
+    crate::typst_editor::tests::assert_content(&f.editor.snapshot, &before_typing);
 }
 
 #[test]

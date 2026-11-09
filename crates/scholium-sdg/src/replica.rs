@@ -25,13 +25,14 @@ pub struct TreeIdentity {
 /// Sole mutable structured authority for a device actor; session/store integration is external.
 #[derive(Debug)]
 pub struct Replica {
-    doc: LoroDoc,
+    pub(crate) doc: LoroDoc,
     undo: UndoManager,
     document: DocumentId,
-    actor: u64,
+    pub(crate) actor: u64,
     base_revision: u64,
-    receipts: BTreeMap<String, [u8; 32]>,
+    pub(crate) receipts: BTreeMap<String, [u8; 32]>,
     pending: BTreeMap<String, Vec<u8>>,
+    pub(crate) journal: Option<crate::transaction::Journal>,
 }
 impl Replica {
     /// Bootstrap once from a valid identified document. Other writers restore this snapshot.
@@ -50,9 +51,87 @@ impl Replica {
                 receipts: BTreeMap::new(),
                 pending: BTreeMap::new(),
             },
-        );
+        )?;
         result.projection()?;
         Ok(result)
+    }
+    /// Bootstrap a recoverable initialization Action, including the identified tree.
+    /// # Errors
+    /// Rejects invalid documents, actors and encoding/engine failures.
+    pub fn initialize(
+        mut initial: StructuredDocument,
+        actor: u64,
+    ) -> Result<(Self, Action), Error> {
+        initial.revision = Revision(0);
+        let mut replica = Self::new(initial, actor)?;
+        let action = replica.finish(
+            ActionHeader {
+                document: replica.document,
+                id: RequestId::fresh(),
+                actor,
+                origin: Origin::System("initialize-v1".into()),
+            },
+            &loro::VersionVector::default(),
+        )?;
+        // Initialization is the immutable seed, not an actor undo step.
+        replica.journal = None;
+        replica.checkpoint()?;
+        Ok((replica, action))
+    }
+    /// Recover initialization when a process died after the first Action commit.
+    /// # Errors
+    /// Rejects non-initialization Actions or invalid engine/schema data.
+    pub fn from_initial_action(action: &Action, actor: u64) -> Result<Self, Error> {
+        if action.origin() != &Origin::System("initialize-v1".into()) {
+            return Err(Error::Format);
+        }
+        let meta = LoroDoc::decode_import_blob_meta(&action.update, true)?;
+        if meta
+            .partial_end_vv
+            .iter()
+            .any(|(&peer, _)| peer != action.actor())
+            || meta.change_num == 0
+        {
+            return Err(Error::Identity);
+        }
+        let doc = engine(actor)?;
+        if doc.import(&action.update)?.pending.is_some() {
+            return Err(Error::Format);
+        }
+        let mut receipts = BTreeMap::new();
+        receipts.insert(key(&action.id()), fingerprint(&action.encode()?));
+        let result = Self::attach(
+            doc,
+            actor,
+            SnapshotHeader {
+                document: action.header.document,
+                base_revision: 0,
+                receipts,
+                pending: BTreeMap::new(),
+            },
+        )?;
+        result.check_document(&result.doc)?;
+        result.projection()?;
+        Ok(result)
+    }
+    /// Action identities for rebuilding the read-only planner journal. Order is canonical,
+    /// not causal; callers must not interpret this list as a product history.
+    /// # Errors
+    /// Rejects a malformed receipt identity.
+    pub fn action_ids(&self) -> Result<Vec<RequestId>, Error> {
+        self.receipts
+            .keys()
+            .map(|id| serde_json::from_str(id).map_err(Error::from))
+            .collect()
+    }
+    /// Start a new device undo group. Subsequent commands remain distinct Actions.
+    /// # Errors
+    /// Returns an engine checkpoint failure.
+    pub fn start_undo_group(&mut self) -> Result<(), Error> {
+        self.undo.group_end();
+        self.undo.group_start()?;
+        self.remember(crate::transaction::Step::Group);
+        Ok(())
     }
     /// Restore a version 1 snapshot, keeping all node/operation identities and pending updates.
     /// Undo stacks start empty; a caller must use a unique actor for each concurrent writer.
@@ -73,18 +152,18 @@ impl Replica {
             }
             doc.import(&action.update)?;
         }
-        let result = Self::attach(doc, actor, header);
+        let result = Self::attach(doc, actor, header)?;
         result.check_document(&result.doc)?;
         result.projection()?;
         Ok(result)
     }
-    fn attach(doc: LoroDoc, actor: u64, header: SnapshotHeader) -> Self {
+    fn attach(doc: LoroDoc, actor: u64, header: SnapshotHeader) -> Result<Self, Error> {
         let mut undo = UndoManager::new(&doc);
         undo.add_exclude_origin_prefix("system/");
         undo.add_exclude_origin_prefix("remote/");
         undo.set_merge_interval(0);
         undo.set_max_undo_steps(MAX_UNDO_STEPS);
-        Self {
+        let mut result = Self {
             doc,
             undo,
             actor,
@@ -92,7 +171,11 @@ impl Replica {
             base_revision: header.base_revision,
             receipts: header.receipts,
             pending: header.pending,
-        }
+            journal: None,
+        };
+        // Seed before any writer can create undo history, even before its first checkpoint.
+        result.checkpoint()?;
+        Ok(result)
     }
     /// Valid structured projection with explicit deterministic repair diagnostics.
     /// # Errors
@@ -195,7 +278,9 @@ impl Replica {
             header.id,
         )?;
         self.undo.record_new_checkpoint()?;
-        self.finish(header, &version).map(Some)
+        let action = self.finish(header, &version)?;
+        self.remember(crate::transaction::Step::Edit(action.clone()));
+        Ok(Some(action))
     }
     fn preflight(
         &self,
@@ -275,6 +360,7 @@ impl Replica {
             self.pending.insert(id, encoded);
         }
         self.prune_pending()?;
+        self.remember(crate::transaction::Step::Remote(action.clone()));
         Ok(true)
     }
     /// Compensate one local user action without restoring a snapshot or undoing remote input.
@@ -290,6 +376,15 @@ impl Replica {
         self.compensate(true)
     }
     fn compensate(&mut self, redo: bool) -> Result<Option<Action>, Error> {
+        let result = self.compensate_with_id(redo, None)?;
+        self.remember(crate::transaction::Step::Compensate(redo, result.clone()));
+        Ok(result)
+    }
+    pub(crate) fn compensate_with_id(
+        &mut self,
+        redo: bool,
+        id: Option<RequestId>,
+    ) -> Result<Option<Action>, Error> {
         self.check_capacity()?;
         let version = self.doc.oplog_vv();
         let changed = if redo {
@@ -303,14 +398,14 @@ impl Replica {
         self.doc.commit();
         let header = ActionHeader {
             document: self.document,
-            id: RequestId::fresh(),
+            id: id.unwrap_or_else(RequestId::fresh),
             actor: self.actor,
             origin: if redo { Origin::Redo } else { Origin::Undo },
         };
         self.project(&self.doc, self.receipts.len() + 1)?;
         self.finish(header, &version).map(Some)
     }
-    fn finish(
+    pub(crate) fn finish(
         &mut self,
         header: ActionHeader,
         version: &loro::VersionVector,
@@ -346,7 +441,7 @@ impl Replica {
                 .map_err(|_| Error::Engine)?,
         )
     }
-    fn project(&self, doc: &LoroDoc, receipts: usize) -> Result<Projection, Error> {
+    pub(crate) fn project(&self, doc: &LoroDoc, receipts: usize) -> Result<Projection, Error> {
         let revision = self
             .base_revision
             .checked_add(receipts as u64)
@@ -402,7 +497,7 @@ fn engine(actor: u64) -> Result<LoroDoc, Error> {
     doc.get_tree("sdg").enable_fractional_index(0);
     Ok(doc)
 }
-fn fingerprint(bytes: &[u8]) -> [u8; 32] {
+pub(crate) fn fingerprint(bytes: &[u8]) -> [u8; 32] {
     Sha256::digest(bytes).into()
 }
 

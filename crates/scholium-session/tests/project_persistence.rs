@@ -43,10 +43,10 @@ fn undo_appends_a_recoverable_state_without_rewriting_prior_actions() {
     .expect("edit");
     core.run(CommandId::Undo, CommandArgs::None).expect("undo");
     drop(core);
-    assert_eq!(
-        EditorCore::open_project(handle).expect("reopen").snapshot,
-        blank
-    );
+    let restored = EditorCore::open_project(handle).expect("reopen");
+    assert_eq!(restored.snapshot.blocks, blank.blocks);
+    assert_eq!(restored.snapshot.document, blank.document);
+    assert_eq!(restored.snapshot.revision.0, blank.revision.0 + 2);
 }
 
 struct Dir(std::path::PathBuf);
@@ -89,18 +89,22 @@ fn save_as_switches_to_a_new_project_and_discard_restores_its_checkpoint() {
     )
     .expect("edit");
     core.discard_project().expect("discard");
-    assert_eq!(core.snapshot, saved);
+    assert_eq!(core.snapshot.blocks, saved.blocks);
+    assert_eq!(core.snapshot.document, saved.document);
+    assert!(!core.dirty());
     drop(core);
     assert_eq!(
         EditorCore::open_project(copy)
             .expect("copy reopen")
-            .snapshot,
-        saved
+            .snapshot
+            .blocks,
+        saved.blocks
     );
     assert_eq!(
         EditorCore::open_project(original)
             .expect("original reopen")
-            .snapshot,
-        saved
+            .snapshot
+            .blocks,
+        saved.blocks
     );
 }
