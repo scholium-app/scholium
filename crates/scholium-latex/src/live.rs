@@ -30,6 +30,8 @@ pub struct LiveConfig {
     /// Continuous successful-heartbeat period after which the restart budget resets.
     pub restart_stability_window: Duration,
 }
+/// Largest protocol line accepted by default; also bounds the JSON nodes one message can hold.
+pub(crate) const DEFAULT_LINE_BYTES: usize = 16 * 1024 * 1024;
 impl Default for LiveConfig {
     fn default() -> Self {
         Self {
@@ -38,7 +40,7 @@ impl Default for LiveConfig {
             startup_timeout: Duration::from_secs(10),
             compile_timeout: Duration::from_secs(5),
             pass_timeout: Duration::from_secs(30),
-            line_bytes: 16 * 1024 * 1024,
+            line_bytes: DEFAULT_LINE_BYTES,
             total_bytes: 64 * 1024 * 1024,
             max_restarts: 3,
             restart_stability_window: Duration::from_secs(30),

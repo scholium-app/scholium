@@ -222,3 +222,16 @@ Typst 取文档页数；宿主只检查 `%PDF-` 头、尾部 `%%EOF`、字节与
 验证：`reported_pages` 单元测试（含换行折断、多次输出取最后、缺失/非数字）；`scholium-app`、`scholium-latex` 测试通过；
 三引擎原生导出像素对照（`--ignored`）通过；窗口检查 pdf-export、source-find、problem-panel、source-preview-layout、
 project-latex、latex-view 中英 12/12 通过。
+
+## 协调者整合：真实引擎验收暴露的问题（2026-11-09）
+
+合并 #108 后，专用 `latex-exit` workflow 第一次在本分支的新沙箱上运行真实 rtex：
+
+- workflow 只构建 `scholium-app`，缺少同目录的 `scholium-sandbox-fs` 与 `scholium-pdf-worker`，应用报告
+  “install scholium-sandbox-fs beside the application”。改为 `cargo build --workspace --bins`。发行打包同样必须携带这两个 helper。
+- 产品缺陷：100 页 LuaLaTeX 夹具的整页布局超过 `validate::coordinates` 的固定 120 万 JSON 节点上限，引擎被标为 Failed、无预览。
+  该遍历发生在 serde 已按 16 MiB 行上限解析之后，固定节点上限只会误伤长文档；改为由行上限推导
+  （每个节点至少 2 字节，`DEFAULT_LINE_BYTES / 2`），仍以字节约束遍历。新增 150 万节点消息通过的回归。
+- 检查脚本：增量读日志时以文本模式读取，读到多字节字符中间时抛 `UnicodeDecodeError`；改为按字节读取、只解码完整行。
+
+本机真实 rtex `latex-exit` 中英 2/2 通过（含 100 页 E6）。

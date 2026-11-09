@@ -53,3 +53,12 @@ async fn protocol_truncation_malformed_unknown_and_oversized_inputs_are_bounded(
         assert!(!matches!(first, crate::protocol::Incoming::Message(_)));
     }
 }
+
+#[test]
+fn long_real_documents_are_not_rejected_by_the_json_node_walk() {
+    // A 100-page layout carries well over a million JSON nodes outside the counted lists.
+    let wide = vec![0u8; 1_500_000];
+    let value = json!({"event":"LayoutUpdate", "pages_total":100, "meta": wide});
+    assert!(crate::view::validate::message(&value).is_ok());
+    const { assert!(crate::view::validate::MAX_JSON_NODES >= crate::live::DEFAULT_LINE_BYTES / 2) };
+}

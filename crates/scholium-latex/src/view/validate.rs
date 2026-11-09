@@ -5,6 +5,10 @@ use serde_json::Value;
 const MAX_ROWS: u64 = 20_000;
 const MAX_ITEMS: usize = 100_000;
 const MAX_COORDINATE: f64 = 1_000_000_000_000.0;
+/// Every JSON node takes at least two encoded bytes, so a message within the protocol line limit
+/// cannot exceed this; the walk stays bounded by bytes without rejecting long real documents
+/// (a 100-page LuaLaTeX layout exceeds a fixed 1.2M-node cap).
+pub(crate) const MAX_JSON_NODES: usize = crate::live::DEFAULT_LINE_BYTES / 2;
 
 pub(crate) fn message(value: &Value) -> Result<(), LatexError> {
     if value["pages_total"].as_u64().is_some_and(|n| n > 256) {
@@ -70,7 +74,7 @@ fn coordinates(value: &Value) -> Result<(), LatexError> {
     let mut visited = 0;
     while let Some((value, coordinate)) = pending.pop() {
         visited += 1;
-        if visited > MAX_ITEMS * 12 {
+        if visited > MAX_JSON_NODES {
             return Err(invalid("JSON node limit exceeded"));
         }
         match value {
