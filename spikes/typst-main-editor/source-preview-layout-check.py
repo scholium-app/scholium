@@ -153,6 +153,7 @@ def latex_case():
     app = ProjectApp(binary, folder, entry)
     # Use real detector failure, without affecting the worker's fixed system executable paths.
     app.env["SCHOLIUM_RTEX_BIN"] = str(folder / "missing-rtex")
+    app.env["SCHOLIUM_RTEX_TEXDIR"] = str(folder / "missing-tex")
     (folder / "xdotool").symlink_to(shutil.which("xdotool"))
     app.env["PATH"] = str(folder)
     # xdotool and screenshot helpers run with the host PATH; only the app inherits the missing tools.

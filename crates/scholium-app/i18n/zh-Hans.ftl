@@ -633,6 +633,7 @@ math-input-category-punctuation = 标点
 math-input-category-structure = 结构
 
 chrome-status-settings_hint = 打开项目设置，调整预览引擎
+latex-restarting = 正在重启预览
 
 export-progress = 正在导出 PDF…
 export-done = PDF 已导出 · { $pages } 页

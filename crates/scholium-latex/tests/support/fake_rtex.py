@@ -39,6 +39,10 @@ def layout(failed=False):
     if args.mode == 'diagnostics':
         items = [{'severity': 'error', 'file': 'main.tex', 'line': 2, 'message': 'Undefined control sequence.'}] if '\\foo' in text else []
         emit({'event': 'Diagnostics', 'source': 'background', 'items': items})
+    if args.mode == 'timeout-repair' and generation == 1 and 'loop ' in text:
+        failed = True
+        emit({'event': 'Diagnostics', 'source': 'background', 'items': [{
+            'severity': 'error', 'message': 'background pass: lualatex was stopped after 30 s, the time limit of a pass (does the document loop forever?)'}]})
     value = {'event': 'LayoutUpdate', 'versions': {'source_revision': revision},
           'pages_total': 1, 'compile': {'state': 'Failed' if failed else 'Ok'},
           'unknown_future_field': {'ignored': True}}
@@ -79,6 +83,8 @@ for raw in sys.stdin:
         if generation == 1 and args.mode == 'hang':
             signal.pause()
         emit({'reply': cmd, 'result': {'source_revision': revision}})
+        if args.mode == 'timeout-repair':
+            layout()
         if args.mode == 'diagnostics':
             emit({'event': 'Diagnostics', 'source': 'background', 'versions': {'source_revision': revision - 1}, 'items': [{'severity': 'error', 'file': 'stale.tex', 'line': 1, 'message': 'stale'}]})
             layout()

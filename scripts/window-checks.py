@@ -33,6 +33,7 @@ A11Y = "a11y"
 # name -> overrides: screen (Xvfb geometry), timeout (s), extra (inserted after the
 # binary), session ("dbus" wraps the check in dbus-run-session), skip (reason).
 EXCEPTIONS = {
+    "latex-exit": {"skip": "real rtex + TeX Live acceptance runs in latex-exit.yml", "timeout": 600},
     "problem-panel": {"screen": "1440x900x24"},
     "ui-polish-final": {"screen": "1440x900x24"},
     "sharp-raster": {"screen": "1920x1400x24"},
@@ -124,6 +125,8 @@ def main():
             for name in names:
                 label = f"{name} [{locale}]"
                 reason = EXCEPTIONS.get(name, {}).get("skip")
+                if args.only and name == "latex-exit":
+                    reason = None
                 if reason:
                     rows.append((label, f"skip ({reason})", 0.0))
                     continue

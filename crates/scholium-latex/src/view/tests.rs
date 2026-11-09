@@ -94,3 +94,31 @@ fn math_boundaries_are_metadata_but_unknown_drawing_requires_pdf() {
             .is_err()
     );
 }
+
+#[test]
+fn hundred_page_vector_scene_rasterizes_only_the_requested_page_within_budget() {
+    let mut value = layout(655360);
+    let mut page = value["pages_changed"][0].clone();
+    // A4 in TeX scaled points; 100 pages cannot fit the all-page raster budget.
+    page["dl"]["page_width"] = json!(39_158_276);
+    page["dl"]["page_height"] = json!(55_380_990);
+    value["pages_total"] = json!(100);
+    value["pages_changed"] = (1..=100)
+        .map(|n| {
+            let mut next = page.clone();
+            next["page"] = json!(n);
+            next
+        })
+        .collect();
+    let drawing = Drawing::decode(&value, None);
+    assert!(Renderer::default().apply(&drawing, None).is_err());
+    let mut renderer = Renderer::default();
+    for selected in [1, 100, 50] {
+        let pages = renderer
+            .apply_page(&drawing, None, selected)
+            .expect("visible page");
+        assert_eq!(pages.len(), 1);
+        assert_eq!(pages[0].page, selected);
+        assert_eq!(pages[0].origin, RasterOrigin::DisplayList);
+    }
+}

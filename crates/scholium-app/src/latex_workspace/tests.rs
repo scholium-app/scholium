@@ -196,3 +196,45 @@ fn member_jump_keeps_entry_drafts_in_build_snapshots_and_save_as() {
         "main"
     );
 }
+
+#[test]
+fn lua_whole_page_preview_labels_its_actual_source() {
+    use scholium_storage::project::{ProjectHandle, ProjectLanguage, SourceProject};
+    let dir = tempfile::tempdir().expect("directory");
+    let handle =
+        ProjectHandle::create(&dir.path().join("paper"), ProjectLanguage::Latex).expect("project");
+    let source = SourceProject::open(handle).expect("source");
+    let mut workspace = Workspace::open(source, &egui::Context::default());
+    workspace.backend = None;
+    workspace.unavailable = false;
+    workspace.paragraph = false;
+    assert!(workspace.status(Locale::En).contains("Full"));
+    assert!(workspace.status(Locale::ZhHans).contains("整编"));
+}
+
+#[test]
+fn restart_is_presented_before_a_queued_ready_state() {
+    use scholium_latex::EngineState;
+    use scholium_storage::project::{ProjectHandle, ProjectLanguage, SourceProject};
+    let dir = tempfile::tempdir().expect("directory");
+    let handle =
+        ProjectHandle::create(&dir.path().join("paper"), ProjectLanguage::Latex).expect("project");
+    let source = SourceProject::open(handle).expect("source");
+    let ctx = egui::Context::default();
+    let mut workspace = Workspace::open(source, &ctx);
+    let (tx, rx) = tokio::sync::mpsc::channel(4);
+    workspace.backend = Some(Backend::test_receiver(rx));
+    workspace.unavailable = false;
+    for state in [EngineState::Recovering, EngineState::Ready] {
+        tx.try_send(Update::Engine {
+            state,
+            reason: None,
+        })
+        .expect("state");
+    }
+    workspace.poll(&ctx);
+    assert!(workspace.status(Locale::En).contains("Restarting"));
+    assert!(workspace.status(Locale::ZhHans).contains("重启"));
+    workspace.poll(&ctx);
+    assert_eq!(workspace.engine_state, EngineState::Ready);
+}

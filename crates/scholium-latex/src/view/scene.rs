@@ -127,7 +127,26 @@ impl Renderer {
     ) -> Result<Vec<RasterPage>, LatexError> {
         let pages = self.pages.clone();
         let placements = self.placements.clone();
-        let result = self.apply_inner(drawing, paragraph);
+        let result = self.apply_inner(drawing, paragraph, None);
+        if result.is_err() {
+            self.pages = pages;
+            self.placements = placements;
+        }
+        result
+    }
+    /// Apply a bounded drawing, rasterizing only the selected 1-based page.
+    /// Other pages retain vector geometry for navigation and paragraph replacements.
+    /// # Errors
+    /// Reports malformed geometry, excessive page counts or unresolved current-page drawing.
+    pub fn apply_page(
+        &mut self,
+        drawing: &Drawing,
+        paragraph: Option<u64>,
+        page: u64,
+    ) -> Result<Vec<RasterPage>, LatexError> {
+        let pages = self.pages.clone();
+        let placements = self.placements.clone();
+        let result = self.apply_inner(drawing, paragraph, Some(page));
         if result.is_err() {
             self.pages = pages;
             self.placements = placements;
@@ -138,6 +157,7 @@ impl Renderer {
         &mut self,
         drawing: &Drawing,
         paragraph: Option<u64>,
+        wanted: Option<u64>,
     ) -> Result<Vec<RasterPage>, LatexError> {
         let mut changed = std::collections::BTreeSet::new();
         if let Some(count) = drawing.count {
@@ -154,45 +174,58 @@ impl Renderer {
         if let (Some(id), Some((dl, fragments))) = (paragraph, &drawing.paragraph) {
             self.replace(id, dl, fragments, &mut changed)?;
         }
+        self.validate_pixels(wanted)?;
+        let mut out = Vec::new();
+        for n in changed
+            .into_iter()
+            .filter(|n| wanted.is_none_or(|page| page == *n))
+        {
+            out.extend(self.render_page(drawing, n)?);
+        }
+        Ok(out)
+    }
+    fn validate_pixels(&self, wanted: Option<u64>) -> Result<(), LatexError> {
         let mut total_pixels = 0.0;
-        for (_, dl) in self.pages.values() {
+        for (n, (_, dl)) in &self.pages {
             let w = dl.page_width.unwrap_or(0) as f64 / SP_PER_BP * super::PIXELS_PER_POINT;
             let h = dl.page_height.unwrap_or(0) as f64 / SP_PER_BP * super::PIXELS_PER_POINT;
             dimensions(w, h)?;
-            total_pixels += w * h;
+            if wanted.is_none_or(|page| page == *n) {
+                total_pixels += w * h;
+            }
         }
         if total_pixels > super::MAX_SCENE_PIXELS as f64 {
             return Err(invalid("scene pixel budget exceeded"));
         }
+        Ok(())
+    }
+    fn render_page(&mut self, drawing: &Drawing, n: u64) -> Result<Vec<RasterPage>, LatexError> {
         let mut out = Vec::new();
-        for n in changed {
-            let (exact, dl) = &self.pages[&n];
-            let width = dl.page_width.ok_or_else(|| invalid("missing page width"))? as f64
-                / SP_PER_BP
-                * super::PIXELS_PER_POINT;
-            let height = dl
-                .page_height
-                .ok_or_else(|| invalid("missing page height"))? as f64
-                / SP_PER_BP
-                * super::PIXELS_PER_POINT;
-            dimensions(width, height)?;
-            let (pixels, stats) = paint::page(dl, 300.0, &mut self.fonts)
-                .ok_or_else(|| invalid("invalid page dimensions"))?;
-            if !exact || stats.degraded || stats.glyphs_skipped > 0 || stats.images_skipped > 0 {
-                let bytes = drawing
-                    .pdf
-                    .as_deref()
-                    .ok_or_else(|| invalid("page requires current PDF fallback"))?;
-                out.extend(pdf::render(bytes, Some(n), RasterOrigin::PdfFallback)?);
-            } else {
-                out.push(RasterPage {
-                    page: n,
-                    width: pixels.width(),
-                    height: pixels.height(),
-                    rgba: pixels.data().into(),
-                    origin: RasterOrigin::DisplayList,
-                });
-            }
+        let (exact, dl) = &self.pages[&n];
+        let width = dl.page_width.ok_or_else(|| invalid("missing page width"))? as f64 / SP_PER_BP
+            * super::PIXELS_PER_POINT;
+        let height = dl
+            .page_height
+            .ok_or_else(|| invalid("missing page height"))? as f64
+            / SP_PER_BP
+            * super::PIXELS_PER_POINT;
+        dimensions(width, height)?;
+        let (pixels, stats) = paint::page(dl, 300.0, &mut self.fonts)
+            .ok_or_else(|| invalid("invalid page dimensions"))?;
+        if !exact || stats.degraded || stats.glyphs_skipped > 0 || stats.images_skipped > 0 {
+            let bytes = drawing
+                .pdf
+                .as_deref()
+                .ok_or_else(|| invalid("page requires current PDF fallback"))?;
+            out.extend(pdf::render(bytes, Some(n), RasterOrigin::PdfFallback)?);
+        } else {
+            out.push(RasterPage {
+                page: n,
+                width: pixels.width(),
+                height: pixels.height(),
+                rgba: pixels.data().into(),
+                origin: RasterOrigin::DisplayList,
+            });
         }
         Ok(out)
     }

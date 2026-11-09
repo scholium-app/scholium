@@ -639,6 +639,7 @@ math-input-category-punctuation = Punctuation
 math-input-category-structure = Structure
 
 chrome-status-settings_hint = Open project settings to change the preview engine
+latex-restarting = Restarting preview
 
 export-progress = Exporting PDF…
 export-done = PDF exported · { $pages } pages

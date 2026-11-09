@@ -158,6 +158,8 @@ Paragraph/Pages 携带内核自有不透明 `Drawing`，由 raster worker 的 `R
   淘汰预览更新则标记需要调用 `request_layout` 补齐。Engine 状态与原因按序保留；队列全为 Engine 时等待消费者腾出空间，
   等待时间不计入心跳截止或健康期，不因消费落后永久失败。此时 actor 的命令处理也会等待消费恢复。
   Diagnostic/Location 淘汰数用饱和计数器累计，队列排空后输出各自丢失条数及重新查询提示，不能静默丢失。stderr 单独关闭不等于会话死亡。
+- 已确认当前 revision 的 `pass_timeout` 后，保持诊断与源码，等下一次编辑才以原重启预算更换整个沙箱进程并重同步；
+  不自动重试相同挂起源码，不安装宿主逐编译看门狗。
 - 宿主用 monotonic 时间记录编辑转发到段落更新、layout request/background scheduling 到结果的耗时；这不是 UI 呈现时延或编译 watchdog。
 
 CI 故障注入无需 rtex/TeX/bwrap：私有 tests/support 假进程覆盖崩溃、挂起、丢失更新、引擎 Restarting/Failed、
@@ -173,7 +175,12 @@ CI 故障注入无需 rtex/TeX/bwrap：私有 tests/support 假进程覆盖崩�
 OpenType 字形经 skrifa；TFM 通过固定宿主 kpsewhich 的 pdftex.map/encoding 解析 Type 1。
 字体路径须 canonicalize 到受信系统字体/TeX 树，单文件 ≤64 MiB，face/glyph 缓存条数有界。
 未知图元、degraded 页面、缺失字形或图片使用当前 layout PDF 经 hayro 0.8 渲染；缺当前 PDF 时保留上次预览并请求布局。
-单页 ≤2400 万像素，场景 ≤9600 万像素，PDF ≤64 MiB、≤256 页；超限失败，不截断为正常预览。
+单页 ≤2400 万像素，单次栅格结果 ≤9600 万像素，PDF ≤64 MiB、≤256 页；超限失败，不截断为正常预览。
+`Renderer::apply_page` 保留全部页面的有界矢量几何与段落 placements，只栅格化请求的 1-based 可见页；
+逐页检查尺寸，整篇页数不等于常驻栅格数。原 `apply` 全页接口仍受原累计像素预算限制。
+app 的 LuaLaTeX 工作台只保存当前页纹理，页码总数来自布局事件；翻页请求完整布局并按所选页栅格化。
+启用 `SCHOLIUM_EDITOR_AUDIT` 时，适配器另发 `latex-engine-timing`：同 generation/host revision 的
+上游段落 `timing.total_us` 换算为 ms，布局记录 `wall_ms`；缺字段为 null，不冒充宿主或窗口呈现耗时。
 
 `full::compile` 接收不可变 SourceSession，在独立临时目录复制正规资源（拒绝 symlink/特殊文件，≤1 万项、64 MiB），
 覆盖已加载资源的未保存文本，再通过 `BuildProfile::FullCompilation` 编译。pdfLaTeX 直接输出 PDF；
@@ -263,6 +270,18 @@ LiveSession 的 edit 在当前项目 capability 下先加载目标资源，再�
 跳过注释、转义控制序列、verb 与 verbatim/lstlisting/minted 中的假结构，document 不占环境层级。
 不展开宏、不推断计数器或宏生成的章节；破损未闭合标题不创建目标。调用方按当前文本失效缓存，不保存第二份源码权威。
 
+当前 pin 的后台 pass 超时只给出固定格式文本；诊断适配器为无文件位置、error 且精确匹配该 envelope 的消息补充
+`code = pass_timeout`，保留原消息。不把其它引擎故障或普通文档错误标为 pass 超时。
+
+## 真实窗口 L1 回归
+
+`latex-exit-check.py` 使用随应用打包的真实 rtex、LuaLaTeX/XeLaTeX 和 app 的正常 Sandbox 构造路径，
+在私有 Xvfb 中检查混合中英文三页论文的正文/公式段落更新、静止后整编、来源/耗时、Save—SIGKILL—重开，
+以及 Lua/io、绝对 input、shell 和根外写入负对照。真实 rtex SIGKILL 必须显示重启并重新取得布局；
+无限 Lua 循环由上游 pass_timeout 终止并显示诊断，源码修复后恢复。
+10/100 页夹具分别记录原生按键到 XGetImage 预览像素改变的 p50/p95；同时校验 host revision 与段落来源。
+输入接受耗时与 UI frame 耗时独立记录，引擎暂停期间继续输入，不以 rtex 自报耗时代替窗口测量。
+常规窗口批次跳过此检查，显式 `--only latex-exit` 运行它；专用 latex-exit workflow 安装真实工具链并检查两种界面语言。
 
 ## PDF 导出整编
 

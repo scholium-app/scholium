@@ -41,9 +41,12 @@ pub(crate) struct Workspace {
     edited_at: Option<Instant>,
     presented: Option<Duration>,
     paragraph: bool,
+    engine_state: scholium_latex::EngineState,
+    page_count: usize,
     source_rect: Option<egui::Rect>,
     preview_rect: Option<egui::Rect>,
     audit_last: Option<serde_json::Value>,
+    frame_at: Option<Instant>,
 }
 struct Page {
     texture: egui::TextureHandle,
@@ -81,9 +84,12 @@ impl Workspace {
             edited_at: None,
             presented: None,
             paragraph: false,
+            engine_state: scholium_latex::EngineState::Starting,
+            page_count: 0,
             source_rect: None,
             preview_rect: None,
             audit_last: None,
+            frame_at: None,
         }
     }
     pub(crate) fn source(&self) -> &scholium_storage::project::SourceProject {
@@ -171,6 +177,8 @@ impl Workspace {
         self.revision = 0;
         self.shown_revision = None;
         self.generation = 0;
+        self.page_count = 0;
+        self.engine_state = scholium_latex::EngineState::Starting;
         self.pages.clear();
         self.page_index = 0;
         self.diagnostics = Default::default();
@@ -179,6 +187,7 @@ impl Workspace {
         self.presented = None;
     }
     pub(crate) fn show(&mut self, ui: &mut egui::Ui, state: &mut crate::state::WorkspaceState) {
+        let frame = Instant::now();
         let locale = state.locale.resolve();
         self.poll(ui.ctx());
         self.diagnostic_jump(ui.ctx(), state);
@@ -222,6 +231,19 @@ impl Workspace {
             .problems
             .publish(self.revision, batch, self.output.clone());
         self.audit();
+        if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_some()
+            && std::env::var_os("SCHOLIUM_LATEX_FRAME_AUDIT").is_some()
+        {
+            let interval = self
+                .frame_at
+                .replace(frame)
+                .map(|last| frame.duration_since(last));
+            crate::audit_line::emit(
+                "AUDIT",
+                &serde_json::json!({"kind":"latex-frame", "interval_ms":interval.map(|d|d.as_secs_f64()*1000.0), "work_ms":frame.elapsed().as_secs_f64()*1000.0}),
+            );
+            ui.ctx().request_repaint_after(Duration::from_millis(16));
+        }
     }
     fn poll(&mut self, ctx: &egui::Context) {
         loop {
@@ -243,8 +265,19 @@ impl Workspace {
                         self.output = log;
                     }
                 }
+                Update::Engine { state, reason } => {
+                    self.engine_state = state;
+                    if state == scholium_latex::EngineState::Recovering {
+                        ctx.request_repaint();
+                        break;
+                    }
+                    if state == scholium_latex::EngineState::Failed {
+                        self.error = reason;
+                    }
+                }
                 Update::Ready { engine } => {
                     self.engine = engine;
+                    self.engine_state = scholium_latex::EngineState::Ready;
                     self.unavailable = false;
                     self.error = None;
                 }
@@ -276,7 +309,11 @@ impl Workspace {
                         self.generation = generation;
                     }
                     if let Some(count) = count {
+                        self.page_count = count as usize;
                         self.pages.retain(|n, _| *n <= count);
+                    }
+                    if self.engine == Engine::LuaLatex {
+                        self.pages.clear();
                     }
                     self.upload(ctx, pages);
                     self.shown_revision = Some(revision);
@@ -318,7 +355,7 @@ impl Workspace {
         if self.unavailable {
             return format!("{engine} · {}", i18n::text(locale, "latex.unavailable"));
         }
-        let mode = if self.engine == Engine::LuaLatex {
+        let mode = if self.paragraph {
             "latex.live"
         } else {
             "latex.full"
@@ -334,7 +371,9 @@ impl Workspace {
                 ),
             ],
         );
-        let state = if self.unavailable {
+        let state = if self.engine_state == scholium_latex::EngineState::Recovering {
+            Some("latex.restarting")
+        } else if self.unavailable {
             Some("latex.unavailable")
         } else if self.pages.is_empty() {
             Some("latex.building")
@@ -356,7 +395,7 @@ impl Workspace {
             .max(usize::from(self.error.is_some() && !self.unavailable))
     }
     pub(crate) fn page_info(&self) -> Option<(usize, usize)> {
-        (!self.pages.is_empty()).then_some((self.page_index + 1, self.pages.len()))
+        (!self.pages.is_empty()).then_some((self.page_index + 1, self.page_count))
     }
 
     fn audit(&mut self) {
@@ -364,7 +403,7 @@ impl Workspace {
             return;
         }
         let rect = |r: Option<egui::Rect>| r.map(|r| [r.min.x, r.min.y, r.max.x, r.max.y]);
-        let fact = serde_json::json!({"kind":"latex","revision":self.revision,"shown_revision":self.shown_revision,"generation":self.generation,"text":self.source.text(),"diagnostics":self.diagnostics,"selection":self.editor.selection(),"active_resource":self.source.active_path(),"entry":self.source.handle().entry(),"dirty":self.source.dirty(),"engine":format!("{:?}",self.engine),"toolchain_unavailable":self.unavailable,"error":self.error,"pages":self.pages.len(),"source_rect":rect(self.source_rect),"preview_rect":rect(self.preview_rect),"page_rect":rect(self.page_rect),"page_index":self.page_index,"paragraph":self.paragraph,"pixels_per_point":scholium_latex::view::PIXELS_PER_POINT,"origin":self.pages.values().map(|p|format!("{:?}",p.origin)).collect::<Vec<_>>(),"submitted_ms":self.presented.map(|d|d.as_secs_f64()*1000.0)});
+        let fact = serde_json::json!({"kind":"latex","revision":self.revision,"shown_revision":self.shown_revision,"generation":self.generation,"text":self.source.text(),"diagnostics":self.diagnostics,"selection":self.editor.selection(),"active_resource":self.source.active_path(),"entry":self.source.handle().entry(),"dirty":self.source.dirty(),"engine":format!("{:?}",self.engine),"toolchain_unavailable":self.unavailable,"error":self.error,"pages":self.pages.len(),"source_rect":rect(self.source_rect),"preview_rect":rect(self.preview_rect),"page_rect":rect(self.page_rect),"page_index":self.page_index,"paragraph":self.paragraph,"page_count":self.page_count,"raster_pages":self.pages.keys().copied().collect::<Vec<_>>(),"engine_state":format!("{:?}", self.engine_state),"status":self.status(Locale::En),"elapsed_ms":self.elapsed.as_secs_f64()*1000.0,"pixels_per_point":scholium_latex::view::PIXELS_PER_POINT,"origin":self.pages.values().map(|p|format!("{:?}",p.origin)).collect::<Vec<_>>(),"submitted_ms":self.presented.map(|d|d.as_secs_f64()*1000.0)});
         if self.audit_last.as_ref() != Some(&fact) {
             crate::audit_line::emit("AUDIT", &fact);
             self.audit_last = Some(fact);

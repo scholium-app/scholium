@@ -1,0 +1,13 @@
+{
+  "platform": "Linux-7.2.14-arch1-1-x86_64-with-glibc2.44",
+  "architecture": "x86_64",
+  "build": "cargo debug; workspace dependency opt-level 2; software GL/private Xvfb 1280x900x24",
+  "rtex": "531e2c6b32a09d33be58f6be1301fe8f793411cd",
+  "workspace_tests": {
+    "passed": 747,
+    "ignored_native": 16
+  },
+  "typst_system_font_comparisons": 31,
+  "typst_bundled_font_comparisons": 31,
+  "native_timeout_repair_test": "pass"
+}
