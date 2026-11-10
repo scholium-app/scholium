@@ -116,6 +116,9 @@ egui、eframe、winit、accesskit，测试也相同；由 `scripts/check-layers.
 - 边缘 Typed/Commit/Paste 创建数学 Text 兄弟，必要时把根/槽包成 Row；最后一个字素删除后移除空兄弟，
   折叠单子 Row 并回到边缘。边缘分数/Attach 命令创建空分子/base，进入新分子或上下标槽；同一步撤销。
   插入/删除后按已接受内容重新验证字素边界；undo/redo 保留边缘 Position。
+- Delimited 外侧右边缘的 Backspace 先将可见 close 改为 U+0000，进入 body 末尾；独立一步撤销。
+  close 已隐形时沿用仅空结构移除和逐停点导航规则。body 末尾键入支持闭符替换隐形 close 并到该节点外侧右边缘，
+  独立一步撤销。焦点栏循环按 open 寻找下一种配对，并恢复匹配的可见 close；见 [ADR 0060](../adr/ADR-0060-math-delimiter-input.md)。
 - Backspace/Delete 先删同叶对应方向字素；空 optional Attach 槽 RemoveSlot 优先；槽位对应边界的全空
   结构移除为 Hole（Row 中则摘除），空公式移除。其余只按左右方向移动一个停点，不写动作/历史或重置 run。
 - UI 历史最多 512 个分组；同叶、连续位置、间隔 <1 秒的键入与 IME 提交按词合并（含词尾空白）；
@@ -203,3 +206,6 @@ Attach 的 after edge 输入另一个脚本扩展同一 Attach，不制造空底
 旧 temporary native v1 envelope 严格验证后一次追加 SDG 初始化与 snapshot，旧 Actions/snapshots 保留。
 实验 SessionStore 只读导入，目标声明已发布而没有 durable head 时重试导入；未知版本/损坏拒绝。
 边界、初始化 wire 语义和稳定 tombstone 见 [ADR 0059](../adr/ADR-0059-sdg-session-durability.md)。
+
+刚键入的空 `||` 内容槽接受共享引擎的 `||`、`|.`、`|'` 转换意图；光标保留在同一内容槽。
+转换独立于绝对值创建及后续键入的撤销组，一次 Undo 恢复原 `||` 和原 body 光标。窗口中断来自正常 Input 分发。

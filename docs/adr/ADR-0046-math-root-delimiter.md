@@ -1,6 +1,7 @@
 # ADR 0046：数学根式与自动定界符节点
 
 - 状态：Accepted
+- 修订：[ADR 0060](ADR-0060-math-delimiter-input.md) 将 close 扩展为独立闭符或隐形标记，并增加键入转换与闭侧编辑。
 - 日期：2026-11-02
 - 影响模块：model、document、storage、typst、session、app
 - 接续：[ADR 0033](ADR-0033-structured-local-session-migration.md)、[ADR 0039](ADR-0039-math-attach.md)、[ADR 0045](ADR-0045-math-edge-caret.md)

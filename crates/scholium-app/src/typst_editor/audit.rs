@@ -35,6 +35,32 @@ fn counts(event: &egui::Event) -> bool {
 }
 
 impl EditorSession {
+    /// Opt-in evidence: exact committed pixels uploaded by this window, before overlays.
+    pub(super) fn audit_raster(&self, raster: &scholium_typst::editor::Raster) {
+        if std::env::var_os("SCHOLIUM_EDITOR_AUDIT").is_none() {
+            return;
+        }
+        let Some(directory) = std::env::var_os("SCHOLIUM_EDITOR_RASTER_AUDIT") else {
+            return;
+        };
+        let pixels = raster.rgba();
+        if pixels.len() != raster.width as usize * raster.height as usize * 4 {
+            return;
+        }
+        let path = std::path::PathBuf::from(directory).join(self.snapshot.revision.0.to_string());
+        let record = json!({"width": raster.width, "height": raster.height,
+                            "px_per_pt": raster.px_per_pt});
+        let write = || -> Result<(), Box<dyn std::error::Error>> {
+            std::fs::write(path.with_extension("rgba"), pixels)?;
+            std::fs::write(path.with_extension("tmp"), serde_json::to_vec(&record)?)?;
+            std::fs::rename(path.with_extension("tmp"), path.with_extension("json"))?;
+            Ok(())
+        };
+        if let Err(error) = write() {
+            eprintln!("raster audit: {error}");
+        }
+    }
+
     pub(super) fn audit(
         &mut self,
         ctx: &egui::Context,

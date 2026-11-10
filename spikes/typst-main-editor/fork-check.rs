@@ -15,6 +15,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     std::fs::create_dir_all(&output)?;
     let worker = EditorWorker::spawn(|| {})?;
     for name in [
+        "delim-input-norm",
+        "delim-input-floor",
+        "delim-input-ceil",
+        "delim-open-interval",
+        "delim-invisible",
+        "delim-half-open",
         "display-root-delimiter",
         "display-only",
         "display-start",

@@ -187,7 +187,7 @@ SceneStamp 采纳，类型本身不构成窗口竞态验收。裁决见
 
 `RootAt` 和 `DelimitedAt` 共用同一行范围规划：无选区时保留前后文字并进入空内容槽，
 有选区时仅包装所选内容并进入该槽。`RootIndex` 增加空 index 或进入已有 index 的首个可编辑停点；
-`SetDelimiter` 更换配对，最终结构验证拒绝不支持的组合。它们遵守相同的原子动作、撤销和无效范围合约。
+`SetDelimiter` 原子更换两侧，最终结构验证分别检查 open 与 close 字符集；close 可为 U+0000 隐形标记，open 不可隐形。它们遵守相同的原子动作、撤销和无效范围合约。
 
 Equation 的空树判断、选区提取目标查找和新块落点递归覆盖 Root 的 index/radicand 以及 Delimited 的 body；嵌套根式与定界符遵守同一块边界合约。
 

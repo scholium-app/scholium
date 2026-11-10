@@ -154,7 +154,7 @@ pub enum StructuralEdit {
         node: NodeId,
         /// Supported opening delimiter.
         open: char,
-        /// Matching closing delimiter.
+        /// Independently supported closing delimiter, or the model invisible marker.
         close: char,
     },
     /// Insert an auto-sized delimiter at a math caret or wrap a same-row selection.
@@ -163,9 +163,9 @@ pub enum StructuralEdit {
         start: BodyTextPosition,
         /// Other endpoint; equal means an empty body is inserted at that position.
         end: BodyTextPosition,
-        /// Supported delimiter pair; validated again with the document.
+        /// Supported opening delimiter; validated again with the document.
         open: char,
-        /// Matching closing delimiter.
+        /// Independently supported closing delimiter, or the model invisible marker.
         close: char,
     },
     /// Wrap a math subtree as numerator and create an addressed empty denominator.

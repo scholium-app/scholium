@@ -4,6 +4,7 @@ fn context(before: &str) -> Context<'_> {
     Context {
         math: true,
         before,
+        delimiter: None,
         selected: false,
     }
 }
@@ -104,6 +105,7 @@ fn body_and_paste_do_not_trigger_mathematical_composition() {
             Context {
                 math: false,
                 before: "<",
+                delimiter: None,
                 selected: false
             }
         ),

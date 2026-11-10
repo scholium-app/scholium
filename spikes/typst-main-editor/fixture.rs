@@ -68,13 +68,25 @@ fn root_delimiter_fixture(name: &str) -> (BlockKind, Vec<StructuredInline>) {
             "delim-norm" => ('‖', '‖'),
             "delim-angle" => ('⟨', '⟩'),
             "delim-floor" => ('⌊', '⌋'),
-            "delim-ceil" => ('⌈', '⌉'),
+            "delim-ceil" | "delim-input-ceil" => ('⌈', '⌉'),
+            "delim-input-norm" => ('‖', '‖'),
+            "delim-input-floor" => ('⌊', '⌋'),
+            "delim-invisible" | "delim-open-interval" => ('[', '\0'),
+            "delim-half-open" => ('[', ')'),
             _ => unreachable!(),
         };
         MathBody::Delimited {
             open,
             close,
-            body: Box::new(frac(math("a"), math("b"))),
+            body: Box::new(if name.starts_with("delim-input-") {
+                math("x")
+            } else if matches!(name, "delim-half-open" | "delim-open-interval") {
+                math("0, 1")
+            } else if name == "delim-invisible" {
+                frac(math("1"), math("2"))
+            } else {
+                frac(math("a"), math("b"))
+            }),
         }
     };
     (
@@ -102,9 +114,11 @@ pub fn fixture(name: &str) -> StructuredDocument {
         return empty_fixture(name);
     }
     let (kind, content) = match name {
-        "square-root" | "indexed-root" | "root-delimiter" | "delim-paren" | "delim-bracket"
-        | "delim-brace" | "delim-abs" | "delim-norm" | "delim-angle" | "delim-floor"
-        | "delim-ceil" => root_delimiter_fixture(name),
+        _ if name.starts_with("delim-")
+            || matches!(name, "square-root" | "indexed-root" | "root-delimiter") =>
+        {
+            root_delimiter_fixture(name)
+        }
         "edge-root" | "edge-row" => {
             let fraction = frac(math("a"), math("b"));
             let root = if name == "edge-row" {

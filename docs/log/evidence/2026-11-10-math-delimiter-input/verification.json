@@ -1,0 +1,351 @@
+{
+  "task": "T55",
+  "base": "ccc4a4e9cc17cbb6e53d22e01ed6d8984d7bbcdf",
+  "red_tests": {
+    "session": {
+      "passed": 1,
+      "failed": 3
+    },
+    "model_independent_sides": {
+      "failed": 1
+    },
+    "neighbor_text_caret": {
+      "failed": 1
+    }
+  },
+  "workspace_tests": {
+    "passed": 808,
+    "failed": 0,
+    "ignored": 21
+  },
+  "stock_comparison": {
+    "system": {
+      "total": 37,
+      "equal_pixels": true,
+      "new_cases": [
+        {
+          "case": "delim-input-norm",
+          "equal_pixels": true,
+          "fork": {
+            "built": 5,
+            "carets": 14,
+            "height": 305,
+            "repeat_built": 0,
+            "repeat_reused": 1,
+            "reused": 0,
+            "source_reads": 0,
+            "width": 1191
+          },
+          "stock": {
+            "height": 305,
+            "width": 1191
+          },
+          "sha256": "56ae31bfdf666745e44db401a8d54597db747327e9c9489eb486d392d1e92a04"
+        },
+        {
+          "case": "delim-input-floor",
+          "equal_pixels": true,
+          "fork": {
+            "built": 5,
+            "carets": 14,
+            "height": 305,
+            "repeat_built": 0,
+            "repeat_reused": 1,
+            "reused": 0,
+            "source_reads": 0,
+            "width": 1191
+          },
+          "stock": {
+            "height": 305,
+            "width": 1191
+          },
+          "sha256": "56e3136701a8eedb406114967976ece1938ae96c0db17c956ffa35a72cebf955"
+        },
+        {
+          "case": "delim-input-ceil",
+          "equal_pixels": true,
+          "fork": {
+            "built": 5,
+            "carets": 14,
+            "height": 305,
+            "repeat_built": 0,
+            "repeat_reused": 1,
+            "reused": 0,
+            "source_reads": 0,
+            "width": 1191
+          },
+          "stock": {
+            "height": 305,
+            "width": 1191
+          },
+          "sha256": "21159bac61020ca40cb6c89bf50957f677bd09e214fcf168192e52dde27d165d"
+        },
+        {
+          "case": "delim-invisible",
+          "equal_pixels": true,
+          "fork": {
+            "built": 7,
+            "carets": 18,
+            "height": 305,
+            "repeat_built": 0,
+            "repeat_reused": 1,
+            "reused": 0,
+            "source_reads": 0,
+            "width": 1191
+          },
+          "stock": {
+            "height": 305,
+            "width": 1191
+          },
+          "sha256": "39ec0aaeb783e045f4f8ce68633f9773fa9a6af7e32e1bc63004167668c70a88"
+        },
+        {
+          "case": "delim-open-interval",
+          "equal_pixels": true,
+          "fork": {
+            "built": 5,
+            "carets": 21,
+            "height": 305,
+            "repeat_built": 0,
+            "repeat_reused": 1,
+            "reused": 0,
+            "source_reads": 0,
+            "width": 1191
+          },
+          "stock": {
+            "height": 305,
+            "width": 1191
+          },
+          "sha256": "896d0e2b2d637ebb19d0736499c7593b5572da955cd2cebcf05bff8f2480c1f0"
+        },
+        {
+          "case": "delim-half-open",
+          "equal_pixels": true,
+          "fork": {
+            "built": 5,
+            "carets": 21,
+            "height": 305,
+            "repeat_built": 0,
+            "repeat_reused": 1,
+            "reused": 0,
+            "source_reads": 0,
+            "width": 1191
+          },
+          "stock": {
+            "height": 305,
+            "width": 1191
+          },
+          "sha256": "854061747d564d56880bf1454ef43cf0c65410d0e5b3f2164e0345e1f5ce53c5"
+        }
+      ]
+    },
+    "bundled": {
+      "total": 37,
+      "equal_pixels": true,
+      "new_cases": [
+        {
+          "case": "delim-input-norm",
+          "equal_pixels": true,
+          "fork": {
+            "built": 5,
+            "carets": 14,
+            "height": 304,
+            "repeat_built": 0,
+            "repeat_reused": 1,
+            "reused": 0,
+            "source_reads": 0,
+            "width": 1191
+          },
+          "stock": {
+            "height": 304,
+            "width": 1191
+          },
+          "sha256": "f34fb4b181117c59d4c2e8760de04c29285f68c395bbae2dd9b5d2990aa43572"
+        },
+        {
+          "case": "delim-input-floor",
+          "equal_pixels": true,
+          "fork": {
+            "built": 5,
+            "carets": 14,
+            "height": 304,
+            "repeat_built": 0,
+            "repeat_reused": 1,
+            "reused": 0,
+            "source_reads": 0,
+            "width": 1191
+          },
+          "stock": {
+            "height": 304,
+            "width": 1191
+          },
+          "sha256": "b74562f23e2b583fcc48337e0fe1994c0b44db58fa5569fb45349354eb6b48e5"
+        },
+        {
+          "case": "delim-input-ceil",
+          "equal_pixels": true,
+          "fork": {
+            "built": 5,
+            "carets": 14,
+            "height": 304,
+            "repeat_built": 0,
+            "repeat_reused": 1,
+            "reused": 0,
+            "source_reads": 0,
+            "width": 1191
+          },
+          "stock": {
+            "height": 304,
+            "width": 1191
+          },
+          "sha256": "2dd1107b7eae75d8ef0e5cd4821035ff466d8a967055a3d0706c451e35e45c03"
+        },
+        {
+          "case": "delim-invisible",
+          "equal_pixels": true,
+          "fork": {
+            "built": 7,
+            "carets": 18,
+            "height": 304,
+            "repeat_built": 0,
+            "repeat_reused": 1,
+            "reused": 0,
+            "source_reads": 0,
+            "width": 1191
+          },
+          "stock": {
+            "height": 304,
+            "width": 1191
+          },
+          "sha256": "139df99a3e880a5d5457bf9e1d757da46f37a9470098c3aa2d684e35d3d80dad"
+        },
+        {
+          "case": "delim-open-interval",
+          "equal_pixels": true,
+          "fork": {
+            "built": 5,
+            "carets": 21,
+            "height": 304,
+            "repeat_built": 0,
+            "repeat_reused": 1,
+            "reused": 0,
+            "source_reads": 0,
+            "width": 1191
+          },
+          "stock": {
+            "height": 304,
+            "width": 1191
+          },
+          "sha256": "40cf544302240c6723a2f41dcc7e7d001cbd98d3d8be2a72b6c332265c135e91"
+        },
+        {
+          "case": "delim-half-open",
+          "equal_pixels": true,
+          "fork": {
+            "built": 5,
+            "carets": 21,
+            "height": 304,
+            "repeat_built": 0,
+            "repeat_reused": 1,
+            "reused": 0,
+            "source_reads": 0,
+            "width": 1191
+          },
+          "stock": {
+            "height": 304,
+            "width": 1191
+          },
+          "sha256": "4b2406f6ee2063f9fdba90f56897ed54074af559dcb7a669359fa74b2c720dee"
+        }
+      ]
+    }
+  },
+  "fork_source": {
+    "upstream_commit": "9dfd3a08500b7896045f907433cf7b4b02434fad",
+    "upstream_tag": "v0.15.1",
+    "source_sha256": "338f31223e40d34dbf0381cbda7e2e8648b733a63626a9df44ed93544af9ab4d",
+    "file_count": 467,
+    "patches": {
+      "0001-structural-math-origin-and-holes.patch": "422b501eacfb041789a9b494dc850a20d0491d0f4b630c53ae3c26789f23f46a",
+      "0002-composite-slots-and-fraction-rule-owners.patch": "f9ffcd1a956cc796653eae60d9cb16eee967c682bc7f4eb0e541061c6f86907a",
+      "0003-shaped-text-caret-geometry.patch": "0a4a173866ca5da6dc7da492c91835283cee73c6c46b0ac8bfa66b80be1e1b6b",
+      "0004-editor-paragraph-computation-counters.patch": "315a2aec1e43c740f6cf8bd8a045d3a67fcc3ceee1474a94198477c45f7219bb",
+      "0005-delimiter-body-slot-origin.patch": "67a9c20e2274b4bc3c4a34aefd8d7b6d34591f0b9b8c425fe140848f78bf1ccd"
+    }
+  },
+  "window_checks": {
+    "initial_full": {
+      "passed": 68,
+      "failed": 0,
+      "locales": [
+        "zh-Hans",
+        "en"
+      ],
+      "jobs": 3,
+      "skipped": 2,
+      "skip_reason": "latex-exit is delegated by the standard runner to latex-exit.yml, once per locale"
+    },
+    "targeted": {
+      "passed": 4,
+      "failed": 0,
+      "checks": [
+        "math-input",
+        "math-root-delimiter"
+      ],
+      "locales": [
+        "zh-Hans",
+        "en"
+      ]
+    },
+    "final_full": {
+      "passed": 65,
+      "failed": 3,
+      "skipped": 2,
+      "jobs": 3,
+      "runner_exit": 120,
+      "results_json_published": false,
+      "failures": [
+        {
+          "check": "ui-polish-final",
+          "locale": "en",
+          "details": "window resize assertion followed by EDQUOT writing summary"
+        },
+        {
+          "check": "start-page-dialogs",
+          "locale": "en",
+          "details": "exit 120 during quota exhaustion"
+        },
+        {
+          "check": "a11y",
+          "locale": "en",
+          "details": "all assertions passed; EDQUOT writing summary"
+        }
+      ]
+    },
+    "recovery": {
+      "passed": 3,
+      "failed": 0,
+      "jobs": 3,
+      "checks": [
+        "start-page-dialogs",
+        "ui-polish-final",
+        "a11y"
+      ],
+      "locale": "en",
+      "code_or_assertions_changed": false,
+      "cleanup": "removed 553233792 bytes of redundant RGBA from task-owned window evidence directories only"
+    }
+  },
+  "gates": {
+    "cargo fmt --all -- --check": "pass",
+    "cargo clippy --locked --workspace --all-targets -- -D warnings": "pass",
+    "cargo test --locked --workspace": "pass",
+    "RUSTDOCFLAGS='-D warnings' cargo doc --locked --workspace --no-deps": "pass",
+    "python3 scripts/check-rust-size.py": "pass",
+    "python3 scripts/check-doc-links.py": "pass",
+    "python3 scripts/check-ui-strings.py": "pass",
+    "python3 scripts/check-layers.py": "pass",
+    "cargo deny --locked check licenses bans sources": "pass",
+    "cargo build --locked -p scholium-app -p scholium-storage --bins": "pass"
+  }
+}

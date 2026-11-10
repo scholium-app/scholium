@@ -17,6 +17,7 @@ pub enum TabAction {
 pub struct Engine {
     command: Option<String>,
     recent: Option<String>,
+    recent_abs: bool,
     selected: usize,
 }
 impl Engine {
@@ -44,6 +45,7 @@ impl Engine {
     /// End a candidate run after motion, pointer input, paste, IME or another action.
     pub fn interrupt(&mut self) {
         self.recent = None;
+        self.recent_abs = false;
     }
     /// Discard transient command input when authority/context is replaced.
     pub fn reset(&mut self) {
@@ -91,7 +93,34 @@ impl Engine {
             }
         }
     }
+    fn delimiter_input(&mut self, c: char, context: Context<'_>) -> Option<Intent> {
+        let recent_abs = std::mem::take(&mut self.recent_abs);
+        if !context.math || context.selected {
+            return None;
+        }
+        let delimiter = context.delimiter?;
+        let intent = if delimiter.close.is_none()
+            && delimiter.at_end
+            && matches!(c, ')' | ']' | '}' | '|' | '‖' | '⟩' | '⌋' | '⌉')
+        {
+            Intent::CloseDelimiter(c)
+        } else if recent_abs
+            && delimiter.empty
+            && delimiter.open == '|'
+            && delimiter.close == Some('|')
+        {
+            let (open, close) = data::delimiter_conversion(c)?;
+            Intent::ConvertDelimiter { open, close }
+        } else {
+            return None;
+        };
+        self.interrupt();
+        Some(intent)
+    }
     fn typed(&mut self, c: char, context: Context<'_>) -> Intent {
+        if let Some(intent) = self.delimiter_input(c, context) {
+            return intent;
+        }
         self.recent = Some(c.to_string());
         if c == '$' {
             self.interrupt();
@@ -110,6 +139,7 @@ impl Engine {
             _ => None,
         } {
             self.interrupt();
+            self.recent_abs = c == '|' && !context.selected;
             return Intent::Structure(template);
         }
         if !context.selected {

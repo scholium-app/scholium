@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Real-window shared math input, command overlay and Tab-context acceptance."""
+import hashlib
 import importlib.util
 import json
 import os
@@ -20,7 +21,11 @@ spec.loader.exec_module(parity)
 def run_case(binary, output, name, check):
     out = output / name
     out.mkdir(parents=True, exist_ok=False)
-    replay = parity.Replay(binary, out)
+    pixels = out / "pixels"
+    pixels.mkdir()
+    replay = parity.Replay(binary, out, {
+        "SCHOLIUM_EDITOR_RASTER_AUDIT": str(pixels), "SCHOLIUM_RASTER_PX_PER_PT": "2",
+    })
     rows = []
     try:
         replay.focus()
@@ -111,12 +116,69 @@ def brackets(replay, act):
     assert node == {"kind": "text", "text": "x"}, node
 
 
+def stock_pixels(replay, state, name):
+    expected = json.loads((ROOT / "reference/delimiter-pixels.json").read_text())[name]
+    path = replay.output / "pixels" / str(state["revision"])
+    deadline = time.monotonic() + parity.TIMEOUT
+    while time.monotonic() < deadline:
+        if path.with_suffix(".json").exists():
+            meta = json.loads(path.with_suffix(".json").read_text())
+            if meta["px_per_pt"] == 2:
+                pixels = path.with_suffix(".rgba").read_bytes()
+                actual = {"width": meta["width"], "height": meta["height"],
+                          "sha256": hashlib.sha256(pixels).hexdigest()}
+                assert actual == expected, (name, actual, expected)
+                return
+        time.sleep(0.05)
+    raise AssertionError(f"no uploaded 2 px/pt raster for revision {state['revision']}")
+
+
+def delimiter_shortcut(key, open_char, close_char, name):
+    def check(replay, act):
+        act("type", "--clearmodifiers", "root ")
+        act("type", "--clearmodifiers", "--delay", "40", "$|")
+        state = act("type", "--clearmodifiers", key)
+        assert formula(state) == {"kind": "delimited", "open": open_char, "close": close_char,
+                                  "body": {"body": {"kind": "hole"}}}
+        assert state["semantic"]["cursor"]["path"].endswith("/root/body/body")
+        assert state["cursor_byte"] == 0
+        state = act("type", "--clearmodifiers", "x")
+        assert formula(state)["body"]["body"] == {"kind": "text", "text": "x"}
+        assert state["cursor_byte"] == 1
+        assert parity.cursor_caret(state)["exact"]
+        stock_pixels(replay, state, name)
+    return check
+
+
+def half_open(replay, act):
+    act("type", "--clearmodifiers", "root ")
+    state = act("type", "--clearmodifiers", "--delay", "40", "$[0, 1")
+    assert formula(state)["body"]["body"] == {"kind": "text", "text": "0, 1"}
+    state = act("key", "Tab")
+    assert state["semantic"]["cursor"]["path"].endswith("/root") and state["cursor_byte"] == 1
+    state = act("key", "BackSpace")
+    assert formula(state)["open"] == "[" and formula(state)["close"] == "\0"
+    assert state["semantic"]["cursor"]["path"].endswith("/root/body/body") and state["cursor_byte"] == 4
+    assert parity.cursor_caret(state)["exact"]
+    stock_pixels(replay, state, "delim-open-interval")
+    state = act("type", "--clearmodifiers", ")")
+    assert formula(state) == {"kind": "delimited", "open": "[", "close": ")",
+                              "body": {"body": {"kind": "text", "text": "0, 1"}}}
+    assert state["semantic"]["cursor"]["path"].endswith("/root") and state["cursor_byte"] == 1
+    assert parity.cursor_caret(state)["exact"]
+    stock_pixels(replay, state, "delim-half-open")
+
+
 def main():
     display = os.environ.get("DISPLAY", "")
     assert display and not re.fullmatch(r"(?:[^:]*):0(?:\.\d+)?", display), "private Xvfb required"
     binary, output = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
     for name, check in [("structures", structures), ("composition", composition),
-                        ("commands", commands), ("brackets", brackets)]:
+                        ("commands", commands), ("brackets", brackets),
+                        ("norm", delimiter_shortcut("|", "‖", "‖", "delim-input-norm")),
+                        ("floor", delimiter_shortcut(".", "⌊", "⌋", "delim-input-floor")),
+                        ("ceil", delimiter_shortcut("'", "⌈", "⌉", "delim-input-ceil")),
+                        ("half-open", half_open)]:
         run_case(binary, output, name, check)
 
 

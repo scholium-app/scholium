@@ -64,6 +64,12 @@ pub(super) fn page(
 ) -> Result<typst_layout::Page, String> {
     let empty = "#par[#text(\"\")]";
     let blocks = match name {
+        "delim-input-norm" => vec!["root $lr(‖ x ‖)$"],
+        "delim-input-floor" => vec!["root $lr(⌊ x ⌋)$"],
+        "delim-input-ceil" => vec!["root $lr(⌈ x ⌉)$"],
+        "delim-open-interval" => vec!["root $lr(bracket.l 0 , 1)$"],
+        "delim-invisible" => vec!["root $lr(bracket.l frac(1, 2))$"],
+        "delim-half-open" => vec!["root $lr(bracket.l 0 , 1 paren.r)$"],
         "empty-start" => vec![empty, "alpha"],
         "empty-middle" => vec!["alpha", empty, "omega"],
         "empty-three" => vec!["alpha", empty, empty, empty, "omega"],

@@ -272,3 +272,12 @@ PDF 选项采用 fork 默认值，不注入系统时间；PDF 编码错误也经
 经 hayro 在固定 300 dpi 比较页数、尺寸及全部 RGBA，容差为零。元数据差异不参与判断；
 不得通过放宽容差接受以后升级的排版差异。另测试跨文件 source snapshot 与损坏语法/未填槽拒绝。
 最终文件发布和共同报告属于 app，见 [ADR 0056](../adr/ADR-0056-pdf-export.md)。
+
+## 独立定界符两侧
+
+Lr 的可见两侧使用真正的 `SymbolElem`，具有可伸缩的数学定界符类；隐形 close 不产生 Content。
+生成源码对匹配配对使用既有语法，对独立两侧使用固定白名单符号名，例如
+`lr(bracket.l 0 , 1 paren.r)` 与 `lr(bracket.l frac(1, 2))`。后者只有开侧，无打印占位符。
+白名单符号绕开语法解析器的括号匹配；body 仍逐原子字面转义，用户文本不参与源码求值。
+两种字体 profile 都以未打补丁的 stock Typst v0.15.1 编译独立源码作零容差像素对照。
+打包字体的新增夹具尺寸和 SHA-256 固定于 `reference/delimiter-pixels.json`，stock 对照同时验证它未过期。

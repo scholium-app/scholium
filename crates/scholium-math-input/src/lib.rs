@@ -43,6 +43,17 @@ pub struct Context<'a> {
     pub math: bool,
     pub before: &'a str,
     pub selected: bool,
+    pub delimiter: Option<DelimiterContext>,
+}
+/// Read-only facts about the innermost delimiter body containing the caret.
+#[allow(missing_docs)]
+#[derive(Debug, Clone, Copy)]
+pub struct DelimiterContext {
+    pub open: char,
+    /// None means the closing side is invisible.
+    pub close: Option<char>,
+    pub empty: bool,
+    pub at_end: bool,
 }
 /// Abstract input. IME commits and paste bypass this vocabulary in language adapters.
 #[allow(missing_docs)]
@@ -64,7 +75,22 @@ pub enum Intent {
     None,
     Literal(String),
     Symbol(String),
-    Replace { bytes: usize, text: String },
+    Replace {
+        bytes: usize,
+        text: String,
+    },
     Structure(Template),
-    NextSlot { reverse: bool },
+    NextSlot {
+        reverse: bool,
+    },
+    /// Change the containing delimiter pair, keeping the caret in its body.
+    ConvertDelimiter {
+        open: char,
+        close: char,
+    },
+    /// Restore the invisible closing side and leave the body at its outer right edge.
+    CloseDelimiter(char),
 }
+
+#[cfg(test)]
+mod delimiter_tests;

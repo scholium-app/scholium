@@ -534,3 +534,11 @@ rename 后目录同步失败仍报告失败，但可能留下完整新文件。�
 受限 `.typ` 导出和语法错误不发布且进入面板；不依赖 TeX。显式 ignored 的 app 原生测试把
 pdfLaTeX/XeLaTeX/LuaLaTeX 导出与宿主原引擎输出逐页以 300 dpi、零 RGBA 差异比较，Lua fixture 为中文/英文混排。
 边界和容差理由见 [ADR 0056](../adr/ADR-0056-pdf-export.md)。
+
+## 定界符无障碍与窗口证据
+
+结构公式的朗读逐一命名定界符两侧，包括不匹配的 close 与不可见 close；中英文均经语言目录。
+编辑规则全部来自共享 engine/session，app 不按特定字符分派定界符动作。
+仅同时设置 `SCHOLIUM_EDITOR_AUDIT=1` 和 `SCHOLIUM_EDITOR_RASTER_AUDIT=<已有目录>` 时，
+窗口在纹理上传前把完整 sharp raster 按 revision 导出 RGBA 和原子发布的尺寸 JSON；稀疏 raster 不导出。
+该可选证据不包含 caret/选区等叠层。真实窗口测试在固定 2 px/pt 下与独立 stock 的打包字体像素 hash 严格比较。

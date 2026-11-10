@@ -1,0 +1,32 @@
+{
+  "delim-input-norm": {
+    "height": 304,
+    "width": 1191,
+    "sha256": "f34fb4b181117c59d4c2e8760de04c29285f68c395bbae2dd9b5d2990aa43572"
+  },
+  "delim-input-floor": {
+    "height": 304,
+    "width": 1191,
+    "sha256": "b74562f23e2b583fcc48337e0fe1994c0b44db58fa5569fb45349354eb6b48e5"
+  },
+  "delim-input-ceil": {
+    "height": 304,
+    "width": 1191,
+    "sha256": "2dd1107b7eae75d8ef0e5cd4821035ff466d8a967055a3d0706c451e35e45c03"
+  },
+  "delim-invisible": {
+    "height": 304,
+    "width": 1191,
+    "sha256": "139df99a3e880a5d5457bf9e1d757da46f37a9470098c3aa2d684e35d3d80dad"
+  },
+  "delim-open-interval": {
+    "height": 304,
+    "width": 1191,
+    "sha256": "40cf544302240c6723a2f41dcc7e7d001cbd98d3d8be2a72b6c332265c135e91"
+  },
+  "delim-half-open": {
+    "height": 304,
+    "width": 1191,
+    "sha256": "4b2406f6ee2063f9fdba90f56897ed54074af559dcb7a669359fa74b2c720dee"
+  }
+}

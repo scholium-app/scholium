@@ -307,6 +307,8 @@ fn root_index_and_all_delimiter_pairs_survive_the_v1_storage_codec() {
         ('⟨', '⟩'),
         ('⌊', '⌋'),
         ('⌈', '⌉'),
+        ('[', ')'),
+        ('[', '\0'),
     ]
     .into_iter()
     .map(|(open, close)| MathNode {
@@ -366,4 +368,34 @@ fn display_equation_round_trips_and_rejects_body_text() {
         },
     });
     assert!(doc.validate().is_err());
+}
+
+#[test]
+fn unsupported_closing_sides_are_rejected_without_replacing_the_stored_head() {
+    let path = Fixture::fresh();
+    let store = SessionStore::create_structured(&path.0).expect("store");
+    let original = sample();
+    store.save_structured(&original, &[]).expect("initial head");
+    for close in ['x', '(', '/', '.', '\u{200b}'] {
+        let mut invalid = original.clone();
+        invalid.blocks[0].content[0].body = InlineBody::Math {
+            root: MathNode {
+                node: NodeId::fresh(),
+                body: MathBody::Delimited {
+                    open: '[',
+                    close,
+                    body: Box::new(MathNode::hole()),
+                },
+            },
+        };
+        assert!(store.save_structured(&invalid, &[]).is_err());
+        assert_eq!(
+            store
+                .load_structured()
+                .expect("load")
+                .expect("head")
+                .snapshot,
+            original
+        );
+    }
 }

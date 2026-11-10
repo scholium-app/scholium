@@ -20,6 +20,8 @@ pub(crate) enum Shape {
     Fraction,
     Attach,
     Root,
+    // Independent v1 sides; close U+0000 is invisible (ADR 0060).
+    // Projection checks the supported sets through model validation.
     Delimited(char, char),
     Hole,
 }
