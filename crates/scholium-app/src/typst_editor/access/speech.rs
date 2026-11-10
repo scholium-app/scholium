@@ -65,10 +65,14 @@ pub(super) fn describe_in(node: &MathNode, locale: crate::i18n::Locale) -> Strin
                 &[("index", index.into()), ("radicand", radicand.into())],
             )
         }
-        MathBody::Delimited { body, .. } => crate::i18n::text_with(
+        MathBody::Delimited { open, close, body } => crate::i18n::text_with(
             locale,
             "a11y.math.delimited",
-            &[("body", describe_in(body, locale).into())],
+            &[
+                ("open", delimiter_name(*open, locale).into()),
+                ("close", delimiter_name(*close, locale).into()),
+                ("body", describe_in(body, locale).into()),
+            ],
         ),
     }
 }
@@ -224,4 +228,25 @@ fn slot_name(name: &str, locale: crate::i18n::Locale) -> String {
     } else {
         name.to_owned()
     }
+}
+
+fn delimiter_name(c: char, locale: crate::i18n::Locale) -> String {
+    let key = match c {
+        '(' => "a11y.math.delimiter.paren.open",
+        ')' => "a11y.math.delimiter.paren.close",
+        '[' => "a11y.math.delimiter.bracket.open",
+        ']' => "a11y.math.delimiter.bracket.close",
+        '{' => "a11y.math.delimiter.brace.open",
+        '}' => "a11y.math.delimiter.brace.close",
+        '|' => "a11y.math.delimiter.abs",
+        '‖' => "a11y.math.delimiter.norm",
+        '⟨' => "a11y.math.delimiter.angle.open",
+        '⟩' => "a11y.math.delimiter.angle.close",
+        '⌊' => "a11y.math.delimiter.floor.open",
+        '⌋' => "a11y.math.delimiter.floor.close",
+        '⌈' => "a11y.math.delimiter.ceil.open",
+        '⌉' => "a11y.math.delimiter.ceil.close",
+        _ => "a11y.math.delimiter.invisible",
+    };
+    crate::i18n::text(locale, key)
 }

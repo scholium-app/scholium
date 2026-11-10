@@ -110,3 +110,7 @@ Typst 会话在成功结构规划后调用 `apply_effects`，只提交 adapter A
 本地删除保留原 TreeID/metadata/text，以 inactive tombstone 隐藏子树，避免引擎撤销重建容器时复制 NodeId。
 已存在的物理 tree tombstone 仍可读取；重新激活隐藏身份复用原 TreeID。初始化、退役与迁移裁决见
 [ADR 0059](../adr/ADR-0059-sdg-session-durability.md)。网络与协作 UI 不属于此接入。
+
+`scholium-sdg` 的 `Shape::Delimited(open, close)` 保留两个独立字符；close 的 U+0000 表示隐形。
+属性更新、Action 重放、snapshot 恢复均保留节点及 body 身份，并经 model 验证拒绝未知两侧。
+该值扩展沿用 schema/Action/snapshot v1，兼容边界见 [ADR 0060](../adr/ADR-0060-math-delimiter-input.md)。

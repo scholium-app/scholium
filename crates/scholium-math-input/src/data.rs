@@ -137,3 +137,10 @@ pub fn core() -> &'static Data {
         data
     })
 }
+
+/// Immediate continuation of a just-created empty absolute-value body.
+pub(crate) fn delimiter_conversion(key: char) -> Option<(char, char)> {
+    [('|', '‖', '‖'), ('.', '⌊', '⌋'), ('\'', '⌈', '⌉')]
+        .into_iter()
+        .find_map(|(trigger, open, close)| (key == trigger).then_some((open, close)))
+}

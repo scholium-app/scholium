@@ -15,6 +15,7 @@ impl EditorSession {
         if self.core.poll_layout()
             && let Some((base, sharp)) = self.core.take_scene_rasters()
         {
+            self.audit_raster(&sharp);
             self.texture = Some(raster::Layers::from_rasters(ctx, base, sharp));
         }
         for update in self.core.poll_strips() {
@@ -32,6 +33,7 @@ impl EditorSession {
         if self.core.adopt_scene(stamp, outcome)
             && let Some((base, sharp)) = self.core.take_scene_rasters()
         {
+            self.audit_raster(&sharp);
             self.texture = Some(raster::Layers::from_rasters(ctx, base, sharp));
         }
     }

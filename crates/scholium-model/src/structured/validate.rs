@@ -24,8 +24,8 @@ pub enum StructureError {
     /// Required mathematical content is not yet filled.
     #[error("required math slot is unfilled: {0:?}")]
     Unfilled(NodeId),
-    /// A delimiter pair is not one of the explicitly supported Typst pairs.
-    #[error("unsupported math delimiter pair")]
+    /// A delimiter side is not explicitly supported.
+    #[error("unsupported math delimiter side")]
     Delimiter,
 }
 
@@ -154,17 +154,12 @@ impl Validator {
                 self.math(radicand, depth + 1)?;
             }
             MathBody::Delimited { open, close, body } => {
-                if !matches!(
-                    (open, close),
-                    ('(', ')')
-                        | ('[', ']')
-                        | ('{', '}')
-                        | ('|', '|')
-                        | ('‖', '‖')
-                        | ('⟨', '⟩')
-                        | ('⌊', '⌋')
-                        | ('⌈', '⌉')
-                ) {
+                if !matches!(open, '(' | '[' | '{' | '|' | '‖' | '⟨' | '⌊' | '⌈')
+                    || !matches!(
+                        *close,
+                        ')' | ']' | '}' | '|' | '‖' | '⟩' | '⌋' | '⌉' | INVISIBLE_DELIMITER
+                    )
+                {
                     return Err(StructureError::Delimiter);
                 }
                 self.math(body, depth + 1)?;

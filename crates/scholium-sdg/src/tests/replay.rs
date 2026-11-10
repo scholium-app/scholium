@@ -195,3 +195,59 @@ fn all_math_children() -> Vec<MathNode> {
         },
     ]
 }
+
+#[test]
+fn independent_delimiter_sides_replay_and_reject_invalid_closes() {
+    let mut initial = fixture();
+    let node = NodeId::fresh();
+    initial.blocks[0].content[0].body = InlineBody::Math {
+        root: MathNode {
+            node,
+            body: MathBody::Delimited {
+                open: '[',
+                close: ']',
+                body: Box::new(MathNode::hole()),
+            },
+        },
+    };
+    let mut a = Replica::new(initial, 1).expect("bootstrap");
+    let mut replay = Replica::restore(&a.snapshot().expect("snapshot"), 2).expect("restore");
+    for close in ['\0', ')', '⌉'] {
+        let action = a
+            .edit(
+                StructuralEdit::SetDelimiter {
+                    node,
+                    open: '[',
+                    close,
+                },
+                "close",
+            )
+            .expect("edit")
+            .expect("action");
+        replay.receive(&action).expect("replay");
+        assert_eq!(
+            replay.document().expect("projection"),
+            a.document().expect("document")
+        );
+        let restored = Replica::restore(&replay.snapshot().expect("snapshot"), 3).expect("restore");
+        assert_eq!(
+            restored.document().expect("projection"),
+            a.document().expect("document")
+        );
+    }
+    let before = a.document().expect("document");
+    for close in ['x', '(', '.', '\u{200b}'] {
+        assert!(
+            a.edit(
+                StructuralEdit::SetDelimiter {
+                    node,
+                    open: '[',
+                    close
+                },
+                "invalid"
+            )
+            .is_err()
+        );
+        assert_eq!(a.document().expect("unchanged"), before);
+    }
+}

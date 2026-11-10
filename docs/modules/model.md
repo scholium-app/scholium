@@ -78,8 +78,10 @@ sub/sup，至少一个槽存在，缺席的槽不序列化；它是 v1 信封内
 不持久化提示文字。`validate` 检查身份/容量/叶/容器，`ensure_filled` 拒绝 Hole，但不能
 证明 RawMath 可以严格编译。树深上限 24，单叶 1 MiB、合计内容 16 MiB、节点 100000。
 
-`Root` 有可选 index 和必填 radicand，`Delimited` 有 body 与严格匹配的八种配对：`()`、`[]`、
-`{}`、`||`、`‖‖`、`⟨⟩`、`⌊⌋`、`⌈⌉`。两者为 v1 加性 tag，旧构建遇到新节点会拒绝；
+`Root` 有可选 index 和必填 radicand，`Delimited` 有 body、open 与 close。open 取 `(`、`[`、`{`、`|`、`‖`、`⟨`、`⌊`、`⌈`；
+close 独立取 `)`、`]`、`}`、`|`、`‖`、`⟩`、`⌋`、`⌉`，或常量 `INVISIBLE_DELIMITER`（U+0000，JSON `\u0000`）。
+开侧不能隐形，未知字符拒绝。独立两侧是 v1 加性值扩展，新构建读取旧配对，旧构建拒绝不匹配或隐形的两侧；
+见 [ADR 0060](../adr/ADR-0060-math-delimiter-input.md)。两者为 v1 加性 tag，旧构建遇到新节点会拒绝；
 空槽与存在的 index 递归参与验证和 `ensure_filled`。见 [ADR 0046](../adr/ADR-0046-math-root-delimiter.md)。
 
 `StructuredDocument::migrate` 保留文档/块身份、样式和原值，首次为 inline 分配身份；

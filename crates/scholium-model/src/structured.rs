@@ -20,6 +20,9 @@ pub const MAX_LEAF_BYTES: usize = 1024 * 1024;
 /// Maximum blocks accepted by the candidate session.
 pub const MAX_BLOCKS: usize = 10_000;
 
+/// Invisible closing side of an auto-sized delimiter (wire value U+0000).
+pub const INVISIBLE_DELIMITER: char = '\0';
+
 /// Identified snapshot of the single local document authority (candidate schema v1).
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -146,12 +149,12 @@ pub enum MathBody {
         /// Required content under the radical.
         radicand: Box<MathNode>,
     },
-    /// Auto-sized paired delimiters around one addressed body slot.
+    /// Auto-sized independently selected delimiters around one addressed body slot.
     /// Additive to schema v1: older builds reject documents that contain it.
     Delimited {
         /// Supported opening delimiter.
         open: char,
-        /// Matching supported closing delimiter.
+        /// Supported closing delimiter, or [`INVISIBLE_DELIMITER`].
         close: char,
         /// Content between the delimiters.
         body: Box<MathNode>,

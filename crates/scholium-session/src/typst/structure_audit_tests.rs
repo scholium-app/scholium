@@ -210,6 +210,13 @@ fn removable(root: &MathNode, at: NodeId) -> bool {
 }
 fn can_delete(core: &EditorCore, forward: bool) -> bool {
     let at = core.cursor;
+    if !forward
+        && at.byte == 1
+        && let Some(MathBody::Delimited { close, body, .. }) =
+            core.math_node_at(at.leaf).map(|n| &n.body)
+    {
+        return *close != '\0' || empty(body);
+    }
     if !input::leaves(&core.snapshot)
         .into_iter()
         .any(|l| l.id == at.leaf)

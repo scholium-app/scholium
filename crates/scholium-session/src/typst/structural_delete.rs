@@ -2,7 +2,7 @@
 use super::*;
 use unicode_segmentation::UnicodeSegmentation;
 
-fn empty(node: &MathNode) -> bool {
+pub(super) fn empty(node: &MathNode) -> bool {
     match &node.body {
         MathBody::Hole => true,
         MathBody::Text { text } => text.is_empty(),
@@ -31,6 +31,9 @@ fn empty_owner(node: &MathNode, leaf: scholium_model::NodeId) -> Option<scholium
 }
 impl EditorCore {
     pub(super) fn delete_before(&mut self) -> Result<Outcome, CommandError> {
+        if let Some(result) = self.backspace_delimiter() {
+            return result;
+        }
         self.structural_delete(false)
     }
     pub(super) fn delete_after(&mut self) -> Result<Outcome, CommandError> {

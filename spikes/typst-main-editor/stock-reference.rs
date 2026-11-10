@@ -80,7 +80,7 @@ fn fixture(name: &str) -> Content {
         "display-root-delimiter" => {
             let fraction = FracElem::new(symbol("a"), symbol("b")).pack();
             let brackets = typst::math::LrElem::new(Content::sequence([
-                kernel::text("("), fraction, kernel::text(")"),
+                typst::foundations::SymbolElem::packed('('), fraction, typst::foundations::SymbolElem::packed(')'),
             ])).pack();
             let mut root = typst::math::RootElem::new(brackets);
             root.index.set(Some(symbol("3")));
@@ -106,7 +106,7 @@ fn fixture(name: &str) -> Content {
             let body = if name.ends_with("root") || name == "root-delimiter" {
                 let fraction = if name == "root-delimiter" {
                     typst::math::LrElem::new(Content::sequence([
-                        kernel::text("("), fraction, kernel::text(")"),
+                        typst::foundations::SymbolElem::packed('('), fraction, typst::foundations::SymbolElem::packed(')'),
                     ])).pack()
                 } else { fraction };
                 let mut elem = typst::math::RootElem::new(fraction);
@@ -121,7 +121,7 @@ fn fixture(name: &str) -> Content {
                     _ => unreachable!(),
                 };
                 typst::math::LrElem::new(Content::sequence([
-                    kernel::text(&open.to_string()), fraction, kernel::text(&close.to_string()),
+                    typst::foundations::SymbolElem::packed(open), fraction, typst::foundations::SymbolElem::packed(close),
                 ])).pack()
             };
             paragraph(Content::sequence([kernel::text("root "), EquationElem::new(body).pack()]))
@@ -212,6 +212,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     std::fs::create_dir_all(&output)?;
     let world = reference_world();
     for name in [
+        "delim-input-norm", "delim-input-floor", "delim-input-ceil", "delim-open-interval", "delim-invisible", "delim-half-open",
         "display-root-delimiter", "display-only", "display-start", "display-middle", "display-end",
         "square-root", "indexed-root", "root-delimiter", "delim-paren", "delim-bracket", "delim-brace",
         "delim-abs", "delim-norm", "delim-angle", "delim-floor", "delim-ceil",
@@ -231,7 +232,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "empty-between-headings",
         "empty-only",
     ] {
-        let page = if name.starts_with("empty-") {
+        let page = if name.starts_with("empty-") || name.starts_with("delim-input-") || matches!(name, "delim-invisible" | "delim-open-interval" | "delim-half-open") {
             stock_empty::page(&world, name)?
         } else {
             let frame = kernel::layout_in(

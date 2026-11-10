@@ -166,3 +166,10 @@ symlink）或不可发布时不覆盖；发布后目录同步失败可能留完�
 `open_structured` 只以 READ_WRITE 打开已有文件，不含 CREATE；校验 v1 schema 后才调整
 WAL/FULL。legacy、缺失或坏库拒绝，不自动生成/迁移表或改变旧库日志模式。
 开发主程序据此选择已知 v1；创建新库使用独立原子 create API。
+
+## 定界符值兼容
+
+structured v1 与正式 SDG Action/snapshot 都保留 `Delimited.open/close` 的字符字段。
+close 独立取支持闭符或 U+0000 隐形标记（JSON `\u0000`），不迁移旧值、不提升 envelope 版本。
+保存、恢复与重放使用相同 model 验证；旧构建拒绝新增值，不能静默恢复为配对括号。
+见 [ADR 0060](../adr/ADR-0060-math-delimiter-input.md)。

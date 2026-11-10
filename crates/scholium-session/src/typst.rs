@@ -3,6 +3,7 @@ mod attach;
 mod block_merge;
 mod command;
 mod deferred;
+mod delimiter_input;
 mod diagnose;
 mod edit;
 mod events;
@@ -230,6 +231,8 @@ mod structure_audit_tests;
 #[cfg(test)]
 mod fraction_caret_tests;
 
+#[cfg(test)]
+mod delimiter_input_tests;
 #[cfg(test)]
 mod display_tests;
 mod root_delimiter;

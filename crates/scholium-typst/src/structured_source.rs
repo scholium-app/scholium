@@ -233,15 +233,7 @@ fn math(out: &mut GeneratedSource, node: &MathNode) {
                 out.source.push(')');
             }
         }
-        MathBody::Delimited { open, close, body } => {
-            out.source.push_str("lr(");
-            out.source.push(*open);
-            out.source.push(' ');
-            math(out, body);
-            out.source.push(' ');
-            out.source.push(*close);
-            out.source.push(')');
-        }
+        MathBody::Delimited { open, close, body } => delimited(out, *open, *close, body),
     }
 }
 
@@ -362,4 +354,54 @@ fn is_markup_special(ch: char) -> bool {
             | '/'
             | '-'
     )
+}
+
+// Named symbols bypass the parser's bracket matching while retaining stretchable glyphs.
+fn delimiter_symbol(c: char) -> &'static str {
+    match c {
+        '(' => "paren.l",
+        ')' => "paren.r",
+        '[' => "bracket.l",
+        ']' => "bracket.r",
+        '{' => "brace.l",
+        '}' => "brace.r",
+        '|' => "bar.v",
+        '‖' => "bar.v.double",
+        '⟨' => "chevron.l",
+        '⟩' => "chevron.r",
+        '⌊' => "floor.l",
+        '⌋' => "floor.r",
+        '⌈' => "ceil.l",
+        '⌉' => "ceil.r",
+        _ => unreachable!("validated visible delimiter"),
+    }
+}
+
+fn delimited(out: &mut GeneratedSource, open: char, close: char, body: &MathNode) {
+    let matched = matches!(
+        (open, close),
+        ('(', ')')
+            | ('[', ']')
+            | ('{', '}')
+            | ('|', '|')
+            | ('‖', '‖')
+            | ('⟨', '⟩')
+            | ('⌊', '⌋')
+            | ('⌈', '⌉')
+    );
+    out.source.push_str("lr(");
+    if matched {
+        out.source.push(open);
+    } else {
+        out.source.push_str(delimiter_symbol(open));
+    }
+    out.source.push(' ');
+    math(out, body);
+    out.source.push(' ');
+    if matched {
+        out.source.push(close);
+    } else if close != scholium_model::structured::INVISIBLE_DELIMITER {
+        out.source.push_str(delimiter_symbol(close));
+    }
+    out.source.push(')');
 }

@@ -52,8 +52,7 @@ impl EditorCore {
         let Some(node) = self.delimiter_owner() else {
             return;
         };
-        let Some(MathBody::Delimited { open, close, .. }) =
-            self.math_node_at(node).map(|n| &n.body)
+        let Some(MathBody::Delimited { open, .. }) = self.math_node_at(node).map(|n| &n.body)
         else {
             return;
         };
@@ -69,7 +68,7 @@ impl EditorCore {
         ];
         let current = pairs
             .iter()
-            .position(|p| p == &(*open, *close))
+            .position(|p| p.0 == *open)
             .expect("validated pair");
         let (open, close) = pairs[(current + 1) % pairs.len()];
         self.apply(StructuralEdit::SetDelimiter { node, open, close }, state);

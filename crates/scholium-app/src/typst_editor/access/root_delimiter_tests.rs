@@ -74,9 +74,9 @@ fn root_and_delimiter_speech_names_every_slot_and_edge_in_both_locales() {
         assert_eq!(
             speech::describe_in(&delimited, locale),
             if locale == Locale::En {
-                "Brackets (x)"
+                "Delimiters (opening: left parenthesis; body: x; closing: right parenthesis)"
             } else {
-                "括号（x）"
+                "定界符（左侧：左圆括号；内容：x；右侧：右圆括号）"
             }
         );
     }
@@ -140,4 +140,31 @@ fn english_root_with_empty_and_nested_slots_is_spoken_in_english() {
         tree.children(Role::Status)[0].1.label(),
         Some("Radicand: empty")
     );
+}
+
+#[test]
+fn invisible_and_mismatched_closers_are_spoken_in_both_locales() {
+    for (close, english, chinese) in [
+        ('\0', "invisible", "不可见"),
+        (')', "right parenthesis", "右圆括号"),
+    ] {
+        let delimited = MathNode {
+            node: NodeId::fresh(),
+            body: MathBody::Delimited {
+                open: '[',
+                close,
+                body: Box::new(text_node("x")),
+            },
+        };
+        let en = speech::describe_in(&delimited, crate::i18n::Locale::En);
+        let zh = speech::describe_in(&delimited, crate::i18n::Locale::ZhHans);
+        assert_eq!(
+            en,
+            format!("Delimiters (opening: left bracket; body: x; closing: {english})")
+        );
+        assert_eq!(
+            zh,
+            format!("定界符（左侧：左方括号；内容：x；右侧：{chinese}）")
+        );
+    }
 }

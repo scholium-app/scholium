@@ -49,12 +49,13 @@ def differences(expected, actual):
 
 
 class Replay:
-    def __init__(self, binary, output):
+    def __init__(self, binary, output, extra_env=None):
         self.output = output
         self.log = output / "app.log"
         self.env = dict(os.environ, SCHOLIUM_PROJECT_PATH=str(output / "project"),
                         SCHOLIUM_EDITOR_AUDIT="1", WINIT_UNIX_BACKEND="x11", WINIT_X11_SCALE_FACTOR="1")
         self.env["SCHOLIUM_TEST_FONTS"] = "bundled"
+        self.env.update(extra_env or {})
         self.env.pop("WAYLAND_DISPLAY", None)
         reset_log(self.log)
         self.writer = self.log.open("w")

@@ -271,8 +271,8 @@ fn roots_and_supported_delimiter_pairs_round_trip_and_validate() {
 }
 
 #[test]
-fn unsupported_or_mismatched_delimiter_pairs_are_rejected() {
-    for (open, close) in [('(', ']'), ('<', '>'), ('/', '/')] {
+fn unsupported_delimiter_sides_are_rejected() {
+    for (open, close) in [('(', 'x'), ('<', '>'), ('/', '/'), ('\0', ')')] {
         let document = native(MathNode {
             node: NodeId::fresh(),
             body: MathBody::Delimited {
@@ -412,4 +412,24 @@ fn display_equation_requires_exactly_one_structured_formula() {
 #[test]
 fn display_equation_uses_the_chinese_block_label() {
     assert_eq!(BlockKind::Equation.label(), "独立公式");
+}
+
+#[test]
+fn supported_closers_and_invisible_close_are_independent_of_open() {
+    for open in ['(', '[', '{', '|', '‖', '⟨', '⌊', '⌈'] {
+        for close in [')', ']', '}', '|', '‖', '⟩', '⌋', '⌉', '\0'] {
+            let document = native(MathNode {
+                node: NodeId::fresh(),
+                body: MathBody::Delimited {
+                    open,
+                    close,
+                    body: Box::new(MathNode::hole()),
+                },
+            });
+            document.validate().expect("independent supported sides");
+            let encoded = serde_json::to_string(&document).expect("encode");
+            let restored: StructuredDocument = serde_json::from_str(&encoded).expect("decode");
+            assert_eq!(restored, document);
+        }
+    }
 }

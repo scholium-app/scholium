@@ -26,6 +26,7 @@ impl EditorCore {
             math: self.in_math(),
             before,
             selected: self.selected(),
+            delimiter: self.delimiter_context(),
         }
     }
     /// The same decision is published to the host focus bar and used on key input.
@@ -111,6 +112,10 @@ impl EditorCore {
             }
             Intent::Replace { bytes, text } => self.replace_token(bytes, text, state),
             Intent::Structure(template) => self.math_template(template, state),
+            Intent::ConvertDelimiter { open, close } => {
+                self.set_body_delimiter(Some(open), close, state)
+            }
+            Intent::CloseDelimiter(close) => self.set_body_delimiter(None, close, state),
             Intent::NextSlot { reverse } => self.math_tab(reverse),
         }
     }

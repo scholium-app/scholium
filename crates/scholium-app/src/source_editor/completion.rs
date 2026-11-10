@@ -5,6 +5,7 @@ fn context() -> Context<'static> {
     Context {
         math: true,
         before: "",
+        delimiter: None,
         selected: false,
     }
 }

@@ -279,9 +279,13 @@ impl ContentCache {
     ) -> Result<Content, EditorError> {
         let body = self.math(body)?;
         let content = sequence(vec![
-            super::kernel::text(&open.to_string()),
+            typst::foundations::SymbolElem::packed(open),
             body,
-            super::kernel::text(&close.to_string()),
+            if close == scholium_model::structured::INVISIBLE_DELIMITER {
+                Content::empty()
+            } else {
+                typst::foundations::SymbolElem::packed(close)
+            },
         ]);
         Ok(typst::math::LrElem::new(content)
             .pack()
